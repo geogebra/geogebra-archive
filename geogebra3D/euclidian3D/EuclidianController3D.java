@@ -1634,7 +1634,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		addSelectedLine(hits, 10, true);
 		
 		// currently tested only for 3D conics
-		addSelectedConicND(hits, 10, true);
+		addSelectedConic(hits, 10, true);
 		
 		// currently tested only for planes
 		addSelectedCS2D(hits, 10, true);
@@ -1659,7 +1659,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			return ret;
 
 		} else if (selLines() ==1){
-			if (selConicsND()>=1 ) {// line-conic
+			if (selConics()>=1 ) {// line-conic
 				GeoLineND line = getSelectedLinesND()[0];
 				GeoConicND conic = getSelectedConicsND()[0];
 				GeoElement[] ret = new GeoElement[2];
@@ -1701,7 +1701,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) polygon);
 		 */
 			}
-		} else if (selConicsND()>=2 ) {// conic-conic
+		} else if (selConics()>=2 ) {// conic-conic
 			GeoConicND[] conics = getSelectedConicsND();
 			GeoElement[] ret = new GeoElement[4];
 			GeoPointND[] points = getKernel().getManager3D().IntersectConics(null, conics[0], conics[1]);
@@ -1748,6 +1748,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				return false;	
 
 			//////////////////////////////////////////////////
+			/* TODO ???
 			if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 				Hits goodHits = new Hits();
 				
@@ -1761,9 +1762,28 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 	
 			}
+			*/
 		
+			/*
 			addSelectedCS2D(hits, 10, true);
 			addSelectedQuadric(hits, 10, true);
+			*/
+			
+			//only add first correct hit
+			//Application.debug(hits);//+"\ntop"+hits.getTopHits());
+			boolean found = false;
+			for (int i=0; i<hits.size() && !found; i++){
+				if (hits.get(i) instanceof GeoCoordSys2D){
+					//Application.debug("cs2D");
+					addSelectedCS2D(hits, 10, false);
+					found=true;
+				}else if (hits.get(i) instanceof GeoQuadric3D){
+					//Application.debug("quadric");
+					addSelectedQuadric(hits, 10, false);
+					found=true;
+				}
+				
+			}
 
 			//singlePointWanted = singlePointWanted && selGeos() == 2;
 			
@@ -1823,10 +1843,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	
 			else if ((selCS2D() >= 1) &&  (selQuadric() >= 1)) { //plane-quadric
+				
+				
 				GeoElement plane = (GeoElement) getSelectedCS2D()[0];
 				GeoQuadric3D quad = getSelectedQuadric()[0];
 				GeoElement[] ret = {kernel.getManager3D().Intersect( null, (GeoPlaneND) plane, (GeoQuadricND) quad)};
-				ret[0].setObjColor(intersectionCurveColorPlanarQuadric);
+				//ret[0].setObjColor(intersectionCurveColorPlanarQuadric);
 				return ret[0].isDefined();
 			}
 			

@@ -20,6 +20,8 @@ public class CoordMatrix4x4 extends CoordMatrix {
 	
 	final static public CoordMatrix4x4 IDENTITY = Identity();
 	final static public CoordMatrix4x4 MIRROR_Y = Identity().mirrorY();
+	final static public CoordMatrix4x4 ROTATION_OZ_90 = RotationOz(Math.PI/2);
+	final static public CoordMatrix4x4 ROTATION_OZ_M90 = RotationOz(-Math.PI/2);
 	
 	
 	///////////////////////////////////////////////////
@@ -40,6 +42,19 @@ public class CoordMatrix4x4 extends CoordMatrix {
 	static final public CoordMatrix4x4 Identity(){
 		CoordMatrix4x4 ret = new CoordMatrix4x4();
 		ret.set(Identity(4));
+		return ret;
+	}
+	
+	static final public CoordMatrix4x4 RotationOz(double angle){
+		CoordMatrix4x4 ret = new CoordMatrix4x4();
+		double c = Math.cos(angle);
+		double s = Math.sin(angle);
+		ret.set(1,1,c);
+		ret.set(2,2,c);
+		ret.set(2,1,s);
+		ret.set(1,2,-s);
+		ret.set(3,3,1);
+		ret.set(4,4,1);
 		return ret;
 	}
 	

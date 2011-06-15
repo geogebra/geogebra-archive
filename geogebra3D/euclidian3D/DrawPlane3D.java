@@ -212,12 +212,14 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	protected void updateForView(){
 		if (getView3D().viewChanged()){
 			setWaitForUpdate();
+			/*
 			if (getView3D().viewChangedByRotate()){
 				//Application.debug(getGeoElement().getMainDirection().dotproduct(getView3D().getViewDirection()));
 				((GeoPlane3D) getGeoElement()).updateViewForPlaneDirection(
 						getView3D().getViewDirection(),
 						getView3D().getToScreenMatrix());
 			}
+			*/
 		}
 		
 	}

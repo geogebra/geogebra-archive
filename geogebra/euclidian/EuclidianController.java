@@ -221,7 +221,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected ArrayList selectedRegions = new ArrayList();
 	protected ArrayList selectedPaths = new ArrayList();
-	protected ArrayList selectedConics = new ArrayList(); //TODO merge with selectedConicsND
 	protected ArrayList selectedConicsND = new ArrayList<GeoConicND>();
 	protected ArrayList selectedImplicitpoly = new ArrayList();
 
@@ -522,7 +521,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// preview for compass: radius first
 		case EuclidianView.MODE_COMPASSES:
-			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints, selectedSegments, selectedConics);
+			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints, selectedSegments, selectedConicsND);
 			break;
 
 			// preview for arcs and sectors
@@ -606,7 +605,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelection(selectedPoints);
 		clearSelection(selectedLines);
 		clearSelection(selectedSegments);
-		clearSelection(selectedConics);
 		clearSelection(selectedConicsND);
 		clearSelection(selectedVectors);
 		clearSelection(selectedPolygons);
@@ -4366,20 +4364,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// two lines
 		if (selLines() >= 2) {
-			GeoLine[] lines = getSelectedLines();
+			GeoLineND[] lines = getSelectedLinesND();
 			GeoElement[] ret = { null };
-			ret[0] = kernel.IntersectLines(null, lines[0], lines[1]);
+			ret[0] = (GeoElement) kernel.IntersectLines(null, lines[0], lines[1]);
 			return ret;
 		}
 		// two conics
 		else if (selConics() >= 2) {
-			GeoConic[] conics = getSelectedConics();
+			GeoConicND[] conics = getSelectedConicsND();
 			GeoElement[] ret = { null };
 			if (singlePointWanted)
-				ret[0] = kernel.IntersectConicsSingle(null, conics[0], conics[1], xRW,
+				ret[0] = kernel.IntersectConicsSingle(null, (GeoConic) conics[0], (GeoConic) conics[1], xRW,
 						yRW);
 			else
-				ret = kernel.IntersectConics(null, conics[0], conics[1]);
+				ret = (GeoElement[]) kernel.IntersectConics(null, conics[0], conics[1]);
 			return ret;
 		} else if (selFunctions() >= 2) {
 			GeoFunction[] fun = getSelectedFunctions();
@@ -6242,7 +6240,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// we already have a circle that defines the radius
 		else if (selConics() == 1) {
-			GeoConic circle =  (GeoConic) selectedConics.get(0);
+			GeoConic circle =  (GeoConic) selectedConicsND.get(0);
 
 			// check for centerPoint
 			GeoPoint centerPoint = (GeoPoint) chooseGeo(hits, GeoPoint.class);
@@ -6297,10 +6295,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			addSelectedConic(hits, 1, false);
 
 			// don't allow conics other than circles to be selected
-			if (selectedConics.size() > 0) {
-				GeoConic c = (GeoConic)selectedConics.get(0);
+			if (selectedConicsND.size() > 0) {
+				GeoConic c = (GeoConic)selectedConicsND.get(0);
 				if (!c.isCircle()) {
-					selectedConics.remove(0); 
+					selectedConicsND.remove(0); 
 					clearSelections();
 				}
 			}
@@ -6758,21 +6756,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	final protected GeoConic[] getSelectedConics() {
-		GeoConic[] conics = new GeoConic[selectedConics.size()];
+		GeoConic[] conics = new GeoConic[selectedConicsND.size()];
 		int i = 0;
-		Iterator it = selectedConics.iterator();
+		Iterator it = selectedConicsND.iterator();
 		while (it.hasNext()) {
 			conics[i] = (GeoConic) it.next();
 			i++;
 		}
-		clearSelection(selectedConics);
+		clearSelection(selectedConicsND);
 		return conics;
 	}
 	
 	final protected GeoConic[] getSelectedCircles() {
-		GeoConic[] circles = new GeoConic[selectedConics.size()];
+		GeoConic[] circles = new GeoConic[selectedConicsND.size()];
 		int i = 0;
-		Iterator it = selectedConics.iterator();
+		Iterator it = selectedConicsND.iterator();
 		while (it.hasNext()) {
 			GeoConic c =(GeoConic) it.next();
 			if(c.isCircle()){
@@ -6780,7 +6778,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				i++;
 			}
 		}
-		clearSelection(selectedConics);
+		clearSelection(selectedConicsND);
 		return circles;
 	}
 	
@@ -6933,22 +6931,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedVectors, geoClass);
 	}
 
-	final protected int addSelectedConic(Hits hits, int max,
-			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConics, GeoConic.class);
-	}
 	
 	final protected int addSelectedCircle(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		ArrayList<GeoConic> selectedCircles = new ArrayList<GeoConic>();
-		for(Object c:selectedConics){
+		for(Object c:selectedConicsND){
 			if(((GeoConic)c).isCircle())
 				selectedCircles.add((GeoConic)c);
 		}
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCircles, GeoConic.class);
 	}
 	
-	final protected int addSelectedConicND(Hits hits, int max,
+	final protected int addSelectedConic(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConicsND, GeoConicND.class);
 	}
@@ -7036,13 +7030,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return selectedVectors.size();
 	}
 
-	final int selConics() {
-		return selectedConics.size();
-	}
-	
-	protected final int selConicsND() {
+	protected final int selConics() {
 		return selectedConicsND.size();
 	}
+	
 	
 	final int selPaths() {
 		return selectedPaths.size();

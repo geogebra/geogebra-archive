@@ -756,7 +756,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * Toggle the style bar.
 	 */
-	private void toggleStyleBar() {
+	public void toggleStyleBar() {
 		if(!this.hasStyleBar) return;
 		
 		if(showStyleBar) {

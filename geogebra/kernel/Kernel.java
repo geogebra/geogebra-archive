@@ -39,6 +39,8 @@ import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
 import geogebra.kernel.discrete.AlgoShortestDistance;
 import geogebra.kernel.discrete.AlgoTravelingSalesman;
 import geogebra.kernel.discrete.AlgoVoronoi;
+import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -2750,7 +2752,7 @@ public class Kernel {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);		
 			GeoLine perp = OrthogonalLine(null, P, g);
-			GeoPoint S = IntersectLines(null, perp, g);		
+			GeoPoint S = (GeoPoint) IntersectLines(null, perp, g);		
 		cons.setSuppressLabelCreation(oldMacroMode);
 		return S;
 	}
@@ -5280,11 +5282,11 @@ public class Kernel {
 	/** 
 	 * IntersectLines yields intersection point named label of lines g, h
 	 */
-	final public GeoPoint IntersectLines(
+	public GeoPointND IntersectLines(
 		String label,
-		GeoLine g,
-		GeoLine h) {
-		AlgoIntersectLines algo = new AlgoIntersectLines(cons, label, g, h);
+		GeoLineND g,
+		GeoLineND h) {
+		AlgoIntersectLines algo = new AlgoIntersectLines(cons, label, (GeoLine) g, (GeoLine) h);
 		GeoPoint S = algo.getPoint();
 		return S;
 	}
@@ -5772,11 +5774,11 @@ public class Kernel {
 	 * IntersectConics yields intersection points named label1, label2, label3, label4
 	 * of conics c1, c2
 	 */
-	final public GeoPoint[] IntersectConics(
+	public GeoPointND[] IntersectConics(
 		String[] labels,
-		GeoConic a,
-		GeoConic b) {
-		AlgoIntersectConics algo = getIntersectionAlgorithm(a, b);
+		GeoConicND a,
+		GeoConicND b) {
+		AlgoIntersectConics algo = getIntersectionAlgorithm((GeoConic) a, (GeoConic) b);
 		algo.setPrintedInXML(true);
 		GeoPoint[] points = algo.getIntersectionPoints();
 		GeoElement.setLabels(labels, points);

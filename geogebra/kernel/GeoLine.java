@@ -1207,7 +1207,10 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	}
 	
 	public Coords getStartInhomCoords(){
-		return getStartCoordsInD(3);
+		if (startPoint != null && startPoint.isFinite()) 
+  			return startPoint.getInhomCoordsInD(3);
+		else
+			return getStartCoordsInD(3);
 	}
 	
 

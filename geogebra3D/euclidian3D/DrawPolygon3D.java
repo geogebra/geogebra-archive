@@ -95,7 +95,12 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 	
 	public int getPickOrder(){
-		return DRAW_PICK_ORDER_2D;
+		/*
+		Application.debug(alpha<1);
+		if (alpha<1)
+			return DRAW_PICK_ORDER_2D; //when transparent
+		else*/
+			return DRAW_PICK_ORDER_1D; //when not
 	}	
 	
 	

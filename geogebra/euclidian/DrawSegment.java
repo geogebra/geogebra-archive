@@ -96,6 +96,9 @@ implements Previewable {
     		return;
         }
         
+        if (s.getEndPoint().getLabel().equals("S3'"))
+        	Application.debug("start=\n"+s.getStartInhomCoords()+"\nA=\n"+A);
+        
         coordsA[0] = A.getX(); coordsA[1] = A.getY();
         coordsB[0] = B.getX(); coordsB[1] = B.getY();
 		

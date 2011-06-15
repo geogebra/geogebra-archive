@@ -1429,8 +1429,10 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	
 	public void update(){
 		super.update();
-		if (euclidianViewForPlane!=null)
-			euclidianViewForPlane.updateAllDrawables(true);
+		if (euclidianViewForPlane!=null){
+			euclidianViewForPlane.updateForPlane();
+		}
+			
 	}
 
 	public void matrixTransform(double a00, double a01, double a02, double a10,

@@ -44,7 +44,7 @@ public  GeoElement[] process(Command c) throws MyError {
                 && (ok[1] = (arg[1] .isGeoLine()))) {
                 GeoElement[] ret =
                     {
-                         kernel.IntersectLines(
+                         (GeoElement) kernel.IntersectLines(
                             c.getLabel(),
                             (GeoLine) arg[0],
                             (GeoLine) arg[1])};
@@ -139,7 +139,7 @@ public  GeoElement[] process(Command c) throws MyError {
             else if (
                 (ok[0] = (arg[0] .isGeoConic()))
                     && (ok[1] = (arg[1] .isGeoConic())))
-				return kernel.IntersectConics(
+				return (GeoElement[]) kernel.IntersectConics(
                     c.getLabels(),
                     (GeoConic) arg[0],
                     (GeoConic) arg[1]);

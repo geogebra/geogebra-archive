@@ -5081,4 +5081,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return getPlaneContaining();
 	}
 	
+	public void updateForPlane(){
+		//only used in EuclidianViewForPlane
+	}
+	
 }

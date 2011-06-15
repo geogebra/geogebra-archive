@@ -51,11 +51,17 @@ public class EuclidianViewForPlane extends EuclidianView {
 		
 		//TODO
 		setShowAxes(false, true);
+		showGrid(false);
 	}
 	
 
 	public boolean isDefault2D(){
 		return false;
+	}
+	
+	public void updateForPlane(){
+		updateMatrix();
+		updateAllDrawables(true);
 	}
 	
 	
@@ -130,61 +136,12 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	private CoordMatrix4x4 planeMatrix, reverseMatrix, transformedMatrix;
 	private CoordMatrix4x4 transform = CoordMatrix4x4.IDENTITY;
-	private int reverse = 1;
-	
-	/*
-	final static private int TRANSFORM_INIT = 0;
-	final static private int TRANSFORM_IDENTITY = 1;
-	final static private int TRANSFORM_MIRROR_Y = 2;
-	final static private int TRANSFORM_MIRROR_X = 3;
-	final static private int TRANSFORM_MIRROR_O = 4;
-	final static private int TRANSFORM_ROT_M90 = 5;
-	final static private int TRANSFORM_ROT_90 = 6;
-	private int oldTransform = TRANSFORM_INIT;
-	private int transform = TRANSFORM_IDENTITY;
-
-	 */
 	
 	public void updateMatrix(){
 		planeMatrix = plane.getCoordSys().getMatrixOrthonormal();	
 		
 		transformedMatrix = planeMatrix.mul(transform);//transform.mul(planeMatrix);
 		
-		
-		
-		//Application.debug("t="+transform+"\nold="+oldTransform);
-		/*
-		if (oldTransform!=transform){
-			switch(transform){
-			case TRANSFORM_MIRROR_Y:
-				transformedMatrix = planeMatrix.mirrorY();
-				break;
-			case TRANSFORM_MIRROR_X:
-				transformedMatrix = planeMatrix.mirrorX();
-				break;
-			case TRANSFORM_MIRROR_O:
-				transformedMatrix = planeMatrix.mirrorO();
-				break;
-			case TRANSFORM_ROT_M90:
-				transformedMatrix = planeMatrix.rotateM90();
-				break;
-			case TRANSFORM_ROT_90:
-				transformedMatrix = planeMatrix.rotate90();
-				break;
-				
-				
-			case TRANSFORM_IDENTITY:
-			default:
-				transformedMatrix = planeMatrix;
-				break;
-			}
-			
-			Application.debug("planeMatrix=\n"+planeMatrix+"\ntransf.=\n"+transformedMatrix);
-			
-			oldTransform=transform;
-			
-		}
-		*/
 	}
 	
 	public void setTransform(Coords directionView3D, CoordMatrix toScreenMatrix){
@@ -192,17 +149,39 @@ public class EuclidianViewForPlane extends EuclidianView {
 
 		//front or back view
 		double p = plane.getCoordSys().getNormal().dotproduct(directionView3D);
+		double reverse = 1;
 		if (p>0)
 			transform = CoordMatrix4x4.IDENTITY;
-		else if (p<0)
-			transform = CoordMatrix4x4.MIRROR_Y;		
+		else if (p<0){
+			transform = CoordMatrix4x4.MIRROR_Y;
+			reverse = -1;
+		}
 
 		//Application.debug("transform=\n"+transform);
 		
-		Coords vx = toScreenMatrix.mul(planeMatrix.getVx());
-		Coords vy = toScreenMatrix.mul(planeMatrix.getVy());
+		//CoordMatrix m = toScreenMatrix.mul(planeMatrix.mul(transform));
+		CoordMatrix m = toScreenMatrix.mul(planeMatrix);
 		
-		//Application.debug("vx=\n"+vx+"\nvy=\n"+vy);
+		//Application.debug("m=\n"+m);
+		
+		double vXx = m.get(1, 1);
+		double vXy = m.get(2, 1);
+		double vYx = m.get(1, 2);
+		double vYy = m.get(2, 2);
+		
+		//Application.debug("vx="+vXx+","+vXy+"\nvy="+vYx+","+vYy);
+		
+		//if (vXx*vXx+vXy*vXy>vYx*vYx+vYy*vYy){//vX is more important
+			if (Math.abs(vXy)>Math.abs(vXx)){			
+				if (vYx*reverse>=0)
+					transform = CoordMatrix4x4.ROTATION_OZ_90.mul(transform);
+				else
+					transform = CoordMatrix4x4.ROTATION_OZ_M90.mul(transform);
+			}
+		/*}else{//vY is more important
+			if (Math.abs(vYx)>Math.abs(vYy))
+				transform = CoordMatrix4x4.ROTATION_OZ_90.mul(transform);			
+		}*/
 		
 		/*
 		if (vx.getX()>=0){

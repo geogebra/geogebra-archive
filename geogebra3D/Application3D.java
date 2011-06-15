@@ -175,6 +175,7 @@ public class Application3D extends Application{
 		//panel.setShowStyleBar(dpInfo[i].showStyleBar());
 		//panel.setOpenInFrame(dpInfo[i].isOpenInFrame());
 		panel.setVisible(true);
+		panel.toggleStyleBar();
 		
 		
 		getGuiManager().getLayout().getDockManager().show(panel);

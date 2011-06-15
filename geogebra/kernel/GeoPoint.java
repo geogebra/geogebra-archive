@@ -1299,12 +1299,9 @@ GeoPointND, Animatable, Transformable  {
 				return getInhomCoords();
 			case 3:
 			/*
-				Coords v = new Coords(3);
-				v.setX(inhomX);
-				v.setY(inhomY);
-				v.setZ(0);
-				return v;
-			*/
+			  	if (label!=null && label.equals("S3'"))
+					Application.debug(label+": "+inhomX+","+inhomY);
+					*/
 				return new Coords(inhomX,inhomY,0,1);
 			default:
 				return null;

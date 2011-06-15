@@ -22,6 +22,8 @@ import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoCircleTwoPoints;
 import geogebra.kernel.AlgoDependentLine;
+import geogebra.kernel.AlgoIntersectConics;
+import geogebra.kernel.AlgoIntersectLines;
 import geogebra.kernel.AlgoOrthoLinePointLine;
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
@@ -42,7 +44,10 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
@@ -364,7 +369,31 @@ public class Kernel3D
 
 	
 
-	
+	/////////////////////////////////
+	// OVERRIDES KERNEL
+	/////////////////////////////////
+	public GeoPointND IntersectLines(
+			String label,
+			GeoLineND g,
+			GeoLineND h) {
+
+		if (((GeoElement) g).isGeoElement3D() || ((GeoElement) h).isGeoElement3D())
+			return (GeoPointND) getManager3D().Intersect(label, (GeoElement) g, (GeoElement) h);
+		else
+			return super.IntersectLines(label, g, h);
+			
+	}
+
+	public GeoPointND[] IntersectConics(
+			String[] labels,
+			GeoConicND a,
+			GeoConicND b) {
+
+		if (((GeoElement) a).isGeoElement3D() || ((GeoElement) b).isGeoElement3D())
+			return getManager3D().IntersectConics(labels, a, b);
+		else
+			return super.IntersectConics(labels, a, b);
+	}
 	
 	
 	
