@@ -9,43 +9,27 @@ import geogebra.kernel.View;
 import geogebra.main.Application;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JViewport;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 public class SpreadsheetView extends JSplitPane implements View, ComponentListener, FocusListener
