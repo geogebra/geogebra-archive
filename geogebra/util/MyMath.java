@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.util;
 
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.math.BigDecimal;
 
@@ -126,7 +127,7 @@ public final class MyMath {
 		try {
 			// see http://mathworld.wolfram.com/RegularizedGammaFunction.html
 			// http://en.wikipedia.org/wiki/Incomplete_gamma_function#Regularized_Gamma_functions_and_Poisson_random_variables
-			return Gamma.regularizedGammaQ(a, x) * gamma(a, kernel);
+			return Gamma.regularizedGammaP(a, x) * gamma(a, kernel);
 		} catch (MathException e) {
 			return Double.NaN;
 		}
@@ -136,7 +137,7 @@ public final class MyMath {
 	final public static double gammaIncompleteRegularized(double a, double x) {
 
 		try {
-			return Gamma.regularizedGammaQ(a, x);
+			return Gamma.regularizedGammaP(a, x);
 		} catch (MathException e) {
 			return Double.NaN;
 		}

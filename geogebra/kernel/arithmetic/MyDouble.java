@@ -576,13 +576,13 @@ implements NumberValue {
 	}
 
 	public ExpressionValue gammaIncompleteRegularized(NumberValue lt) {
-		val = MyMath.gammaIncompleteRegularized(val, lt.getDouble());
+		val = MyMath.gammaIncompleteRegularized(lt.getDouble(), val);
 		isAngle = false;
 		return this;
 	}
 
 	public ExpressionValue gammaIncomplete(NumberValue lt) {
-		val = MyMath.gammaIncomplete(val, lt.getDouble(), kernel);
+		val = MyMath.gammaIncomplete(lt.getDouble(), val, kernel);
 		isAngle = false;
 		return this;
 	}
@@ -595,14 +595,14 @@ implements NumberValue {
 
 	public ExpressionValue betaIncomplete(VectorValue lt) {
 		GeoVec2D vec = lt.getVector();
-		val = MyMath.betaIncomplete(val, vec.x, vec.y);
+		val = MyMath.betaIncomplete(vec.x, vec.y, val);
 		isAngle = false;
 		return this;
 	}
 
 	public ExpressionValue betaIncompleteRegularized(VectorValue lt) {
 		GeoVec2D vec = lt.getVector();
-		val = MyMath.betaIncompleteRegularized(val, vec.x, vec.y);
+		val = MyMath.betaIncompleteRegularized(vec.x, vec.y, val);
 		isAngle = false;
 		return this;
 	}
