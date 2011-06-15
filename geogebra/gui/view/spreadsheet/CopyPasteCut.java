@@ -149,7 +149,7 @@ public class CopyPasteCut {
 		try {
 			DataFlavor HTMLflavor = new	DataFlavor("text/html;class=java.lang.String");
 			
-			System.out.println("is HTML? " + contents.isDataFlavorSupported(HTMLflavor));
+			//System.out.println("is HTML? " + contents.isDataFlavorSupported(HTMLflavor));
 			
 			if(contents.isDataFlavorSupported(HTMLflavor)){
 				buf = convertHTMLTableToCSV((String) contents.getTransferData(HTMLflavor));
@@ -821,7 +821,7 @@ public class CopyPasteCut {
 	private static Comparator comparator;
 
 
-	//G.STURR 2010-1-15
+	
 	public void deleteAll() {
 
 		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
@@ -842,7 +842,7 @@ public class CopyPasteCut {
 
 		// read file 
 		StringBuilder contents = new StringBuilder();
-
+		
 		try {				
 			InputStream is = url.openStream();
 			BufferedReader input = new BufferedReader(new InputStreamReader(is));
@@ -874,9 +874,13 @@ public class CopyPasteCut {
 		if(clearSpreadsheet){
 			deleteAll();
 		}
+		
+		boolean oldEqualsSetting = view.isEqualsRequired();
+		view.setEqualsRequired(true);
 		boolean succ = paste(targetRange);
 		clipboard.setContents(oldContent, null);
-
+		view.setEqualsRequired(oldEqualsSetting);
+		
 		return succ;
 
 
