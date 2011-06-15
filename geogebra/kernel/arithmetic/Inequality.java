@@ -165,28 +165,10 @@ public class Inequality {
 					conicBorder = (GeoConic) newBorder;
 				else
 					conicBorder.set(newBorder);
-				border = conicBorder;
-				GeoVec2D midpoint = conicBorder.getTranslationVector();
-				ExpressionNode normalCopy = (ExpressionNode) normal
-						.deepCopy(kernel);
-				double midX, midY;
+				border = conicBorder;						
 				if (conicBorder.type == GeoConic.CONIC_INTERSECTING_LINES) {
-					GeoLine[] lines = conicBorder.getLines();
-					midX = midpoint.x + lines[0].x + lines[1].x;
-					midY = midpoint.y + lines[0].y + lines[1].y;
-				} else if (conicBorder.type == GeoConic.CONIC_PARABOLA){
-					midX = midpoint.x+conicBorder.p*conicBorder.eigenvec[0].x;
-					midY = midpoint.y+conicBorder.p*conicBorder.eigenvec[0].x;;
-				} else {					
-					midX = midpoint.x;
-					midY = midpoint.y;
-				} 
-				normalCopy.replace(fv[0], new MyDouble(kernel, midX));
-				normalCopy.replace(fv[1], new MyDouble(kernel, midY));
-				double valAtCenter = ((NumberValue) normalCopy.evaluate())
-						.getDouble();
-				isAboveBorder = (valAtCenter < 0)
-						^ (conicBorder.getType() == GeoConic.CONIC_HYPERBOLA);
+				   isAboveBorder = true;
+				} else setAboveBorderFromConic();
 			}
 		}
 		if (type == INEQUALITY_PARAMETRIC_X || type == INEQUALITY_PARAMETRIC_Y) {
@@ -202,6 +184,26 @@ public class Inequality {
 			border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		} else
 			border.setLineType(EuclidianView.LINE_TYPE_FULL);
+	}
+
+	private void setAboveBorderFromConic() {
+		GeoVec2D midpoint = conicBorder.getTranslationVector();
+		ExpressionNode normalCopy = (ExpressionNode) normal
+				.deepCopy(kernel);
+		double midX, midY;	
+		if (conicBorder.type == GeoConic.CONIC_PARABOLA){
+			midX = midpoint.x+conicBorder.p*conicBorder.eigenvec[0].x;
+			midY = midpoint.y+conicBorder.p*conicBorder.eigenvec[0].y;;
+		} else {					
+			midX = midpoint.x;
+			midY = midpoint.y;
+		} 
+		normalCopy.replace(fv[0], new MyDouble(kernel, midX));
+		normalCopy.replace(fv[1], new MyDouble(kernel, midY));
+		double valAtCenter = ((NumberValue) normalCopy.evaluate())
+				.getDouble();
+		isAboveBorder = (valAtCenter < 0)
+				^ (conicBorder.getType() == GeoConic.CONIC_HYPERBOLA);		
 	}
 
 	private void init1varFunction(int varIndex) {

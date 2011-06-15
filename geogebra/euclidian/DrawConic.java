@@ -317,7 +317,9 @@ final public class DrawConic extends Drawable implements Previewable {
         
         drawPoint.update();   
     }
-    
+    /**
+     * Updates the lines and shape so that positive part is colored
+     */
     final private void updateLines() {
     	
     	if (conic.isGeoElement3D()){//TODO implement for 3D conics
@@ -347,7 +349,9 @@ final public class DrawConic extends Drawable implements Previewable {
 	       shape = lineToGpc(drawLines[1]);
 	       ((Area)shape).exclusiveOr(lineToGpc(drawLines[0]));
 	       //FIXME: buggy when conic(RW(0),RW(0))=0
-	       if(conic.evaluate(view.toRealWorldCoordX(0), view.toRealWorldCoordY(0))<0){
+	       
+	       	       
+	       if(negativeColored() ){
 	    	   Area b = new Area(view.getBoundingPath());
 	    	   b.subtract((Area)shape);
 	    	   shape = b;
@@ -358,7 +362,17 @@ final public class DrawConic extends Drawable implements Previewable {
          
     }
     
-    private Area lineToGpc(DrawLine drawLine) {
+    private boolean negativeColored() {
+    	double[] xTry = new double[] {0,10,20,0,10,20};
+	       double[] yTry = new double[] {0,0,0,10,10,20};	       
+	       for(int i=0;i<6;i++){
+	    	   double val1=conic.evaluate(view.toRealWorldCoordX(xTry[i]), view.toRealWorldCoordY(yTry[i]));
+	    	   if(!Kernel.isZero(val1))
+	    	    return (val1<0)^shape.contains(xTry[i], yTry[i]);
+	       }
+		return false;
+	}
+	private Area lineToGpc(DrawLine drawLine) {
     	GeneralPathClipped gpc = new GeneralPathClipped(view);
     	 boolean invert = false;
         if(drawLine.x1 > drawLine.x2){
@@ -748,7 +762,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	
 
         // build Polyline of parametric hyperbola
-        // hyp(t) = 1/(1-t�) {a(1+t�), 2bt}, 0 <= t < 1
+        // hyp(t) = 1/(1-t^2) {a(1+t^2), 2bt}, 0 <= t < 1
         // this represents the first quadrant's wing of a hypberola                                                
         hypRight.addPoint(points-1, a, 0);
         hypLeft.addPoint(points-1, -a, 0);
@@ -835,7 +849,7 @@ final public class DrawConic extends Drawable implements Previewable {
             firstParabola = false;
             parabola = new QuadCurve2D.Double();                    
         }                
-        // calc control points coords of parabola y� = 2 p x                
+        // calc control points coords of parabola y^2 = 2 p x                
         x0 = Math.max( Math.abs(vertex.x - view.xmin),
                        		   Math.abs(vertex.x - view.xmax) );                                      
         x0 = Math.max(x0, Math.abs(vertex.y - view.ymin));
@@ -843,7 +857,7 @@ final public class DrawConic extends Drawable implements Previewable {
 		
         /*
         x0 *= 2.0d;
-        // y� = 2px
+        // y^2 = 2px
         y0 = Math.sqrt(2*c.p*x0);
         */
         
@@ -861,7 +875,7 @@ final public class DrawConic extends Drawable implements Previewable {
             k2 = i * i;
         }
         x0 = k2/2 * conic.p; // x = k*p
-        y0 = i * conic.p;    // y = sqrt(2k p�) = i p                
+        y0 = i * conic.p;    // y = sqrt(2k p^2) = i p                
         
 		//	set transform
 		transform.setTransform(view.coordTransform);
