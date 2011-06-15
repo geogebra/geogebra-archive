@@ -57,73 +57,73 @@ public interface ExpressionNodeConstants {
     // arithmetic
     public static final int PLUS = 0;
     public static final int MINUS = 1;
+    public static final int VECTORPRODUCT = 2;
     
     // these next three must be adjacent
     // so that brackets work for eg a/(b/c)
     // and are removed in (a/b)/c
     // see case DIVIDE in ExpressionNode
-    public static final int MULTIPLY = 2;
-    public static final int DIVIDE = 3;
-    public static final int POWER = 4;            
+    public static final int MULTIPLY = 10;
+    public static final int DIVIDE = 11;
+    public static final int POWER = 12;            
     
     
-    public static final int COS = 5;   
-    public static final int SIN = 6;   
-    public static final int TAN = 7;   
-    public static final int EXP = 8;   
-    public static final int LOG = 9;   
-    public static final int ARCCOS = 10;   
-    public static final int ARCSIN = 11;   
-    public static final int ARCTAN = 12;   
-    public static final int ARCTAN2 = 13;   
-    public static final int SQRT = 14;   
-    public static final int ABS = 15;   
-    public static final int SGN = 16;   
-    public static final int XCOORD = 17; 
-    public static final int YCOORD = 18;  
-    public static final int ZCOORD = 19;  
-    public static final int COSH = 20;
-    public static final int SINH = 21;
-    public static final int TANH = 22;
-    public static final int ACOSH = 23;
-    public static final int ASINH = 24;
-    public static final int ATANH = 25;
-    public static final int CSC = 26;
-    public static final int SEC = 27;
-    public static final int COT = 28;
-    public static final int CSCH = 29;
-    public static final int SECH = 30;
-    public static final int COTH = 31;
-    public static final int FLOOR = 32;
-    public static final int CEIL = 33;  
-    public static final int FACTORIAL = 34;
-    public static final int ROUND = 35;  
-    public static final int GAMMA = 36;    
-    public static final int GAMMA_INCOMPLETE = 37;    
-    public static final int GAMMA_INCOMPLETE_REGULARIZED = 38;    
-    public static final int BETA = 39;    
-    public static final int BETA_INCOMPLETE = 40;    
-    public static final int BETA_INCOMPLETE_REGULARIZED = 41;    
-    public static final int ERF = 42;     // error function [aka phi(x)]
-    public static final int LOG10 = 43;  
-    public static final int LOG2 = 44; 
-    public static final int CBRT = 45;   
-    public static final int RANDOM = 46;
-    public static final int VECTORPRODUCT = 47;
-    public static final int CONJUGATE = 48;
-    public static final int ARG = 49; 
+    public static final int COS = 50;   
+    public static final int SIN = 60;   
+    public static final int TAN = 70;   
+    public static final int EXP = 80;   
+    public static final int LOG = 90;   
+    public static final int ARCCOS = 100;   
+    public static final int ARCSIN = 110;   
+    public static final int ARCTAN = 120;   
+    public static final int ARCTAN2 = 130;   
+    public static final int SQRT = 140;   
+    public static final int ABS = 150;   
+    public static final int SGN = 160;   
+    public static final int XCOORD = 170; 
+    public static final int YCOORD = 180;  
+    public static final int ZCOORD = 190;  
+    public static final int COSH = 200;
+    public static final int SINH = 210;
+    public static final int TANH = 220;
+    public static final int ACOSH = 230;
+    public static final int ASINH = 240;
+    public static final int ATANH = 250;
+    public static final int CSC = 260;
+    public static final int SEC = 270;
+    public static final int COT = 280;
+    public static final int CSCH = 290;
+    public static final int SECH = 300;
+    public static final int COTH = 310;
+    public static final int FLOOR = 320;
+    public static final int CEIL = 330;  
+    public static final int FACTORIAL = 340;
+    public static final int ROUND = 350;  
+    public static final int GAMMA = 360;    
+    public static final int GAMMA_INCOMPLETE = 370;    
+    public static final int GAMMA_INCOMPLETE_REGULARIZED = 380;    
+    public static final int BETA = 390;    
+    public static final int BETA_INCOMPLETE = 400;    
+    public static final int BETA_INCOMPLETE_REGULARIZED = 410;    
+    public static final int ERF = 420;     // error function [aka phi(x)]
+    public static final int LOG10 = 430;  
+    public static final int LOG2 = 440; 
+    public static final int CBRT = 450;   
+    public static final int RANDOM = 460;
+    public static final int CONJUGATE = 480;
+    public static final int ARG = 490; 
      
-    public static final int FUNCTION = 50;
-    public static final int FUNCTION_NVAR = 51;
-    public static final int VEC_FUNCTION = 52;
-    public static final int DERIVATIVE = 53;  
-    public static final int ELEMENT_OF = 54;  
+    public static final int FUNCTION = 500;
+    public static final int FUNCTION_NVAR = 510;
+    public static final int VEC_FUNCTION = 520;
+    public static final int DERIVATIVE = 530;  
+    public static final int ELEMENT_OF = 540;  
     
     // spreadsheet absolute reference using $ signs
-    public static final int $VAR_ROW = 55;
-    public static final int $VAR_COL = 56;
-    public static final int $VAR_ROW_COL = 57;
+    public static final int $VAR_ROW = 550;
+    public static final int $VAR_COL = 560;
+    public static final int $VAR_ROW_COL = 570;
 	
     // logarithm for arbitrary base log(b, x)
-    public static final int LOGB = 58;
+    public static final int LOGB = 580;
 }
