@@ -251,6 +251,7 @@ public class CommandDispatcher {
     	cmdTable.put("Midpoint", new CmdMidpoint(kernel));	
     	cmdTable.put("LineBisector", new CmdLineBisector(kernel));	 
     	cmdTable.put("Intersect", new CmdIntersect(kernel));
+    	cmdTable.put("IntersectRegion", new CmdIntersectRegion(kernel));
     	
     	cmdTable.put("Distance", new CmdDistance(kernel));	   
     	cmdTable.put("Length", new CmdLength(kernel));	  

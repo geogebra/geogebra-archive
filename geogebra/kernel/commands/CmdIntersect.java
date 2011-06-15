@@ -24,7 +24,6 @@ import geogebra.main.MyError;
  * Intersect[ <GeoImplicitPoly>, <GeoImplicitPoly> ] Intersect[ <GeoImplicitPoly>, <GeoLine> ]
  * Intersect[ <GeoImplicitPoly>, <GeoFunction(Polynomial)> ]
  * Intersect[ <GeoFunction>, <GeoFunction>, <NumberValue>, <NumberValue> ]
- * Intersect[ <GeoPolygon>, <GeoPolygon>]
  */
 public class CmdIntersect extends CommandProcessor {
 	
@@ -224,12 +223,8 @@ public  GeoElement[] process(Command c) throws MyError {
 						(GeoList) arg[0], (GeoList)arg[1] ) };
 				return ret;
 			} */
-            // intersection of two polygons
-			else if (arg[0].isGeoPolygon() && arg[1].isGeoPolygon() ) {
-				GeoElement[] ret =  kernel.IntersectPolygons(c.getLabels(),
-						(GeoPolygon) arg[0], (GeoPolygon)arg[1] ) ;
-				return ret;
-			} 
+            
+			
             
 			else {
                 if (!ok[0])
