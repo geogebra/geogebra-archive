@@ -613,7 +613,8 @@ public class CopyPasteCut {
 					else {
 						GeoElement value0 = RelativeCopy.getValue(table, column, row);
 						values2[iy][ix] = RelativeCopy.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, data[iy][ix], value0, column, row);
-						values2[iy][ix].setAuxiliaryObject(values2[iy][ix].isGeoNumeric()); 
+						//values2[iy][ix].setAuxiliaryObject(values2[iy][ix].isGeoNumeric()); 
+						values2[iy][ix].setAuxiliaryObject(true); 
 						table.setValueAt(values2[iy][ix], row, column);
 					}
 				}
