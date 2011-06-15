@@ -23,6 +23,7 @@ import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.AlgoSlope;
+import geogebra.kernel.AlgoTransformation;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -35,8 +36,10 @@ import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
@@ -4343,7 +4346,9 @@ public	class PropertiesPanel extends JPanel {
 			cbFillType.setVisible(true); //TODO remove this (see below)
 			for (int i = 0; i < geos.length; i++) {
 				if (!(geos[i] instanceof GeoFunctionNVar || geos[i] instanceof GeoFunction
-						|| geos[i] instanceof GeoCurveCartesian || geos[i] instanceof GeoConic)){
+						|| geos[i] instanceof GeoCurveCartesian || geos[i] instanceof GeoConic
+						|| geos[i] instanceof GeoPolygon || geos[i] instanceof GeoLocus)
+						|| ( ((GeoElement)geos[i]).getParentAlgorithm() instanceof AlgoTransformation)){
 					cbFillInverse.setVisible(false);
 					lblFillInverse.setVisible(false);
 				}

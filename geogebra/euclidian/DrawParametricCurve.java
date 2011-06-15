@@ -21,6 +21,7 @@ import geogebra.kernel.roots.RealRootUtil;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 
@@ -154,9 +155,7 @@ public class DrawParametricCurve extends Drawable {
 		}
 		//shape for filling
 		
-		if(!geo.isInverseFill())
-			setShape(new Area(gp));
-		else{
+		if(geo.isInverseFill()){			
 			setShape(new Area(view.getBoundingPath()));
 			getShape().subtract(new Area(gp));
 		}
@@ -909,7 +908,7 @@ public class DrawParametricCurve extends Drawable {
         	if (fillCurve) {
 				try {
 					
-					fill(g2, getShape(), false); // fill using default/hatching/image as appropriate
+					fill(g2, geo.isInverseFill()?getShape():gp, false); // fill using default/hatching/image as appropriate
 
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
@@ -934,13 +933,14 @@ public class DrawParametricCurve extends Drawable {
 	   drawWithValueStrokePure(gp, g2);		   
 	}		
     
-	final public boolean hit(int x,int y) {  
+	final public boolean hit(int x,int y) {  		
     	if (isVisible) {
+    		Shape t = geo.isInverseFill()?getShape():gp;
     		if (strokedShape == null) {
     			strokedShape = objStroke.createStrokedShape(gp);
     		}    		
     		if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled())
-    			return gp.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 					
+    			return t.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 					
     		else
     			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 
          	} else

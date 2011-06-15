@@ -19,6 +19,8 @@ import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 
 
@@ -71,7 +73,11 @@ public final class DrawLocus extends Drawable {
 				isTracing = false;
 				view.updateBackground();
 			}
-		}			
+		}		
+		if(geo.isInverseFill())			{
+			setShape(new Area(view.getBoundingPath()));
+			getShape().subtract(new Area(gp));
+		}
 
    }
     
@@ -132,7 +138,7 @@ public final class DrawLocus extends Drawable {
         	if ((geo.getAlphaValue() > 0 || geo.isHatchingEnabled())) {
 				try {
 					
-					fill(g2, gp, false); // fill using default/hatching/image as appropriate
+					fill(g2, geo.isInverseFill()?getShape():gp, false); // fill using default/hatching/image as appropriate
 
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
@@ -155,14 +161,14 @@ public final class DrawLocus extends Drawable {
      * location (x,y) in screen coords)
      */
     final public boolean hit(int x, int y) {
-
-    	if (gp == null) return false; // hasn't been drawn yet (hidden)
+		Shape t = geo.isInverseFill()?getShape():gp;
+    	if (t == null) return false; // hasn't been drawn yet (hidden)
 
     	if (strokedShape == null) {
 			strokedShape = objStroke.createStrokedShape(gp);
 		}    		
 		if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled())
-			return gp.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 					
+			return t.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 					
 		else
 			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 
     	

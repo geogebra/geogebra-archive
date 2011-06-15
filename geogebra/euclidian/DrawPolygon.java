@@ -27,6 +27,8 @@ import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
@@ -87,9 +89,12 @@ public class DrawPolygon extends Drawable implements Previewable {
 			if (!isVisible)
 				return;
 			gp.closePath();
-
+			if(geo.isInverseFill())			{
+				setShape(new Area(view.getBoundingPath()));
+				getShape().subtract(new Area(gp));
+			}
 			// polygon on screen?
-			if (!gp.intersects(0, 0, view.width, view.height)) {
+			if (!gp.intersects(0, 0, view.width, view.height)&&!geo.isInverseFill()) {
 				isVisible = false;
 				// don't return here to make sure that getBounds() works for
 				// offscreen points too
@@ -157,7 +162,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 
 	final public void draw(Graphics2D g2) {
 		if (isVisible) {
-			fill(g2, gp, false); // fill using default/hatching/image as
+			fill(g2, geo.isInverseFill()?getShape():gp, false); // fill using default/hatching/image as
 									// appropriate
 
 			if (geo.doHighlighting()) {
@@ -301,8 +306,9 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	final public boolean hit(int x, int y) {
-		return gp != null
-				&& (gp.contains(x, y) || gp.intersects(x - hitThreshold, y - hitThreshold, 2*hitThreshold, 2*hitThreshold));
+		Shape t = geo.isInverseFill()?getShape():gp;
+		return t != null
+				&& (t.contains(x, y) || t.intersects(x - hitThreshold, y - hitThreshold, 2*hitThreshold, 2*hitThreshold));
 	}
 
 	final public boolean isInside(Rectangle rect) {
