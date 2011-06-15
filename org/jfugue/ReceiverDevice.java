@@ -40,8 +40,13 @@ public class ReceiverDevice
     public void sendSequence(Sequence sequence)
     {
         TimeEventManager tem = new TimeEventManager();
-        MidiEvent[] events = tem.getEvents(sequence);
-
+        
+        // ============================================== 
+        // made null because getEvents does not exist
+        // TODO must fix this if we ever need it
+        MidiEvent[] events = null;   // = tem.getEvents(sequence);
+        // ==============================================
+        
         long elapsedTime = 0;
         for (int i = 0; i < events.length; i++) {
             MidiEvent event = events[i];

@@ -1,6 +1,29 @@
+/*
+ * JFugue - API for Music Programming
+ * Copyright (C) 2003-2008  David Koelle
+ *
+ * http://www.jfugue.org 
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *  
+ */
+
 package org.jfugue;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
@@ -17,7 +40,7 @@ import javax.sound.midi.Track;
  *@version 2.0
  *@version 3.0 - renamed to MidiEventManager
  */
-public class MidiEventManager
+public final class MidiEventManager
 {
     private final int CHANNELS = 16;
     private final int LAYERS = 16;
@@ -27,13 +50,14 @@ public class MidiEventManager
     private Sequence sequence;
     private Track track[] = new Track[CHANNELS];
 
-    public MidiEventManager()
+    public MidiEventManager(float sequenceTiming, int resolution)
     {
         try {
-            sequence = new Sequence(Sequence.PPQ, 120);
+            this.sequence = new Sequence(sequenceTiming, resolution);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         for (int i=0; i < CHANNELS; i++) {
             for (int u=0; u < LAYERS; u++) {
                 time[i][u] = 0;
@@ -43,7 +67,7 @@ public class MidiEventManager
         }
         currentTrack = 0;
     }
-
+    
     /**
      * Sets the current track, or channel, to which new events will be added.
      * @param track the track to select
@@ -92,32 +116,19 @@ public class MidiEventManager
     }
 
     /**
-     * Adds a MIDI event to the current track.  If the command passed to
-     * addEvent is a ShortMessage.NOTE_ON command, then this method will
-     * automatically add a ShortMessage.NOTE_OFF command for the note,
-     * using the duration parameter to space the NOTE_OFF command properly.
+     * Adds a MetaMessage to the current track.  
      *
      * @param command the MIDI command represented by this message
      * @param data1 the first data byte
      * @param data2 the second data byte
-     * @param duration for Note events, the duration of the note
      */
-    public void addEvent(int command, int data1, int data2, long duration)
+    public void addMetaMessage(int type, byte[] bytes)
     {
         try {
-            ShortMessage message = new ShortMessage();
-            message.setMessage(command, currentTrack, data1, data2);
+            MetaMessage message = new MetaMessage();
+            message.setMessage(type, bytes, bytes.length);
             MidiEvent event = new MidiEvent(message, getTrackTimer());
             track[currentTrack].add(event);
-
-            advanceTrackTimer(duration);
-
-            if (command == ShortMessage.NOTE_ON) {
-                ShortMessage message2 = new ShortMessage();
-                message2.setMessage(ShortMessage.NOTE_OFF, currentTrack, data1, data2);
-                MidiEvent event2 = new MidiEvent(message2, getTrackTimer());
-                track[currentTrack].add(event2);
-            }
         } catch (InvalidMidiDataException e)
         {
             // We've kept a good eye on the data.  This exception won't happen.
@@ -125,38 +136,82 @@ public class MidiEventManager
         }
     }
 
-    /**
-     * Adds a ShortMessage.NOTE_ON event to the current track, using attack and
-     * decay velocity values.  This method will
-     * automatically add a ShortMessage.NOTE_OFF command for the note,
-     * using the duration parameter to space the NOTE_OFF command properly.
-     *
-     * @param command the NOTE_ON command.  If another command is given, this
-     * method will call addEvent(command, data1, data2, duration)
-     * @param data1 the first data byte, which contains the note value
-     * @param data2 the second data byte for the NOTE_ON event, which contains the attack velocity
-     * @param data3 the second data byte for the NOTE_OFF event, which contains the decay velocity
-     * @param duration the duration of the note
-     */
-    public void addEvent(int command, int data1, int data2, int data3, long duration)
-    {
-        if (command != ShortMessage.NOTE_ON) {
-            addEvent(command, data1, data2, duration);
-            return;
-        }
 
+    /**
+     * Adds a MIDI event to the current track.  
+     *
+     * @param command the MIDI command represented by this message
+     * @param data1 the first data byte
+     */
+    public void addEvent(int command, int data1)
+    {
+        try {
+            ShortMessage message = new ShortMessage();
+            message.setMessage(command, currentTrack, data1);
+            MidiEvent event = new MidiEvent(message, getTrackTimer());
+            track[currentTrack].add(event);
+        } catch (InvalidMidiDataException e)
+        {
+            // We've kept a good eye on the data.  This exception won't happen.
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Adds a MIDI event to the current track.  
+     *
+     * @param command the MIDI command represented by this message
+     * @param data1 the first data byte
+     * @param data2 the second data byte
+     */
+    public void addEvent(int command, int data1, int data2)
+    {
         try {
             ShortMessage message = new ShortMessage();
             message.setMessage(command, currentTrack, data1, data2);
             MidiEvent event = new MidiEvent(message, getTrackTimer());
             track[currentTrack].add(event);
+        } catch (InvalidMidiDataException e)
+        {
+            // We've kept a good eye on the data.  This exception won't happen.
+            e.printStackTrace();
+        }
+    }
+    
+    
+    /**
+     * Adds a ShortMessage.NOTE_ON event to the current track, using attack and
+     * decay velocity values.  Also adds a ShortMessage.NOTE_OFF command for
+     * the note, using the duration parameter to space the NOTE_OFF command properly.
+     * 
+     * Both the NOTE_ON and NOTE_OFF events can be suppressed.  This is useful
+     * when notes are tied to other notes.
+     *
+     * @param data1 the first data byte, which contains the note value
+     * @param data2 the second data byte for the NOTE_ON event, which contains the attack velocity
+     * @param data3 the second data byte for the NOTE_OFF event, which contains the decay velocity
+     * @param duration the duration of the note
+     * @param addNoteOn whether a ShortMessage.NOTE_ON event should be created for for this event.  For the end of a tied note, this should be false; otherwise it should be true.
+     * @param addNoteOff whether a ShortMessage.NOTE_OFF event should be created for for this event.  For the start of a tied note, this should be false; otherwise it should be true.
+     */
+    public void addNoteEvent(int data1, int data2, int data3, long duration, boolean addNoteOn, boolean addNoteOff)
+    {
+        try {
+            if (addNoteOn) {
+                ShortMessage message = new ShortMessage();
+                message.setMessage(ShortMessage.NOTE_ON, currentTrack, data1, data2);
+                MidiEvent event = new MidiEvent(message, getTrackTimer());
+                track[currentTrack].add(event);
+            }
 
             advanceTrackTimer(duration);
 
-            ShortMessage message2 = new ShortMessage();
-            message2.setMessage(ShortMessage.NOTE_OFF, currentTrack, data1, data3);
-            MidiEvent event2 = new MidiEvent(message2, getTrackTimer());
-            track[currentTrack].add(event2);
+            if (addNoteOff) {
+                ShortMessage message2 = new ShortMessage();
+                message2.setMessage(ShortMessage.NOTE_OFF, currentTrack, data1, data3);
+                MidiEvent event2 = new MidiEvent(message2, getTrackTimer());
+                track[currentTrack].add(event2);
+            }
         } catch (InvalidMidiDataException e)
         {
             // We've kept a good eye on the data.  This exception won't happen.

@@ -1,3 +1,25 @@
+/*
+ * JFugue - API for Music Programming
+ * Copyright (C) 2003-2008  David Koelle
+ *
+ * http://www.jfugue.org 
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *  
+ */
+
 package org.jfugue;
 
 import java.util.ArrayList;
@@ -6,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sound.midi.MidiEvent;
-import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
@@ -21,43 +42,31 @@ import javax.sound.midi.Track;
  * @author David Koelle
  * @version 3.0
  */
-public class TimeEventManager 
+public final class TimeEventManager 
 {
-    private Map timeMap;
-    private long longestTime;
-    
-    public TimeEventManager()
-    {
-        timeMap = new HashMap();
-    }
-    
-    private void mapSequence(Sequence sequence)
+    public static final long sortSequenceByTimestamp(Sequence sequence, Map<Long, List<MidiEvent>> timeMap)
     {
         // Keep track of how long the sequence is
-        longestTime = 0;
+        long longestTime = 0;
         
         // Iterate through the tracks, and store the events into our time map
         Track[] tracks = sequence.getTracks();
         for (int i=0; i < tracks.length; i++)
         {
-            System.out.println("Track "+i+" size = " + tracks[i].size());
-            long elapsedTime = 0;
             for (int e=0; e < tracks[i].size(); e++)
             {
                 // Get MIDI message and time data from event
                 MidiEvent event = tracks[i].get(e);
-                MidiMessage message = event.getMessage();
                 long timestamp = event.getTick();
-                long deltaTime = timestamp - elapsedTime;
-                elapsedTime = timestamp;
 
                 // Put the MIDI message into the time map
-                Long longObject = new Long(elapsedTime);
-                List list = null;
-                if ((list = (ArrayList)timeMap.get(longObject)) == null)
+                List<MidiEvent> list = null;
+                if ((list = (ArrayList<MidiEvent>)timeMap.get(timestamp)) == null)
                 {
-                    list = new ArrayList();
-                    timeMap.put(longObject, list);
+                    // Add a new list to the map if one doesn't already exist 
+                    // for the timestamp in question
+                    list = new ArrayList<MidiEvent>();
+                    timeMap.put(timestamp, list);
                 } 
                 list.add(event);
                 
@@ -68,30 +77,35 @@ public class TimeEventManager
                 }
             }
         }
+        
+        return longestTime;
     }
     
     /**
-     * Returns the events from this sequence in temporal order
+     * Returns the events from this sequence in temporal order.  This is
+     * done in a two step process:
+     * 1. mapSequence() populates timeMap.  Each timestamp key in timeMap is mapped to
+     *    a List of events that take place at that time
+     * 2. A list of all events from all timestamps is created and returned
      * @return The events from the sequence, in temporal order
      */
-    public MidiEvent[] getEvents(Sequence sequence)
+    public static final List<MidiEvent> getAllEventsSortedByTimestamp(Sequence sequence)
     {
-        mapSequence(sequence);
+        Map<Long, List<MidiEvent>> timeMap = new HashMap<Long, List<MidiEvent>>();
+        long longestTime = sortSequenceByTimestamp(sequence, timeMap);
         
-        List totalList = new ArrayList();
+        List<MidiEvent> totalList = new ArrayList<MidiEvent>();
         
         for (long l=0; l < longestTime; l++)
         {
             Long key = new Long(l);
             if (timeMap.containsKey(key))
             {
-                List list = (List)timeMap.get(key);
+                List<MidiEvent> list = (List<MidiEvent>)timeMap.get(key);
                 totalList.addAll(list);
             }
         }
         
-        MidiEvent[] events = new MidiEvent[totalList.size()];
-        totalList.toArray(events);
-        return events;
+        return totalList;
     }
 }

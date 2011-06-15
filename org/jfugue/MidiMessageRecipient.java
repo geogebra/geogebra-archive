@@ -22,9 +22,16 @@
 
 package org.jfugue;
 
-import java.util.EventListener;
+import javax.sound.midi.MidiMessage;
 
-public interface ParserProgressListener extends EventListener
+/**
+ * Used in conjunction with TimeFactor.sortAndDeliverMidiMessages;
+ * handles MIDI messages when they are delivered. 
+ * 
+ * @author David Koelle
+ *
+ */
+public interface MidiMessageRecipient
 {
-    public void progressReported(String description, long partCompleted, long whole);
+    public void messageReady(MidiMessage message, long timestamp);
 }

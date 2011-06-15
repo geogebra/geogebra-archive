@@ -1,3 +1,25 @@
+/*
+ * JFugue - API for Music Programming
+ * Copyright (C) 2003-2008  David Koelle
+ *
+ * http://www.jfugue.org
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 package org.jfugue;
 
 import java.util.HashMap;
@@ -11,6 +33,8 @@ import java.util.Map;
  * PatternTransformer subclasses are packaged with JFugue; refer to those to see examples
  * of transformers in action.
  *
+ * This feature is covered in detail in The Complete Guide to JFugue.
+ *
  * @see org.jfugue.extras.DiatonicIntervalPatternTransformer
  * @see org.jfugue.extras.DurationPatternTransformer
  * @see org.jfugue.extras.IntervalPatternTransformer
@@ -18,64 +42,39 @@ import java.util.Map;
  * @author David Koelle
  * @version 2.0
  */
-public abstract class PatternTransformer implements ParserListener
+public class PatternTransformer implements ParserListener
 {
-    private Map parameters;
+    /**
+     * Contains the pattern to return at the end of the transformation.
+     * As of version 4.0, this variable is private.  Use the protected methods
+     * getReturnPattern() and setReturnPattern() to access the return pattern.
+     */
+    private Pattern returnPattern;
 
-    public PatternTransformer()
+    /**
+     * Returns the pattern that the transformer is modifying
+     * @version 4.0
+     */
+    protected Pattern getReturnPattern()
     {
-        parameters = new HashMap();
+        return returnPattern;
     }
 
     /**
-     * Returns a list of parameters needed by your Transformer.
-     *
-     * <p>
-     * It is very important to keep these strings standardized! This will allow
-     * future programs to understand what is required of each Transformer. Therefore,
-     * make your Transformer return strings like this. Notice the use of quotes and slashes.
-     * </p>
-     *
-     * <code>'variable name'/type/description/default</code>
-     *
-     * <p>
-     * If you need to return multiple Strings, end each String with a \n, the newline character.
-     * </p>
-     *
-     * <p>
-     * Also, be sure to add your strings to the JavaDoc for the getParameters() method as
-     * well, so users can learn what your code needs from its documentation.
-     * </p>
+     * Sets the pattern that the transformer is modifying
+     * @version 4.0
      */
-    public abstract String getParameters();
-
-    /**
-     * Indicates what this PatternTransformer does.
-     * @return A String giving a quick description of this transformer
-     */
-    public abstract String getDescription();
-
-    /** Places a value for a variable. */
-    public void putParameter(String name, Object value)
+    protected void setReturnPattern(Pattern pattern)
     {
-        parameters.put(name,value);
+        this.returnPattern = pattern;
     }
-
-    /** Returns a variable setting. */
-    public Object getParameter(String name)
-    {
-        return parameters.get(name);
-    }
-
-    /** Contains the pattern to return at the end of the transformation. */
-    protected Pattern returnPattern;
 
     /** Transforms the pattern, according to the event method that you have
      *  presumably extended.
      */
     public Pattern transform(Pattern p)
     {
-        returnPattern = new Pattern();
+        setReturnPattern(new Pattern());
         MusicStringParser parser = new MusicStringParser();
         parser.addParserListener(this);
         try {
@@ -84,7 +83,7 @@ public abstract class PatternTransformer implements ParserListener
         {
             e.printStackTrace();
         }
-        return returnPattern;
+        return getReturnPattern();
     }
 
     /** Extend this method to make your transformer modify the voice. */
@@ -117,10 +116,40 @@ public abstract class PatternTransformer implements ParserListener
         returnPattern.addElement(time);
     }
 
+    /** Extend this method to make your transformer modify the time. */
+    public void keySignatureEvent(KeySignature keySig)
+    {
+        returnPattern.addElement(keySig);
+    }
+
+    /** Extend this method to make your transformer modify the measure. */
+    public void measureEvent(Measure measure)
+    {
+        returnPattern.addElement(measure);
+    }
+
     /** Extend this method to make your transformer modify the controller messages. */
     public void controllerEvent(Controller controller)
     {
         returnPattern.addElement(controller);
+    }
+
+    /** Extend this method to make your transformer modify the channel pressure messages. */
+    public void channelPressureEvent(ChannelPressure channelPressure)
+    {
+        returnPattern.addElement(channelPressure);
+    }
+
+    /** Extend this method to make your transformer modify the polyphonic pressure messages. */
+    public void polyphonicPressureEvent(PolyphonicPressure polyphonicPressure)
+    {
+        returnPattern.addElement(polyphonicPressure);
+    }
+
+    /** Extend this method to make your transformer modify the pitch bend messages. */
+    public void pitchBendEvent(PitchBend pitchBend)
+    {
+        returnPattern.addElement(pitchBend);
     }
 
     /** Extend this method to make your transformer modify the note.

@@ -22,37 +22,41 @@
 
 package org.jfugue;
 
-import java.io.Serializable;
-
 /**
- * This is the base class for the JFugue elements, including
- * Voice, Instrument, Note, Controller, and Tempo.  It requires that
- * elements be able to return a Music String representation of
- * their settings.
+ * Represents a measure marker.  This has no bearing on the audio produced,
+ * but is useful for making music strings more readable, and for listening
+ * to progress as a song is played.
  *
  *@author David Koelle
- *@version 2.0
- *@version 4.0 - Added getVerifyString()
- *@version 4.0.3 - Now extends Serializable
+ *@version 3.0
  */
-public interface JFugueElement extends Serializable
+public final class Measure implements JFugueElement
 {
     /**
-     * Returns the Music String representing this element and all of its settings.
-     * @return the Music String for this element
+     * Creates a new Measure object, which is simply an indicator
+     * that a measure line has been parsed in a MusicString
      */
-    public String getMusicString();
+    public Measure()
+    {
+    }
 
     /**
-     * Returns a verification string, which should contain a String representation
-     * of all of the aspects of the given element.  This should be in the
-     * following form:
-     *     Thing: key=value, key=value, key=value,...
-     * For example:
-     *     Note: value=60, duration=0.25
-     *
+     * Returns the Music String representing this element.
+     * For a Measure object, the Music String is <code>|</code>
+     * @return the Music String for this element
+     */
+    public String getMusicString()
+    {
+        return "|";
+    }
+
+    /**
+     * Returns verification string in this format:
+     * Measure
      * @version 4.0
      */
-    public String getVerifyString();
+    public String getVerifyString()
+    {
+        return "Measure";
+    }
 }
-

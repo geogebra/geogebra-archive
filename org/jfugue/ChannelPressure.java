@@ -23,65 +23,66 @@
 package org.jfugue;
 
 /**
- * Represents voice changes, also known as <i>track changes</i>.
+ * Represents channel pressure changes.
  *
  *@author David Koelle
- *@version 1.0
+ *@version 3.0
  */
-public final class Voice implements JFugueElement
+public final class ChannelPressure implements JFugueElement
 {
-    private byte voice;
+    private byte pressure;
 
     /**
-     * Creates a new Voice object, with the specified voice value.
-     * @param voice the voice for this object
+     * Creates a new channel pressure object, with the specified key and pressure values.
+     * @param key the key to apply pressure to
+     * @param pressure the pressure to apply
      */
-    public Voice(byte voice)
+    public ChannelPressure(byte pressure)
     {
-        setVoice(voice);
+        setPressure(pressure);
     }
 
     /**
-     * Sets the value of the voice for this object.
-     * @param tempo the voice for this object
+     * Sets the pressure value of this object.
+     * @param pressure the pressure for this object
      */
-    public void setVoice(byte voice)
+    public void setPressure(byte pressure)
     {
-        this.voice = voice;
+        this.pressure = pressure;
     }
 
     /**
-     * Returns the voice used in this object
-     * @return the voice used in this object
+     * Returns the pressure for this object.
+     * @return the pressure for this object
      */
-    public byte getVoice()
+    public byte getPressure()
     {
-        return voice;
+        return this.pressure;
     }
 
     /**
      * Returns the Music String representing this element and all of its settings.
-     * For a Voice object, the Music String is <code>V</code><i>voice</i>
+     * For a channel pressure object, the Music String is <code>+</code><i>key,pressure</i>
      * @return the Music String for this element
      */
     public String getMusicString()
     {
         StringBuffer buffy = new StringBuffer();
-        buffy.append("V");
-        buffy.append(getVoice());
+        buffy.append("+");
+        buffy.append(getPressure());
         return buffy.toString();
     }
 
     /**
      * Returns verification string in this format:
-     * Voice: voice={#}
+     * ChannelPressure: pressure={#}
      * @version 4.0
      */
     public String getVerifyString()
     {
         StringBuffer buffy = new StringBuffer();
-        buffy.append("Voice: voice=");
-        buffy.append(getVoice());
+        buffy.append("ChannelPressure: pressure=");
+        buffy.append(getPressure());
         return buffy.toString();
     }
 

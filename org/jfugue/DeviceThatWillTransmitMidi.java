@@ -1,3 +1,25 @@
+/*
+ * JFugue - API for Music Programming
+ * Copyright (C) 2003-2008  David Koelle
+ *
+ * http://www.jfugue.org 
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *  
+ */
+
 package org.jfugue;
 
 import javax.sound.midi.MidiDevice;
@@ -16,25 +38,51 @@ import javax.sound.midi.Transmitter;
  * @author David Koelle
  * @version 3.0
  */
-public class TransmitterDevice 
+public class DeviceThatWillTransmitMidi 
 {
+    private MidiDevice device;
     private Transmitter transmitter;
     private MidiReceiverForTransmitterDevice mrftd;
-    private Receiver defaultReceiver;
+//    private Receiver defaultReceiver;
     
-    public TransmitterDevice(MidiDevice.Info info) throws MidiUnavailableException
+    
+    /**
+     * Creates a new DeviceThatWillTransmitMidi using JFugue's Intelligent Device Resolver to pick the 
+     * most likely device to open.
+     * @throws MidiUnavailableException
+     */
+    public DeviceThatWillTransmitMidi() throws MidiUnavailableException
     {
-        MidiDevice device = null;
-
-        device = MidiSystem.getMidiDevice(info);
-        
-        if (!(device.isOpen())) {
-          device.open();
+        this.device = IntelligentDeviceResolver.selectTransmitterDevice();
+        init();
+    }
+    
+    public DeviceThatWillTransmitMidi(MidiDevice.Info info) throws MidiUnavailableException
+    {
+        this.device = MidiSystem.getMidiDevice(info);
+        init();
+    }
+    
+    private void init() throws MidiUnavailableException
+    {
+        try 
+        {
+            if (!(device.isOpen())) {
+              device.open();
+            }
+    
+            this.transmitter = device.getTransmitter();
+            this.mrftd = new MidiReceiverForTransmitterDevice();
+        } catch (MidiUnavailableException e)
+        {
+            device.close();
+            throw e;
         }
-
-        this.transmitter = device.getTransmitter();
-        this.defaultReceiver = this.transmitter.getReceiver();
-        this.mrftd = new MidiReceiverForTransmitterDevice();
+    }
+    
+    public Transmitter getTransmitter()
+    {
+        return this.transmitter;
     }
     
     public void addParserListener(ParserListener listener)
@@ -63,7 +111,10 @@ public class TransmitterDevice
     
     public void stopListening()
     {
-        this.transmitter.setReceiver(this.defaultReceiver);
+//        this.transmitter.setReceiver(this.defaultReceiver);
+        device.close();
+//        this.transmitter.close();
+//        this.mrftd.close();
     }
 
     public void listenForMillis(long millis) throws InterruptedException
@@ -85,8 +136,10 @@ public class TransmitterDevice
 
     public void close()
     {
-        this.mrftd.close();
-        this.transmitter.close();
+        transmitter.close();
+        device.close();
+//        this.mrftd.close();
+//        this.transmitter.close();
     }
     
     class MidiReceiverForTransmitterDevice implements Receiver
@@ -100,8 +153,7 @@ public class TransmitterDevice
         {
             System.out.println("Built mrftd");
             
-            parser = new MidiParser();
-            parser.setTracing(Parser.TRACING_ON);
+            parser = new MidiParser();  
             renderer = new MusicStringRenderer();
             parser.addParserListener(renderer);
             
@@ -122,11 +174,14 @@ public class TransmitterDevice
         public void send(MidiMessage message, long timestamp)
         {
             System.out.println("Parsing "+message+" ts: "+timestamp);
-            parser.parse(message, timestamp);
+            parser.parse(message, timestamp / (1000 * 4));
             sequencerReceiver.send(message, timestamp);
         }
         
-        public void close() { }
+        public void close() 
+        {
+            sequencerReceiver.close();
+        }
         
         public Pattern getPattern()
         {

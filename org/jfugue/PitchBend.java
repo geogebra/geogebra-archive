@@ -23,65 +23,69 @@
 package org.jfugue;
 
 /**
- * Represents voice changes, also known as <i>track changes</i>.
+ * Represents pitch bend changes.
  *
  *@author David Koelle
- *@version 1.0
+ *@version 3.0
  */
-public final class Voice implements JFugueElement
+public final class PitchBend implements JFugueElement
 {
-    private byte voice;
+    private byte lsb;
+    private byte msb;
 
     /**
-     * Creates a new Voice object, with the specified voice value.
-     * @param voice the voice for this object
+     * Creates a new Pitch Bend object, with the specified tempo value.
+     * Integer value = msb * 0x80 + lsb   (0x80 hex == 128 dec)
+     * @param lsb the least significant byte for the pitch bend for this object
+     * @param msb the most significant byte for the pitch bend for this object
      */
-    public Voice(byte voice)
+    public PitchBend(byte lsb, byte msb)
     {
-        setVoice(voice);
+        setPitchBend(lsb, msb);
     }
 
     /**
-     * Sets the value of the voice for this object.
-     * @param tempo the voice for this object
+     * Sets the value of the pitch bend for this object.
+     * @param tempo the pitch bend for this object
      */
-    public void setVoice(byte voice)
+    public void setPitchBend(byte lsb, byte msb)
     {
-        this.voice = voice;
+        this.lsb = lsb;
+        this.msb = msb;
     }
 
     /**
-     * Returns the voice used in this object
-     * @return the voice used in this object
+     * Returns the value of the pitch bend for this object.
+     * @return the value of the pitch bend for this object
      */
-    public byte getVoice()
+    public byte[] getBend()
     {
-        return voice;
+        return new byte[] { lsb, msb };
     }
 
     /**
      * Returns the Music String representing this element and all of its settings.
-     * For a Voice object, the Music String is <code>V</code><i>voice</i>
+     * For a PitchBend object, the Music String is <code>&</code><i>int</i> or <code>&</code><i>lsb,msb</i>
      * @return the Music String for this element
      */
     public String getMusicString()
     {
         StringBuffer buffy = new StringBuffer();
-        buffy.append("V");
-        buffy.append(getVoice());
+        buffy.append("&");
+        buffy.append(getBend()[1] * 0x80 + getBend()[0]);
         return buffy.toString();
     }
 
     /**
      * Returns verification string in this format:
-     * Voice: voice={#}
+     * PitchBend: bend={#}
      * @version 4.0
      */
     public String getVerifyString()
     {
         StringBuffer buffy = new StringBuffer();
-        buffy.append("Voice: voice=");
-        buffy.append(getVoice());
+        buffy.append("PitchBend: bend=");
+        buffy.append(getBend());
         return buffy.toString();
     }
 

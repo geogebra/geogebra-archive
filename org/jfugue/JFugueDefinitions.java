@@ -1,6 +1,28 @@
+/*
+ * JFugue - API for Music Programming
+ * Copyright (C) 2003-2008  David Koelle
+ *
+ * http://www.jfugue.org
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 package org.jfugue;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Loads default definitions into the JFugue dictionary.
@@ -15,7 +37,7 @@ import java.util.HashMap;
  *@author David Koelle
  *@version 2.0
  */
-public class JFugueDefinitions
+public final class JFugueDefinitions
 {
     private JFugueDefinitions() { }
 
@@ -25,7 +47,7 @@ public class JFugueDefinitions
      * controller events, and some controller values.
      * @param dictionaryMap the dictionary instantiated by the parser
      */
-    protected static void populateDictionary(HashMap dictionaryMap)
+    protected static void populateDictionary(Map<String, Object> dictionaryMap)
     {
         //
         // Instrument names
@@ -55,7 +77,7 @@ public class JFugueDefinitions
         dictionaryMap.put("CHURCH_ORGAN"             ,"19");
 
         dictionaryMap.put("REED_ORGAN"               ,"20");
-        dictionaryMap.put("ACCORIDAN"                ,"21");
+        dictionaryMap.put("ACCORDIAN"                ,"21");
         dictionaryMap.put("HARMONICA"                ,"22");
         dictionaryMap.put("TANGO_ACCORDIAN"          ,"23");
         dictionaryMap.put("GUITAR"                   ,"24");
@@ -88,8 +110,8 @@ public class JFugueDefinitions
         dictionaryMap.put("STRING_ENSEMBLE_1"        ,"48");
         dictionaryMap.put("STRING_ENSEMBLE_2"        ,"49");
 
-        dictionaryMap.put("SYNTHSTRINGS_1"           ,"50");
-        dictionaryMap.put("SYNTHSTRINGS_2"           ,"51");
+        dictionaryMap.put("SYNTH_STRINGS_1"          ,"50");
+        dictionaryMap.put("SYNTH_STRINGS_2"          ,"51");
         dictionaryMap.put("CHOIR_AAHS"               ,"52");
         dictionaryMap.put("VOICE_OOHS"               ,"53");
         dictionaryMap.put("SYNTH_VOICE"              ,"54");
@@ -266,7 +288,7 @@ public class JFugueDefinitions
         dictionaryMap.put("VOLUME_COARSE"               ,"7");
         dictionaryMap.put("BALANCE_COARSE"              ,"8");
         dictionaryMap.put("PAN_POSITION_COARSE"         ,"10");
-        dictionaryMap.put("EXPRESSION"                  ,"11");
+        dictionaryMap.put("EXPRESSION_COARSE"           ,"11");
         dictionaryMap.put("EFFECT_CONTROL_1_COARSE"     ,"12");
         dictionaryMap.put("EFFECT_CONTROL_2_COARSE"     ,"13");
 
@@ -284,7 +306,7 @@ public class JFugueDefinitions
         dictionaryMap.put("VOLUME_FINE"                 ,"39");
         dictionaryMap.put("BALANCE_FINE"                ,"40");
         dictionaryMap.put("PAN_POSITION_FINE"           ,"42");
-        dictionaryMap.put("EXPRESSION"                  ,"43");
+        dictionaryMap.put("EXPRESSION_FINE"             ,"43");
         dictionaryMap.put("EFFECT_CONTROL_1_FINE"       ,"44");
         dictionaryMap.put("EFFECT_CONTROL_2_FINE"       ,"45");
 
@@ -395,5 +417,25 @@ public class JFugueDefinitions
         dictionaryMap.put("ON"                         ,"127");
         dictionaryMap.put("OFF"                        ,"0");
         dictionaryMap.put("DEFAULT"                    ,"64");
+
+        //
+        // Tempo values
+        // (NEW for JFugue 4.0)
+        dictionaryMap.put("GRAVE"                      ,"40");
+        dictionaryMap.put("LARGO"                      ,"45");
+        dictionaryMap.put("LARGHETTO"                  ,"50");
+        dictionaryMap.put("LENTO"                      ,"55");
+        dictionaryMap.put("ADAGIO"                     ,"60");
+        dictionaryMap.put("ADAGIETTO"                  ,"65");
+
+        dictionaryMap.put("ANDANTE"                    ,"70");
+        dictionaryMap.put("ANDANTINO"                  ,"80");
+        dictionaryMap.put("MODERATO"                   ,"95");
+        dictionaryMap.put("ALLEGRETTO"                 ,"110");
+
+        dictionaryMap.put("ALLEGRO"                    ,"120");
+        dictionaryMap.put("VIVACE"                     ,"145");
+        dictionaryMap.put("PRESTO"                     ,"180");
+        dictionaryMap.put("PRETISSIMO"                 ,"220");
     }
 }
