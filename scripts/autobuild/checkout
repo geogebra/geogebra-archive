@@ -4,14 +4,15 @@
 
 # For proguard we need the java150-rt.jar file in the .. directory.
 # This jar may come from different places on different operating systems.
-UNIX_RT_JAR=/usr/lib/jvm/java-1.5.0-sun/jre/lib/rt.jar
-MACOSX_RT_JAR=/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar
 
 test -r autobuild.conf || {
  echo "Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
  exit 1
  }
 . ./autobuild.conf
+
+UNIX_RT_JAR=$JAVA_HOME/jre/lib/rt.jar
+MACOSX_RT_JAR=/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar
 
 umask 0002 # trying to ensure g+w rights for all created files automatically
 
