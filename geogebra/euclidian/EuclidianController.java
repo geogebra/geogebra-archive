@@ -1334,12 +1334,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					startPoint.setLocation(xRW - loc.inhomX, yRW
 							- loc.inhomY);
 
+					GeoPoint loc2 = new GeoPoint(loc);
 			        movedGeoText.setNeedsUpdatedBoundingBox(true);
 			        movedGeoText.update(); 
-					loc.setCoords(movedGeoText.getBoundingBox().getX(), movedGeoText.getBoundingBox().getY(), 1.0);
+					loc2.setCoords(movedGeoText.getBoundingBox().getX(), movedGeoText.getBoundingBox().getY(), 1.0);
 
-					transformCoordsOffset[0]=loc.inhomX-xRW;
-					transformCoordsOffset[1]=loc.inhomY-yRW;
+					transformCoordsOffset[0]=loc2.inhomX-xRW;
+					transformCoordsOffset[1]=loc2.inhomY-yRW;
 				}
 			} else {
 				// for relative locations label has to be moved
