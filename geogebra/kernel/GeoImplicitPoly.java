@@ -27,16 +27,27 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
+import edu.jas.util.ArrayUtil;
 import geogebra.Matrix.Coords;
+import geogebra.gui.PointStyleListRenderer;
+import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
+import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.parser.ParseException;
+import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
+import geogebra.main.MyError;
+import geogebra3D.euclidian3D.plots.ImplicitPlotTree;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +64,11 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 public class GeoImplicitPoly extends GeoUserInputElement 
 implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRotateable, Dilateable
 {
-
+	public static final int IMPLICIT_POLY_BY_EQUATION = 1;
+	public static final int IMPLICIT_POLY_THROUGH_POINTS = 2;
+	
+	private int type = IMPLICIT_POLY_BY_EQUATION;
+	
 	private double[][] coeff;
 	private double[][] coeffSquarefree;
 	private int degX;
@@ -67,7 +82,10 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 	private boolean trace; //for traceable interface
 	
 	private Coords [] pointsOnCurve;
-	
+	private Coords lastClosestPoint;
+
+	private Parser parser;
+	private AlgebraProcessor algebraProcessor;
 //	private Thread factorThread;
 	
 	private GenPolynomial<BigRational> genPoly;
@@ -77,27 +95,29 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		degX=-1;
 		degY=-1;
 		coeffSquarefree=null;
+		pointsOnCurve = null;
+		lastClosestPoint = null;
+		parser = c.getKernel().getParser();
+		algebraProcessor = c.getKernel().getAlgebraProcessor();
 	}
 	
 	protected GeoImplicitPoly(Construction c, String label,double[][] coeff){
 		this(c);
 		setLabel(label);
 		setCoeff(coeff);
-		pointsOnCurve = null;
 	}
 	
 	protected GeoImplicitPoly(Construction c, String label,Polynomial poly){
 		this(c);
 		setLabel(label);
 		setCoeff(poly.getCoeff());
-		pointsOnCurve = null;
 	}
 	
 	
 	public GeoImplicitPoly(GeoImplicitPoly g){
 		this(g.cons);
 		set(g);
-		if(g.pointsOnCurve != null)
+		if(type == IMPLICIT_POLY_THROUGH_POINTS)
 		{
 			pointsOnCurve = new Coords[g.pointsOnCurve.length];
 	        for(int i=0; i<pointsOnCurve.length; i++)
@@ -583,43 +603,74 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 //		Application.debug("squarefree: "+sqEngine.baseSquarefreePart(genPoly));
 	}
 	
-	public GeoPoint getSomePointOnCurve()
+	
+	public Coords getPointOnCurve()
 	{
-		Coords coords = new Coords(0,0,1);
-		double r = 1;
-		double coeffs[] = {1, 0, 1,  0, 0, -r};
-		
-		GeoConic circle = new GeoConic(cons, "", coeffs);
-		GeoImplicitPoly poly = new GeoImplicitPoly(circle);
-		AlgoIntersectImplicitpolys algo = new AlgoIntersectImplicitpolys(cons, this, poly);
+		double c=0;
+		GeoLine line = new GeoLine(cons, "", 0, 1, c);
+		line.remove();
+		AlgoIntersectImplicitpolyParametric algo = new AlgoIntersectImplicitpolyParametric(cons, this, line);
+		algo.remove();
 		algo.compute();
 		GeoPoint [] ip = (GeoPoint[]) algo.getIntersectionPoints();
-		while(ip.length == 0)
+		while(c < 10000)
 		{
-			r++;
-			coeffs[5] = -r;
-			circle.setCoeffs(coeffs);
-			circle.update();
-			poly.fromGeoConic(circle);
-			algo = new AlgoIntersectImplicitpolys(cons, this, poly);;
+			c += 0.5;
+			line.setCoords(0, 1, c);
+			line.update();
+			algo.setOutputLength(0);
+			algo.update();
 			algo.compute();
 			ip = (GeoPoint[]) algo.getIntersectionPoints();
+			if(ip.length > 0)
+				break;
+			line.setCoords(0, 1, -c);
+			line.update();
+			algo.setOutputLength(0);
+			algo.update();
+			algo.compute();
+			ip = (GeoPoint[]) algo.getIntersectionPoints();
+			if(ip.length > 0)
+				break;
+			line.setCoords(1, 0, c);
+			line.update();
+			algo.setOutputLength(0);
+			algo.update();
+			algo.compute();
+			ip = (GeoPoint[]) algo.getIntersectionPoints();
+			if(ip.length > 0)
+				break;
+			line.setCoords(1, 0, -c);
+			line.update();
+			algo.setOutputLength(0);
+			algo.update();
+			algo.compute();
+			ip = (GeoPoint[]) algo.getIntersectionPoints();
+			if(ip.length > 0)
+				break;
 		}
-		circle.remove();
-		poly.remove();
-		return ip[0];
+		
+		Coords coord = ip[0].getCoordsInD(2);
+		//precisePoint(coord, line);
+		return coord;
 	}
+	
 	
 	public void setNearestPointOnCurve(GeoPointND PI){
 		
-		if(this.isOnPath(PI))
+		/*if(this.isOnPath(PI))
 			return;
 		
 		Coords coords = PI.getCoordsInD(2);
 		double x = coords.getX();
 		double y = coords.getY();
 		
-		GeoPoint gp = getSomePointOnCurve();
+		Coords gp;
+		if(lastClosestPoint == null)
+			gp = getPointOnCurve();
+		else
+			gp = lastClosestPoint;
+		
 		double r = Math.sqrt(Math.pow(gp.getX() - x, 2) + Math.pow(gp.getY() - y, 2));
 		double coeffs[] = {1, 0, 1,  -2*x, -2*y, -r*r+x*x+y*y};
 		
@@ -633,7 +684,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		GeoPoint [] ip = (GeoPoint[]) algo.getIntersectionPoints();
 		
 		double down = 0, up = r;
-		while(ip.length != 1)
+		while(ip.length != 1 && !Kernel.isEqual(down, up))
 		{
 			if(down > up)
 			{
@@ -670,6 +721,11 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		PI.setCoords2D(ip[0].getX(), ip[0].getY(), 1);
 		PI.updateCoords();
 		
+		if(lastClosestPoint == null)
+			lastClosestPoint = new Coords(PI.getCoordsInD(2).get());
+		else
+			lastClosestPoint.set(PI.getCoordsInD(2));
+		*/
 	}
 	
 	
@@ -800,16 +856,15 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 			solver = new LUDecompositionImpl(matrix).getSolver();
 		} while (!solver.isNonSingular());
 		
-		
 		for(int i=0; i<results.length; i++)
 			results[i] *= -1;
-		
+        		
 		double [] partialSolution = solver.solve(results);
-		
+			               
 		for(int i=0; i<partialSolution.length; i++)
 			if(Kernel.isZero(partialSolution[i]))
 				partialSolution[i] = 0;
-		
+			               
 		for(int i=0; i<partialSolution.length; i++)
 			if(Kernel.isZero(partialSolution[i]))
 				partialSolution[i] = 0;
@@ -830,17 +885,19 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 				this.setUndefined();
 				return;
 			}
+		
+		this.type = IMPLICIT_POLY_THROUGH_POINTS;
 	}
 	
 
 	public void pointChanged(GeoPointND PI) {
-		Application.debug("point changed="+PI);
 		setNearestPointOnCurve(PI);
+		PI.getPathParameter().setT(0);
 	}
 
 	public void pathChanged(GeoPointND PI) {
-		Application.debug("path changed="+PI);
 		setNearestPointOnCurve(PI);
+		PI.getPathParameter().setT(0);
 	}
 
 	public boolean isOnPath(GeoPointND PI) {
@@ -1093,175 +1150,165 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 			return;
 		}
 		
-		if(degX != 2 || degY != 2)
+		GeoPoint S = new GeoPoint(cons, "", c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
+		S.remove();
+		double r = 1/c.getCircleRadius();
+		
+		translate(new Coords(-S.getX(), -S.getY()));
+		
+		String fun = new String("");
+		
+		int degx = coeff.length;
+		int degy = coeff[0].length;
+		
+		int deg = (degx > degy) ? degx : degy;
+		
+		String [] u = new String[degx+degy];
+		for(int i=0; i<degx+degy; i++)
+			u[i] = new String("");
+		
+		for(int i=0; i<degx; i++)
+			for(int j=0; j<degy; j++)
+				if(!Kernel.isZero(coeff[i][j]))
+				{
+					if(coeff[i][j] > 0)
+						u[i+j] += " + ";
+					u[i+j] += coeff[i][j] + "*x^" + i + "*y^" + j;
+				}
+		
+		for(int i=0; i<degx+degy; i++)
 		{
-			setUndefined();
-			return;
+			if(u[i].length() > 0)
+				u[i] = " * (" + u[i] + ")";
 		}
 		
+		for(int i=0; i<deg; i++)
+			fun += " + " + Math.pow(r, 2*(deg-i-1)) + "*(x^2+y^2)^" + (deg-i-1) + u[i];
+		fun += " = 0";
 		
-		GeoConic gc = new GeoConic(cons);
-		this.toGeoConic(gc);	
-		
-		if(gc.type == GeoConic.CONIC_CIRCLE)
-		{ 
-			gc.mirror(c);
-			this.fromGeoConic(gc);
-			return;
-		}
-		
-		GeoPoint centerOfInversion = new GeoPoint(cons, "", c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
-		double distance = gc.distance(centerOfInversion);
-		centerOfInversion.remove();
-
-		ArrayList<GeoPoint> pointsOnConic;    	
-    	
-		// center of circle inversion is on conic
-		if(Math.abs(distance) < Kernel.STANDARD_PRECISION)
+		ValidExpression ve = null;
+		try{
+			ve = parser.parseGeoGebraExpression(fun);
+		} catch(ParseException e)
 		{
-			pointsOnConic = gc.getPointsOnConic(10);
-			for(int i=0; i<pointsOnConic.size(); i++)
-				pointsOnConic.get(i).remove();
-			
-			for(int i=0; i<pointsOnConic.size(); i++)
-			{
-				pointsOnConic.get(i).mirror(c);
-				if(pointsOnConic.get(i).isInfinite())
-					pointsOnConic.remove(i);
-			}
-			
-			if(pointsOnConic.size() > 9)
-				pointsOnConic.remove(9);
-		
-			this.throughPoints(pointsOnConic);
+			throw new MyError(app, "Error");
 		}
-		else
-		{
-			pointsOnConic = gc.getPointsOnConic(15);
-			for(int i=0; i<pointsOnConic.size(); i++)
-				pointsOnConic.get(i).remove();
-			for(int i=0; i<pointsOnConic.size(); i++)
-			{
-				pointsOnConic.get(i).mirror(c);
-				if(pointsOnConic.get(i).isInfinite())
-					pointsOnConic.remove(i);
-			}
-			
-			if(pointsOnConic.size() > 14)
-				pointsOnConic.remove(14);
 		
-			this.throughPoints(pointsOnConic);
-		}
-			
+		GeoElement geo = (GeoElement) algebraProcessor.processEquation((Equation) ve)[0];
+		GeoImplicitPoly gp = ((GeoImplicitPoly)geo);
+		
+		gp.normalize();
+		
+		setCoeff(gp.getCoeff());
+		geo.remove();
+		
+		translate(new Coords(S.getX(), S.getY()));
+	}
+	
+	public void normalize()
+	{
+		double div = 0;
+		
+		outer_loop:
+			for(int i=coeff.length-1; i >= 0; i--)
+				for(int j=coeff[0].length-1; j >= 0; j--)
+					if(coeff[i][j] != 0)
+					{
+						div = coeff[i][j];
+						break outer_loop;
+					}
+		
+		for(int i=0; i<coeff.length; i++)
+			for(int j=0; j<coeff[0].length; j++)
+				coeff[i][j] /= div;
 	}
 
 	public void mirror(GeoPoint Q) {
-		// for curves given by equation
-		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
-			return;
-		
-		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
-			
-		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
-		for(int i=0; i<parentCharacteristicPoints.length; i++)
-		{
-			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
-			points[i].mirror(Q);
-			points[i].remove();
-		}
-		this.throughPoints(points);
+		doTransformation(new String(2.0 * Q.inhomX + "- a"), new String(2.0 * Q.inhomY + "- b"));
 	}
 
 	public void mirror(GeoLine g) {
-		// for curves given by equation
-		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
-			return;
+		/*Coords v = new Coords(g.getZ()/g.getX(), 0);
+		this.translate(v);
 		
-		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
-			
-		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
-		for(int i=0; i<parentCharacteristicPoints.length; i++)
-		{
-			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
-			points[i].mirror(g);
-			points[i].remove();
-		}
-		this.throughPoints(points);
+		double R = Math.atan(-g.getX()/g.getY());
+		double cosR = Math.cos(R), sinR=Math.sin(R);
+		
+		String newX = cosR + "*a + " + sinR + "*b";
+		String newY = -sinR + "*c + " + cosR + "*d";
+		doTransformation(newX, newY);
+		
+		newX = "-a";
+		newY = "b";
+		doTransformation(newX, newY);
+		
+		cosR = Math.cos(R);
+		sinR= -Math.sin(R);
+		
+		newX = cosR + "*a + " + sinR + "*b";
+		newY = -sinR + "*c + " + cosR + "*d";
+		doTransformation(newX, newY);
+		
+		v.set(1, -v.getX());
+		this.translate(v);*/
 		
 	}
+
+	public void translate(Coords v) {
+		doTransformation(new String("a+" + (-v.getX())), new String("b+" + (-v.getY())));
+	}
+
+	public void rotate(NumberValue r) {
+		double cosR = Math.cos(r.getDouble()), sinR = Math.sin(r.getDouble());
+		String newX = cosR + "*a + " + sinR + "*b";
+		String newY = -sinR + "*c + " + cosR + "*d";
+		doTransformation(newX, newY);		
+	}
+
+	public void rotate(NumberValue r, GeoPoint S) {
+		this.translate(new Coords(-S.getX()/S.getZ(), -S.getY()/S.getZ()));
+		this.rotate(r);
+		this.translate(new Coords(S.getX()/S.getZ(), S.getY()/S.getZ()));
+	}
+
+	public void dilate(NumberValue r, GeoPoint S) {
+		double f = 1/r.getDouble();	
+		doTransformation(new String(f + "*a + " + (1-f)*S.inhomX), 
+				new String(f + "*b + " + (1-f)*S.inhomY));
+	}
+
+	public void doTransformation(String newX, String newY)
+	{
+		String cmd = this.toString();
+		cmd = cmd.replace("x", "(" + newX + ")");
+		cmd = cmd.replace("y", "(" + newY + ")");
+		
+		cmd = cmd.replace("a", "x");
+		cmd = cmd.replace("b", "y");
+		cmd = cmd.replace("c", "x");
+		cmd = cmd.replace("d", "y");
+		
+		ValidExpression ve = null;
+		try{
+			ve = parser.parseGeoGebraExpression(cmd);
+		} catch(ParseException e)
+		{
+			throw new MyError(app, "Error");
+		}
+		
+		GeoElement geo = (GeoElement) algebraProcessor.processEquation((Equation) ve)[0];
+		
+		if(geo instanceof GeoConicND)
+			this.fromGeoConic((GeoConicND)geo);
+		else
+			this.setCoeff(((GeoImplicitPoly)geo).getCoeff());
+		geo.remove();
+	}
+	
 	 @Override
 	 protected char getLabelDelimiter(){
 		 return ':';
 	 }
 
-	public void translate(Coords v) {
-		// for curves given by equation
-		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
-			return;
-		
-		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
-			
-		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
-		for(int i=0; i<parentCharacteristicPoints.length; i++)
-		{
-			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
-			points[i].translate(v);
-			points[i].remove();
-		}
-		this.throughPoints(points);
-		
-	}
-
-	public void rotate(NumberValue r) {
-		// for curves given by equation
-		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
-			return;
-		
-		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
-		
-		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
-		for(int i=0; i<parentCharacteristicPoints.length; i++)
-		{
-			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
-			points[i].rotate(r);
-			points[i].remove();
-		}
-		this.throughPoints(points);	
-	}
-
-	public void rotate(NumberValue r, GeoPoint S) {
-		// for curves given by equation
-		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
-			return;
-		
-		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
-			
-		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
-		for(int i=0; i<parentCharacteristicPoints.length; i++)
-		{
-			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
-			points[i].rotate(r, S);
-			points[i].remove();
-		}
-		this.throughPoints(points);
-		
-	}
-
-	public void dilate(NumberValue r, GeoPoint S) {
-		// for curves given by equation
-		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
-			return;
-		
-		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
-			
-		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
-		for(int i=0; i<parentCharacteristicPoints.length; i++)
-		{
-			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
-			points[i].dilate(r, S);
-			points[i].remove();
-		}
-		this.throughPoints(points);	
-		
-	}
 }
+
