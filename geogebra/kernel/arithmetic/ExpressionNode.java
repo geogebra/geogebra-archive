@@ -2948,7 +2948,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		case GAMMA_INCOMPLETE:
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
-				sb.append("\\Gamma \\left( ");
+				sb.append("\\gamma \\left( ");
 				break;
 
 			case STRING_TYPE_MAXIMA:

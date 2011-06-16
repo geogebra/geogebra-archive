@@ -163,6 +163,11 @@ public class TableSymbols {
 		" ceil(x) ",
 		" round(x) ",
 		" gamma(x) ",
+		" gamma(a, x) ",
+		" gammaRegularized(a, x) ",
+		" beta(a, b) ",
+		" beta(a, b, x) ",
+		" betaRegularized(a, b, x) ",
 		" random() ",
 		" erf(x) "
 	};

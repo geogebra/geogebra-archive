@@ -16,12 +16,13 @@ public class RenameInputHandler implements InputHandler {
 
 	private Application app;
 
-	private static String[] invalidFunctionNames = { "gamma", "x", "y", "abs",
+	private static String[] invalidFunctionNames = { "x", "y", "abs",
 			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan",
 			"acos", "arcos", "arccos", "asin", "arcsin", "atan", "arctan", 
 			"cosh", "sinh", "tanh", "acosh", "arcosh", "arccosh", "asinh",
 			"arcsinh", "atanh", "arctanh", "atan2", "erf",
 			"floor", "ceil", "round", "random", "conjugate", "arg",
+			"gamma", "gammaRegularized", "beta", "betaRegularized", 
 			"sec", "csc", "cosec", "cot", "sech", "csch", "coth", Unicode.IMAGINARY };
 
 	public RenameInputHandler(Application app, GeoElement geo, boolean storeUndo) {
