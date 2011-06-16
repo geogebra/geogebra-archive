@@ -6165,12 +6165,11 @@ class CmdFDistribution extends CommandProcessor {
 					String command;
 					
 					if (cumulative) {
-						command = "betaIncompleteRegularized(("+d1+")/2,("+d2+")/2,("+d1+")*x/(("+d1+")*x+"+d2+"))";
+						command = "If[x<0,0,betaRegularized(("+d1+")/2,("+d2+")/2,("+d1+")*x/(("+d1+")*x+"+d2+"))]";
 					} else {
-						command = "sqrt((("+d1+")*x)^("+d1+")*("+d2+")^("+d2+")/(("+d1+")*x+"+d2+")^("+d1+"+"+d2+"))/x/beta(("+d1+")/2,("+d2+")/2)";
+						command = "If[x<0,0,((("+d1+")*x)^(("+d1+")/2)*("+d2+")^(("+d2+")/2))/(x*(("+d1+")*x+"+d2+")^(("+d1+"+"+d2+")/2)*beta(("+d1+")/2,("+d2+")/2))]";
 					}
 					
-					//Application.debug(command);
 					
 					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand(command, true);
 					return ret;
