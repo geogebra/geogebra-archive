@@ -19,7 +19,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import edu.jas.arith.BigRational;
-import edu.jas.gb.RPseudoReduction;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.ExpVectorLong;
 import edu.jas.poly.GenPolynomial;
@@ -27,13 +26,10 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
-import edu.jas.util.ArrayUtil;
 import geogebra.Matrix.Coords;
-import geogebra.gui.PointStyleListRenderer;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -44,10 +40,8 @@ import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.euclidian3D.plots.ImplicitPlotTree;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;

@@ -2982,7 +2982,8 @@ class CmdMirror extends CommandProcessor {
 						|| arg[0] instanceof GeoLine
 						|| arg[0] instanceof GeoPolyLineInterface
 						|| arg[0] instanceof GeoFunction
-						|| arg[0] instanceof GeoList) {
+						|| arg[0] instanceof GeoList
+						|| arg[0] instanceof GeoImplicitPoly) {
 					ret = kernel.Mirror(label, arg[0], conic1);
 					return ret;
 				}
