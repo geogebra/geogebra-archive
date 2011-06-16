@@ -22,20 +22,6 @@ public class AlgoPolygon3D extends AlgoPolygon {
 
 	
 	
-	/**
-	 * Constructor with an 2D coord sys and points
-	 * @param cons the construction
-	 * @param label names of the polygon and segments
-	 * @param cs 2D coord sys
-	 * @param points vertices of the polygon
-	 * @param polyhedron polyhedron (when segment is part of)
-	 */    
-	public AlgoPolygon3D(Construction cons, String[] label, 
-			CoordSys cs, GeoPoint[] points, GeoElement polyhedron) {
-		super(cons, label, points, null,cs,true, polyhedron);
-
-	}
-	
 	
 	
 	/**
@@ -60,7 +46,7 @@ public class AlgoPolygon3D extends AlgoPolygon {
      */
 	public AlgoPolygon3D(Construction cons, String[] labels, 
 			GeoPointND[] points, boolean createSegments, GeoElement polyhedron) {
-		super(cons, labels, points, null,null,createSegments, polyhedron);
+		super(cons, labels, points, null,null,createSegments, polyhedron, null);
 		
 	}
 	

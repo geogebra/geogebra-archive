@@ -263,6 +263,10 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	
 	
+	public boolean hasForParent(GeoElement geo){
+		return geo.isParentOf((GeoElement) plane);
+	}
+	
 	
 	
 }

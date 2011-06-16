@@ -40,6 +40,7 @@ import geogebra.kernel.discrete.AlgoShortestDistance;
 import geogebra.kernel.discrete.AlgoTravelingSalesman;
 import geogebra.kernel.discrete.AlgoVoronoi;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -2908,6 +2909,15 @@ public class Kernel {
 		return g;
 	}
 
+	public GeoLineND OrthogonalLine(
+			String label,
+			GeoPointND P,
+			GeoLineND l, 
+			GeoDirectionND direction) {
+		return OrthogonalLine(label, (GeoPoint) P, (GeoLine) l);
+	}
+
+
 	/** 
 	 * Line bisector of points A, B
 	 */
@@ -5017,7 +5027,7 @@ public class Kernel {
 	 * polygon P[0], ..., P[n-1]
 	 * The labels name the polygon itself and its segments
 	 */
-	final public GeoElement [] Polygon(String [] labels, GeoPoint [] P) {
+	final public GeoElement [] Polygon(String [] labels, GeoPointND [] P) {
 		AlgoPolygon algo = new AlgoPolygon(cons, labels, P);
 		return algo.getOutput();
 	}

@@ -486,7 +486,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * @return points of this polygon.
 	 */
 	public GeoPoint [] getPoints() {
-		return (GeoPoint []) points;
+		return (GeoPoint[]) points;
 	}
 	
 	/**

@@ -8,6 +8,7 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
@@ -3514,4 +3515,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public boolean isDefault2D(){
 		return false;
 	}
+	
+
+	public boolean hasForParent(GeoElement geo){
+		return false;
+	}
+	
 }

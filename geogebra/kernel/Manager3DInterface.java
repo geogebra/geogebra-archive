@@ -126,6 +126,9 @@ public interface Manager3DInterface {
 			 /** Line3D through point orthogonal to line   */	
 			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoLineND line);
 			 
+			 /** Line3D through point orthogonal to line and direction   */	
+			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoLineND line, GeoDirectionND direction);
+			 
 			 /** Line3D orthogonal two lines   */	
 			 public GeoLineND OrthogonalLine3D(String label, GeoLineND line1, GeoLineND line2);
 
@@ -136,11 +139,17 @@ public interface Manager3DInterface {
 			 public GeoVectorND UnitOrthogonalVector3D(String label, GeoCoordSys2D plane);
 
 
-			/** Polygon3D linking points P1, P2, ...  
-			 * @param label name of the polygon
-			 * @param points vertices of the polygon
-			 * @return the polygon */
+			 /** Polygon3D linking points P1, P2, ...  
+			  * @param label name of the polygon
+			  * @param points vertices of the polygon
+			  * @return the polygon */
 			 public GeoElement [] Polygon3D(String[] label, GeoPointND[] points);
+
+			 /** Polygon3D linking points P1, P2, ...  
+			  * @param label name of the polygon
+			  * @param points vertices of the polygon
+			  * @return the polygon */
+			 public GeoElement [] Polygon3D(String[] label, GeoPointND[] points, GeoDirectionND direction);
 
 
 			/** Prism with vertices (last one is first vertex of second parallel face)

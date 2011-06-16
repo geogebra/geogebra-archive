@@ -27,7 +27,7 @@ public class EuclidianDockPanelForPlane extends EuclidianDockPanelAbstract {
 		super(
 			Application.VIEW_EUCLIDIAN_FOR_PLANE,	// view id 
 			"GraphicsViewForPlaneA", 				// view title
-			null,// toolbar string
+			Toolbar.getAllToolsNoMacrosForPlane(),// toolbar string
 			true,						// style bar?
 			-1,							// menu order
 			'P'

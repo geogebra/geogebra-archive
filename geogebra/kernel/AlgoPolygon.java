@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.CoordSys;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
@@ -30,7 +31,7 @@ public class AlgoPolygon extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	protected GeoPointND [] points;  // input
-	private GeoList geoList;  // alternative input
+	protected GeoList geoList;  // alternative input
     protected GeoPolygon poly;     // output
     
     /** /2D coord sys used for 3D */
@@ -38,6 +39,9 @@ public class AlgoPolygon extends AlgoElement {
     
     /** polyhedron (when segment is part of), used for 3D */
     protected GeoElement polyhedron; 
+    
+    /** normal direction, used for 3D */
+    protected GeoDirectionND direction;
     
     
     protected AlgoPolygon(Construction cons, String [] labels, GeoList geoList) {
@@ -49,7 +53,7 @@ public class AlgoPolygon extends AlgoElement {
     }
  
     protected AlgoPolygon(Construction cons, String [] labels, GeoPointND [] points, GeoList geoList) {
-    	this(cons,labels,points,geoList,null,true,null);
+    	this(cons,labels,points,geoList,null,true,null,null);
     }
     
     /**
@@ -60,15 +64,17 @@ public class AlgoPolygon extends AlgoElement {
      * @param cs2D for 3D stuff : GeoCoordSys2D
      * @param createSegments  says if the polygon has to creates its edges (3D only) 
      * @param polyhedron polyhedron (when segment is part of), used for 3D
+     * @param direction normal direction, used for 3D
      */
     protected AlgoPolygon(Construction cons, String [] labels, 
     		GeoPointND [] points, GeoList geoList, CoordSys cs2D, 
-    		boolean createSegments, GeoElement polyhedron) {
+    		boolean createSegments, GeoElement polyhedron, GeoDirectionND direction) {
         super(cons);
         this.points = points;           
         this.geoList = geoList;
         this.cs2D = cs2D;
         this.polyhedron = polyhedron;
+        this.direction = direction;
           
         //poly = new GeoPolygon(cons, points);
         createPolygon(createSegments);  
@@ -136,17 +142,12 @@ public class AlgoPolygon extends AlgoElement {
     	if (oldPointsLength != points.length)
     		setOutput();    	
     }
-    
-    
-    
-    
-    
-    // for AlgoElement
-    protected void setInputOutput() {
-    	
-    	//efficient inputs are points or list
+
+
+    protected GeoElement [] createEfficientInput(){
+
     	GeoElement [] efficientInput;
-    	
+
     	if (geoList != null) {
     		// list as input
     		efficientInput = new GeoElement[1];
@@ -156,7 +157,17 @@ public class AlgoPolygon extends AlgoElement {
     		efficientInput = new GeoElement[points.length];
     		for(int i = 0; i < points.length; i++)
     			efficientInput[i]=(GeoElement) points[i];
-    	}    	
+    	}    
+
+    	return efficientInput;
+    }
+    
+    
+    // for AlgoElement
+    protected void setInputOutput() {
+    	
+    	//efficient inputs are points or list
+    	GeoElement [] efficientInput = createEfficientInput();  	
     	
     	//add polyhedron to inputs
     	if (polyhedron==null){
@@ -239,9 +250,13 @@ public class AlgoPolygon extends AlgoElement {
         poly.updateRegionCS();
     }   
     
-    StringBuilder sb;
-    final public String toString() {
+    
+    
+    protected StringBuilder sb;
+    
 
+    protected void createStringBuilder(){
+    	
         if (sb == null) sb = new StringBuilder();
         else sb.setLength(0);
   
@@ -263,11 +278,21 @@ public class AlgoPolygon extends AlgoElement {
 			sb.append(points[last].getLabel());
 		}
         
+
+        if (polyhedron!=null){
+            sb.append(' ');
+            sb.append(app.getPlain("of"));
+            sb.append(' ');
+        	sb.append(polyhedron.getLabel());
+        }
         
-        //TODO use app.getPlain()
-        if (polyhedron!=null)
-        	sb.append(" of "+polyhedron.getLabel());
-        
-        return  sb.toString();
     }
+
+    final public String toString() {
+    	createStringBuilder();
+    	return  sb.toString();
+    }
+    
+    	
+    
 }

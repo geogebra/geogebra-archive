@@ -5085,4 +5085,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		//only used in EuclidianViewForPlane
 	}
 	
+	public boolean hasForParent(GeoElement geo){
+		return false;
+	}
+	
 }

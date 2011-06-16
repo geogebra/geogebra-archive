@@ -61,6 +61,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
+import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -1217,7 +1218,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						movedGeoElement.isGeoList() || 
 						movedGeoElement.isGeoVector()) 
 				{		
-					translateableGeos = movedGeoElement.getFreeInputPoints();
+					translateableGeos = getFreeInputPoints(movedGeoElement);
 				}
 			}
 
@@ -1250,6 +1251,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				moveMode = MOVE_NONE;
 			}				
 		} 
+		
+		// geo parent of the view
+		else if (view.hasForParent(movedGeoElement)){
+			Application.debug("parent geo: not moveable");
+			moveMode = MOVE_NONE;
+		}
 
 		// free point
 		else if (movedGeoElement.isGeoPoint()) {
@@ -1494,6 +1501,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		view.repaintEuclidianView();												
 	}
 
+
+
+	protected ArrayList<GeoPoint> getFreeInputPoints(GeoElement geo) {
+		return geo.getFreeInputPoints();
+	}
 
 
 	////////////////////////////////////////////
@@ -4677,17 +4689,22 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoPointND[] points = getSelectedPointsND();
 				GeoLineND[] lines = getSelectedLinesND();
 				// create new line
-				GeoElement[] ret = { null };
-				if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) lines[0]).isGeoElement3D())
-					ret[0] = (GeoElement) getKernel().getManager3D().OrthogonalLine3D(null,points[0], lines[0]);
-				else
-					ret[0] = getKernel().OrthogonalLine(null, (GeoPoint) points[0], (GeoLine) lines[0]);
-				return ret;
+				return orthogonal(points[0], lines[0]);
 			}
 		}
 		return null;
 	}
 	
+	protected GeoElement[] orthogonal(GeoPointND point, GeoLineND line){
+		if (((GeoElement) point).isGeoElement3D() || ((GeoElement) line).isGeoElement3D())
+			return new GeoElement[] {(GeoElement) getKernel().getManager3D().OrthogonalLine3D(null,point, line, ((EuclidianView) view).getDirection())};		
+		else
+			return orthogonal2D(point, line);		
+	}
+	
+	protected GeoElement[] orthogonal2D(GeoPointND point, GeoLineND line){
+		return new GeoElement[] {getKernel().OrthogonalLine(null, (GeoPoint) point, (GeoLine) line)};
+	}
 	
 	// get two points, line segment or conic
 	// and create midpoint/center for them/it
@@ -6497,9 +6514,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
 	protected boolean move(Hits hits) {	
-		addSelectedGeo(hits.getMoveableHits(), 1, false);	
+		addSelectedGeo(getMoveableHits(hits), 1, false);	
 		return false;
 	}
+
+	protected Hits getMoveableHits(Hits hits) {
+		return hits.getMoveableHits();
+	}
+
 
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview

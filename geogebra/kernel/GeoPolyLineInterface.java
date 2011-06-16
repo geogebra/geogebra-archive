@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 
 public interface GeoPolyLineInterface {
 	/**

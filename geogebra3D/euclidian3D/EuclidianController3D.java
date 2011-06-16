@@ -2267,6 +2267,17 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 	
+
+
+	
+	protected GeoElement[] orthogonal(GeoPointND point, GeoLineND line){
+		if (((GeoElement) point).isGeoElement3D() || ((GeoElement) line).isGeoElement3D())
+			return new GeoElement[] {(GeoElement) getKernel().getManager3D().OrthogonalLine3D(null,point, line)};		
+		else
+			return orthogonal2D(point, line);
+	
+	}
+	
 	
 }
 

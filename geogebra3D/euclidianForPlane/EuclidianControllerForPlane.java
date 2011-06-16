@@ -1,13 +1,18 @@
 package geogebra3D.euclidianForPlane;
 
+import java.util.ArrayList;
+
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 
 /**
@@ -67,8 +72,12 @@ public class EuclidianControllerForPlane extends EuclidianController {
 	protected GeoElement[] createCircle2(GeoPointND p0, GeoPointND p1){
 		return createCircle2ForPoints3D(p0, p1);
 	}
-	
-	
+
+
+	protected GeoElement[] orthogonal(GeoPointND point, GeoLineND line){
+		return new GeoElement[] {(GeoElement) getKernel().getManager3D().OrthogonalLine3D(null,point, line, ((EuclidianView) view).getDirection())};		
+
+	}
 	
 	
 	
@@ -89,5 +98,28 @@ public class EuclidianControllerForPlane extends EuclidianController {
 		xRW = coords.getX();
 		yRW = coords.getY();
 	}
+	
+	
+	
 
+	protected ArrayList<GeoPoint> getFreeInputPoints(GeoElement geo) {
+		ArrayList<GeoPoint> list = geo.getFreeInputPoints();
+		ArrayList<GeoPoint> ret = new ArrayList<GeoPoint>();	
+		for (GeoPoint p : list)
+			if (!view.hasForParent(p))
+				ret.add(p);
+		return ret;
+	}
+
+
+	protected Hits getMoveableHits(Hits hits) {
+		Hits ret = new Hits();
+		
+		for (Object geo : hits.getMoveableHits()){
+			if (!view.hasForParent((GeoElement) geo))
+				ret.add(geo);
+		}
+		
+		return ret;
+	}
 }

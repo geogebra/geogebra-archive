@@ -5,6 +5,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdOrthogonalLine;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
@@ -67,7 +68,25 @@ public class CmdOrthogonalLine3D extends CmdOrthogonalLine {
 	    						(GeoLineND) arg[1])};
 	    		return ret;
 	    	}
-	    	
+	    	break;
+	    
+	    case 3 :
+	    	arg = resArgs(c);
+	    	if (
+	    			(ok[0] = (arg[0] .isGeoPoint() ) )
+	    			&& (ok[1] = (arg[1] instanceof GeoLineND ))
+	    			&& (ok[2] = (arg[2] instanceof GeoDirectionND ))
+	    	) {
+	    		GeoElement[] ret =
+	    		{
+	    				(GeoElement) kernel.getManager3D().OrthogonalLine3D(
+	    						c.getLabel(),
+	    						(GeoPointND) arg[0],
+	    						(GeoLineND) arg[1],
+	    						(GeoDirectionND) arg[2])};
+	    		return ret;
+	    	}
+	    	break;
 	    }
 	    
 

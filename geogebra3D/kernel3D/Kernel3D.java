@@ -45,6 +45,7 @@ import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -394,6 +395,17 @@ public class Kernel3D
 		else
 			return super.IntersectConics(labels, a, b);
 	}
+	
+	
+
+	public GeoLineND OrthogonalLine(
+			String label,
+			GeoPointND P,
+			GeoLineND l, 
+			GeoDirectionND direction) {
+		return getManager3D().OrthogonalLine3D(label, P, l, direction);
+	}
+
 	
 	
 	

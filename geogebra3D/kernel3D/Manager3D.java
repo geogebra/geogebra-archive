@@ -6,6 +6,7 @@ import geogebra.kernel.AlgoIntersectLineConic;
 import geogebra.kernel.AlgoLinePointLine;
 import geogebra.kernel.AlgoMidpoint;
 import geogebra.kernel.AlgoPointOnPath;
+import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
@@ -252,6 +253,11 @@ public class Manager3D implements Manager3DInterface {
 		 return algo.getLine();
 	 }
 	 
+	 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoLineND line, GeoDirectionND direction){
+		 AlgoOrthoLineLinePointPlane algo = new AlgoOrthoLineLinePointPlane(cons, label, point, line, direction);
+		 return algo.getLine();
+	 }
+	 
 	 
 	 public GeoLineND OrthogonalLine3D(String label, GeoLineND line1, GeoLineND line2){
 		 AlgoOrthoLineLineLine algo = new AlgoOrthoLineLineLine(cons, label, line1, line2);
@@ -279,7 +285,15 @@ public class Manager3D implements Manager3DInterface {
 
 		return algo.getOutput();
 
-	}	
+	}
+	
+	final public GeoElement [] Polygon3D(String[] label, GeoPointND[] points, GeoDirectionND direction){
+		AlgoPolygon algo = new AlgoPolygon3DDirection(cons,label,points,direction);
+
+		return algo.getOutput();
+
+	}
+
 
 
 	/** Prism with vertices (last one is first vertex of second parallel face)

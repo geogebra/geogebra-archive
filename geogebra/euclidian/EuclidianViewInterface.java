@@ -3,6 +3,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.Application;
 
@@ -403,5 +404,13 @@ public interface EuclidianViewInterface {
 	 * @return true if this is Graphics or Graphics 2
 	 */
 	public boolean isDefault2D();
+	
+	/**
+	 * 
+	 * @param geo
+	 * @return true if the geo is parent of the view
+	 */
+	public boolean hasForParent(GeoElement geo);
+	
 	
 }

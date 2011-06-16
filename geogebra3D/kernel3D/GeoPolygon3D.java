@@ -232,6 +232,39 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		 
 	}
 	 
+	 /**
+	  * check that all points are on coord sys, and calc their 2D coords
+	  * @return true if all points lie on coord sys
+	  */
+	 public boolean checkPointsAreOnCoordSys(){
+		 for(int i=0;i<points.length;i++){
+
+			 //check if the vertex is defined and finite
+			 if(!points[i].isDefined() || !points[i].isFinite()){
+				 coordSys.setUndefined();
+				 return false;
+			 }
+			 
+			 //project the point on the coord sys
+			 Coords[] project=points[i].getInhomCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
+
+			 //Application.debug("project["+i+"]="+project[1]);
+			 
+			 //check if the vertex lies on the coord sys
+			 if(!Kernel.isEqual(project[1].getZ(), 0, Kernel.STANDARD_PRECISION)){
+				 coordSys.setUndefined();
+				 return false;
+			 }
+
+			 
+			 
+			 //set the 2D points
+			 points2D[i].setCoords(project[1].getX(), project[1].getY(), project[1].getW());
+		 }
+		 
+		 return true;
+	 }
+	 
 	 
 	 public boolean updateCoordSys(){
 
@@ -248,35 +281,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 			 coordSys.addPoint(points[i].getInhomCoordsInD(3));
 		 }
 
-		 if (coordSys.makeOrthoMatrix(false,false)){
-			 
-			 //Application.debug("ortho=\n"+coordSys.getMatrixOrthonormal());
-			 
-			 for(int i=0;i<points.length;i++){
-
-				 //check if the vertex is defined and finite
-				 if(!points[i].isDefined() || !points[i].isFinite()){
-					 coordSys.setUndefined();
-					 return false;
-				 }
-				 
-				 //project the point on the coord sys
-				 Coords[] project=points[i].getInhomCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
-
-				 //Application.debug("project["+i+"]="+project[1]);
-				 
-				 //check if the vertex lies on the coord sys
-				 if(!Kernel.isEqual(project[1].getZ(), 0, Kernel.STANDARD_PRECISION)){
-					 coordSys.setUndefined();
-					 return false;
-				 }
-
-				 
-				 
-				 //set the 2D points
-				 points2D[i].setCoords(project[1].getX(), project[1].getY(), project[1].getW());
-			 }
-		 }
+		 if (coordSys.makeOrthoMatrix(false,false)){			 
+			 checkPointsAreOnCoordSys();			 
+		 }else
+			 return false;
 		 
 		 return true;
 		 
