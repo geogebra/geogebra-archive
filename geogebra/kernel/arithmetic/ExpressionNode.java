@@ -2956,7 +2956,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			default:
-				sb.append("gammaIncomplete(");
+				sb.append("gamma(");
 			}
 			sb.append(leftStr);
 			sb.append(", ");
@@ -2967,7 +2967,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		case GAMMA_INCOMPLETE_REGULARIZED:
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
-				sb.append("Q \\left( ");
+				sb.append("P \\left( ");
 				break;
 
 			case STRING_TYPE_MAXIMA:
@@ -2975,7 +2975,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			default:
-				sb.append("gammaIncompleteRegularized(");
+				sb.append("gammaRegularized(");
 			}
 			sb.append(leftStr);
 			sb.append(", ");
@@ -3013,7 +3013,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			default:
-				sb.append("betaIncomplete(");
+				sb.append("beta(");
 			}
 			sb.append(leftStr);
 			sb.append(", ");
@@ -3032,7 +3032,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			default:
-				sb.append("betaIncompleteRegularized(");
+				sb.append("betaRegularized(");
 			}
 			sb.append(leftStr);
 			sb.append(", ");
