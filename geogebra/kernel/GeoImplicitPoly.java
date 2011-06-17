@@ -1137,18 +1137,16 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 
 	public void mirror(GeoConic c) 
 	{
-		
-		if(c.getType() != GeoConic.CONIC_CIRCLE)
-		{
-			setUndefined();
-			return;
-		}
-		
 		GeoPoint S = new GeoPoint(cons, "", c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
 		S.remove();
+		if(c.getCircleRadius() < 10e-2)
+		{
+			this.setUndefined();
+			return;
+		}
 		double r = 1/c.getCircleRadius();
-		
-		translate(new Coords(-S.getX(), -S.getY()));
+		if(S.inhomX != 0 || S.inhomY != 0)
+			translate(new Coords(-S.getX(), -S.getY()));
 		
 		String fun = new String("");
 		
@@ -1171,10 +1169,8 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 				}
 		
 		for(int i=0; i<degx+degy; i++)
-		{
 			if(u[i].length() > 0)
 				u[i] = " * (" + u[i] + ")";
-		}
 		
 		for(int i=0; i<deg; i++)
 			fun += " + " + Math.pow(r, 2*(deg-i-1)) + "*(x^2+y^2)^" + (deg-i-1) + u[i];
@@ -1190,13 +1186,12 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		
 		GeoElement geo = (GeoElement) algebraProcessor.processEquation((Equation) ve)[0];
 		GeoImplicitPoly gp = ((GeoImplicitPoly)geo);
-		
 		gp.normalize();
-		
 		setCoeff(gp.getCoeff());
 		geo.remove();
 		
-		translate(new Coords(S.getX(), S.getY()));
+		if(S.inhomX != 0 || S.inhomY != 0)
+			translate(new Coords(S.getX(), S.getY()));
 	}
 	
 	public void normalize()
@@ -1222,29 +1217,36 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 	}
 
 	public void mirror(GeoLine g) {
-		/*Coords v = new Coords(g.getZ()/g.getX(), 0);
+		String newX, newY;
+		if(g.getX() == 0)
+		{
+			this.translate(new Coords(-g.getZ()/g.getY(), 0));
+			doTransformation("x", "-y");
+			this.translate(new Coords(g.getZ()/g.getY(), 0));
+			return;
+		}
+		
+		Coords v = new Coords(g.getZ()/g.getX(), 0);
 		this.translate(v);
 		
-		double R = Math.atan(-g.getX()/g.getY());
+		double R = Math.PI - Math.atan(-g.getX()/g.getY());
 		double cosR = Math.cos(R), sinR=Math.sin(R);
 		
-		String newX = cosR + "*a + " + sinR + "*b";
-		String newY = -sinR + "*c + " + cosR + "*d";
+		newX = cosR + "*a + " + sinR + "*b";
+		newY = -sinR + "*c + " + cosR + "*d";
 		doTransformation(newX, newY);
 		
-		newX = "-a";
-		newY = "b";
-		doTransformation(newX, newY);
+		doTransformation("-a", "b");
 		
-		cosR = Math.cos(R);
-		sinR= -Math.sin(R);
+		cosR = Math.cos(Math.PI-R);
+		sinR= Math.sin(Math.PI-R);
 		
 		newX = cosR + "*a + " + sinR + "*b";
 		newY = -sinR + "*c + " + cosR + "*d";
 		doTransformation(newX, newY);
 		
 		v.set(1, -v.getX());
-		this.translate(v);*/
+		this.translate(v);
 		
 	}
 
@@ -1273,7 +1275,10 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 
 	public void doTransformation(String newX, String newY)
 	{
+		kernel.setTemporaryPrintFigures(20);
 		String cmd = this.toString();
+		kernel.restorePrintAccuracy();
+		
 		cmd = cmd.replace("x", "(" + newX + ")");
 		cmd = cmd.replace("y", "(" + newY + ")");
 		
