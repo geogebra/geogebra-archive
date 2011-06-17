@@ -882,8 +882,10 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	public void clearPlotGeoList(){
 
 		for(GeoElement geo : plotGeoList){
-			if(geo != null)
+			if(geo != null){
 				geo.remove();
+				geo = null;
+			}
 		}
 		plotGeoList.clear();
 	}
@@ -891,8 +893,10 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	public void removeGeos(){
 		//statPanel.removeGeos();
 
-		if(dataListSelected != null)
+		if(dataListSelected != null){
 			dataListSelected.remove();
+			dataListSelected = null;
+		}
 
 		clearPlotGeoList();
 	}

@@ -567,7 +567,10 @@ public class CellRangeProcessor {
 				}
 			}
 
-			listString.deleteCharAt(listString.length()-1);
+			// remove last comma
+			if(listString.length()>1)
+				listString.deleteCharAt(listString.length()-1);
+			
 			listString.append("}");
 
 			if(isSorted){
@@ -576,7 +579,7 @@ public class CellRangeProcessor {
 			}
 
 
-			//System.out.println(listString);
+			//Application.debug(listString);
 			// convert list string to geo
 			geos = table.kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(listString.toString(), false);

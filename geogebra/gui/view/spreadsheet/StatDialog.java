@@ -137,8 +137,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private JPanel cardPanel, buttonPanel;
 	private int defaultDividerSize;
 	private RegressionPanel regressionPanel;
-
-
+	
 
 
 
@@ -302,6 +301,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	 * range.
 	 */
 	private boolean setDataSource(){
+		
+		dataSource = null;
 		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		boolean success = true;
 
@@ -342,12 +343,14 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	 */
 	private void loadDataLists(){
 
+		if(dataSource == null) return;
+		
 		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		String text = "";
 
 		boolean scanByColumn = true;
 		boolean isSorted = false;
-		boolean copyByValue = false;
+		boolean copyByValue = true;
 		boolean doStoreUndo = false;
 
 
@@ -466,9 +469,11 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	 */
 	public String[] getDataTitles(){
 
+		if(dataSource == null) return null;
+		
 		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		String[] title = null;
-
+		
 		switch(mode){
 
 		case MODE_ONEVAR:
@@ -522,7 +527,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	public void swapXY(){
 		leftToRight = !leftToRight;
-		updateDialog();
+		updateDialog(false);
 	}
 
 
@@ -872,13 +877,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			//Application.debug("statDialog visible");
 			//spView.setColumnSelect(true);
 			this.attachView();
-			if(!isIniting)
-				updateDialog();
+			//if(!isIniting)
+			//updateDialog();
 
 		}else{
 			//Application.debug("statDialog not visible");
 			//spView.setColumnSelect(false);
-			removeGeos();		
+			removeStatGeos();		
 			this.detachView();		
 		}
 	}
@@ -908,12 +913,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 
 
-	public void updateDialog(){
+	public void updateDialog(boolean doSetDataSource){
 
-		//selectedColumns = spreadsheetTable.getSelectedColumnsList();
-		removeGeos();
-		boolean dataOK = setDataSource();
-		if(dataOK){
+		removeStatGeos();
+		boolean hasValidDataSource = doSetDataSource? setDataSource() : true;
+		if(dataSource == null) return;
+		
+		if(hasValidDataSource){
 			loadDataLists();
 
 			updateAllComboPanels(true);
@@ -939,12 +945,14 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		comboStatPanel2.updatePlot(doCreateGeo);
 
 		if(mode == statDialog.MODE_ONEVAR){
-			statList.remove();
+			this.removeStatGeo(statList);
+			//statList.remove();
 			statList = statGeo.createBasicStatList(dataListSelected, mode);
 			statTable.updateData(statList);
 		}
 		else if(mode == statDialog.MODE_REGRESSION){
-			statList.remove();
+			this.removeStatGeo(statList);
+			//statList.remove();
 			statList = statGeo.createBasicStatList(dataListSelected, mode,geoRegression);
 			statTable.updateData(statList);
 
@@ -973,25 +981,15 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	/**
 	 * Removes all geos maintained by this dialog and its child components
 	 */
-	public void removeGeos(){
+	public void removeStatGeos(){
 
-		if(dataListAll != null)
-			dataListAll.remove();
-
-		if(dataListSelected != null)
-			dataListSelected.remove();
-
-		if(statList != null)
-			statList.remove();
-
-		if(geoRegression != null)
-			geoRegression.remove();
+		removeStatGeo(dataListAll);
+		removeStatGeo(dataListSelected);
+		removeStatGeo(statList);
+		removeStatGeo(geoRegression);
 
 		if(statTable != null)
 			statTable.removeGeos();
-
-		if(dataPanel != null)
-			dataPanel.removeGeos();
 
 		if(comboStatPanel != null)
 			comboStatPanel.removeGeos();
@@ -999,8 +997,15 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		if(comboStatPanel2 != null)
 			comboStatPanel2.removeGeos();
 
+
 	}
 
+	private void removeStatGeo(GeoElement statGeo){
+		if(statGeo != null){
+			statGeo.remove();
+			statGeo = null;
+		}
+	}
 
 
 	//=================================================
@@ -1020,12 +1025,15 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	}
 
 	public void remove(GeoElement geo) {
+
 		//System.out.println("removed: " + geo.toString());
-		//	if (!isIniting && isInDataColumn(geo)) {	
-		//loadDataLists();
-		//comboStatPanel.updatePlot();
-		//comboStatPanel2.updatePlot();
-		//	}
+		if (isInDataSource(geo)) {	
+			System.out.println("stat dialog removed: " + geo.toString());
+			//removeStatGeos();
+			dataSource = null;
+			this.updateDialog(false);
+		}
+
 	}
 
 	public void rename(GeoElement geo) {
@@ -1046,17 +1054,21 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 		//Application.debug("------> update:" + geo.toString());
 		if (!isIniting && isInDataSource(geo)) {
-			Application.debug("---------> is in data source:" + geo.toString());
-			//removeGeos();
-			//this.loadDataLists();
-			updateAllComboPanels(true);	
+			//Application.debug("geo is in data source: " + geo.toString());
+			//removeStatGeos();
+			//dataSource = null;
+			this.updateDialog(false);
 
 		}
+
 
 	}
 
 
 	public boolean isInDataSource(GeoElement geo){
+		
+		if(dataSource == null) return false;
+		
 		// TODO handle case of GeoList data source
 		if(dataSource instanceof GeoList){
 			return geo.equals(((GeoList)dataSource));

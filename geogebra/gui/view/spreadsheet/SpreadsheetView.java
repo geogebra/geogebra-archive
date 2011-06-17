@@ -552,7 +552,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				oneVarStatDialog = new StatDialog(view, app, mode);
 			}else{
 				oneVarStatDialog.setLeftToRight(true);
-				oneVarStatDialog.updateDialog();
+				oneVarStatDialog.updateDialog(true);
 			}
 			oneVarStatDialog.setVisible(true);	
 			break;
@@ -561,7 +561,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			if(twoVarStatDialog == null){
 				twoVarStatDialog = new StatDialog(view, app, mode);
 			}else{
-				twoVarStatDialog.updateDialog();
+				twoVarStatDialog.updateDialog(true);
 			}
 			twoVarStatDialog.setVisible(true);	
 			break;
@@ -570,7 +570,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			if(multiVarStatDialog == null){
 				multiVarStatDialog = new StatDialog(view, app, mode);
 			}else{
-				multiVarStatDialog.updateDialog();
+				multiVarStatDialog.updateDialog(true);
 			}
 			multiVarStatDialog.setVisible(true);	
 			break;

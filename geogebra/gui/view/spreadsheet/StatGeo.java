@@ -151,6 +151,9 @@ public class StatGeo   {
 	public GeoList  createBasicStatList(GeoList dataList, int mode, GeoElement regFunction){
 
 		GeoList statList = null;
+		if(dataList.size()<=2)
+			return statList;
+		
 		String label = dataList.getLabel();	      //getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);  
 		String text = "";
 
