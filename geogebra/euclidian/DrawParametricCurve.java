@@ -109,11 +109,22 @@ public class DrawParametricCurve extends Drawable {
 			if (max>maxView)
 				max=maxView;				
 		}
-		Point labelPoint = plotCurve(curve,
+		Point labelPoint;
+		
+		
+		
+		if (Kernel.isEqual(min, max)) {
+			double [] eval = new double[2];
+			curve.evaluateCurve(min, eval);
+			view.toScreenCoords(eval);
+			labelPoint = new Point((int)eval[0], (int)eval[1]);
+		} else {
+			labelPoint = plotCurve(curve,
 					min,
 					max,
 					view, gp,
 					labelVisible, !fillCurve); 
+		}
 
 		// gp on screen?		
 		if (!gp.intersects(0,0, view.width, view.height)) {				
