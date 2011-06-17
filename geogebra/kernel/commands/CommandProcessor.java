@@ -6036,10 +6036,8 @@ class CmdChiSquared extends CommandProcessor {
 					String command = null;
 					
 					if (cumulative) {
-						//command = "0.5+sign(x)/2*(betaRegularized(("+v+")/2,0.5,1)-betaRegularized(("+v+")/2,0.5,("+v+")/("+v+"+x^2)))";
 						command = "If[x<0,0,gamma(("+k+")/2,x/2)/gamma(("+k+")/2)]";
 					} else {
-						//command = "gamma(("+v+"+1)/2)*(1+x^2/("+v+"))^(-(("+v+"+1)/2))/(gamma(("+v+")/2)*sqrt(pi*("+v+")))";
 						command = "If[x<0,0,(x^(("+k+")/2-1)exp(-x/2))/(2^(("+k+")/2)gamma(("+k+")/2))]";
 					}
 					
