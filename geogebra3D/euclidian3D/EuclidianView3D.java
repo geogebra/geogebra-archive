@@ -12,11 +12,13 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
@@ -3519,6 +3521,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public boolean hasForParent(GeoElement geo){
 		return false;
+	}
+	
+
+	public boolean isMoveable(GeoElement geo){
+		return geo.isMoveable();
+	}
+	
+
+	public ArrayList<GeoPoint> getFreeInputPoints(AlgoElement algoParent){
+		return algoParent.getFreeInputPoints();
 	}
 	
 }

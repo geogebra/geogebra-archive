@@ -1,8 +1,10 @@
 package geogebra.euclidian;
 
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.Application;
@@ -412,5 +414,18 @@ public interface EuclidianViewInterface {
 	 */
 	public boolean hasForParent(GeoElement geo);
 	
+	/**
+	 * 
+	 * @param algoParent
+	 * @return free input points of the algoElement
+	 */
+	public ArrayList<GeoPoint> getFreeInputPoints(AlgoElement algoParent);
 	
+	/**
+	 * 
+	 * @param geo
+	 * @return true if the geo is moveable in the view
+	 */
+	public boolean isMoveable(GeoElement geo);
+
 }

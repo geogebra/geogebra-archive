@@ -10,7 +10,9 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
@@ -267,6 +269,23 @@ public class EuclidianViewForPlane extends EuclidianView {
 		return geo.isParentOf((GeoElement) plane);
 	}
 	
+
+	public boolean isMoveable(GeoElement geo){
+		if (hasForParent(geo))
+			return false;
+		else
+			return geo.isMoveable();
+	}
+	
+
+	public ArrayList<GeoPoint> getFreeInputPoints(AlgoElement algoParent){
+		ArrayList<GeoPoint> list = algoParent.getFreeInputPoints();
+		ArrayList<GeoPoint> ret = new ArrayList<GeoPoint>();	
+		for (GeoPoint p : list)
+			if (!hasForParent(p))
+				ret.add(p);
+		return ret;
+	}
 	
 	
 }

@@ -1075,7 +1075,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			moveModeSelectionHandled = true;
 
 			// find and set rotGeoElement
-			hits = hits.getPointRotateableHits(rotationCenter);
+			hits = hits.getPointRotateableHits(view,rotationCenter);
 			if (!hits.isEmpty() && hits.contains(rotGeoElement))
 				geo = rotGeoElement;
 			else {
@@ -1139,7 +1139,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// if we just click (no drag) on eg an intersection, we want it selected
 		// not a popup with just the lines in
 		if (drag)
-			moveableList = view.getHits().getMoveableHits();
+			moveableList = view.getHits().getMoveableHits(view);
 		else
 			moveableList = view.getHits();
 
@@ -1195,7 +1195,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// DEPENDENT object: changeable parents?
 		// move free parent points (e.g. for segments)
-		else if (!movedGeoElement.isMoveable()) {
+		else if (!movedGeoElement.isMoveable(view)) {
 			
 			translateableGeos = null;
 			Application.debug("1");
@@ -1208,7 +1208,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 
 			// STANDARD case: get free input points of dependent movedGeoElement
-			else if (movedGeoElement.hasMoveableInputPoints()) {
+			else if (movedGeoElement.hasMoveableInputPoints(view)) {
 				// allow only moving of the following object types
 				if (movedGeoElement.isGeoLine() || 
 						movedGeoElement.isGeoPolygon() ||					 
@@ -1218,7 +1218,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						movedGeoElement.isGeoList() || 
 						movedGeoElement.isGeoVector()) 
 				{		
-					translateableGeos = getFreeInputPoints(movedGeoElement);
+					translateableGeos = movedGeoElement.getFreeInputPoints(view);
 				}
 			}
 
@@ -1252,12 +1252,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}				
 		} 
 		
-		// geo parent of the view
-		else if (view.hasForParent(movedGeoElement)){
-			Application.debug("parent geo: not moveable");
-			moveMode = MOVE_NONE;
-		}
-
 		// free point
 		else if (movedGeoElement.isGeoPoint()) {
 			moveMode = MOVE_POINT;
@@ -1503,10 +1497,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 
-	protected ArrayList<GeoPoint> getFreeInputPoints(GeoElement geo) {
-		return geo.getFreeInputPoints();
-	}
-
 
 	////////////////////////////////////////////
 	// setters movedGeoElement -> movedGeoPoint, ...
@@ -1627,7 +1617,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (Application.isRightClick(e)){
 			// if there's no hit, or if first hit is not moveable, do 3D view rotation
 			if ((!TEMPORARY_MODE) || view.getHits().size() == 0 
-					|| !((GeoElement) view.getHits().get(0)).isMoveable()
+					|| !((GeoElement) view.getHits().get(0)).isMoveable(view)
 					|| ( !((GeoElement) view.getHits().get(0)).isGeoPoint() && ((GeoElement) view.getHits().get(0)).hasDrawable3D() )
 					)
 				if (processRotate3DView()){ //in 2D view, return false
@@ -3351,15 +3341,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		translationVec.setY(yRW - startPoint.y);
 		startPoint.setLocation(xRW, yRW);
 		startLoc = mouseLoc;
-
+		
 		// move all selected geos
-		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, new Coords(xRW, yRW, 0), null);									
+		GeoElement.moveObjects(removeParentsOfView(app.getSelectedGeos()), translationVec, new Coords(xRW, yRW, 0), null);									
 
 		if (repaint)
 			kernel.notifyRepaint();					
 	}		
+	
 
-
+	protected ArrayList<GeoElement> removeParentsOfView(ArrayList<GeoElement> list){
+		return list;
+	}
 
 
 	/**
@@ -6514,19 +6507,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
 	protected boolean move(Hits hits) {	
-		addSelectedGeo(getMoveableHits(hits), 1, false);	
+		addSelectedGeo(hits.getMoveableHits(view), 1, false);	
 		return false;
 	}
 
-	protected Hits getMoveableHits(Hits hits) {
-		return hits.getMoveableHits();
-	}
 
 
 	// dummy function for highlighting:
 	// used only in preview mode, see mouseMoved() and selectionPreview
 	final protected boolean moveRotate(Hits hits) {				
-		addSelectedGeo(hits.getPointRotateableHits(rotationCenter), 1, false);
+		addSelectedGeo(hits.getPointRotateableHits(view, rotationCenter), 1, false);
 		return false;
 	}
 

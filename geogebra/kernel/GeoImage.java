@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.util.Util;
@@ -829,12 +830,12 @@ implements Locateable, AbsoluteScreenLocateable,
 		return false;
 	}
 	
-	public boolean hasMoveableInputPoints() {
+	public boolean hasMoveableInputPoints(EuclidianViewInterface view) {
 		
 		if (hasAbsoluteLocation()) return false;
 		
 		for (int i = 0 ; i < corners.length ; i++) {
-			if (corners[i] != null && !corners[i].isMoveable()) return false;
+			if (corners[i] != null && !corners[i].isMoveable(view)) return false;
 		}
 		return true;
 	}
@@ -844,7 +845,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	/**
 	 * Returns all free parent points of this GeoElement.	 
 	 */
-	public ArrayList<GeoPoint> getFreeInputPoints() {		
+	public ArrayList<GeoPoint> getFreeInputPoints(EuclidianViewInterface view) {		
 			if (hasAbsoluteLocation()) return null;
 			
 			if (al == null) al = new ArrayList<GeoPoint>();

@@ -3215,6 +3215,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	final public ArrayList getMoveableHits(ArrayList hits) {
 		return getMoveables(hits, TEST_MOVEABLE, null);
 	}
+	
+
+	
+
 
 	/**
 	 * returns array of changeable GeoElements out of hits that implement
@@ -3240,7 +3244,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			switch (test) {
 			case TEST_MOVEABLE:
 				// moveable object
-				if (geo.isMoveable()) {
+				if (geo.isMoveable(this)) {
 					moveableList.add(geo);
 				}
 				// point with changeable parent coords
@@ -3250,7 +3254,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						moveableList.add(point);
 				}
 				// not a point, but has moveable input points
-				else if (geo.hasMoveableInputPoints()) {
+				else if (geo.hasMoveableInputPoints(this)) {
 					moveableList.add(geo);
 				}
 				break;			
@@ -5089,4 +5093,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return false;
 	}
 	
+	public boolean isMoveable(GeoElement geo){
+		return geo.isMoveable();
+	}
+	
+
+	public ArrayList<GeoPoint> getFreeInputPoints(AlgoElement algoParent){
+		return algoParent.getFreeInputPoints();
+	}
 }

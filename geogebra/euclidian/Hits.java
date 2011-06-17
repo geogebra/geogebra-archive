@@ -273,20 +273,20 @@ public class Hits extends ArrayList {
 	/**
 	 * returns array of changeable GeoElements out of hits
 	 */
-	final public Hits getMoveableHits() {
-		return getMoveables(TEST_MOVEABLE, null);
+	final public Hits getMoveableHits(EuclidianViewInterface view) {
+		return getMoveables(view, TEST_MOVEABLE, null);
 	}
 
 	/**
 	 * returns array of changeable GeoElements out of hits that implement
 	 * PointRotateable
 	 */
-	final public Hits getPointRotateableHits(GeoPointND rotCenter) {
-		return getMoveables(TEST_ROTATEMOVEABLE, rotCenter);
+	final public Hits getPointRotateableHits(EuclidianViewInterface view, GeoPointND rotCenter) {
+		return getMoveables(view, TEST_ROTATEMOVEABLE, rotCenter);
 	}
 
 
-	protected Hits getMoveables(int test, GeoPointND rotCenter) {
+	protected Hits getMoveables(EuclidianViewInterface view, int test, GeoPointND rotCenter) {
 
 
 		GeoElement geo;
@@ -296,7 +296,7 @@ public class Hits extends ArrayList {
 			switch (test) {
 			case TEST_MOVEABLE:
 				// moveable object
-				if (geo.isMoveable()) {
+				if (geo.isMoveable(view)) {
 					moveableList.add(geo);
 					//Application.debug("moveable GeoElement = "+geo);
 				}
@@ -307,7 +307,7 @@ public class Hits extends ArrayList {
 						moveableList.add(point);
 				}
 				// not a point, but has moveable input points
-				else if (geo.hasMoveableInputPoints()) {
+				else if (geo.hasMoveableInputPoints(view)) {
 					moveableList.add(geo);
 				}
 				break;

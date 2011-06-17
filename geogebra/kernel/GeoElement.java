@@ -1677,20 +1677,29 @@ public abstract class GeoElement
 	public boolean isMoveable() {
 		return isChangeable();
 	}
+	
+	/**
+	 * 
+	 * @param view
+	 * @return true if moveable in the view
+	 */
+	public boolean isMoveable(EuclidianViewInterface view){
+		return view.isMoveable(this);
+	}
 
 	/**
 	 * Returns whether this (dependent) GeoElement has input points that can be
 	 * moved in Euclidian View.
 	 * @return
 	 */
-	public boolean hasMoveableInputPoints() {
+	public boolean hasMoveableInputPoints(EuclidianViewInterface view) {
 		// allow only moving of certain object types
 		switch (getGeoClassType()) {
 			case GEO_CLASS_CONIC:
 				
 				// special case for Circle[A, r]
 				if (getParentAlgorithm() instanceof AlgoCirclePointRadius) {
-					return containsOnlyMoveableGeos(getFreeInputPoints());					
+					return containsOnlyMoveableGeos(getFreeInputPoints(view));					
 				}
 				
 				// fall through
@@ -1702,16 +1711,16 @@ public abstract class GeoElement
 			case GEO_CLASS_RAY:
 			case GEO_CLASS_SEGMENT:
 			case GEO_CLASS_TEXT:
-				return hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints());
+				return hasOnlyFreeInputPoints(view) && containsOnlyMoveableGeos(getFreeInputPoints(view));
 
 			case GEO_CLASS_POLYGON:
 			case GEO_CLASS_POLYLINE:
-				return containsOnlyMoveableGeos(getFreeInputPoints());
+				return containsOnlyMoveableGeos(getFreeInputPoints(view));
 
 			case GEO_CLASS_VECTOR:
-				if (hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints())) {
+				if (hasOnlyFreeInputPoints(view) && containsOnlyMoveableGeos(getFreeInputPoints(view))) {
 					// check if first free input point is start point of vector
-					ArrayList freeInputPoints = getFreeInputPoints();
+					ArrayList freeInputPoints = getFreeInputPoints(view);
 					if (freeInputPoints.size() > 0) {
 						GeoPoint firstInputPoint = (GeoPoint) freeInputPoints.get(0);
 						GeoPoint startPoint = ((GeoVector) this).getStartPoint();
@@ -1727,21 +1736,21 @@ public abstract class GeoElement
 	/**
 	 * Returns all free parent points of this GeoElement.
 	 */
-	public ArrayList<GeoPoint> getFreeInputPoints() {
+	public ArrayList<GeoPoint> getFreeInputPoints(EuclidianViewInterface view) {
 		if (algoParent == null)
 			return null;
 		else
-			return algoParent.getFreeInputPoints();
+			return view.getFreeInputPoints(algoParent);
 	}
 
-	final public boolean hasOnlyFreeInputPoints() {
+	final public boolean hasOnlyFreeInputPoints(EuclidianViewInterface view) {
 		if (algoParent == null)
 			return false;
 		else {
 			// special case for edge of polygon
-			if ( algoParent instanceof AlgoJoinPointsSegment && algoParent.getFreeInputPoints().size() == 2) return true;
+			if ( algoParent instanceof AlgoJoinPointsSegment && view.getFreeInputPoints(algoParent).size() == 2) return true;
 
-			return algoParent.getFreeInputPoints().size() == algoParent.input.length;
+			return view.getFreeInputPoints(algoParent).size() == algoParent.input.length;
 		}
 	}
 

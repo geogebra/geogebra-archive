@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
@@ -1386,7 +1387,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		return false;
 	}
 
-	public boolean hasMoveableInputPoints() {
+	public boolean hasMoveableInputPoints(EuclidianViewInterface view) {
 		for (int i = 0; i < geoList.size(); i++) {
 			GeoElement geo = (GeoElement) geoList.get(i);
 
@@ -1395,7 +1396,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 					return false;
 			} else {
 				// not point
-				if (!geo.hasMoveableInputPoints())
+				if (!geo.hasMoveableInputPoints(view))
 					return false;
 			}
 		}
@@ -1407,7 +1408,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	 * allow lists like this to be dragged {Segment[A, B], Segment[B, C], (3.92,
 	 * 4)}
 	 */
-	public ArrayList<GeoPoint> getFreeInputPoints() {
+	public ArrayList<GeoPoint> getFreeInputPoints(EuclidianViewInterface view) {
 		ArrayList<GeoPoint> al = new ArrayList<GeoPoint>();
 		for (int i = 0; i < geoList.size(); i++) {
 			GeoElement geo = (GeoElement) geoList.get(i);
@@ -1418,7 +1419,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 					al.add(p);
 
 			} else {
-				ArrayList<GeoPoint> al2 = geo.getFreeInputPoints();
+				ArrayList<GeoPoint> al2 = geo.getFreeInputPoints(view);
 
 				if (al2 != null)
 					for (int j = 0; j < al2.size(); j++) {

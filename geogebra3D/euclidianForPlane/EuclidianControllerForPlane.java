@@ -102,24 +102,15 @@ public class EuclidianControllerForPlane extends EuclidianController {
 	
 	
 
-	protected ArrayList<GeoPoint> getFreeInputPoints(GeoElement geo) {
-		ArrayList<GeoPoint> list = geo.getFreeInputPoints();
-		ArrayList<GeoPoint> ret = new ArrayList<GeoPoint>();	
-		for (GeoPoint p : list)
-			if (!view.hasForParent(p))
-				ret.add(p);
-		return ret;
-	}
-
-
-	protected Hits getMoveableHits(Hits hits) {
-		Hits ret = new Hits();
-		
-		for (Object geo : hits.getMoveableHits()){
-			if (!view.hasForParent((GeoElement) geo))
+	protected ArrayList<GeoElement> removeParentsOfView(ArrayList<GeoElement> list){
+		ArrayList<GeoElement> ret = new ArrayList<GeoElement>();
+		for (GeoElement geo : list)
+			if (view.isMoveable(geo))
 				ret.add(geo);
-		}
-		
 		return ret;
 	}
+	
+	
+
+
 }
