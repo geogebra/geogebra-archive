@@ -1013,9 +1013,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		removeGeos();
 		createGeoElements();
 
-	
-		if(selectedDist == DIST_F
-				|| selectedDist == DIST_GAMMA
+
+		if( selectedDist == DIST_GAMMA
 				|| selectedDist == DIST_WEIBULL
 				|| selectedDist == DIST_EXPONENTIAL){
 			mainPanel.remove(plotPanel);
@@ -1232,7 +1231,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		defaultParameterMap.put(DIST_STUDENT, new double[] {10}); // df = 10
 		defaultParameterMap.put(DIST_CHISQUARE, new double[] {6}); // df = 6
 
-		defaultParameterMap.put(DIST_F, new double[] {6,6}); // df = 6
+		defaultParameterMap.put(DIST_F, new double[] {5,2}); // df1 = 5, df2 = 2
 		defaultParameterMap.put(DIST_EXPONENTIAL, new double[] {6}); // df = 6
 		defaultParameterMap.put(DIST_GAMMA, new double[] {6,6}); // df = 6
 		defaultParameterMap.put(DIST_CAUCHY, new double[] {0,1}); // median = 0, scale = 1
@@ -1279,7 +1278,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		case DIST_STUDENT:
 			//double v = parms[0];
 			v = "Element[" + parmList.getLabel() + ",1]";
-			expr =  "gamma((" + v + " + 1) / 2) / (sqrt(" + v + " Pi) gamma(" + v + " / 2)) (1 + x^2 / " + v + ")^(-((" + v + " + 1) / 2))";
+			expr =  "TDistribution[" + v + ",x]";
 			break;
 
 		case DIST_CHISQUARE:
@@ -1289,16 +1288,15 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			break;
 
 		case DIST_F:
-			//double k = parms[0];
-			k = "Element[" + parmList.getLabel() + ",1]";
-			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
+			v = "Element[" + parmList.getLabel() + ",1]";
+			v2 = "Element[" + parmList.getLabel() + ",2]";
+			expr = "FDistribution[" + v + "," + v2 + ",x]";
 			break;
 
 		case DIST_CAUCHY:			
-			// CauchyPDF =  1 / (pi scale (1 + ((x - med) / scale)^2))
 			median = "Element[" + parmList.getLabel() + ",1]";
 			scale = "Element[" + parmList.getLabel() + ",2]";
-			expr = "1 / (pi * " + scale + "*(1 + ((x - " + median + ") / " + scale + ")^2))";
+			expr = "Cauchy[" + median + "," + scale + ",x]";
 			break;
 
 		case DIST_EXPONENTIAL:
@@ -1429,7 +1427,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		// retrieve the parameter values from the parmList geo
 		double [] parms = getCurrentParameters();
-		double mean, sigma, v, v2, k, median, scale, shape, mode, n, p, pop, sample;	
+		double mean, sigma, v, v2, k, median, scale, shape, mode, n, p, pop, sample, variance;	
 
 		switch(selectedDist){
 
@@ -1462,14 +1460,17 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			break;
 
 		case DIST_F:
-			k = parms[0];		
+			v = parms[0];
+			v2 = parms[1];
+			mode = v2/v *(v-2)/(v2+2);
+			variance = 2*v*v*(v + v2 - 2)/(v2*(v-2)*(v-2)*(v-4));
 			xMin = 0;
-			xMax = 4*k;
+			xMax = mode + 5 * Math.sqrt(variance);
 			yMin = 0;
-			if(k>2)
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
+			if(v>2)
+				yMax = 1.2*((GeoFunction)densityCurve).evaluate(mode);	
 			else
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+				yMax = 1.2;	
 			break;
 
 		case DIST_CAUCHY:
