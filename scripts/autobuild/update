@@ -47,9 +47,39 @@ export JAVA_HOME
 export ANT_OPTS="-Xmx1024m"
 
 # 4. Building
-# alias signjar=jarsigner # May be needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
-ant geogebra-cl || exit 3
+
+# 4/1. Deleting *.class files and compiling grammar with javacc
+ant delete-classes compile-grammar || exit 3
+
+# 4/2. Setting classpath for ecj (required for Java 5)
+CP=""
+for i in *.jar; do
+ CP=$CP:$i
+ done
+CP=$CP:3D/jogl.jar:3D/gluegenrt.jar
+
+# 4/3. Setting bootclasspath
+BCP=../java150-rt.jar
+
+# 4/4. Creating *.class files
+echo "Creating class files"
+java -jar ecj-3.6.2.jar -1.5 -source 1.5 -target 1.5 -classpath $CP -bootclasspath $BCP\
+ -time -proceedOnError -g .  > /tmp/ecj.log 2>&1
+tail -1 /tmp/ecj.log
+echo ", see /tmp/ecj.log for more details" # ecj.log has no \n before EOF
+
+# 4/5. Packaging
+ant geogebra || exit 3
+
+# 4/6. Testing packed jars
+cd $SVNDIR/geogebra/scripts/autobuild
+./test-packed-jars
+cd $SVNDIR/geogebra
+
+# 4/7. Creating Mac OS X installer
 ant installer-clean installer-macosx
+
+# Making sure that all files have group writable permissions
 WARNINGS=`chmod -R g+rw $SVNDIR/geogebra 2>&1 | wc -l | awk '{print $1}'`
 echo "$WARNINGS warnings during chmod'ing build files"
 
@@ -78,11 +108,11 @@ chmod g+rwx $WWWDIR/$MYDIR || exit 4
 
 echo "$0: (re)creating $WWWDIR/$MYDIR directory"
 
-# 6/1. Copying dynamically generated files (autobuild):
+# 6/1. Copying dynamically generated files (autobuild)
 cp -R * $WWWDIR/$MYDIR || exit 4
 echo "$0: dynamically generated files copied"
 
-# 6/2. Copying static files:
+# 6/2. Copying static files
 cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR/$MYDIR || exit 4
 cp $SVNDIR/geogebra/vernier_ccsd-macintel-static.jar $WWWDIR/$MYDIR || exit 4
 echo "$0: static files copied"
@@ -111,7 +141,7 @@ for i in *.html *.jnlp; do
     echo "$0: $i is rewritten"
     done
 
-# 7. Finally, making sure that all files have group writable permissions:
+# 7. Finally, making sure that all files have group writable permissions
 WARNINGS=`chmod -R g+rw $WWWDIR/$MYDIR 2>&1 | wc -l | awk '{print $1}'`
 echo "$WARNINGS warnings during chmod'ing web files"
 
