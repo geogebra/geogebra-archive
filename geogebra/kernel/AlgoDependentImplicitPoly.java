@@ -50,8 +50,8 @@ public class AlgoDependentImplicitPoly extends AlgoElement {
 	@Override
 	protected void setInputOutput() {
 		input = equation.getGeoElementVariables();  
-		output = new GeoElement[1];        
-        output[0] = implicitPoly;        
+		setOutputLength(1);        
+        setOutput(0,implicitPoly);        
         setDependencies(); // done by AlgoElement
 	}
 

@@ -1,15 +1,12 @@
 package geogebra.gui.menubar;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
-import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 import javax.swing.AbstractAction;
@@ -17,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 /**
@@ -31,10 +27,6 @@ class ViewMenu extends BaseMenu {
 	private AbstractAction 
 		showAlgebraInputAction,
 		showKeyboardAction,
-		showHandwritingAction,
-		showHandwritingAutoAddAction,
-		showHandwritingTimedAddAction,
-		showHandwritingTimedRecogniseAction,
 		showCmdListAction,
 		showInputTopAction,
 		showToolBarAction,
@@ -56,11 +48,7 @@ class ViewMenu extends BaseMenu {
 		cbShowConsProtNavigationPlay,
 		cbShowConsProtNavigationOpenProt,
 		cbShowAlgebraInput,
-		cbShowKeyboard,
-		cbShowHandwriting,
-		cbShowHandwritingAutoAdd,
-		cbShowHandwritingTimedAdd,
-		cbShowHandwritingTimedRecognise,
+		cbShowKeyboard,		
 		cbShowCmdList,
 		cbShowAxes,
 		cbShowGrid;
@@ -69,9 +57,7 @@ class ViewMenu extends BaseMenu {
 	private JCheckBoxMenuItem[] cbViews;
 	
 	private JMenu
-		menuConsProt, 
-		menuViews,
-		menuHandwriting,
+		menuConsProt, 		
 		menuInput,
 		menuToolBar
 	;

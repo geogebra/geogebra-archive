@@ -108,6 +108,7 @@ public class Toolbar extends JToolBar {
 
 	/**
 	 * Sets toolbar mode. This will change the selected toolbar icon.
+	 * @param mode see EuclidianConstants for mode numbers
 	 * 
 	 * @return true if mode could be selected in toolbar.
 	 */
@@ -173,8 +174,9 @@ public class Toolbar extends JToolBar {
 	 * @param tb
 	 * @param bg
 	 */
+	@SuppressWarnings("unchecked")
 	private void addCustomModesToToolbar(ModeToggleButtonGroup bg) {
-		Vector toolbarVec;
+		Vector<Object> toolbarVec;
 		try {
 			if (dockPanel != null) {
 				toolbarVec = parseToolbarString(dockPanel.getToolbarString());
@@ -204,8 +206,8 @@ public class Toolbar extends JToolBar {
 				continue;
 			}
 
-			// new menu
-			Vector menu = (Vector) ob;
+			// new menu			
+			Vector<Integer> menu = (Vector<Integer>) ob;
 			ModeToggleMenu tm = new ModeToggleMenu(app, this, bg);
 			modeToggleMenus.add(tm);
 
@@ -269,20 +271,21 @@ public class Toolbar extends JToolBar {
 	 * Parses a toolbar definition string like "0 , 1 2 | 3 4 5 || 7 8 9" where
 	 * the int values are mode numbers, "," adds a separator within a menu, "|"
 	 * starts a new menu and "||" adds a separator before starting a new menu.
+	 * @param toolbarString toolbar definition string
 	 * 
 	 * @return toolbar as nested Vector objects with Integers for the modes. Note:
 	 *         separators have negative values.
 	 */
-	public static Vector parseToolbarString(String toolbarString) {
+	public static Vector<Object> parseToolbarString(String toolbarString) {
 		String[] tokens = toolbarString.split(" ");
-		Vector toolbar = new Vector();
-		Vector menu = new Vector();
+		Vector<Object> toolbar = new Vector<Object>();
+		Vector<Integer> menu = new Vector<Integer>();
 
 		for (int i = 0; i < tokens.length; i++) {
 			if (tokens[i].equals("|")) { // start new menu
 				if (menu.size() > 0)
 					toolbar.add(menu);
-				menu = new Vector();
+				menu = new Vector<Integer>();
 			} else if (tokens[i].equals("||")) { // separator between menus
 				if (menu.size() > 0)
 					toolbar.add(menu);
@@ -294,7 +297,7 @@ public class Toolbar extends JToolBar {
 				toolbar.add(SEPARATOR);
 
 				// start next menu
-				menu = new Vector();
+				menu = new Vector<Integer>();
 			} else if (tokens[i].equals(",")) { // separator within menu
 				menu.add(SEPARATOR);
 			} else { // add mode to menu

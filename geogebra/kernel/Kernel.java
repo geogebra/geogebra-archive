@@ -8587,5 +8587,10 @@ public class Kernel {
 		return null;
 	}
 	
+	public GeoNumeric getDefaultNumber(boolean isAngle){
+		return (GeoNumeric)cons.consDefaults.
+			getDefaultGeo(isAngle?ConstructionDefaults.DEFAULT_ANGLE:
+			ConstructionDefaults.DEFAULT_NUMBER);
+	}
 }
 	

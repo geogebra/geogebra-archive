@@ -37,7 +37,11 @@ public class AlgoDependentPoint extends AlgoElement {
     
     private GeoVec2D temp;
         
-    /** Creates new AlgoJoinPoints */
+    /** Creates new AlgoJoinPoints 
+     * @param cons 
+     * @param label 
+     * @param root expression defining the result
+     * @param complex true if result is complex number*/
     public AlgoDependentPoint(Construction cons, String label, ExpressionNode root, boolean complex) {
     	super(cons);
         this.root = root;        

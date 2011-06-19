@@ -39,7 +39,12 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
     private GeoLine g, h;
     private GeoVector wv; // direction of line bisector  
 
-    /** Creates new AlgoLineBisector */
+    /** Creates new AlgoLineBisector 
+     * @param cons 
+     * @param label 
+     * @param A 
+     * @param B 
+     * @param C */
     AlgoAngularBisectorPoints(
         Construction cons,
         String label,
@@ -79,8 +84,8 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
         input[1] = B;
         input[2] = C;
 
-        output = new GeoElement[1];
-        output[0] = bisector;
+        setOutputLength(1);
+        setOutput(0,bisector);
         setDependencies(); // done by AlgoElement
     }
 

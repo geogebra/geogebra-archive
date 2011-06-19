@@ -5,7 +5,6 @@ import geogebra.main.Application;
 import java.awt.Event;
 import java.awt.Toolkit;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;

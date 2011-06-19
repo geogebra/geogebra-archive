@@ -75,8 +75,9 @@ public class AlgoAxes extends AlgoElement {
     public void setInputOutput() {
         input = new GeoElement[1];
         input[0] = c;
-
-        output = axes;
+        setOutputLength(2);
+        setOutput(0,axes[0]);
+        setOutput(1,axes[1]);        
         setDependencies(); // done by AlgoElement
     }
 

@@ -297,6 +297,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		}
 	}	
 	
+	@SuppressWarnings("unchecked")
 	private boolean containsTool(DefaultMutableTreeNode node, Integer mode) {
         // compare modes
 		Object ob = node.getUserObject();
@@ -316,24 +317,26 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	
 	/**
 	 * Inits the toolbar tree in this panel to show the given toolbar definition string.
+	 * @param dockPanel 
+	 * @param toolbarDefinition toolbar as string (sequence of numbers and delimiters)
 	 */
 	public void setToolbar(DockPanel dockPanel, String toolbarDefinition) {
 		this.dockPanel = dockPanel;
 		
 		// create new tree model
-		Vector toolVec = Toolbar.parseToolbarString(toolbarDefinition);		
+		Vector<Object> toolVec = Toolbar.parseToolbarString(toolbarDefinition);		
 		DefaultTreeModel model = new DefaultTreeModel(generateRootNode(toolVec));
 		tree.setModel(model);		
 		collapseAllRows();	
 		tree.setRowHeight(-1);
 		
-		Vector allTools = generateToolsVector(Toolbar.getAllTools(app));
-		Vector usedTools = generateToolsVector(toolbarDefinition);
+		Vector<Object> allTools = generateToolsVector(Toolbar.getAllTools(app));
+		Vector<Object> usedTools = generateToolsVector(toolbarDefinition);
 		
 		toolListModel.clear();
 		toolListModel.addElement(Toolbar.SEPARATOR); // always display the separator in the tools list
 		
-		for(Iterator iter = allTools.iterator(); iter.hasNext();) {
+		for(Iterator<Object> iter = allTools.iterator(); iter.hasNext();) {
 			Object next = iter.next();
 			
 			if(!usedTools.contains(next)) {
@@ -364,6 +367,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	/**
 	 * Returns the custom toolbar created with this panel as a String.
 	 * Separator ("||" between menus, "," in menu), New menu starts with "|"
+	 * @return toolbar as string
 	 */
 	public String getToolBarString() {								
 		StringBuilder sb = new StringBuilder();
@@ -402,22 +406,25 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	}
 	
 	/**
+	 * @param toolbarDefinition 
+	 * @return vector of menus (vectors of ints) and separators (ints)
 	 * 
 	 */
-	public Vector generateToolsVector(String toolbarDefinition) {				
-		Vector vector = new Vector();		
+	@SuppressWarnings("unchecked")
+	public Vector<Object> generateToolsVector(String toolbarDefinition) {				
+		Vector<Object> vector = new Vector<Object>();		
 		// separator
 		vector.add(Toolbar.SEPARATOR);
 				
 		// get default toolbar as nested vectors
-		Vector defTools = Toolbar.parseToolbarString(toolbarDefinition);				
+		Vector<Object> defTools = Toolbar.parseToolbarString(toolbarDefinition);				
 		for (int i=0; i < defTools.size(); i++) {
 			Object element = defTools.get(i);
 			
 			if (element instanceof Vector) {
-				Vector menu = (Vector) element;
+				Vector<Integer> menu = (Vector<Integer>) element;
 				for (int j=0; j < menu.size(); j++) {
-					Integer modeInt = (Integer) menu.get(j);
+					Integer modeInt = menu.get(j);
 					int mode = modeInt.intValue();
 					if (mode != -1)
 						vector.add(modeInt);
@@ -452,8 +459,11 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		return jTree;
 	}
 	/**
+	 * @param toolbarModes 
+	 * @return toolbar as DefaultMutableTreeNode 
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	public DefaultMutableTreeNode generateRootNode(Vector toolbarModes) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode();
 		
@@ -517,6 +527,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	}
 	
 	/**
+	 * @param e 
 	 * 
 	 */
 	public void valueChanged(javax.swing.event.ListSelectionEvent e) {}

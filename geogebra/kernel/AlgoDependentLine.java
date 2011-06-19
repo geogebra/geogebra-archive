@@ -51,7 +51,10 @@ public class AlgoDependentLine extends AlgoElement {
     public final static int MODE_DIVIDE   = 4;
     
         
-    /** Creates new AlgoDependentLine */
+    /** Creates new AlgoDependentLine 
+     * @param cons 
+     * @param label 
+     * @param equ */
     public AlgoDependentLine(Construction cons, String label, Equation equ) {        
        	super(cons, false); // don't add to construction list yet
         equation = equ;  
@@ -112,8 +115,8 @@ public class AlgoDependentLine extends AlgoElement {
 		}
 			
 			
-        output = new GeoElement[1];        
-        output[0] = g;        
+        setOutputLength(1);        
+        setOutput(0,g);        
         setDependencies(); // done by AlgoElement
     }    
     
@@ -154,7 +157,7 @@ public class AlgoDependentLine extends AlgoElement {
     		break;
     	case MODE_DIVIDE:
     		n = num.getDouble();
-    		if (kernel.isZero(n))
+    		if (Kernel.isZero(n))
     			g.setUndefined();
     		else {
 	    		g.x = line1.x / n;

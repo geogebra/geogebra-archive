@@ -63,8 +63,8 @@ public class AlgoAxisSecond extends AlgoElement {
         input = new GeoElement[1];
         input[0] = c;        
         
-        output = new GeoElement[1];
-        output[0] = axis;
+        setOutputLength(1);
+        setOutput(0,axis);
         setDependencies(); // done by AlgoElement
     }    
     

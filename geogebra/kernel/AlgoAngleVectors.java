@@ -56,8 +56,8 @@ public class AlgoAngleVectors extends AlgoElement {
         input[0] = v;
         input[1] = w;
 
-        output = new GeoElement[1];
-        output[0] = angle;
+        setOutputLength(1);
+        setOutput(0,angle);
         setDependencies(); // done by AlgoElement
     }
 

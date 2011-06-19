@@ -19,14 +19,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
-import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -137,8 +133,7 @@ public class ToolbarConfigDialog extends JDialog implements ActionListener {
 			this.value = value;
 		}
 	 
-		public int getKey() { return key; }
-		public String getValue() { return value; }
+		public int getKey() { return key; }		
 	 
 		@Override
 		public String toString() { return value; }

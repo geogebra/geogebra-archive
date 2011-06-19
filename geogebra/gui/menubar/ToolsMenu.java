@@ -36,6 +36,7 @@ class ToolsMenu extends BaseMenu {
 	/**
 	 * Initialize the menu items.
 	 */
+	@SuppressWarnings("unchecked")
 	private void updateItems()
 	{
 		removeAll();
@@ -67,7 +68,7 @@ class ToolsMenu extends BaseMenu {
 		}
 
 		Toolbar toolbar = new Toolbar(app);
-		Vector modes = Toolbar.parseToolbarString(toolbar
+		Vector<Object> modes = Toolbar.parseToolbarString(toolbar
 				.getDefaultToolbarString());
 
 		int menuIndex = 0;

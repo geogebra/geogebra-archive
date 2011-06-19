@@ -1821,7 +1821,7 @@ public abstract class GeoElement
 	 * Returns the current animation speed of this slider. Note that
 	 * the speed can be negative which will change the direction of the animation.
 	 */
-	final public double getAnimationSpeed() {
+	public double getAnimationSpeed() {
 		if (animationSpeedObj == null) {
 			initAnimationSpeedObject();
 		}

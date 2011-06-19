@@ -1,19 +1,13 @@
 package geogebra.gui.menubar;
 
-import geogebra.GeoGebra;
 import geogebra.gui.layout.Layout;
-import geogebra.gui.util.BrowserLauncher;
 import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 
 /**
  * The "Help" menu.
@@ -29,8 +23,9 @@ class PerspectivesMenu extends BaseMenu {
 	savePerspectiveAction
 	;
 	/**
-	 * Creates new help menu
+	 * Creates new perspectives menu
 	 * @param app
+	 * @param layout 
 	 */
 	public PerspectivesMenu(Application app, Layout layout) {
 		super(app, app.getMenu("Perspectives"));

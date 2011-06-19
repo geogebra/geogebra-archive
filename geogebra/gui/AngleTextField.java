@@ -19,8 +19,8 @@ import java.util.Locale;
 
 public class AngleTextField extends MyTextField implements KeyListener {
 
-	public AngleTextField(int i, GuiManager guiManager) {
-		super(guiManager, i);
+	public AngleTextField(int columns, GuiManager guiManager) {
+		super(guiManager, columns);
 		this.addKeyListener(this);
 	}
 

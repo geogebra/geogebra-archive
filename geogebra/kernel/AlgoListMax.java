@@ -50,8 +50,8 @@ public class AlgoListMax extends AlgoElement {
         input = new GeoElement[1];
         input[0] = geoList;
 
-        output = new GeoElement[1];
-        output[0] = max;
+        setOutputLength(1);
+        setOutput(0,max);
         setDependencies(); // done by AlgoElement
     }
 

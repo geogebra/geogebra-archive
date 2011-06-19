@@ -35,7 +35,12 @@ public class AlgoDependentNumber extends AlgoElement {
 	private ExpressionNode root;  // input
     private GeoNumeric number;     // output              
         
-    /** Creates new AlgoJoinPoints */
+    /** Creates new AlgoJoinPoints 
+     * @param cons 
+     * @param label 
+     * @param root expression defining the result
+     * @param isAngle true for angles 
+     * */
     public AlgoDependentNumber(Construction cons, String label, ExpressionNode root, boolean isAngle) {
     	this(cons,root,isAngle);
         number.setLabel(label);

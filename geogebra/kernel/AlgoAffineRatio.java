@@ -36,8 +36,8 @@ public class AlgoAffineRatio extends AlgoElement {
         input[1] = B;
         input[2] = C;
         
-        output = new GeoElement[1];
-        output[0] = M;
+        setOutputLength(1);
+        setOutput(0,M);
         setDependencies(); // done by AlgoElement
     }
     

@@ -48,11 +48,10 @@ public class ModeToggleMenu extends JPanel {
 	ModeToggleButtonGroup bg;
 	private MyJToggleButton tbutton, mouseOverButton;
 	private JPopupMenu popMenu;
-	private ArrayList menuItemList;
+	private ArrayList<JMenuItem> menuItemList;
 	
 	private ActionListener popupMenuItemListener;
 	private Application app;
-	private Toolbar toolbar;
 	int size;
 	
 	final static Color bgColor = Color.white;
@@ -60,8 +59,6 @@ public class ModeToggleMenu extends JPanel {
 	public ModeToggleMenu(Application app, Toolbar toolbar, ModeToggleButtonGroup bg) {
 		this.app = app;
 		this.bg = bg;
-		this.toolbar = toolbar;
-		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		tbutton = new MyJToggleButton(this);		
@@ -70,7 +67,7 @@ public class ModeToggleMenu extends JPanel {
 		
 		popMenu = new JPopupMenu();	
 		popMenu.setBackground(bgColor);
-		menuItemList = new ArrayList();
+		menuItemList = new ArrayList<JMenuItem>();
 		popupMenuItemListener = new MenuItemListener();
 		size = 0;
 	}
@@ -87,7 +84,7 @@ public class ModeToggleMenu extends JPanel {
 		String modeText = mode + "";
 		
 		for (int i=0; i < size; i++) {
-			JMenuItem mi = (JMenuItem) menuItemList.get(i);
+			JMenuItem mi = menuItemList.get(i);
 			// found item for mode?
 			if (mi.getActionCommand().equals(modeText)) {
 				selectItem(mi);

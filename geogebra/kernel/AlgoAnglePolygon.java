@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.MyDouble;
 

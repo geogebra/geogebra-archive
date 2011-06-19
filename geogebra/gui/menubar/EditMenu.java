@@ -1,12 +1,9 @@
 package geogebra.gui.menubar;
 
-import geogebra.gui.util.ImageSelection;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -39,7 +36,6 @@ public class EditMenu extends BaseMenu {
 		invertItem,
 		showhideItem,
 		showhideLabelsItem,
-		propertiesItem,
 		selectAllItem,
 		selectAllAncestorsItem,
 		selectAllDescendantsItem,

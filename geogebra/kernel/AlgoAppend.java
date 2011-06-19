@@ -70,8 +70,8 @@ public class AlgoAppend extends AlgoElement {
             input[1] = inputList;
         }
 
-        output = new GeoElement[1];
-        output[0] = outputList;
+        setOutputLength(1);
+        setOutput(0,outputList);
         setDependencies(); // done by AlgoElement
     }
 

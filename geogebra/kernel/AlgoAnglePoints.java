@@ -110,8 +110,8 @@ public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation
         input[1] = B;
         input[2] = C;
 
-        output = new GeoElement[1];
-        output[0] = angle;
+        setOutputLength(1);
+        setOutput(0,angle);
         setDependencies(); // done by AlgoElement
     }
 
@@ -158,8 +158,8 @@ public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation
         wx = C.inhomX - bx;
         wy = C.inhomY - by;
                 
-        if (kernel.isZero(vx) && kernel.isZero(vy) ||
-        		kernel.isZero(wx) && kernel.isZero(wy)) {
+        if (Kernel.isZero(vx) && Kernel.isZero(vy) ||
+        		Kernel.isZero(wx) && Kernel.isZero(wy)) {
         	angle.setUndefined();
         	return;
         }

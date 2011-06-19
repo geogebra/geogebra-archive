@@ -61,8 +61,8 @@ public class AlgoDotPlot extends AlgoElement {
         input = new GeoElement[1];
         input[0] = inputList;
 
-        output = new GeoElement[1];
-        output[0] = outputList;
+        setOutputLength(1);
+        setOutput(0,outputList);
         setDependencies(); // done by AlgoElement
     }
 
@@ -81,12 +81,11 @@ public class AlgoDotPlot extends AlgoElement {
     	//========================================
     	// sort the raw data
     	
-    	GeoElement geo0 = inputList.get(0);     	
-    	Class geoClass = geo0.getClass();   	
-    	TreeSet sortedSet;
+    	GeoElement geo0 = inputList.get(0);     	    	 	
+    	TreeSet<GeoNumeric> sortedSet;
     		
     	if (geo0.isNumberValue()) {
-    		sortedSet = new TreeSet(GeoNumeric.getComparator());
+    		sortedSet = new TreeSet<GeoNumeric>(GeoNumeric.getComparator());
     		
     	} else {
     		outputList.setUndefined();
@@ -97,8 +96,8 @@ public class AlgoDotPlot extends AlgoElement {
         for (int i=0 ; i<size ; i++)
         {
 	      	GeoElement geo = inputList.get(i); 
-	   		if (geo.getClass().equals(geoClass)) {
-	   			sortedSet.add(geo);
+	   		if (geo instanceof GeoNumeric) {
+	   			sortedSet.add((GeoNumeric)geo);
 	   		}
 	   		else
 	   		{
@@ -118,7 +117,7 @@ public class AlgoDotPlot extends AlgoElement {
         boolean suppressLabelCreation = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 	
-        Iterator<GeoElement> iterator = sortedSet.iterator();    
+        Iterator<GeoNumeric> iterator = sortedSet.iterator();    
         double k = 1.0;
         double prevValue;
         double currentValue = (double)((GeoNumeric) iterator.next()).getDouble(); 

@@ -39,7 +39,11 @@ public class AlgoAngularBisectorLines extends AlgoElement {
     private boolean infiniteB;
     private int index;
 
-    /** Creates new AlgoAngularBisectorLines */
+    /** Creates new AlgoAngularBisectorLines 
+     * @param cons 
+     * @param label 
+     * @param g 
+     * @param h */
     AlgoAngularBisectorLines(
         Construction cons,
         String label,

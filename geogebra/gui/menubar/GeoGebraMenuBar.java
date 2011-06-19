@@ -29,9 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.scilab.forge.jlatexmath.TeXFormula;
-import org.scilab.forge.jlatexmath.TeXIcon;
-
 public class GeoGebraMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1736020764918189176L;
 
@@ -228,7 +225,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 			// default: do nothing
 		}
 		if (app.getApplet() != null) vsb.append(" Applet");
-		else if (app.isWebstart()) vsb.append(" Webstart");
+		else if (Application.isWebstart()) vsb.append(" Webstart");
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><b>");

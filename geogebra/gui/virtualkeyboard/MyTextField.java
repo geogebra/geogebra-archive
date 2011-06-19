@@ -77,8 +77,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		initField();
 	}
 
-	public MyTextField(GuiManager guiManager, int i) {
-		super(i);
+	public MyTextField(GuiManager guiManager, int columns) {
+		super(columns);
 		this.guiManager = guiManager;
 		initField();
 	}

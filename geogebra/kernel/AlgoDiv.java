@@ -53,7 +53,7 @@ public class AlgoDiv extends AlgoTwoNumFunction {
     		
     		double fraction = numerator / denominator;
     		double integer = Math.round(fraction);	
-    		if (kernel.isEqual(fraction, integer)) {
+    		if (Kernel.isEqual(fraction, integer)) {
     			num.setValue(integer);
     		} else if (denominator > 0)
     			{

@@ -49,7 +49,6 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		setClosedIcon(app.getImageIcon("tree-open.png"));
 
 		latexIcon = new ImageIcon();
-		String laTextStr;
 		this.view = view;
 	}
 
@@ -109,7 +108,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 			if(view.isRenderLaTeX()  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
 				latexFont = new Font(app.getBoldFont().getName(),app.getBoldFont().getStyle(),app.getBoldFont().getSize()-1);
 				latexStr = geo.getLaTeXAlgebraDescription(true);
-				if(latexStr != null && app.isLaTeXneeded(latexStr)){
+				if(latexStr != null && Application.isLaTeXneeded(latexStr)){
 					latexStr = "\\;" + latexStr; // add a little space for the icon
 					drawLatexImageIcon(latexIcon, latexStr, latexFont, false, getForeground(), this.getBackground() );
 					setIcon(joinIcons((ImageIcon) getIcon(),latexIcon));

@@ -110,7 +110,6 @@ public class AnimatedGifEncoder {
    * 
    * @param iter
    *          int number of iterations.
-   * @return
    */
   public void setRepeat(int iter) {
     if (iter >= 0) {
@@ -181,6 +180,7 @@ public class AnimatedGifEncoder {
   /**
    * Flushes any pending data and closes output file. If writing to an
    * OutputStream, the stream is not closed.
+   * @return true if succesful
    */
   public boolean finish() {
     if (!started)
@@ -232,7 +232,6 @@ public class AnimatedGifEncoder {
    * 
    * @param quality
    *          int greater than 0.
-   * @return
    */
   public void setQuality(int quality) {
     if (quality < 1)
@@ -349,6 +348,8 @@ public class AnimatedGifEncoder {
 
   /**
    * Returns index of palette color closest to c
+   * @param c 
+   * @return index of color closest to c in euclidean RGB space
    * 
    */
   protected int findClosest(Color c) {
@@ -394,6 +395,7 @@ public class AnimatedGifEncoder {
 
   /**
    * Writes Graphic Control Extension
+   * @throws IOException 
    */
   protected void writeGraphicCtrlExt() throws IOException {
     out.write(0x21); // extension introducer
@@ -425,6 +427,7 @@ public class AnimatedGifEncoder {
 
   /**
    * Writes Image Descriptor
+   * @throws IOException 
    */
   protected void writeImageDesc() throws IOException {
     out.write(0x2c); // image separator
@@ -448,6 +451,7 @@ public class AnimatedGifEncoder {
 
   /**
    * Writes Logical Screen Descriptor
+   * @throws IOException 
    */
   protected void writeLSD() throws IOException {
     // logical screen size
@@ -465,6 +469,7 @@ public class AnimatedGifEncoder {
 
   /**
    * Writes Netscape application extension to define repeat count.
+   * @throws IOException 
    */
   protected void writeNetscapeExt() throws IOException {
     out.write(0x21); // extension introducer
@@ -479,6 +484,7 @@ public class AnimatedGifEncoder {
 
   /**
    * Writes color table
+   * @throws IOException 
    */
   protected void writePalette() throws IOException {
     out.write(colorTab, 0, colorTab.length);
@@ -490,6 +496,7 @@ public class AnimatedGifEncoder {
 
   /**
    * Encodes and writes pixel data
+   * @throws IOException 
    */
   protected void writePixels() throws IOException {
     LZWEncoder encoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
@@ -498,6 +505,8 @@ public class AnimatedGifEncoder {
 
   /**
    * Write 16-bit value to output stream, LSB first
+   * @param value 
+   * @throws IOException 
    */
   protected void writeShort(int value) throws IOException {
     out.write(value & 0xff);
@@ -506,6 +515,8 @@ public class AnimatedGifEncoder {
 
   /**
    * Writes string to output stream
+   * @param s 
+   * @throws IOException 
    */
   protected void writeString(String s) throws IOException {
     for (int i = 0; i < s.length(); i++) {
@@ -902,7 +913,7 @@ class NeuQuant {
    */
   public void unbiasnet() {
 
-    int i, j;
+    int i;
 
     for (i = 0; i < netsize; i++) {
       network[i][0] >>= netbiasshift;

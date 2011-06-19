@@ -24,7 +24,6 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 

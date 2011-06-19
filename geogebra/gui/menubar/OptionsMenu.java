@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
@@ -22,18 +21,11 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	private static final long serialVersionUID = -8032696074032177289L;
 	
 	private Kernel kernel;
-	private Layout layout;
-	
 	private AbstractAction
 		//drawingPadPropAction,
 		savePreferencesAction,
 		clearPreferencesAction,
 		showOptionsAction
-	;
-	
-	private JCheckBoxMenuItem
-		cbShowViewTitlebar,
-		cbIgnoreDocumentPerspective
 	;
 	
 	private JMenu
@@ -47,8 +39,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		super(app, app.getMenu("Options"));
 		
 		kernel = app.getKernel();
-		this.layout = layout;
-		
 		initActions();
 		initItems();
 		

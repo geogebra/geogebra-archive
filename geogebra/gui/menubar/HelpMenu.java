@@ -1,11 +1,9 @@
 package geogebra.gui.menubar;
 
 import geogebra.GeoGebra;
-import geogebra.gui.util.BrowserLauncher;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
