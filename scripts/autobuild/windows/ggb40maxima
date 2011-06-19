@@ -15,9 +15,9 @@ umask 0002 # trying to ensure g+w rights for all created files automatically
 
 TEMPDIR=/tmp/ggb40maxima
 mkdir -p $TEMPDIR
+. ../autobuild.conf
 cp $GGB40MAXIMA_ZIP $TEMPDIR
 ZIPFILE=`basename $GGB40MAXIMA_ZIP`
-. ../autobuild.conf
 TARGET_DIR=$WWWDIR/installer
 
 ## GGB40MAXIMA_ZIP_URL=http://www.geogebra.org/webstart/4.0/ggb40maxima-3.9.155.0_5.23.2.zip
