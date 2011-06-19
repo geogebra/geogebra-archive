@@ -1144,7 +1144,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 			this.setUndefined();
 			return;
 		}
-		double r = 1/c.getCircleRadius();
+		double r = c.getCircleRadius();
 		if(S.inhomX != 0 || S.inhomY != 0)
 			translate(new Coords(-S.getX(), -S.getY()));
 		
@@ -1171,9 +1171,11 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		for(int i=0; i<degx+degy; i++)
 			if(u[i].length() > 0)
 				u[i] = " * (" + u[i] + ")";
+			else 
+				u[i] = "* 0";
 		
 		for(int i=0; i<deg; i++)
-			fun += " + " + Math.pow(r, 2*(deg-i-1)) + "*(x^2+y^2)^" + (deg-i-1) + u[i];
+			fun += " + " + Math.pow(r, 2*i) + "*(x^2+y^2)^" + (deg-i-1) + u[i];
 		fun += " = 0";
 		
 		ValidExpression ve = null;
@@ -1301,6 +1303,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 			this.fromGeoConic((GeoConicND)geo);
 		else
 			this.setCoeff(((GeoImplicitPoly)geo).getCoeff());
+		
 		geo.remove();
 	}
 	
