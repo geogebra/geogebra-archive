@@ -4654,7 +4654,7 @@ public class Kernel {
 	 * G. Sturr
 	 */
 	final public GeoList Frequency(String label,GeoBoolean isCumulative, GeoList dataList) {
-		AlgoFrequency algo = new AlgoFrequency(cons, label, isCumulative, dataList, null);
+		AlgoFrequency algo = new AlgoFrequency(cons, label, isCumulative, null, dataList);
 		GeoList list = algo.getResult();
 		return list;
 	}
