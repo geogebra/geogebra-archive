@@ -43,12 +43,12 @@ public class CmdNormal extends CommandProcessor {
 					String sd = arg[1].getLabel();
 					
 					if (cumulative) {
-						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "erf((x-("+mean+"))/abs("+sd+"))/2 + 0.5", true );
+						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "(erf((x-("+mean+"))/abs("+sd+")) + 1)/2", true );
 						
 						return ret;
 						
 					} else {
-						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "1/sqrt(2 * pi) / abs("+sd+")*exp(-((x-("+mean+"))/("+sd+"))^2/2)", true );
+						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "exp(-((x-("+mean+"))/("+sd+"))^2/2)/(sqrt(2*pi)*abs("+sd+"))", true );
 						
 						return ret;
 					}
