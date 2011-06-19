@@ -645,14 +645,13 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		}
 		
 		Coords coord = ip[0].getCoordsInD(2);
-		//precisePoint(coord, line);
 		return coord;
 	}
 	
 	
 	public void setNearestPointOnCurve(GeoPointND PI){
 		
-		/*if(this.isOnPath(PI))
+		if(this.isOnPath(PI))
 			return;
 		
 		Coords coords = PI.getCoordsInD(2);
@@ -719,7 +718,6 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 			lastClosestPoint = new Coords(PI.getCoordsInD(2).get());
 		else
 			lastClosestPoint.set(PI.getCoordsInD(2));
-		*/
 	}
 	
 	
