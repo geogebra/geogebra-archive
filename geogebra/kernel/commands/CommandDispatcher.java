@@ -560,6 +560,7 @@ public class CommandDispatcher {
     	cmdTable.put("InverseZipf", new CmdInverseZipf(kernel));
     	cmdTable.put("Triangular", new CmdTriangular(kernel));
     	cmdTable.put("Uniform", new CmdUniform(kernel));
+    	cmdTable.put("Erlang", new CmdErlang(kernel));
     	
     	cmdSubTable[TABLE_PROBABILITY].putAll(cmdTable);
     	cmdTable.clear();

@@ -6391,75 +6391,145 @@ class CmdLogistic extends CommandProcessor {
 
 	}
 
-/**
- *FDistribution
- */
-class CmdFDistribution extends CommandProcessor {
-
 	/**
-	 * Create new command processor
-	 * 
-	 * @param kernel
-	 *            kernel
+	 *Erlang Distribution
 	 */
-	public CmdFDistribution(Kernel kernel) {
-		super(kernel);
-	}
+	class CmdErlang extends CommandProcessor {
 
-	public GeoElement[] process(Command c) throws MyError {
-		int n = c.getArgumentNumber();
-		boolean[] ok = new boolean[n];
-		GeoElement[] arg;
-		
-		arg = resArgs(c);
+		/**
+		 * Create new command processor
+		 * 
+		 * @param kernel
+		 *            kernel
+		 */
+		public CmdErlang(Kernel kernel) {
+			super(kernel);
+		}
 
-		boolean cumulative = false; // default for n=3
-		switch (n) {
-		case 4:
-			if (arg[3].isGeoBoolean()) {
-				cumulative = ((GeoBoolean)arg[3]).getBoolean();
-			} else
-				throw argErr(app, c.getName(), arg[3]);
+		public GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+			
+			arg = resArgs(c);
 
-			// fall through
-		case 3:			
-			if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
-				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
-
-					String d1 = arg[0].getLabel();
-					String d2 = arg[1].getLabel();
-					String command;
-					
-					if (cumulative) {
-						command = "If[x<0,0,betaRegularized(("+d1+")/2,("+d2+")/2,("+d1+")*x/(("+d1+")*x+"+d2+"))]";
-					} else {
-						command = "If[x<0,0,((("+d1+")*x)^(("+d1+")/2)*("+d2+")^(("+d2+")/2))/(x*(("+d1+")*x+"+d2+")^(("+d1+"+"+d2+")/2)*beta(("+d1+")/2,("+d2+")/2))]";
-					}
-					
-					
-					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand(command, true);
-					return ret;
-
-
-				} else if (arg[2].isNumberValue()) {
-					GeoElement[] ret = { kernel.FDistribution(c.getLabel(),
-							(NumberValue) arg[0], (NumberValue) arg[1],
-							(NumberValue) arg[2]) };
-					return ret;
+			boolean cumulative = false; // default for n=3
+			switch (n) {
+			case 4:
+				if (arg[3].isGeoBoolean()) {
+					cumulative = ((GeoBoolean)arg[3]).getBoolean();
 				} else
-					throw argErr(app, c.getName(), arg[2]);
+					throw argErr(app, c.getName(), arg[3]);
 
-				} else if (!ok[0])
-					throw argErr(app, c.getName(), arg[0]);
-				else if (!ok[1])
-					throw argErr(app, c.getName(), arg[1]);
-				
+				// fall through
+			case 3:			
+				if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
+					if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 
-			default:
-				throw argNumErr(app, c.getName(), n);
+						String k = arg[0].getLabel();
+						String l = arg[1].getLabel();
+						String command;
+						
+						if (cumulative) {
+							command = "If[x<0,0,gamma("+k+",("+l+")x)/("+k+"-1)!]";
+						} else {
+							command = "If[x<0,0,(("+l+")^("+k+")x^("+k+"-1)exp(-("+l+")x))/("+k+"-1)!]";
+						}						
+						
+						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand(command, true);
+						return ret;
+
+
+					} else if (arg[2].isNumberValue()) {
+						String k = arg[0].getLabel();
+						String l = arg[1].getLabel();
+						String x = arg[2].getLabel();
+						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand("If[x<0,0,(("+l+")^("+k+")("+x+")^("+k+"-1)exp(-("+l+")("+x+")))/("+k+"-1)!]", true);
+						return ret;
+					} else
+						throw argErr(app, c.getName(), arg[2]);
+
+					} else if (!ok[0])
+						throw argErr(app, c.getName(), arg[0]);
+					else if (!ok[1])
+						throw argErr(app, c.getName(), arg[1]);
+					
+
+				default:
+					throw argNumErr(app, c.getName(), n);
+				}
 			}
 		}
-	}
+
+	/**
+	 *FDistribution
+	 */
+	class CmdFDistribution extends CommandProcessor {
+
+		/**
+		 * Create new command processor
+		 * 
+		 * @param kernel
+		 *            kernel
+		 */
+		public CmdFDistribution(Kernel kernel) {
+			super(kernel);
+		}
+
+		public GeoElement[] process(Command c) throws MyError {
+			int n = c.getArgumentNumber();
+			boolean[] ok = new boolean[n];
+			GeoElement[] arg;
+			
+			arg = resArgs(c);
+
+			boolean cumulative = false; // default for n=3
+			switch (n) {
+			case 4:
+				if (arg[3].isGeoBoolean()) {
+					cumulative = ((GeoBoolean)arg[3]).getBoolean();
+				} else
+					throw argErr(app, c.getName(), arg[3]);
+
+				// fall through
+			case 3:			
+				if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
+					if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
+
+						String d1 = arg[0].getLabel();
+						String d2 = arg[1].getLabel();
+						String command;
+						
+						if (cumulative) {
+							command = "If[x<0,0,betaRegularized(("+d1+")/2,("+d2+")/2,("+d1+")*x/(("+d1+")*x+"+d2+"))]";
+						} else {
+							command = "If[x<0,0,((("+d1+")*x)^(("+d1+")/2)*("+d2+")^(("+d2+")/2))/(x*(("+d1+")*x+"+d2+")^(("+d1+"+"+d2+")/2)*beta(("+d1+")/2,("+d2+")/2))]";
+						}
+						
+						
+						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand(command, true);
+						return ret;
+
+
+					} else if (arg[2].isNumberValue()) {
+						GeoElement[] ret = { kernel.FDistribution(c.getLabel(),
+								(NumberValue) arg[0], (NumberValue) arg[1],
+								(NumberValue) arg[2]) };
+						return ret;
+					} else
+						throw argErr(app, c.getName(), arg[2]);
+
+					} else if (!ok[0])
+						throw argErr(app, c.getName(), arg[0]);
+					else if (!ok[1])
+						throw argErr(app, c.getName(), arg[1]);
+					
+
+				default:
+					throw argNumErr(app, c.getName(), n);
+				}
+			}
+		}
 
 /**
  *InverseFDistribution
