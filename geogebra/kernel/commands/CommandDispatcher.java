@@ -514,7 +514,7 @@ public class CommandDispatcher {
 
     	cmdTable.put("TTest", new CmdTTest(kernel));
     	cmdTable.put("TTestPaired", new CmdTTestPaired(kernel));
-
+    	cmdTable.put("TTest2", new CmdTTest2(kernel));
     	
     	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
     	cmdTable.clear();

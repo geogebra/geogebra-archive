@@ -122,6 +122,7 @@ import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoTTest;
+import geogebra.kernel.statistics.AlgoTTest2;
 import geogebra.kernel.statistics.AlgoTTestPaired;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.AlgoWeibull;
@@ -4155,6 +4156,22 @@ public class Kernel {
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	/** TTest2[] with sample data */
+	final public GeoNumeric TTest2(String label, GeoList sampleList1, GeoList sampleList2, GeoText tail, GeoBoolean pooled) {
+		AlgoTTest2 algo = new AlgoTTest2(cons, label, sampleList1, sampleList2, tail, pooled);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** TTest2[] with sample statistics */
+	final public GeoNumeric TTest2(String label, GeoNumeric mean1, GeoNumeric sd1, GeoNumeric n1, GeoNumeric mean2, 
+			GeoNumeric sd2, GeoNumeric n2, GeoText tail, GeoBoolean pooled) {
+		AlgoTTest2 algo = new AlgoTTest2(cons, label, mean1, mean2, sd1, sd2, n1, n2, tail, pooled);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
 	
 	
 	
