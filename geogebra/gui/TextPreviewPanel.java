@@ -4,7 +4,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AlgoDependentText;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -41,7 +41,6 @@ public class TextPreviewPanel extends EuclidianView {
 	private static boolean[] showAxes = { false, false };
 	private static boolean showGrid = false;
 	private GeoText previewGeoIndependent, previewGeoDependent;
-	private boolean enableUpdateSize = true; // needed ?
 
 	private AlgoDependentText textAlgo;
 	private Construction cons ;
@@ -243,7 +242,7 @@ public class TextPreviewPanel extends EuclidianView {
 		// set error message style
 		if(isErrorMessage)
 		{
-			geo.setVisualStyle(cons.getConstructionDefaults().getDefaultGeo(GeoElement.GEO_CLASS_TEXT));
+			geo.setVisualStyle(cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_TEXT));					
 			geo.setObjColor(Color.red);
 			geo.setBackgroundColor(Color.white);
 			//geo.setFontSize(app.getFontSize());

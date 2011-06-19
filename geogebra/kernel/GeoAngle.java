@@ -50,7 +50,7 @@ public final class GeoAngle extends GeoNumeric {
 	final public static double DEFAULT_SLIDER_MIN = 0;
 	/** Default maximum value when displayed as slider*/
 	final public static double DEFAULT_SLIDER_MAX = Kernel.PI_2;
-
+	final public static double DEFAULT_SLIDER_INCREMENT = Math.PI / 180.0;
 	/** Measure angle anticlockwise*/
 	final public static int ANGLE_ISANTICLOCKWISE = 0; // old allowReflexAngle=true
 	/** Measure angle clockwise*/
@@ -87,7 +87,6 @@ public final class GeoAngle extends GeoNumeric {
 		setAlphaValue(ConstructionDefaults.DEFAULT_ANGLE_ALPHA);
 		setLabelMode(GeoElement.LABEL_NAME);
 		setEuclidianVisible(false);
-		setAnimationStep(Math.PI / 180.0);
 	}
 
 	/**

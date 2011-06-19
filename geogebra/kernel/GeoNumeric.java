@@ -27,7 +27,6 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -56,6 +55,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public static double DEFAULT_SLIDER_MAX = 5;
 	/** Default increment when displayed as slider*/
 	public static double DEFAULT_SLIDER_INCREMENT = 0.1;
+	/** Default increment when displayed as slider*/
+	public static double DEFAULT_SLIDER_SPEED = 1;
 	
 	/** value of the number or angle */
 	protected double value;	
@@ -87,7 +88,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		super(c);
 		setEuclidianVisible(isGeoAngle());
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
-		setAnimationStep(DEFAULT_SLIDER_INCREMENT);					
+		//setAnimationStep(DEFAULT_SLIDER_INCREMENT);					
 	}
 
 	public String getClassName() {
@@ -161,28 +162,28 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 					
 		// slider is only possible for independent
 		// number with given min and max
-		if (isIndependent()) {
+		if (isIndependent()) {			
 			if (visible) {		
+				GeoNumeric num = kernel.getDefaultNumber(isAngle());				
 				// make sure the slider value is not fixed 
 				setFixed(false);
-				
 				if (!intervalMinActive) {
-					if (!intervalMaxActive) {
+					if (!intervalMaxActive) {			
 						// set both to default
-						double min = Math.min(getDefaultSliderMin(), Math.floor(value));
-						double max = Math.max(getDefaultSliderMax(), Math.ceil(value));
+						double min = Math.min(num.getIntervalMin(), Math.floor(value));
+						double max = Math.max(num.getIntervalMax(), Math.ceil(value));
 						setIntervalMin(new MyDouble(kernel,min));
-						setIntervalMax(new MyDouble(kernel,max));												
+						setIntervalMax(new MyDouble(kernel,max));						
 					} else {
 						// max is available but no min
-						double min = Math.min(getDefaultSliderMin(), Math.floor(value));
+						double min = Math.min(num.getIntervalMin(), Math.floor(value));
 						setIntervalMin(new MyDouble(kernel,min));				
 					}
 				}
 				else { // min exists
 					if (!intervalMaxActive) {
 						//	min is available but no max
-						double max = Math.max(getDefaultSliderMax(), Math.ceil(value));
+						double max = Math.max(num.getIntervalMax(), Math.ceil(value));
 						setIntervalMax(new MyDouble(kernel,max));					
 					}
 				}			
@@ -253,8 +254,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 
 	public final boolean showInAlgebraView() {
-		// independent or defined
-		//return isIndependent() || isDefined();
 		return true;
 	}
 
@@ -304,7 +303,22 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		else 
 			return false;
 	}
+	
+	public double getAnimationStep() {
+		if(getAnimationStepObject() == null){
+			GeoNumeric num = kernel.getDefaultNumber(isGeoAngle());
+			setAnimationStep(num.getAnimationStep());		
+		}
+		return super.getAnimationStep();
+	}
 
+	public double getAnimationSpeed() {
+		if(getAnimationSpeedObject() == null){
+			GeoNumeric num = kernel.getDefaultNumber(isGeoAngle());
+			setAnimationStep(num.getAnimationSpeed());
+		}
+		return super.getAnimationSpeed();
+	}
 	/**
 	 * Sets value of the number
 	 * @param x number value
@@ -590,6 +604,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * Sets the location of the slider for this number.
 	 * @param x x-coord of the slider
 	 * @param y y-coord of the slider
+	 * @param force when false, this method ignores fixed sliders
 	 */
 	public final void setSliderLocation(double x, double y, boolean force) {
 		if (!force && sliderFixed) return;
@@ -856,10 +871,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	
 	public void update() {  	
-		super.update();
+		super.update();		
 		//G.Sturr 2010-5-12
 		EuclidianView view = kernel.getApplication().getEuclidianView();	
-		if (this == view.getEuclidianController().recordObject){	
+		if (view != null && this == view.getEuclidianController().recordObject){	
     		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
     	}
 	  	//END G.Sturr
@@ -1039,21 +1054,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	private static Comparator<GeoNumeric> comparator;
 
-	/**
-	 * Returns default minimum for slider
-	 * @return default minimum for slider
-	 */
-	public double getDefaultSliderMin() {
-		return isGeoAngle() ? GeoAngle.DEFAULT_SLIDER_MAX : DEFAULT_SLIDER_MIN;
-	}
-
-	/**
-	 * Returns default maximum for slider
-	 * @return default maximum for slider
-	 */
-	public double getDefaultSliderMax() {
-		return isGeoAngle() ? GeoAngle.DEFAULT_SLIDER_MAX : DEFAULT_SLIDER_MAX;
-	}
+	
 	
 	//protected void setRandomNumber(boolean flag) {
 	//	isRandomNumber = flag;
@@ -1086,7 +1087,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * Set interval min
 	 * @param value
 	 */
-	public void setIntervalMin(double value) {
+	public void setIntervalMin(double value) {			
 			setIntervalMin(new MyDouble(kernel, value));		
 	}
 	
@@ -1094,7 +1095,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * Set interval max
 	 * @param value
 	 */
-	public void setIntervalMax(double value) {
+	public void setIntervalMax(double value) {		
 		setIntervalMax(new MyDouble(kernel, value));		
 	}
 

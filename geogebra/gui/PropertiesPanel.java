@@ -5249,9 +5249,9 @@ class SliderPanel
         kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalMin){
 			GeoElement min0 = num0.getIntervalMinObject();
-			if (onlyAngles && (min0 == null ||(!min0.isLabelSet() && min0.isIndependent())))
+			if (onlyAngles && (min0 == null ||(!min0.isLabelSet() && min0.isIndependent()))){				
 				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());			
-			else
+			}else
 				tfMin.setText(min0.getLabel());
 		} else {
 			tfMin.setText("");
@@ -5749,14 +5749,14 @@ class AnimationSpeedPanel
 
 		// check if properties have same values
 		GeoElement temp, geo0 = (GeoElement) geos[0];
-		boolean equalStep = true;
+		boolean equalSpeed = true;
 		boolean equalAnimationType = true;
 
 		for (int i = 0; i < geos.length; i++) {
 			temp = (GeoElement) geos[i];
 			// same object visible value
 			if (geo0.getAnimationSpeedObject() != temp.getAnimationSpeedObject())
-				equalStep = false;
+				equalSpeed = false;
 			if (geo0.getAnimationType() != temp.getAnimationType())
 				equalAnimationType = false;
 		}
@@ -5771,9 +5771,10 @@ class AnimationSpeedPanel
 		//kernel.setMaximumFractionDigits(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
         kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
         
-        if (equalStep) {
+        if (equalSpeed) {
         	GeoElement speedObj = geo0.getAnimationSpeedObject();
-			tfAnimSpeed.setText(speedObj == null ? "1" : speedObj.getLabel());
+        	GeoNumeric num = kernel.getDefaultNumber(geo0.isAngle());
+			tfAnimSpeed.setText(speedObj == null ? num.getAnimationSpeedObject().getLabel() : speedObj.getLabel());
         } else
 			tfAnimSpeed.setText("");
         

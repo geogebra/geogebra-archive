@@ -255,6 +255,12 @@ public class ConstructionDefaults {
 		number.setLocalVariableLabel("Numeric");
 		number.setSliderFixed(true);
 		number.setLabelMode(GeoElement.LABEL_NAME_VALUE);	
+		/*we have to set min/max/increment/speed here because 
+		SetEuclideanVisible takes these from default geo*/
+		number.setIntervalMax(GeoNumeric.DEFAULT_SLIDER_MAX);
+		number.setIntervalMin(GeoNumeric.DEFAULT_SLIDER_MIN);
+		number.setAnimationStep(GeoNumeric.DEFAULT_SLIDER_INCREMENT);
+		number.setAnimationSpeed(GeoNumeric.DEFAULT_SLIDER_SPEED);
 		defaultGeoElements.put(DEFAULT_NUMBER, number);
 				
 		// angle
@@ -265,8 +271,12 @@ public class ConstructionDefaults {
 		angle.setObjColor(colAngle);		
 		angle.setAlphaValue(DEFAULT_ANGLE_ALPHA);
 		angle.setArcSize(angleSize);
-		//angle.setDrawable(true);
-		//angle.setParentAlgorithm(new AlgoElement(cons));
+		/*we have to set min/max/increment/speed here because 
+		SetEuclideanVisible takes these from default geo*/
+		angle.setIntervalMax(GeoAngle.DEFAULT_SLIDER_MAX);
+		angle.setIntervalMin(GeoAngle.DEFAULT_SLIDER_MIN);
+		angle.setAnimationStep(GeoAngle.DEFAULT_SLIDER_INCREMENT);
+		angle.setAnimationSpeed(GeoAngle.DEFAULT_SLIDER_SPEED);				
 		defaultGeoElements.put(DEFAULT_ANGLE, angle);
 		
 		// function
@@ -559,7 +569,7 @@ public class ConstructionDefaults {
 		
 		this.angleSize = Math.max(angleSize, 1);
 			
-		Iterator it = defaultGeoElements.values().iterator();
+		Iterator<GeoElement> it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();	
 			
@@ -577,7 +587,7 @@ public class ConstructionDefaults {
 			
 		this.pointSize = Math.max(pointSize, 1);
 		
-		Iterator it = defaultGeoElements.values().iterator();
+		Iterator<GeoElement> it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();	
 			
@@ -599,7 +609,7 @@ public class ConstructionDefaults {
 		
 		this.lineThickness = Math.max(lineThickness, 1);
 			
-		Iterator it = defaultGeoElements.values().iterator();
+		Iterator<GeoElement> it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();	
 			
@@ -619,7 +629,7 @@ public class ConstructionDefaults {
 		
 		this.filling = filling;
 			
-		Iterator it = defaultGeoElements.values().iterator();
+		Iterator<GeoElement> it = defaultGeoElements.values().iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();	
 			

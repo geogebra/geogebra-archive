@@ -14,12 +14,10 @@ package geogebra.gui;
 
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
-import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.main.Application;
-import geogebra.main.MyParseError;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -60,10 +58,12 @@ public class SliderDialog extends JDialog
 	private GeoElement geoResult;
 	private GeoNumeric number;
 	private GeoAngle angle;
-	
+			
 	/**
 	 * Creates a dialog to create a new GeoNumeric for a slider.
-	 * @param x, y: location of slider in screen coords
+	 * @param x x-coordinate of slider in screen coords
+	 * @param y x-coordinate of slider in screen coords
+	 * @param app
 	 */
 	public SliderDialog(Application app, int x, int y) {
 		super(app.getFrame(), false);
@@ -72,29 +72,37 @@ public class SliderDialog extends JDialog
 		
 		// create temp geos that may be returned as result
 		Construction cons = app.getKernel().getConstruction();
-		GeoNumeric defaultNum = (GeoNumeric)cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_NUMBER);
-		GeoNumeric defaultAngle = (GeoNumeric)cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_ANGLE);
+		
+		
 		number = new GeoNumeric(cons);
-		number.setSliderFixed(defaultNum.isSliderFixed());
-		number.setEuclidianVisible(true);
-		number.setSliderLocation(x, y, true);
-		number.setAbsoluteScreenLocActive(true);
-		number.setValue(1);
-		
 		angle = new GeoAngle(cons);
-		angle.setSliderFixed(defaultAngle.isSliderFixed());
-		angle.setEuclidianVisible(true);
-		angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
-		angle.setSliderLocation(x, y, true);
-		angle.setAnimationType(GeoElement.ANIMATION_INCREASING);
-		angle.setAbsoluteScreenLocActive(true);
+		setFromDefault(number,false);
+		setFromDefault(angle,true);
+		number.setValue(1);
 		angle.setValue(45 * Math.PI/180);
+			
+		number.setSliderLocation(x, y, true);
+		angle.setSliderLocation(x, y, true);
 		
+		
+				
 		geoResult = null;
 
 		createGUI();	
 	}			
 	
+	private void setFromDefault(GeoNumeric num, boolean isAngle) {
+		GeoNumeric defaultNum = app.getKernel().getDefaultNumber(isAngle);		
+		num.setSliderFixed(defaultNum.isSliderFixed());		
+		num.setEuclidianVisible(true);
+		num.setIntervalMin((GeoNumeric)defaultNum.getIntervalMinObject());
+		num.setIntervalMax((GeoNumeric)defaultNum.getIntervalMaxObject());
+		num.setAbsoluteScreenLocActive(true);
+		num.setAnimationType(defaultNum.getAnimationType());
+		num.setSliderWidth(defaultNum.getSliderWidth());
+		num.setRandom(defaultNum.isRandom());
+	}
+
 	private void createGUI() {
 		setTitle(app.getPlain("Slider"));
 		setResizable(false);		
@@ -224,16 +232,16 @@ public class SliderDialog extends JDialog
 			setVisible(false);
 		} 
 		else if (source == rbNumber || source == rbAngle || source == rbInteger) {
-			GeoElement selGeo = rbAngle.isSelected() ? angle : number;
-			
+			GeoElement selGeo = rbAngle.isSelected() ? angle : number;			
 			if (source == rbInteger) {
 				number.setAnimationStep(1);
 				number.setIntervalMin(1);
 				number.setIntervalMax(30);
 			} else if (source == rbNumber) {
-				number.setAnimationStep(GeoNumeric.DEFAULT_SLIDER_INCREMENT);
-				number.setIntervalMin(GeoNumeric.DEFAULT_SLIDER_MIN);
-				number.setIntervalMax(GeoNumeric.DEFAULT_SLIDER_MAX);
+				GeoNumeric num = (GeoNumeric) app.getKernel().getDefaultNumber(false);
+				number.setAnimationStep(num.getAnimationStep());
+				number.setIntervalMin(num.getIntervalMin());
+				number.setIntervalMax(num.getIntervalMax());
 			}
 			GeoElement [] geos = { selGeo };			
 			sliderPanel.update(geos);			
