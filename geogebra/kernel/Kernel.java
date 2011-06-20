@@ -71,6 +71,7 @@ import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
 import geogebra.kernel.statistics.AlgoGamma;
 import geogebra.kernel.statistics.AlgoGeometricMean;
+import geogebra.kernel.statistics.AlgoHarmonicMean;
 import geogebra.kernel.statistics.AlgoHyperGeometric;
 import geogebra.kernel.statistics.AlgoInverseBinomial;
 import geogebra.kernel.statistics.AlgoInverseCauchy;
@@ -4930,6 +4931,15 @@ public class Kernel {
 		return num;
 	}
 	
+	/** 
+	 * HarmonicMean[list]
+	 * G. Sturr
+	 */
+	final public GeoNumeric HarmonicMean(String label, GeoList list) {
+		AlgoHarmonicMean algo = new AlgoHarmonicMean(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
 	
 	
 	
