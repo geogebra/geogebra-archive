@@ -252,8 +252,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected boolean POINT_CREATED = false;
 
 	protected boolean moveModeSelectionHandled;
-	
+
 	protected boolean highlightJustCreatedGeos = true;
+
+	protected ArrayList<GeoElement> pastePreviewSelected;
 
 	//protected MyPopupMenu popupMenu;
 
@@ -311,7 +313,69 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		this.view = view;
 	}
 
-	
+	//==============================================
+	// Paste preview
+
+	public void setPastePreviewSelected() {
+		if (pastePreviewSelected == null)
+			pastePreviewSelected = new ArrayList<GeoElement>();
+
+		GeoElement geo;
+		boolean firstMoveable = true;
+		for (int i = 0; i < app.getSelectedGeos().size(); i++) {
+			geo = app.getSelectedGeos().get(i);
+			if (geo.isIndependent() && geo.isMoveable()) {
+				pastePreviewSelected.add(geo);
+				if (firstMoveable) {
+					if (geo.isGeoPoint()) {
+						startPoint.setLocation(((GeoPoint)geo).inhomX, ((GeoPoint)geo).inhomY);
+						firstMoveable = false;
+					} else if (geo.isGeoText()) {
+						if (((GeoText)geo).hasAbsoluteLocation()) {
+							GeoPoint loc = (GeoPoint) movedGeoText.getStartPoint();
+							startPoint.setLocation(loc.inhomX, loc.inhomY);
+							firstMoveable = false;
+						}
+					} else if (geo.isGeoNumeric()) {
+						if (!((GeoNumeric)geo).isAbsoluteScreenLocActive()) {
+							startPoint.setLocation(((GeoNumeric)geo).getRealWorldLocX(), ((GeoNumeric)geo).getRealWorldLocY());
+							firstMoveable = false;
+						}
+					} else if (geo.isGeoImage()) {
+						if (((GeoImage)geo).hasAbsoluteLocation()) {
+							GeoPoint loc = (GeoPoint)((GeoImage)geo).getStartPoints()[2];
+							if (loc != null) { // top left defined
+								//transformCoordsOffset[0]=loc.inhomX-xRW;
+								//transformCoordsOffset[1]=loc.inhomY-yRW;
+								startPoint.setLocation(loc.inhomX, loc.inhomY);
+								firstMoveable = false;
+							} else {
+								loc = (GeoPoint) movedGeoImage.getStartPoint();
+								if (loc != null) { // bottom left defined (default)
+									//transformCoordsOffset[0]=loc.inhomX-xRW;
+									//transformCoordsOffset[1]=loc.inhomY-yRW;
+									startPoint.setLocation(loc.inhomX, loc.inhomY);
+									firstMoveable = false;
+								} else {
+									loc = (GeoPoint) movedGeoImage.getStartPoints()[1];
+									if (loc != null) { // bottom right defined
+										//transformCoordsOffset[0]=loc.inhomX-xRW;
+										//transformCoordsOffset[1]=loc.inhomY-yRW;
+										startPoint.setLocation(loc.inhomX, loc.inhomY);
+										firstMoveable = false;
+									}
+								}
+							}
+						}
+					}
+					firstMoveable = false;
+				}
+			}
+		}
+		if (!firstMoveable) {
+			
+		}
+	}
 	
 	//==============================================
 	//  Pen 
@@ -1693,6 +1757,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			} 
 		}
 
+		if (pastePreviewSelected != null)
+			if (!pastePreviewSelected.isEmpty()) {
+				if (translationVec == null)
+					translationVec = new Coords(2);
+				translationVec.setX(xRW - startPoint.x);
+				translationVec.setY(yRW - startPoint.y);
+				startPoint.setLocation(xRW, yRW);
+				GeoElement.moveObjects(pastePreviewSelected, translationVec, new Coords(xRW, yRW, 0), null);
+			}
+
 		handleMouseDragged(true);								
 	}	
 
@@ -1950,6 +2024,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return;
 		}
 
+		boolean changedKernel0 = false;
+		if (pastePreviewSelected != null) {
+			pastePreviewSelected.clear();
+			changedKernel0 = true;
+		}
 
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
 		if (getMovedGeoPoint() != null){
@@ -2092,7 +2171,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		// remember helper point, see createNewPoint()
-		if (changedKernel)
+		if (changedKernel || changedKernel0)
 			app.storeUndoInfo();
 
 		// make sure that when alt is pressed for creating a segment or line
@@ -2565,9 +2644,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.updatePreviewable();
 			repaintNeeded = true;
 		}
+		
+		if (pastePreviewSelected != null && !pastePreviewSelected.isEmpty()) {
+			transformCoords();
+			if (translationVec == null)
+				translationVec = new Coords(2);
+			translationVec.setX(xRW - startPoint.x);
+			translationVec.setY(yRW - startPoint.y);
+			startPoint.setLocation(xRW, yRW);
+			GeoElement.moveObjects(pastePreviewSelected, translationVec, new Coords(xRW, yRW, 0), null);
+				
+			repaintNeeded = true;
+		}
 
 		// show Mouse coordinates, manage alt -> multiple of 15 degrees
-		if (view.getShowMouseCoords()) {
+		else if (view.getShowMouseCoords()) {
 			transformCoords();
 			repaintNeeded = true;
 		}		

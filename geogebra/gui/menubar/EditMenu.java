@@ -3,6 +3,7 @@ package geogebra.gui.menubar;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.util.CopyPaste;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -28,7 +29,9 @@ public class EditMenu extends BaseMenu {
 		selectAllAncestorsAction,
 		selectAllDescendantsAction,
 		selectCurrentLayerAction,
-		copyToClipboardAction
+		copyToClipboardAction,
+		copyAction,
+		pasteAction
 	;
 	
 	private JMenuItem
@@ -40,7 +43,9 @@ public class EditMenu extends BaseMenu {
 		selectAllAncestorsItem,
 		selectAllDescendantsItem,
 		selectCurrentLayerItem,
-		copyToClipboardItem
+		copyToClipboardItem,
+		copyItem,
+		pasteItem
 	;
 	
 	private JSeparator
@@ -77,6 +82,12 @@ public class EditMenu extends BaseMenu {
 			addSeparator();
 		}
 
+		copyItem = add(copyAction);
+		setMenuShortCutAccelerator(copyItem, 'C');
+		
+		pasteItem = add(pasteAction);
+		setMenuShortCutAccelerator(pasteItem, 'V');
+		
 		copyToClipboardItem = add(copyToClipboardAction);
 		// ctrl-shift-c is also handled in MyKeyListener
 		setMenuShortCutShiftAccelerator(copyToClipboardItem, 'C');
@@ -206,6 +217,30 @@ public class EditMenu extends BaseMenu {
 				app.showHideSelectionLabels();
 			}
 		};
+
+		copyAction = new AbstractAction(
+				"Copy",
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {			
+				app.setWaitCursor();
+				CopyPaste.copyToXML(app, app.getSelectedGeos());
+				app.setDefaultCursor();
+			}
+		};
+		
+		pasteAction = new AbstractAction(
+				"Paste",
+				app.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setWaitCursor();
+				CopyPaste.pasteFromXML(app);
+				app.setDefaultCursor();
+			}
+		};
 		
 		copyToClipboardAction = new AbstractAction(
 				app.getMenu("DrawingPadToClipboard"),
@@ -277,7 +312,10 @@ public class EditMenu extends BaseMenu {
 		 */
 		
 		boolean justCreated = !(app.getActiveEuclidianView().getEuclidianController().getJustCreatedGeos().isEmpty());
-		
+
+		copyAction.setEnabled(!app.getSelectedGeos().isEmpty());
+		pasteAction.setEnabled(!CopyPaste.isEmpty());
+
 		deleteAction.setEnabled(layer != -1 || justCreated);
 		deleteItem.setVisible(layer != -1 || justCreated);
 		deleteSeparator.setVisible(layer != -1 || justCreated);
