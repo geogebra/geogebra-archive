@@ -30,5 +30,5 @@ wine $WIXDIR/light.exe -sval -ext WixUIExtension GeoGebra.wixobj
 
 mv GeoGebra.msi $MSIFILE
 
-echo Now you can run 'msiexec /i $MSIFILE' to test GeoGebra Windows Installer on Unix
+echo "Now you can run 'msiexec /i $MSIFILE' to test GeoGebra Windows Installer on Unix"
 
