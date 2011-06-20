@@ -219,7 +219,7 @@ public class EditMenu extends BaseMenu {
 		};
 
 		copyAction = new AbstractAction(
-				"Copy",
+				app.getMenu("Copy"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
@@ -231,7 +231,7 @@ public class EditMenu extends BaseMenu {
 		};
 		
 		pasteAction = new AbstractAction(
-				"Paste",
+				app.getMenu("Paste"),
 				app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
