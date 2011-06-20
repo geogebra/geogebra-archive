@@ -24,13 +24,13 @@ exit /b 0
 :NoJava
 call :Message "You need (Sun/Oracle) Java version 1.5 or above to run GeoGebra 4.0.
  You will be redirected to the downloading page immediately."
+:: Waiting 5 seconds
+PING -n 5 127.0.0.1 > NUL
+start http://java.com/en/download/index.jsp
 exit /b 1
 
 :BadDirectory
 call :Message "Probably you run this batch from the wrong directory. Please reinstall GeoGebra."
-:: Waiting 5 seconds
-PING -n 5 127.0.0.1 > NUL
-start http://java.com/en/download/index.jsp
 exit /b 2
 
 :Message
