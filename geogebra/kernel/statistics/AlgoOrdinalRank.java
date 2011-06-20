@@ -30,14 +30,14 @@ import java.util.TreeSet;
  * @version 2010-05-27
  */
 
-public class AlgoRank extends AlgoElement {
+public class AlgoOrdinalRank extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
     private GeoList outputList; //output	
     private int size;
 
-    public AlgoRank(Construction cons, String label, GeoList inputList) {
+    public AlgoOrdinalRank(Construction cons, String label, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
                
@@ -49,7 +49,7 @@ public class AlgoRank extends AlgoElement {
     }
 
     public String getClassName() {
-        return "AlgoRank";
+        return "AlgoOrdinalRank";
     }
 
     protected void setInputOutput(){

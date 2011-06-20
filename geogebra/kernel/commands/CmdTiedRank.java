@@ -7,15 +7,15 @@ import geogebra.kernel.Kernel;
 /*
  * Rank[ <List> ]
  */
-class CmdRank extends CmdOneListFunction {
+class CmdTiedRank extends CmdOneListFunction {
 
-	public CmdRank(Kernel kernel) {
+	public CmdTiedRank(Kernel kernel) {
 		super(kernel);
 	}
 
 	final protected GeoElement doCommand(String a, GeoList b)
 	{
-		return kernel.Rank(a, b);
+		return kernel.TiedRank(a, b);
 	}
 
 

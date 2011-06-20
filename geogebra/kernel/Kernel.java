@@ -59,13 +59,13 @@ import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
 import geogebra.kernel.statistics.AlgoExponential;
 import geogebra.kernel.statistics.AlgoFDistribution;
 import geogebra.kernel.statistics.AlgoFit;
-import geogebra.kernel.statistics.AlgoFitNL;
 import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitGrowth;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLineY;
 import geogebra.kernel.statistics.AlgoFitLog;
 import geogebra.kernel.statistics.AlgoFitLogistic;
+import geogebra.kernel.statistics.AlgoFitNL;
 import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
@@ -100,6 +100,7 @@ import geogebra.kernel.statistics.AlgoMean;
 import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoMode;
 import geogebra.kernel.statistics.AlgoNormal;
+import geogebra.kernel.statistics.AlgoOrdinalRank;
 import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.kernel.statistics.AlgoPercentile;
 import geogebra.kernel.statistics.AlgoPoisson;
@@ -112,7 +113,6 @@ import geogebra.kernel.statistics.AlgoRandomBinomial;
 import geogebra.kernel.statistics.AlgoRandomNormal;
 import geogebra.kernel.statistics.AlgoRandomPoisson;
 import geogebra.kernel.statistics.AlgoRandomUniform;
-import geogebra.kernel.statistics.AlgoRank;
 import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSample;
 import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
@@ -4190,11 +4190,20 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Rank[list]
+	 * OrdinalRank[list]
 	 * Michael Borcherds
 	 */
-	final public GeoList Rank(String label, GeoList list) {
-		AlgoRank algo = new AlgoRank(cons, label, list);
+	final public GeoList OrdinalRank(String label, GeoList list) {
+		AlgoOrdinalRank algo = new AlgoOrdinalRank(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * TiedRank[list]
+	 */
+	final public GeoList TiedRank(String label, GeoList list) {
+		AlgoTiedRank algo = new AlgoTiedRank(cons, label, list);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}

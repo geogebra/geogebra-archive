@@ -55,7 +55,7 @@ public class AlgoTiedRank extends AlgoElement {
 	}
 
 	public String getClassName() {
-		return "AlgoRank";
+		return "AlgoTiedRank";
 	}
 
 	protected void setInputOutput(){

@@ -505,7 +505,8 @@ public class CommandDispatcher {
     	
     	
     	cmdTable.put("Sample", new CmdSample(kernel));	  
-    	cmdTable.put("Rank", new CmdRank(kernel));
+    	cmdTable.put("OrdinalRank", new CmdOrdinalRank(kernel));
+    	cmdTable.put("TiedRank", new CmdTiedRank(kernel));
     	cmdTable.put("Shuffle", new CmdShuffle(kernel));
     	
     	cmdTable.put("Frequency", new CmdFrequency(kernel));
