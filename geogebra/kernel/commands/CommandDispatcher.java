@@ -516,6 +516,7 @@ public class CommandDispatcher {
     	cmdTable.put("TTestPaired", new CmdTTestPaired(kernel));
     	cmdTable.put("TTest2", new CmdTTest2(kernel));
     	cmdTable.put("Percentile", new CmdPercentile(kernel));
+    	cmdTable.put("GeometricMean", new CmdGeometricMean(kernel));
     	
     	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
     	cmdTable.clear();

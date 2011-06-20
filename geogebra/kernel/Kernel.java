@@ -70,6 +70,7 @@ import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
 import geogebra.kernel.statistics.AlgoGamma;
+import geogebra.kernel.statistics.AlgoGeometricMean;
 import geogebra.kernel.statistics.AlgoHyperGeometric;
 import geogebra.kernel.statistics.AlgoInverseBinomial;
 import geogebra.kernel.statistics.AlgoInverseCauchy;
@@ -4918,6 +4919,19 @@ public class Kernel {
 		GeoNumeric num = algo.getQ3();
 		return num;
 	}
+	
+	/** 
+	 * GeometricMean[list]
+	 * G. Sturr
+	 */
+	final public GeoNumeric GeometricMean(String label, GeoList list) {
+		AlgoGeometricMean algo = new AlgoGeometricMean(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	
+	
 	
 	/** 
 	 * Iteration[ f(x), x0, n ] 
