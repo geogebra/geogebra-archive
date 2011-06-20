@@ -99,6 +99,7 @@ import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoMode;
 import geogebra.kernel.statistics.AlgoNormal;
 import geogebra.kernel.statistics.AlgoPascal;
+import geogebra.kernel.statistics.AlgoPercentile;
 import geogebra.kernel.statistics.AlgoPoisson;
 import geogebra.kernel.statistics.AlgoProduct;
 import geogebra.kernel.statistics.AlgoQ1;
@@ -124,6 +125,7 @@ import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoTTest;
 import geogebra.kernel.statistics.AlgoTTest2;
 import geogebra.kernel.statistics.AlgoTTestPaired;
+import geogebra.kernel.statistics.AlgoTiedRank;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.AlgoWeibull;
 import geogebra.kernel.statistics.AlgoZipf;
@@ -4193,6 +4195,16 @@ public class Kernel {
 		AlgoRank algo = new AlgoRank(cons, label, list);
 		GeoList list2 = algo.getResult();
 		return list2;
+	}
+	
+	/** 
+	 * Percentile[list, value]
+	 * G. Sturr
+	 */
+	final public GeoNumeric Percentile(String label, GeoList list, GeoNumeric value) {
+		AlgoPercentile algo = new AlgoPercentile(cons, label, list, value);
+		GeoNumeric result = algo.getResult();
+		return result;
 	}
 	
 	/** 
