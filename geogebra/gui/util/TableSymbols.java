@@ -48,7 +48,8 @@ public class TableSymbols {
 				{ "\u0393" , app.getPlain("GreekCharacterA", "\u0393" ) },  //uppercaseGreekGAMMA
 				{ "\u0394" , app.getPlain("GreekCharacterA", "\u0394" ) },  //uppercaseGreekDELTA
 				{ "\u0398" , app.getPlain("GreekCharacterA", "\u0398" ) },  //uppercaseGreekTHETA
-				{ "\u039b" , app.getPlain("GreekCharacterA", "\u039b" ) },  //uppercaseGreekLAMBDA
+				// removed - too similar to logical 'and'
+				//{ "\u039b" , app.getPlain("GreekCharacterA", "\u039b" ) },  //uppercaseGreekLAMBDA
 				{ "\u039e" , app.getPlain("GreekCharacterA", "\u039e" ) },  //uppercaseGreekXI
 				{ "\u03a0" , app.getPlain("GreekCharacterA", "\u03a0" ) },  //uppercaseGreekPI
 				{ "\u03a3" , app.getPlain("GreekCharacterA", "\u03a3" ) },  //uppercaseGreekSIGMA
@@ -77,6 +78,7 @@ public class TableSymbols {
 				{ Unicode.IMAGINARY , Unicode.IMAGINARY },   //sqrt(-1)
 				{ Unicode.PI_STRING , Unicode.PI_STRING },   //pi
 				{ Unicode.EULER_STRING , Unicode.EULER_STRING },   //e
+				{ Unicode.NBSP , app.getMenu("Symbol.NBSP" ) },   //e
 		};
 
 		return array;
@@ -181,20 +183,6 @@ public class TableSymbols {
 		"\u03c1", "\u03c3", "\u03c4", "\u03c5", "\u03d5", "\u03c7", "\u03c8",
 		"\u03c9"
 	};
-
-	public final static String [] greekUpperCase = {
-		"\u0393", // Gamma
-		"\u0394", // Delta
-		"\u0398", // Theta
-		"\u039b", // Lambda
-		"\u039e", // Xi
-		"\u03a0", // Pi
-		"\u03a3", // Sigma
-		"\u03a6", // Phi
-		"\u03a8", // Psi
-		"\u03a9"  // Omega
-	};
-
 
 
 	public final static String [] greekUpperCaseFull = {

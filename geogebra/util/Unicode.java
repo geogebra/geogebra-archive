@@ -43,6 +43,7 @@ public class Unicode {
 	final public static char FEMININE_ORDINAL_INDICATOR = '\u00aa';
 	
 	final public static String IMAGINARY = "\u03af"; // GREEK SMALL LETTER IOTA WITH TONOS
+	public static final String NBSP = "\u00a0"; // non-breaking (hard) space
 	public static char mu = '\u03bc';
 	public static char sigma = '\u03c3';
 	
