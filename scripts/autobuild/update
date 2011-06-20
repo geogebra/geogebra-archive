@@ -64,9 +64,9 @@ BCP=../java150-rt.jar
 # 4/4. Creating *.class files
 echo "Creating class files"
 java -jar ecj-3.6.2.jar -1.5 -source 1.5 -target 1.5 -classpath $CP -bootclasspath $BCP\
- -time -proceedOnError -g .  > /tmp/ecj.log 2>&1
-tail -1 /tmp/ecj.log
-echo ", see /tmp/ecj.log for more details" # ecj.log has no \n before EOF
+ -time -proceedOnError -g .  > .ecjlog 2>&1
+tail -1 .ecjlog
+echo ", see .ecjlog for more details" # .ecjlog has no \n before EOF
 
 # 4/5. Packaging
 ant geogebra || exit 3
