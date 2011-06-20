@@ -76,14 +76,14 @@ public class DrawCurve3D extends Drawable3DCurves {
 		double z1 = temp.getFront(true);
 		double z2 = temp.getBack(true);
 		Coords [] v = new Coords[8];
-		v[0] = new Coords(x1,y1,z1);
-		v[1] = new Coords(x1,y2,z1);
-		v[2] = new Coords(x1,y1,z2);
-		v[3] = new Coords(x1,y2,z2);
-		v[4] = new Coords(x2,y1,z1);
-		v[5] = new Coords(x2,y2,z1);
-		v[6] = new Coords(x2,y1,z2);
-		v[7] = new Coords(x2,y2,z2);
+		v[0] = new Coords(x1,y1,z1,0);
+		v[1] = new Coords(x1,y2,z1,0);
+		v[2] = new Coords(x1,y1,z2,0);
+		v[3] = new Coords(x1,y2,z2,0);
+		v[4] = new Coords(x2,y1,z1,0);
+		v[5] = new Coords(x2,y2,z1,0);
+		v[6] = new Coords(x2,y1,z2,0);
+		v[7] = new Coords(x2,y2,z2,0);
 
 		savedRadius=0;
 		double norm;

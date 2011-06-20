@@ -62,7 +62,9 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	/** default quadric type */
 	public static final int DEFAULT_QUADRIC_LIMITED = 3303;
 
-	
+	/** default surface type */
+	public static final int DEFAULT_SURFACECARTESIAN3D = 3304;
+
 	
 	
 	
@@ -277,6 +279,13 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		function.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
 		defaultGeoElements.put(DEFAULT_FUNCTION_NVAR, function);
 	
+		// surface
+		GeoSurfaceCartesian3D surface = new GeoSurfaceCartesian3D(cons);	
+		surface.setLocalVariableLabel("surface");
+		surface.setObjColor(colQuadric);
+		surface.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
+		defaultGeoElements.put(DEFAULT_SURFACECARTESIAN3D, surface);
+	
 	
 
 
@@ -334,6 +343,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 			return DEFAULT_QUADRIC_LIMITED;
 		case GeoElement.GEO_CLASS_FUNCTION_NVAR:
 			return DEFAULT_FUNCTION_NVAR;
+		case GeoElement.GEO_CLASS_SURFACECARTESIAN3D:
+			return DEFAULT_SURFACECARTESIAN3D;
 			
 			
 		default:

@@ -72,10 +72,6 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 
 		for (int i=0;i<coords.length;i++){
 			exp[i]= kernel.convertNumberValueToExpressionNode(coords[i]);
-			/* TODO
-			fun[i] = new FunctionNVar(exp[i], funVar);
-			fun[i].initFunction();
-			 */	
 			for (int j=0;j<localVar.length; j++)
 				exp[i].replace(localVar[j], funVar[j]);
 			fun[i] = new FunctionNVar(exp[i], funVar);

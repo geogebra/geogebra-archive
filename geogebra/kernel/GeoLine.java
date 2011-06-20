@@ -1228,7 +1228,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	
 	
 	public Coords getDirectionInD3(){
-		return new Coords(-y,x,0);
+		return new Coords(-y,x,0,0);
 	}
 
 	public void matrixTransform(double a00, double a01, double a02, double a10,

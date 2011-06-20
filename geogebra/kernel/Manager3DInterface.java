@@ -414,7 +414,7 @@ public interface Manager3DInterface {
 
 
 			////////////////////////////////////////////////
-			// 3D CURVE (2 VARS)
+			// 3D CURVE (1 VAR)
 
 			/** 
 			 * 3D Cartesian curve command:
@@ -423,7 +423,20 @@ public interface Manager3DInterface {
 			 public GeoElement CurveCartesian3D(String label, 
 					NumberValue xcoord, NumberValue ycoord, NumberValue zcoord, 
 					GeoNumeric localVar, NumberValue from, NumberValue to) ;
+			 
+			 
 
+			 ////////////////////////////////////////////////
+			 // 3D SURFACE (2 VARS)
+
+			 /** 
+			  * 3D Cartesian surface command:
+			  * Surface[ <expression x-coord>, <expression y-coord>,  <expression z-coord>, <u-var>, <u-from>, <u-to>, <v-var>, <v-from>, <v-to> ]  
+			  */
+			 public GeoElement SurfaceCartesian3D(String label, 
+					 NumberValue xcoord, NumberValue ycoord, NumberValue zcoord, 
+					 GeoNumeric uVar, NumberValue uFrom, NumberValue uTo,
+					 GeoNumeric vVar, NumberValue vFrom, NumberValue vTo) ;
 
 
 			 ////////////////////////////////////////////////

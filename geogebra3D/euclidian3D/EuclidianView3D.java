@@ -41,6 +41,7 @@ import geogebra3D.kernel3D.GeoPlane3DConstant;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoQuadric3D;
 import geogebra3D.kernel3D.GeoQuadric3DPart;
+import geogebra3D.kernel3D.GeoSurfaceCartesian3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
@@ -607,9 +608,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					d = new DrawImplicitFunction3Var(this, geoFun);
 					break;
 				}
-				break;									
+				break;	
+				
+				
+			case GeoElement3D.GEO_CLASS_SURFACECARTESIAN3D:	
+				d = new DrawSurface3D(this, (GeoSurfaceCartesian3D) geo);
+				break;	
 
 			}
+			
+								
+
 
 		}
 

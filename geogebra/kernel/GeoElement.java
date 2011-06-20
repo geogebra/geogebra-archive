@@ -368,6 +368,9 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_QUADRIC_LIMITED = 3232;
 
 	public static final int GEO_CLASS_POLYHEDRON = 3310;
+	
+	public static final int GEO_CLASS_SURFACECARTESIAN3D = 3320;
+
 
 
 
@@ -385,7 +388,7 @@ public abstract class GeoElement
 	public static final int TOOLTIP_NEXTCELL = 				4;
 	private int tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
 
-	protected String label; // should only be used directly in subclasses
+	public String label; // should only be used directly in subclasses
 	private String realLabel; //for macro constructions, see setRealLabel() for details
 	private String oldLabel; // see doRenameLabel
 	private String caption; // only used by GeoBoolean for check boxes at the moment

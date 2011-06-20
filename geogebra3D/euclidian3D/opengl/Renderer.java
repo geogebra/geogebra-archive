@@ -327,7 +327,7 @@ public class Renderer implements GLEventListener {
         
         //start drawing
         viewOrtho();
-        
+        //viewPersp();
         
         //update 3D controller
         ((EuclidianController3D) view3D.getEuclidianController()).processMouseMoved();
@@ -1630,7 +1630,23 @@ public class Renderer implements GLEventListener {
     	
     }
     
+    //private GLU glu = new GLU();
     
+    private void viewPersp()                                      
+    {
+
+    	gl.glViewport(0,0,right-left,top-bottom);
+    	
+    	gl.glMatrixMode(GL.GL_PROJECTION);
+    	gl.glLoadIdentity();
+    	final float h = (float) (right-left) / (float) (top-bottom);
+        glu.gluPerspective(45.0f, h, 1, 1000.0);
+    	gl.glTranslatef(0, 0, -500);
+    	gl.glMatrixMode(GL.GL_MODELVIEW);
+    	
+    	
+    	
+    }
 	
     /**
      * Set Up An Ortho View after setting left, right, bottom, front values

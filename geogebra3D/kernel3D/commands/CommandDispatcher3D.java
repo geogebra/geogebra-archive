@@ -65,9 +65,10 @@ public class CommandDispatcher3D extends CommandDispatcher {
      	cmdTable.put("QuadricSide", new CmdQuadricSide(kernel));	
      	cmdTable.put("Bottom", new CmdBottom(kernel));	
      	cmdTable.put("Top", new CmdTop(kernel));	
-	       	
 
 		cmdTable.put("Function", new CmdFunction2Var(kernel));
+		
+		cmdTable.put("SurfaceCartesian", new CmdSurfaceCartesian3D(kernel));
     	    	
 	}
 	

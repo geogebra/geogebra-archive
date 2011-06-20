@@ -5,20 +5,20 @@ import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.plots.SurfaceMesh;
+import geogebra3D.kernel3D.GeoSurfaceCartesian3D;
 
 /**
  * Class for drawing a 2-var function
  * @author matthieu
  *
  */
-public class DrawFunction2Var extends Drawable3DSurfaces {
+public class DrawSurface3D extends Drawable3DSurfaces {
 	
 	private SurfaceMesh mesh;
 	
-	private GeoFunctionNVar function;
+	private GeoSurfaceCartesian3D surface;
 	
 	
-	private boolean unlimitedRange;
 	
 	private double lastBaseRadius;
 	
@@ -32,9 +32,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	 * @param a_view3d
 	 * @param function
 	 */
-	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunctionNVar function) {
-		super(a_view3d, function);
-		this.function=function;
+	public DrawSurface3D(EuclidianView3D a_view3d, GeoSurfaceCartesian3D surface) {
+		super(a_view3d, surface);
+		this.surface=surface;
 		
 		/*
 		Application.debug("function on ["
@@ -45,19 +45,10 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		);
 		*/
 
-		if (Double.isNaN(function.getMinParameter(0))){
-			unlimitedRange=true;
-		}else{
-			unlimitedRange=false;
-		}
 		
-		updateRadius();
+		//updateRadius();
 		
-		if(unlimitedRange){
-			lastBaseRadius=savedRadius*unlimitedScaleFactor;
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-		} else
-			mesh = new SurfaceMesh(function, savedRadius, false);
+		//mesh = new SurfaceMesh(function, savedRadius, false);
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -114,28 +105,27 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		super.updateForItSelf();
 		boolean ret = true;
 		
+		
 		if(elementHasChanged){
 			elementHasChanged = false;
-			mesh.updateParameters();
+			//mesh.updateParameters();
 		}
 		
 		Renderer renderer = getView3D().getRenderer();
-		mesh.setRadius(savedRadius);
-		ret = mesh.optimize();
+		//mesh.setRadius(savedRadius);
+		//ret = mesh.optimize();
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
-		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
+		GeoSurfaceCartesian3D geo = (GeoSurfaceCartesian3D) getGeoElement();
 		surface.start(geo);
 		
 		float uMin, uMax, vMin, vMax;
-		if (unlimitedRange){
-			uMin = -1; uMax = 1; vMin = -1; vMax = 1;
-		}else{
-			uMin = (float) geo.getMinParameter(0);
-			uMax = (float) geo.getMaxParameter(0);
-			vMin = (float) geo.getMinParameter(1);
-			vMax = (float) geo.getMaxParameter(1);
-		}
+
+		uMin = (float) geo.getMinParameter(0);
+		uMax = (float) geo.getMaxParameter(0);
+		vMin = (float) geo.getMinParameter(1);
+		vMax = (float) geo.getMaxParameter(1);
+		
 		
 		surface.setU(uMin,uMax);
 		surface.setNbU((int) (uMax-uMin)*10);
@@ -144,27 +134,15 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		
 		//TODO use fading texture
 		
-		surface.draw(mesh);
+		surface.draw();
+		//surface.draw(mesh);
 		setGeometryIndex(surface.end());
 
 		return ret;
 	}
 	
 	protected void updateForView(){
-		updateRadius();
-		if(unlimitedRange && savedRadius>lastBaseRadius){
-			lastBaseRadius=savedRadius*unlimitedScaleFactor;
-			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
-								 new double [] {-lastBaseRadius,lastBaseRadius});
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
-			lastBaseRadius=savedRadius/unlimitedScaleFactor;
-			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
-								 new double [] {-lastBaseRadius,lastBaseRadius});
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-		} 
-//		else if(oldRadius!=savedRadius && mesh != null)
-//			mesh.turnOnUpdates();
+		//updateRadius();
 	}
 
 	public int getPickOrder() {

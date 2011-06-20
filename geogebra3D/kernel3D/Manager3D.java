@@ -741,7 +741,7 @@ public class Manager3D implements Manager3DInterface {
 
 
 	////////////////////////////////////////////////
-	// 3D CURVE (2 VARS)
+	// 3D CURVE (1 VAR)
 
 	/** 
 	 * 3D Cartesian curve command:
@@ -756,6 +756,24 @@ public class Manager3D implements Manager3DInterface {
 		return (GeoCurveCartesian3D) algo.getCurve();		
 	}	
 
+	
+	 ////////////////////////////////////////////////
+	 // 3D SURFACE (2 VARS)
+
+
+	public GeoElement SurfaceCartesian3D(String label, 
+			NumberValue xcoord, NumberValue ycoord, NumberValue zcoord, 
+			GeoNumeric uVar, NumberValue uFrom, NumberValue uTo,
+			GeoNumeric vVar, NumberValue vFrom, NumberValue vTo){
+
+		AlgoSurfaceCartesian3D algo = new AlgoSurfaceCartesian3D(cons, label, 
+				new NumberValue[] {xcoord, ycoord, zcoord} , 
+				new GeoNumeric[] {uVar, vVar}, 
+				new NumberValue[] {uFrom, vFrom},
+				new NumberValue[] {uTo, vTo});
+		return (GeoSurfaceCartesian3D) algo.getSurface();		
+
+	}
 
 	////////////////////////////////////////////////
 	// intersection algos
