@@ -719,39 +719,46 @@ public class Toolbar extends JToolBar {
 	 * @return default toolbar (3D)
 	 */
 	public static String getAllToolsNoMacros3D() {
-		return EuclidianView.MODE_MOVE + " || "
-				+ EuclidianView.MODE_POINT_ON_OBJECT + " " + EuclidianView.MODE_POINT
-				+ " " + EuclidianView.MODE_INTERSECT + " "
-				+ EuclidianView.MODE_MIDPOINT + " | " + EuclidianView.MODE_JOIN + " "
-				+ EuclidianView.MODE_SEGMENT + " " + EuclidianView.MODE_RAY + " , "
-				+ EuclidianView.MODE_VECTOR + " | " + EuclidianView.MODE_ORTHOGONAL
-				+ " " + EuclidianView.MODE_PARALLEL + " || "
-				+ EuclidianView.MODE_POLYGON
-				+ " | "
-				+ EuclidianView.MODE_CIRCLE_AXIS_POINT
-				+ " "
-				+ EuclidianView.MODE_CIRCLE_POINT_RADIUS_DIRECTION
-				+ " "
-				+ EuclidianView.MODE_CIRCLE_THREE_POINTS
-				+ " | "
-				+ EuclidianView.MODE_INTERSECTION_CURVE
-				+ " || "
-				+ EuclidianView.MODE_PLANE_THREE_POINTS
-				+ " , "
-				+ EuclidianView.MODE_PLANE_POINT_LINE
-				+ " | "
-				+ EuclidianView.MODE_ORTHOGONAL_PLANE
-				+ " , "
-				+ EuclidianView.MODE_PARALLEL_PLANE
-				+ " || "
-				+ EuclidianView.MODE_RIGHT_PRISM
-				// +" , "
-				// +EuclidianView.MODE_PRISM
-				+ " | " + EuclidianView.MODE_SPHERE_TWO_POINTS + " "
-				+ EuclidianView.MODE_SPHERE_POINT_RADIUS + " || "
-				+ EuclidianView.MODE_ROTATEVIEW + " "
-				+ EuclidianView.MODE_TRANSLATEVIEW + " " + EuclidianView.MODE_ZOOM_IN
-				+ " " + EuclidianView.MODE_ZOOM_OUT + " | "
-				+ EuclidianView.MODE_VIEW_IN_FRONT_OF;
+		return EuclidianView.MODE_MOVE 
+		+ " || "
+		+ EuclidianView.MODE_POINT
+		+ " " 
+		+ EuclidianView.MODE_POINT_ON_OBJECT 
+		+ " " 
+		+ EuclidianView.MODE_INTERSECT 
+		+ " "
+		+ EuclidianView.MODE_MIDPOINT 
+		+ " | " 
+		+ EuclidianView.MODE_JOIN + " "
+		+ EuclidianView.MODE_SEGMENT + " " + EuclidianView.MODE_RAY + " , "
+		+ EuclidianView.MODE_VECTOR + " | " + EuclidianView.MODE_ORTHOGONAL
+		+ " " + EuclidianView.MODE_PARALLEL + " || "
+		+ EuclidianView.MODE_POLYGON
+		+ " | "
+		+ EuclidianView.MODE_CIRCLE_AXIS_POINT
+		+ " "
+		+ EuclidianView.MODE_CIRCLE_POINT_RADIUS_DIRECTION
+		+ " "
+		+ EuclidianView.MODE_CIRCLE_THREE_POINTS
+		+ " | "
+		+ EuclidianView.MODE_INTERSECTION_CURVE
+		+ " || "
+		+ EuclidianView.MODE_PLANE_THREE_POINTS
+		+ " , "
+		+ EuclidianView.MODE_PLANE_POINT_LINE
+		+ " | "
+		+ EuclidianView.MODE_ORTHOGONAL_PLANE
+		+ " , "
+		+ EuclidianView.MODE_PARALLEL_PLANE
+		+ " || "
+		+ EuclidianView.MODE_RIGHT_PRISM
+		// +" , "
+		// +EuclidianView.MODE_PRISM
+		+ " | " + EuclidianView.MODE_SPHERE_TWO_POINTS + " "
+		+ EuclidianView.MODE_SPHERE_POINT_RADIUS + " || "
+		+ EuclidianView.MODE_ROTATEVIEW + " "
+		+ EuclidianView.MODE_TRANSLATEVIEW + " " + EuclidianView.MODE_ZOOM_IN
+		+ " " + EuclidianView.MODE_ZOOM_OUT + " | "
+		+ EuclidianView.MODE_VIEW_IN_FRONT_OF;
 	}
 }
