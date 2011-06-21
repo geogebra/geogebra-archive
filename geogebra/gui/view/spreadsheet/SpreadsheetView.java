@@ -867,6 +867,12 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 		if(fileBrowser != null)
 			fileBrowser.updateFonts();
+		if(this.oneVarStatDialog != null)
+			oneVarStatDialog.updateFonts();
+		if(this.twoVarStatDialog != null)
+			twoVarStatDialog.updateFonts();
+		if(this.multiVarStatDialog != null)
+			multiVarStatDialog.updateFonts();
 	}
 
 
