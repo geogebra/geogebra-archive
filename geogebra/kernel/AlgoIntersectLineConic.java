@@ -212,11 +212,23 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     			}
     		}
     	} */
-    	if (c.getPointsOnConic().contains(g.startPoint))
-    		pointOnConic = g.startPoint;
-    	else if (c.getPointsOnConic().contains(g.endPoint))
-    		pointOnConic = g.endPoint;
-    		
+    	
+    	ArrayList pointsOnConic = c.getPointsOnConic();
+		if (pointsOnConic != null) {
+	    	if (c.getPointsOnConic().contains(g.startPoint))
+	    		pointOnConic = g.startPoint;
+	    	else if (c.getPointsOnConic().contains(g.endPoint))
+	    		pointOnConic = g.endPoint;
+	    	else {
+	    		int size = pointsOnConic.size();
+	    		for (int i=0; i < size; i++) {
+	    			GeoPoint p = (GeoPoint) pointsOnConic.get(i);
+	    			if (p.getPath()==g)
+	    				pointOnConic = p;
+	    		}
+			}
+		}
+
    
     	if (pointOnConic == null) return false;
     		    
