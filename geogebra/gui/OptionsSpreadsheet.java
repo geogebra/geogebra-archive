@@ -62,6 +62,8 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	private JButton browseButton, restoreButton, setCurrentButton;
 	private JRadioButton dirRadioButton, urlRadioButton;
 	private JPanel locationPanel;
+
+	private JTabbedPane tabbedPane;
 	
 	
 	/**
@@ -85,7 +87,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		setLayout(new BorderLayout());
 		add(new JScrollPane(buildLayoutOptionsPanel()));
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		
 		tabbedPane.addTab(app.getMenu("Layout"),null, new JScrollPane(buildLayoutOptionsPanel()));
 		if(app.hasFullPermissions())
@@ -270,7 +272,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		urlRadioButton.setText(app.getMenu("URL") + ":");
 		restoreButton.setText(app.getMenu("Settings.ResetDefault"));
 		setCurrentButton.setText(app.getMenu("SetToCurrentLocation"));
-	        
+		
+		tabbedPane.setTitleAt(0, app.getMenu("Layout"));
+		tabbedPane.setTitleAt(1, app.getMenu("Browser"));
+	    
 	}
 	
 	/**
