@@ -24,6 +24,7 @@ import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,9 @@ public class DrawImplicitPoly extends Drawable {
 		this.geo=implicitPoly;
 		update();
 	}
-
+	public Area getShape(){		
+		return new Area();
+	}
 	@Override
 	public void draw(Graphics2D g2) {
 		if (!isVisible) return;
