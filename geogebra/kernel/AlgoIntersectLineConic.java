@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 
@@ -190,7 +191,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     private boolean handleSpecialCase() {
     	// check if startpoint or endpoint of line is on conic
     	GeoPoint pointOnConic = null;    	
-    	if (g.startPoint != null && c.isOnPath(g.startPoint, Kernel.MIN_PRECISION)) {    		
+    	// When a point incidentally stands on g and c, it may not be considered as special case 
+    	/*if (g.startPoint != null && c.isOnPath(g.startPoint, Kernel.MIN_PRECISION)) {    		
     		pointOnConic = g.startPoint;    		
     	} 
     	else if (g.endPoint != null && c.isOnPath(g.endPoint, Kernel.MIN_PRECISION)) {    		
@@ -209,7 +211,13 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     				}
     			}
     		}
-    	}
+    	} */
+    	if (c.getPointsOnConic().contains(g.startPoint))
+    		pointOnConic = g.startPoint;
+    	else if (c.getPointsOnConic().contains(g.endPoint))
+    		pointOnConic = g.endPoint;
+    		
+   
     	if (pointOnConic == null) return false;
     		    
     	// calc new intersection points Q
