@@ -5,6 +5,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.CopyPaste;
 import geogebra.util.Unicode;
 
 import java.util.Locale;
@@ -75,9 +76,12 @@ public class RenameInputHandler implements InputHandler {
 	}
 
 	// check if name is valid for geo
-	private boolean checkName(GeoElement geo, String name) {
+	public static boolean checkName(GeoElement geo, String name) {
 		if (name == null) return true;
-		
+
+		if (name.startsWith(CopyPaste.labelPrefix))
+			return false;
+
 		name = name.toLowerCase(Locale.US);
 		if (geo.isGeoFunction()) {
 			for (int i = 0; i < invalidFunctionNames.length; i++) {

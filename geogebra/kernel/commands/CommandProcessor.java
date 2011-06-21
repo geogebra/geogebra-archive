@@ -16,6 +16,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.gui.RenameInputHandler;
 import geogebra.kernel.AlgoCellRange;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
@@ -8362,11 +8363,15 @@ class CmdRename extends CommandProcessor {
 
 				GeoElement geo = (GeoElement) arg[0];
 
-				geo.rename(((GeoText) arg[1]).getTextString());
-				geo.updateRepaint();
+				if (RenameInputHandler.checkName(geo, ((GeoText) arg[1]).getTextString())) {
+					geo.rename(((GeoText) arg[1]).getTextString());
+					geo.updateRepaint();
 
-				GeoElement[] ret = { geo };
-				return ret;
+					GeoElement[] ret = { geo };
+					return ret;
+				} else {
+					throw argErr(app, c.getName(), arg[1]);
+				}
 			} else
 				throw argErr(app, c.getName(), arg[1]);
 
