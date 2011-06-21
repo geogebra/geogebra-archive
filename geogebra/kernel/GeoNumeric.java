@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -167,8 +168,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				GeoNumeric num = kernel.getDefaultNumber(isAngle());				
 				// make sure the slider value is not fixed 
 				setFixed(false);
-				if (!intervalMinActive) {
-					if (!intervalMaxActive) {			
+				if (!intervalMinActive && !(intervalMin instanceof GeoNumeric)) {
+					if (!intervalMaxActive && !(intervalMax instanceof GeoNumeric)) {			
 						// set both to default
 						double min = Math.min(num.getIntervalMin(), Math.floor(value));
 						double max = Math.max(num.getIntervalMax(), Math.ceil(value));
@@ -181,7 +182,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 					}
 				}
 				else { // min exists
-					if (!intervalMaxActive) {
+					if (!intervalMaxActive && !(intervalMax instanceof GeoNumeric)) {
 						//	min is available but no max
 						double max = Math.max(num.getIntervalMax(), Math.ceil(value));
 						setIntervalMax(new MyDouble(kernel,max));					
@@ -250,7 +251,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public boolean showInEuclidianView() {
 		return isDrawable() && isDefined() && !isInfinite() && 
 			(intervalMin == null || intervalMax == null || 
-					intervalMin.getDouble()<intervalMax.getDouble());
+					(intervalMinActive && intervalMaxActive));
 	}
 
 	public final boolean showInAlgebraView() {
@@ -560,8 +561,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @param max New maximum for slider
 	 */
 	public void setIntervalMax(NumberValue max) {	
-		if (Double.isNaN(max.getDouble()) || Double.isInfinite(max.getDouble())) return;
-
 		if(intervalMax instanceof GeoNumeric){
 			((GeoNumeric)intervalMax).unregisterMinMaxListener(this);
 		}
@@ -577,9 +576,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * Changes minimal value for slider
 	 * @param min New minimum for slider
 	 */
-	public void setIntervalMin(NumberValue min) {
-		if (Double.isNaN(min.getDouble()) || Double.isInfinite(min.getDouble()))
-				return;
+	public void setIntervalMin(NumberValue min) {		
 		if(intervalMin instanceof GeoNumeric){
 			((GeoNumeric)intervalMin).unregisterMinMaxListener(this);
 		}
@@ -891,13 +888,15 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private void resolveMinMax() {
 		if(intervalMin == null || intervalMax == null)
 			return;
+		boolean okMin = !Double.isNaN(getIntervalMin()) && !Double.isInfinite(getIntervalMin());
+		boolean okMax = !Double.isNaN(getIntervalMax()) && !Double.isInfinite(getIntervalMax());
 		boolean ok =  (getIntervalMin() <= getIntervalMax());
-		intervalMinActive = ok;
-		intervalMaxActive = ok;
-			
-		if(ok)
+		intervalMinActive = ok && okMin;
+		intervalMaxActive = ok && okMax;
+			Application.debug(Double.isInfinite(getIntervalMax())+","+intervalMaxActive);
+		if(ok && okMin && okMax)
 			setValue(isDefined() ? value : 1.0);		
-		else 
+		else if(okMin && okMax) 
 			setUndefined();
 		
 		updateCascade();
