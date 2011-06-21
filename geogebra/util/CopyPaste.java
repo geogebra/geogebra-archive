@@ -36,8 +36,6 @@ import java.util.Arrays;
  */
 public class CopyPaste {
 
-	// TODO: get menu messages from the resource bundle 
-	
 	public static final String labelPrefix = "CLIPBOARDMAGICSTRING";
 	protected static StringBuilder copiedXML;
 	protected static ArrayList<String> copiedXMLlabels;
@@ -158,17 +156,23 @@ public class CopyPaste {
 
 		ConstructionElement geo;
 		String label;
+		String reallabel;
 		for (int i = 0; i < conels.size(); i++)
 		{
 			geo = (ConstructionElement) conels.get(i);
 			if (geo.isGeoElement())
 			{
-				((GeoElement)geo).setRealLabel(null);
-				label = ((GeoElement)geo).getRealLabel();
-				((GeoElement)geo).setLabel(labelPrefix + label); 
-				// TODO: check if it is a good method
-				// TODO: exclude the possibility of giving this labels normally
-				copiedXMLlabels.add(((GeoElement)geo).getRealLabel());
+				label = ((GeoElement)geo).getLabelSimple();
+				if (label != null) {
+					((GeoElement)geo).setLabel(labelPrefix + label);
+					copiedXMLlabels.add(((GeoElement)geo).getLabelSimple());
+
+					// TODO: check possible realLabel issues
+					//reallabel = ((GeoElement)geo).getRealLabel();
+					//if (!reallabel.equals( ((GeoElement)geo).getLabelSimple() )) {
+					//	((GeoElement)geo).setRealLabel(labelPrefix + reallabel);
+					//}
+				}
 			}
 		}
 
@@ -183,15 +187,15 @@ public class CopyPaste {
 		}
 	}
 
-	/**
+	/* This method is buggy, so kernel.restoreCurrentUndoInfo is used instead of it
 	 * copyToXML - Step 6
 	 * After saving the conels to xml, we have to rename its labels
 	 * and also show the GeoElements in geostoshow
 	 * 
 	 * @param conels
 	 * @param geostoshow
-	 */
-	public static void afterSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostoshow) {
+	 *
+	/*public static void afterSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostoshow) {
 
 		ConstructionElement geo;
 		String label;
@@ -217,7 +221,7 @@ public class CopyPaste {
 				((GeoElement)geo).setEuclidianVisible(true);
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * This method saves independent geos - and those which
@@ -309,11 +313,8 @@ public class CopyPaste {
 				//geo.removeView(app.getEuclidianView2());
 				//geo.addView(app.getActiveEuclidianView());
 
-				// TODO: check if it is a good method
 				geo.setLabel(geo.getDefaultLabel(false));
 
-				// TODO?: selectedGeos in EuclidianController
-				//app.getActiveEuclidianView().getEuclidianController();
 				app.addSelectedGeo(geo);
 			}
 		}

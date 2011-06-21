@@ -548,6 +548,13 @@ public abstract class GeoElement
 	/* *******************************************************/
 
 	/**
+	 * We may need a simple method to get the label, as in the CopyPaste class.
+	 */
+	public String getLabelSimple() {
+		return label;
+	}
+
+	/**
 	 * Returns label of GeoElement. If the label is null then
 	 * algoParent.getCommandDescription() or  toValueString() is returned.
 	 * @return geo's label
