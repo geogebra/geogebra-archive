@@ -1331,28 +1331,8 @@ public class Application implements KeyEventDispatcher {
 		return getEuclidianView().getExportImage(scale);
 	}
 	
-
-	public void toggleAxis(){
-		
-		boolean bothAxesShown = ((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowXaxis()
-			&& ((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowYaxis();
-		//getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
-		((EuclidianView)getGuiManager().getActiveEuclidianView()).setShowAxes(!bothAxesShown, true);
-		/*
-		getEuclidianView().repaint();
-		storeUndoInfo();
-		updateMenubar();
-		*/
-	}
-	
 	public void setShowAxesSelected(JCheckBoxMenuItem cb){
 		cb.setSelected(((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowXaxis() && ((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowYaxis());
-	}
-	
-	public void toggleGrid(){
-		
-		((EuclidianView)getGuiManager().getActiveEuclidianView()).showGrid(!((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowGrid());
-
 	}
 	
 	public void setShowGridSelected(JCheckBoxMenuItem cb){

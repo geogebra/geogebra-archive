@@ -1,5 +1,6 @@
 package geogebra.gui.menubar;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
@@ -73,6 +74,15 @@ class ViewMenu extends BaseMenu {
 		update();
 	}
 	
+	/*
+	 * these need changing each time before menu shown in case ActiveEuclidianView has changed
+	 */
+	void updateItems() {
+		EuclidianView ev = (EuclidianView) app.getGuiManager().getActiveEuclidianView();
+		cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
+		cbShowGrid.setSelected(ev.getShowGrid());		
+	}
+	
 	/**
 	 * Initialize the menu items.
 	 */
@@ -81,13 +91,11 @@ class ViewMenu extends BaseMenu {
 		// views
 		//menuViews = new JMenu(app.getMenu("Views")+" ...");
 		cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());		
-		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
-				&& app.getEuclidianView().getShowYaxis());
 		add(cbShowAxes);
 
 		cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
-		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
 		add(cbShowGrid);
+		updateItems();
 		addSeparator();
 
 		initViewItems(this);
@@ -561,4 +569,8 @@ class ViewMenu extends BaseMenu {
 			}
 		}
 	}
+    public void setPopupMenuVisible(boolean b) {
+    	updateItems();
+    	super.setPopupMenuVisible(b);
+    }
 }

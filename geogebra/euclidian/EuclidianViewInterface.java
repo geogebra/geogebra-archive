@@ -135,21 +135,8 @@ public interface EuclidianViewInterface {
 	//////////////////////////////////////////////////////	
 	
 	
-	/** sets the visibility of x and y axis
-	 * @param showXaxis 
-	 * @param showYaxis
-	 * @deprecated use {@link EuclidianViewInterface#setShowAxes(boolean, boolean)} 
-	 * or {@link EuclidianViewInterface#setShowAxis(int, boolean, boolean)} instead
-	 */
-	//void showAxes(boolean showXaxis, boolean showYaxis);
-	
-	
-	
-	
 	boolean getShowXaxis();
 	boolean getShowYaxis();
-	
-	
 	
 	boolean isGridOrAxesShown();
 	int getGridType();

@@ -2477,15 +2477,12 @@ public class GuiManager {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				// toggle axes
-				app.toggleAxis();
+				// get ev with focus
+				EuclidianView ev = ((EuclidianView)getActiveEuclidianView());
 				
-				/*
-				boolean bothAxesShown = app.getEuclidianView().getShowXaxis()
-						&& app.getEuclidianView().getShowYaxis();
-				app.getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
-				*/
-				app.getEuclidianView().repaint();
+				boolean bothAxesShown = ev.getShowXaxis() && ev.getShowYaxis();
+				ev.setShowAxes(!bothAxesShown, true);
+				ev.repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
 				
@@ -2497,9 +2494,10 @@ public class GuiManager {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				// toggle grid
-				app.toggleGrid();
-				app.getEuclidianView().repaint();
+				// get ev with focus
+				EuclidianView ev = ((EuclidianView)getActiveEuclidianView());
+				ev.showGrid(!ev.getShowGrid());
+				ev.repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
 				
