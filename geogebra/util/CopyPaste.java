@@ -210,15 +210,15 @@ public class CopyPaste {
 		}
 	}
 
-	/* This method is buggy, so kernel.restoreCurrentUndoInfo is used instead of it
+	/* 
 	 * copyToXML - Step 6
 	 * After saving the conels to xml, we have to rename its labels
 	 * and also show the GeoElements in geostoshow
 	 * 
 	 * @param conels
 	 * @param geostoshow
-	 *
-	/*public static void afterSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostoshow) {
+	 */
+	public static void afterSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostoshow) {
 
 		ConstructionElement geo;
 		String label;
@@ -227,12 +227,13 @@ public class CopyPaste {
 			geo = (ConstructionElement) conels.get(i);
 			if (geo.isGeoElement())
 			{
-				((GeoElement)geo).setRealLabel(null);
-				label = ((GeoElement)geo).getRealLabel();
-				try {
-					((GeoElement)geo).setLabel(label.substring(labelPrefix.length()));
-				} catch (Exception e) {
-					e.printStackTrace();
+				label = ((GeoElement)geo).getLabelSimple();
+				if (label != null && label.length() >= labelPrefix.length()) {
+					try {
+						((GeoElement)geo).setLabel(label.substring(labelPrefix.length()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -244,7 +245,7 @@ public class CopyPaste {
 				((GeoElement)geo).setEuclidianVisible(true);
 			}
 		}
-	}*/
+	}
 
 	/**
 	 * This method saves independent geos - and those which
@@ -271,8 +272,8 @@ public class CopyPaste {
 
 		// store undo info
 		Kernel kernel = app.getKernel();
-		kernel.setUndoActive(true);
-        kernel.getConstruction().storeUndoInfo();
+		//kernel.setUndoActive(true);
+        //kernel.getConstruction().storeUndoInfo();
 
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
@@ -299,14 +300,24 @@ public class CopyPaste {
 			e.printStackTrace();
 			copiedXML = new StringBuilder();
 		}
-		kernel.restoreCurrentUndoInfo();
-		//afterSavingToXML(geoslocal, geostohide);
+		//kernel.restoreCurrentUndoInfo();
+		afterSavingToXML(geoslocal, geostohide);
 
 		// restore kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 		kernel.setTranslateCommandName(oldValue);
 		app.setMode(EuclidianView.MODE_MOVE);
+		
+		// make sure the coord style is updated the right way
+		ConstructionElement ce;
+		Construction cons = app.getKernel().getConstruction();
+		for (int i = 0; i < cons.steps(); ++i) {
+			ce = cons.getConstructionElement(i);
+			if (geoslocal.contains(ce) && ce.isGeoElement())
+				((GeoElement)ce).updateRepaint();
+		}
+		kernel.notifyRepaint();
 	}
 
 	/**
