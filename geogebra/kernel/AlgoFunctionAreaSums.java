@@ -12,6 +12,13 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+
+import java.util.ArrayList;
+
+import org.apache.commons.math.distribution.BinomialDistribution;
+import org.apache.commons.math.distribution.BinomialDistributionImpl;
+import org.apache.commons.math.distribution.IntegerDistribution;
+
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -20,6 +27,7 @@ import geogebra.kernel.roots.RealRootFunction;
 import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
+import geogebra.main.Application;
 
 
 
@@ -50,42 +58,54 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	/** Lower Rieman sum **/
 	public static final int TYPE_LOWERSUM = 1;
 	/** Left Rieman sum (Ulven: 09.02.11) **/
-	public static final int TYPE_LEFTSUM=11;
+	public static final int TYPE_LEFTSUM = 2;
 	/** Rectangle sum with divider for step interval (Ulven: 09.02.11) **/
-	public static final int TYPE_RECTANGLESUM=12;	
+	public static final int TYPE_RECTANGLESUM = 3;	
+	/** Trapezoidal sum**/
+	public static final int TYPE_TRAPEZOIDALSUM = 4;
+	
+	
 	/** Barchart from expression**/
-	public static final int TYPE_BARCHART = 2;
+	public static final int TYPE_BARCHART = 10;
 	/** Barchart from raw data **/
-	public static final int TYPE_BARCHART_RAWDATA = 3;
+	public static final int TYPE_BARCHART_RAWDATA = 11;
 	/** Barchart from (values,frequencies)**/
-	public static final int TYPE_BARCHART_FREQUENCY_TABLE = 4;
+	public static final int TYPE_BARCHART_FREQUENCY_TABLE = 12;
 	/** Barchart from (values,frequencies) with given width**/
-	public static final int TYPE_BARCHART_FREQUENCY_TABLE_WIDTH = 5;
+	public static final int TYPE_BARCHART_FREQUENCY_TABLE_WIDTH = 13;
+	
 	
 	/** Histogram from(class boundaries, raw data) with default density = 1 
 	* or Histogram from(class boundaries, frequencies) no density required **/
-	public static final int TYPE_HISTOGRAM = 6;
+	public static final int TYPE_HISTOGRAM = 21;
 	/** Histogram from(class boundaries, raw data) with given density **/
-	public static final int TYPE_HISTOGRAM_DENSITY = 7;
+	public static final int TYPE_HISTOGRAM_DENSITY = 22;
 	
-	/** Trapezoidal sum**/
-	public static final int TYPE_TRAPEZOIDALSUM = 8;
+	
 	/** Boxplot**/
-	public static final int TYPE_BOXPLOT = 9;
+	public static final int TYPE_BOXPLOT = 30;
 	/** Boxplot from raw data**/
-	public static final int TYPE_BOXPLOT_RAWDATA = 10;
+	public static final int TYPE_BOXPLOT_RAWDATA = 31;
+	
+	
+	/** barchart of a discrete probability distribution **/
+	public static final int TYPE_BARCHART_BINOMIAL = 40;
+	public static final int TYPE_BARCHART_PASCAL = 41;
+	public static final int TYPE_BARCHART_POISSON = 42;
+	public static final int TYPE_BARCHART_HYPERGEOMETRIC = 43;
+	
 	
 	
 	// tolerance for parabolic interpolation
 	private static final double TOLERANCE = 1E-7;
 
 	private GeoFunction f; // input	   
-	private NumberValue a, b, n, width, density; // input
+	private NumberValue a, b, n, width, density, p1,p2,p3; // input
 	private NumberValue d;  // input: divider for Rectangle sum, 0..1
 	private GeoList list1, list2; // input
 	private GeoList tempList;
 	private GeoElement ageo, bgeo, ngeo, dgeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, 
-	                   widthGeo, densityGeo, useDensityGeo, isCumulative;
+	                   widthGeo, densityGeo, useDensityGeo, isCumulative, p1geo, p2geo, p3geo;
 	private GeoNumeric  sum; // output sum    
 	
 	
@@ -100,7 +120,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	// maximum frequency of bar chart
 	// this is used by stat dialogs when setting window dimensions
 	private double freqMax;
+	
+	private BinomialDistribution binomialDist;
 
+	
 	/**
 	 * Returns maximum frequency of a bar chart or histogram
 	 * @return
@@ -438,6 +461,41 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	}
 	
 
+	/**
+	 * Discrete distribution bar chart
+	 * @param cons
+	 * @param label
+	 * @param p1
+	 * @param p2
+	 * @param p3
+	 * @param type
+	 */
+	public AlgoFunctionAreaSums(Construction cons, String label, 
+			NumberValue p1, NumberValue p2, NumberValue p3, GeoBoolean isCumulative, int type) {
+
+		super(cons);
+
+		this.type = type;
+		this.p1 = p1;
+		this.p2 = p2;
+		this.p3 = p3;
+		p1geo = p1.toGeoElement();
+		if(p2 != null)
+			p2geo = p2.toGeoElement();
+		if(p3 != null)
+			p3geo = p3.toGeoElement();
+		this.isCumulative = isCumulative;
+		sum = new GeoNumeric(cons); // output
+		setInputOutput(); // for AlgoElement	
+		compute();
+		sum.setLabel(label);
+		sum.setDrawable(true);
+	}
+
+
+
+	
+
 	final public void euclidianViewUpdate() {
 		compute();
 	}
@@ -541,7 +599,21 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			input[1] = bgeo;		
 			input[2] = list1;		
 			break;
-
+			
+		case TYPE_BARCHART_BINOMIAL:
+			ArrayList<GeoElement> inputList = new ArrayList<GeoElement>();
+			inputList.add(p1geo);
+			if(p2geo != null)
+				inputList.add(p2geo);
+			if(p3geo != null)
+				inputList.add(p3geo);
+			if(isCumulative != null)
+				inputList.add(isCumulative);
+						
+			
+			input = new GeoElement[inputList.size()];
+			input = inputList.toArray(input);
+			break;
 		}
 		setOutputLength(1);
 		setOutput(0,sum);
@@ -1049,6 +1121,22 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			break;
 			
 		case TYPE_BARCHART_FREQUENCY_TABLE:
+		case TYPE_BARCHART_BINOMIAL:
+		case TYPE_BARCHART_POISSON:
+		case TYPE_BARCHART_HYPERGEOMETRIC:
+		case TYPE_BARCHART_PASCAL:
+			
+				
+			if(type == TYPE_BARCHART_BINOMIAL
+					|| type == TYPE_BARCHART_POISSON
+					|| type == TYPE_BARCHART_HYPERGEOMETRIC
+					|| type == TYPE_BARCHART_PASCAL){
+				if(!setDistributionLists()) {
+					sum.setUndefined();
+					return;
+				}
+			}
+			
 			// BarChart[{11,12,13,14,15},{1,5,0,13,4}]
 			if (!list1.isDefined() || !list2.isDefined()) 
 			{
@@ -1059,10 +1147,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 			N = list1.size() + 1;
 			
-			if (yval == null || yval.length < N) {
+			//if (yval == null || yval.length < N) {
 				yval = new double[N];
 				leftBorder = new double[N];
-			}				
+		//	}				
 			
 			if (N == 2) {
 				// special case, 1 bar
@@ -1543,4 +1631,56 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			return false;
 		}
 	}
+	
+
+	private boolean setDistributionLists(){
+
+		IntegerDistribution dist = null;
+		int first = 0, last = 0;
+		try{
+			switch(type){
+			case TYPE_BARCHART_BINOMIAL:
+				if(!(p1geo.isDefined() && p2geo.isDefined()))
+					return false;
+				int n = (int)Math.round(p1.getDouble());
+				double p = p2.getDouble();
+				dist = new BinomialDistributionImpl(n, p);
+				first = 0;
+				last = n;
+				break;
+			}
+
+			boolean oldSuppress = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			if(list1 != null)
+				list1.remove();
+			list1 = new GeoList(cons);
+
+			if(list2 != null)
+				list2.remove();
+			list2 = new GeoList(cons);
+		
+			double prob;
+			double cumProb = 0;
+			for(int i = first; i <= last; i++ ){
+				list1.add(new GeoNumeric(cons,i));
+				prob = dist.probability(i);
+				cumProb += prob;
+				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean())
+				list2.add(new GeoNumeric(cons, cumProb));
+				else
+					list2.add(new GeoNumeric(cons, prob));
+			}
+			cons.setSuppressLabelCreation(oldSuppress);
+			
+			
+		}
+		catch (Exception e) {
+			Application.debug(e.getMessage());
+			return false;        			
+		}
+		
+		return true;
+	}	
+	
 }

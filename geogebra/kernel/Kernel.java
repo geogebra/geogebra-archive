@@ -47,6 +47,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
 import geogebra.kernel.statistics.AlgoBinomialDist;
+import geogebra.kernel.statistics.AlgoBinomialDistBarChart;
 import geogebra.kernel.statistics.AlgoCauchy;
 import geogebra.kernel.statistics.AlgoChiSquared;
 import geogebra.kernel.statistics.AlgoDoubleListCovariance;
@@ -4150,11 +4151,25 @@ public class Kernel {
 		return num;
 	}
 	
+	/** Binomial[] probability */
 	final public GeoNumeric BinomialDist(String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
 		AlgoBinomialDist algo = new AlgoBinomialDist(cons, label, a, b, c, isCumulative);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	/** Binomial[] bar chart */
+	final public GeoNumeric BinomialDist(String label, NumberValue a, NumberValue b) {
+		AlgoBinomialDistBarChart algo = new AlgoBinomialDistBarChart(cons, label, a, b);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	/** Binomial[] bar chart with cumulative option */
+	final public GeoNumeric BinomialDist(String label, NumberValue a, NumberValue b, GeoBoolean isCumulative) {
+		AlgoBinomialDistBarChart algo = new AlgoBinomialDistBarChart(cons, label, a, b, isCumulative);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
 	
 	final public GeoNumeric InverseBinomial(String label, NumberValue a, NumberValue b, NumberValue c) {
 		AlgoInverseBinomial algo = new AlgoInverseBinomial(cons, label, a, b, c);
