@@ -65,7 +65,7 @@ public class CopyPaste {
 			} else {
 				TreeSet ts = geo.getAllIndependentPredecessors();
 
-				// exclude from ts the numeric input of AlgoPolygonRegular
+				// exclude from ts the numeric input of AlgoPolygonRegular or AlgoCirclePointRadius
 		    	Iterator it = ts.iterator();
 		    	while (it.hasNext()) {
 		    		geo2 = (GeoElement)it.next();
@@ -73,6 +73,9 @@ public class CopyPaste {
 		    			// check the case of input of AlgoPolygonRegular
 		    			ArrayList<ConstructionElement> geoal = geo2.getAlgorithmList();
 		    			if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoPolygonRegular")) {
+		    				ts.remove(geo2);
+		    			// or AlgoCirclePointRadius
+		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoCirclePointRadius")) {
 		    				ts.remove(geo2);
 		    			}
 		    		}
@@ -109,7 +112,7 @@ public class CopyPaste {
 	    	while (it.hasNext()) {
 	    		geo2 = it.next();
 	    		if (!ret.contains(geo2) && !geos.contains(geo2)) {
-	    			// note: may contain independent GeoNumeric input of AlgoPolygonRegular, too
+	    			// note: may contain independent GeoNumeric input of AlgoPolygonRegular or AlgoCirclePointRadius, too
 	    			ret.add(geo2);
 	    		}
 	    	}  
