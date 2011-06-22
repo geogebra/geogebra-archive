@@ -562,7 +562,6 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	 * shows this dialog centered on screen
 	 */
 	public void setVisible(boolean flag) {
-		Application.debug("data attach-detach");
 		if (flag) {
 			data.attachView();
 		} else {
@@ -1927,50 +1926,40 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 
 	public void add(GeoElement geo) {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.add");
-		
 	}
 
 	public void remove(GeoElement geo) {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.remove");
 	}
 
 	public void rename(GeoElement geo) {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.rename");
 	}
 
 	public void update(GeoElement geo) {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.update");
 		data.update(geo);
 	}
 
 	public void updateAuxiliaryObject(GeoElement geo) {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.updateAuxiliaryObject");
 	}
 
 	public void repaintView() {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.repaintView");
 		data.repaintView();
 	}
 
 	public void reset() {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.reset");
 	}
 
 	public void clearView() {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.clearView");
 	}
 
 	public void setMode(int mode) {
 		// TODO Auto-generated method stub
-		Application.debug("CPW.setMode");
 	}
 	
 	public void attachView() {
