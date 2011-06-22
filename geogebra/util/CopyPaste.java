@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.util;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
@@ -305,6 +306,7 @@ public class CopyPaste {
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 		kernel.setTranslateCommandName(oldValue);
+		app.setMode(EuclidianView.MODE_MOVE);
 	}
 
 	/**
@@ -352,5 +354,6 @@ public class CopyPaste {
 			}
 		}
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
+		app.setMode(EuclidianView.MODE_MOVE);
 	}
 }
