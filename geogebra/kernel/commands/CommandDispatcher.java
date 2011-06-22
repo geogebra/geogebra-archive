@@ -488,6 +488,8 @@ public class CommandDispatcher {
     	cmdTable.put("MeanX", new CmdMeanX(kernel));
     	cmdTable.put("MeanY", new CmdMeanY(kernel));
     	cmdTable.put("PMCC", new CmdPMCC(kernel));
+    	cmdTable.put("SampleSDX", new CmdSampleSDX(kernel));
+    	cmdTable.put("SampleSDY", new CmdSampleSDY(kernel));
     	  	
     	cmdTable.put("FitLineY", new CmdFitLineY(kernel));
     	cmdTable.put("FitLineX", new CmdFitLineX(kernel));

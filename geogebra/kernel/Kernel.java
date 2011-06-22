@@ -93,6 +93,8 @@ import geogebra.kernel.statistics.AlgoListPMCC;
 import geogebra.kernel.statistics.AlgoListSXX;
 import geogebra.kernel.statistics.AlgoListSXY;
 import geogebra.kernel.statistics.AlgoListSYY;
+import geogebra.kernel.statistics.AlgoListSampleSDX;
+import geogebra.kernel.statistics.AlgoListSampleSDY;
 import geogebra.kernel.statistics.AlgoListSigmaXX;
 import geogebra.kernel.statistics.AlgoListSigmaXY;
 import geogebra.kernel.statistics.AlgoListSigmaYY;
@@ -3675,6 +3677,28 @@ public class Kernel {
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	/** 
+	 * SampleSDX[list]
+	 * G. Sturr
+	 */
+	final public GeoNumeric SampleSDX(String label, GeoList list) {
+		AlgoListSampleSDX algo = new AlgoListSampleSDX(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	
+	/** 
+	 * SampleSDY[list]
+	 * G. Sturr
+	 */
+	final public GeoNumeric SampleSDY(String label, GeoList list) {
+		AlgoListSampleSDY algo = new AlgoListSampleSDY(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
 	
 	/** 
 	 * PMCC[list]

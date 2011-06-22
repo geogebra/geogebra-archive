@@ -54,6 +54,8 @@ public abstract class AlgoStats2D extends AlgoElement {
     final static int STATS_PMCC = 7;
     final static int STATS_SIGMAXX = 8;
     final static int STATS_SIGMAYY = 9;
+    final static int STATS_SAMPLESDX = 10;
+    final static int STATS_SAMPLESDY = 11;
 
     
     public AlgoStats2D(Construction cons, String label, GeoList geoListx, GeoList geoListy, int stat) {
@@ -172,6 +174,7 @@ public abstract class AlgoStats2D extends AlgoElement {
     	
     	double mux=sumx/(double)sizex;
     	double muy=sumy/(double)sizex;
+    	double var;
     	
         switch (stat)
         {
@@ -204,6 +207,14 @@ public abstract class AlgoStats2D extends AlgoElement {
         	break;
         case  STATS_PMCC:
         	result.setValue((sumxy*sizex-sumx*sumy)/Math.sqrt((sumxx*sizex-sumx*sumx)*(sumyy*sizex-sumy*sumy)));
+        	break;
+        case  STATS_SAMPLESDX:
+        	var=(sumxx - sumx * sumx / sizex) / (sizex -1);
+			result.setValue(Math.sqrt(var));
+        	break;
+        case  STATS_SAMPLESDY:
+        	var=(sumyy - sumy * sumy / sizey) / (sizey -1);
+			result.setValue(Math.sqrt(var));
         	break;
         }
     }
