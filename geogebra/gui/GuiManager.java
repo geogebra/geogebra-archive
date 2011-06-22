@@ -13,6 +13,7 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.layout.panels.AlgebraDockPanel;
 import geogebra.gui.layout.panels.CasDockPanel;
+import geogebra.gui.layout.panels.ConstructionProtocolDockPanel;
 import geogebra.gui.layout.panels.Euclidian2DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
@@ -25,7 +26,7 @@ import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.GeoGebraFileChooser;
 import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
-import geogebra.gui.view.consprotocol.ConstructionProtocol;
+import geogebra.gui.view.consprotocol.ConstructionProtocolView;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.FunctionInspector;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
@@ -93,8 +94,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML;
@@ -120,7 +123,7 @@ public class GuiManager {
 	private OptionsDialog optionsDialog;
 
 	protected PropertiesDialog propDialog;
-	private ConstructionProtocol constProtocol;
+	private ConstructionProtocolView constProtocol;
 	protected ConstructionProtocolNavigation constProtocolNavigation;
 
 	private AlgebraInput algebraInput;
@@ -129,7 +132,8 @@ public class GuiManager {
 	private CasManager casView;
     private SpreadsheetView spreadsheetView; 
     private EuclidianView euclidianView2;
-
+    private ConstructionProtocolView constructionProtocolView;
+    
 	private GeoGebraFileChooser fileChooser;
 	private GeoGebraMenuBar menuBar;
 
@@ -246,7 +250,10 @@ public class GuiManager {
 		layout.registerPanel(new CasDockPanel(app));
 		
 		// register EuclidianView2  
-		layout.registerPanel(newEuclidian2DockPanel());	
+		layout.registerPanel(newEuclidian2DockPanel());
+		
+		// register ConstructionProtocol view 
+		layout.registerPanel(new ConstructionProtocolDockPanel(app));
 	}
 	
 	/**
@@ -318,6 +325,14 @@ public class GuiManager {
 	 */
 	protected AlgebraView newAlgebraView(AlgebraController algc){
 		return new AlgebraView(algc);
+	}
+	
+	public ConstructionProtocolView getConstructionProtocolView() {
+		if (constructionProtocolView == null) {
+			constructionProtocolView = new ConstructionProtocolView(app);
+		}
+
+		return constructionProtocolView;
 	}
 	
 	public void startEditing(GeoElement geo) {
@@ -485,6 +500,9 @@ public class GuiManager {
 			case Application.VIEW_CAS:
 				attachCasView();
 				break;
+			case Application.VIEW_CONSTRUCTION_PROTOCOL:
+				attachConstructionProtocolView();
+				break;
 		}
 	}
 	
@@ -506,6 +524,9 @@ public class GuiManager {
 				break;
 			case Application.VIEW_CAS:
 				detachCasView();
+				break;
+			case Application.VIEW_CONSTRUCTION_PROTOCOL:
+				detachConstructionProtocolView();
 				break;
 		}
 	}
@@ -530,7 +551,7 @@ public class GuiManager {
 			algebraView.detachView();		
 	}	
 	
-	public void attachCasView(){	
+	public void attachCasView(){
 		getCasView();
 		casView.attachView();		
 	}	
@@ -538,6 +559,16 @@ public class GuiManager {
 	public void detachCasView(){	
 		if (casView != null)
 			casView.detachView();		
+	}	
+	
+	public void attachConstructionProtocolView(){	
+		getConstructionProtocolView();
+		constructionProtocolView.getData().attachView();
+	}	
+	
+	public void detachConstructionProtocolView(){	
+		if (constructionProtocolView != null)
+			constructionProtocolView.getData().detachView();		
 	}	
 	
 	public void setShowAuxiliaryObjects(boolean flag) {
@@ -704,7 +735,7 @@ public class GuiManager {
 	 */
 	public void showConstructionProtocol() {
 		app.getEuclidianView().resetMode();
-		getConstructionProtocol();
+	//	getConstructionProtocol();
 		constProtocol.setVisible(true);
 	}
 
@@ -725,9 +756,9 @@ public class GuiManager {
 		return constProtocol.isVisible();
 	}
 
-	public JDialog getConstructionProtocol() {
+	public JPanel getConstructionProtocol() {
 		if (constProtocol == null) {		
-			constProtocol = new ConstructionProtocol(app);
+			constProtocol = new ConstructionProtocolView(app);
 		}
 		return constProtocol;
 	}
@@ -2945,7 +2976,7 @@ public class GuiManager {
 	        *  Exports construction protocol as html 
 	        */
 	    final public void exportConstructionProtocolHTML() {
-	        getConstructionProtocol();
+	       // getConstructionProtocol();
 	        constProtocol.initProtocol();
 	        constProtocol.showHTMLExportDialog();
 	    }

@@ -310,6 +310,7 @@ public class Application implements KeyEventDispatcher {
 	public static final int VIEW_SPREADSHEET = 4;
 	public static final int VIEW_CAS = 8;
 	public static final int VIEW_EUCLIDIAN2 = 16;
+	public static final int VIEW_CONSTRUCTION_PROTOCOL = 32;
     public static final int VIEW_EUCLIDIAN3D = 512;
     public static final int VIEW_EUCLIDIAN_FOR_PLANE = 1024;
 

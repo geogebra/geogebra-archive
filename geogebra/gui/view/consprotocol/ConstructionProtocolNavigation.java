@@ -53,7 +53,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	private JPanel playPanel;
 	
 	private Application app;
-	private ConstructionProtocol prot;
+	private ConstructionProtocolView prot;
 	private boolean showPlayButton = true, 
 					showConsProtButton = true;
 	
@@ -64,7 +64,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	 * Creates a new navigation bar to step through the construction protocol.
 	 * @param internalNavigation: true if navigation bar is part of the protocol window
 	 */
-	public ConstructionProtocolNavigation(ConstructionProtocol prot) {		
+	public ConstructionProtocolNavigation(ConstructionProtocolView prot) {		
 		this.prot = prot;			
 		app = prot.getApplication();	
 				

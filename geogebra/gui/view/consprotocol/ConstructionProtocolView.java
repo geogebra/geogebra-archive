@@ -72,6 +72,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -88,7 +89,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-public class ConstructionProtocol extends JDialog implements Printable {
+public class ConstructionProtocolView extends JPanel implements Printable, View {
 
 	/**
 	 * 
@@ -127,12 +128,13 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	private ConstructionProtocolNavigation protNavBar; // navigation bar of
 														// protocol window
 
-	public ConstructionProtocol(final Application app) {
-		super(app.getFrame());
-
+	public ConstructionProtocolView(final Application app) {
+		//super(app.getFrame());
+		super();
+		
 		this.app = app;
 		kernel = app.getKernel();
-		thisDialog = this;
+		//thisDialog = this;
 		data = new ConstructionTableData();
 		useColors = true;
 		addIcons = false;
@@ -174,8 +176,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.getViewport().setBackground(Color.white);
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
-
+		//getContentPane().add(scrollPane, BorderLayout.CENTER);
+		add(scrollPane, BorderLayout.CENTER);
+		
 		// clicking
 		ConstructionMouseListener ml = new ConstructionMouseListener();
 		table.addMouseListener(ml);
@@ -190,9 +193,11 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		protNavBar = new ConstructionProtocolNavigation(this);
 		protNavBar.setPlayButtonVisible(false);
 		protNavBar.setConsProtButtonVisible(false);
-		getContentPane().add(protNavBar, BorderLayout.SOUTH);
+		//getContentPane().add(protNavBar, BorderLayout.SOUTH);
+		add(protNavBar, BorderLayout.SOUTH);
 		Util.addKeyListenerToAll(protNavBar, keyListener);
 
+		/*
 		addWindowListener(new WindowListener() {
 			public void windowClosed(WindowEvent arg0) {
 				// TODO Auto-generated method stub
@@ -230,11 +235,11 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				
 			}
 		});
-		
+		*/
 		initGUI();
 
 		// setSize(500, 200);
-		pack();
+		//pack();
 
 		// center dialog
 		Dimension d1 = getSize();
@@ -242,6 +247,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		int x = Math.max((d2.width - d1.width) / 2, 0);
 		int y = Math.max((d2.width - d1.width) / 2, 0);
 		setBounds(x, y, d1.width, d1.height);
+		
+		attachView();
 	}
 
 	public Application getApplication() {
@@ -344,7 +351,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	 * inits GUI with labels of current language
 	 */
 	public void initGUI() {
-		setTitle(app.getPlain("ConstructionProtocol"));
+		//setTitle(app.getPlain("ConstructionProtocol"));
 		setFont(app.getPlainFont());
 		setMenuBar();
 		// set header values (language may have changed)
@@ -454,7 +461,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		mi.addActionListener(lstHelp);
 		mHelp.add(mi);
 		menuBar.add(mHelp);
-		setJMenuBar(menuBar);
+		//setJMenuBar(menuBar);
 		updateMenubar();
 	}
 
@@ -526,7 +533,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				Thread runner = new Thread() {
 					public void run() {
 						JDialog d = new geogebra.export.ConstructionProtocolExportDialog(
-								ConstructionProtocol.this);
+								ConstructionProtocolView.this);
 						d.setVisible(true);
 					}
 				};
@@ -555,6 +562,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	 * shows this dialog centered on screen
 	 */
 	public void setVisible(boolean flag) {
+		Application.debug("data attach-detach");
 		if (flag) {
 			data.attachView();
 		} else {
@@ -581,6 +589,15 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		table.repaint();
 	}
 
+	public JTable getTable(){
+		return table;
+	}
+	
+	public ConstructionTableData getData(){
+		return data;
+	}
+
+	
 	class ConstructionKeyListener extends KeyAdapter {
 		public void keyPressed(KeyEvent event) {
 			// SPECIAL KEYS
@@ -1063,7 +1080,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 	}
 
-	class ConstructionTableData extends AbstractTableModel implements View {
+	public class ConstructionTableData extends AbstractTableModel implements View {
 
 		/**
 		 * 
@@ -1906,6 +1923,59 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		sb.append("/>\n");
 
 		return sb.toString();
+	}
+
+	public void add(GeoElement geo) {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.add");
+		
+	}
+
+	public void remove(GeoElement geo) {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.remove");
+	}
+
+	public void rename(GeoElement geo) {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.rename");
+	}
+
+	public void update(GeoElement geo) {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.update");
+		data.update(geo);
+	}
+
+	public void updateAuxiliaryObject(GeoElement geo) {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.updateAuxiliaryObject");
+	}
+
+	public void repaintView() {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.repaintView");
+		data.repaintView();
+	}
+
+	public void reset() {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.reset");
+	}
+
+	public void clearView() {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.clearView");
+	}
+
+	public void setMode(int mode) {
+		// TODO Auto-generated method stub
+		Application.debug("CPW.setMode");
+	}
+	
+	public void attachView() {
+		kernel.notifyAddAll(this);
+		kernel.attach(this);
 	}
 
 }
