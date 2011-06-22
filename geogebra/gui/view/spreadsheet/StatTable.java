@@ -78,11 +78,7 @@ public class StatTable extends JScrollPane {
 
 
 
-		if(mode == StatDialog.MODE_ONEVAR)
-			statMap = createOneVarStatMap();
-		else
-			statMap = createTwoVarStatMap();
-
+		setStatMap();
 		model = new DefaultTableModel(statMap.length, 1);
 		statTable.setModel(model);
 
@@ -146,8 +142,16 @@ public class StatTable extends JScrollPane {
 	}
 
 
+	private void setStatMap(){
+		if(mode == StatDialog.MODE_ONEVAR)
+			statMap = createOneVarStatMap();
+		else
+			statMap = createTwoVarStatMap();
+	}
 
-	public String[][]  createOneVarStatMap(){
+	private String[][]  createOneVarStatMap(){
+
+
 
 		String[][]statMap1 = { 
 				{app.getMenu("Length.short") ,"Length"},
@@ -168,15 +172,14 @@ public class StatTable extends JScrollPane {
 	}
 
 
-	public String[][]  createTwoVarStatMap(){
+	private String[][]  createTwoVarStatMap(){
 
 		String[][]statMap2 = {
 				{app.getMenu("Length.short") ,"Length"},
 				{app.getMenu("MeanX") ,"MeanX"},
 				{app.getMenu("MeanY") ,"MeanY"},
-				//TODO add SDX etc cmds
-				//{app.getMenu("Sx") ,"SampleSDx"},
-				//{app.getMenu("Sy") ,"SampleSDY"},
+				{app.getMenu("Sx") ,"SampleSDX"},
+				{app.getMenu("Sy") ,"SampleSDY"},
 				{app.getMenu("CorrelationCoefficient.short") ,"PMCC"},
 				{app.getMenu("Spearman.short") ,"Spearman"},
 				{app.getMenu("Sxx") ,"Sxx"},
@@ -237,17 +240,19 @@ public class StatTable extends JScrollPane {
 		statTable.setFont(font);  
 		rowHeader.setFont(font);
 		int h = statTable.getCellRenderer(0,0).getTableCellRendererComponent(statTable, "X",
-				 false, false, 0, 0).getPreferredSize().height; 
+				false, false, 0, 0).getPreferredSize().height; 
 		statTable.setRowHeight(h);
 		rowHeader.setFixedCellHeight(h);
-				
+
 		//preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
 		//columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
 
 	}
 
 
-
+	public void setLabels(){
+		setStatMap();
+	}
 
 	/**
 	 * Adjust the width of a column to fit the maximum preferred width of 
@@ -363,7 +368,7 @@ public class StatTable extends JScrollPane {
 
 				setFont(app.getPlainFont());
 				setText((String) value);
-		
+
 				return this;
 			}
 
