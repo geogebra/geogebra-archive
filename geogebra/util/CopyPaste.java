@@ -73,10 +73,10 @@ public class CopyPaste {
 		    			// check the case of input of AlgoPolygonRegular
 		    			ArrayList<ConstructionElement> geoal = geo2.getAlgorithmList();
 		    			if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoPolygonRegular")) {
-		    				ts.remove(geo2);
+		    				it.remove();
 		    			// or AlgoCirclePointRadius
 		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoCirclePointRadius")) {
-		    				ts.remove(geo2);
+		    				it.remove();
 		    			}
 		    		}
 		    	}
