@@ -1392,8 +1392,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		xmin = -xZero * invXscale;
 		xmax = (width - xZero) * invXscale;
 		ymax = yZero * invYscale;
-		ymin = (yZero - height) * invYscale;
+		ymin = (yZero - height) * invYscale;		
 		updateBoundObjects();
+		updateBounds();
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 		calcPrintingScale();
