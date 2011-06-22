@@ -251,6 +251,9 @@ public class CopyPaste {
 	 */
 	public static void copyToXML(Application app, ArrayList<GeoElement> geos) {
 
+		copiedXML = new StringBuilder();
+		copiedXMLlabels = new ArrayList<String>();
+
 		if (geos.isEmpty())
 			return;
 		
@@ -302,6 +305,14 @@ public class CopyPaste {
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 		kernel.setTranslateCommandName(oldValue);
+	}
+
+	/**
+	 * In some situations, we may need to clear the clipboard
+	 */
+	public static void clearClipboard() {
+		copiedXML = null;
+		copiedXMLlabels = new ArrayList<String>();
 	}
 
 	/**

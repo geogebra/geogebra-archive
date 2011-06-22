@@ -317,8 +317,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// Paste preview
 
 	public void setPastePreviewSelected() {
-		if (pastePreviewSelected == null)
-			pastePreviewSelected = new ArrayList<GeoElement>();
+		pastePreviewSelected = new ArrayList<GeoElement>();
 
 		GeoElement geo;
 		boolean firstMoveable = true;
