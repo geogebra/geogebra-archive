@@ -56,15 +56,33 @@ public class CopyPaste {
 	public static void dropGeosDependentFromOutside(ArrayList<ConstructionElement> geos) {
 		
 		ConstructionElement geo;
+		GeoElement geo2;
 		for (int i = geos.size() - 1; i >= 0; i--)
 		{
 			geo = (ConstructionElement) geos.get(i);
 			if (geo.isIndependent()) {
 				continue;
-			} else if (geos.containsAll(geo.getAllIndependentPredecessors())) {
-				continue;
 			} else {
-				geos.remove(i);
+				TreeSet ts = geo.getAllIndependentPredecessors();
+
+				// exclude from ts the numeric input of AlgoPolygonRegular
+		    	Iterator it = ts.iterator();
+		    	while (it.hasNext()) {
+		    		geo2 = (GeoElement)it.next();
+		    		if (geo2.isGeoNumeric()) {
+		    			// check the case of input of AlgoPolygonRegular
+		    			ArrayList<ConstructionElement> geoal = geo2.getAlgorithmList();
+		    			if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoPolygonRegular")) {
+		    				ts.remove(geo2);
+		    			}
+		    		}
+		    	}
+
+				if (geos.containsAll(ts)) {
+					continue;
+				} else {
+					geos.remove(i);
+				}
 			}
 		}
 	}
@@ -91,6 +109,7 @@ public class CopyPaste {
 	    	while (it.hasNext()) {
 	    		geo2 = it.next();
 	    		if (!ret.contains(geo2) && !geos.contains(geo2)) {
+	    			// note: may contain independent GeoNumeric input of AlgoPolygonRegular, too
 	    			ret.add(geo2);
 	    		}
 	    	}  
@@ -125,7 +144,7 @@ public class CopyPaste {
 				ale = (AlgoElement) geoal.get(j);
 				ac = new ArrayList<ConstructionElement>();
 				ac.addAll(ale.getAllIndependentPredecessors());
-				if (conels.containsAll(ac)) {
+				if (conels.containsAll(ac) && !conels.contains((ConstructionElement) ale)) {
 					conels.add((ConstructionElement) ale);
 					geos = ale.getOutput();
 					for (int k = 0; k < geos.length; k++) {
