@@ -57,7 +57,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
          
         inGeo = in;
         if(inGeo instanceof GeoPolyLineInterface || inGeo.isLimitedPath()){
-	        outGeo = ((GeoPolygon)in).copyInternal(cons);
+	        outGeo = in.copyInternal(cons);
 	        out = (MatrixTransformable) outGeo;
         }
         else if(inGeo.isGeoList()){
