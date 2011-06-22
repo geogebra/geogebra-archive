@@ -51,7 +51,7 @@ GeoSegmentND {
 	public static final int SEGMENT_DECORATION_THREE_ARROWS = 6;
 //	 Michael Borcherds 20071006 end
 	
-	// added by Lo�c
+	// added by Loic
 	/**
 	 * Returns array of all decoration types
 	 * @see #SEGMENT_DECORATION_ONE_TICK etc.
@@ -229,6 +229,7 @@ GeoSegmentND {
 	   return sbToString.toString();
    }      
    private StringBuilder sbToString = new StringBuilder(30);
+private boolean forceSimpleTransform;
    
    final public String toValueString() {
 	   return kernel.format(length);
@@ -458,18 +459,12 @@ GeoSegmentND {
 		else if(!t.isAffine()) {			
 			// mirror endpoints
 			
-			boolean oldSuppressLabelCreation = cons.isSuppressLabelsActive();
-			cons.setSuppressLabelCreation(true);
-			GeoPoint [] points = {getStartPoint(), getEndPoint(), kernel.Midpoint(getEndPoint(), getStartPoint())};
-			points = t.transformPoints(points);
-			cons.setSuppressLabelCreation(oldSuppressLabelCreation);
-			points[0].setLabel(Transform.transformedGeoLabel(getStartPoint()));
-			points[1].setLabel(Transform.transformedGeoLabel(getEndPoint()));
-			AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(cons, Transform.transformedGeoLabel(this),
-			    		points[0], points[2],points[1],GeoConicPart.CONIC_PART_ARC);
-			GeoElement arc = ae.getConicPart(); 				
-			arc.setVisualStyleForTransformations(this);
-			GeoElement [] geos = {arc, points[0], points[1]};	
+			//boolean oldSuppressLabelCreation = cons.isSuppressLabelsActive();
+			//cons.setSuppressLabelCreation(true);
+			GeoPoint [] points = {getStartPoint(), getEndPoint()};
+			points = t.transformPoints(points);	
+			this.forceSimpleTransform = true;
+			GeoElement [] geos = {t.transform(this, label)[0], points[0], points[1]};
 			return geos;	
 		} 
 		else {
@@ -623,7 +618,7 @@ GeoSegmentND {
     }
 
 	public boolean isAllEndpointsLabelsSet() {
-		return startPoint.isLabelSet() && endPoint.isLabelSet();		
+		return !forceSimpleTransform && startPoint.isLabelSet() && endPoint.isLabelSet();		
 	} 
 
 	

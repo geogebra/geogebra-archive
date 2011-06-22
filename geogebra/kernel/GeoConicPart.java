@@ -932,5 +932,14 @@ implements LimitedPath, NumberValue, LineProperties {
     	return false;		
 	} 
 	
+    public GeoPoint getPointParam(double param){
+    	GeoPoint ret = new GeoPoint(cons);
+    	this.pathChanged(ret);
+    	ret.getPathParameter().setT(param);    
+    	this.pathChanged(ret);
+    	ret.updateCoords();        	
+    	return ret;
+    }
+    
 	
 }

@@ -1513,5 +1513,10 @@ GeoPointND, Animatable, Transformable  {
 			
 		}
 
+		public void removePath() {
+			path = null;
+			pathParameter = null;			
+		}
+
 
 }

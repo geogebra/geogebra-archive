@@ -302,7 +302,20 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
     public boolean isAllEndpointsLabelsSet() {
 		return startPoint.isLabelSet();		
 	} 
-
+    
+    public GeoPoint getInnerPoint(){    	
+    	
+    	double nx = startPoint.x+y;
+    	double ny = startPoint.y-x;
+    	GeoPoint ret = new GeoPoint(cons);
+    	ret.setCoords(nx, ny, 1);
+    	if(!isOnPath(ret, Kernel.EPSILON)){
+    		nx = startPoint.x-y;
+        	ny = startPoint.y+x;
+        	ret.setCoords(nx, ny, 1);
+    	}
+    	return ret;
+    }
  
 	
 }

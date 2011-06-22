@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.main.Application;
 
 /**
  *
@@ -38,6 +39,8 @@ public class AlgoMirror extends AlgoTransformation {
     private GeoPoint mirrorPoint;      
     private GeoConic mirrorConic;      
     private GeoElement mirror;
+    
+    private GeoPoint transformedPoint;
     
     /**
      * Creates new "mirror at point" algo
@@ -105,7 +108,7 @@ public class AlgoMirror extends AlgoTransformation {
         setInputOutput();
               
         cons.registerEuclidianViewAlgo(this);
-        
+        transformedPoint = new GeoPoint(cons);
         compute();                                     
     }           
     
@@ -207,6 +210,8 @@ public class AlgoMirror extends AlgoTransformation {
 			return new GeoCurveCartesian(cons);
 		if((geo instanceof GeoFunction) && mirror != mirrorPoint)
 			return new GeoCurveCartesian(cons);
+		if(geo.isLimitedPath() && mirror == mirrorConic)
+			return new GeoConicPart(cons, GeoConicPart.CONIC_PART_ARC);
 		if (mirror instanceof GeoConic && geo instanceof GeoLine){
         	return new GeoConic(cons);        	
         }
@@ -214,11 +219,93 @@ public class AlgoMirror extends AlgoTransformation {
         		(!((GeoConic)geo).isCircle()||!((GeoConic)geo).keepsType()))
         	return new GeoImplicitPoly(cons);
 		if(geo instanceof GeoPolyLineInterface  || (geo.isLimitedPath() && mirror!=mirrorConic))
-			return geo.copyInternal(cons);
-		if(geo.isLimitedPath() && mirror == mirrorConic)
-			return new GeoConicPart(cons, GeoConicPart.CONIC_PART_ARC);
+			return geo.copyInternal(cons);		
 		if(geo.isGeoList())        	
         	return new GeoList(cons);
 		return geo.copy();
+	}
+    
+    protected void transformLimitedPath(GeoElement a,GeoElement b){
+    	if(mirror != mirrorConic){
+    		super.transformLimitedPath(a, b);
+    	}
+    	GeoConicPart arc = (GeoConicPart)b;
+    	arc.setParameters(0, 6.28, true);
+		if(a instanceof GeoRay){			
+			transformedPoint.removePath();
+			setTransformedObject(
+					((GeoRay)a).getStartPoint(),
+					transformedPoint);
+			compute();						
+			arc.pathChanged(transformedPoint);
+			double d = transformedPoint.getPathParameter().getT();
+			transformedPoint.removePath();
+			transformedPoint.setCoords(mirrorConic.getTranslationVector());
+			arc.pathChanged(transformedPoint);
+			double e = transformedPoint.getPathParameter().getT();					
+			arc.setParameters(d*Kernel.PI_2, e*Kernel.PI_2, true);
+			transformedPoint.removePath();
+			setTransformedObject(
+					arc.getPointParam(0.5),
+					transformedPoint);			
+			compute();			
+			if(!((GeoRay)a).isOnPath(transformedPoint, Kernel.EPSILON))
+				arc.setParameters(d*Kernel.PI_2, e*Kernel.PI_2, false);
+			
+			setTransformedObject(a,b);
+		}
+		else if(a instanceof GeoSegment){
+			arc.setParameters(0, Kernel.PI_2, true);
+			transformedPoint.removePath();
+			setTransformedObject(
+					((GeoSegment)a).getStartPoint(),
+					transformedPoint);
+			compute();
+			
+			arc.pathChanged(transformedPoint);
+			double d = transformedPoint.getPathParameter().getT();
+			
+			arc.setParameters(0, Kernel.PI_2, true);
+			transformedPoint.removePath();
+			setTransformedObject(
+					((GeoSegment)a).getEndPoint(),
+					transformedPoint);
+			compute();
+		
+			arc.pathChanged(transformedPoint);
+			double e = transformedPoint.getPathParameter().getT();			
+			arc.setParameters(d*Kernel.PI_2, e*Kernel.PI_2, true);				
+			transformedPoint.removePath();
+			transformedPoint.setCoords(mirrorConic.getTranslationVector());
+			if(arc.isOnPath(transformedPoint, Kernel.EPSILON))
+				arc.setParameters(d*Kernel.PI_2, e*Kernel.PI_2, false);
+			setTransformedObject(a,b);
+		}
+		if(a instanceof GeoConicPart){
+			transformedPoint.removePath();
+			setTransformedObject(
+					((GeoConicPart)a).getPointParam(0),transformedPoint
+			);
+			compute();
+			Application.debug("startbefore"+transformedPoint);
+			arc.pathChanged(transformedPoint);
+			transformedPoint.updateCoords();
+			Application.debug("start"+transformedPoint);
+			double d = transformedPoint.getPathParameter().getT();
+			transformedPoint.removePath();
+			setTransformedObject(
+					((GeoConicPart)a).getPointParam(1),transformedPoint
+			);
+			compute();
+			//Application.debug("endbefore"+transformedPoint);
+			arc.pathChanged(transformedPoint);
+			transformedPoint.updateCoords();
+			//Application.debug("end"+transformedPoint);			
+			double e = transformedPoint.getPathParameter().getT();
+			Application.debug(d+","+e);
+			//arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,true);
+			setTransformedObject(a,b);
+			//TODO transform for conic part
+		}
 	}
 }

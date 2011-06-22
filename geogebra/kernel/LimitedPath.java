@@ -11,8 +11,6 @@ the Free Software Foundation.
 */
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
-
 /**
  * Represents geos with endpoints (segment, ray, arc, etc.)
  *
