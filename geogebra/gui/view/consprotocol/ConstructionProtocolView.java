@@ -15,7 +15,6 @@ the Free Software Foundation.
 
 import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
-import geogebra.gui.GuiManager;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.view.spreadsheet.MyTable;
@@ -33,7 +32,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -49,8 +47,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -127,7 +123,8 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	private ArrayList navigationBars = new ArrayList();
 	private ConstructionProtocolNavigation protNavBar; // navigation bar of
 														// protocol window
-
+	private ConstructionProtocolView view=this;
+	
 	public ConstructionProtocolView(final Application app) {
 		//super(app.getFrame());
 		super();
@@ -242,12 +239,13 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		//pack();
 
 		// center dialog
+		/*
 		Dimension d1 = getSize();
 		Dimension d2 = app.getMainComponent().getSize();
 		int x = Math.max((d2.width - d1.width) / 2, 0);
 		int y = Math.max((d2.width - d1.width) / 2, 0);
 		setBounds(x, y, d1.width, d1.height);
-		
+		*/
 		attachView();
 	}
 
@@ -386,7 +384,15 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	public void update() {
 		data.updateAll();
 	}
-
+	
+	public TableColumn[] getTableColumns(){
+		return tableColumns;
+	}
+	
+	public boolean getUseColors(){
+		return useColors;
+	}
+	
 	private void setMenuBar() {
 		menuBar.removeAll();
 
@@ -545,7 +551,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 
 	}
 
-	private boolean isColumnInModel(TableColumn col) {
+	public boolean isColumnInModel(TableColumn col) {
 		boolean ret = false;
 		TableColumnModel model = table.getColumnModel();
 		int size = model.getColumnCount();
@@ -705,6 +711,10 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 				if (e.getClickCount() == 2) {
 					setConstructionStep(-1);
 					table.repaint();
+				} else if (e.getClickCount() == 1){
+					//ConstructionProtocolView view = ConstructionProtocolView.ge;
+					ConstructionProtocolContextMenu contextMenu = new ConstructionProtocolContextMenu(app);
+					contextMenu.show(view, e.getPoint().x, e.getPoint().y);
 				}
 			}
 		}
@@ -773,7 +783,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		}
 	}
 
-	class ColumnKeeper implements ActionListener {
+	public class ColumnKeeper implements ActionListener {
 		protected TableColumn column;
 		protected ColumnData colData;
 
@@ -816,7 +826,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			// reinit view to update possible breakpoint changes
 			data.initView();
 
-			SwingUtilities.updateComponentTreeUI(thisDialog);
+			//SwingUtilities.updateComponentTreeUI(thisDialog);
 		}
 	}
 
