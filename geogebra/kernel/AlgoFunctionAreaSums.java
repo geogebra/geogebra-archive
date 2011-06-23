@@ -22,6 +22,7 @@ import org.apache.commons.math.distribution.PascalDistributionImpl;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.optimization.NegativeRealRootFunction;
@@ -683,6 +684,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
+		yval = new double[0];
+		leftBorder= new double[0];
 	}
 
 	protected AlgoFunctionAreaSums( 
@@ -889,7 +892,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * @return lower bound for sums and y-offset for boxplots
 	 */
 	public NumberValue getA() {
-		return a;
+		return a == null ? new MyDouble(kernel,Double.NaN):a;
 	}
 	
 	/**
@@ -897,7 +900,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * @return upper bound for sums and y-scale for boxplots
 	 */
 	public NumberValue getB() {
-		return b;
+		return b == null ? new MyDouble(kernel,Double.NaN):b;
 	}
 	
 	/**
