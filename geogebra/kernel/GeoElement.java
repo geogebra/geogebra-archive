@@ -2195,117 +2195,9 @@ public abstract class GeoElement
 			}
 		}
 
-		return translationFix(captionSB.toString());
+		return app.translationFix(captionSB.toString());
 	}
 
-	/**
-	 * In Hungarian, a properties file cannot completely describe translations.
-	 * This method tries to rewrite a text to the correct form.
-	 * @param text
-	 * @return
-	 */
-	private String translationFix(String text) {
-		// Currently no other language is supported than Hungarian.
-		String lang = app.getLocale().getLanguage();
-		if (!("hu".equals(lang))) {
-			return text;
-		}
-		return translationFixHu(text);
-	}
-	
-	private String translationFixHu(String text) {
-		// Pass 1: Fixing affixes.
-		// We assume that object names are usual object names like "P", "O_1" etc.
-		// FIXME: This will not work for longer object names, e.g. "X Triangle",
-		// "mypoint". To solve this problem, we should check the whole word and
-		// its vowels.
-		String[] affixesList = {"-ra/-re", "-nak/-nek", "-ba/-be", "-ban/-ben", "-hoz/-hez", "-val/-vel"};
-		// These endings will get -re, -nek, -hez:
-		String endE1 = "bcdeéfgiíjlmnprstvwxz1479";
-		String[] endE2 = {"10", "40", "50", "70", "90"};
-		String[] endE3 = {"000"};
-		// These endings will get -ra, -nak, -ban, -ba, -hoz:
-		String endO1 = "ahkoóquúy368";
-		// These endings will get -re, -nek, -ben, -be, -höz:
-		String endÖ1 = "öőüű25";
-
-		for (String affixes : affixesList) {
-			int match;
-			do {
-				match = text.indexOf(affixes);
-				// match>0 can be assumed because an affix will not start the text
-				if (match > -1 && match > 0) {
-					// Affix found. Get the previous character.
-					String prevChar = text.substring(match-1, match).toLowerCase();
-					if (endE1.indexOf(prevChar) > -1) {
-						text = translationFixHuAffixChange(text, match, affixes, "e");
-					}
-					else if (endO1.indexOf(prevChar) > -1) {
-							text = translationFixHuAffixChange(text, match, affixes, "o");
-						}
-					else if (endÖ1.indexOf(prevChar) > -1) {
-								text = translationFixHuAffixChange(text, match, affixes, "ö");
-						} else {
-						// Use heuristics:
-						text = translationFixHuAffixChange(text, match, affixes, "o");
-						}
-				}
-			}
-			while (match > -1);
-			
-			}
-		// Pass 2. Fixing "-val/-vel". TODO
-
-		return text;
-	}
-
-	private String translationFixHuAffixChange(String text, int match,
-			String affixes, String affixForm) {
-				String replace = "";
-		if ("-ra/-re".equals(affixes)) {
-			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-ra";
-			} else {
-				replace = "-re";
-			}
-		} else if ("-nak/-nek".equals(affixes)) {
-			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-nak";
-			} else {
-				replace = "-nek";
-			}
-		} else if ("-ba/-be".equals(affixes)) {
-			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-ba";
-			} else {
-				replace = "-be";
-			}
-		} else if ("-ban/-ben".equals(affixes)) {
-			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-ban";
-			} else {
-				replace = "-ben";
-			}
-		} else if ("-hoz/-hez".equals(affixes)) {
-			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-hoz";
-			} else if ("e".equals(affixForm)) {
-				replace = "-hez";
-			} else {
-				replace = "-höz";
-			}
-		}
-		
-		if ("".equals(replace)) {
-			return text;
-		}
-		else {
-			int affixesLength = affixes.length();
-			text = text.substring(0,match) + replace + text.substring(match+affixesLength);
-			return text;
-		}
-		
-	}
 	
 	public String getRawCaption() {
 		if (caption == null)
@@ -3561,7 +3453,7 @@ public abstract class GeoElement
 				}
 				else
 					sbLongDescHTML.append(": ");
-				sbLongDescHTML.append(indicesToHTML(translationFix(algoParent.toString()), false));
+				sbLongDescHTML.append(indicesToHTML(app.translationFix(algoParent.toString()), false));
 				if (rightToLeft)
 					//sbLongDescHTML.append("\u200e");
 					sbLongDescHTML.append(Unicode.LeftToRightMark);
