@@ -10,8 +10,11 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
+
 
 public class ColorPopupMenuButton extends PopupMenuButton implements ActionListener{
 
@@ -95,41 +98,41 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	private  Color[] getColorArray(int colorSetType) {
 		
 		Color[] colors = new Color[24];
+		HashMap<String, Color> hm = app.getColorsHashMap();
 		
 		Color[]	primaryColors = new Color[] {		
-				new Color(255, 0, 0), // Red
-				new Color(255, 153, 0), // Orange
-				new Color(255, 255, 0), // Yellow
-				new Color(0, 255, 0), // Green 
-				new Color(0, 255, 255), // Cyan 
-				new Color(0, 0, 255), // Blue
-				new Color(153, 0, 255), // Purple
-				new Color(255, 0, 255) // Magenta 
+				hm.get("RED"), 
+				hm.get("DARKORANGE"), 
+				hm.get("YELLOW"), 
+				hm.get("LIME"), 
+				hm.get("CYAN"), 
+				hm.get("BLUE"), 
+				hm.get("BLUEVIOLET"), 
+				hm.get("MAGENTA"), 
 		};
 		
 		Color[]	lightColors = new Color[] {		
-				new Color(255,228,225),	//Misty Rose
-				new Color(255, 204, 153), // Tan
-				new Color(255, 255, 153), // Light Yellow
-				new Color(204, 255, 204), // Light Green
-				new Color(204, 255, 255), // Light Turquoise
-				new Color(153, 204, 255), // Pale Blue
-				new Color(204, 153, 255), // Lavender
-				new Color(255,153,204),	//Rose		 	
+				hm.get("MISTYROSE"),
+				hm.get("NAVAJOWHITE"),
+				hm.get("PALEGOLDENROD"),
+				hm.get("LIGHTGREEN"),
+				hm.get("LIGHTCYAN"),
+				hm.get("LIGHTSKYBLUE"),
+				hm.get("ORCHID"),
+				hm.get("PINK"),		 	
 		};
 		
 		//TODO assign better dark colors
 		Color[]	darkColors = new Color[] {		
-				primaryColors[0].darker(),	
-				new Color(153, 51, 0), // orange-brown default fill color	
-				primaryColors[2].darker(),	
-				primaryColors[3].darker(),	
-				primaryColors[4].darker(),	
-				primaryColors[5].darker(),	
-				primaryColors[6].darker(),	
-				primaryColors[7].darker(),	
-		};
-		
+				hm.get("BROWN"),
+				hm.get("SIENNA"),
+				hm.get("GOLD"),
+				hm.get("GREEN"),
+				hm.get("LIGHTSEAGREEN"),
+				hm.get("NAVY"),
+				hm.get("DARKORCHID"),
+				hm.get("PLUM"),
+		};		
 		
 		for(int i = 0; i< 8; i++){
 			
