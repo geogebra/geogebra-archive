@@ -1388,6 +1388,9 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	}
 
 	public boolean hasMoveableInputPoints(EuclidianViewInterface view) {
+		//we don't want e.g. DotPlots to be dragged
+		if(!(getParentAlgorithm() == null || getParentAlgorithm() instanceof AlgoDependentList))
+			return false;
 		for (int i = 0; i < geoList.size(); i++) {
 			GeoElement geo = (GeoElement) geoList.get(i);
 
@@ -1410,6 +1413,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	 */
 	public ArrayList<GeoPoint> getFreeInputPoints(EuclidianViewInterface view) {
 		ArrayList<GeoPoint> al = new ArrayList<GeoPoint>();
+		
 		for (int i = 0; i < geoList.size(); i++) {
 			GeoElement geo = (GeoElement) geoList.get(i);
 
