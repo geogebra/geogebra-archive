@@ -41,9 +41,16 @@ public class AlgoSumLower extends AlgoFunctionAreaSums {
 		cons.registerEuclidianViewAlgo(this);
 	}
 	
+	private AlgoSumLower( 
+			   NumberValue a, NumberValue b, NumberValue n,double[]vals,double[]borders) {
+		super(a, b, n, AlgoFunctionAreaSums.TYPE_LOWERSUM,vals,borders);		
+		cons.registerEuclidianViewAlgo(this);
+	}
+	
 	public AlgoSumLower copy() {
-		return new AlgoSumLower(this.cons,null,(GeoFunction)this.getF().copy(),(NumberValue)this.getA().deepCopy(kernel),
-				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate());
+		return new AlgoSumLower((NumberValue)this.getA().deepCopy(kernel),
+				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate(),
+				getValues().clone(),getLeftBorder().clone());
 	}
 	public String getClassName() {
 		return "AlgoSumLower";

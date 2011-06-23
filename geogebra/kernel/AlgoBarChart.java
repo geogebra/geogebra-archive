@@ -73,7 +73,24 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 	 */
 	public AlgoBarChart(Construction cons, String label,
 			GeoList list1, GeoList list2, NumberValue a) {
-		super(cons, label, list1, list2, a);
+		super(cons, label,list1,list2,  a);
+	}
+
+	public AlgoBarChart(NumberValue a, NumberValue b,
+			double[]vals,double[]borders,int N) {
+		super(a,b,vals,borders,N);		
+	}
+
+	private AlgoBarChart(double[]vals,double[]borders,int N) {
+		super(true,vals,borders,N);
+	}
+
+	private AlgoBarChart(NumberValue a,double[]vals,double[]borders,int N) {
+		super(a,vals,borders,N);
+	}
+
+	public AlgoBarChart( GeoNumeric a,double[]vals,double[]borders,int N) {
+		super(a,vals,borders,N);
 	}
 
 	public String getClassName() {
@@ -81,16 +98,17 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 	}
 	
 	public AlgoBarChart copy() {
+		int N = this.getIntervals();
 		switch(this.getType()) {
-		case AlgoFunctionAreaSums.TYPE_BARCHART:
-			return new AlgoBarChart(this.cons,null,(NumberValue)getA().deepCopy(kernel),
-					(NumberValue)getB().deepCopy(kernel),(GeoList)getList1().copy());
-		case AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE:
-			return new AlgoBarChart(this.cons,null,(GeoList)getList1().copy(),(GeoList)getList2().copy());
-		case AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE_WIDTH:
-			return new AlgoBarChart(this.cons,null,(GeoList)getList1().copy(),(GeoList)getList2().copy(),(NumberValue)getA().deepCopy(kernel));
+		case TYPE_BARCHART:
+			return new AlgoBarChart((NumberValue)getA().deepCopy(kernel),
+					(NumberValue)getB().deepCopy(kernel),getValues().clone(),getLeftBorder().clone(),N);
+		case TYPE_BARCHART_FREQUENCY_TABLE:
+			return new AlgoBarChart(getValues().clone(),getLeftBorder().clone(),N);
+		case TYPE_BARCHART_FREQUENCY_TABLE_WIDTH:
+			return new AlgoBarChart((NumberValue)getA().deepCopy(kernel),getValues().clone(),getLeftBorder().clone(),N);
 		default: //TYPE_BARCHART_RAWDATA
-			return new AlgoBarChart(this.cons,null,(GeoList)getList1().copy(),(GeoNumeric)getN().copy());	
+			return new AlgoBarChart((GeoNumeric)getN().copy(),getValues().clone(),getLeftBorder().clone(),N);	
 		}
 	}
 	

@@ -61,7 +61,10 @@ public class AlgoSlope extends AlgoElement implements AlgoDrawInformation{
     }
     
 
-    public String getClassName() {
+    public AlgoSlope(GeoLine g) {
+    	this.g = g;
+	}
+	public String getClassName() {
         return "AlgoSlope";
     }
 
@@ -109,6 +112,6 @@ public class AlgoSlope extends AlgoElement implements AlgoDrawInformation{
     }
 
 	public AlgoDrawInformation copy() {		
-		return new AlgoSlope(cons,(GeoLine)g.copy());
+		return new AlgoSlope((GeoLine)g.copy());
 	}
 }

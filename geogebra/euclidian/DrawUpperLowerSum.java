@@ -90,6 +90,7 @@ public class DrawUpperLowerSum extends Drawable {
 		
 		// init gp
 		gp.reset();
+		
 		double aRW = a.getDouble();
 		double bRW = b.getDouble();
 
@@ -99,7 +100,7 @@ public class DrawUpperLowerSum extends Drawable {
 				
 		// plot upper/lower sum rectangles
 		int N = algo.getIntervals();		
-		double [] leftBorder = algo.getLeftBorders();
+		double [] leftBorder = algo.getLeftBorders();		
 		double [] yval = algo.getValues();
 		
 		// first point 						

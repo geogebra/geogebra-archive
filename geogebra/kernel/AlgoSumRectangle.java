@@ -27,17 +27,23 @@ public class AlgoSumRectangle extends AlgoFunctionAreaSums {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Creates new triangle sum
+	 * Creates new rectangle sum
 	 * @param cons construction
 	 * @param label label
 	 * @param f function
 	 * @param a lower bound
 	 * @param b upper bound
 	 * @param n number of columns
+	 * @param d 0 for left sum, 1 for right sum
 	 */
 	public AlgoSumRectangle(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n,NumberValue d) {
 		super(cons, label, f, a, b, n, d, AlgoFunctionAreaSums.TYPE_RECTANGLESUM);		
+	}
+	
+	private AlgoSumRectangle( GeoFunction f, 
+			   NumberValue a, NumberValue b, NumberValue n,NumberValue d) {
+		super(f, a, b, n, d, AlgoFunctionAreaSums.TYPE_RECTANGLESUM);		
 	}
 	
 	public String getClassName() {
@@ -45,7 +51,7 @@ public class AlgoSumRectangle extends AlgoFunctionAreaSums {
 	}
 	
 	public AlgoSumRectangle copy() {
-		return new AlgoSumRectangle(this.cons,null,(GeoFunction)this.getF().copy(),(NumberValue)this.getA().deepCopy(kernel),
+		return new AlgoSumRectangle((GeoFunction)this.getF().copy(),(NumberValue)this.getA().deepCopy(kernel),
 				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate(), (NumberValue)this.getD().deepCopy(kernel));
 	}
 	

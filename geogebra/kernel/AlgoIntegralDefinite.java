@@ -101,7 +101,15 @@ public class AlgoIntegralDefinite extends AlgoElementCAS implements AlgoDrawInfo
         n.setDrawable(true);
     }
 
-    public String getClassName() {
+    public AlgoIntegralDefinite(GeoFunction f, NumberValue a,
+			NumberValue b, GeoBoolean evaluate) {
+    	 this.f = f;         
+         this.a = a;
+         this.b = b;
+         this.evaluate = evaluate;  
+	}
+
+	public String getClassName() {
         return "AlgoIntegralDefinite";
     }
 
@@ -157,7 +165,7 @@ public class AlgoIntegralDefinite extends AlgoElementCAS implements AlgoDrawInfo
         // check for equal bounds
         double lowerLimit = a.getDouble();
         double upperLimit = b.getDouble();
-        if (kernel.isEqual(lowerLimit, upperLimit)) {
+        if (Kernel.isEqual(lowerLimit, upperLimit)) {
             n.setValue(0);
             return;
         }
@@ -208,6 +216,10 @@ public class AlgoIntegralDefinite extends AlgoElementCAS implements AlgoDrawInfo
     /**
      * Computes integral of function fun in interval a, b using an adaptive Gauss 
      * quadrature approach.
+     * @param fun function
+     * @param a lower bound
+     * @param b upper bound
+     * @return integral value
      */
     public static double numericIntegration(RealRootFunction fun, double a, double b) {
     	adaptiveGaussQuadCounter = 0;
@@ -280,11 +292,11 @@ public class AlgoIntegralDefinite extends AlgoElementCAS implements AlgoDrawInfo
     
     public AlgoDrawInformation copy(){
     	if(evaluate!= null)
-    	return new AlgoIntegralDefinite(cons,(GeoFunction)f.copy(),
+    	return new AlgoIntegralDefinite((GeoFunction)f.copy(),
     			(NumberValue)a.deepCopy(kernel),
     			(NumberValue)b.deepCopy(kernel),
     			(GeoBoolean)evaluate.copy());
-    	return new AlgoIntegralDefinite(cons,(GeoFunction)f.copy(),
+    	return new AlgoIntegralDefinite((GeoFunction)f.copy(),
     			(NumberValue)a.deepCopy(kernel),
     			(NumberValue)b.deepCopy(kernel),null);
     }

@@ -53,6 +53,11 @@ public class AlgoAngleLines extends AlgoElement  implements AlgoDrawInformation{
         
     }
     
+    AlgoAngleLines(GeoLine g, GeoLine h) {        
+        this.g = g;
+        this.h = h;
+   }
+    
     /**
      * Creates new labeled angle between lines algo
      * @param cons construction
@@ -67,7 +72,7 @@ public class AlgoAngleLines extends AlgoElement  implements AlgoDrawInformation{
     }
     
     public AlgoAngleLines copy(){
-    	return new AlgoAngleLines(cons,(GeoLine)g.copy(),(GeoLine)h.copy());
+    	return new AlgoAngleLines((GeoLine)g.copy(),(GeoLine)h.copy());
     }
 
     public String getClassName() {

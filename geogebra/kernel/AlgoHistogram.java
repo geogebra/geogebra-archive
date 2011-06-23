@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  * Histogram algorithm. See AlgoFunctionAreaSums for implementation.
@@ -39,11 +38,16 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 		super(cons, label, list1, list2);		
 	}
 	
+	private AlgoHistogram(double[]vals,double[]borders,int N) {
+		super(vals, borders,N);		
+	}
+	
 
 	/**
 	 * Creates histogram with density scaling factor 
 	 * @param cons construction
 	 * @param label label for the histogram
+	 * @param isCumulative 
 	 * @param list1 list of boundaries
 	 * @param list2 list of heights or raw data
 	 * @param useDensity flag  
@@ -58,13 +62,25 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 		super(cons, label, isCumulative, list1, list2, useDensity, density);		
 	}
 	
+	private AlgoHistogram(
+			GeoBoolean isCumulative,					   			
+			GeoBoolean useDensity, 
+			GeoNumeric density,double[]vals,double[]borders,int N) {
+		super(isCumulative,  useDensity, density, vals, borders,N);		
+	}
+	
 	
 	public String getClassName() {
 		return "AlgoHistogram";
 	}
 	
 	public AlgoHistogram copy() {
-		return new AlgoHistogram(this.cons,null,(GeoList)this.getList1().copy(),(GeoList)this.getList2().copy());
+		int N = getIntervals();
+		if(getType()==TYPE_HISTOGRAM_DENSITY)
+			return new AlgoHistogram((GeoBoolean)getIsCumulative().copy(), 
+				(GeoBoolean)getUseDensityGeo().copy(),(GeoNumeric)getDensityGeo().copy(),
+				getValues().clone(),getLeftBorder().clone(),N);
+		return new AlgoHistogram(getValues().clone(),getLeftBorder().clone(),N);
 	}
 	
 }

@@ -95,8 +95,14 @@ public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation
          
      }
     
-    public AlgoAnglePoints copy(){
-    	return new AlgoAnglePoints(cons,(GeoPoint)A.copy(),(GeoPoint)B.copy(),(GeoPoint)C.copy());
+    public AlgoAnglePoints(GeoPoint A, GeoPoint B, GeoPoint C) {
+    	this.A = A;
+        this.B = B;
+        this.C = C;
+	}
+
+	public AlgoAnglePoints copy(){
+    	return new AlgoAnglePoints((GeoPoint)A.copy(),(GeoPoint)B.copy(),(GeoPoint)C.copy());
     }
 
     void setAlgoAnglePolygon(AlgoAnglePolygon algo) {

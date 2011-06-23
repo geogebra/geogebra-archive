@@ -40,13 +40,19 @@ public class AlgoSumTrapezoidal extends AlgoFunctionAreaSums {
 		super(cons, label, f, a, b, n, AlgoFunctionAreaSums.TYPE_TRAPEZOIDALSUM);		
 	}
 	
+	private AlgoSumTrapezoidal( 
+			   NumberValue a, NumberValue b, NumberValue n,double[]vals,double[]borders) {
+		super( a, b, n, AlgoFunctionAreaSums.TYPE_TRAPEZOIDALSUM,vals,borders);		
+	}
+	
 	public String getClassName() {
 		return "AlgoSumTrapezoidal";
 	}
 	
 	public AlgoSumTrapezoidal copy() {
-		return new AlgoSumTrapezoidal(this.cons,null,(GeoFunction)this.getF().copy(),(NumberValue)this.getA().deepCopy(kernel),
-				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate());
+		return new AlgoSumTrapezoidal((NumberValue)this.getA().deepCopy(kernel),
+				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate(),
+				getValues().clone(),getLeftBorder().clone());
 	}
 	
 }

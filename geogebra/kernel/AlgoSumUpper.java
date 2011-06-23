@@ -41,13 +41,19 @@ public class AlgoSumUpper extends AlgoFunctionAreaSums {
 		cons.registerEuclidianViewAlgo(this);
 	}
 	
+	private AlgoSumUpper( 
+			   NumberValue a, NumberValue b, NumberValue n,double[]vals,double[]borders) {
+		super( a, b, n, AlgoFunctionAreaSums.TYPE_UPPERSUM,vals,borders);			
+	}
+	
 	public String getClassName() {
 		return "AlgoSumUpper";
 	}
 	
 	public AlgoSumUpper copy() {
-		return new AlgoSumUpper(this.cons,null,(GeoFunction)this.getF().copy(),(NumberValue)this.getA().deepCopy(kernel),
-				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate());
+		return new AlgoSumUpper((NumberValue)this.getA().deepCopy(kernel),
+				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate(),
+				getValues().clone(),getLeftBorder().clone());
 	}
 	
 }

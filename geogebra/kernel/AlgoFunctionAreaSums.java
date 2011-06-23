@@ -15,7 +15,6 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 
-import org.apache.commons.math.distribution.BinomialDistribution;
 import org.apache.commons.math.distribution.BinomialDistributionImpl;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.apache.commons.math.distribution.IntegerDistribution;
@@ -104,11 +103,55 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 	private GeoFunction f; // input	   
 	private NumberValue a, b, n, width, density, p1,p2,p3; // input
+	/**
+	 * @return the p1
+	 */
+	public NumberValue getP1() {
+		return p1;
+	}
+
+	/**
+	 * @return the p2
+	 */
+	public NumberValue getP2() {
+		return p2;
+	}
+
+	/**
+	 * @return the p3
+	 */
+	public NumberValue getP3() {
+		return p3;
+	}
+
+
 	private NumberValue d;  // input: divider for Rectangle sum, 0..1
 	private GeoList list1, list2; // input
 	private GeoList tempList;
 	private GeoElement ageo, bgeo, ngeo, dgeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, 
 	                   widthGeo, densityGeo, useDensityGeo, isCumulative, p1geo, p2geo, p3geo;
+	/**
+	 * @return the densityGeo
+	 */
+	public GeoElement getDensityGeo() {
+		return densityGeo;
+	}
+
+	/**
+	 * @return the useDensityGeo
+	 */
+	public GeoElement getUseDensityGeo() {
+		return useDensityGeo;
+	}
+
+	/**
+	 * @return the isCumulative
+	 */
+	public GeoElement getIsCumulative() {
+		return isCumulative;
+	}
+
+
 	private GeoNumeric  sum; // output sum    
 	
 	
@@ -124,12 +167,9 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	// this is used by stat dialogs when setting window dimensions
 	private double freqMax;
 	
-	private BinomialDistribution binomialDist;
-
-	
 	/**
 	 * Returns maximum frequency of a bar chart or histogram
-	 * @return
+	 * @return maximum frequency of a bar chart or histogram
 	 */
 	public double getFreqMax() {
 		return freqMax;
@@ -137,7 +177,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	
 	/**
 	 * Returns y values (heights) of a bar chart or histogram
-	 * @return
+	 * @return y values (heights) of a bar chart or histogram
 	 */
 	public double[] getYValue() {
 		return yval;
@@ -145,7 +185,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	
 	/**
 	 * Returns left class borders of a bar chart or histogram
-	 * @return
+	 * @return left class borders of a bar chart or histogram
 	 */
 	public double[] getLeftBorder() {
 		return leftBorder;
@@ -186,7 +226,24 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
-	}//AlgoFunctionAreaSums(cons,label,func,a,b,n,d,type)
+	}
+	
+	public AlgoFunctionAreaSums(GeoFunction f, 
+			   NumberValue a, NumberValue b, NumberValue n, NumberValue d,
+			   int type) {
+
+		this.f = f;
+		this.a = a;
+		this.b = b;			
+		this.n = n;
+		this.d = d;
+		ageo = a.toGeoElement();
+		bgeo = b.toGeoElement();
+		ngeo = n.toGeoElement();
+		dgeo = d.toGeoElement();
+		N= (int)Math.round(n.getDouble());
+
+	}
 	
 	
 	/**
@@ -224,6 +281,22 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setDrawable(true);
 	}
 	
+	public AlgoFunctionAreaSums(  
+			   NumberValue a, NumberValue b, NumberValue n,
+			   int type,double[]vals,double[]borders) {
+
+		this.type = type;
+		
+		this.a = a;
+		this.b = b;			
+		this.n = n;
+		this.yval=vals;
+		this.leftBorder=borders;
+		N= (int)Math.round(n.getDouble());
+		
+}
+
+	
 	/**
 	 *  BARCHART
 	 * @param cons
@@ -251,6 +324,24 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
+	
+	/**
+	 * Constructor for copying BarChart
+	 * @param a
+	 * @param b
+	 * @param vals 
+	 * @param borders 
+	 * @param N 
+	 */
+	protected AlgoFunctionAreaSums(  
+			   NumberValue a, NumberValue b, double[]vals,double[]borders,int N) {
+		type = TYPE_BARCHART;	
+		this.a = a;
+		this.b = b;					
+		this.yval=vals;
+		this.leftBorder=borders;
+		this.N=N;
+	}
 	/**
 	 *  BarChart [<list of data without repetition>, <frequency of each of these data>]
 	 * @param cons
@@ -274,6 +365,21 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
+	}
+	/**
+	 * Constructor for copying BarChart
+	 * @param dummy to distinguish from other constructors
+	 * @param vals 
+	 * @param borders 
+	 * @param N 
+	 */
+	protected AlgoFunctionAreaSums(  
+			   boolean dummy,double[]vals,double[]borders,int N) {
+		type = TYPE_BARCHART_FREQUENCY_TABLE;
+		
+		this.yval=vals;
+		this.leftBorder=borders;
+		this.N=N;
 	}
 	
 	/**
@@ -302,6 +408,23 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
+	}
+	/**
+	 * Constructor for copying BarChart
+	 * @param width 
+	 * @param vals 
+	 * @param borders 
+	 * @param N 
+	 */
+	protected AlgoFunctionAreaSums(NumberValue width,double[]vals,double[]borders,int N) {
+		type = TYPE_BARCHART_FREQUENCY_TABLE_WIDTH;
+		
+		
+		this.width = width;
+		widthGeo = width.toGeoElement();
+		this.yval=vals;
+		this.leftBorder=borders;
+		this.N=N;
 	}
 	
 	
@@ -333,6 +456,24 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
+	/**
+	 * Constructor for copying BarChart
+	 * @param n
+	 * @param vals 
+	 * @param borders 
+	 * @param N 
+	 */
+	protected AlgoFunctionAreaSums(GeoNumeric n,double[]vals,double[]borders,int N) {		
+		
+		type = TYPE_BARCHART_RAWDATA;
+		
+		
+		this.n = n;
+		this.yval=vals;
+		this.leftBorder=borders;
+		this.N=N;
+	}
+
 		
 	/**
 	 *  HISTOGRAM[ <list of class boundaries>, <list of heights> ]
@@ -356,6 +497,14 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
+	
+	public AlgoFunctionAreaSums(double[]vals,double[]borders,int N) {
+
+		type = TYPE_HISTOGRAM;
+		this.leftBorder = borders;
+		this.yval = vals;
+		this.N=N;
+	}
 		
 	
 	
@@ -363,8 +512,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 *  Histogram [<list of class boundaries>, <list of raw data>, <useDensity>, <densityFactor>]
 	 * @param cons
 	 * @param label
+	 * @param isCumulative 
 	 * @param list1
 	 * @param list2
+	 * @param useDensity 
 	 * @param density
 	 */
 	public AlgoFunctionAreaSums(Construction cons, String label, GeoBoolean isCumulative,  
@@ -388,6 +539,19 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
+	}
+	
+	public AlgoFunctionAreaSums(GeoBoolean isCumulative,  
+			   GeoBoolean useDensity, GeoNumeric density,
+			   double[]vals,double[]borders,int N) {
+		type = TYPE_HISTOGRAM_DENSITY;
+		
+		this.isCumulative = isCumulative;
+		this.N=N;
+		this.density = density;
+		this.useDensityGeo = useDensity;		
+		this.leftBorder = borders;
+		this.yval = vals;		
 	}
 	
 	
@@ -432,6 +596,21 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
+	
+	public AlgoFunctionAreaSums( 
+			NumberValue min, NumberValue Q1,
+			NumberValue median, NumberValue Q3, NumberValue max, NumberValue a, NumberValue b) {
+				
+		this.a=a;
+		this.b=b;
+		ageo = a.toGeoElement();
+		bgeo = b.toGeoElement(); 
+		minGeo = min.toGeoElement();
+		Q1geo = Q1.toGeoElement();
+		medianGeo = median.toGeoElement();
+		Q3geo = Q3.toGeoElement();
+		maxGeo = max.toGeoElement();
+	}
 
 	/**
 	 *  BOXPLOT (raw data)
@@ -463,6 +642,16 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setDrawable(true);
 	}
 	
+	public AlgoFunctionAreaSums(  
+			GeoList list1, NumberValue a, NumberValue b) {
+
+		type = TYPE_BOXPLOT_RAWDATA;
+		
+		this.a=a;
+		this.b=b;
+		this.list1 = list1;		
+	}
+	
 
 	/**
 	 * Discrete distribution bar chart
@@ -471,6 +660,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * @param p1
 	 * @param p2
 	 * @param p3
+	 * @param isCumulative 
 	 * @param type
 	 */
 	public AlgoFunctionAreaSums(Construction cons, String label, 
@@ -493,6 +683,27 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
+	}
+
+	protected AlgoFunctionAreaSums( 
+			NumberValue p1, NumberValue p2, NumberValue p3, GeoBoolean isCumulative, int type,
+			NumberValue a, NumberValue b, double[]vals, double[]borders, int N) {
+		this.type = type;
+		this.p1 = p1;
+		this.p2 = p2;
+		this.p3 = p3;
+		p1geo = p1.toGeoElement();
+		if(p2 != null)
+			p2geo = p2.toGeoElement();
+		if(p3 != null)
+			p3geo = p3.toGeoElement();
+		this.isCumulative = isCumulative;	
+		this.a = a;
+		this.b = b;
+		this.yval = vals;
+		this.leftBorder = borders;
+		this.N=N;
+		
 	}
 
 
@@ -637,7 +848,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
  	 * number of intervals
  	 * @return number of intervals
  	 */
-	public int getIntervals() {
+	public int getIntervals() {		
 		return N;
 	}
 	
@@ -1188,7 +1399,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			
 			//Application.debug("N = "+N+" start = "+start+" end = "+end+" width = "+width);
 
-			if (!kernel.isEqual(end - start, step * (N-2)) // check first list is (consistent) with being AP 
+			if (!Kernel.isEqual(end - start, step * (N-2)) // check first list is (consistent) with being AP 
 					|| step <= 0) {
 						sum.setUndefined();
 						return;
@@ -1255,7 +1466,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			
 			//Application.debug("N = "+N+" start = "+start+" end = "+end+" colWidth = "+colWidth);
 
-			if (!kernel.isEqual(end - start, step * (N-2)) // check first list is (consistent) with being AP 
+			if (!Kernel.isEqual(end - start, step * (N-2)) // check first list is (consistent) with being AP 
 					|| step <= 0) {
 						sum.setUndefined();
 						return;

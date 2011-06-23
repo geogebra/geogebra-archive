@@ -41,9 +41,15 @@ public class AlgoSumLeft extends AlgoFunctionAreaSums {
 		cons.registerEuclidianViewAlgo(this);
 	}
 	
-	public AlgoSumLeft copy() {
-		return new AlgoSumLeft(this.cons,null,(GeoFunction)this.getF().copy(),(NumberValue)this.getA().deepCopy(kernel),
-				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate());
+	private AlgoSumLeft(  
+			   NumberValue a, NumberValue b, NumberValue n,double[]vals,double[]borders) {
+		super(a, b, n, AlgoFunctionAreaSums.TYPE_LEFTSUM,vals,borders);				
+	}
+	
+	public AlgoSumLeft copy() {		
+		return new AlgoSumLeft( (NumberValue)this.getA().deepCopy(kernel),
+				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate(),
+				this.getValues().clone(),this.getLeftBorder().clone());
 	}
 	public String getClassName() {
 		return "AlgoSumLeft";

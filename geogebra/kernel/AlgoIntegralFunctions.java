@@ -74,12 +74,22 @@ public class AlgoIntegralFunctions extends AlgoElement  implements AlgoDrawInfor
 		n.setLabel(label);
 	}
 	
+	public AlgoIntegralFunctions(GeoFunction f, GeoFunction g,
+			MyDouble a, MyDouble b, GeoBoolean evaluate) {
+		this.f = f;
+		this.g = g;		
+		this.a = a;
+		this.b = b;
+		this.evaluate = evaluate;
+	}
+
+
 	public String getClassName() {
 		return "AlgoIntegralFunctions";
 	}
 	
     public AlgoIntegralFunctions copy(){
-    	return new AlgoIntegralFunctions(cons, null, (GeoFunction)f.copy(),
+    	return new AlgoIntegralFunctions((GeoFunction)f.copy(),
     			(GeoFunction)g.copy(), 
     			new MyDouble(kernel,a.getDouble()), 
     			new MyDouble(kernel,b.getDouble()), 
@@ -105,8 +115,8 @@ public class AlgoIntegralFunctions extends AlgoElement  implements AlgoDrawInfor
 		input[3] = bgeo;
 		input[4] = evaluate;
 		}
-		output = new GeoElement[1];
-		output[0] = n;
+		setOutputLength(1);
+		setOutput(0,n);
 		setDependencies(); // done by AlgoElement
 	}
 

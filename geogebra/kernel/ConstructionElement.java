@@ -37,6 +37,9 @@ implements Comparable {
 	private static long ceIDcounter = 1;
 	private long ceID; // creation ID of this ConstructionElement, used for sorting
 		
+	public ConstructionElement(){
+		
+	}
 	public ConstructionElement(Construction c) {			
 		ceID = ceIDcounter++;
 		setConstruction(c);

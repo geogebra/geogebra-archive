@@ -38,14 +38,25 @@ public class AlgoPascalBarChart extends AlgoFunctionAreaSums {
         super(cons,label, n, p, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_PASCAL);
     }
 	
+	private AlgoPascalBarChart( 
+			NumberValue n, NumberValue p, GeoBoolean isCumulative,NumberValue a,NumberValue b,double[]vals,
+			double[]borders,int N) {
+        super(n, p, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_HYPERGEOMETRIC,a,b,vals,borders,N);
+    }
+	
 
     public String getClassName() {
         return "AlgoPascalBarChart";
     }
 
 	public AlgoDrawInformation copy() {
-		// TODO Auto-generated method stub
-		return null;
+		GeoBoolean b = (GeoBoolean)this.getIsCumulative();
+		if(b!=null)b=(GeoBoolean)b.copy();
+		return new AlgoPascalBarChart(
+				(NumberValue)this.getP1().deepCopy(kernel),(NumberValue)this.getP2().deepCopy(kernel),				
+				b,(NumberValue)this.getA().deepCopy(kernel),(NumberValue)this.getB().deepCopy(kernel),
+				getValues().clone(),getLeftBorder().clone(),getIntervals());
+
 	}
 }
 

@@ -1,7 +1,5 @@
 package geogebra.kernel;
 
-import geogebra.main.Application;
-
 public abstract class AlgoElementCAS extends AlgoElement {
 
 	public AlgoElementCAS(Construction c) {
@@ -16,6 +14,9 @@ public abstract class AlgoElementCAS extends AlgoElement {
     	super.remove();  
     	if (geo != null)
     		geo.removeAlgorithm(algoCAS);
+    }
+	public AlgoElementCAS(){
+    	
     }
 
 }

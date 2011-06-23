@@ -38,14 +38,26 @@ public class AlgoHyperGeometricBarChart extends AlgoFunctionAreaSums {
         super(cons,label, n, p, sampleSize, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_HYPERGEOMETRIC);
     }
 	
+	private AlgoHyperGeometricBarChart( 
+			NumberValue n, NumberValue p, NumberValue sampleSize, GeoBoolean isCumulative,NumberValue a,NumberValue b,double[]vals,
+			double[]borders,int N) {
+        super(n, p, sampleSize, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_HYPERGEOMETRIC,a,b,vals,borders,N);
+    }
+	
 
     public String getClassName() {
         return "AlgoHyperGeometricBarChart";
     }
 
-	public AlgoDrawInformation copy() {
-		// TODO Auto-generated method stub
-		return null;
+	public AlgoDrawInformation copy() {		
+		GeoBoolean b = (GeoBoolean)this.getIsCumulative();
+		if(b!=null)b=(GeoBoolean)b.copy();
+		return new AlgoHyperGeometricBarChart(
+				(NumberValue)this.getP1().deepCopy(kernel),(NumberValue)this.getP2().deepCopy(kernel),
+				(NumberValue)this.getP3().deepCopy(kernel),
+				b,(NumberValue)this.getA().deepCopy(kernel),(NumberValue)this.getB().deepCopy(kernel),
+				getValues().clone(),getLeftBorder().clone(),getIntervals());
+
 	}
 }
 

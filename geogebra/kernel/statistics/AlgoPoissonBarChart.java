@@ -38,14 +38,24 @@ public class AlgoPoissonBarChart extends AlgoFunctionAreaSums {
         super(cons,label, mean, null, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_POISSON);
     }
 	
+	private AlgoPoissonBarChart( 
+			NumberValue mean, GeoBoolean isCumulative,NumberValue a,NumberValue b,double[]vals,
+			double[]borders,int N) {
+        super(mean, null, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_HYPERGEOMETRIC,a,b,vals,borders,N);
+    }
 
     public String getClassName() {
         return "AlgoPoissonBarChart";
     }
 
 	public AlgoDrawInformation copy() {
-		// TODO Auto-generated method stub
-		return null;
+		GeoBoolean b = (GeoBoolean)this.getIsCumulative();
+		if(b!=null)b=(GeoBoolean)b.copy();
+		return new AlgoPoissonBarChart(
+				(NumberValue)this.getP1().deepCopy(kernel),				
+				b,(NumberValue)this.getA().deepCopy(kernel),(NumberValue)this.getB().deepCopy(kernel),
+				getValues().clone(),getLeftBorder().clone(),getIntervals());
+
 	}
 }
 
