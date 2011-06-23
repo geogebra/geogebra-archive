@@ -3289,7 +3289,7 @@ public abstract class GeoElement
 		if (algoParent == null)
 			return "";
 		else
-			return indicesToHTML(algoParent.toString(), addHTMLtag);
+			return indicesToHTML(app.translationFix(algoParent.toString()), addHTMLtag);
 	}
 
 	public String getCommandDescription() {
