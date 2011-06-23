@@ -350,7 +350,15 @@ public class GuiManager {
 	}
 	
 	public boolean hasSpreadsheetView() {
-		return spreadsheetView != null;
+		if (spreadsheetView == null) return false;
+		if (!spreadsheetView.isShowing()) return false;
+		return true;
+	}
+	
+	public boolean hasAlgebraView() {
+		if (algebraView == null) return false;
+		if (!algebraView.isShowing()) return false;
+		return true;
 	}
 	
 	public JComponent getSpreadsheetView() {
@@ -449,7 +457,7 @@ public class GuiManager {
     	if (euclidianView2 == null) {
     		boolean [] showAxis = { true, true };
     		boolean showGrid = false;
-    		Application.debug("XXXXX Creating 2nd Euclidian View XXXXX",1);
+    		Application.printStacktrace("XXXXX Creating 2nd Euclidian View XXXXX");
     		euclidianView2 = new EuclidianView(new EuclidianController(kernel), showAxis, showGrid, 2);
     		//euclidianView2.setEuclidianViewNo(2);
     		euclidianView2.setAntialiasing(true);
@@ -459,7 +467,9 @@ public class GuiManager {
 	}
 	
 	public boolean hasEuclidianView2() {
-		return euclidianView2 != null;
+		if (euclidianView2 == null) return false;
+		if (!euclidianView2.isShowing()) return false;
+		return true;
 	}
 	
 	/**

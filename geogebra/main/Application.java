@@ -3614,7 +3614,9 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		// save AlgebraView settings
-		getGuiManager().getAlgebraViewXML(sb);
+		if (getGuiManager().hasAlgebraView()){
+			getGuiManager().getAlgebraViewXML(sb);
+		}
 		
 		// coord style, decimal places settings etc
 		kernel.getKernelXML(sb);
