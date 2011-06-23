@@ -616,9 +616,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// showAxes = true;
 		// showGrid = false;
 		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
-		pointStyle = POINT_STYLE_DOT;
-		
-		booleanSize=13; // Michael Borcherds 2008-05-12
 
 		// added by Lo�c BEGIN
 		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
