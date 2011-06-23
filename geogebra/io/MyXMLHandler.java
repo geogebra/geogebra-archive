@@ -2548,10 +2548,12 @@ public class MyXMLHandler implements DocHandler {
 			else
 				geo.removeView(app.getEuclidianView());
 			
-			if ((EVs & 2) == 0) // bit 1
-				geo.addView(app.getGuiManager().getEuclidianView2());
-			else
-				geo.removeView(app.getGuiManager().getEuclidianView2());
+			if (app.getGuiManager().hasEuclidianView2()) {
+				if ((EVs & 2) == 0) // bit 1
+					geo.addView(app.getGuiManager().getEuclidianView2());
+				else
+					geo.removeView(app.getGuiManager().getEuclidianView2());
+			}
 			return true;
 			
 		} catch (Exception e) {
