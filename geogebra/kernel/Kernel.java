@@ -74,6 +74,7 @@ import geogebra.kernel.statistics.AlgoGamma;
 import geogebra.kernel.statistics.AlgoGeometricMean;
 import geogebra.kernel.statistics.AlgoHarmonicMean;
 import geogebra.kernel.statistics.AlgoHyperGeometric;
+import geogebra.kernel.statistics.AlgoHyperGeometricBarChart;
 import geogebra.kernel.statistics.AlgoInverseBinomial;
 import geogebra.kernel.statistics.AlgoInverseCauchy;
 import geogebra.kernel.statistics.AlgoInverseChiSquared;
@@ -105,8 +106,10 @@ import geogebra.kernel.statistics.AlgoMode;
 import geogebra.kernel.statistics.AlgoNormal;
 import geogebra.kernel.statistics.AlgoOrdinalRank;
 import geogebra.kernel.statistics.AlgoPascal;
+import geogebra.kernel.statistics.AlgoPascalBarChart;
 import geogebra.kernel.statistics.AlgoPercentile;
 import geogebra.kernel.statistics.AlgoPoisson;
+import geogebra.kernel.statistics.AlgoPoissonBarChart;
 import geogebra.kernel.statistics.AlgoProduct;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
@@ -4112,11 +4115,26 @@ public class Kernel {
 		return num;
 	}
 	
+	/** Pascal[] probability */
 	final public GeoNumeric Pascal(String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
 		AlgoPascal algo = new AlgoPascal(cons, label, a, b, c, isCumulative);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	/** Pascal[] bar chart */
+	final public GeoNumeric Pascal(String label, NumberValue a, NumberValue b) {
+		AlgoPascalBarChart algo = new AlgoPascalBarChart(cons, label, a, b);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	/** Pascal[] bar chart with cumulative option */
+	final public GeoNumeric Pascal(String label, NumberValue a, NumberValue b, GeoBoolean isCumulative) {
+		AlgoPascalBarChart algo = new AlgoPascalBarChart(cons, label, a, b, isCumulative);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
 	
 	final public GeoNumeric InversePascal(String label, NumberValue a, NumberValue b, NumberValue c) {
 		AlgoInversePascal algo = new AlgoInversePascal(cons, label, a, b, c);
@@ -4124,12 +4142,27 @@ public class Kernel {
 		return num;
 	}
 	
-	
+	/** Poisson[] probability */
 	final public GeoNumeric Poisson(String label, NumberValue a, NumberValue b, GeoBoolean isCumulative) {
 		AlgoPoisson algo = new AlgoPoisson(cons, label, a, b, isCumulative);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	/** Poisson[] bar chart */
+	final public GeoNumeric Poisson(String label, NumberValue a) {
+		AlgoPoissonBarChart algo = new AlgoPoissonBarChart(cons, label, a);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	/** Poisson[] bar chart with cumulative option */
+	final public GeoNumeric Poisson(String label, NumberValue a, GeoBoolean isCumulative) {
+		AlgoPoissonBarChart algo = new AlgoPoissonBarChart(cons, label, a, isCumulative);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
+	
 	
 	final public GeoNumeric InversePoisson(String label, NumberValue a, NumberValue b) {
 		AlgoInversePoisson algo = new AlgoInversePoisson(cons, label, a, b);
@@ -4137,13 +4170,29 @@ public class Kernel {
 		return num;
 	}
 	
-	
+	/** HyperGeometric[] probability */
 	final public GeoNumeric HyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d,
 			GeoBoolean isCumulative) {
 		AlgoHyperGeometric algo = new AlgoHyperGeometric(cons, label, a, b, c, d, isCumulative);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	/** HyperGeometric[] bar chart */
+	final public GeoNumeric HyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoHyperGeometricBarChart algo = new AlgoHyperGeometricBarChart(cons, label, a, b, c);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	/** HyperGeometric[] bar chart with cumulative option */
+	final public GeoNumeric HyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+		AlgoHyperGeometricBarChart algo = new AlgoHyperGeometricBarChart(cons, label, a, b, c, isCumulative);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
+	
+	
+	
 	
 	final public GeoNumeric InverseHyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d) {
 		AlgoInverseHyperGeometric algo = new AlgoInverseHyperGeometric(cons, label, a, b, c, d);

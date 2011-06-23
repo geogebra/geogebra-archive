@@ -6827,6 +6827,37 @@ class CmdPascal extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
+		
+		case 2:
+			arg = resArgs(c);
+			if ((ok[0] = arg[0].isNumberValue())
+					&& (ok[1] = arg[1].isNumberValue())) {
+				GeoElement[] ret = { kernel.Pascal(c.getLabel(),
+						(NumberValue) arg[0], (NumberValue) arg[1]) };
+				return ret;
+
+			} else if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else
+				throw argErr(app, c.getName(), arg[1]);
+
+			
+		case 3:
+			arg = resArgs(c);
+			if ((ok[0] = arg[0].isNumberValue())
+					&& (ok[1] = arg[1].isNumberValue())
+					&& (ok[2] = arg[2].isGeoBoolean())) {
+				GeoElement[] ret = { kernel.Pascal(c.getLabel(),
+						(NumberValue) arg[0], (NumberValue) arg[1], (GeoBoolean)arg[2]) };
+				return ret;
+
+			} else if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else if (!ok[1])
+				throw argErr(app, c.getName(), arg[1]);
+			else
+				throw argErr(app, c.getName(), arg[2]);
+
 		case 4:
 			arg = resArgs(c);
 			if ((ok[0] = arg[0].isNumberValue())
@@ -7043,6 +7074,31 @@ class CmdPoisson extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
+		
+		case 1:
+			arg = resArgs(c);
+			if ((ok[0] = arg[0].isNumberValue())) {
+				GeoElement[] ret = { kernel.Poisson(c.getLabel(),
+						(NumberValue) arg[0]) };
+				return ret;
+			}
+			else
+				throw argErr(app, c.getName(), arg[0]);
+
+			
+		case 2:
+			arg = resArgs(c);
+			if ((ok[0] = arg[0].isNumberValue())
+					&& (ok[1] = arg[1].isGeoBoolean())) {
+				GeoElement[] ret = { kernel.Poisson(c.getLabel(),
+						(NumberValue) arg[0], (GeoBoolean)arg[1]) };
+				return ret;
+
+			} else if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else
+				throw argErr(app, c.getName(), arg[1]);
+		
 		case 3:
 			arg = resArgs(c);
 			if ((ok[0] = arg[0].isNumberValue())
@@ -7387,6 +7443,42 @@ class CmdHyperGeometric extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
+		
+		case 3:
+			arg = resArgs(c);
+			if ((ok[0] = arg[0].isNumberValue())
+					&& (ok[1] = arg[1].isNumberValue())) {
+				GeoElement[] ret = { kernel.HyperGeometric(c.getLabel(),
+						(NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2]) };
+				return ret;
+
+			} else if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else if (!ok[1])
+				throw argErr(app, c.getName(), arg[1]);
+			else
+				throw argErr(app, c.getName(), arg[2]);
+
+			
+		case 4:
+			arg = resArgs(c);
+			if ((ok[0] = arg[0].isNumberValue())
+					&& (ok[1] = arg[1].isNumberValue())
+					&& (ok[2] = arg[2].isGeoBoolean())) {
+				GeoElement[] ret = { kernel.HyperGeometric(c.getLabel(),
+						(NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2], (GeoBoolean)arg[3]) };
+				return ret;
+
+			} else if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else if (!ok[1])
+				throw argErr(app, c.getName(), arg[1]);
+			else if (!ok[2])
+				throw argErr(app, c.getName(), arg[2]);
+			else
+				throw argErr(app, c.getName(), arg[3]);
+			
+
 		case 5:
 			arg = resArgs(c);
 			if ((ok[0] = arg[0].isNumberValue())

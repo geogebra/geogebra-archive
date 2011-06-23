@@ -17,7 +17,10 @@ import java.util.ArrayList;
 
 import org.apache.commons.math.distribution.BinomialDistribution;
 import org.apache.commons.math.distribution.BinomialDistributionImpl;
+import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.apache.commons.math.distribution.IntegerDistribution;
+import org.apache.commons.math.distribution.PascalDistributionImpl;
+import org.apache.commons.math.distribution.PoissonDistributionImpl;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -601,6 +604,9 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			break;
 			
 		case TYPE_BARCHART_BINOMIAL:
+		case TYPE_BARCHART_PASCAL:
+		case TYPE_BARCHART_HYPERGEOMETRIC:
+		case TYPE_BARCHART_POISSON:
 			ArrayList<GeoElement> inputList = new ArrayList<GeoElement>();
 			inputList.add(p1geo);
 			if(p2geo != null)
@@ -610,7 +616,6 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			if(isCumulative != null)
 				inputList.add(isCumulative);
 						
-			
 			input = new GeoElement[inputList.size()];
 			input = inputList.toArray(input);
 			break;
@@ -1131,7 +1136,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 					|| type == TYPE_BARCHART_POISSON
 					|| type == TYPE_BARCHART_HYPERGEOMETRIC
 					|| type == TYPE_BARCHART_PASCAL){
-				if(!setDistributionLists()) {
+				if(!prepareDistributionLists()) {
 					sum.setUndefined();
 					return;
 				}
@@ -1633,11 +1638,15 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	}
 	
 
-	private boolean setDistributionLists(){
+	/**
+	 * Prepares list1 and list2 for use with probability distribution bar charts
+	 */
+	private boolean prepareDistributionLists(){
 
 		IntegerDistribution dist = null;
 		int first = 0, last = 0;
 		try{
+			// get the distribution and the first, last list values for given distribution type
 			switch(type){
 			case TYPE_BARCHART_BINOMIAL:
 				if(!(p1geo.isDefined() && p2geo.isDefined()))
@@ -1648,39 +1657,96 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				first = 0;
 				last = n;
 				break;
+				
+			case TYPE_BARCHART_PASCAL:
+				if(!(p1geo.isDefined() && p2geo.isDefined()))
+					return false;
+				n = (int)Math.round(p1.getDouble());
+				p = p2.getDouble();
+				dist = new PascalDistributionImpl(n, p);
+				
+				first = 0;
+				last = -1;
+				break;
+				
+			case TYPE_BARCHART_POISSON:
+				if(!p1geo.isDefined())
+					return false;
+				double lambda = p1.getDouble();
+				dist = new PoissonDistributionImpl(lambda);
+				first = 0;
+				last = -1;
+				break;
+				
+			case TYPE_BARCHART_HYPERGEOMETRIC:
+				if(!(p1geo.isDefined() && p2geo.isDefined() && p3geo.isDefined()))
+					return false;
+				int pop = (int)p1.getDouble();
+				int successes = (int)p2.getDouble();
+				int sample = (int)p3.getDouble();
+				dist = new HypergeometricDistributionImpl(pop, successes, sample);
+				first = Math.max(0, successes + sample - pop);
+				last = Math.min(successes, sample);
+				break;
 			}
-
-			boolean oldSuppress = cons.isSuppressLabelsActive();
-			cons.setSuppressLabelCreation(true);
-			if(list1 != null)
-				list1.remove();
-			list1 = new GeoList(cons);
-
-			if(list2 != null)
-				list2.remove();
-			list2 = new GeoList(cons);
-		
-			double prob;
-			double cumProb = 0;
-			for(int i = first; i <= last; i++ ){
-				list1.add(new GeoNumeric(cons,i));
-				prob = dist.probability(i);
-				cumProb += prob;
-				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean())
-				list2.add(new GeoNumeric(cons, cumProb));
-				else
-					list2.add(new GeoNumeric(cons, prob));
-			}
-			cons.setSuppressLabelCreation(oldSuppress);
 			
 			
+			// load class list and probability list
+			loadDistributionLists( first, last, dist);
 		}
+		
 		catch (Exception e) {
 			Application.debug(e.getMessage());
 			return false;        			
 		}
-		
+
 		return true;
 	}	
+	
+	
+	/**
+	 * Utility method, creates and loads list1 and list2 with classes and probabilities for
+	 * the probability distribution bar charts
+	 */
+	private void loadDistributionLists(int first, int last, IntegerDistribution dist) throws Exception
+	{
+		boolean oldSuppress = cons.isSuppressLabelsActive() ;
+		cons.setSuppressLabelCreation(true);
+		if(list1 != null)
+			list1.remove();
+		list1 = new GeoList(cons);
+
+		if(list2 != null)
+			list2.remove();
+		list2 = new GeoList(cons);
+
+		double prob;
+		double cumProb = 0;
+		if(last == -1){
+			int i = first;
+			while(cumProb < 1 - 1e-6){
+				list1.add(new GeoNumeric(cons,i));
+				prob = dist.probability(i);
+				cumProb += prob;
+				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean())
+					list2.add(new GeoNumeric(cons, cumProb));
+				else
+					list2.add(new GeoNumeric(cons, prob));
+				i++;
+			}
+		}
+		for(int i = first; i <= last; i++ ){
+			list1.add(new GeoNumeric(cons,i));
+			prob = dist.probability(i);
+			cumProb += prob;
+			if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean())
+				list2.add(new GeoNumeric(cons, cumProb));
+			else
+				list2.add(new GeoNumeric(cons, prob));
+		}
+		cons.setSuppressLabelCreation(oldSuppress);
+
+	}
+	
 	
 }
