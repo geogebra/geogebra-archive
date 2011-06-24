@@ -1569,10 +1569,7 @@ public class Application implements KeyEventDispatcher {
 		// update right angle style in euclidian view (different for German)
 		if (euclidianView != null)
 			euclidianView.updateRightAngleStyle(locale);
-		
-		// TODO: avoid initing GUI when spreadsheet is not showing
-		((SpreadsheetView)getGuiManager().getSpreadsheetView()).restart();
-		
+				
 		// make sure digits are updated in all numbers
 		getKernel().updateConstruction();
 		setUnsaved();
