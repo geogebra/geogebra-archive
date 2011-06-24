@@ -358,13 +358,17 @@ public class CopyPaste {
 			String ll = copiedXMLlabels.get(i);
 			geo = kernel.lookupLabel(ll);
 			if (geo != null) {
-				// TODO: handle EuclidianView2
-				//geo.removeView(app.getEuclidianView());
-				//geo.removeView(app.getEuclidianView2());
-				//geo.addView(app.getActiveEuclidianView());
+				if (app.getActiveEuclidianView() == app.getEuclidianView()) {
+					app.addToEuclidianView(geo);
+					geo.removeView(app.getEuclidianView2());
+					app.getEuclidianView2().remove(geo);
+				} else {
+					app.removeFromEuclidianView(geo);
+					geo.addView(app.getEuclidianView2());
+					app.getEuclidianView2().add(geo);
+				}
 
 				geo.setLabel(geo.getDefaultLabel(false));
-
 				app.addSelectedGeo(geo);
 			}
 		}
