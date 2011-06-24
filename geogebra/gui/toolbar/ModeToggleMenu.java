@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 /**
  * JToggle button combined with popup menu for mode selction
@@ -238,6 +239,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	//private static final Color selColor = new Color(17, 26, 100, 200);
 	private static final Color selColor = new Color(0,0,153, 200);
 	private static final BasicStroke selStroke = new BasicStroke(3f);
+	
+	private Timer showMenuTimer;
 			
 	MyJToggleButton(ModeToggleMenu menu) {
 		super();
@@ -332,7 +335,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 	
 	
 	private boolean popupTriangleClicked(int x, int y) {
-		popupTriangleClicked = (menu.size > 1 && y > iconHeight-2);
+		popupTriangleClicked = (menu.size > 1 && y > iconHeight-4);
 		return popupTriangleClicked;
 	}
 
@@ -344,27 +347,51 @@ implements MouseListener, MouseMotionListener, ActionListener {
 		menu.setMouseOverButton(this);
 	}
 
+	public void mousePressed(MouseEvent e) {
+		if (!menu.isPopupShowing() && popupTriangleClicked(e.getX(), e.getY())) {
+			menu.setPopupVisible(true);
+		} else {
+			// Display the menu after a specific amount of time as well, start 
+			// a timer for this. The mouseReleased method stops this timer,
+			// which ensures that the menu is not displayed if the user stopped
+			// to press this button.
+			if(showMenuTimer == null) {
+				showMenuTimer = new Timer(1000, new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						menu.setPopupVisible(true);
+					}
+				});
+				showMenuTimer.setRepeats(false);
+			}
+			
+			showMenuTimer.start();
+		}
+	}
+
 	public void mouseExited(MouseEvent arg0) {
 		menu.setMouseOverButton(null);
 		if (popupTriangleHighlighting) {
 			popupTriangleHighlighting = false;
 			repaint();
 		}
+		
+		// Stop the timer to show the menu if the user is no longer
+		// hovering over this button.
+		if(showMenuTimer != null && showMenuTimer.isRunning()) {
+			showMenuTimer.stop();
+		}
 	}
 
-	public void mousePressed(MouseEvent e) {
-		if (!menu.isPopupShowing() && popupTriangleClicked(e.getX(), e.getY())) {
-			menu.setPopupVisible(true);
-		}			
-	}
-
-	public void mouseReleased(MouseEvent e) {	
+	public void mouseReleased(MouseEvent e) {
 		if (menu.isPopupShowing() && !popupTriangleClicked(e.getX(), e.getY())) {
 			menu.setPopupVisible(false);
-		}	
+		}
 		
-		// 2011-01-03 Markus: this caused multiple setMode() calls in the CAS view
-		//doClick();		
+		// Stop the timer to show the menu if the user released his mouse. In case
+		// the timer already executed his action this has no effect anyway.
+		if(showMenuTimer != null && showMenuTimer.isRunning()) {
+			showMenuTimer.stop();
+		}	
 	}
 	
 	public void doClick() {
