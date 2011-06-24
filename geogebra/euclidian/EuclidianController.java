@@ -442,6 +442,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected void endOfMode(int mode) {
 		switch (mode) {
+		case EuclidianView.MODE_MOVE:
+			if (pastePreviewSelected != null) {
+				while (!pastePreviewSelected.isEmpty()) {
+					GeoElement geo = pastePreviewSelected.get(0);
+					pastePreviewSelected.remove(geo);
+					geo.remove();
+				}
+			}
+			break;
+
 		case EuclidianView.MODE_SHOW_HIDE_OBJECT:				
 			// take all selected objects and hide them
 			Collection coll = 	app.getSelectedGeos();				
