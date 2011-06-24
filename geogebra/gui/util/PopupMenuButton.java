@@ -439,8 +439,14 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.keepVisible = keepVisible;
 	}
 
-	
-
+	/**
+	 * sets the tooTip strings for the menu selection table; 
+	 * the toolTipArray should have a 1-1 correspondence with the data array 
+	 * @param toolTipArray
+	 */
+	public void setToolTipArray(String[] toolTipArray){
+		myTable.setToolTipArray(toolTipArray);
+	}
 
 
 	 //==============================================

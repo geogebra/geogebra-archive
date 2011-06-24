@@ -102,6 +102,11 @@ public class SelectionTable extends JTable{
 	}
 
 	private String[] toolTipArray = null;
+	/**
+	 * sets the tooTip strings for the selection table; 
+	 * the toolTipArray should have a 1-1 correspondence with the data array 
+	 * @param toolTipArray
+	 */
 	public void setToolTipArray(String[] toolTipArray) {
 		this.toolTipArray = toolTipArray;
 	}

@@ -42,6 +42,8 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 		for(int i = 0; i < colorSet.length; i++)
 			lookupMap.put(colorSet[i], i);
 		
+		setToolTipArray(getToolTipArray());
+		
 		getMyTable().setUseColorSwatchBorder(true);
 		getMySlider().setMinimum(0);
 		getMySlider().setMaximum(100);
@@ -167,6 +169,23 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 		return colors;
 		
 	}
+	
+	private String[] getToolTipArray(){
+		String[] toolTipArray = new String[colorSet.length];
+		for(int i=0; i<toolTipArray.length; i++){
+			
+			// for testing
+			//toolTipArray[i] = colorSet[i].toString();
+			
+			
+			// add code here for color swatch tooltips
+			// also be sure to handle the swatch with the 
+			// empty set icon for bg colors
+			
+		}
+		return toolTipArray;
+	}
+	
 	
 	
 	private ImageIcon[] getColorSwatchIcons(Color[] colorArray, float alpha, Dimension iconSize, int colorSetType){
