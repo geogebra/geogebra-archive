@@ -374,6 +374,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (!firstMoveable) {
 			startPoint.setLocation((view.getXmin() + view.getXmax()) / 2, (view.getYmin() + view.getYmax()) / 2);
 		}
+		if (pastePreviewSelected != null && !pastePreviewSelected.isEmpty()) {
+			transformCoords();
+			updatePastePreviewPosition();
+			kernel.notifyRepaint();
+		}
+	}
+	
+	protected void updatePastePreviewPosition() {
+		if (translationVec == null)
+			translationVec = new Coords(2);
+		translationVec.setX(xRW - startPoint.x);
+		translationVec.setY(yRW - startPoint.y);
+		startPoint.setLocation(xRW, yRW);
+		GeoElement.moveObjects(pastePreviewSelected, translationVec, new Coords(xRW, yRW, 0), null);
 	}
 	
 	//==============================================
@@ -1758,12 +1772,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (pastePreviewSelected != null)
 			if (!pastePreviewSelected.isEmpty()) {
-				if (translationVec == null)
-					translationVec = new Coords(2);
-				translationVec.setX(xRW - startPoint.x);
-				translationVec.setY(yRW - startPoint.y);
-				startPoint.setLocation(xRW, yRW);
-				GeoElement.moveObjects(pastePreviewSelected, translationVec, new Coords(xRW, yRW, 0), null);
+				updatePastePreviewPosition();
 			}
 
 		handleMouseDragged(true);								
@@ -2646,13 +2655,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		if (pastePreviewSelected != null && !pastePreviewSelected.isEmpty()) {
 			transformCoords();
-			if (translationVec == null)
-				translationVec = new Coords(2);
-			translationVec.setX(xRW - startPoint.x);
-			translationVec.setY(yRW - startPoint.y);
-			startPoint.setLocation(xRW, yRW);
-			GeoElement.moveObjects(pastePreviewSelected, translationVec, new Coords(xRW, yRW, 0), null);
-				
+			updatePastePreviewPosition();
 			repaintNeeded = true;
 		}
 
