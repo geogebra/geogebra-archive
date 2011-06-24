@@ -367,11 +367,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 							}
 						}
 					}
-					firstMoveable = false;
 				}
 			}
 		}
-		if (!firstMoveable) {
+		if (firstMoveable) {
 			startPoint.setLocation((view.getXmin() + view.getXmax()) / 2, (view.getYmin() + view.getYmax()) / 2);
 		}
 		if (pastePreviewSelected != null && !pastePreviewSelected.isEmpty()) {
