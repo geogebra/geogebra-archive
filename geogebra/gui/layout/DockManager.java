@@ -169,11 +169,7 @@ public class DockManager implements AWTEventListener {
 
 			// now insert the dock panels
 			for(int i = 0; i < dpInfo.length; ++i) {
-				
 				DockPanel panel = getPanel(dpInfo[i].getViewId());
-				
-				
-
 				
 				// skip panels which will not be drawn in the main window
 				if(!dpInfo[i].isVisible())
@@ -209,7 +205,6 @@ public class DockManager implements AWTEventListener {
 				}
 
 				panel.updatePanel();
-				rootPane.updateUI();
 				
 				// move toolbar to main container
 				if(panel.hasToolbar()) {
@@ -226,7 +221,9 @@ public class DockManager implements AWTEventListener {
 				if(spInfo[i].getOrientation() == DockSplitPane.VERTICAL_SPLIT)
 					splitPanes[i].setDividerLocation((int)(spInfo[i].getDividerLocation() * windowHeight));
 				else 
-					splitPanes[i].setDividerLocation((int)(spInfo[i].getDividerLocation() * windowWidth));			
+					splitPanes[i].setDividerLocation((int)(spInfo[i].getDividerLocation() * windowWidth));
+				
+				splitPanes[i].updateUI();
 			}
 			
 			markAlonePanel();

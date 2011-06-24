@@ -989,8 +989,9 @@ public class Application implements KeyEventDispatcher {
 			centerPanel.add(getEuclidianView(), BorderLayout.CENTER);
 		}
 		
-		if (updateUI)
+		if (updateUI) {
 			updateComponentTreeUI();
+		}
 	}
 
 	public JPanel getCenterPanel() {
