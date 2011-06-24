@@ -2164,7 +2164,7 @@ public	class PropertiesPanel extends JPanel {
 		private boolean checkGeos(Object[] geos) {
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (geo.isIndependent() || !(geo instanceof GeoAngle))
+				if ((geo.isIndependent() && !isDefaults) || !(geo instanceof GeoAngle))
 					return false;
 			}
 			return true;
@@ -4593,7 +4593,7 @@ public	class PropertiesPanel extends JPanel {
 				if (!(geo.isPath()
 					|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
 					|| (geo.isGeoNumeric()
-						&& ((GeoNumeric) geo).isDrawable())
+						&& (((GeoNumeric) geo).isDrawable() || isDefaults))
 					|| ((geo instanceof GeoFunctionNVar)
 						&& ((GeoFunctionNVar) geo).isInequality()))) {
 					geosOK = false;
