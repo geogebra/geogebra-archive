@@ -457,7 +457,7 @@ public class GuiManager {
     	if (euclidianView2 == null) {
     		boolean [] showAxis = { true, true };
     		boolean showGrid = false;
-    		Application.printStacktrace("XXXXX Creating 2nd Euclidian View XXXXX");
+    		Application.debug("XXXXX Creating 2nd Euclidian View XXXXX");
     		euclidianView2 = new EuclidianView(new EuclidianController(kernel), showAxis, showGrid, 2);
     		//euclidianView2.setEuclidianViewNo(2);
     		euclidianView2.setAntialiasing(true);
