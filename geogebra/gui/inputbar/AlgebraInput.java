@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.gui.inputbar;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.autocompletion.AutoCompletion;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.view.algebra.AlgebraInputDropTargetListener;
 import geogebra.gui.view.algebra.InputPanel;
@@ -83,10 +82,6 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.setEditable(true);						
 		inputField.addKeyListener(this);
 		inputField.addFocusListener(this);
-		
-		// install new auto completion popup
-		inputField.setAutoComplete(false);
-		AutoCompletion.install(inputField, new String[] {"help", "haaaaa", "heeeelp"}, true, 8);
 		
 		// enable drops
 		inputField.setDragEnabled(true);
