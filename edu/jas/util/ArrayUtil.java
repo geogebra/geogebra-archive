@@ -5,6 +5,7 @@
 package edu.jas.util;
 
 import edu.jas.structure.Complex;
+import edu.jas.structure.RingElem;
 
 /**
  * Array utilities.
@@ -12,19 +13,11 @@ import edu.jas.structure.Complex;
  * @author Heinz Kredel
  */
 
-public class ArrayUtil {
-
-	/**
-	 * * Copy the specified array.
-	 * 
-	 * @param original
-	 *            array.
-	 * @param newLength
-	 *            new array length.
-	 * @return copy of this.
-	 */
-	public static Complex[] copyOfComplex(Complex[] original, int newLength) {
-		Complex[] copy = new Complex[newLength];
+public class ArrayUtil {	
+	
+	public static <C extends RingElem<C>> Complex<C>[] copyOfComplex(Complex<C>[] original, int newLength) {
+		@SuppressWarnings("unchecked")
+		Complex<C>[] copy = new Complex[newLength];
 		System.arraycopy(original, 0, copy, 0, Math.min(original.length, newLength));
 		return copy;
 	}
