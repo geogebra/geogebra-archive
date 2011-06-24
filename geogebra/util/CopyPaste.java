@@ -344,6 +344,9 @@ public class CopyPaste {
 		if (copiedXML.length() == 0)
 			return;
 
+		if (!app.getActiveEuclidianView().getEuclidianController().mayPaste())
+			return;
+
 		app.getActiveEuclidianView().getEuclidianController().clearSelections();
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
 		app.getGgbApi().evalXML(copiedXML.toString());

@@ -317,7 +317,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// Paste preview
 
 	public void setPastePreviewSelected() {
-		pastePreviewSelected = new ArrayList<GeoElement>();
+
+		// don't allow paste on top of another paste until its placed
+		if (pastePreviewSelected != null) {
+			while (!pastePreviewSelected.isEmpty()) {
+				GeoElement geo = pastePreviewSelected.get(0);
+				pastePreviewSelected.remove(geo);
+				geo.remove();
+			}
+		} else {
+			pastePreviewSelected = new ArrayList<GeoElement>();
+		}
 
 		GeoElement geo;
 		boolean firstMoveable = true;
@@ -379,7 +389,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			kernel.notifyRepaint();
 		}
 	}
-	
+
+	public boolean mayPaste() {
+		if (pastePreviewSelected == null) return true;
+		return pastePreviewSelected.isEmpty();
+	}
+
 	protected void updatePastePreviewPosition() {
 		if (translationVec == null)
 			translationVec = new Coords(2);
