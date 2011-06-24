@@ -1,6 +1,5 @@
 package geogebra.gui.autocompletion;
 
-import edu.jas.util.ArrayUtil;
 import geogebra.main.Application;
 
 import java.awt.Component;
@@ -139,7 +138,8 @@ public class AutoCompletion {
 	 */
 	public static void install(JTextField textField, String[] completionOptions, boolean caseInsensitiveCompletion, int maxPopupRowCount) {
 		// Array will be changed (sorted) - create defensive copy
-		String[] optionsCopy = ArrayUtil.copyOf(completionOptions);
+		String[] optionsCopy = new String[completionOptions.length];
+		System.arraycopy(completionOptions, 0, optionsCopy, 0, completionOptions.length);
 		// Wrap array in provider and install
 		CompletionProvider<String> arrayProvider = new SortedArrayCompletionProvider<String>(optionsCopy, caseInsensitiveCompletion) {
 			public String toString(String option) { return option; }
