@@ -372,7 +372,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 		}
 		if (!firstMoveable) {
-			
+			startPoint.setLocation((view.getXmin() + view.getXmax()) / 2, (view.getYmin() + view.getYmax()) / 2);
 		}
 	}
 	
