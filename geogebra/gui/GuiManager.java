@@ -3142,6 +3142,10 @@ public class GuiManager {
 			return virtualKeyboard;
 		}
 		
+		public boolean hasVirtualKeyboard() {
+			return virtualKeyboard != null;
+		}
+		
 		/*
 		HandwritingRecognitionTool handwritingRecognition = null;
 		

@@ -236,8 +236,6 @@ public class OptionsDialog extends JDialog implements WindowListener {
 
 	/**
 	 * Update the labels of the components (e.g. if the language changed).
-	 * 
-	 * TODO use real phrases (F.S.)
 	 */
 	public void setLabels() {
 		setTitle(app.getMenu("Settings"));

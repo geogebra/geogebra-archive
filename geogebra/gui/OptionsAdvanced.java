@@ -505,7 +505,16 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
 		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
 		
+		boolean keyboardInitialized = app.getGuiManager().hasVirtualKeyboard();
 		VirtualKeyboard virtualKeyboard = app.getGuiManager().getVirtualKeyboard();
+		
+		// fix for #664: If the keyboard is not made visible it uses the CPU all
+		// the time - for whatever task. Wierd.
+		if(!keyboardInitialized) {
+			virtualKeyboard.setVisible(true);
+			virtualKeyboard.setVisible(false);
+		}
+		
 		tfKeyboardWidth.setText(Integer.toString(virtualKeyboard.getWidth()));
 		tfKeyboardHeight.setText(Integer.toString(virtualKeyboard.getHeight()));
 		
