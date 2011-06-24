@@ -182,7 +182,10 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 	public void updateRegressionPanel(){
 		fldTitleX.setText(statDialog.getDataTitles()[0]);
 		fldTitleY.setText(statDialog.getDataTitles()[1]);
-		this.setRegressionEquationLabel();
+		setRegressionEquationLabel();
+		doTextFieldActionPerformed(fldInputX);
+		updateGUI();
+		
 	}
 
 	private void setRegressionLabels(){	
@@ -210,7 +213,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 		ActionListener al = cbRegression.getActionListeners()[0];
 		cbRegression.removeActionListener(al);
 		cbRegression.removeAllItems();
-		for(int i=0;i<5;i++)
+		for(int i=0;i<regressionLabels.length;i++)
 			cbRegression.addItem(regressionLabels[i]);
 		cbRegression.setSelectedIndex(j);
 		cbRegression.addActionListener(al);		
@@ -303,7 +306,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 		else if(source == cbRegression){			
 			statDialog.setRegressionMode(cbRegression.getSelectedIndex());
 			statDialog.setRegressionGeo();
-			setRegressionEquationLabel();
+			updateRegressionPanel();
 		}
 
 		else if(source == cbPolyOrder){
@@ -314,28 +317,37 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 		
 		else if(source == btnSwapXY){
 			statDialog.swapXY();
+			// clear the prediction panel
+			fldInputX.setText("");
+			fldOutputY.setText("");
 		}
 
 
 	}
 
+	 
 	private void doTextFieldActionPerformed(JTextField source) {
 		if(isIniting ) return;
-		try {
-			String inputText = source.getText().trim();
-			NumberValue nv;
-			nv = app.getKernel().getAlgebraProcessor().evaluateToNumeric(inputText, false);		
-			double value = nv.getDouble();
 
-			if(source == fldInputX){
+		if(source == fldInputX){
+			try {
+				String inputText = source.getText().trim();
+				if(inputText == null || inputText.length() == 0) return;
+				
+				NumberValue nv;
+				nv = app.getKernel().getAlgebraProcessor().evaluateToNumeric(inputText, true);		
+				double value = nv.getDouble();
+
 				String str = "\"\" + " + statDialog.getRegressionModel().getLabel() + "(" + value + ")";
-			//	System.out.println(str);
 				GeoText text = app.getKernel().getAlgebraProcessor().evaluateToText(str, false);
 				fldOutputY.setText(text.getTextString());
-			}
 
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

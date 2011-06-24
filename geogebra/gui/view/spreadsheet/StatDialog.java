@@ -222,26 +222,32 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		statDialog = this;
 
 		defaultDialogDimension = new Dimension(700,500);
-
 		
-		//===========================================
-		//load data from the data source (based on currently selected geos)
-
 		boolean dataOK = setDataSource();
 		if(dataOK){
+			//load data from the data source (based on currently selected geos)
 			loadDataLists();
 		}else{
-			//TODO is this needed ?
+			//TODO is dispose needed ?
 			//dispose();
 			return;  
 		}
+		
+		createGUI();
+		
+	} 
+
+	/*************************************************  
+	 * END StatDialog constructor  */
 
 
-		//================================================
+	private void createGUI(){
+		
+		
 		// Create two StatCombo panels with default plots.
 		// StatCombo panels display various plots and tables
 		// selected by a comboBox.
-
+		//================================================
 		switch(mode){
 
 		case MODE_ONEVAR:
@@ -264,10 +270,9 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 
 
+		
+		// Create a StatPanel to display basic statistics for the current data set
 		//================================================
-		// Create a statList and StatPanel.
-		// StatPanels display basic statistics for the current data set
-
 		if(mode == statDialog.MODE_ONEVAR){
 			statTable = new StatTable(app, this, mode);
 			statTable.evaluateStatTable(dataListSelected);
@@ -279,20 +284,20 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 
 
-		//================================================
+		
 		// Create a DataPanel.
 		// Data panels display the current data set(s) and allow temporary editing. 
 		// Edited data is used by the statTable and statCombo panels. 
-
+		//================================================
 		if(mode != statDialog.MODE_MULTIVAR){
 			dataPanel = new StatDataPanel(app, this, dataListAll, mode);
 			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		}
 
 
-		//================================================
+	
 		// Init the GUI and attach this view to the kernel
-
+		//================================================
 		initGUI();
 		updateFonts();
 		btnClose.requestFocus();
@@ -302,11 +307,11 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		updateGUI();
 		pack();
 
-	} 
-
-	/**  END StatDialog constructor  */
-
-
+	}
+	
+	
+		
+	
 
 	//=================================================
 	//       Data Handling
@@ -399,15 +404,11 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		boolean copyByValue = true;
 		boolean doStoreUndo = false;
 
-
+		
 		//=======================================
 		// create/update dataListAll 
-
-		if(dataListAll != null){
-			dataListAll.remove();
-		}
-
-
+		if(dataListAll != null) dataListAll.remove();
+		
 		if(dataSource instanceof GeoList){
 			//dataListAll = dataSource;
 			text = ((GeoList)dataSource).getLabel();
@@ -440,6 +441,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 				break;
 
+				//TODO: dataListAll needs to be created as copy by value
 			case MODE_MULTIVAR:
 				text = cr.createColumnMatrixExpression((ArrayList<CellRange>) dataSource); 							
 				dataListAll = new GeoList(cons);
@@ -447,7 +449,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 					dataListAll = (GeoList) kernel.getAlgebraProcessor()
 					.changeGeoElementNoExceptionHandling((GeoElement)dataListAll, text, true, false);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}				
 				break;
@@ -505,6 +506,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 		dataListSelected.updateCascade();
 		updateAllComboPanels(false);
+		if(regressionPanel != null)
+			regressionPanel.updateRegressionPanel();
 		//Application.debug("updateSelectedList: " + index + doAdd);
 
 	}
@@ -738,6 +741,10 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		comboStatPanel2.setLabels();
 
 		dialogOptionsPanel.setLabels();
+		if(statTable != null)
+			statTable.setLabels();
+		statTable.repaint();
+		
 
 	}
 
@@ -931,7 +938,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			//updateDialog();
 
 		}else{
-			//Application.debug("statDialog not visible");
+			//Application.printStacktrace("statDialog not visible");
 			//spView.setColumnSelect(false);
 			removeStatGeos();		
 			this.detachView();		
@@ -1026,8 +1033,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		btnPrint.setFont(font);
 		btnOptions.setFont(font);
 		
-		comboStatPanel.updateStatTableFonts(font);
-		comboStatPanel2.updateStatTableFonts(font);
 		if(mode != MODE_MULTIVAR){
 			dataPanel.updateFonts(font);
 			statTable.updateFonts(font);

@@ -911,10 +911,13 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		dataListSelected = dataList;
 	}
 
-	public void updateStatTableFonts(Font font){
-		//statPanel.updateFonts(font);
+	public void updateFonts(){
+		
+		
+		
 	}
-
+	
+	
 	public void attachView() {
 		plotPanel.attachView();
 

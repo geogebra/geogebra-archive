@@ -47,13 +47,13 @@ public class StatGeo   {
 		cons = kernel.getConstruction();
 
 		regCmd[StatDialog.REG_NONE] = "";
-		regCmd[StatDialog.REG_LINEAR] = "FitLine";
-		regCmd[StatDialog.REG_LOG] = "FitLog";
-		regCmd[StatDialog.REG_POLY] = "FitPoly";
-		regCmd[StatDialog.REG_POW] = "FitPow";
-		regCmd[StatDialog.REG_EXP] = "FitExp";
-		regCmd[StatDialog.REG_SIN] = "FitSin";
-		regCmd[StatDialog.REG_LOGISTIC] = "FitLogistic";		
+		regCmd[StatDialog.REG_LINEAR] = app.getCommand("FitLine");
+		regCmd[StatDialog.REG_LOG] = app.getCommand("FitLog");
+		regCmd[StatDialog.REG_POLY] = app.getCommand("FitPoly");
+		regCmd[StatDialog.REG_POW] = app.getCommand("FitPow");
+		regCmd[StatDialog.REG_EXP] = app.getCommand("FitExp");
+		regCmd[StatDialog.REG_SIN] = app.getCommand("FitSin");
+		regCmd[StatDialog.REG_LOGISTIC] = app.getCommand("FitLogistic");		
 
 	}
 
@@ -631,6 +631,7 @@ public class StatGeo   {
 	}
 
 
+	
 
 	public void updateRegressionPlot(PlotSettings ps, GeoList dataList){
 
