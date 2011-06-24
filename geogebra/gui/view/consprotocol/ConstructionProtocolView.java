@@ -246,7 +246,6 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		int y = Math.max((d2.width - d1.width) / 2, 0);
 		setBounds(x, y, d1.width, d1.height);
 		*/
-		attachView();
 	}
 
 	public Application getApplication() {
