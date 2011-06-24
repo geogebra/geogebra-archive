@@ -308,6 +308,7 @@ public class CopyPaste {
 		kernel.setCASPrintForm(oldPrintForm);
 		kernel.setTranslateCommandName(oldValue);
 		app.setMode(EuclidianView.MODE_MOVE);
+		app.getActiveEuclidianView().setSelectionRectangle(null);
 		
 		// make sure the coord style is updated the right way
 		ConstructionElement ce;

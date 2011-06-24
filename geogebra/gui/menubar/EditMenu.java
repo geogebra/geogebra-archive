@@ -226,6 +226,7 @@ public class EditMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {			
 				app.setWaitCursor();
 				CopyPaste.copyToXML(app, app.getSelectedGeos());
+				app.updateMenubar();
 				app.setDefaultCursor();
 			}
 		};
