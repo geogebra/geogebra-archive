@@ -392,8 +392,6 @@ public class DockManager implements AWTEventListener {
 		app.getEuclidianView().dispatchEvent(
 			new ComponentEvent(rootPane, ComponentEvent.COMPONENT_RESIZED)
 		);
-		
-		Application.debug(getDebugTree(0, rootPane));
 	}
 	
 	/**
@@ -630,7 +628,6 @@ public class DockManager implements AWTEventListener {
 		if(panel.isOpenInFrame()) {
 			panel.removeFrame();
 			panel.setOpenInFrame(true); // open in frame the next time
-			markAlonePanel();
 		} else {
 			DockSplitPane parent = panel.getParentSplitPane();
 			
@@ -649,7 +646,6 @@ public class DockManager implements AWTEventListener {
 					rootPane = (DockSplitPane)parent.getOpposite(panel);
 				} else {
 					parent.replaceComponent(panel, null);
-					markAlonePanel();
 				}
 				app.updateCenterPanel(true);
 			} else {
@@ -662,6 +658,8 @@ public class DockManager implements AWTEventListener {
 			if(isPermanent) {
 				app.validateComponent();
 			}
+			
+			markAlonePanel();
 
 			if(panel.hasToolbar()) {
 				ToolbarContainer mainContainer = app.getGuiManager().getToolbarPanel();

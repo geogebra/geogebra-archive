@@ -441,47 +441,47 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		frame = new JFrame(getPlainTitle());
 		
 		// needs the higher res as used by Windows 7 for the Toolbar
-	   	frame.setIconImage(app.getInternalImage("geogebra64.png"));  
-	   	frame.addWindowListener(this);	
-	   	
-	   	frame.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent event) {
-            	setFrameBounds(event.getComponent().getBounds());
-            }
-            
-            public void componentMoved(ComponentEvent event) {
-            	setFrameBounds(event.getComponent().getBounds());
-            }
-        });
-	   	
-	   	frame.getContentPane().add(this);
-	   	
-	   	
-	   	// TODO multimonitor supported?
-	   	Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-	   	
-	   	// Use the previous dimension of this view
-	   	Rectangle windowBounds = getFrameBounds();
-	   	
-	   	// resize window if necessary
-	   	if(windowBounds.width > screenSize.width)
-	   		windowBounds.width = screenSize.width - 50;
-	   	if(windowBounds.height > screenSize.height)
-	   		windowBounds.height = windowBounds.height - 50;
-	   	
-	   	// center window if necessary
-	   	if(windowBounds.x + windowBounds.width > screenSize.width ||
-	   		windowBounds.y + windowBounds.height > screenSize.height) {
-	   		frame.setLocationRelativeTo(null);
-	   	} else {
-	   		frame.setLocation(windowBounds.getLocation());
-	   	}
-	   	setOpenInFrame(true);
-	   	
-	   	frame.setSize(windowBounds.getSize());
-	   	frame.setVisible(true);
-		
-	   	// make titlebar visible if necessary
+   	frame.setIconImage(app.getInternalImage("geogebra64.png"));  
+   	frame.addWindowListener(this);	
+   	
+   	frame.addComponentListener(new ComponentAdapter() {
+          public void componentResized(ComponentEvent event) {
+          	setFrameBounds(event.getComponent().getBounds());
+          }
+          
+          public void componentMoved(ComponentEvent event) {
+          	setFrameBounds(event.getComponent().getBounds());
+          }
+      });
+   	
+   	frame.getContentPane().add(this);
+   	
+   	
+   	// TODO multimonitor supported?
+   	Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+   	
+   	// Use the previous dimension of this view
+   	Rectangle windowBounds = getFrameBounds();
+   	
+   	// resize window if necessary
+   	if(windowBounds.width > screenSize.width)
+   		windowBounds.width = screenSize.width - 50;
+   	if(windowBounds.height > screenSize.height)
+   		windowBounds.height = windowBounds.height - 50;
+   	
+   	// center window if necessary
+   	if(windowBounds.x + windowBounds.width > screenSize.width ||
+   		windowBounds.y + windowBounds.height > screenSize.height) {
+   		frame.setLocationRelativeTo(null);
+   	} else {
+   		frame.setLocation(windowBounds.getLocation());
+   	}
+   	setOpenInFrame(true);
+   	
+   	frame.setSize(windowBounds.getSize());
+   	frame.setVisible(true);
+	
+   	// make titlebar visible if necessary
 		updatePanel();
 		
 		frame.repaint();
