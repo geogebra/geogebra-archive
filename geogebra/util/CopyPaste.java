@@ -360,8 +360,10 @@ public class CopyPaste {
 			if (geo != null) {
 				if (app.getActiveEuclidianView() == app.getEuclidianView()) {
 					app.addToEuclidianView(geo);
-					geo.removeView(app.getEuclidianView2());
-					app.getEuclidianView2().remove(geo);
+					if (app.getGuiManager().hasEuclidianView2()) {
+						geo.removeView(app.getEuclidianView2());
+						app.getEuclidianView2().remove(geo);
+					}
 				} else {
 					app.removeFromEuclidianView(geo);
 					geo.addView(app.getEuclidianView2());
