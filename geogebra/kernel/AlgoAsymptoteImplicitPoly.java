@@ -67,34 +67,41 @@ public class AlgoAsymptoteImplicitPoly extends AlgoElement {
         
         if(ip.getDegX() == ip.getDegY())
         {
-        	int degX = ip.getCoeff().length;
+        	int degX = ip.getCoeff().length-1;
         	
-
         	sb.setLength(0);
     	    sb.append("{");
     		
-        	double [] coeffk = new double[degX];
-        	double [] coeffn = new double[degX-1];
+        	double [] coeffk = new double[degX+1];
+        	double [] diag = new double[degX+1];
+        	double [] upDiag = new double[degX];
         	
-        	for(int i=degX-1, k=0; i>=0; i--)
-        		for(int j=degX-1; j>=0; j--)
-        			if(i+j == degX-1)
-        				coeffk[k++] = ip.getCoeff()[i][j];
-        				
-        	for(int j=1; j<coeffk.length; j++)
-				coeffn[j-1] = j*coeffk[j];
-			
+        	
+        	for(int i=degX, k=0, m=0; i>=0; i--)
+        		for(int j=degX; j>=0; j--)
+        			if(i+j == degX)
+        			{
+        				coeffk[k] = ip.getCoeff()[i][j];
+        				diag[k++] = ip.getCoeff()[i][j];
+        			}
+        			else if(i+j == degX-1)
+        				upDiag[m++] = ip.getCoeff()[i][j];
+        	
         	int numk = solver.polynomialRoots(coeffk);
 			
 			for(int k=0; k<numk; k++)
 			{
-				double div = 0;
-				for(int i=0; i<coeffn.length; i++)
-					div += coeffn[i]*Math.pow(coeffk[k], i);
+				double down = 0, up = 0;
+				for(int i=0; i<upDiag.length; i++)
+				{	
+					up += upDiag[i]*Math.pow(coeffk[k], i);
+					down += (i+1)*diag[i+1]*Math.pow(coeffk[k], i);
+				}
 				
-				sb.append("y = " + 	coeffk[k] + " *x + " + ip.getCoeff()[degX-2][0]/div + ",");
+				sb.append("y = " + coeffk[k] + "*x + " + -up/down + ",");
 			}
-			sb.deleteCharAt(sb.length()-1);
+			if(sb.length() > 1)
+				sb.deleteCharAt(sb.length()-1);
 	        sb.append("}");
 
         }
