@@ -632,8 +632,9 @@ Section Install Install
     File cc.ico
     File forum.ico
     File "${build.dir}\installer\windows\geogebra.exe"
-    File "${build.dir}\unpacked\geogebra*.jar"
-    File gpl-2.0.txt
+    File "${build.dir}\unpacked\*.jar"
+    File gpl-3.0.txt
+    File cc-by-sa-3.0.txt
     File wiki.ico
     SetOutPath $INSTDIR\unsigned
     File "${build.dir}\unsigned\unpacked\geogebra*.jar"
