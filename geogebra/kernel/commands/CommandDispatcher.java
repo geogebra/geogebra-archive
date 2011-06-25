@@ -518,6 +518,7 @@ public class CommandDispatcher {
     	cmdTable.put("TTest", new CmdTTest(kernel));
     	cmdTable.put("TTestPaired", new CmdTTestPaired(kernel));
     	cmdTable.put("TTest2", new CmdTTest2(kernel));
+    	cmdTable.put("TMeanEstimate", new CmdTMeanEstimate(kernel));
     	cmdTable.put("Percentile", new CmdPercentile(kernel));
     	cmdTable.put("GeometricMean", new CmdGeometricMean(kernel));
     	cmdTable.put("HarmonicMean", new CmdHarmonicMean(kernel));

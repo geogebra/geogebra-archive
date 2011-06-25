@@ -130,6 +130,7 @@ import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.kernel.statistics.AlgoTDistribution;
+import geogebra.kernel.statistics.AlgoTMeanEstimate;
 import geogebra.kernel.statistics.AlgoTTest;
 import geogebra.kernel.statistics.AlgoTTest2;
 import geogebra.kernel.statistics.AlgoTTestPaired;
@@ -4264,6 +4265,20 @@ public class Kernel {
 		return num;
 	}
 	
+	
+	/** TMeanEstimate[] with sample data */
+	final public GeoList TMeanEstimate(String label, GeoList sampleList, GeoNumeric level) {
+		AlgoTMeanEstimate algo = new AlgoTMeanEstimate(cons, label, sampleList, level);
+		GeoList num = algo.getResult();
+		return num;
+	}
+	
+	/** TMeanEstimate[] with sample statistics */
+	final public GeoList TMeanEstimate(String label, GeoNumeric mean, GeoNumeric sd, GeoNumeric n, GeoNumeric level) {
+		AlgoTMeanEstimate algo = new AlgoTMeanEstimate(cons, label, mean, sd, n, level);
+		GeoList num = algo.getResult();
+		return num;
+	}
 	
 	
 	
