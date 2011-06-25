@@ -146,12 +146,9 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
    }
    
    
-   /** 
-	* Yields true if the area of this polygon is equal to the
-	* area of polygon p.
-	*/
 	// Michael Borcherds 2008-04-30
 	final public boolean isEqual(GeoElement geo) {
+		//TODO
 		return false;
 	}
 
@@ -362,11 +359,18 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 		getScriptTags(sb);
 	}
 
-
-	public GeoPoint[] getPoints() {
+	public final GeoPoint[] getPoints() {
 		return (GeoPoint[])points;
 	}
 
+	public GeoPointND[] getPointsND() {
+		return points;
+	}
+	
+	public GeoPointND getPointND(int i) {
+		return points[i];
+	}
+	
 	/**
 	 * Recompute length of this polyline
 	 */

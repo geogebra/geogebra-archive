@@ -201,9 +201,34 @@ GeoLineND, GeoCoordSys{
 	public void pointChanged(GeoPointND P){
 		
 		
-		boolean done = false;
 		
-		//project P on line
+		double t = getParamOnLine(P);
+		
+		if (t<getMinParameter())
+			t=getMinParameter();
+		else if (t>getMaxParameter())
+			t=getMaxParameter();
+
+		
+		
+		
+		
+		// set path parameter		
+		PathParameter pp = P.getPathParameter();
+		
+		
+		pp.setT(t);
+		
+		//udpate point using pathChanged
+		pathChanged(P);
+		
+		
+
+	}
+	//get the param of P's projection on line 
+	public double getParamOnLine(GeoPointND P) {
+	
+		boolean done = false;
 		double t = 0;
 		if (((GeoElement) P).isGeoElement3D()){
 			if (((GeoPoint3D) P).getWillingCoords()!=null){
@@ -235,43 +260,22 @@ GeoLineND, GeoCoordSys{
 				}
 			}
 		}
-		
+	
 		if(!done){
 			//project current point coordinates
 			//Application.debug("project current point coordinates");
 			Coords preDirection = P.getCoordsInD(3).sub(coordsys.getOrigin()).crossProduct(coordsys.getVx());
 			if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
 				preDirection = coordsys.getVy();
-			
+		
 			Coords[] project = P.getCoordsInD(3).projectOnLineWithDirection(
 					coordsys.getOrigin(),
 					coordsys.getVx(),
 					preDirection.crossProduct(coordsys.getVx()));
-	
+
 			t = project[1].get(1);	
 		}
-		
-		
-		if (t<getMinParameter())
-			t=getMinParameter();
-		else if (t>getMaxParameter())
-			t=getMaxParameter();
-
-		
-		
-		
-		
-		// set path parameter		
-		PathParameter pp = P.getPathParameter();
-		
-		
-		pp.setT(t);
-		
-		//udpate point using pathChanged
-		pathChanged(P);
-		
-		
-
+		return t;
 	}
 	
 	

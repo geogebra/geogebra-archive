@@ -295,6 +295,16 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 
+	final public GeoElement [] PolyLine3D(String [] labels, GeoPointND [] P) {
+		AlgoPolyLine3D algo = new AlgoPolyLine3D(cons, labels, P);
+		return algo.getOutput();
+	}
+	
+	final public GeoElement [] PolyLine3D(String [] labels, GeoList pointList) {
+		AlgoPolyLine3D algo = new AlgoPolyLine3D(cons, labels, pointList);
+		return algo.getOutput();
+	}
+	
 
 	/** Prism with vertices (last one is first vertex of second parallel face)
 	 * @param label name

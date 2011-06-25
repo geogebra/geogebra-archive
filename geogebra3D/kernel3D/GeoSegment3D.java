@@ -261,15 +261,24 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 	
 
 	public double getPointX(double parameter) {
-		// TODO Auto-generated method stub
+		// TODO delete from GeoSegmentND
 		return 0;
 	}
 
 	public double getPointY(double parameter) {
-		// TODO Auto-generated method stub
+		// TODO delete from GeoSegmentND
 		return 0;
 	}
 
+	
+	//TODO add to GeoSegmentND
+	public Coords getPointCoords(double parameter) {
+		return startPoint.getCoordsInD(3).add(
+				(endPoint.getCoordsInD(3).sub(startPoint.getCoordsInD(3)))
+				.mul(parameter));	
+	}
+	
+	
 	public GeoElement getStartPointAsGeoElement() {
 		return (GeoElement) startPoint;
 	}

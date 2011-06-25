@@ -144,6 +144,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.ScientificFormat;
 import geogebra.util.Unicode;
+import geogebra3D.kernel3D.AlgoPolyLine3D;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -5233,10 +5234,6 @@ public class Kernel {
 		return algo.getOutput();
 	}
 	
-	/** 
-	 * Polygon with vertices from geolist 
-	 * Only the polygon is labeled, segments are not labeled
-	 */
 	final public GeoElement [] PolyLine(String [] labels, GeoList pointList) {
 		AlgoPolyLine algo = new AlgoPolyLine(cons, labels, pointList);
 		return algo.getOutput();

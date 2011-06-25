@@ -10,11 +10,16 @@ the Free Software Foundation.
 
 */
 
-package geogebra.kernel;
+package geogebra3D.kernel3D;
 
 import geogebra.Matrix.CoordSys;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.AlgoPolyLine;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 
 
@@ -25,22 +30,20 @@ import geogebra.kernel.kernelND.GeoPointND;
  * @author  Michael Borcherds
  * @version 
  */
-public class AlgoPolyLine extends AlgoElement {
+public class AlgoPolyLine3D extends AlgoPolyLine {
 
 	private static final long serialVersionUID = 1L;
-	protected GeoPointND [] points;  // input
-	protected GeoList geoList;  // alternative input
-    protected GeoPolyLine poly;     // output
+    
        
-    protected AlgoPolyLine(Construction cons, String [] labels, GeoList geoList) {
+    public AlgoPolyLine3D(Construction cons, String [] labels, GeoList geoList) {
     	this(cons, labels, null, geoList);
     }
     
-    protected AlgoPolyLine(Construction cons, String [] labels, GeoPointND [] points) {
+    public AlgoPolyLine3D(Construction cons, String [] labels, GeoPointND [] points) {
     	this(cons, labels, points, null);
     }
  
-    protected AlgoPolyLine(Construction cons, String [] labels, GeoPointND [] points, GeoList geoList) {
+    protected AlgoPolyLine3D(Construction cons, String [] labels, GeoPointND [] points, GeoList geoList) {
     	this(cons,labels,points,geoList,null,true,null);
     }
     
@@ -53,25 +56,23 @@ public class AlgoPolyLine extends AlgoElement {
      * @param createSegments  says if the polygon has to creates its edges (3D only) 
      * @param polyhedron polyhedron (when segment is part of), used for 3D
      */
-    protected AlgoPolyLine(Construction cons, String [] labels, 
+    protected AlgoPolyLine3D(Construction cons, String [] labels, 
     		GeoPointND [] points, GeoList geoList, CoordSys cs2D, 
     		boolean createSegments, GeoElement polyhedron) {
-        super(cons);
-        this.points = points;           
-        this.geoList = geoList;
-          
+        super(cons, labels, points, geoList, cs2D, createSegments, polyhedron);
+
         //poly = new GeoPolygon(cons, points);
-        createPolyLine(createSegments);  
+      //  createPolyLine(createSegments);  
         
         // compute polygon points
-        compute();  
+      //  compute();  
         
-        setInputOutput(); // for AlgoElement
+      //  setInputOutput(); // for AlgoElement
         
-        if (labels != null)
-        	poly.setLabel(labels[0]);
-        else
-        	poly.setLabel(null);
+      //  if (labels != null)
+        //	poly.setLabel(labels[0]);
+        //else
+        //	poly.setLabel(null);
         
     }   
     
@@ -81,11 +82,11 @@ public class AlgoPolyLine extends AlgoElement {
      * @param createSegments says if the polygon has to creates its edges (3D only)
      */
     protected void createPolyLine(boolean createSegments){
-    	poly = new GeoPolyLine(this.cons, this.points);
+    	poly = new GeoPolyLine3D(this.cons, this.points);
     }
         
     public String getClassName() {
-        return "AlgoPolyLine";
+        return "AlgoPolyLine3D";
     }
     
     public int getRelatedModeID() {
@@ -106,35 +107,13 @@ public class AlgoPolyLine extends AlgoElement {
     	
     	// create new points array
     	int size = pointList.size();
-    	points = new GeoPoint[size];
+    	points = new GeoPointND[size];
     	for (int i=0; i < size; i++) {    		
-    		points[i] = (GeoPoint) pointList.get(i);
+    		points[i] = (GeoPointND) pointList.get(i);
     	}
     	poly.setPoints(points);
     	
     }
-    
-    
-    // for AlgoElement
-    protected void setInputOutput() {
-    	if (geoList != null) {
-    		// list as input
-			input = new GeoElement[1];
-			input[0] = geoList;
-
-    	} else {    	
-   			input = (GeoElement[]) points;
-    	}    	
-    	// set dependencies
-        for (int i = 0; i < input.length; i++) {
-            input[i].addAlgorithm(this);
-        }
-        
-        // set output
-        setOutputLength(1);
-        setOutput(0,poly);
-        setDependencies();
-    }    
     
     public void update() {
         // compute output from input
@@ -142,10 +121,9 @@ public class AlgoPolyLine extends AlgoElement {
         getOutput(0).update();
     }
     
-    
-    public GeoPolyLine getPoly() { return poly; }    
-    public GeoPoint [] getPoints() {
-    	return (GeoPoint[]) points;
+      
+    public GeoPointND[] getPointsND() {
+    	return points;
     }
     
  
@@ -159,31 +137,57 @@ public class AlgoPolyLine extends AlgoElement {
         
     }   
     
-    StringBuilder sb;
-    final public String toString() {
+    
+    
+    // for AlgoElement
+    protected void setInputOutput() {
+    	
+    	//efficient inputs are points or list
+    	GeoElement [] efficientInput = createEfficientInput();  	
+    	
+    	
+    		input = new GeoElement[efficientInput.length];
+    		for (int i=0; i<efficientInput.length; i++)
+    			input[i]=efficientInput[i];
+    	
+    	
+    	
+    	setEfficientDependencies(input, efficientInput);
+        
+    	//set output after, to avoid segments to have this to parent algo
+    	//setOutput();
+    	
+        setOutputLength(1);
+        setOutput(0,poly);
+        setDependencies();
+    	
 
-        if (sb == null) sb = new StringBuilder();
-        else sb.setLength(0);
-  
-        sb.append(app.getPlain("PolyLine"));
-        sb.append(' ');
-        
-        //G.Sturr: get label from geoList  (2010-3-15)
-		if (geoList != null) {
-			sb.append(geoList.getLabel());
-			
-		} else {
-		// use point labels
-			 
-			int last = points.length - 1;
-			for (int i = 0; i < last; i++) {
-				sb.append(points[i].getLabel());
-				sb.append(", ");
-			}
-			sb.append(points[last].getLabel());
-		}
-        
-        
-        return  sb.toString();
+    }    
+    
+    protected GeoElement [] createEfficientInput(){
+
+    	GeoElement [] efficientInput;
+
+    	if (geoList != null) {
+    		// list as input
+    		efficientInput = new GeoElement[1];
+    		efficientInput[0] = geoList;
+    	} else {    	
+    		// points as input
+    		efficientInput = new GeoElement[points.length];
+    		for(int i = 0; i < points.length; i++)
+    			efficientInput[i]=(GeoElement) points[i];
+    	}    
+
+    	return efficientInput;
     }
+    
+    private void setOutput() {
+                     
+        output[0] = poly;        
+        
+       
+    }
+    
+    
 }

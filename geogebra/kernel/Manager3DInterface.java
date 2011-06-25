@@ -12,6 +12,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
+import geogebra3D.kernel3D.AlgoPolyLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 
 /**
@@ -151,6 +152,11 @@ public interface Manager3DInterface {
 			  * @return the polygon */
 			 public GeoElement [] Polygon3D(String[] label, GeoPointND[] points, GeoDirectionND direction);
 
+
+			 public GeoElement [] PolyLine3D(String [] labels, GeoPointND [] P);
+				
+			 public GeoElement [] PolyLine3D(String [] labels, GeoList pointList);
+				
 
 			/** Prism with vertices (last one is first vertex of second parallel face)
 			 * @param label name

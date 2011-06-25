@@ -366,7 +366,7 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_QUADRIC = 3230;
 	public static final int GEO_CLASS_QUADRIC_PART = 3231;
 	public static final int GEO_CLASS_QUADRIC_LIMITED = 3232;
-
+	public static final int GEO_CLASS_POLYLINE3D = 3260;
 	public static final int GEO_CLASS_POLYHEDRON = 3310;
 	
 	public static final int GEO_CLASS_SURFACECARTESIAN3D = 3320;
