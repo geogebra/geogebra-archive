@@ -530,11 +530,11 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 				casEvalStringSymbolic = expression.getCASstring(kernel
 						.getCurrentCAS(), true);
 
-			// chaching should only be done if the expression doesn't contain
+			// caching should only be done if the expression doesn't contain
 			// other functions
 			// e.g. this is important for f(x) = x^2, g(x,y) = f(x) + y,
 			// Derivative(g(x,y), x)
-			// where we cannot cache the derivative fo g because f may have
+			// where we cannot cache the derivative of g because f may have
 			// changed
 			useCaching = symbolic
 					&& !expression
