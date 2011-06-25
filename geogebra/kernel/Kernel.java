@@ -4230,40 +4230,40 @@ public class Kernel {
 	
 	
 	/** TTest[] with sample data */
-	final public GeoNumeric TTest(String label, GeoList sampleList, GeoNumeric hypMean, GeoText tail) {
+	final public GeoList TTest(String label, GeoList sampleList, GeoNumeric hypMean, GeoText tail) {
 		AlgoTTest algo = new AlgoTTest(cons, label, sampleList, hypMean, tail);
-		GeoNumeric num = algo.getResult();
-		return num;
+		GeoList result = algo.getResult();
+		return result;
 	}
 	
 	/** TTest[] with sample statistics */
-	final public GeoNumeric TTest(String label, GeoNumeric mean, GeoNumeric sd, GeoNumeric n, GeoNumeric hypMean, GeoText tail) {
+	final public GeoList TTest(String label, GeoNumeric mean, GeoNumeric sd, GeoNumeric n, GeoNumeric hypMean, GeoText tail) {
 		AlgoTTest algo = new AlgoTTest(cons, label, mean, sd, n, hypMean, tail);
-		GeoNumeric num = algo.getResult();
-		return num;
+		GeoList result = algo.getResult();
+		return result;
 	}
 	
 
 	/** TTestPaired[] */
-	final public GeoNumeric TTestPaired(String label, GeoList sampleList1, GeoList sampleList2, GeoText tail) {
+	final public GeoList TTestPaired(String label, GeoList sampleList1, GeoList sampleList2, GeoText tail) {
 		AlgoTTestPaired algo = new AlgoTTestPaired(cons, label, sampleList1, sampleList2, tail);
-		GeoNumeric num = algo.getResult();
-		return num;
+		GeoList result = algo.getResult();
+		return result;
 	}
 	
 	/** TTest2[] with sample data */
-	final public GeoNumeric TTest2(String label, GeoList sampleList1, GeoList sampleList2, GeoText tail, GeoBoolean pooled) {
+	final public GeoList TTest2(String label, GeoList sampleList1, GeoList sampleList2, GeoText tail, GeoBoolean pooled) {
 		AlgoTTest2 algo = new AlgoTTest2(cons, label, sampleList1, sampleList2, tail, pooled);
-		GeoNumeric num = algo.getResult();
-		return num;
+		GeoList result = algo.getResult();
+		return result;
 	}
 	
 	/** TTest2[] with sample statistics */
-	final public GeoNumeric TTest2(String label, GeoNumeric mean1, GeoNumeric sd1, GeoNumeric n1, GeoNumeric mean2, 
+	final public GeoList TTest2(String label, GeoNumeric mean1, GeoNumeric sd1, GeoNumeric n1, GeoNumeric mean2, 
 			GeoNumeric sd2, GeoNumeric n2, GeoText tail, GeoBoolean pooled) {
 		AlgoTTest2 algo = new AlgoTTest2(cons, label, mean1, mean2, sd1, sd2, n1, n2, tail, pooled);
-		GeoNumeric num = algo.getResult();
-		return num;
+		GeoList result = algo.getResult();
+		return result;
 	}
 	
 	

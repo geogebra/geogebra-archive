@@ -36,7 +36,7 @@ public class AlgoTTest extends AlgoElement {
 	private GeoList geoList; //input
 	private GeoNumeric hypMean, mean, sd, n; //input
 	private GeoText tail; //input
-	private GeoNumeric  result;     // output   
+	private GeoList  result;     // output   
 	private TTestImpl tTestImpl;
 	private double[] val;
 	private double p, testStat;
@@ -49,7 +49,7 @@ public class AlgoTTest extends AlgoElement {
 		this.mean = null;
 		this.sd = null;
 		this.n = null;
-		result = new GeoNumeric(cons); 
+		result = new GeoList(cons); 
 		setInputOutput(); // for AlgoElement
 
 		compute();      
@@ -64,7 +64,7 @@ public class AlgoTTest extends AlgoElement {
 		this.mean = mean;
 		this.sd = sd;
 		this.n = n;
-		result = new GeoNumeric(cons); 
+		result = new GeoList(cons); 
 		setInputOutput(); // for AlgoElement
 
 		compute();      
@@ -83,7 +83,7 @@ public class AlgoTTest extends AlgoElement {
 			input[0] = geoList;
 			input[1] = hypMean;
 			input[2] = tail;
-			
+
 		}else{
 			input = new GeoElement[5];
 			input[0] = mean;
@@ -98,11 +98,11 @@ public class AlgoTTest extends AlgoElement {
 		setDependencies(); // done by AlgoElement
 	}
 
-	public GeoNumeric getResult() {
+	public GeoList getResult() {
 		return result;
 	}
 
-	
+
 	private double adjustedPValue(double p, double testStatistic){
 
 		// two sided test
@@ -117,21 +117,21 @@ public class AlgoTTest extends AlgoElement {
 			return 1 - p/2;
 	}
 
-	
+
 	protected final void compute() {
 
-		
+
 		if(!(tail.getTextString().equals("<") 
 				|| tail.getTextString().equals(">") 
 				|| tail.getTextString().equals("!="))){
 			result.setUndefined();
 			return;
 		}
-		
-		
+
+
 		// sample data input
 		if(input.length == 3){
-			
+
 			int size= geoList.size();
 			if(!geoList.isDefined() || size < 2){
 				result.setUndefined();	
@@ -139,38 +139,45 @@ public class AlgoTTest extends AlgoElement {
 			}
 
 			val = new double[size];
-			
+
 			for (int i=0; i < size; i++) {
-        		GeoElement geo = geoList.get(i);
-        		if (geo.isNumberValue()) {
-        			NumberValue num = (NumberValue) geo;
-        			val[i] = num.getDouble();
-        			
-        		} else {
-            		result.setUndefined();
-        			return;
-        		}    		    		
-        	}   
-			
+				GeoElement geo = geoList.get(i);
+				if (geo.isNumberValue()) {
+					NumberValue num = (NumberValue) geo;
+					val[i] = num.getDouble();
+
+				} else {
+					result.setUndefined();
+					return;
+				}    		    		
+			}   
+
 			try {
+				
+				// get the test statistic and p
 				if(tTestImpl == null)
 					tTestImpl = new TTestImpl();
+				testStat = tTestImpl.t(hypMean.getDouble(), val);
+				p = tTestImpl.tTest(hypMean.getDouble(), val);
+				p = adjustedPValue(p, testStat);
 				
-				 p = tTestImpl.tTest(hypMean.getDouble(), val);
-				 testStat = tTestImpl.t(hypMean.getDouble(), val);
-				result.setValue(adjustedPValue(p, testStat));
-				
-				
+
+				// put these results into the output list
+				result.clear();
+				result.add(new GeoNumeric(cons, p));
+				result.add(new GeoNumeric(cons,testStat));
+
+
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (MathException e) {
 				e.printStackTrace();
 			}
-			
 
-		// sample statistics input 
+
+			// sample statistics input 
 		}else{
-			     
+
 			// check for valid standard deviation and sample size
 			if(sd.getDouble() < 0 || n.getDouble() < 2){
 				result.setUndefined();
@@ -178,23 +185,31 @@ public class AlgoTTest extends AlgoElement {
 			}
 			StatisticalSummaryValues sumStats = new StatisticalSummaryValues(
 					mean.getDouble(), sd.getDouble()*sd.getDouble(), (long) n.getDouble(), -1,-1,-1);
-			
+
 			try {
+				
+				// get the test statistic and p
 				if(tTestImpl == null)
 					tTestImpl = new TTestImpl();
+				testStat = tTestImpl.t(hypMean.getDouble(), sumStats);
+				p = tTestImpl.tTest(hypMean.getDouble(), sumStats);
+				p = adjustedPValue(p, testStat);
 				
-				 p = tTestImpl.tTest(hypMean.getDouble(), sumStats);
-				 testStat = tTestImpl.t(hypMean.getDouble(), sumStats);
-				result.setValue(adjustedPValue(p, testStat));
-				
+
+				// put these results into the output list
+				result.clear();
+				result.add(new GeoNumeric(cons, p));
+				result.add(new GeoNumeric(cons,testStat));
+
+
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (MathException e) {
 				e.printStackTrace();
 			}
-			
-    	}
-			
+
+		}
+
 	}
 
 }

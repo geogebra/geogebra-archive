@@ -34,7 +34,7 @@ public class AlgoTTestPaired extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList0, geoList1; //input
 	private GeoText tail; //input
-	private GeoNumeric  result;     // output   
+	private GeoList  result;     // output   
 	private TTestImpl tTestImpl;
 	private double[] val0, val1;
 
@@ -43,7 +43,7 @@ public class AlgoTTestPaired extends AlgoElement {
 		this.geoList0 = geoList0;
 		this.geoList1 = geoList1;
 		this.tail = tail;
-		result = new GeoNumeric(cons); 
+		result = new GeoList(cons); 
 		setInputOutput(); // for AlgoElement
 
 		compute();      
@@ -67,7 +67,7 @@ public class AlgoTTestPaired extends AlgoElement {
 		setDependencies(); // done by AlgoElement
 	}
 
-	public GeoNumeric getResult() {
+	public GeoList getResult() {
 		return result;
 	}
 
@@ -131,14 +131,22 @@ public class AlgoTTestPaired extends AlgoElement {
 		}   
 
 		try {
+			
+			// get the test statistic and p
 			if(tTestImpl == null)
 				tTestImpl = new TTestImpl();
-
+			testStat = tTestImpl.pairedT(val0, val1);
 			p = tTestImpl.pairedTTest(val0, val1);
 			testStat = tTestImpl.pairedT(val0, val1);
-			result.setValue(adjustedPValue(p, testStat));
+			p = adjustedPValue(p, testStat);
 
-
+			
+			// put these results into the output list
+			result.clear();
+			result.add(new GeoNumeric(cons, p));
+			result.add(new GeoNumeric(cons,testStat));
+			
+			
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (MathException e) {
