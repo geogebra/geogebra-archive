@@ -2116,11 +2116,16 @@ class CmdAsymptote extends CommandProcessor {
 			// asymptotes to conic
 			if (arg[0].isGeoConic())
 				return kernel.Asymptote(c.getLabels(), (GeoConic) arg[0]);
-			else if (arg[0].isGeoFunction()) {
+			else if (arg[0].isGeoFunction())
+			{
 				GeoElement[] ret = { kernel.AsymptoteFunction(c.getLabel(),
 						(GeoFunction) arg[0]) };
 				return ret;
-
+			}
+			else if (arg[0].isGeoImplicitPoly()) {
+				GeoElement[] ret = { kernel.AsymptoteImplicitpoly(c.getLabel(),
+						(GeoImplicitPoly) arg[0]) };
+				return ret;
 			}
 			throw argErr(app, "Asymptote", arg[0]);
 

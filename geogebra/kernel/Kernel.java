@@ -6955,6 +6955,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * Asymptotes to ImplicitPoly
+	 * Michael Borcherds 
+	 */
+	final public GeoList AsymptoteImplicitpoly(String label, GeoImplicitPoly ip) {		
+		AlgoAsymptoteImplicitPoly algo = new AlgoAsymptoteImplicitPoly(cons, label, ip);
+		return algo.getResult();			
+	}
+	
+	/**
 	 * Numerator
 	 * Michael Borcherds 
 	 */
