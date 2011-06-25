@@ -1900,7 +1900,7 @@ ExpressionNode numberFunction():
 	                throw new MyParseError(app, str);
 	      		} 		
       		}
-      		else { // no derivative
+      		else { // no derivative: a(b)
 	      		if (geo instanceof Evaluatable) // function 
 	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION, myList.getListElement(0)); 
 				else if (geo instanceof GeoFunctionNVar) {
@@ -1910,12 +1910,13 @@ ExpressionNode numberFunction():
 	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.VEC_FUNCTION, myList.getListElement(0)); 
 	      		else if (geo.isGeoList()) // list1(1) to get first element of list1
 	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.ELEMENT_OF, myList); 
-	      		else if (geo.isGeoNumeric()) // a(1+x) -> multiply
+
+				// a(b) becomes a*b because a is not a function, no list, and no curve
+				// e.g. a(1+x) = a*(1+x) when a is a number
+	      		else 
 	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.MULTIPLY, myList.getListElement(0)); 
-	      		else {// error: no function
-	      			String [] str = { "FunctionExpected", funcName };
-	                throw new MyParseError(app, str);
-	            }
+
+//	      		else {// error: no function//	      			String [] str = { "FunctionExpected", funcName };//	                throw new MyParseError(app, str);//	            }
 	      	}
       }  
 }
