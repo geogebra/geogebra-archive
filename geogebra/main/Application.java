@@ -5432,6 +5432,12 @@ public class Application implements KeyEventDispatcher {
 			} else {
 				replace = Unicode.translationFixHu_hoez;
 			}
+		} else if ("-val/-vel".equals(affixes)) {
+			if ("a".equals(affixForm) || "o".equals(affixForm)) {
+				replace = "-val";
+			} else {
+				replace = "-vel";
+			}
 		}
 		
 		if ("".equals(replace)) {
