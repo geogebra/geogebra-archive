@@ -1218,60 +1218,18 @@ TrialFactorize(n, limit) :=
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 50 # jFactorsPoly( poly_CanBeUni ) <--
 [
     If(InVerboseMode(),Tell("jFactorsPoly_100612",poly));
     Local(content,pp,ppFactors,monomialFactors,result,moreDetails);
-    Local(vars,nvars,disassem,degrees,mpoly,nterms,allCoeffs,allPowers);
-    Local(hasRealCoefficients,hasRationalCoefficients,isHomogeneous);
+    Local(vars,nvars,nterms);
+    Local(isHomogeneous);
     Local(extraFactor);
     
     moreDetails := False;
-    disassem  := DisassembleExpression(poly);
-    allCoeffs := disassem[3];
 
-    
-    
-    hasRealCoefficients := HasRealCoefficients(poly);
-    If( hasRealCoefficients, 
-      [
-         Local(realPoly);
-         realPoly  := poly;   
-         allPowers := Flatten(disassem[2],"List");
-         poly      := RealToRationalConvert(poly);
-         
-         hasRealCoefficients := False;          ]
-    );
-    
-    
-    hasRationalCoefficients := HasRationalCoefficients(poly);
-    If(hasRationalCoefficients, 
-      [
-         Local(rationalPoly);
-         rationalPoly  := poly;   
-         If(InVerboseMode(),Tell("   RATIONAL",rationalPoly));
-         
-         poly := RationalToIntegerConvert(poly);
-         
-         hasRationalCoefficients := False;    
-      ]
-    );
+    If(HasRealCoefficients(poly), poly := RealToRationalConvert(poly));
+    If(HasRationalCoefficients(poly), poly := RationalToIntegerConvert(poly));
 
     
     content := xContent( poly );
@@ -1281,18 +1239,15 @@ TrialFactorize(n, limit) :=
     
     If( Length(VarList(pp))=0, result := {{pp*content,1}},
       [
+         Local(disassem);
          
          vars     := VarList(pp);
          nvars    := Length(vars);
          disassem := DisassembleExpression(pp);
          nterms   := Length(disassem[3]);
-         degrees  := {};
-         allCoeffs         := disassem[3];
-         allPowers         := Flatten(disassem[2],"List");
+
          If(nvars > 0,
            [
-             ForEach(v,vars)
-                [ DestructiveAppend(degrees,Degree(pp,v)); ];
              isHomogeneous     := [
                  
                  
@@ -1306,6 +1261,13 @@ TrialFactorize(n, limit) :=
     
          If(InVerboseMode() And moreDetails,
            [
+             Local(degrees, allCoeffs, allPowers);
+
+             degrees := {};
+             ForEach(v,vars) [ DestructiveAppend(degrees,Degree(pp,v)); ];
+             allCoeffs := disassem[3];
+             allPowers := Flatten(disassem[2],"List");
+
              Tell("               ",vars);
              Tell("              ",nvars);
              Tell("             ",nterms);
@@ -1340,7 +1302,6 @@ TrialFactorize(n, limit) :=
          
          If( monomialFactors[1][1] = 1,
              result := ppFactors,        
-             
              result := Concat(monomialFactors,ppFactors)      
          );
       ]
@@ -1447,15 +1408,18 @@ UnFence("jFactorsHomogeneousBivariate",1);
     
     
     If(InVerboseMode(),[NewLine();Tell("  REAL",poly);]);
-    Local(coeffs,gcd,lcm);
-    coeffs := Rationalize /@ (allCoeffs);
-    If(InVerboseMode(),[Tell("      to-Q",coeffs);Tell("      to-Z",coeffs);]);
-    Local(gcd,lcm);
-    gcd    := Gcd(Numerator /@ coeffs);
-    lcm    := Lcm(Denominator /@ coeffs);
-    If(InVerboseMode(),[Tell("       ",gcd);Tell("       ",lcm);]);
+    Local(disassem,coeffs);
+    disassem := DisassembleExpression(poly);
+    coeffs := Rationalize /@ disassem[3];
+    If(InVerboseMode(), [
+        Local(gcd,lcm);
+        gcd    := Gcd(Numerator /@ coeffs);
+        lcm    := Lcm(Denominator /@ coeffs);
+        Tell("      to-Q",coeffs);
+        Tell("       ",gcd);
+        Tell("       ",lcm);
+    ]);
     disassem[3] := coeffs;
-    allCoeffs   := coeffs;
     poly        := Sum(ReassembleListTerms(disassem));
     If(InVerboseMode(),Tell("   new",poly));
     poly;
@@ -1468,7 +1432,7 @@ UnFence("RealToRationalConvert",1);
     
     
     Local(coeffs,gcd,lcm);
-    coeffs := allCoeffs;
+    coeffs := DisassembleExpression(poly)[3];
     If(InVerboseMode(),Tell("  ",coeffs));
     lcm         := Lcm(Denominator /@ coeffs);
     extraFactor := lcm;
@@ -1714,14 +1678,7 @@ UnFence("jFac",3);
             lcm     := Lcm( Denominator /@ cc );
             uni[3]  := lcm * cc;
             fnew    := NormalForm(uni);
-            If( hasRationalCoefficients,
-              [
-                 DestructiveAppend(factrsnew,f);
-              ],
-              [ 
-                 DestructiveAppend(factrsnew,{fnew,f[2]});
-              ]
-            );
+            DestructiveAppend(factrsnew,{fnew,f[2]});
           ]
         );
         If( Degree(f[1])=2,
@@ -2300,99 +2257,6 @@ UnFence("ApproximateRealCoefficients",1);
     If(InVerboseMode(),Tell("    new ",p));
     xFactors(p);
 ];
-
-
-
-
-10 # IsPureRational( N_IsRational )_(Not IsInteger(N)) <-- True;
-
-12 # IsPureRational( _N ) <-- False;
-
-
-10 # HasRealCoefficients( poly_IsPolynomial ) <--
-[
-    Local(disassem);
-    disassem := DisassembleExpression(poly);
-    (Length(Select(disassem[3],"IsDecimal")) > 0);
-];
-
-10 # HasRealCoefficients( poly_IsMonomial ) <--
-[
-    Local(disassem);
-    disassem := DisassembleExpression(poly);
-    (Length(Select(disassem[3],"IsDecimal")) > 0);
-];
-
-
-10 # HasRationalCoefficients( poly_IsPolynomial ) <--
-[
-    Local(disassem);
-    disassem := DisassembleExpression(poly);
-    
-    (Length(Select(disassem[3],"IsPureRational")) > 0);
-];
-
-10 # HasRationalCoefficients( poly_IsMonomial) <--
-[
-    Local(disassem);
-    disassem := DisassembleExpression(poly);
-    (Length(Select(disassem[3],"IsPureRational")) > 0);
-];
-
-
-10 # FixUpMonicFactors( factrs_IsList ) <--
-[
-    If(InVerboseMode(),[ NewLine(); Tell("   doing monic fixup"); ] );
-    Local(factrsnew,residuals,uni);
-    factrsnew := {};
-    residuals := {};
-    ForEach(f,factrs)
-    [
-        If(InVerboseMode(),Tell("               ",f));
-        uni := MakeUni(f[1]);
-        If(InVerboseMode(),Tell("                    ",uni));
-        If( Degree(f[1])=1,
-          [
-            Local(cc,lcm,fnew);
-            If(InVerboseMode(),Tell("                          ",Degree(f[1])));
-            cc      := Coef(f[1],uni[1],0 .. 1);
-            
-            lcm     := Lcm( Denominator /@ cc );
-            uni[3]  := lcm * cc;
-            fnew    := NormalForm(uni);
-            If( hasRationalCoefficients,
-              [
-                 DestructiveAppend(factrsnew,f);
-              ],
-              [ 
-                 DestructiveAppend(factrsnew,{fnew,f[2]});
-              ]
-            );
-          ]
-        );
-        If( Degree(f[1])=2,
-          [
-            If(InVerboseMode(),Tell("                          ",Degree(f[1])));
-            Local(pq);
-            pq      := PrimitivePart(f[1]);
-            DestructiveAppend(factrsnew,{pq,f[2]});
-          ]
-        );
-        
-        
-        If( Degree(f[1]) > 2,
-          [
-            If(InVerboseMode(),Tell("                          ",Degree(f[1])));
-            Local(pq);
-            pq      := PrimitivePart(f[1]);
-            DestructiveAppend(residuals,{pq,f[2]});
-            If(InVerboseMode(),Tell("                   appending to residuals",pq));
-          ]
-        );       
-    ];
-    {factrsnew,residuals};
-];
-UnFence("FixUpMonicFactors",1);
 
 10 # IsIrreducible( poly_IsPolynomial )_(Length(VarList(poly))=1) <--
 [
