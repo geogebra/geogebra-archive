@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,10 +29,12 @@ import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.scilab.forge.jlatexmath.ParseException;
 
+/*
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
+*/
 
 /**
  * Class that manages text rendering
@@ -68,9 +71,9 @@ public class PlotterText {
 	 */
 	public void rectangle(int x, int y, int z, int width, int height){
 		
-		GL gl = manager.getGL();
+		GL2 gl = manager.getGL();
 		
-		gl.glBegin(GL.GL_QUADS);
+		gl.glBegin(GLlocal.GL_QUADS);
 		gl.glTexCoord2f(0, 0);
 		gl.glVertex3i(x,y,z); 
 		gl.glTexCoord2f(1, 0);

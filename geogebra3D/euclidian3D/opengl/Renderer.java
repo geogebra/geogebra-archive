@@ -16,29 +16,30 @@ import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.euclidian3D.Hits3D;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 
-import com.sun.opengl.util.BufferUtil;
-import com.sun.opengl.util.FPSAnimator;
-import com.sun.opengl.util.j2d.TextRenderer;
-
+//import com.jogamp.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.GLBuffers;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 /**
  * 
@@ -60,7 +61,7 @@ public class Renderer implements GLEventListener {
 	// openGL variables
 	private GLU glu= new GLU();
 	//private GLUT glut = new GLUT();
-	private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 16));
+	//private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 16));
 	/** default text scale factor */
 	private static final float DEFAULT_TEXT_SCALE_FACTOR = 0.8f;
 
@@ -69,10 +70,9 @@ public class Renderer implements GLEventListener {
 	
 	/** canvas usable for a JPanel */
 	public GLCanvas canvas;
-	//public GLJPanel canvas;
 
 	private GLCapabilities caps;
-	private GL gl;
+	private GL2 gl;
 	private GLUquadric quadric;
 	private FPSAnimator animator;
 	
@@ -156,14 +156,26 @@ public class Renderer implements GLEventListener {
 		
 		Application.debug("create gl renderer");
 		
-	    caps = new GLCapabilities();
+	    caps = new GLCapabilities(GLProfile.getDefault());
+	    
 	    
 	    //anti-aliasing
     	caps.setSampleBuffers(true);caps.setNumSamples(4);    	
     	//caps.setSampleBuffers(false);
        
         //avoid flickering
-    	caps.setDoubleBuffered(true);	    
+    	caps.setDoubleBuffered(true);	  
+    	
+        //stereo
+    	Application.debug("stereo: "+caps.getStereo()); 
+    	
+    	
+    	/*
+        caps.setAccumAlphaBits(16);
+        caps.setAccumBlueBits(16);
+        caps.setAccumGreenBits(16);
+        caps.setAccumRedBits(16);
+    	*/
     	
     	//canvas
 	    canvas = new GLCanvas(caps);
@@ -178,7 +190,7 @@ public class Renderer implements GLEventListener {
 	    
 	    
 	    animator = new FPSAnimator( canvas, 60 );
-        animator.setRunAsFastAsPossible(true);	  
+        //animator.setRunAsFastAsPossible(true);	  
         //animator.setRunAsFastAsPossible(false);	  
         animator.start();
         
@@ -218,9 +230,9 @@ public class Renderer implements GLEventListener {
 	 */
 	public void setCulling(boolean flag){
 		if (flag)
-			gl.glEnable(GL.GL_CULL_FACE);
+			gl.glEnable(GLlocal.GL_CULL_FACE);
 		else
-			gl.glDisable(GL.GL_CULL_FACE);
+			gl.glDisable(GLlocal.GL_CULL_FACE);
 	}
 	
 	/** sets if openGL blending is done or not
@@ -228,9 +240,9 @@ public class Renderer implements GLEventListener {
 	 */
 	public void setBlending(boolean flag){
 		if (flag)
-			gl.glEnable(GL.GL_BLEND);
+			gl.glEnable(GLlocal.GL_BLEND);
 		else
-			gl.glDisable(GL.GL_BLEND);
+			gl.glDisable(GLlocal.GL_BLEND);
 	}
 	
 	private void drawTransp(){
@@ -238,17 +250,17 @@ public class Renderer implements GLEventListener {
 		
 		getTextures().loadTextureLinear(Textures.FADING);
 		
-		gl.glDisable(GL.GL_CULL_FACE);
+		gl.glDisable(GLlocal.GL_CULL_FACE);
 		drawable3DLists.drawTransp(this);
 		//drawList3D.drawTranspClosed(this);
 
 		
 		//TODO fix it
-		//gl.glDisable(GL.GL_TEXTURE_2D);
+		//gl.glDisable(GLlocal.GL_TEXTURE_2D);
 		//TODO improve this !
-		gl.glEnable(GL.GL_CULL_FACE);
-		gl.glCullFace(GL.GL_FRONT); drawable3DLists.drawTranspClosed(this);//draws inside parts  
-		gl.glCullFace(GL.GL_BACK); drawable3DLists.drawTranspClosed(this);//draws outside parts 
+		gl.glEnable(GLlocal.GL_CULL_FACE);
+		gl.glCullFace(GLlocal.GL_FRONT); drawable3DLists.drawTranspClosed(this);//draws inside parts  
+		gl.glCullFace(GLlocal.GL_BACK); drawable3DLists.drawTranspClosed(this);//draws outside parts 
 		
 		
 		
@@ -264,17 +276,17 @@ public class Renderer implements GLEventListener {
 		
 		getTextures().loadTextureLinear(Textures.FADING);
 
-        gl.glEnable(GL.GL_BLEND);
+        gl.glEnable(GLlocal.GL_BLEND);
         
-        //gl.glCullFace(GL.GL_BACK);gl.glEnable(GL.GL_CULL_FACE);
-		gl.glDisable(GL.GL_CULL_FACE);
+        //gl.glCullFace(GLlocal.GL_BACK);gl.glEnable(GLlocal.GL_CULL_FACE);
+		gl.glDisable(GLlocal.GL_CULL_FACE);
         drawable3DLists.drawNotTransparentSurfaces(this);
 
 		
 		//TODO improve this !
-		gl.glEnable(GL.GL_CULL_FACE);
-		gl.glCullFace(GL.GL_FRONT); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws inside parts  
-		gl.glCullFace(GL.GL_BACK); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws outside parts 
+		gl.glEnable(GLlocal.GL_CULL_FACE);
+		gl.glCullFace(GLlocal.GL_FRONT); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws inside parts  
+		gl.glCullFace(GLlocal.GL_BACK); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws outside parts 
 		
 		
 		
@@ -303,8 +315,9 @@ public class Renderer implements GLEventListener {
 
     	//double displayTime = System.currentTimeMillis();
         
-        gl = gLDrawable.getGL();
-        
+        //gl = gLDrawable.getGL();
+        gl = gLDrawable.getGL().getGL2();
+               
         
         
         //picking        
@@ -315,8 +328,6 @@ public class Renderer implements GLEventListener {
         }
         
         
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-        gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
         
         
@@ -325,10 +336,7 @@ public class Renderer implements GLEventListener {
 
         
         
-        //start drawing
-        viewOrtho();
-        //viewPersp();
-        
+                
         //update 3D controller
         ((EuclidianController3D) view3D.getEuclidianController()).processMouseMoved();
         
@@ -342,29 +350,73 @@ public class Renderer implements GLEventListener {
 
     	// say that 3D view changed has been performed
         view3D.resetViewChanged();
+
+        
+
+        //start drawing
+        /*
+        eye=EYE_ONE;
+        setColorMask();
+        gl.glClear(GLlocal.GL_COLOR_BUFFER_BIT | GLlocal.GL_DEPTH_BUFFER_BIT);
+        for (int i=0;i<2;i++){
+        	//clear buffers
+        	eye=EYE_ONE;
+        	//setColorMask();
+        	//gl.glClear(GLlocal.GL_DEPTH_BUFFER_BIT);
+        	gl.glColorMask(false,false,false,true);
+            gl.glClear(GLlocal.GL_COLOR_BUFFER_BIT | GLlocal.GL_DEPTH_BUFFER_BIT);
+            
+            //draw
+           	eye=i;
+           	setColorMask();
+        	setView();
+
+        	draw();       		
+        }
+        */
+        
+        eye=EYE_ONE;
+        setColorMask();
+        gl.glClear(GLlocal.GL_COLOR_BUFFER_BIT | GLlocal.GL_DEPTH_BUFFER_BIT);
+        setView();
+        draw(); 
+        
+        gLDrawable.swapBuffers(); //TODO ?
+        
+        
+        if (needExportImage){
+        	setExportImage();
+        	needExportImage=false;
+        	//notify();
+        }
+    }
+    
+    private void draw(){
+        
         
         
         
         //draw face-to screen parts (labels, ...)
         //drawing labels
-        //gl.glEnable(GL.GL_CULL_FACE);
-        //gl.glCullFace(GL.GL_BACK);
-        gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
-        gl.glDisable(GL.GL_LIGHTING);
-        gl.glEnable(GL.GL_BLEND);
-        gl.glEnable(GL.GL_TEXTURE_2D);
-        //gl.glDisable(GL.GL_BLEND);
+        //gl.glEnable(GLlocal.GL_CULL_FACE);
+        //gl.glCullFace(GLlocal.GL_BACK);
+        gl.glEnable(GLlocal.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
+        gl.glDisable(GLlocal.GL_LIGHTING);
+        gl.glEnable(GLlocal.GL_BLEND);
+        gl.glEnable(GLlocal.GL_TEXTURE_2D);
+        //gl.glDisable(GLlocal.GL_BLEND);
         drawable3DLists.drawLabel(this);
-        //gl.glEnable(GL.GL_LIGHTING);
-        //gl.glDisable(GL.GL_ALPHA_TEST);     
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        //gl.glEnable(GLlocal.GL_LIGHTING);
+        //gl.glDisable(GLlocal.GL_ALPHA_TEST);     
+        gl.glDisable(GLlocal.GL_TEXTURE_2D);
     	
         
         
         
         //init drawing matrix to view3D toScreen matrix
         gl.glPushMatrix();
-        gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
+        gl.glMultMatrixd(view3D.getToScreenMatrix().get(),0);
+        //gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         
         
  
@@ -373,11 +425,11 @@ public class Renderer implements GLEventListener {
        
 
         //drawing the cursor
-        //gl.glEnable(GL.GL_BLEND);
-        gl.glEnable(GL.GL_LIGHTING);
-        gl.glDisable(GL.GL_ALPHA_TEST);       
-        gl.glEnable(GL.GL_CULL_FACE);
-        //gl.glCullFace(GL.GL_FRONT);
+        //gl.glEnable(GLlocal.GL_BLEND);
+        gl.glEnable(GLlocal.GL_LIGHTING);
+        gl.glDisable(GLlocal.GL_ALPHA_TEST);       
+        gl.glEnable(GLlocal.GL_CULL_FACE);
+        //gl.glCullFace(GLlocal.GL_FRONT);
         view3D.drawCursor(this);
         
          
@@ -387,54 +439,55 @@ public class Renderer implements GLEventListener {
         //primitives.enableVBO(gl);
         
         //drawing hidden part
-        //gl.glEnable(GL.GL_CULL_FACE);
-        gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
-        //gl.glDisable(GL.GL_BLEND);
+        //gl.glEnable(GLlocal.GL_CULL_FACE);
+        gl.glEnable(GLlocal.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
+        //gl.glDisable(GLlocal.GL_BLEND);
         drawable3DLists.drawHiddenNotTextured(this);
-        gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.glEnable(GLlocal.GL_TEXTURE_2D);
         //gl.glColorMask(false,false,false,false); //no writing in color buffer		
         drawable3DLists.drawHiddenTextured(this);
         drawNotTransp();
         //gl.glColorMask(true,true,true,true);
-        gl.glDisable(GL.GL_TEXTURE_2D);
-        //gl.glDisable(GL.GL_TEXTURE_2D);
-        gl.glDisable(GL.GL_ALPHA_TEST);       
+        gl.glDisable(GLlocal.GL_TEXTURE_2D);
+        //gl.glDisable(GLlocal.GL_TEXTURE_2D);
+        gl.glDisable(GLlocal.GL_ALPHA_TEST);       
 
        
 
         
-        //gl.glEnable(GL.GL_BLEND);
-        //gl.glDisable(GL.GL_CULL_FACE);
+        //gl.glEnable(GLlocal.GL_BLEND);
+        //gl.glDisable(GLlocal.GL_CULL_FACE);
         
         
         //drawing transparents parts
         gl.glDepthMask(false);
-        gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.glEnable(GLlocal.GL_TEXTURE_2D);
         drawTransp();      
         gl.glDepthMask(true);
 
         
         
         //drawing labels
-        gl.glDisable(GL.GL_TEXTURE_2D);
-        gl.glEnable(GL.GL_CULL_FACE);
-        //gl.glCullFace(GL.GL_BACK);
-        //gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
-        //gl.glDisable(GL.GL_LIGHTING);
-        gl.glDisable(GL.GL_BLEND);
+        gl.glDisable(GLlocal.GL_TEXTURE_2D);
+        gl.glEnable(GLlocal.GL_CULL_FACE);
+        //gl.glCullFace(GLlocal.GL_BACK);
+        //gl.glEnable(GLlocal.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
+        //gl.glDisable(GLlocal.GL_LIGHTING);
+        gl.glDisable(GLlocal.GL_BLEND);
         //drawList3D.drawLabel(this);
-        //gl.glEnable(GL.GL_LIGHTING);
-        //gl.glDisable(GL.GL_ALPHA_TEST);       
+        //gl.glEnable(GLlocal.GL_LIGHTING);
+        //gl.glDisable(GLlocal.GL_ALPHA_TEST);       
 
         
         
         //drawing hiding parts
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
-        gl.glCullFace(GL.GL_FRONT); //draws inside parts    
+        gl.glCullFace(GLlocal.GL_FRONT); //draws inside parts    
         drawable3DLists.drawClosedSurfacesForHiding(this); //closed surfaces back-faces
-        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glDisable(GLlocal.GL_CULL_FACE);
         drawable3DLists.drawSurfacesForHiding(this); //non closed surfaces
-        gl.glColorMask(true,true,true,true);
+        //gl.glColorMask(true,true,true,true);
+        setColorMask();
 
 
         
@@ -442,39 +495,39 @@ public class Renderer implements GLEventListener {
 
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
-        gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.glEnable(GLlocal.GL_TEXTURE_2D);
         gl.glDepthMask(false);
-        gl.glEnable(GL.GL_BLEND);
+        gl.glEnable(GLlocal.GL_BLEND);
         drawTransp();
         gl.glDepthMask(true);
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.glDisable(GLlocal.GL_TEXTURE_2D);
         
         //drawing hiding parts
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
-        gl.glDisable(GL.GL_BLEND);
-        gl.glEnable(GL.GL_CULL_FACE);
-        gl.glCullFace(GL.GL_BACK); //draws inside parts
+        gl.glDisable(GLlocal.GL_BLEND);
+        gl.glEnable(GLlocal.GL_CULL_FACE);
+        gl.glCullFace(GLlocal.GL_BACK); //draws inside parts
         drawable3DLists.drawClosedSurfacesForHiding(this); //closed surfaces front-faces
-        gl.glColorMask(true,true,true,true);
-        
+        //gl.glColorMask(true,true,true,true);
+        setColorMask();
         
         
         
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
-        gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.glEnable(GLlocal.GL_TEXTURE_2D);
         gl.glDepthMask(false);
-        gl.glEnable(GL.GL_BLEND);
+        gl.glEnable(GLlocal.GL_BLEND);
         drawTransp();
         gl.glDepthMask(true);
-        //gl.glDisable(GL.GL_TEXTURE_2D);
+        //gl.glDisable(GLlocal.GL_TEXTURE_2D);
         
 
        
         //drawing not hidden parts
-        gl.glEnable(GL.GL_CULL_FACE);
-        //gl.glDisable(GL.GL_BLEND);
-        //gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.glEnable(GLlocal.GL_CULL_FACE);
+        //gl.glDisable(GLlocal.GL_BLEND);
+        //gl.glEnable(GLlocal.GL_TEXTURE_2D);
         drawable3DLists.draw(this);
   
         
@@ -490,8 +543,8 @@ public class Renderer implements GLEventListener {
         
         
         //FPS
-        gl.glDisable(GL.GL_LIGHTING);
-        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GLlocal.GL_LIGHTING);
+        gl.glDisable(GLlocal.GL_DEPTH_TEST);
 
 
         //drawWireFrame();
@@ -503,27 +556,10 @@ public class Renderer implements GLEventListener {
    	
     	//drawFPS();
         
-    	gl.glEnable(GL.GL_DEPTH_TEST);
-    	gl.glEnable(GL.GL_LIGHTING);
+    	gl.glEnable(GLlocal.GL_DEPTH_TEST);
+    	gl.glEnable(GLlocal.GL_LIGHTING);
 
     	
-        gLDrawable.swapBuffers(); //TODO
-        
-        /*
-        gl.glReadBuffer(GL.GL_FRONT);
-        FloatBuffer buffer = FloatBuffer.allocate(3);
-        gl.glReadPixels(mouseX, (top-bottom) -mouseY, 1, 1, GL.GL_RGB, GL.GL_FLOAT, buffer);
-        float[] pixels = new float[3];
-        pixels = buffer.array();
-        //System.out.println("mouse ("+mouseX+","+((top-bottom)-mouseY)+"):"+pixels[0]+" "+pixels[1]+" "+pixels[2]);
-        //Application.debug("display : "+((int) (System.currentTimeMillis()-displayTime)));
-        */
-        
-        if (needExportImage){
-        	setExportImage();
-        	needExportImage=false;
-        	//notify();
-        }
         
         	
     }    
@@ -535,15 +571,15 @@ public class Renderer implements GLEventListener {
     	
     	//if (true) return;
     	
-    	gl.glPushAttrib(GL.GL_ALL_ATTRIB_BITS);
+    	gl.glPushAttrib(GLlocal.GL_ALL_ATTRIB_BITS);
     	
     	gl.glDepthMask(false);
-    	gl.glPolygonMode(GL.GL_FRONT, GL.GL_LINE);gl.glPolygonMode(GL.GL_BACK, GL.GL_LINE);
-        gl.glEnable(GL.GL_LIGHTING);
-        gl.glDisable(GL.GL_LIGHT0);
-        gl.glDisable(GL.GL_CULL_FACE);
-        gl.glDisable(GL.GL_BLEND);
-        gl.glEnable(GL.GL_ALPHA_TEST);
+    	gl.glPolygonMode(GLlocal.GL_FRONT, GLlocal.GL_LINE);gl.glPolygonMode(GLlocal.GL_BACK, GLlocal.GL_LINE);
+        gl.glEnable(GLlocal.GL_LIGHTING);
+        gl.glDisable(GLlocal.GL_LIGHT0);
+        gl.glDisable(GLlocal.GL_CULL_FACE);
+        gl.glDisable(GLlocal.GL_BLEND);
+        gl.glEnable(GLlocal.GL_ALPHA_TEST);
         
     	drawable3DLists.drawTransp(this);
     	drawable3DLists.drawTranspClosed(this);   
@@ -581,11 +617,11 @@ public class Renderer implements GLEventListener {
      */
     private void setExportImage(){
     	
-        gl.glReadBuffer(GL.GL_FRONT);
+        gl.glReadBuffer(GLlocal.GL_FRONT);
         int width = right-left;
         int height = top-bottom;
         FloatBuffer buffer = FloatBuffer.allocate(3*width*height);
-        gl.glReadPixels(0, 0, width, height, GL.GL_RGB, GL.GL_FLOAT, buffer);
+        gl.glReadPixels(0, 0, width, height, GLlocal.GL_RGB, GLlocal.GL_FLOAT, buffer);
         float[] pixels = buffer.array();
         
         bi = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
@@ -771,7 +807,7 @@ public class Renderer implements GLEventListener {
     
     
     /**
-     * sets the drawing matrix to openGL.
+     * sets the drawing matrix to openGLlocal.
      * same as initMatrix(m_drawingMatrix)
      */
     public void initMatrix(){
@@ -779,7 +815,7 @@ public class Renderer implements GLEventListener {
     }
     
     /**
-     * sets a_drawingMatrix to openGL.
+     * sets a_drawingMatrix to openGLlocal.
      * @param a_drawingMatrix the matrix
      */
     private void initMatrix(CoordMatrix a_drawingMatrix){
@@ -788,7 +824,7 @@ public class Renderer implements GLEventListener {
     
     
     /**
-     * sets a_drawingMatrix to openGL.
+     * sets a_drawingMatrix to openGLlocal.
      * @param a_drawingMatrix the matrix
      */
     private void initMatrix(double[] a_drawingMatrix){
@@ -802,7 +838,7 @@ public class Renderer implements GLEventListener {
     }
     
     /**
-     * turn off the last drawing matrix set in openGL.
+     * turn off the last drawing matrix set in openGLlocal.
      */
     public void resetMatrix(){
     	gl.glPopMatrix();
@@ -855,14 +891,14 @@ public class Renderer implements GLEventListener {
     public void drawCursor(int type){
     	
     	if (!PlotterCursor.isTypeAlready(type))
-    		gl.glDisable(GL.GL_LIGHTING);
+    		gl.glDisable(GLlocal.GL_LIGHTING);
     	
     	initMatrix();
     	geometryManager.draw(geometryManager.cursor.getIndex(type));
 		resetMatrix();
     	
 		if (!PlotterCursor.isTypeAlready(type))
-			gl.glEnable(GL.GL_LIGHTING);
+			gl.glEnable(GLlocal.GL_LIGHTING);
    	
     } 
     
@@ -994,10 +1030,10 @@ public class Renderer implements GLEventListener {
     	
     	//if (true)    		return;
     	
-        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glMatrixMode(GLlocal.GL_TEXTURE);
         gl.glLoadIdentity();
         
-    	gl.glMatrixMode(GL.GL_MODELVIEW);
+    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
     	
     	
     	initMatrix();
@@ -1041,10 +1077,12 @@ public class Renderer implements GLEventListener {
     /////////////////////////
     // FPS
     
+    /*
 	double displayTime = 0;
 	int nbFrame = 0;
 	double fps = 0;
     
+	
     private void drawFPS(){
     	
     	if (displayTime==0)
@@ -1054,17 +1092,11 @@ public class Renderer implements GLEventListener {
     	
     	double newDisplayTime = System.currentTimeMillis();
     	
-    	//Application.debug("delay = "+ (newDisplayTime-displayTime));
     	
     	//displayTime = System.currentTimeMillis();
     	if (newDisplayTime > displayTime+1000){
     		
-    		//Application.debug("nbFrame = "+nbFrame);
-    		/*
-    	fps = 0.9*fps + 0.1*1000/(displayTime-displayTimeOld);
-    	if (fps>100)
-    		fps=100;
-    		 */
+    		
 
     		fps = 1000*nbFrame/(newDisplayTime - displayTime);
     		displayTime = newDisplayTime;
@@ -1074,10 +1106,10 @@ public class Renderer implements GLEventListener {
     	
     	
     	
-        gl.glMatrixMode(GL.GL_TEXTURE);
+        gl.glMatrixMode(GLlocal.GL_TEXTURE);
         gl.glLoadIdentity();
         
-    	gl.glMatrixMode(GL.GL_MODELVIEW);
+    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
     	
     	gl.glPushMatrix();
     	gl.glLoadIdentity();
@@ -1100,7 +1132,7 @@ public class Renderer implements GLEventListener {
     
     
     
-    
+    */
     
     
     
@@ -1151,14 +1183,15 @@ public class Renderer implements GLEventListener {
     	//double pickTime = System.currentTimeMillis();
 
     	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
-    	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
+    	//selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
+    	selectBuffer =  GLBuffers.newDirectIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
         
         
         // The Size Of The Viewport. [0] Is <x>, [1] Is <y>, [2] Is <length>, [3] Is <width>
         int[] viewport = new int[4];
-        gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);      
+        gl.glGetIntegerv(GLlocal.GL_VIEWPORT, viewport, 0);      
         //System.out.println("viewport= "+viewport[0]+","+viewport[1]+","+viewport[2]+","+viewport[3]);
         
         
@@ -1169,7 +1202,7 @@ public class Renderer implements GLEventListener {
         
         
         // Puts OpenGL In Selection Mode. Nothing Will Be Drawn.  Object ID's and Extents Are Stored In The Buffer.
-        gl.glRenderMode(GL.GL_SELECT);
+        gl.glRenderMode(GLlocal.GL_SELECT);
         gl.glInitNames(); // Initializes The Name Stack
         gl.glPushName(0); // Push 0 (At Least One Entry) Onto The Stack
         
@@ -1177,28 +1210,27 @@ public class Renderer implements GLEventListener {
         // This Creates A Matrix That Will Zoom Up To A Small Portion Of The Screen, Where The Mouse Is.
 
         
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glMatrixMode(GLlocal.GL_PROJECTION);
         gl.glLoadIdentity();
       
         
         /* create MOUSE_PICK_WIDTH x MOUSE_PICK_WIDTH pixel picking region near cursor location */
-        //glu.gluPickMatrix((double) mouseX, (double) (470 - mouseY),  5.0, 5.0, viewport, 0);
-        //mouseY+=30; //TODO understand this offset
-        //glu.gluPickMatrix((double) mouseX, (double) (viewport[3] - mouseY), 5.0, 5.0, viewport, 0);
         glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
-        gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
-    	gl.glMatrixMode(GL.GL_MODELVIEW);
+ 
+        setProjectionMatrix();
+        //gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
+    	//gl.glMatrixMode(GLlocal.GL_MODELVIEW);
     	
         
     	
 
-    	gl.glDisable(GL.GL_ALPHA_TEST);
-    	gl.glDisable(GL.GL_BLEND);
-    	gl.glDisable(GL.GL_LIGHTING);
-       	gl.glDisable(GL.GL_TEXTURE);
-       	//gl.glDisable(GL.GL_DEPTH_TEST);
+    	gl.glDisable(GLlocal.GL_ALPHA_TEST);
+    	gl.glDisable(GLlocal.GL_BLEND);
+    	gl.glDisable(GLlocal.GL_LIGHTING);
+       	gl.glDisable(GLlocal.GL_TEXTURE);
+       	//gl.glDisable(GLlocal.GL_DEPTH_TEST);
        	//gl.glColorMask(false,false,false,false);
-       	//gl.glDisable(GL.GL_NORMALIZE);
+       	//gl.glDisable(GLlocal.GL_NORMALIZE);
     	
     	drawHits = new Drawable3D[BUFSIZE];
   
@@ -1211,7 +1243,7 @@ public class Renderer implements GLEventListener {
     	
         // set the scene matrix
     	gl.glPushMatrix();
-        gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
+        gl.glMultMatrixd(view3D.getToScreenMatrix().get(),0);
         
         
 		// picking objects
@@ -1226,21 +1258,21 @@ public class Renderer implements GLEventListener {
         
         if (pickingMode == PICKING_MODE_LABELS){
         	// picking labels
-        	gl.glEnable(GL.GL_ALPHA_TEST);
-        	gl.glEnable(GL.GL_BLEND);
-           	gl.glEnable(GL.GL_TEXTURE_2D);
+        	gl.glEnable(GLlocal.GL_ALPHA_TEST);
+        	gl.glEnable(GLlocal.GL_BLEND);
+           	gl.glEnable(GLlocal.GL_TEXTURE_2D);
            	
         	drawable3DLists.drawLabelForPicking(this);
         	
-           	gl.glDisable(GL.GL_TEXTURE_2D);
-           	gl.glDisable(GL.GL_BLEND);
-           	gl.glDisable(GL.GL_ALPHA_TEST);
+           	gl.glDisable(GLlocal.GL_TEXTURE_2D);
+           	gl.glDisable(GLlocal.GL_BLEND);
+           	gl.glDisable(GLlocal.GL_ALPHA_TEST);
             
         }
         
         
         //end picking
-        hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
+        hits = gl.glRenderMode(GLlocal.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
         
         //hits are stored
@@ -1287,7 +1319,7 @@ public class Renderer implements GLEventListener {
         
         
         
-        gl.glEnable(GL.GL_LIGHTING);
+        gl.glEnable(GLlocal.GL_LIGHTING);
     }
     
     
@@ -1354,10 +1386,10 @@ public class Renderer implements GLEventListener {
     private void disableLight(int light){
     	switch(light){
     	case LIGHT_STANDARD:
-    		gl.glDisable(GL.GL_LIGHT0);
+    		gl.glDisable(GLlocal.GL_LIGHT0);
     		break;
     	case LIGHT_HIGHLIGHTED:
-    		gl.glDisable(GL.GL_LIGHT1);
+    		gl.glDisable(GLlocal.GL_LIGHT1);
     		break;
     	}
     }
@@ -1365,10 +1397,10 @@ public class Renderer implements GLEventListener {
     private void enableLight(int light){
     	switch(light){
     	case LIGHT_STANDARD:
-    		gl.glEnable(GL.GL_LIGHT0);
+    		gl.glEnable(GLlocal.GL_LIGHT0);
     		break;
     	case LIGHT_HIGHLIGHTED:
-    		gl.glEnable(GL.GL_LIGHT1);
+    		gl.glEnable(GLlocal.GL_LIGHT1);
     		break;
     	}
     }
@@ -1387,11 +1419,12 @@ public class Renderer implements GLEventListener {
     	
     	//Application.printStacktrace("");
         
-        gl = drawable.getGL();
-        
+        //gl = drawable.getGL();
+        gl = drawable.getGL().getGL2();
+               
         
         // check openGL version
-        final String version = gl.glGetString(GL.GL_VERSION);
+        final String version = gl.glGetString(GLlocal.GL_VERSION);
        
         
         // Check For VBO support
@@ -1427,11 +1460,11 @@ public class Renderer implements GLEventListener {
         float specular = 0f;
         float[] lightSpecular = {specular, specular, specular, 1f};
        
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular, 0);
-        //gl.glLightfv(GL.GL_LIGHT0, GL.GL_SHININESS, lightDiffuse, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT0, GLlocal.GL_AMBIENT, lightAmbient, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT0, GLlocal.GL_DIFFUSE, lightDiffuse, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT0, GLlocal.GL_POSITION, lightPosition, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT0, GLlocal.GL_SPECULAR, lightSpecular, 0);
+        //gl.glLightfv(GLlocal.GL_LIGHT0, GLlocal.GL_SHININESS, lightDiffuse, 0);
  
  
         
@@ -1442,10 +1475,10 @@ public class Renderer implements GLEventListener {
         //lightDiffuse = new float[] {diffuse, diffuse, diffuse, 1.0f};  
         specular = 1f;
         lightSpecular = new float[] {specular, specular, specular, 1f};
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPosition, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecular, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT1, GLlocal.GL_AMBIENT, lightAmbient, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT1, GLlocal.GL_DIFFUSE, lightDiffuse, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT1, GLlocal.GL_POSITION, lightPosition, 0);
+        gl.glLightfv(GLlocal.GL_LIGHT1, GLlocal.GL_SPECULAR, lightSpecular, 0);
        
         
         enableLight(LIGHT_STANDARD);
@@ -1456,39 +1489,40 @@ public class Renderer implements GLEventListener {
         /*
         float[] mat_specular = { 1.0f, 1.0f, 1.0f, 1.0f };
         float[] mat_shininess = { 10.0f };
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular,0);       
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess,0);
+        gl.glMaterialfv(GLlocal.GL_FRONT, GLlocal.GL_SPECULAR, mat_specular,0);       
+        gl.glMaterialfv(GLlocal.GL_FRONT, GLlocal.GL_SHININESS, mat_shininess,0);
         */
         
-        gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
-        //gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
-        gl.glEnable(GL.GL_COLOR_MATERIAL);
+        gl.glColorMaterial(GLlocal.GL_FRONT_AND_BACK, GLlocal.GL_AMBIENT_AND_DIFFUSE);
+        //gl.glColorMaterial(GLlocal.GL_FRONT, GLlocal.GL_AMBIENT_AND_DIFFUSE);
+        gl.glEnable(GLlocal.GL_COLOR_MATERIAL);
 
         
   
-        gl.glShadeModel(GL.GL_SMOOTH);
-        gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
-        gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE,GL.GL_TRUE);
+        gl.glShadeModel(GLlocal.GL_SMOOTH);
+        gl.glLightModeli(GLlocal.GL_LIGHT_MODEL_TWO_SIDE,GLlocal.GL_TRUE);
+        gl.glLightModelf(GLlocal.GL_LIGHT_MODEL_TWO_SIDE,GLlocal.GL_TRUE);
   
         
-        gl.glEnable(GL.GL_LIGHTING);
+        gl.glEnable(GLlocal.GL_LIGHTING);
    
         //common enabling
-        gl.glEnable(GL.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL.GL_LEQUAL);
-		gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+        gl.glEnable(GLlocal.GL_DEPTH_TEST);
+        gl.glDepthFunc(GLlocal.GL_LEQUAL);
+		gl.glEnable(GLlocal.GL_POLYGON_OFFSET_FILL);
 
         //gl.glPolygonOffset(1.0f, 2f);
 
-        gl.glEnable(GL.GL_CULL_FACE);
+        gl.glEnable(GLlocal.GL_CULL_FACE);
         
         //blending
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
-        gl.glEnable(GL.GL_BLEND);	
+        gl.glBlendFunc(GLlocal.GL_SRC_ALPHA, GLlocal.GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glBlendFunc(GLlocal.GL_SRC_ALPHA, GLlocal.GL_DST_ALPHA);
+        gl.glEnable(GLlocal.GL_BLEND);	
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);  
+        //gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);  
         
-        gl.glAlphaFunc(GL.GL_NOTEQUAL, 0);//pixels with alpha=0 are not drawn
+        gl.glAlphaFunc(GLlocal.GL_NOTEQUAL, 0);//pixels with alpha=0 are not drawn
         
         //using glu quadrics
         quadric = glu.gluNewQuadric();// Create A Pointer To The Quadric Object (Return 0 If No Memory) (NEW)
@@ -1500,8 +1534,8 @@ public class Renderer implements GLEventListener {
         
         
         //normal anti-scaling
-        gl.glEnable(GL.GL_NORMALIZE);
-        //gl.glEnable(GL.GL_RESCALE_NORMAL);
+        gl.glEnable(GLlocal.GL_NORMALIZE);
+        //gl.glEnable(GLlocal.GL_RESCALE_NORMAL);
         
         
         
@@ -1538,8 +1572,10 @@ public class Renderer implements GLEventListener {
 	
 	public int getLeft(){ return left;	}
 	public int getRight(){ return right;	}
+	public int getWidth(){return right-left;}
 	public int getBottom(){ return bottom;	}
 	public int getTop(){ return top;	}
+	public int getHeight(){return top - bottom;}
 	public float getFront(boolean extended){ 
 		if (extended)
 			return front*DEPTH_FACTOR;
@@ -1609,43 +1645,133 @@ public class Renderer implements GLEventListener {
 		
 		return minmax;
 	}
+	
+	/**
+	 * set up the view
+	 */
+	private void setView(){
+		gl.glViewport(0,0,right-left,top-bottom);
+
+		gl.glMatrixMode(GLlocal.GL_PROJECTION);
+		gl.glLoadIdentity();
+
+		setProjectionMatrix();
+
+		
+		
+	}
+
+	
+	private void setProjectionMatrix(){
+		viewOrtho();
+		//viewPersp();
+		//viewEye();
+	}
    
 	
     /**
      * Set Up An Ortho View regarding left, right, bottom, front values
      * 
      */
-    private void viewOrtho()                                      
-    {
-
-    	gl.glViewport(0,0,right-left,top-bottom);
-    	
-    	gl.glMatrixMode(GL.GL_PROJECTION);
-    	gl.glLoadIdentity();
+    private void viewOrtho(){
 
     	gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
-    	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
+    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
+    	gl.glLoadIdentity();
+    }
+
+    
+    private void viewPersp(){
+
+    	final float h = (float) (right-left) / (float) (top-bottom);
+        glu.gluPerspective(45.0f, h, 1, 1000.0);
+    	//gl.glTranslatef(0, 0, -500);
+        
+        gl.glMatrixMode(GLlocal.GL_MODELVIEW);
+        gl.glLoadIdentity();
+        
+    	glu.gluLookAt(
+    			0,0,500, //eye position
+    			0,0,0, //look at position
+    			0,1,0); //up direction
     	
     	
     }
     
-    //private GLU glu = new GLU();
+    private static final double near = 0.1; 
+    private static final double fo = 500;//1000;
+    private static final double cameraZ = 1000;
+    private static final double aperture = 0.7*Math.PI;
+    private static final double EYE_SEP = fo/30;
     
-    private void viewPersp()                                      
-    {
+    
+    private void viewEye(){
+    	
 
-    	gl.glViewport(0,0,right-left,top-bottom);
+    	double aspectratio = (double) getWidth() / (double) getHeight();         // Divide by 2 for side-by-side stereo
     	
-    	gl.glMatrixMode(GL.GL_PROJECTION);
+    	double eyesep;
+
+    	switch(eye){
+    	case EYE_ONE:
+    	default:
+    		eyesep= 0;
+    		break;
+    	case EYE_LEFT:
+    		eyesep= -EYE_SEP;
+    		break;
+    	case EYE_RIGHT:
+    		eyesep= EYE_SEP;
+    		break;
+    	}
+
+    	
+
+    	
+    	double widthdiv2   = near * Math.tan(aperture / 2); // aperture in radians
+    	
+    	double top    =   widthdiv2;
+    	double bottom = - widthdiv2;
+    	double left   = - aspectratio * widthdiv2 - 0.5 * eyesep * near / fo;
+    	double right  =   aspectratio * widthdiv2 - 0.5 * eyesep * near / fo;
+    	gl.glFrustum(left,right,bottom,top,1,2000);
+    	
+    	    	
+    	//glu.gluPerspective(45.0f, aspectratio, 1, 1000.0);
+    	
+    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
     	gl.glLoadIdentity();
-    	final float h = (float) (right-left) / (float) (top-bottom);
-        glu.gluPerspective(45.0f, h, 1, 1000.0);
-    	gl.glTranslatef(0, 0, -500);
-    	gl.glMatrixMode(GL.GL_MODELVIEW);
-    	
-    	
-    	
+    	glu.gluLookAt(0+eyesep,0,cameraZ,
+    			0+eyesep,0,0,
+    			0,1,0);
+
+
+    	/*
+    	eye = EYE_RIGHT;
+    	setColorMask();
+    	*/
+    }
+    
+    
+    private static final int EYE_ONE = -1;
+    private static final int EYE_LEFT = 0;
+    private static final int EYE_RIGHT = 1;
+    private int eye = EYE_ONE;
+    
+    private void setColorMask(){
+    	switch(eye){
+    	case EYE_ONE:
+    		default:
+    		gl.glColorMask(true,true,true,true);
+    		break;
+       	case EYE_LEFT:
+    		gl.glColorMask(true,false,false,true);
+    		break;
+    	case EYE_RIGHT:
+    		gl.glColorMask(false,true,true,true);
+    		break;   		
+    	}
     }
 	
     /**
@@ -1674,7 +1800,7 @@ public class Renderer implements GLEventListener {
     	);
     	*/
     	
-    	viewOrtho();
+    	setView();
     }
    
     
@@ -1682,13 +1808,19 @@ public class Renderer implements GLEventListener {
 
 
 
-    private void viewPerspective(GL gl)                                  // Set Up A Perspective View
+    private void viewPerspective(GLlocal gl)                                  // Set Up A Perspective View
     {
-        gl.glMatrixMode(GL.GL_PROJECTION);                               // Select Projection
+        gl.glMatrixMode(GLlocal.GL_PROJECTION);                               // Select Projection
         gl.glPopMatrix();                                                // Pop The Matrix
-        gl.glMatrixMode(GL.GL_MODELVIEW);                                // Select Modelview
+        gl.glMatrixMode(GLlocal.GL_MODELVIEW);                                // Select Modelview
         gl.glPopMatrix();                                                // Pop The Matrix
     }
+
+
+	public void dispose(GLAutoDrawable arg0) {
+		// TODO Auto-generated method stub
+		
+	}
     
 
 

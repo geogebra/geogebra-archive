@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 
 /**
@@ -22,17 +23,17 @@ abstract public class Manager {
 	static final int TYPE_GLLIST = 1;
 	
 	/** geometries types */
-	static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
-	static final int TRIANGLE_FAN = GL.GL_TRIANGLE_FAN;
-	static final int QUAD_STRIP = GL.GL_QUAD_STRIP;
-	static final int QUADS = GL.GL_QUADS;
-	static final int TRIANGLES = GL.GL_TRIANGLES;
+	static final int TRIANGLE_STRIP = GLlocal.GL_TRIANGLE_STRIP;
+	static final int TRIANGLE_FAN = GLlocal.GL_TRIANGLE_FAN;
+	static final int QUAD_STRIP = GLlocal.GL_QUAD_STRIP;
+	static final int QUADS = GLlocal.GL_QUADS;
+	static final int TRIANGLES = GLlocal.GL_TRIANGLES;
 
 	/** color factor for highlighting */
 	private float colorFactor;
 	
 	// GL 
-	protected GL gl;
+	protected GL2 gl;
 	protected GLU glu;
 
 	
@@ -68,7 +69,7 @@ abstract public class Manager {
 	 * @param glu 
 	 * @param view3D 3D view
 	 */
-	public Manager(GL gl, GLU glu, EuclidianView3D view3D){
+	public Manager(GL2 gl, GLU glu, EuclidianView3D view3D){
 		
 		this.gl = gl;
 		this.glu = glu;
@@ -142,7 +143,7 @@ abstract public class Manager {
 	/**
 	 * @return gl context
 	 */
-	public GL getGL(){
+	public GL2 getGL(){
 		return gl;
 	}
 

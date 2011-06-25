@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 
@@ -30,7 +31,7 @@ public class ManagerGLList extends Manager {
 	 * @param glu 
 	 * @param view3D 3D view
 	 */
-	public ManagerGLList(GL gl, GLU glu, EuclidianView3D view3D) {
+	public ManagerGLList(GL2 gl, GLU glu, EuclidianView3D view3D) {
 		super(gl,glu,view3D);
 	}
 
@@ -57,13 +58,13 @@ public class ManagerGLList extends Manager {
 		// generates a new list
 		int ret = genLists(1);
 		
-		gl.glNewList(ret, GL.GL_COMPILE);
+		gl.glNewList(ret, GLlocal.GL_COMPILE);
 		
 		return ret;
 	}
 	
 	private void newList(int index){
-		gl.glNewList(index, GL.GL_COMPILE);
+		gl.glNewList(index, GLlocal.GL_COMPILE);
 	}
 	
 	
@@ -131,7 +132,7 @@ public class ManagerGLList extends Manager {
 		/*
 		newList(ret);
 		
-		gl.glBegin(GL.GL_TRIANGLES);
+		gl.glBegin(GLlocal.GL_TRIANGLES);
 		normal(nx, ny, nz);
 		*/
 	    
@@ -207,10 +208,10 @@ public class ManagerGLList extends Manager {
 	
 	protected void vertices(FloatBuffer v, int count){
 		v.rewind();
-		gl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-		gl.glVertexPointer(3, GL.GL_FLOAT, 0, v);
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
-		gl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GLlocal.GL_VERTEX_ARRAY);
+		gl.glVertexPointer(3, GLlocal.GL_FLOAT, 0, v);
+		gl.glDrawArrays(GLlocal.GL_TRIANGLES, 0, 3);
+		gl.glDisableClientState(GLlocal.GL_VERTEX_ARRAY);
 	}
 	
 	

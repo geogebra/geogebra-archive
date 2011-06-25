@@ -3,15 +3,16 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.main.Application;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellatorCallback;
 
 public class RendererTesselCallBack implements GLUtessellatorCallback
   {
-    private GL gl;
+    private GL2 gl;
     private GLU glu;
 
-    public RendererTesselCallBack(GL gl, GLU glu)
+    public RendererTesselCallBack(GL2 gl, GLU glu)
     {
       this.gl = gl;
       this.glu = glu;

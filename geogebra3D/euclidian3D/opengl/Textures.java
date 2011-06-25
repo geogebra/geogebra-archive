@@ -15,7 +15,8 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
+//import com.sun.opengl.util.BufferUtil;
 
 
 
@@ -311,7 +312,7 @@ public class Textures {
 		
 		
 		
-		byte[] bytes = new byte[sizeX*sizeY];
+		byte[] bytes = new byte[sizeX*sizeY+2]; //TODO understand why +2
 
 		for (int i=0; i<sizeX*sizeY; i++)
 			if (description[i])      		
@@ -321,20 +322,6 @@ public class Textures {
 
 		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
 		
-		/*
-		
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_NEAREST);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_NEAREST);
-*/
-
-		//TODO use gl.glTexImage1D ?
-		//gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  4, sizeX, sizeY, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buf);
-
-		
-		//setTextureLinear();
-
-
-		//TODO use gl.glTexImage1D ?
 		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  GL.GL_ALPHA, sizeX, sizeY, 0, GL.GL_ALPHA, GL.GL_UNSIGNED_BYTE, buf);
 
 	}
@@ -361,7 +348,8 @@ public class Textures {
 			}
 
 			int bytesPerPixel = storeAlphaChannel ? 4 : 3;
-			ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
+			//ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
+			ByteBuffer unpackedPixels = GLBuffers.newDirectByteBuffer(packedPixels.length * bytesPerPixel);
 
 			for (int row = img.getHeight() - 1; row >= 0; row--) {
 				for (int col = 0; col < img.getWidth(); col++) {

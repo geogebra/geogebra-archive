@@ -5,25 +5,12 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra4/3D"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="3D/jogl.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra/3D"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="3D/gluegen-rt.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra/3D"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib_jsobject.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="geogebra/3D"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="lib_jsobject.jar"/>
 	<classpathentry kind="lib" path="lib_mac_extensions.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-6-sun-1.6.0.24"/>
 	<classpathentry kind="lib" path="jlatexmath.jar"/>
 	<classpathentry kind="lib" path="jlm_greek.jar"/>
 	<classpathentry kind="lib" path="jlm_cyrillic.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL2"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
