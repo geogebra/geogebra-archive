@@ -109,7 +109,9 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		
 		//	TODO: can't remember why the caret position was reset like this,
 		// a trick to keep the Mac OS from selecting the field?
-		thisField.setCaretPosition(thisField.getCaretPosition());
+		//
+		// now removed - stops the text being highlighted #709
+		//thisField.setCaretPosition(thisField.getCaretPosition());
 		
 		thisField.repaint();
 		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
