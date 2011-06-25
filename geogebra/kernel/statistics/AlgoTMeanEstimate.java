@@ -37,7 +37,7 @@ public class AlgoTMeanEstimate extends AlgoElement {
 	private GeoList  result;     // output   
 
 	private double[] val;
-	private double level, mean, sd, n, width;
+	private double level, mean, sd, n, me;
 	private SummaryStatistics stats;
 	private TDistributionImpl tDist;
 	
@@ -50,7 +50,6 @@ public class AlgoTMeanEstimate extends AlgoElement {
 		this.geoSD = null;
 		this.geoN = null;
 		
-		level = geoLevel.getDouble();
 		result = new GeoList(cons); 
 		setInputOutput(); // for AlgoElement
 
@@ -66,11 +65,6 @@ public class AlgoTMeanEstimate extends AlgoElement {
 		this.geoSD = geoSD;
 		this.geoN = geoN;
 		
-		level = geoLevel.getDouble();
-		mean = geoMean.getDouble();
-		sd = geoSD.getDouble();
-		n = geoN.getDouble();
-
 		result = new GeoList(cons); 
 		setInputOutput(); // for AlgoElement
 
@@ -80,7 +74,7 @@ public class AlgoTMeanEstimate extends AlgoElement {
 
 
 	public String getClassName() {
-		return "AlgoTEstimate";
+		return "AlgoTMeanEstimate";
 	}
 
 	protected void setInputOutput(){
@@ -107,14 +101,13 @@ public class AlgoTMeanEstimate extends AlgoElement {
 		return result;
 	}
 
+	
 
-	private double getConfidenceIntervalWidth(double sd, double n, double confLevel) throws MathException {
+	private double getMarginOfError(double sd, double n, double confLevel) throws MathException {
 		tDist = new TDistributionImpl(n - 1);
-		double a = tDist.inverseCumulativeProbability(1.0 - confLevel/2);
+		double a = tDist.inverseCumulativeProbability((confLevel + 1d)/2);
 		return a * sd / Math.sqrt(n);
 	}
-
-
 
 	protected final void compute() {
 
@@ -151,9 +144,16 @@ public class AlgoTMeanEstimate extends AlgoElement {
 				n = stats.getN();
 				sd = stats.getStandardDeviation();
 				mean = stats.getMean();
+				
+			}else{
+					
+				mean = geoMean.getDouble();
+				sd = geoSD.getDouble();
+				n = geoN.getDouble();
 			}
 
-
+			level = geoLevel.getDouble();
+			
 			// validate statistics
 			if(level < 0 || level > 1 || sd < 0 || n < 1){
 				result.setUndefined();
@@ -163,12 +163,18 @@ public class AlgoTMeanEstimate extends AlgoElement {
 
 
 			// get interval estimate 
-			width = getConfidenceIntervalWidth(sd, n, level);
+			me = getMarginOfError(sd, n, level);
+			
+			
+			// return list = {low limit, high limit, mean, margin of error, df }
 			result.clear();
 			boolean oldSuppress = cons.isSuppressLabelsActive();
 			cons.setSuppressLabelCreation(true);
-			result.add(new GeoNumeric(cons, mean - width));
-			result.add(new GeoNumeric(cons, mean + width));
+			result.add(new GeoNumeric(cons, mean - me));
+			result.add(new GeoNumeric(cons, mean + me));
+			result.add(new GeoNumeric(cons, mean));
+			result.add(new GeoNumeric(cons, me));
+			result.add(new GeoNumeric(cons, n-1)); // df
 			cons.setSuppressLabelCreation(oldSuppress);
 			
 

@@ -130,6 +130,7 @@ import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.kernel.statistics.AlgoTDistribution;
+import geogebra.kernel.statistics.AlgoTMean2Estimate;
 import geogebra.kernel.statistics.AlgoTMeanEstimate;
 import geogebra.kernel.statistics.AlgoTTest;
 import geogebra.kernel.statistics.AlgoTTest2;
@@ -4269,15 +4270,30 @@ public class Kernel {
 	/** TMeanEstimate[] with sample data */
 	final public GeoList TMeanEstimate(String label, GeoList sampleList, GeoNumeric level) {
 		AlgoTMeanEstimate algo = new AlgoTMeanEstimate(cons, label, sampleList, level);
-		GeoList num = algo.getResult();
-		return num;
+		GeoList resultList = algo.getResult();
+		return resultList;
 	}
 	
 	/** TMeanEstimate[] with sample statistics */
 	final public GeoList TMeanEstimate(String label, GeoNumeric mean, GeoNumeric sd, GeoNumeric n, GeoNumeric level) {
 		AlgoTMeanEstimate algo = new AlgoTMeanEstimate(cons, label, mean, sd, n, level);
-		GeoList num = algo.getResult();
-		return num;
+		GeoList resultList = algo.getResult();
+		return resultList;
+	}
+	
+	/** TMean2Estimate[] with sample data */
+	final public GeoList TMean2Estimate(String label, GeoList sampleList1, GeoList sampleList2, GeoNumeric level, GeoBoolean pooled) {
+		AlgoTMean2Estimate algo = new AlgoTMean2Estimate(cons, label, sampleList1, sampleList2, level, pooled);
+		GeoList resultList = algo.getResult();
+		return resultList;
+	}
+	
+	/** TMean2Estimate[] with sample statistics */
+	final public GeoList TMean2Estimate(String label, GeoNumeric mean1, GeoNumeric sd1, GeoNumeric n1, 
+			GeoNumeric mean2, GeoNumeric sd2, GeoNumeric n2, GeoNumeric level, GeoBoolean pooled) {
+		AlgoTMean2Estimate algo = new AlgoTMean2Estimate(cons, label, mean1, sd1, n1, mean2, sd2, n2,level, pooled);
+		GeoList resultList = algo.getResult();
+		return resultList;
 	}
 	
 	
