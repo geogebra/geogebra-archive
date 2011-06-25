@@ -48,10 +48,10 @@ public class AlgoInverseBinomial extends AlgoDistribution {
         			double result = dist.inverseCumulativeProbability(val);
         			
         			// eg InversePascal[1,1,1] returns  2147483647 
-        			if (result >= Integer.MAX_VALUE )
-        				num.setUndefined();
+        			if (result > param )
+        				num.setValue(param);
         			else
-        				num.setValue(result);    
+        				num.setValue(result + 1);    
         			
         		}
         		catch (Exception e) {
