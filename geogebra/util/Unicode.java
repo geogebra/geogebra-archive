@@ -58,6 +58,16 @@ public class Unicode {
 	final public static String translationFixHu_oe = "\u00F6";
 	final public static String translationFixHu_hoez = "h\u00F6z";
 	
+	// fractions
+	
+	final public static char fraction1_8 = '\u215b';
+	final public static char fraction1_4 = '\u00bc';
+	final public static char fraction3_8 = '\u215c';
+	final public static char fraction1_2 = '\u00bd';
+	final public static char fraction5_8 = '\u215d';
+	final public static char fraction6_8 = '\u00be';
+	final public static char fraction7_8 = '\u215e';
+	
 	/*
 	 * converts an integer to a unicode superscript string (including minus sign)
 	 * eg for use as a power
