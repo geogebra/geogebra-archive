@@ -20,8 +20,8 @@
 -libraryjars ../java150-rt.jar
 -libraryjars lib_jsobject.jar
 -libraryjars lib_mac_extensions.jar
--libraryjars 3D/jogl.jar
--libraryjars 3D/gluegen-rt.jar
+#-libraryjars 3D/jogl.jar
+#-libraryjars 3D/gluegen-rt.jar
 #-libraryjars jlatexmath.jar
 
 # Rhino Javascript is not obfuscated
