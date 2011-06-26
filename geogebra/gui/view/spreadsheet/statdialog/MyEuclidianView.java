@@ -1,4 +1,4 @@
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui.view.spreadsheet.statdialog;
 
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;

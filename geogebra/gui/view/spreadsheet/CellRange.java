@@ -106,30 +106,30 @@ public class CellRange {
 	}
 	
 	
-	boolean isSingleCell() {
+	public boolean isSingleCell() {
 		return ((maxColumn - minColumn == 0) && (maxRow - minRow == 0));
 	}
 	
-	boolean isColumn() {
+	public boolean isColumn() {
 		return (anchorRow == -1);
 	}
 
-	boolean isRow() {
+	public boolean isRow() {
 		return (anchorColumn == -1);
 	}
 	
 	// TODO -- refator this name, should mean has either exactly 2 rows or 2 columns
-	boolean is2D() {
+	public boolean is2D() {
 		return (maxColumn - minColumn == 1) || (maxRow - minRow == 1);
 	}
 
 	/** isEmpty = cell range contains no geos   */
-	boolean isEmpty() {
+	public boolean isEmpty() {
 		return toGeoList().size() == 0;
 	}
 
 	/** isEmptyRange = the range contains no cells   */
-	boolean isEmptyRange(){
+	public boolean isEmptyRange(){
 		return (minColumn == -1 && maxColumn == -1 && minRow == -1 && maxRow == -1) ;
 	}
 	

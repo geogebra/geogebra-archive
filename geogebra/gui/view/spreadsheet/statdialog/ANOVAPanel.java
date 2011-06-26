@@ -1,5 +1,6 @@
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -13,7 +14,6 @@ import java.util.Locale;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -28,7 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-public class LinearRegressionPanel extends JPanel{
+public class ANOVAPanel extends JPanel{
 
 	private Application app;
 	private Kernel kernel;
@@ -39,7 +39,7 @@ public class LinearRegressionPanel extends JPanel{
 	private DefaultListModel headerModel;
 	
 
-	public LinearRegressionPanel(Application app, GeoList dataList, StatDialog statDialog){
+	public ANOVAPanel(Application app, GeoList dataList, StatDialog statDialog){
 
 		this.app = app;
 		kernel = app.getKernel();
@@ -50,53 +50,47 @@ public class LinearRegressionPanel extends JPanel{
 		this.setBackground(Color.WHITE);
 		this.setLayout(new BorderLayout());
 
-		// north panel with regression equation
-		Box northPanel = Box.createVerticalBox();
-		northPanel.add(new JLabel(" ---- regresion equation ----"));
-		northPanel.add(new JLabel(" ----------------------------"));
 		
-		// south panel with additional statistics
-		Box southPanel = Box.createVerticalBox();
-		southPanel.add(new JLabel(" ---- regresion equation ----"));
-		southPanel.add(new JLabel(" ----------------------------"));
+		headerModel = new DefaultListModel();
+		
 		
 		// set up table
 		model = new DefaultTableModel();
-		headerModel = new DefaultListModel();	
 		JTable table = new JTable(model);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setGridColor(MyTable.TABLE_GRID_COLOR);
 		table.setShowGrid(true);
 
-		// table row header
+		// set up row header
 		JList rowHeader = new JList(headerModel);
 		rowHeader.setFixedCellWidth(50);
 		rowHeader.setFixedCellHeight(table.getRowHeight() + table.getRowMargin()); 
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 
+		
 		// add table to scroll pane
 		JScrollPane scroll = new JScrollPane(table);
 		scroll.setRowHeaderView(rowHeader);
-		
-		
 		
 		this.add(scroll, BorderLayout.CENTER);
 
 	}
 
 
-	public void updateRegressionPanel(){
+	public void updateANOVAPanel(){
 		
 		String[] columnLabels = { 
-				app.getMenu("Coefficient"),
-				app.getMenu("StandardError.short"),
-				app.getMenu("TStatistic"),
-				app.getMenu("Pvalue"),
+				app.getMenu("DegreesOfFreedom.short"),
+				app.getMenu("SumSquares.short"),
+				app.getMenu("MeanSquare.short"),
+				app.getMenu("FStatistic"),
+				app.getMenu("PValue"),
 		};
 		
 		String[] rowLabels = { 
-				app.getMenu("Intercept"),
-				app.getMenu("Slope"),
+				app.getMenu("BetweenGroups"),
+				app.getMenu("WithinGroups"),
+				app.getMenu("Total"),
 		};
 		
 		

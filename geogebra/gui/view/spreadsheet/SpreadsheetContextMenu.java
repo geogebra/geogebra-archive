@@ -5,6 +5,7 @@ import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
 import geogebra.gui.OptionsDialog;
 import geogebra.gui.RedefineInputHandler;
+import geogebra.gui.view.spreadsheet.statdialog.StatDialog;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.main.Application;

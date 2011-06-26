@@ -1,8 +1,10 @@
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -41,6 +43,8 @@ import javax.swing.text.JTextComponent;
 public class OneVarInferencePanel extends JPanel implements ActionListener {
 
 	private Application app;
+	private Kernel kernel;
+	
 	private GeoList dataList;
 
 	private static final int MODE_ZTEST = 0;
@@ -62,11 +66,13 @@ public class OneVarInferencePanel extends JPanel implements ActionListener {
 	private JPanel cardProcedure;
 	private JPanel resultPanel;
 	private String[] nullHypName;
+	
 
 
 	public OneVarInferencePanel(Application app, GeoList dataList, StatDialog statDialog){
 
 		this.app = app;
+		this.kernel = app.getKernel();
 		this.dataList = dataList;
 		this.statDialog = statDialog;
 
@@ -80,7 +86,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener {
 
 	public void updateOneVarPanel(){
 
-		String P = app.getMenu("Pvalue");
+		String P = app.getMenu("PValue");
 		String t = app.getMenu("TStatistic");
 		String up = app.getMenu("UpperLimit");
 		String low = app.getMenu("LowerLimit");
@@ -112,7 +118,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener {
 		testSB.append(SE + " = 123");
 		
 
-		//taResult.setText(testSB.toString());
+		taResult.setText(testSB.toString());
 
 		nullHypName = new String[3];
 		nullHypName[MODE_ZTEST] = app.getMenu("HypothesizedMean.short");
@@ -229,11 +235,29 @@ public class OneVarInferencePanel extends JPanel implements ActionListener {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
 
 	//============================================================
 	//            Utilities
 	//============================================================
 
+	private double evaluateExpression(String expr){
+
+		NumberValue nv;
+		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);	
+
+		return nv.getDouble();
+	}
+	
+	
+	
+	
 
 	private JPanel flowPanel(JComponent... comp){
 		JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));

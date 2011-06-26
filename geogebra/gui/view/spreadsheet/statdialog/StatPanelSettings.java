@@ -1,4 +1,5 @@
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui.view.spreadsheet.statdialog;
+
 
 public class StatPanelSettings {
 

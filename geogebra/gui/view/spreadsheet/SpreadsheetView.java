@@ -2,6 +2,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.gui.view.spreadsheet.statdialog.StatDialog;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -169,6 +170,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			defaultFile = System.getProperty("user.dir");
 			initialFilePath = defaultFile;
 		}
+		
+		this.addFocusListener(this);
 
 		//==============================================
 		//  DEBUG
@@ -1292,6 +1295,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	// test all components of SpreadsheetView for hasFocus 
 	public boolean hasFocus() {
+		Application.debug("hasfucus called");
 		if (table == null)
 			return false;
 		return table.hasFocus()

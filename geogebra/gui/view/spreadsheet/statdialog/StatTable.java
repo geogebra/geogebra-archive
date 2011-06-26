@@ -1,4 +1,4 @@
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
