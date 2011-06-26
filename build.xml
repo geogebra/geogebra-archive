@@ -713,7 +713,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 				</and>
 				<and>
 					<os family="unix"/>
-					<available file="${workspace.dir}/igi-keystore.der"/>
+					<available file="${workspace.dir}/igi-keystore-CL.spc.der"/>
 				</and>
 			</or>
 		</and>
