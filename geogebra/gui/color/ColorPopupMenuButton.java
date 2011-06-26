@@ -97,31 +97,54 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	}
 
 	
-	private  Color[] getColorArray(int colorSetType) {
+	private  Color[] getColorArray(int colorSetType){
+		return GeoGebraColorConstants.getPopupArray(colorSetType);
+	}
+	
+	
+	private  Color[] getColorArray2(int colorSetType) {
 		
 		Color[] colors = new Color[24];
 		HashMap<String, Color> hm = app.getColorsHashMap();
 		
+		
+		/*
+		gray=Gray
+		darkgray=Dark Gray
+		lightgray=Light Gray
+		silver=Silver
+		
+		aqua=Aqua	
+		maroon=Maroon
+		white=White
+		black=Black
+		brown=Brown
+		crimson=Crimson
+		indigo=Indigo
+		violet=Violet
+		turquoise=Turquoise
+*/
+		
 		Color[]	primaryColors = new Color[] {		
-				hm.get("RED"), 
-				hm.get("DARKORANGE"), 
-				hm.get("YELLOW"), 
-				hm.get("LIME"), 
-				hm.get("CYAN"), 
-				hm.get("BLUE"), 
-				hm.get("BLUEVIOLET"), 
-				hm.get("MAGENTA"), 
+				hm.get("RED"), //red=Red
+				hm.get("DARKORANGE"), //orange=Orange? 
+				hm.get("YELLOW"),  // yellow=Yellow
+				hm.get("LIME"), // green=Green
+				hm.get("CYAN"), // cyan=Cyan
+				hm.get("BLUE"), // blue=Blue
+				hm.get("BLUEVIOLET"), // ?purple=Purple
+				hm.get("MAGENTA"), // magenta=Magenta
 		};
 		
 		Color[]	lightColors = new Color[] {		
-				hm.get("MISTYROSE"),
-				hm.get("NAVAJOWHITE"),
-				hm.get("PALEGOLDENROD"),
-				hm.get("LIGHTGREEN"),
+				hm.get("MISTYROSE"),   
+				hm.get("NAVAJOWHITE"),  // 
+				hm.get("PALEGOLDENROD"),  // gold=Gold
+				hm.get("LIGHTGREEN"),  
 				hm.get("LIGHTCYAN"),
 				hm.get("LIGHTSKYBLUE"),
 				hm.get("ORCHID"),
-				hm.get("PINK"),		 	
+				hm.get("PINK"),		// pink=Pink 	
 		};
 		
 		//TODO assign better dark colors
@@ -129,9 +152,9 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 				hm.get("BROWN"),
 				hm.get("SIENNA"),
 				hm.get("GOLD"),
-				hm.get("GREEN"),
-				hm.get("LIGHTSEAGREEN"),
-				hm.get("NAVY"),
+				hm.get("GREEN"),  
+				hm.get("LIGHTSEAGREEN"),  // lime=Lime
+				hm.get("NAVY"),   // darkblue=Dark Blue
 				hm.get("DARKORCHID"),
 				hm.get("PLUM"),
 		};		
@@ -172,16 +195,8 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	
 	private String[] getToolTipArray(){
 		String[] toolTipArray = new String[colorSet.length];
-		for(int i=0; i<toolTipArray.length; i++){
-			
-			// for testing
-			//toolTipArray[i] = colorSet[i].toString();
-			
-			
-			// add code here for color swatch tooltips
-			// also be sure to handle the swatch with the 
-			// empty set icon for bg colors
-			
+		for(int i=0; i<toolTipArray.length; i++){			
+			toolTipArray[i] = GeoGebraColorConstants.getGeogebraColorName(app, colorSet[i]);
 		}
 		return toolTipArray;
 	}
