@@ -1140,8 +1140,8 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
     public int getDeg()
     {
     	int deg = 0;
-    	for(int i=degX; i<degX; i++)
-    		for(int j=degY; j>degY; j++)
+    	for(int i=0; i<degX+1; i++)
+    		for(int j=0; j<degY+1; j++)
     			if(coeff[i][j] != 0)
     				deg = i+j;
     	return deg;
