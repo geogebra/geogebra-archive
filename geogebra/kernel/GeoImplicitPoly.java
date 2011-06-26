@@ -1132,6 +1132,21 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
     	}
     	return c;
     }
+    
+    /**
+     * Return degree of implicit poly (x^ny^m = 1 has degree of m+n)
+     * @return degree of implicit poly
+     */
+    public int getDeg()
+    {
+    	int deg = 0;
+    	for(int i=degX; i<degX; i++)
+    		for(int j=degY; j>degY; j++)
+    			if(coeff[i][j] != 0)
+    				deg = i+j;
+    	return deg;
+        	    		
+    }
 
 	public void mirror(GeoConic c) 
 	{
