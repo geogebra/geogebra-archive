@@ -119,7 +119,7 @@ public class GeoGebraColorConstants {
 		primaryColors[5] = geogebraColor.get("blue");
 		primaryColors[6] = geogebraColor.get("violet");
 		primaryColors[7] = geogebraColor.get("magenta");
-		primaryColors[8] = null;
+		primaryColors[8] = geogebraColor.get("lime");
 	}
 
 
@@ -147,7 +147,7 @@ public class GeoGebraColorConstants {
 		darkPrimaryColors[5] = geogebraColor.get("purple");
 		darkPrimaryColors[6] = geogebraColor.get("indigo");
 		darkPrimaryColors[7] = geogebraColor.get("crimson");
-		darkPrimaryColors[8] = null;
+		darkPrimaryColors[8] = geogebraColor.get("pink");
 	}
 
 
