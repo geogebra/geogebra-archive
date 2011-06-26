@@ -6168,45 +6168,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			
 			return null;
 
-			/*
-			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(getKernel().getModeText(mode)),
-					app.getPlain("Angle"), defaultRotateAngle);
-
-			NumberValue num = (NumberValue) ob[0];
-			geogebra.gui.AngleInputDialog dialog = (geogebra.gui.AngleInputDialog) ob[1];
-			String angleText = dialog.getText();
-
-			// keep angle entered if it ends with 'degrees'
-			if (angleText.endsWith("\u00b0") && dialog.success==true) defaultRotateAngle = angleText;
-			else defaultRotateAngle = "45"+"\u00b0";
-
-			if (num == null) {
-				view.resetMode();
-				return null;
-			}
-
-			if (selPolygons() == 1) {
-				GeoPolygon[] polys = getSelectedPolygons();
-				GeoPoint[] points = getSelectedPoints();
-				return kernel.Rotate(null,  polys[0], num, points[0]);
-			} else {	
-				// mirror all selected geos
-				GeoElement [] geos = getSelectedGeos();
-				GeoPoint point = getSelectedPoints()[0];
-				ArrayList<GeoElement> ret = new ArrayList<GeoElement>();
-				for (int i=0; i < geos.length; i++) {				
-					if (geos[i] != point) {
-						if (geos[i] instanceof Transformable) {
-							ret.addAll(Arrays.asList(kernel.Rotate(null,   geos[i], num, point)));
-						} else if (geos[i].isGeoPolygon()) {
-							ret.addAll(Arrays.asList(kernel.Rotate(null, (GeoPolygon) geos[i], num, point)));
-						}
-					}
-				}
-				GeoElement[] retex = {};
-				return ret.toArray(retex);
-			}*/
-			
 		}
 
 		return null;
@@ -6449,38 +6410,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// we got the points		
 		if (selPoints() == 2 || selSegments() == 1) {
-			// get angle			
-			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(getKernel().getModeText(mode)),
-					app.getPlain("Angle"), "45\u00b0");
-			NumberValue num = (NumberValue) ob[0];
-			geogebra.gui.AngleInputDialog aDialog = (geogebra.gui.AngleInputDialog) ob[1]; 			
+			
+			GeoElement[] selGeos = getSelectedGeos();
 
-			if (num == null) {
-				view.resetMode();
-				return null;
-			}
+			app.getGuiManager().showNumberInputDialogAngleFixed(app.getMenu(getKernel().getModeText(mode)), getSelectedSegments(), getSelectedPoints(), selGeos);
+			
+			return null;
 
-			GeoAngle angle = null;
-			boolean posOrientation = aDialog.isCounterClockWise();
-			if (selPoints() == 2) {
-				GeoPoint[] points = getSelectedPoints();		
-				angle = (GeoAngle) kernel.Angle(null, points[0], points[1], num, posOrientation)[0];			
-			} else {
-				GeoSegment[] segment = getSelectedSegments();		
-				angle = (GeoAngle) kernel.Angle(null, segment[0].getEndPoint(), segment[0].getStartPoint(), num, posOrientation)[0];
-			}			
-
-			// make sure that we show angle value
-			if (angle.isLabelVisible()) 
-				angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
-			else 
-				angle.setLabelMode(GeoElement.LABEL_VALUE);
-			angle.setLabelVisible(true);		
-			angle.updateRepaint();
-
-			GeoElement[] ret = { null };
-			ret[0] = angle;
-			return ret;
 		}
 		return null;
 	}	

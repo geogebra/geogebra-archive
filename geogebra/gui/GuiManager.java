@@ -26,8 +26,8 @@ import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.GeoGebraFileChooser;
 import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
-import geogebra.gui.view.consprotocol.ConstructionProtocolView;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
+import geogebra.gui.view.consprotocol.ConstructionProtocolView;
 import geogebra.gui.view.spreadsheet.FunctionInspector;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
@@ -39,10 +39,10 @@ import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
@@ -91,13 +91,11 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML;
@@ -2699,6 +2697,16 @@ public class GuiManager {
 		id.setVisible(true);
 
 	}
+	
+	public void showNumberInputDialogAngleFixed(String title, GeoSegment[] segments, GeoPoint[] points, GeoElement[] selGeos) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogAngleFixed(app, title, handler, segments, points, selGeos, kernel);
+		id.setVisible(true);
+
+	}
+	
+	
 
 	public void showNumberInputDialogDilate(String title, GeoPolygon[] polys, GeoPoint[] points, GeoElement[] selGeos) {
 
