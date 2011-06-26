@@ -159,6 +159,11 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 	}
 
 	public void mousePressed(MouseEvent e) {
+
+		if(!view.hasViewFocus())
+			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
+
+
 		boolean rightClick = Application.isRightClick(e); 
 
 		// tell selection listener about click on GeoElement
@@ -479,7 +484,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 						if( colOffset < 0.5 * table.getCellRect(table.maxSelectionRow, table.maxSelectionColumn + 1, true).width)
 							colOffset = 0;
 					}
-					
+
 					if(rowOffset == 0 && colOffset == 0){
 						table.dragingToColumn = -1;
 						table.dragingToRow = -1;
@@ -575,8 +580,8 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				table.setCursor(table.largeCrossCursor);
 		}
 		//else if(table.isOverDnDRegion)
-			//table.setCursor(table.grabCursor);
-		
+		//table.setCursor(table.grabCursor);
+
 		else
 			table.setCursor(table.defaultCursor);
 

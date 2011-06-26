@@ -86,7 +86,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private StatDialog oneVarStatDialog;
 	private StatDialog twoVarStatDialog;
 	private StatDialog multiVarStatDialog;
-	
+
 	private ProbabilityCalculator probCalculator;
 
 	// file browser default constants
@@ -111,17 +111,17 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		this.app = app;
 		kernel = app.getKernel();
 		view = this;
-		
+
 		// table
 		tableModel = new DefaultTableModel(rows, columns);
 		table = new MyTable(this, tableModel);
-		
+
 		table.headerRenderer.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
 				, (int)(MyTable.TABLE_CELL_HEIGHT)));
 
 		// Create row header
 		rowHeader = new SpreadsheetRowHeader(app,table);
-	
+
 		// Put the table and the row header into a scroll plane
 		// The scrollPane is now named as spreadsheet
 		spreadsheet = new JScrollPane();
@@ -170,7 +170,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			defaultFile = System.getProperty("user.dir");
 			initialFilePath = defaultFile;
 		}
-		
+
 		this.addFocusListener(this);
 
 		//==============================================
@@ -359,7 +359,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	/** Respond to changes in Euclidean mode sent by GUI manager */
 	public void setMode(int mode){
 
-		
+
 		if(isTraceDialogVisible()){
 			traceDialog.toolbarModeChanged(mode);
 		}
@@ -390,7 +390,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			if(!app.getSelectedGeos().isEmpty() && prevMode == mode){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LIST);
 				id.setVisible(true);
-				
+
 			}
 			break;
 
@@ -417,7 +417,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				id.setVisible(true);
 			}
 			break;
-			
+
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_POLYLINE:
 			if(prevMode == mode && table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_POLYLINE);
@@ -531,7 +531,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	private boolean scrollToShow = false;
 
-	
+
 
 	public void setScrollToShow(boolean scrollToShow) {
 		this.scrollToShow = scrollToShow;
@@ -568,7 +568,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			}
 			twoVarStatDialog.setVisible(true);	
 			break;
-			
+
 		case StatDialog.MODE_MULTIVAR:
 			if(multiVarStatDialog == null){
 				multiVarStatDialog = new StatDialog(view, app, mode);
@@ -577,8 +577,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			}
 			multiVarStatDialog.setVisible(true);	
 			break;
-			
-			
+
+
 		}
 
 	}
@@ -599,7 +599,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 	public void showProbabilityCalculator(){
-		
+
 		if(probCalculator == null)
 			probCalculator = new ProbabilityCalculator(view, app);
 		if(!probCalculator.isVisible()){
@@ -664,7 +664,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 
-	
+
 
 	//===============================================================
 	//             XML 
@@ -840,7 +840,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			table.setLabels();
 	}
 
-	
+
 	public void updateFonts() {
 
 		Font font = app.getPlainFont();
@@ -851,7 +851,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		int h = dummy.getPreferredSize().height;
 		int w = dummy.getPreferredSize().width;	
 		rowHeader.setFixedCellWidth(w);	
-		
+
 		//TODO: column widths are not set from here
 		// need to revise updateColumnWidths() to do this correctly
 		dummy.setText("MMMMMMMMMM");  // for column width
@@ -864,7 +864,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		table.setFont(app.getPlainFont());
 		rowHeader.setFont(font);
 		table.headerRenderer.setFont(font);
-		
+
 		// Adjust row heights for tall LaTeX images
 		table.fitAll(true, false); 
 
@@ -908,7 +908,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void updateRowHeader() {
 		rowHeader.updateRowHeader();
 	}
-	
+
 
 	public void setSpreadsheetScrollPosition(int hScroll, int vScroll){
 		spreadsheet.getHorizontalScrollBar().setValue(hScroll);
@@ -1285,6 +1285,19 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	//================================================
 	//	         Focus
 	//================================================
+
+	protected boolean hasViewFocus(){
+		boolean hasFocus = false;
+		 try {
+			hasFocus = app.getGuiManager().getLayout().getDockManager().getFocusedPanel().isAncestorOf(view);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return hasFocus;
+	}
+
+
 
 	// transfer focus to the table
 	public void requestFocus() {
