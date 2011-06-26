@@ -7626,6 +7626,7 @@ class CmdCopyFreeObject extends CommandProcessor {
  */
 class CmdSetColor extends CommandProcessor {
 
+	boolean background = false;
 	/**
 	 * Create new command processor
 	 * 
@@ -7636,7 +7637,7 @@ class CmdSetColor extends CommandProcessor {
 		super(kernel);
 	}
 
-	final public GeoElement[] process(Command c) throws MyError {
+	public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		arg = resArgs(c);
@@ -7669,7 +7670,11 @@ class CmdSetColor extends CommandProcessor {
 					throw argErr(app, c.getName(), arg[1]);
 				}
 
-				arg[0].setObjColor(col);
+				if (background)
+					arg[0].setBackgroundColor(col);
+				else
+					arg[0].setObjColor(col);
+				
 				arg[0].updateRepaint();
 
 				GeoElement geo = (GeoElement) arg[0];
@@ -7703,7 +7708,11 @@ class CmdSetColor extends CommandProcessor {
 				else if (blue > 255)
 					blue = 255;
 
-				arg[0].setObjColor(new Color(red, green, blue));
+				if (background)
+					arg[0].setBackgroundColor(new Color(red, green, blue));
+				else
+					arg[0].setObjColor(new Color(red, green, blue));
+				
 				arg[0].updateRepaint();
 
 				GeoElement geo = (GeoElement) arg[0];
@@ -7720,6 +7729,18 @@ class CmdSetColor extends CommandProcessor {
 		default:
 			throw argNumErr(app, c.getName(), n);
 		}
+	}
+}
+
+class CmdSetBackgroundColor extends CmdSetColor {
+	
+	public CmdSetBackgroundColor(Kernel kernel) {
+		super(kernel);
+		background = true;
+	}
+
+	final public GeoElement[] process(Command c) throws MyError {
+		return super.process(c);
 	}
 }
 

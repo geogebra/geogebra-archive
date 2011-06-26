@@ -628,6 +628,7 @@ public class CommandDispatcher {
     	//=============================================================
       	cmdTable.put("CopyFreeObject", new CmdCopyFreeObject(kernel));
     	cmdTable.put("SetColor", new CmdSetColor(kernel));
+    	cmdTable.put("SetBackgroundColor", new CmdSetBackgroundColor(kernel));
     	cmdTable.put("SetDynamicColor", new CmdSetDynamicColor(kernel));
     	cmdTable.put("SetConditionToShowObject", new CmdSetConditionToShowObject(kernel));
     	cmdTable.put("SetFilling", new CmdSetFilling(kernel));
