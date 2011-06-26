@@ -2,6 +2,7 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.PropertiesPanelMiniListener;
+import geogebra.gui.color.GeoGebraColorConstants;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -178,7 +179,6 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 	    	addMouseListener(this);
 	        setPreferredSize(new Dimension(100,app.getFontSize() + 8));
 	        setBorder(BorderFactory.createRaisedBevelBorder());
-			 HashMap<String, Color> colors = app.getColorsHashMap();				 
 			 
 	        
 	        JMenuItem menuItem1 = new JMenuItem(app.getColor("Red"), new ColorIcon(Color.red));  
@@ -192,8 +192,8 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 	        JMenuItem menuItem9 = new JMenuItem(app.getColor("Orange"), new ColorIcon(Color.orange));  
 	        JMenuItem menuItem10 = new JMenuItem(app.getColor("Pink"), new ColorIcon(Color.pink));  
 	        JMenuItem menuItem11 = new JMenuItem(app.getColor("Gray"), new ColorIcon(Color.gray));  
-	        JMenuItem menuItem12 = new JMenuItem(app.getColor("Purple"), new ColorIcon(colors.get("PURPLE")));  
-	        JMenuItem menuItem13 = new JMenuItem(app.getColor("Brown"), new ColorIcon(colors.get("BROWN")));  
+	        JMenuItem menuItem12 = new JMenuItem(app.getColor("Purple"), new ColorIcon(GeoGebraColorConstants.getGeogebraColor(app, "PURPLE")));  
+	        JMenuItem menuItem13 = new JMenuItem(app.getColor("Brown"), new ColorIcon(GeoGebraColorConstants.getGeogebraColor(app, "BROWN")));  
 	        menuItem1.addActionListener(this);
 	        menuItem2.addActionListener(this);
 	        menuItem3.addActionListener(this);

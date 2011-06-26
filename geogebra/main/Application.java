@@ -2178,6 +2178,23 @@ public class Application implements KeyEventDispatcher {
 	 */
 
 	final public String getColor(String key) {
+
+		if (key == null) return "";
+
+		if (key.length() == 5 && key.toLowerCase(Locale.US).startsWith("gray")) {
+			switch (key.charAt(4)) {
+			case '0': return getColor("white");
+			case '1': return getPlain("AGray",Unicode.fraction1_8);
+			case '2': return getPlain("AGray",Unicode.fraction1_4); // silver
+			case '3': return getPlain("AGray",Unicode.fraction3_8);
+			case '4': return getPlain("AGray",Unicode.fraction1_2);
+			case '5': return getPlain("AGray",Unicode.fraction5_8);
+			case '6': return getPlain("AGray",Unicode.fraction3_4);
+			case '7': return getPlain("AGray",Unicode.fraction7_8);
+			default: return getColor("black");
+			}
+		}
+
 		if (rbcolors == null) {
 			initColorsResourceBundle();
 		}
@@ -4795,159 +4812,7 @@ public class Application implements KeyEventDispatcher {
 		}
 		return eraserCursor;
 	}
-	
-	private HashMap colors = null;
-
-	public HashMap<String, Color> getColorsHashMap() {
 		
-		if (colors == null) {
-			 colors = new HashMap();
-				
-			 // HTML 3.2
-		        colors.put("AQUA", new Color(0x00FFFF));
-		        colors.put("BLACK", new Color(0x000000));
-		        colors.put("BLUE", new Color(0x0000FF));
-		        colors.put("FUCHSIA", new Color(0xFF00FF));
-		        colors.put("GRAY", new Color(0x808080));
-		        colors.put("GREEN", new Color(0x008000));
-		        colors.put("LIME", new Color(0x00FF00));
-		        colors.put("MAROON", new Color(0x800000));
-		        colors.put("NAVY", new Color(0x000080));
-		        colors.put("OLIVE", new Color(0x808000));
-		        colors.put("PURPLE", new Color(0x800080));
-		        colors.put("RED", new Color(0xFF0000));
-		        colors.put("SILVER", new Color(0xC0C0C0));
-		        colors.put("TEAL", new Color(0x008080));
-		        colors.put("WHITE", new Color(0xFFFFFF));
-		        colors.put("YELLOW", new Color(0xFFFF00));
-
-		        colors.put("ALICEBLUE", new Color(0xEFF7FF));
-		        colors.put("ANTIQUEWHITE", new Color(0xF9E8D2));
-		        colors.put("AQUAMARINE", new Color(0x43B7BA));
-		        colors.put("AZURE", new Color(0xEFFFFF));
-		        colors.put("BEIGE", new Color(0xF5F3D7));
-		        colors.put("BISQUE", new Color(0xFDE0BC));
-		        colors.put("BLANCHEDALMOND", new Color(0xFEE8C6));
-		        colors.put("BLUEVIOLET", new Color(0x7931DF));
-		        colors.put("BROWN", new Color(0x980516));
-		        colors.put("BURLYWOOD", new Color(0xEABE83));
-		        colors.put("CADETBLUE", new Color(0x578693));
-		        colors.put("CHARTREUSE", new Color(0x8AFB17));
-		        colors.put("CHOCOLATE", new Color(0xC85A17));
-		        colors.put("CORAL", new Color(0xF76541));
-		        colors.put("CORNFLOWERBLUE", new Color(0x151B8D));
-		        colors.put("CORNSILK", new Color(0xFFF7D7));
-		        colors.put("CRIMSON", new Color(0xE41B17));
-		        colors.put("CYAN", new Color(0x00FFFF));
-		        colors.put("DARKBLUE", new Color(0x2F2F4F));
-		        colors.put("DARKCYAN", new Color(0x57FEFF));
-		        colors.put("DARKGOLDENROD", new Color(0xAF7817));
-		        colors.put("DARKGRAY", new Color(0x7A7777));
-		        colors.put("DARKGREEN", new Color(0x254117));
-		        colors.put("DARKKHAKI", new Color(0xB7AD59));
-		        colors.put("DARKMAGENTA", new Color(0xF43EFF));
-		        colors.put("DARKOLIVEGREEN", new Color(0xCCFB5D));
-		        colors.put("DARKORANGE", new Color(0xF88017));
-		        colors.put("DARKORCHID", new Color(0x7D1B7E));
-		        colors.put("DARKRED", new Color(0xE41B17));
-		        colors.put("DARKSALMON", new Color(0xE18B6B));
-		        colors.put("DARKSEAGREEN", new Color(0x8BB381));
-		        colors.put("DARKSLATEBLUE", new Color(0x2B3856));
-		        colors.put("DARKSLATEGRAY", new Color(0x253856));
-		        colors.put("DARKTURQUOISE", new Color(0x3B9C9C));
-		        colors.put("DARKVIOLET", new Color(0x842DCE));
-		        colors.put("DEEPPINK", new Color(0xF52887));
-		        colors.put("DEEPSKYBLUE", new Color(0x3BB9FF));
-		        colors.put("DIMGRAY", new Color(0x463E41));
-		        colors.put("DODGERBLUE", new Color(0x1589FF));
-		        colors.put("FIREBRICK", new Color(0x800517));
-		        colors.put("FLORALWHITE", new Color(0xFFF9EE));
-		        colors.put("FORESTGREEN", new Color(0x4E9258));
-		        colors.put("GAINSBORO", new Color(0xD8D9D7));
-		        colors.put("GHOSTWHITE", new Color(0xF7F7FF));
-		        colors.put("GOLD", new Color(0xD4A017));
-		        colors.put("GOLDENROD", new Color(0xEDDA74));
-		        colors.put("GREENYELLOW", new Color(0xB1FB17));
-		        colors.put("HONEYDEW", new Color(0xF0FEEE));
-		        colors.put("INDIANRED", new Color(0x5E2217));
-		        colors.put("INDIGO", new Color(0x307D7E));
-		        colors.put("IVORY", new Color(0xFFFFEE));
-		        colors.put("KHAKI", new Color(0xADA96E));
-		        colors.put("LAVENDER", new Color(0xE3E4FA));
-		        colors.put("LAVENDERBLUSH", new Color(0xFDEEF4));
-		        colors.put("LAWNGREEN", new Color(0x87F717));
-		        colors.put("LEMONCHIFFON", new Color(0xFFF8C6));
-		        colors.put("LIGHTBLUE", new Color(0xADDFFF));
-		        colors.put("LIGHTCORAL", new Color(0xE77471));
-		        colors.put("LIGHTCYAN", new Color(0xE0FFFF));
-		        colors.put("LIGHTGOLDENRODYELLOW", new Color(0xFAF8CC));
-		        colors.put("LIGHTGREEN", new Color(0xCCFFCC));
-		        colors.put("LIGHTGRAY", Color.LIGHT_GRAY);
-		        colors.put("LIGHTPINK", new Color(0xFAAFBA));
-		        colors.put("LIGHTSALMON", new Color(0xF9966B));
-		        colors.put("LIGHTSEAGREEN", new Color(0x3EA99F));
-		        colors.put("LIGHTSKYBLUE", new Color(0x82CAFA));
-		        colors.put("LIGHTSLATEGRAY", new Color(0x6D7B8D));
-		        colors.put("LIGHTSTEELBLUE", new Color(0x728FCE));
-		        colors.put("LIGHTYELLOW", new Color(0xFFFEDC));
-		        colors.put("LIMEGREEN", new Color(0x41A317));
-		        colors.put("LINEN", new Color(0xF9EEE2));
-		        colors.put("MAGENTA", new Color(0xFF00FF));
-		        colors.put("MEDIUMAQUAMARINE", new Color(0x348781));
-		        colors.put("MEDIUMBLUE", new Color(0x152DC6));
-		        colors.put("MEDIUMORCHID", new Color(0xB048B5));
-		        colors.put("MEDIUMPURPLE", new Color(0x8467D7));
-		        colors.put("MEDIUMSEAGREEN", new Color(0x306754));
-		        colors.put("MEDIUMSLATEBLUE", new Color(0x5E5A80));
-		        colors.put("MEDIUMSPRINGGREEN", new Color(0x348017));
-		        colors.put("MEDIUMTURQUOISE", new Color(0x48CCCD));
-		        colors.put("MEDIUMVIOLETRED", new Color(0xCA226B));
-		        colors.put("MIDNIGHTBLUE", new Color(0x151B54));
-		        colors.put("MINTCREAM", new Color(0xF5FFF9));
-		        colors.put("MISTYROSE", new Color(0xFDE1DD));
-		        colors.put("MOCCASIN", new Color(0xFDE0AC));
-		        colors.put("NAVAJOWHITE", new Color(0xFDDAA3));
-		        colors.put("OLDLACE", new Color(0xFCF3E2));
-		        colors.put("OLIVEDRAB", new Color(0x658017));
-		        colors.put("ORANGE", new Color(0xF87A17));
-		        colors.put("ORANGERED", new Color(0xF63817));
-		        colors.put("ORCHID", new Color(0xE57DED));
-		        colors.put("PALEGOLDENROD", new Color(0xEDE49E));
-		        colors.put("PALETURQUOISE", new Color(0xAEEBEC));
-		        colors.put("PALEVIOLETRED", new Color(0xD16587));
-		        colors.put("PAPAYAWHIP", new Color(0xFEECCF));
-		        colors.put("PEACHPUFF", new Color(0xFCD5B0));
-		        colors.put("PERU", new Color(0xC57726));
-		        colors.put("PINK", new Color(0xFAAFBE));
-		        colors.put("PLUM", new Color(0xB93B8F));
-		        colors.put("POWDERBLUE", new Color(0xADDCE3));
-		        colors.put("ROSYBROWN", new Color(0xB38481));
-		        colors.put("ROYALBLUE", new Color(0x2B60DE));
-		        colors.put("SADDLEBROWN", new Color(0xF63526));
-		        colors.put("SALMON", new Color(0xF88158));
-		        colors.put("SANDYBROWN", new Color(0xEE9A4D));
-		        colors.put("SEAGREEN", new Color(0x4E8975));
-		        colors.put("SEASHELL", new Color(0xFEF3EB));
-		        colors.put("SIENNA", new Color(0x8A4117));
-		        colors.put("SKYBLUE", new Color(0x6698FF));
-		        colors.put("SLATEBLUE", new Color(0x737CA1));
-		        colors.put("SLATEGRAY", new Color(0x657383));
-		        colors.put("SNOW", new Color(0xFFF9FA));
-		        colors.put("SPRINGGREEN", new Color(0x4AA02C));
-		        colors.put("STEELBLUE", new Color(0x4863A0));
-		        colors.put("TAN", new Color(0xD8AF79));
-		        colors.put("THISTLE", new Color(0xD2B9D3));
-		        colors.put("TOMATO", new Color(0xF75431));
-		        colors.put("TURQUOISE", new Color(0x43C6DB));
-		        colors.put("VIOLET", new Color(0x8D38C9));
-		        colors.put("WHEAT", new Color(0xF3DAA9));
-		        colors.put("WHITESMOKE", new Color(0xFFFFFF));
-		        colors.put("YELLOWGREEN", new Color(0x52D017));
-		    }
-		
-		return colors;
-	}
-	
 	private static boolean virtualKeyboardActive = false;
 	
 	public static boolean isVirtualKeyboardActive() {

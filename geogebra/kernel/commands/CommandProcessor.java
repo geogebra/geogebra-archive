@@ -15,6 +15,7 @@ package geogebra.kernel.commands;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.gui.color.GeoGebraColorConstants;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.RenameInputHandler;
 import geogebra.kernel.AlgoCellRange;
@@ -7651,16 +7652,18 @@ class CmdSetColor extends CommandProcessor {
 				String color = geogebra.util.Util.removeSpaces(
 						((GeoText) arg[1]).getTextString()).toUpperCase();
 				// lookup Color
-				HashMap<String, Color> colors = app.getColorsHashMap();
-				Color col = colors.get(color);
+				//HashMap<String, Color> colors = app.getColorsHashMap();
+				//Color col = colors.get(color);
+				
+				Color col = GeoGebraColorConstants.getGeogebraColor(app,  color);
 
 				// support for translated color names
-				if (col == null) {
-					// translate to English
-					color = app.reverseGetColor(color).toUpperCase();
-					col = (Color) colors.get(color);
-					// Application.debug(color);
-				}
+				//if (col == null) {
+				//	// translate to English
+				//	color = app.reverseGetColor(color).toUpperCase();
+				//	col = (Color) colors.get(color);
+				//	// Application.debug(color);
+				//}
 
 				if (col == null) {
 					throw argErr(app, c.getName(), arg[1]);

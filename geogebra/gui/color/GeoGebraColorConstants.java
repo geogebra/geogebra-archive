@@ -67,11 +67,13 @@ public class GeoGebraColorConstants {
 		// white/gray/black
 		geogebraColor.put("white", htmlColorMap().get("WHITE"));
 		geogebraColor.put("black", htmlColorMap().get("BLACK"));
-		geogebraColor.put("gray10", grayN(10));
-		geogebraColor.put("gray25", grayN(25));
-		geogebraColor.put("gray50", grayN(50));
-		geogebraColor.put("gray75", grayN(75));
-		geogebraColor.put("gray90", grayN(90));
+		geogebraColor.put("gray7", grayN(7));
+		geogebraColor.put("gray6", grayN(6)); // silver
+		geogebraColor.put("gray5", grayN(5));
+		geogebraColor.put("gray4", grayN(4));
+		geogebraColor.put("gray3", grayN(3));
+		geogebraColor.put("gray2", grayN(2));
+		geogebraColor.put("gray1", grayN(1));
 		geogebraColor.put("darkgray", htmlColorMap().get("DARKGRAY"));
 		geogebraColor.put("lightgray", htmlColorMap().get("LIGHTGRAY"));
 		geogebraColor.put("silver", htmlColorMap().get("SILVER"));
@@ -85,8 +87,14 @@ public class GeoGebraColorConstants {
 		geogebraColorReverse.put(entry.getValue(), entry.getKey());
 	}
 
-	public Color getGeogebraColor(Application app, String colorName){
-		return geogebraColor.get(app.reverseGetColor(colorName));
+	public static Color getGeogebraColor(Application app, String colorName){
+		
+		Color ret = geogebraColor.get(colorName);
+		
+		if (ret == null)
+			ret = geogebraColor.get(app.reverseGetColor(colorName));
+		
+		return ret;
 	}
 
 	public static String getGeogebraColorName(Application app, Color color){
@@ -95,13 +103,13 @@ public class GeoGebraColorConstants {
 
 
 	private static Color grayN(int n){
-		int grayN = 255 - (int)n*255/100;
+		int grayN = 256 - 32 * n;
 		return new Color(grayN, grayN, grayN);
 	}
 
 
 
-	public static Color[] primaryColors = new Color[8];
+	public static Color[] primaryColors = new Color[9];
 	static{
 		primaryColors[0] = geogebraColor.get("red");
 		primaryColors[1] = geogebraColor.get("orange");
@@ -111,10 +119,11 @@ public class GeoGebraColorConstants {
 		primaryColors[5] = geogebraColor.get("blue");
 		primaryColors[6] = geogebraColor.get("violet");
 		primaryColors[7] = geogebraColor.get("magenta");
+		primaryColors[8] = null;
 	}
 
 
-	public static Color[] lightPrimaryColors = new Color[8];
+	public static Color[] lightPrimaryColors = new Color[9];
 	static{
 		lightPrimaryColors[0] = geogebraColor.get("pink");
 		lightPrimaryColors[1] = geogebraColor.get("lightorange");
@@ -124,10 +133,11 @@ public class GeoGebraColorConstants {
 		lightPrimaryColors[4] = geogebraColor.get("aqua");
 		lightPrimaryColors[6] = geogebraColor.get("lightpurple");
 		lightPrimaryColors[7] = geogebraColor.get("lightviolet");
+		lightPrimaryColors[8] = null;
 	}
 
 
-	public static Color[] darkPrimaryColors = new Color[8];
+	public static Color[] darkPrimaryColors = new Color[9];
 	static{
 		darkPrimaryColors[0] = geogebraColor.get("maroon");
 		darkPrimaryColors[1] = geogebraColor.get("brown");
@@ -137,19 +147,21 @@ public class GeoGebraColorConstants {
 		darkPrimaryColors[5] = geogebraColor.get("purple");
 		darkPrimaryColors[6] = geogebraColor.get("indigo");
 		darkPrimaryColors[7] = geogebraColor.get("crimson");
+		darkPrimaryColors[8] = null;
 	}
 
 
-	public static Color[] grayColors = new Color[8];
+	public static Color[] grayColors = new Color[9];
 	static{
 		grayColors[0] = geogebraColor.get("white");
-		grayColors[1] = geogebraColor.get("gray10");
-		grayColors[2] = geogebraColor.get("gray25");
-		grayColors[3] = geogebraColor.get("gray50");
-		grayColors[4] = geogebraColor.get("gray75");
-		grayColors[5] = geogebraColor.get("gray90");
-		grayColors[6] = geogebraColor.get("black");;
-		grayColors[7] = null;
+		grayColors[1] = grayN(1);
+		grayColors[2] = grayN(2);
+		grayColors[3] = grayN(3);
+		grayColors[4] = grayN(4);
+		grayColors[5] = grayN(5);
+		grayColors[6] = grayN(6);
+		grayColors[7] = grayN(7);
+		grayColors[8] = geogebraColor.get("black");;
 	}
 
 
@@ -161,21 +173,21 @@ public class GeoGebraColorConstants {
 	 */
 	public static Color[] getPopupArray(int colorSetType) {
 
-		Color[] colors = new Color[24];
+		Color[] colors = new Color[27];
 		HashMap<String, Color> hm = htmlColorMap();
 
-		for(int i = 0; i< 8; i++){
+		for(int i = 0; i< 9; i++){
 			// first row
 			colors[i] = primaryColors[i];
 
 			// second row
 			if(colorSetType == COLORSET_STANDARD)
-				colors[i+8] = darkPrimaryColors[i];
+				colors[i+9] = darkPrimaryColors[i];
 			else
-				colors[i+8] = lightPrimaryColors[i];
+				colors[i+9] = lightPrimaryColors[i];
 
 			// third row
-			colors[i+16] =grayColors[i];
+			colors[i+18] =grayColors[i];
 		}	
 
 		return colors;	

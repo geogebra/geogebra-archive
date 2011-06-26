@@ -60,13 +60,13 @@ public class Unicode {
 	
 	// fractions
 	
-	final public static char fraction1_8 = '\u215b';
-	final public static char fraction1_4 = '\u00bc';
-	final public static char fraction3_8 = '\u215c';
-	final public static char fraction1_2 = '\u00bd';
-	final public static char fraction5_8 = '\u215d';
-	final public static char fraction6_8 = '\u00be';
-	final public static char fraction7_8 = '\u215e';
+	final public static String fraction1_8 = "\u215b";
+	final public static String fraction1_4 = "\u00bc";
+	final public static String fraction3_8 = "\u215c";
+	final public static String fraction1_2 = "\u00bd";
+	final public static String fraction5_8 = "\u215d";
+	final public static String fraction3_4 = "\u00be";
+	final public static String fraction7_8 = "\u215e";
 	
 	/*
 	 * converts an integer to a unicode superscript string (including minus sign)
