@@ -169,8 +169,8 @@ public class Layout {
 			
 			for(Perspective perspective : perspectives) {
 				if(perspective.getId().equals("tmp")) {
-					applyPerspective(perspective);
 					perspectives.remove(perspective);
+					applyPerspective(perspective);
 					foundTmp = true;
 					break;
 				}
