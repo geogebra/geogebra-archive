@@ -17,7 +17,7 @@ public class ConstructionProtocolDockPanel extends DockPanel {
 	public ConstructionProtocolDockPanel(Application app) {
 		super(
 			Application.VIEW_CONSTRUCTION_PROTOCOL, 	// view id
-			"Construction Protocol", 					// view title phrase 
+			"ConstructionProtocol", 					// view title phrase 
 			null,	// toolbar string
 			false,					// style bar?
 			5,						// menu order

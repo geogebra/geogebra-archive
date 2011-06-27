@@ -33,7 +33,7 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 	 */
 	private void initItems() {		
 		// title for menu
-		JLabel title = new JLabel(app.getPlain("Construction Protocol"));
+		JLabel title = new JLabel(app.getPlain("ConstructionProtocol"));
         title.setFont(app.getBoldFont());                      
         title.setBackground(Color.white);
         title.setForeground(Color.black);
@@ -65,13 +65,13 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 
 		JCheckBoxMenuItem cbShowOnlyBreakpoints = new JCheckBoxMenuItem(
 				app.getPlain("ShowOnlyBreakpoints"));
-		//final ConstructionProtocolView cpView = constprotView;
+		cbShowOnlyBreakpoints.setSelected(kernel.showOnlyBreakpoints());
 		
 		cbShowOnlyBreakpoints.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kernel.setShowOnlyBreakpoints(!kernel.showOnlyBreakpoints());
 				constprotView.getData().initView();
-				//constprotView.repaint();
+				constprotView.repaint();
 			}
 		});
 		add(cbShowOnlyBreakpoints);
@@ -86,11 +86,6 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 			}
 		});
 		add(cbUseColors);
-
-		
-		//updatemenubar?
-		
-		
 		
 	}
 }

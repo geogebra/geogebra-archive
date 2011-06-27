@@ -121,7 +121,6 @@ public class GuiManager {
 	private OptionsDialog optionsDialog;
 
 	protected PropertiesDialog propDialog;
-	private ConstructionProtocolView constProtocol;
 	protected ConstructionProtocolNavigation constProtocolNavigation;
 
 	private AlgebraInput algebraInput;
@@ -424,8 +423,8 @@ public class GuiManager {
 	
 	public void getConsProtocolXML(StringBuilder sb) {
 	
-		if (constProtocol != null)
-			sb.append(constProtocol.getConsProtocolXML());
+		if (constructionProtocolView != null)
+			sb.append(constructionProtocolView.getConsProtocolXML());
 	
 		// navigation bar of construction protocol
 		if (app.showConsProtNavigation() && constProtocolNavigation != null) {
@@ -690,8 +689,8 @@ public class GuiManager {
 
 	public JComponent getConstructionProtocolNavigation() {
 		if (constProtocolNavigation == null) {
-			getConstructionProtocol();
-			constProtocolNavigation = new ConstructionProtocolNavigation(constProtocol);
+			getConstructionProtocolView();
+			constProtocolNavigation = new ConstructionProtocolNavigation(constructionProtocolView);
 		}
 
 		return constProtocolNavigation;
@@ -743,46 +742,46 @@ public class GuiManager {
 	 */
 	public void showConstructionProtocol() {
 		app.getEuclidianView().resetMode();
-	//	getConstructionProtocol();
-		constProtocol.setVisible(true);
+		getConstructionProtocolView();
+		constructionProtocolView.setVisible(true);
 	}
 
 	/**
 	 * Displays the construction protocol dialog
 	 */
 	public void hideConstructionProtocol() {
-		if (constProtocol == null) return;
+		if (constructionProtocolView == null) return;
 		app.getEuclidianView().resetMode();
-		constProtocol.setVisible(false);
+		constructionProtocolView.setVisible(false);
 	}
 
 	/**
 	 * returns whether the construction protocol is visible
 	 */
 	public boolean isConstructionProtocolVisible() {
-		if (constProtocol == null) return false;
-		return constProtocol.isVisible();
+		if (constructionProtocolView == null) return false;
+		return constructionProtocolView.isVisible();
 	}
-
+/*
 	public JPanel getConstructionProtocol() {
 		if (constProtocol == null) {		
 			constProtocol = new ConstructionProtocolView(app);
 		}
 		return constProtocol;
 	}
-	
+*/	
 	public void setConstructionStep(int step) {
-		if (constProtocol != null) 
-			constProtocol.setConstructionStep(step);
+		if (constructionProtocolView != null) 
+			constructionProtocolView.setConstructionStep(step);
 	}
 	
 	public void updateConstructionProtocol() {
-		if (constProtocol != null)
-			constProtocol.update();
+		if (constructionProtocolView != null)
+			constructionProtocolView.update();
 	}
 	
 	public boolean isUsingConstructionProtocol() {
-		return constProtocol != null;
+		return constructionProtocolView != null;
 	}
 	                                              
 
@@ -829,8 +828,8 @@ public class GuiManager {
 			// changed to force all panels to be updated
 			reinitPropertiesDialog();  //was propDialog.initGUI();
 			
-		if (constProtocol != null)
-			constProtocol.initGUI();
+		if (constructionProtocolView != null)
+			constructionProtocolView.initGUI();
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.initGUI();
 		
@@ -888,8 +887,8 @@ public class GuiManager {
 			// changed to force all language strings to be updated
 			reinitPropertiesDialog();  //was propDialog.initGUI();
 			
-		if (constProtocol != null)
-			constProtocol.initGUI();
+		if (constructionProtocolView != null)
+			constructionProtocolView.initGUI();
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.setLabels();
 		if (fileChooser != null)
@@ -2995,8 +2994,8 @@ public class GuiManager {
 	        */
 	    final public void exportConstructionProtocolHTML() {
 	       // getConstructionProtocol();
-	        constProtocol.initProtocol();
-	        constProtocol.showHTMLExportDialog();
+	    	constructionProtocolView.initProtocol();
+	    	constructionProtocolView.showHTMLExportDialog();
 	    }
 	    
 
@@ -3008,8 +3007,9 @@ public class GuiManager {
 			// close open windows
 	    	if (propDialog != null && propDialog.isShowing())
 	    		propDialog.cancel();    	
-	    	if (constProtocol != null && constProtocol.isShowing())
+	    	/*if (constProtocol != null && constProtocol.isShowing())
 	    		constProtocol.setVisible(false);
+	    		*/
 	    	
 		}
 		
