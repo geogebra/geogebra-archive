@@ -41,17 +41,17 @@ public class GeoGebraColorConstants {
 		geogebraColor.put("blue", new Color(0,0,255));
 		geogebraColor.put("violet", new Color(127,0,255));
 		geogebraColor.put("magenta", new Color(255,0,255));
-
+		geogebraColor.put("lime", new Color(191,255,0));
+		
 		// light primary
 		geogebraColor.put("pink", new Color(255,192,203));
 		geogebraColor.put("lightorange", new Color(255, 239, 213)); // wikipedia "papaya whip"
 		geogebraColor.put("lightyellow", new Color(255, 250, 205)); // wikipedia "lemon chiffon"
-		geogebraColor.put("lime", new Color(191,255,0));
 		geogebraColor.put("aqua", new Color(188, 212, 230));  // wikipedia "pale aqua" 
 		geogebraColor.put("lightpurple", new Color(204, 204, 255));  // wikipedia "periwinkle"
 		geogebraColor.put("lightviolet", new Color(224, 176, 255));  // wikipedia "mauve"
 		geogebraColor.put("turquoise", new Color(175, 238, 238)); // wikiopedia "pale turquoise"
-
+		geogebraColor.put("lightgreen", new Color(208, 240, 192)); // wikiopedia "tea green"
 
 		// dark primary
 		geogebraColor.put("maroon", new Color(128, 0, 0)); 
@@ -125,15 +125,16 @@ public class GeoGebraColorConstants {
 
 	public static Color[] lightPrimaryColors = new Color[9];
 	static{
-		lightPrimaryColors[0] = geogebraColor.get("pink");
-		lightPrimaryColors[1] = geogebraColor.get("lightorange");
-		lightPrimaryColors[2] = geogebraColor.get("lightyellow");
-		lightPrimaryColors[3] = geogebraColor.get("lime");
+		lightPrimaryColors[0] = null;  // for the null icon symbol (for removing bgcolor)
+		lightPrimaryColors[1] = geogebraColor.get("pink");
+		lightPrimaryColors[2] = geogebraColor.get("lightorange");
+		lightPrimaryColors[3] = geogebraColor.get("lightyellow");
+		lightPrimaryColors[4] = geogebraColor.get("lightgreen");
 		lightPrimaryColors[5] = geogebraColor.get("turquoise");
-		lightPrimaryColors[4] = geogebraColor.get("aqua");
-		lightPrimaryColors[6] = geogebraColor.get("lightpurple");
-		lightPrimaryColors[7] = geogebraColor.get("lightviolet");
-		lightPrimaryColors[8] = null;
+		lightPrimaryColors[6] = geogebraColor.get("aqua");
+		lightPrimaryColors[7] = geogebraColor.get("lightpurple");
+		lightPrimaryColors[8] = geogebraColor.get("lightviolet");
+		
 	}
 
 
@@ -177,17 +178,23 @@ public class GeoGebraColorConstants {
 		HashMap<String, Color> hm = htmlColorMap();
 
 		for(int i = 0; i< 9; i++){
-			// first row
-			colors[i] = primaryColors[i];
-
-			// second row
-			if(colorSetType == COLORSET_STANDARD)
+			if(colorSetType == COLORSET_STANDARD){
+				// first row
+				colors[i] = primaryColors[i];
+				// second row
 				colors[i+9] = darkPrimaryColors[i];
-			else
-				colors[i+9] = lightPrimaryColors[i];
-
-			// third row
-			colors[i+18] =grayColors[i];
+				// third row
+				colors[i+18] =grayColors[i];	
+			}
+			
+			if(colorSetType == COLORSET_BGCOLOR){
+				// first row
+				colors[i] = lightPrimaryColors[i];
+				// second row
+				colors[i+9] = primaryColors[i];
+				// third row
+				colors[i+18] =grayColors[i];	
+			}
 		}	
 
 		return colors;	
