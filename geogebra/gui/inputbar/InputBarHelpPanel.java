@@ -6,6 +6,7 @@ import geogebra.gui.util.TableSymbols;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
@@ -98,7 +99,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		thisPanel = this;
 		this.setOpaque(true);
 		//this.setBackground(Color.blue);	
-		titleColor = MyTable.BACKGROUND_COLOR_HEADER;
+		titleColor = GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER;
 		bgColor = this.getBackground().brighter();
 		
 		createFunctionPanel();
@@ -698,7 +699,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			setClosedIcon(app.getImageIcon("tree-open.png"));
 			setLeafIcon(GeoGebraIcon.createEmptyIcon(5, 1));
 
-			selectionColor = MyTable.SELECTED_BACKGROUND_COLOR;  // this.getBackgroundSelectionColor()     
+			selectionColor = GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR;;  // this.getBackgroundSelectionColor()     
 			rollOverColor =  Color.LIGHT_GRAY;
 
 			this.setTextSelectionColor(Color.black);

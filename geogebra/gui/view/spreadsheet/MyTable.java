@@ -6,6 +6,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -62,10 +63,10 @@ public class MyTable extends JTable implements FocusListener
 	public static final int DOT_SIZE = 7;
 	public static final int LINE_THICKNESS1 = 3;
 	public static final int LINE_THICKNESS2 = 2;
-	public static final Color SELECTED_BACKGROUND_COLOR = new Color(214, 224, 245);
-	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = Color.lightGray;
-	public static final Color BACKGROUND_COLOR_HEADER = new Color(232, 238, 247);
-	public static final Color TABLE_GRID_COLOR = Color.gray;
+	public static final Color SELECTED_BACKGROUND_COLOR = GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR; 
+	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR_HEADER;
+	public static final Color BACKGROUND_COLOR_HEADER = GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER;
+	public static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
 	public static final Color SELECTED_RECTANGLE_COLOR = Color.BLUE;
 
 	private static final long serialVersionUID = 1L;
@@ -958,6 +959,8 @@ public class MyTable extends JTable implements FocusListener
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
 
+		if(!view.hasViewFocus())
+			return;
 		
 		Graphics2D g2 = (Graphics2D)graphics;
 

@@ -249,6 +249,10 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 		int x = e.getX();
 		int y = e.getY();
 		
+		if(!view.hasViewFocus())
+			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
+
+		
 		// Update resizingRow. If nonnegative, then mouse is over a boundary
 		// and it gives the row to be resized (resizing is done in mouseDragged).
 		Point p = e.getPoint(); 

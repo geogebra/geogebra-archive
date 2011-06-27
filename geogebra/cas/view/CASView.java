@@ -12,6 +12,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -90,7 +91,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		
 		//set the lower left corner so that the horizontal scroller looks good
 		JPanel p = new JPanel();
-		p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 1, MyTable.TABLE_GRID_COLOR));
+		p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 1, GeoGebraColorConstants.TABLE_GRID_COLOR));
 		p.setBackground(Color.white);
 		scrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, p);
 		

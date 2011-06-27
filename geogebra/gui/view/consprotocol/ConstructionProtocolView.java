@@ -26,6 +26,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
@@ -938,10 +939,10 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			// setBorder(UIManager.getBorder("TableHeader.cellBorder"));
 			// better for Macs?
 			setForeground(Color.black);
-			setBackground(MyTable.BACKGROUND_COLOR_HEADER);
+			setBackground(GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER);
 			// setBorder(BorderFactory.createBevelBorder(0));
 			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1,
-					MyTable.TABLE_GRID_COLOR));
+					GeoGebraColorConstants.TABLE_GRID_COLOR));
 
 		}
 

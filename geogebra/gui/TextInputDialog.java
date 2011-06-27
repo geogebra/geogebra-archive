@@ -24,6 +24,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 import geogebra.main.MyError;
 
 import java.awt.BorderLayout;
@@ -453,7 +454,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		recentSymbolTable.setSelectedIndex(0);
 		//	this.setUseColorSwatchBorder(true);
 		recentSymbolTable.setShowGrid(true);
-		recentSymbolTable.setGridColor(MyTable.TABLE_GRID_COLOR);
+		recentSymbolTable.setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
 		recentSymbolTable.setBorder(BorderFactory.createLoweredBevelBorder());  
 		recentSymbolTable.setShowSelection(false);
 

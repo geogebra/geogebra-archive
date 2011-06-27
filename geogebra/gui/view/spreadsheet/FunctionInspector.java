@@ -30,6 +30,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -90,7 +91,7 @@ KeyListener, ActionListener{
 
 	private static final Color EVEN_ROW_COLOR = new Color(241, 245, 250);
 	//	private static final Color TABLE_GRID_COLOR = new Color(0xd9d9d9);
-	private static final Color TABLE_GRID_COLOR = MyTable.TABLE_GRID_COLOR;
+	private static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
 
 	private static final int minRows = 12;
 
@@ -1256,7 +1257,7 @@ KeyListener, ActionListener{
 
 			this.setShowGrid(true);
 			this.setGridColor(TABLE_GRID_COLOR);
-			this.setSelectionBackground(MyTable.SELECTED_BACKGROUND_COLOR);
+			this.setSelectionBackground(GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR;);
 
 
 			//table.setAutoCreateColumnsFromModel(false);

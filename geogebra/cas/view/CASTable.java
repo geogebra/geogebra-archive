@@ -6,6 +6,7 @@ package geogebra.cas.view;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -51,7 +52,7 @@ public class CASTable extends JTable {
 		this.table = this;
 
 		setShowGrid(true);
-		setGridColor(MyTable.TABLE_GRID_COLOR);
+		setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
 		setBackground(Color.white);
 
 		tableModel = new CASTableModel(this, app);

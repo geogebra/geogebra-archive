@@ -4,6 +4,7 @@ package geogebra.gui.util;
 
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -392,7 +393,7 @@ public class SelectionTable extends JTable{
 
 			//TODO --- selection color should be centralized, not from spreadsheet
 
-			selectionColor =  MyTable.SELECTED_BACKGROUND_COLOR ;
+			selectionColor =  GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR; ;
 			rollOverColor =  Color.LIGHT_GRAY;
 
 			paddingBorder = BorderFactory.createEmptyBorder(0,5,0,5);

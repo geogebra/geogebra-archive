@@ -92,6 +92,10 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 		boolean shiftDown = e.isShiftDown(); 	 
 		boolean rightClick = Application.isRightClick(e); 	 
 
+		if(!view.hasViewFocus())
+			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
+
+		
 		if (!rightClick) {
 			Point point = table.getIndexFromPixel(x, y);
 			if (point != null) {

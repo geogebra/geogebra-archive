@@ -3,6 +3,7 @@ package geogebra.cas.view;
 import java.awt.Color;
 
 import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.main.GeoGebraColorConstants;
 
 import javax.swing.BorderFactory;
 import javax.swing.JList;
@@ -27,7 +28,7 @@ public class RowHeader extends JList {
 		}
 		setFixedCellWidth(ROW_HEADER_WIDTH);
 		setFocusable(true);
-		setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, MyTable.TABLE_GRID_COLOR));
+		setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, GeoGebraColorConstants.TABLE_GRID_COLOR));
 		// renderer
 		setCellRenderer(new RowHeaderRenderer(table));
 			

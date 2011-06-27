@@ -6,6 +6,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -65,7 +66,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 	public int preferredColumnWidth = MyTable.TABLE_CELL_WIDTH; 
 	
 	private static final Color DISABLED_BACKGROUND_COLOR = Color.LIGHT_GRAY;	
-	private static final Color SELECTED_BACKGROUND_COLOR_HEADER = MyTable.SELECTED_BACKGROUND_COLOR_HEADER;
+	private static final Color SELECTED_BACKGROUND_COLOR_HEADER = GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR_HEADER;
 	private static final Color TABLE_GRID_COLOR = StatDialog.TABLE_GRID_COLOR ;
 	private static final Color TABLE_HEADER_COLOR = StatDialog.TABLE_HEADER_COLOR;   
 	
@@ -153,7 +154,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		btnEnableAll.setDisabledIcon(iconChecked);
 		btnEnableAll.setEnabled(false);
 		btnEnableAll.setBorderPainted(false);
-		btnEnableAll.setBackground(MyTable.BACKGROUND_COLOR_HEADER);	
+		btnEnableAll.setBackground(GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER);	
 		btnEnableAll.setContentAreaFilled(false);
 		btnEnableAll.setHorizontalAlignment(SwingConstants.LEFT);
 		btnEnableAll.addActionListener(this);
@@ -478,7 +479,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 				setOpaque(true);
 				
 				setBorder(BorderFactory.createCompoundBorder(
-						BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR), 
+						BorderFactory.createMatteBorder(0, 0, 1, 1, GeoGebraColorConstants.TABLE_GRID_COLOR), 
 						BorderFactory.createEmptyBorder(0, 5, 0, 2)));
 
 				setHorizontalAlignment(LEFT);

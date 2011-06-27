@@ -1289,7 +1289,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	protected boolean hasViewFocus(){
 		boolean hasFocus = false;
 		 try {
-			hasFocus = app.getGuiManager().getLayout().getDockManager().getFocusedPanel().isAncestorOf(view);
+			 if(app.getGuiManager().getLayout().getDockManager().getFocusedPanel() != null)
+				 hasFocus = app.getGuiManager().getLayout().getDockManager().getFocusedPanel().isAncestorOf(view);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

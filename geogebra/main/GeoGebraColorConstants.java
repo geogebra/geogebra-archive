@@ -24,10 +24,23 @@ import javax.swing.JScrollPane;
 
 public class GeoGebraColorConstants {
 
+	// table colors
+	public static final Color TABLE_SELECTED_BACKGROUND_COLOR = new Color(214, 224, 245);
+	public static final Color TABLE_SELECTED_BACKGROUND_COLOR_HEADER = Color.lightGray;
+	public static final Color TABLE_BACKGROUND_COLOR_HEADER = new Color(232, 238, 247);
+	public static final Color TABLE_GRID_COLOR = Color.gray;
+	
+	
+	// popup color menu type constants
 	public static final int COLORSET_STANDARD = 0;
 	public static final int COLORSET_BGCOLOR = 1;
 
-
+	
+	/**
+	 * HashMap recording RGB color values with named colors
+	 * key = color name from colors.properties
+	 * value = RBG color 
+	 */
 	private static final HashMap<String, Color> geogebraColor = new HashMap<String, Color>();
 	static
 	{
@@ -80,12 +93,23 @@ public class GeoGebraColorConstants {
 	}
 
 
+	/**
+	 * Reverse lookup for GeoGebraColors
+	 * key = RBG color 
+	 * value = color name from colors.properties
+	 */
 	private static final HashMap<Color, String> geogebraColorReverse = new HashMap<Color, String>();
 	static
 	{	for (Entry<String, Color> entry : geogebraColor.entrySet())	
 		geogebraColorReverse.put(entry.getValue(), entry.getKey());
 	}
 
+	/**
+	 * Returns Color object corresponding with given GeoGebra color name string 
+	 * @param app
+	 * @param colorName
+	 * @return
+	 */
 	public static Color getGeogebraColor(Application app, String colorName){
 		
 		Color ret = geogebraColor.get(colorName);
@@ -96,11 +120,28 @@ public class GeoGebraColorConstants {
 		return ret;
 	}
 
+	/**
+	 * Returns GeoGebra color name string corresponding with given Color object 
+	 * @param app
+	 * @param color
+	 * @return
+	 */
 	public static String getGeogebraColorName(Application app, Color color){
 		return app.getColor(geogebraColorReverse.get(color));
 	}
 
-
+	/**
+	 * Returns a gray Color where the gray hue is determined by n, an integer from 1-7. 
+	 * Gray, in RGB values, is given by red = green = blue = (256 - 32*n)
+	 * For example: 
+	 * n = 7 gives RGB[32,32,32], v. dark gray 
+	 * n = 6 gives RGB[64,64,64], dark gray 
+	 * ... 
+	 * n = 1 gives RGB[224,224,224] v.light gray
+	 * 
+	 * @param n
+	 * @return
+	 */
 	private static Color grayN(int n){
 		int grayN = 256 - 32 * n;
 		return new Color(grayN, grayN, grayN);

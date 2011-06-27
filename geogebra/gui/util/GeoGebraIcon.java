@@ -4,6 +4,7 @@ package geogebra.gui.util;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 import geogebra.util.ImageManager;
 
 import java.awt.BasicStroke;
@@ -265,7 +266,7 @@ public class GeoGebraIcon {
 
 		
 
-		Color bgColor = MyTable.BACKGROUND_COLOR_HEADER;
+		Color bgColor = GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER;
 		font = font.deriveFont(Font.BOLD);
 		ImageIcon icon;
 		if(isRollOver)

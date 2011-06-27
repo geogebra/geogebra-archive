@@ -5,6 +5,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -53,7 +54,7 @@ public class MultiVarStatPanel extends JPanel{
 		model = new DefaultTableModel();
 		JTable table = new JTable(model);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setGridColor(MyTable.TABLE_GRID_COLOR);
+		table.setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
 		table.setShowGrid(true);
 
 		// set up row header

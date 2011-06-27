@@ -14,6 +14,7 @@ import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 import geogebra.util.Unicode;
 
 import java.awt.BorderLayout;
@@ -465,7 +466,7 @@ ActionListener, ListSelectionListener {
 		private Color listBackground = Color.white;
 		private Color rolloverBackground = Color.lightGray;
 		private Border gridBorder = BorderFactory.createCompoundBorder(
-				BorderFactory.createMatteBorder(0, 0, 1, 0, MyTable.TABLE_GRID_COLOR),
+				BorderFactory.createMatteBorder(0, 0, 1, 0, GeoGebraColorConstants.TABLE_GRID_COLOR),
 				BorderFactory.createEmptyBorder(2, 5, 2, 5));
 
 				public Component getListCellRendererComponent(JList list, Object value, int index,
