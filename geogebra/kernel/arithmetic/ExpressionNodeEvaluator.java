@@ -108,6 +108,16 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	myList.applyLeft(operation, lt);
         	return myList;
         }
+        
+        else if (lt instanceof Functional && rt instanceof Functional) {              	            	
+        	return GeoFunction.operationSymb(operation,(Functional)lt, (Functional)rt);            	            	
+        }           
+       else if (lt instanceof Functional && rt.isNumberValue() && operation!=FUNCTION) {         	   
+    	   return GeoFunction.applyNumberSymb(operation,(Functional)lt,right,true);              	
+       	}           
+       else if (rt instanceof Functional && lt.isNumberValue()) {            	
+    	   return GeoFunction.applyNumberSymb(operation,(Functional)rt,left,false);
+       } 
        	 
         // NON-List operations (apart from EQUAL_BOOLEAN and list + text)
         switch (operation) {
@@ -139,9 +149,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         		bool.setValue(!bool.getBoolean());
         		return bool;
         	}
-        	else if (lt instanceof GeoFunction) {
-        		return GeoFunction.operationSymb(operation, (GeoFunction)lt, null);
-        	}
+        	
         	else { 
                 String [] str = { "IllegalBoolean",  strNOT, lt.toString()};
                 throw new MyError(app, str);
@@ -155,12 +163,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         		bool.setValue(bool.getBoolean() || ((BooleanValue)rt).getBoolean());
         		return bool;
         	}
-        	else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {
-        		return GeoFunction.operationSymb(operation, (GeoFunction)lt, (GeoFunction)rt);
-        	}
-        	else if (lt instanceof GeoFunctionNVar && rt instanceof GeoFunctionNVar) {
-        		return GeoFunctionNVar.operationSymb(operation, (GeoFunctionNVar)lt, (GeoFunctionNVar)rt);
-        	}
+        	
         	else { 
                 String [] str = { "IllegalBoolean", lt.toString(), strOR,  rt.toString() };
                 throw new MyError(app, str);
@@ -173,12 +176,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         		bool.setValue(bool.getBoolean() && ((BooleanValue)rt).getBoolean());
         		return bool;
         	}
-        	else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {
-        		return GeoFunction.operationSymb(operation, (GeoFunction)lt, (GeoFunction)rt);
-        	}
-        	else if (lt instanceof GeoFunctionNVar && rt instanceof GeoFunctionNVar) {
-        		return GeoFunctionNVar.operationSymb(operation, (GeoFunctionNVar)lt, (GeoFunctionNVar)rt);
-        	}
+        	
         	else { 
                 String [] str = { "IllegalBoolean", lt.toString(), strAND,  rt.toString() };
                 throw new MyError(app, str);
@@ -257,7 +255,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	// number < number
         	if (lt.isNumberValue() && rt.isNumberValue())
 				return new MyBoolean(
-        			kernel.isGreater(
+        			Kernel.isGreater(
     					((NumberValue)rt).getDouble(),
 						((NumberValue)lt).getDouble()	
 					)
@@ -268,14 +266,11 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             } 
         
         case GREATER:
-        	// f(x,y) > number
-        	if ((lt instanceof GeoFunctionNVar) && rt.isNumberValue()){
-        		return GeoFunctionNVar.applyNumberSymb(operation, (GeoFunctionNVar)lt,rt, true);
-        	}
+        	        	
         	// number > number
-        	else if (lt.isNumberValue() && rt.isNumberValue())
+        	if (lt.isNumberValue() && rt.isNumberValue())
 				return new MyBoolean(
-        			kernel.isGreater(
+        			Kernel.isGreater(
     					((NumberValue)lt).getDouble(),
 						((NumberValue)rt).getDouble()	
 					)
@@ -289,7 +284,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	// number <= number
         	if (lt.isNumberValue() && rt.isNumberValue())
 				return new MyBoolean(
-        			kernel.isGreaterEqual(
+        			Kernel.isGreaterEqual(
     					((NumberValue)rt).getDouble(),
 						((NumberValue)lt).getDouble()	
 					)
@@ -303,7 +298,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	// number >= number
         	if (lt.isNumberValue() && rt.isNumberValue())
 				return new MyBoolean(
-        			kernel.isGreaterEqual(
+        			Kernel.isGreaterEqual(
     					((NumberValue)lt).getDouble(),
 						((NumberValue)rt).getDouble()	
 					)
@@ -428,17 +423,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 poly = new Polynomial(kernel, (Polynomial)lt);
                 poly.add((Polynomial)rt);                
                 return poly;
-            }           
-            ///* doesn't work: f + g gives a free object//
-           else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {              	            	
-            	return GeoFunction.operationSymb(ExpressionNode.PLUS,(GeoFunction)lt, (GeoFunction)rt);            	            	
-            }           
-           else if (lt instanceof GeoFunction && rt.isNumberValue()) {           	   
-        	   return GeoFunction.applyNumberSymb(ExpressionNode.PLUS,(GeoFunction)lt,right,true);              	
-              }           
-           else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	
-        	   return GeoFunction.applyNumberSymb(ExpressionNode.PLUS,(GeoFunction)rt,left,true);
-           } 
+            }                                 
             else {    
                 String [] str = { "IllegalAddition", lt.toString(), "+",  rt.toString() };
                 throw new MyError(app, str);
@@ -495,17 +480,6 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 poly.sub((Polynomial)rt);                
                 return poly;
             }           
-            
-           else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {  
-            	            	
-            	return GeoFunction.operationSymb(ExpressionNode.MINUS,(GeoFunction)lt, (GeoFunction)rt);            	
-           }
-           else if (lt instanceof GeoFunction && rt.isNumberValue()) {            	
-        	   return GeoFunction.applyNumberSymb(ExpressionNode.MINUS,(GeoFunction)lt,right,true);             	
-             }           
-          else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	             	       	             	
-             	return GeoFunction.applyNumberSymb(ExpressionNode.MINUS,(GeoFunction)rt,left,false);             	
-             }         
             else { 
                 String [] str = { "IllegalSubtraction", lt.toString(), "-", rt.toString() };
                 throw new MyError(app, str);
@@ -561,12 +535,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                     MyDouble.mult(num, ((BooleanValue)rt).getDouble(), num);       
                     return num;
                 }              
-                        
-               else if (rt instanceof GeoFunction) {            	
-                  	
-                  	return GeoFunction.applyNumberSymb(ExpressionNode.MULTIPLY,(GeoFunction)rt, left,false);
-                  	
-                  } 
+                                       
                 // number * 3D vector
                 /*else if (rt.isVector3DValue()) { 
                     Geo3DVec vec3D = ((Vector3DValue)rt).get3DVec();
@@ -577,13 +546,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                     throw new MyError(app, str);    
                 }
-            }
-           else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {              	            	
-           	return GeoFunction.operationSymb(ExpressionNode.MULTIPLY,(GeoFunction)lt, (GeoFunction)rt);            	            	
-           }           
-          else if (lt instanceof GeoFunction && rt.isNumberValue()) {            	             	       	
-             	return GeoFunction.applyNumberSymb(ExpressionNode.MULTIPLY,(GeoFunction)lt, right,false);              	
-             } 
+            }           
            // boolean * number
            else if (lt.isBooleanValue() && rt.isNumberValue()) {
                 num = ((NumberValue)rt).getNumber();                               
@@ -731,10 +694,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                     return vec;
                     
             }       
-            else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {  
-            	
-            	return GeoFunction.operationSymb(ExpressionNode.DIVIDE,(GeoFunction)lt, (GeoFunction)rt);            	
-           }
+            
                      
           else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	             	       	             	
              	return GeoFunction.applyNumberSymb(ExpressionNode.DIVIDE,(GeoFunction)rt,left,false);             	

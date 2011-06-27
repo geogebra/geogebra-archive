@@ -725,7 +725,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 			
 	    	FunctionNVar f = new FunctionNVar(sum,xy);
 	    	f.initFunction();       	
-	       	AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
+	       	AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),f);
 	       	return adf.getFunction();
 		}
 		

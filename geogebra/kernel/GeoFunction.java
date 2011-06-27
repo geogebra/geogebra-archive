@@ -487,7 +487,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		 
 		 // an indpendent function needs to add
 		 // its expression itself
-		 // e.g. f(x) = x� - 3x
+		 // e.g. f(x) = x^2 - 3x
 		 if (isIndependent()) {
 			sb.append("<expression");
 				sb.append(" label =\"");
@@ -545,7 +545,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				else if (P.x > intervalMax) 
 					P.x = intervalMax;
 			}
-			P.y = evaluate(P.x);// changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x�]] 
+			P.y = evaluate(P.x);// changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x^2]] 
 		}
 		else {
 			pointChangedBoolean(true,P);
@@ -853,47 +853,49 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	/**
 	 * Applies an operation on first and second function and returns the result
 	 * @param op
-	 * @param fun1
-	 * @param fun2
+	 * @param lt 
+	 * @param rt
 	 * @return resulting GeoFunction or GeFunctionNvar
 	 */
-	public static GeoElement operationSymb(int op, GeoFunction fun1, GeoFunction fun2) {
-		Kernel kernel = fun1.getKernel();
+	public static FunctionNVar operationSymb(int op, Functional lt , Functional rt) {
+		Kernel kernel = lt.getFunction().getKernel();
 		FunctionVariable x =  new FunctionVariable(kernel,"x");
 		FunctionVariable y =  new FunctionVariable(kernel,"y");
-		FunctionVariable swap;
-		
-		if("y".equals(fun1.getVarString())^"y".equals(fun2.getVarString())){
-
-			FunctionVariable[] xy = new FunctionVariable[] {x,y};
-			if("y".equals(fun2.getVarString())){
-				swap = x;
-				x= y;
-				y=swap;
-			}
-			
-			ExpressionNode sum = new ExpressionNode(kernel,
-					new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,y),
-					op,
-					fun2==null ? null:new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION,x));
-			
-	    	FunctionNVar f = new FunctionNVar(sum,xy);
-	    	f.initFunction();       	
-	       	AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
-	       	return adf.getFunction();
+		FunctionNVar f;
+		ExpressionNode ltExpr,rtExpr;
+		if(lt instanceof Function){			
+			ltExpr = ((Function)lt).getExpression()
+				.replace(((Function)lt).getFunctionVariables()[0],"y".equals(lt.getFunction().getVarString())?y:x);			
 		}
+		else
+			ltExpr = new ExpressionNode(kernel,(GeoFunction)lt,ExpressionNode.FUNCTION,
+					"y".equals(lt.getFunction().getVarString())?y:x);
+		if(rt instanceof Function){
+			rtExpr = ((Function)rt).getExpression()
+			.replace(((Function)rt).getFunctionVariables()[0],"y".equals(rt.getFunction().getVarString())?y:x);
+		}
+		else
+			rtExpr = new ExpressionNode(kernel,(GeoFunction)rt,ExpressionNode.FUNCTION,
+			"y".equals(lt.getFunction().getVarString())?y:x);
+		ExpressionNode sum = new ExpressionNode(kernel,ltExpr,op,rtExpr);
+		if("y".equals(lt.getFunction().getVarString())^"y".equals(rt.getFunction().getVarString())){
+
+			FunctionVariable[] xy=new FunctionVariable[]{x,y};
+			f = new FunctionNVar(sum,xy);
+	    	
+	       	//AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
+	       	//return adf.getFunction();
+		}
+		else{
 			
-		if("y".equals(fun1.getVarString()))x=y;
-		ExpressionNode sum = new ExpressionNode(kernel,
-				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x),
-				op,
-				fun2==null ? null:new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION,x));
-		
-		
-    	Function f = new Function(sum,x);
-    	f.initFunction();       	
-       	AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),null,f);
-       	return adf.getFunction();
+    	f = new Function(sum,x);
+		}
+    	f.initFunction();
+    	
+    	return f;
+       	//AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),f);
+       	//return adf.getFunction();
+       	
 	}
 	/**
 	 * Applies an operation on this function and number value
@@ -903,28 +905,32 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @param right f op nv for true, nv op f for false
 	 * @return resulting function
 	 */
-	public static GeoFunction applyNumberSymb(int op, GeoFunction fun1, ExpressionValue nv,boolean right) {
+	public static Function applyNumberSymb(int op, Functional fun1, ExpressionValue nv,boolean right) {
 		
-		Kernel kernel = fun1.getKernel();
+		Kernel kernel = fun1.getFunction().getKernel();
 		
 		FunctionVariable x =  new FunctionVariable(kernel);
 		if(nv instanceof ExpressionNode)
-			((ExpressionNode)nv).replaceVariables(fun1.getVarString(), x);
-		else if((nv instanceof FunctionVariable) && nv.toString().equals(fun1.getVarString()))
+			((ExpressionNode)nv).replaceVariables(fun1.getFunction().getVarString(), x);
+		else if((nv instanceof FunctionVariable) && nv.toString().equals(fun1.getFunction().getVarString()))
 			nv = x;
-		ExpressionNode sum;
-		if(right){sum = new ExpressionNode(kernel,
-				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x),				
+		ExpressionNode sum, myExpr;
+		if(fun1 instanceof Function){
+			myExpr = ((Function)fun1).getExpression()
+				.replace(((Function) fun1).getFunctionVariables()[0],x);
+		}
+		else
+			myExpr = new ExpressionNode(kernel,(GeoFunction)fun1,ExpressionNode.FUNCTION,
+					x);
+		if(right){sum = new ExpressionNode(kernel,myExpr,				
 				op, nv);			
 		}
 		else{ sum = new ExpressionNode(kernel,nv,op,
-				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x));
+				myExpr);
 		}
     	Function f = new Function(sum,x);
     	f.initFunction();       	
-       	AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),null,f);
-       	
-       	return adf.getFunction();
+       	return f;
 	}
 
 	
@@ -1013,8 +1019,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @return the limit
 	 */
 	public double getLimit(double x, int direction) {
-   	String functionIn = fun.getExpression().getCASstring(kernel.getCurrentCAS(), true);
-	    
+   	String functionIn = fun.getExpression().getCASstring(kernel.getCurrentCAS(), true);	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    sb.setLength(0);

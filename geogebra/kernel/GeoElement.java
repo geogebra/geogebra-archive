@@ -2056,7 +2056,7 @@ public abstract class GeoElement
 	 * If newLabel is not already used, this object is renamed to newLabel.
 	 * Otherwise nothing is done.
 	 */
-	public void setLabel(String newLabel) {
+	public void setLabel(String newLabel) {		
 		if (cons.isSuppressLabelsActive())
 			return;
 
@@ -2412,7 +2412,7 @@ public abstract class GeoElement
 		String label = cellGeo.getLabel();
 
 		// need an = for B3=B4
-		// need a : for B2:x� + y� = 2
+		// need a : for B2:x^2 + y^2 = 2
 		if (label.indexOf('=') == -1) sb.append('=');
 		else sb.append(':');
 

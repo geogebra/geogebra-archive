@@ -1030,7 +1030,7 @@ public class AlgebraProcessor {
 
 
 	protected GeoElement[] processExpressionNode(ExpressionNode n) throws MyError {					
-		// command is leaf: process command
+		// command is leaf: process command		
 		if (n.isLeaf()) {
 			 ExpressionValue leaf =  n.getLeft();
 			 if (leaf instanceof Command) {			
@@ -1053,11 +1053,14 @@ public class AlgebraProcessor {
 				fun.setLabels(n.getLabels());
 				return processFunctionNVar(n, fun);			
 			} 
+			 
+			 
 		}											
 		
 		// ELSE:  resolve variables and evaluate expressionnode		
 		n.resolveVariables();			
 		eval = n.evaluate(); 
+		Application.debug(eval+","+eval.getClass().getName()+","+n.isLeaf());
 		boolean dollarLabelFound = false;		
 		
 		ExpressionNode myNode = n;
@@ -1094,8 +1097,17 @@ public class AlgebraProcessor {
 		else if (eval.isTextValue())
 			return processText(n, eval);				
 		else if (eval instanceof MyList) {
-			return processList(n, (MyList) eval);
-		}
+			return processList(n, (MyList) eval);		
+		} else if (eval instanceof Function) {
+			Function fun = (Function) eval;
+			fun.setLabels(n.getLabels());
+			return processFunction(n, fun);			
+		} 
+		else if (eval instanceof FunctionNVar) {
+			FunctionNVar fun = (FunctionNVar) eval;
+			fun.setLabels(n.getLabels());
+			return processFunctionNVar(n, fun);			
+		} 
 		//we have to process list in case list=matrix1(1), but not when list=list2 
 		else if (eval instanceof GeoList  && myNode.hasOperations()) {
 			return processList(n, ((GeoList) eval).getMyList());
