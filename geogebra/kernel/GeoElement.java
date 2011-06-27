@@ -4045,7 +4045,7 @@ public abstract class GeoElement
 
 				EuclidianView ev2 = app.getGuiManager().getEuclidianView2();
 				if (ev2 != null) {
-					if (!isVisibleInView(ev2)) {
+					if (isVisibleInView(ev2)) {
 						EVs += 2; // bit 1
 					}
 				}
@@ -4055,6 +4055,7 @@ public abstract class GeoElement
 					sb.append(EVs);
 					sb.append("\"");
 				}
+				
 			}
 
 			sb.append("/>\n");

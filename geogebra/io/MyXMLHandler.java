@@ -2537,22 +2537,24 @@ public class MyXMLHandler implements DocHandler {
 			geo.setLabelVisible(parseBoolean((String) attrs.get("label")));
 			
 			// bit 0 -> display object in EV1, 0 = true (default)
-			// bit 1 -> display object in EV2, 0 = true (default)
-			int EVs = 0; // default, display in all views
+			// bit 1 -> display object in EV2, 0 = false (default)
+			int EVs = 0; // default, display in just EV1
 			String str = (String) attrs.get("ev");
 			if (str != null) 
 			  EVs = Integer.parseInt(str);
-
+			
 			if ((EVs & 1) == 0) // bit 0
 				geo.addView(app.getEuclidianView());
 			else
 				geo.removeView(app.getEuclidianView());
 			
-			if (app.getGuiManager().hasEuclidianView2()) {
-				if ((EVs & 2) == 0) // bit 1
-					geo.addView(app.getGuiManager().getEuclidianView2());
-				else
-					geo.removeView(app.getGuiManager().getEuclidianView2());
+			// will create EV2 if it's there, so care needed
+			if ((EVs & 2) == 2) { // bit 1
+				geo.addView(app.getGuiManager().getEuclidianView2());		
+			} else { 				
+				// don't want to create EV2 unnecessarily
+				if (app.getGuiManager().hasEuclidianView2())
+						geo.removeView(app.getGuiManager().getEuclidianView2());
 			}
 			return true;
 			
