@@ -116,8 +116,6 @@ public class AlgebraView extends JTree implements View{
 	/**
 	 * Should we show auxiliary objects?
 	 */
-	protected boolean showAuxiliaryObjects;
-
 	private GeoElement selectedGeoElement;
 	private DefaultMutableTreeNode selectedNode;
 	
@@ -137,14 +135,16 @@ public class AlgebraView extends JTree implements View{
 	
 	
 	/** Creates new AlgebraView */
-	public AlgebraView(AlgebraController algCtrl) {		
+	public AlgebraView(AlgebraController algCtrl) {	
+		
+		Application.debug("XXX creating Algebra View XXX",1);
+		
 		app = algCtrl.getApplication();
 		kernel = algCtrl.getKernel();
 		algCtrl.setView(this);	
 		this.algebraController = algCtrl;
 		// this is the default value
 		treeMode = MODE_DEPENDENCY;
-		showAuxiliaryObjects = false;
 
 		// cell renderer (tooltips) and editor
 		ToolTipManager.sharedInstance().registerComponent(this);
@@ -210,7 +210,7 @@ public class AlgebraView extends JTree implements View{
 			model.setRoot(rootDependency);
 
 			// add auxiliary node if neccessary
-			if(showAuxiliaryObjects) {
+			if(app.showAuxiliaryObjects) {
 				if(!auxiliaryNode.isNodeChild(rootDependency)) {
 					model.insertNodeInto(auxiliaryNode, rootDependency, rootDependency.getChildCount());
 				}
@@ -223,7 +223,7 @@ public class AlgebraView extends JTree implements View{
 			}
 			
 			// always try to remove the auxiliary node
-			if(showAuxiliaryObjects && auxiliaryNode != null) {
+			if(app.showAuxiliaryObjects && auxiliaryNode != null) {
 				removeAuxiliaryNode();
 			}
 
@@ -290,14 +290,12 @@ public class AlgebraView extends JTree implements View{
 	}
 	
 	public boolean showAuxiliaryObjects() {
-		return showAuxiliaryObjects;
+		return app.showAuxiliaryObjects;
 	}
 	
 	public void setShowAuxiliaryObjects(boolean flag) {
-		if (flag == showAuxiliaryObjects()) 
-			return;
 		
-		showAuxiliaryObjects = flag;
+		app.showAuxiliaryObjects = flag;
 	
 		cancelEditing();
 		

@@ -122,7 +122,7 @@ public class AlgebraView3D extends AlgebraView {
 		}
 
 		// always try to remove the auxiliary node
-		if(showAuxiliaryObjects && auxiliaryNode != null) {
+		if(app.showAuxiliaryObjects && auxiliaryNode != null) {
 			removeAuxiliaryNode();
 		}
 

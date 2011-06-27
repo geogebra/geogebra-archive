@@ -359,7 +359,12 @@ public class Application implements KeyEventDispatcher {
 	
 	private boolean initing = false;
 	protected boolean showAlgebraView = true;	
-	private boolean showAuxiliaryObjects = false;
+	
+	/*
+	 * stored here rather than in algebra view so that it can be set without 
+	 * creating an AV (compatibility with 3.2)
+	 */
+	public boolean showAuxiliaryObjects = false;
 	private boolean showAlgebraInput = true;
 	private boolean showInputTop = false;
 	private boolean showCmdList = true;

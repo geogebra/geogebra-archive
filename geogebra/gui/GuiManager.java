@@ -579,6 +579,7 @@ public class GuiManager {
 	}	
 	
 	public void setShowAuxiliaryObjects(boolean flag) {
+		if (!hasAlgebraView()) return;
 		getAlgebraView();
 		algebraView.setShowAuxiliaryObjects(flag);
 	}
