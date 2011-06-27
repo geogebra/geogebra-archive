@@ -1060,7 +1060,6 @@ public class AlgebraProcessor {
 		// ELSE:  resolve variables and evaluate expressionnode		
 		n.resolveVariables();			
 		eval = n.evaluate(); 
-		Application.debug(eval+","+eval.getClass().getName()+","+n.isLeaf());
 		boolean dollarLabelFound = false;		
 		
 		ExpressionNode myNode = n;
