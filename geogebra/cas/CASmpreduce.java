@@ -214,6 +214,10 @@ public class CASmpreduce extends CASgeneric {
 			
 			// ARBVARS introduces arbitrary new variables when solving singular systems of equations
 			mpreduce.evaluate("off arbvars;");
+			
+			// make sure x*(x+1) isn't returned factored
+			mpreduce.evaluate("off pri;");
+			
 			mpreduce.evaluate("load\\_package(\"rsolve\");");
 			mpreduce.evaluate("load\\_package(\"numeric\");");
 			//the first command sent to mpreduce produces an error
