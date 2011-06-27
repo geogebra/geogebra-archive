@@ -15,7 +15,10 @@ package geogebra.util;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
 import geogebra.kernel.AlgoElement;
-import geogebra.kernel.AlgoJoinPoints;
+import geogebra.kernel.AlgoPolygon;
+import geogebra.kernel.AlgoPolygonRegular;
+import geogebra.kernel.AlgoPolyLine;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -25,7 +28,6 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.Arrays;
 
 /**
  * This class saves the given geos
@@ -60,16 +62,53 @@ public class CopyPaste {
 		for (int i = geos.size() - 1; i >= 0; i--)
 		{
 			geo = (GeoElement) geos.get(i);
-			if ((geo.isGeoLine() && geo.getParentAlgorithm().getClassName() == "AlgoJoinPoints") ||
-				(geo.isGeoSegment() && geo.getParentAlgorithm().getClassName() == "AlgoJoinPointsSegment") ||
-				(geo.isGeoRay() && geo.getParentAlgorithm().getClassName() == "AlgoJoinPointsRay") ||
-				(geo.isGeoVector() && geo.getParentAlgorithm().getClassName() == "AlgoVector")) {
+			if ((geo.isGeoLine() && geo.getParentAlgorithm().getClassName().equals("AlgoJoinPoints")) ||
+				(geo.isGeoSegment() && geo.getParentAlgorithm().getClassName().equals("AlgoJoinPointsSegment")) ||
+				(geo.isGeoRay() && geo.getParentAlgorithm().getClassName().equals("AlgoJoinPointsRay")) ||
+				(geo.isGeoVector() && geo.getParentAlgorithm().getClassName().equals("AlgoVector"))) {
 
 				if (!geos.contains(geo.getParentAlgorithm().getInput()[0])) {
 					geos.add(geo.getParentAlgorithm().getInput()[0]);
 				}
 				if (!geos.contains(geo.getParentAlgorithm().getInput()[1])) {
 					geos.add(geo.getParentAlgorithm().getInput()[1]);
+				}
+			} else if (geo.isGeoPolygon()) {
+				if (geo.getParentAlgorithm().getClassName().equals("AlgoPolygon")) {
+					GeoElement [] points = ((AlgoPolygon)(geo.getParentAlgorithm())).getPoints();
+					for (int j = 0; j < points.length; j++) {
+						if (!geos.contains(points[j])) {
+							geos.add(points[j]);
+						}
+					}
+					GeoElement [] ogeos = ((AlgoPolygon)(geo.getParentAlgorithm())).getOutput();
+					for (int j = 0; j < ogeos.length; j++) {
+						if (!geos.contains(ogeos[j]) && ogeos[j].isGeoSegment()) {
+							geos.add(ogeos[j]);
+						}
+					}
+				} else if (geo.getParentAlgorithm().getClassName().equals("AlgoPolygonRegular")) {
+					GeoElement [] pgeos = ((AlgoPolygonRegular)(geo.getParentAlgorithm())).getInput();
+					for (int j = 0; j < pgeos.length; j++) {
+						if (!geos.contains(pgeos[j]) && pgeos[j].isGeoPoint()) {
+							geos.add(pgeos[j]);
+						}
+					}
+					GeoElement [] ogeos = ((AlgoPolygonRegular)(geo.getParentAlgorithm())).getOutput();
+					for (int j = 0; j < ogeos.length; j++) {
+						if (!geos.contains(ogeos[j]) && (ogeos[j].isGeoSegment() || ogeos[j].isGeoPoint())) {
+							geos.add(ogeos[j]);
+						}
+					}
+				}
+			} else if (geo instanceof GeoPolyLine) {
+				if (geo.getParentAlgorithm().getClassName().equals("AlgoPolyLine")) {
+					GeoElement [] pgeos = ((AlgoPolyLine)(geo.getParentAlgorithm())).getPoints();
+					for (int j = 0; j < pgeos.length; j++) {
+						if (!geos.contains(pgeos[j])) {
+							geos.add(pgeos[j]);
+						}
+					}
 				}
 			}
 		}
