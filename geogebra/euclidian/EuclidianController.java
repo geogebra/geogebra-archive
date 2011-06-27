@@ -41,6 +41,7 @@ import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -341,7 +342,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						firstMoveable = false;
 					} else if (geo.isGeoText()) {
 						if (((GeoText)geo).hasAbsoluteLocation()) {
-							GeoPoint loc = (GeoPoint) movedGeoText.getStartPoint();
+							GeoPoint loc = (GeoPoint) ((GeoText)geo).getStartPoint();
 							startPoint.setLocation(loc.inhomX, loc.inhomY);
 							firstMoveable = false;
 						}
@@ -359,14 +360,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 								startPoint.setLocation(loc.inhomX, loc.inhomY);
 								firstMoveable = false;
 							} else {
-								loc = (GeoPoint) movedGeoImage.getStartPoint();
+								loc = (GeoPoint) ((GeoImage)geo).getStartPoint();
 								if (loc != null) { // bottom left defined (default)
 									//transformCoordsOffset[0]=loc.inhomX-xRW;
 									//transformCoordsOffset[1]=loc.inhomY-yRW;
 									startPoint.setLocation(loc.inhomX, loc.inhomY);
 									firstMoveable = false;
 								} else {
-									loc = (GeoPoint) movedGeoImage.getStartPoints()[1];
+									loc = (GeoPoint) ((GeoImage)geo).getStartPoints()[1];
 									if (loc != null) { // bottom right defined
 										//transformCoordsOffset[0]=loc.inhomX-xRW;
 										//transformCoordsOffset[1]=loc.inhomY-yRW;
@@ -376,7 +377,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 								}
 							}
 						}
-					}
+					} else if (geo.isGeoBoolean()) {
+						//moveMode = MOVE_BOOLEAN;
+						startPoint.setLocation(view.toRealWorldCoordX(((GeoBoolean) geo).getAbsoluteScreenLocX()), view.toRealWorldCoordY(((GeoBoolean) geo).getAbsoluteScreenLocY()+20));
+						firstMoveable = false;
+					} else if (geo.isGeoButton()) {
+						startPoint.setLocation(view.toRealWorldCoordX(((GeoButton) geo).getAbsoluteScreenLocX() - 5), view.toRealWorldCoordY(((GeoButton) geo).getAbsoluteScreenLocY() + 30));
+						firstMoveable = false;
+					} //else if (geo instanceof GeoTextField) {//not available
+					//	startPoint.setLocation(view.toRealWorldCoordX(((GeoTextField) geo).getAbsoluteScreenLocX() - 5), view.toRealWorldCoordY(((GeoTextField) geo).getAbsoluteScreenLocY() + 20));
+					//	firstMoveable = false;
+					//}
 				}
 			}
 		}
