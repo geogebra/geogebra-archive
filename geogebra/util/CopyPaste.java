@@ -15,6 +15,7 @@ package geogebra.util;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoJoinPoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -46,6 +47,32 @@ public class CopyPaste {
 			return true;
 		
 		return (copiedXML.length() == 0);
+	}
+
+	/**
+	 * copyToXML - Step 0.5
+	 * Add subgeos of geos like points of a segment or line or polygon 
+	 *  
+	 * @param geos input and output 
+	 */
+	public static void addSubGeos(ArrayList<ConstructionElement> geos) {
+		GeoElement geo;
+		for (int i = geos.size() - 1; i >= 0; i--)
+		{
+			geo = (GeoElement) geos.get(i);
+			if ((geo.isGeoLine() && geo.getParentAlgorithm().getClassName() == "AlgoJoinPoints") ||
+				(geo.isGeoSegment() && geo.getParentAlgorithm().getClassName() == "AlgoJoinPointsSegment") ||
+				(geo.isGeoRay() && geo.getParentAlgorithm().getClassName() == "AlgoJoinPointsRay") ||
+				(geo.isGeoVector() && geo.getParentAlgorithm().getClassName() == "AlgoVector")) {
+
+				if (!geos.contains(geo.getParentAlgorithm().getInput()[0])) {
+					geos.add(geo.getParentAlgorithm().getInput()[0]);
+				}
+				if (!geos.contains(geo.getParentAlgorithm().getInput()[1])) {
+					geos.add(geo.getParentAlgorithm().getInput()[1]);
+				}
+			}
+		}
 	}
 
 	/**
@@ -262,6 +289,7 @@ public class CopyPaste {
 		// create geoslocal and geostohide
 		ArrayList<ConstructionElement> geoslocal = new ArrayList<ConstructionElement>();
 		geoslocal.addAll(geos);
+		addSubGeos(geoslocal);
 		dropGeosDependentFromOutside(geoslocal);
 		
 		if (geoslocal.isEmpty())
