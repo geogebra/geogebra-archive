@@ -110,6 +110,14 @@ public class CopyPaste {
 						}
 					}
 				}
+			} else if (geo.isGeoConic()) {
+				if (geo.getParentAlgorithm().getClassName().equals("AlgoCircleTwoPoints")) {
+					GeoElement [] pgeos = geo.getParentAlgorithm().getInput();
+					if (!geos.contains(pgeos[0]))
+						geos.add(pgeos[0]);
+					if (!geos.contains(pgeos[1]))
+						geos.add(pgeos[1]);
+				}
 			}
 		}
 	}
