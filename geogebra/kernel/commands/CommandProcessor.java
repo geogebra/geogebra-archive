@@ -5877,7 +5877,7 @@ class CmdDynamicCoordinates extends CommandProcessor {
 		switch (n) {
 		case 3:
 			boolean[] ok = new boolean[2];
-			if ((ok[0] = arg[0].isGeoPoint())
+			if ((ok[0] = (arg[0].isGeoPoint() && arg[0].isMoveable()))
 					&& (ok[1] = arg[1].isNumberValue())
 					&& (arg[2].isNumberValue())) {
 				GeoElement[] ret = { kernel.DynamicCoordinates(c.getLabel(),
