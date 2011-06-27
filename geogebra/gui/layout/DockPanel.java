@@ -1017,6 +1017,10 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		} else {
 			app.getGuiManager().getToolbarPanel().setActiveToolbar(-1);
 		}
+		//switching the view may cause shrinking of help panel, 
+		//we need an update here
+		app.getGuiManager().getToolbarPanel().validate();
+		app.getGuiManager().getToolbarPanel().updateHelpText();
 	}
 	
 	
