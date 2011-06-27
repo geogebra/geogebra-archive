@@ -50,8 +50,8 @@ public class GeoGebraColorConstants {
 		geogebraColor.put("aqua", new Color(188, 212, 230));  // wikipedia "pale aqua" 
 		geogebraColor.put("lightpurple", new Color(204, 204, 255));  // wikipedia "periwinkle"
 		geogebraColor.put("lightviolet", new Color(224, 176, 255));  // wikipedia "mauve"
-		geogebraColor.put("turquoise", new Color(175, 238, 238)); // wikiopedia "pale turquoise"
-		geogebraColor.put("lightgreen", new Color(208, 240, 192)); // wikiopedia "tea green"
+		geogebraColor.put("turquoise", new Color(175, 238, 238)); // wikipedia "pale turquoise"
+		geogebraColor.put("lightgreen", new Color(208, 240, 192)); // wikipedia "tea green"
 
 		// dark primary
 		geogebraColor.put("maroon", new Color(128, 0, 0)); 
