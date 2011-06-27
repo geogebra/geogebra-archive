@@ -125,6 +125,12 @@ public class DockManager implements AWTEventListener {
 					panel.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
 					panel.setShowStyleBar(dpInfo[i].showStyleBar());
 					panel.setOpenInFrame(dpInfo[i].isOpenInFrame());
+					
+					// detach views which were visible, but are not in the new perspective
+					if(panel.isVisible() && !dpInfo[i].isVisible()) {
+						app.getGuiManager().detachView(panel.getViewId());
+					}
+					
 					panel.setVisible(dpInfo[i].isVisible());
 				}
 			}
