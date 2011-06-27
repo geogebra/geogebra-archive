@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import edu.jas.util.ArrayUtil;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
@@ -65,46 +66,63 @@ public class AlgoAsymptoteImplicitPoly extends AlgoElement {
         	return;
         }   
         
-        if(ip.getDegX() == ip.getDegY())
-        {
-        	int degX = ip.getCoeff().length-1;
-        	
-        	sb.setLength(0);
-    	    sb.append("{");
-    		
-        	double [] coeffk = new double[degX+1];
-        	double [] diag = new double[degX+1];
-        	double [] upDiag = new double[degX];
-        	
-        	
-        	for(int i=degX, k=0, m=0; i>=0; i--)
-        		for(int j=degX; j>=0; j--)
-        			if(i+j == degX)
-        			{
-        				coeffk[k] = ip.getCoeff()[i][j];
-        				diag[k++] = ip.getCoeff()[i][j];
-        			}
-        			else if(i+j == degX-1)
-        				upDiag[m++] = ip.getCoeff()[i][j];
-        	
-        	int numk = solver.polynomialRoots(coeffk);
-			
-			for(int k=0; k<numk; k++)
-			{
-				double down = 0, up = 0;
-				for(int i=0; i<upDiag.length; i++)
-				{	
-					up += upDiag[i]*Math.pow(coeffk[k], i);
-					down += (i+1)*diag[i+1]*Math.pow(coeffk[k], i);
-				}
-				
-				sb.append("y = " + coeffk[k] + "*x + " + -up/down + ",");
+        
+    	int deg = ip.getDeg();
+    	
+    	sb.setLength(0);
+	    sb.append("{");
+		
+	    double [][] coeff = new double[deg+1][deg+1];
+	    for(int i=0; i<ip.getCoeff().length; i++)
+	    	for(int j=0; j<ip.getCoeff()[0].length; j++)
+	    	    	coeff[i][j] = ip.getCoeff()[i][j];
+	    
+	    
+    	double [] coeffk = new double[deg+1];
+    	double [] diag = new double[deg+1];
+    	double [] upDiag = new double[deg];
+    	
+    	
+    	for(int i=deg, k=0, m=0; i>=0; i--)
+    		for(int j=deg; j>=0; j--)
+    			if(i+j == deg)
+    			{
+    				coeffk[k] = coeff[i][j];
+    				diag[k++] = coeff[i][j];
+    			}
+    			else if(i+j == deg-1)
+    				upDiag[m++] = coeff[i][j];
+    	
+		int degree = coeffk.length-1;
+		for(int i=degree; coeffk[i]==0; i--)
+			degree--;
+		double [] coeffTmp = new double[degree+1];
+		for(int i=0; i<degree+1; i++)
+			coeffTmp[i] = coeffk[i];
+		
+		coeffk = new double[degree+1];
+		for(int i=0; i<degree+1; i++)
+			coeffk[i] = coeffTmp[i];
+		
+    	int numk = solver.polynomialRoots(coeffk);
+		
+		for(int k=0; k<numk; k++)
+		{
+			double down = 0, up = 0;
+			for(int i=0; i<upDiag.length; i++)
+			{	
+				up += upDiag[i]*Math.pow(coeffk[k], i);
+				down += (i+1)*diag[i+1]*Math.pow(coeffk[k], i);
 			}
-			if(sb.length() > 1)
-				sb.deleteCharAt(sb.length()-1);
-	        sb.append("}");
+			
+			double n = (down == 0) ? 0 : -up/down; 
+			
+			sb.append("y = " + coeffk[k] + "*x + " + n + ",");
+		}
+		if(sb.length() > 1)
+			sb.deleteCharAt(sb.length()-1);
+        sb.append("}");
 
-        }
         
 		g.set(kernel.getAlgebraProcessor().evaluateToList(sb.toString()));	
 		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
