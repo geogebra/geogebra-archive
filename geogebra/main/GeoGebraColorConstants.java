@@ -1,7 +1,6 @@
-package geogebra.gui.color;
+package geogebra.main;
 
 import geogebra.gui.util.GeoGebraIcon;
-import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -4,6 +4,7 @@ import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;
 import java.awt.Dimension;

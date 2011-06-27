@@ -2,8 +2,8 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.PropertiesPanelMiniListener;
-import geogebra.gui.color.GeoGebraColorConstants;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;
 import java.awt.Component;
