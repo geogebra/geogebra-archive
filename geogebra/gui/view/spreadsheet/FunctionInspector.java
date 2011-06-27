@@ -1257,7 +1257,7 @@ KeyListener, ActionListener{
 
 			this.setShowGrid(true);
 			this.setGridColor(TABLE_GRID_COLOR);
-			this.setSelectionBackground(GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR;);
+			this.setSelectionBackground(GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR);
 
 
 			//table.setAutoCreateColumnsFromModel(false);
