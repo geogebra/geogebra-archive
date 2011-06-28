@@ -32,12 +32,12 @@ TRANSLATIONS
   * Basque: Gonzalo Elcano Vizcay (Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
   * Bulgarian: Hristo Stoyanov (Bulgaria)
-  * Catalan: Jaume Bartroli, Pep Bujosa, Josep Lluis Canadilla, Carlos Gimenez, Antoni Goma, Jorge Sanchez,      
-      Roser Sebastian (Spain)
+  * Catalan: Jaume Bartroli, Pep Bujosa, Josep Lluis Canadilla, Carlos Gimenez, Antoni Goma, 
+      Jorge Sanchez, Roser Sebastian (Spain)
   * Chinese (Traditional): Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe, Joe Chen (Taiwan)
   * Chinese (Simplified): Chen Xing (China)
   * Croatian: Sime Suljic, Ela Rac-Marinic-Kragic, Josip Klicinovic, Zeljko Vrabec (Croatia)
-  * Czech: Zuzana Bouchalova, Michaela Norulakova, Marketa Tomanova (Czech Republic)
+  * Czech: Zuzana Bouchalova, Michaela Norulakova, Marketa Tomanova, Marie Pokorna (Czech Republic)
   * Danish: Steen Grode (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat, Carel van de Giessen (Belgium)
   * English: Markus Hohenwarter, Judith Hohenwarter (Austria), Yves Kreis (Luxembourg),
@@ -65,9 +65,11 @@ TRANSLATIONS
   * Nepali: Bhesh Raj Mainali (Nepal)
   * Norwegian: Sigbjorn Hals (Norway)
   * Persian: Saeed Aminorroaya, Ali SafarNavadeh, Azam Zabihi (Iran)
-  * Polish: Ania Borkowska, Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega, Kasia Winkowska-Nowak (Poland)
-  * Portuguese (Brazil): Humberto Bortolossi, Herminio Borges Neto, Alana Paula, 
-      Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
+  * Polish: Ania Borkowska, Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega, 
+      Kasia Winkowska-Nowak (Poland)
+  * Portuguese (Brazil): Humberto Bortolossi, Celina A. A. P. Abar,
+      Gerson Pastre de Oliveira, Lisbete Madsen Barbosa, Herminio Borges Neto,
+      Alana Paula, Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes, Antonio Ribeiro (Portugal)
   * Russian: Anatoly Scherbakov, Beatrice Versichel (Russia)
   * Serbian: Djordje Herceg, Dragoslav Herceg (Serbia)
