@@ -242,7 +242,6 @@ public class CommandDispatcher {
     	cmdTable.put("AngularBisector", new CmdAngularBisector(kernel));
     	cmdTable.put("OrthogonalLine", new CmdOrthogonalLine(kernel));
     	cmdTable.put("Tangent", new CmdTangent(kernel));
-    	cmdTable.put("CommonTangents", new CmdCommonTangents(kernel));
     	cmdTable.put("Segment", new CmdSegment(kernel));
     	cmdTable.put("Slope", new CmdSlope(kernel));	
     	cmdTable.put("Angle", new CmdAngle(kernel));

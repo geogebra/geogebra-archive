@@ -2076,7 +2076,11 @@ class CmdTangent extends CommandProcessor {
 				GeoElement[] ret = kernel.Tangent(c.getLabels(),
 						(GeoLine) arg[0], (GeoImplicitPoly) arg[1]);
 				return ret;
+			} else if ((ok[0] = (arg[0].isGeoConic()))
+					&& (ok[1] = (arg[1].isGeoConic()))) {
+				return kernel.CommonTangents(c.getLabels(), (GeoConic) arg[0], (GeoConic) arg[1]);
 			}
+
 			// syntax error
 			else {
 				if (!ok[0])
@@ -11227,36 +11231,3 @@ class CmdIncircle extends CommandProcessor {
 	}
     }
 } // CmdIncircle
-
-/**
- * CommonTangents[ <GeoConic>, <GeoConic> ]
- * dsun [6/26/2011]
- */
-class CmdCommonTangents extends CommandProcessor {
-    public CmdCommonTangents(Kernel kernel) {
-	super(kernel);
-    }
-    final public GeoElement[] process(Command c) throws MyError {
-	int n = c.getArgumentNumber();
-	boolean[] ok = new boolean[n];
-	GeoElement[] arg;
-	switch (n) {
-	case 2:
-	    arg = resArgs(c);
-	    // tangents through point
-	    if ((ok[0] = (arg[0].isGeoConic()))
-		&& (ok[1] = (arg[1].isGeoConic()))) {
-		return kernel.CommonTangents(c.getLabels(), (GeoConic) arg[0], (GeoConic) arg[1]);
-	    }
-	    // syntax error
-	    else {
-		if (!ok[0])
-		    throw argErr(app, "CommonTangents", arg[0]);
-		else
-		    throw argErr(app, "CommonTangents", arg[1]);
-	    }
-	default:
-	    throw argNumErr(app, "CommonTangents", n);
-	}
-    }
-} // CmdCommonTangents
