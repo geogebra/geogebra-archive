@@ -125,6 +125,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	private ConstructionProtocolNavigation protNavBar; // navigation bar of
 														// protocol window
 	private ConstructionProtocolView view=this;
+	public JScrollPane scrollPane;
 	
 	public ConstructionProtocolView(final Application app) {
 		//super(app.getFrame());
@@ -143,7 +144,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		table.setRowSelectionAllowed(true);
 		table.setGridColor(Color.lightGray);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-
+		
 		// header
 		JTableHeader header = table.getTableHeader();
 		// header.setUpdateTableInRealTime(true);
@@ -172,7 +173,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		table.getColumnModel().addColumnModelListener(
 				data.new ColumnMovementListener());
 
-		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane = new JScrollPane(table);
 		scrollPane.getViewport().setBackground(Color.white);
 		//getContentPane().add(scrollPane, BorderLayout.CENTER);
 		add(scrollPane, BorderLayout.CENTER);
@@ -182,6 +183,9 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		table.addMouseListener(ml);
 		table.addMouseMotionListener(ml);
 		header.addMouseListener(ml); // double clicking
+		scrollPane.addMouseListener(ml);
+		
+		
 
 		// keys
 		ConstructionKeyListener keyListener = new ConstructionKeyListener();
@@ -235,7 +239,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		});
 		*/
 		initGUI();
-
+		
 		// setSize(500, 200);
 		//pack();
 
@@ -247,6 +251,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		int y = Math.max((d2.width - d1.width) / 2, 0);
 		setBounds(x, y, d1.width, d1.height);
 		*/
+		
 	}
 
 	public Application getApplication() {
@@ -351,7 +356,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	public void initGUI() {
 		//setTitle(app.getPlain("ConstructionProtocol"));
 		setFont(app.getPlainFont());
-		setMenuBar();
+		//setMenuBar();
 		// set header values (language may have changed)
 		for (int k = 0; k < tableColumns.length; k++) {
 			tableColumns[k].setHeaderValue(data.columns[k].getTranslatedTitle());
@@ -393,6 +398,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		return useColors;
 	}
 	
+	/*
 	private void setMenuBar() {
 		menuBar.removeAll();
 
@@ -470,7 +476,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		//setJMenuBar(menuBar);
 		updateMenubar();
 	}
-
+*/
 	private void initActions() {
 
 		printPreviewAction = new AbstractAction(app.getMenu("Print")
@@ -528,7 +534,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 				app.setDefaultCursor();
 			}
 		};
-
+/*
 		exportHtmlAction = new AbstractAction(app.getPlain("ExportAsWebpage")
 				+ " (" + Application.FILE_EXT_HTML + ") ...") {
 			private static final long serialVersionUID = 1L;
@@ -548,7 +554,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 				app.setDefaultCursor();
 			}
 		};
-
+*/
 	}
 
 	public boolean isColumnInModel(TableColumn col) {
@@ -707,15 +713,13 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 						table.repaint();
 					}
 				}
-			} else if (ob == table.getTableHeader()) {
-				if (e.getClickCount() == 2) {
-					setConstructionStep(-1);
-					table.repaint();
-				} else if (e.getClickCount() == 1){
-					//ConstructionProtocolView view = ConstructionProtocolView.ge;
-					ConstructionProtocolContextMenu contextMenu = new ConstructionProtocolContextMenu(app);
-					contextMenu.show(view, e.getPoint().x, e.getPoint().y);
-				}
+			} else if (ob == table.getTableHeader()&&(e.getClickCount() == 2)) {
+				setConstructionStep(-1);
+				table.repaint();
+			} else if ((e.getClickCount() == 1)&&(Application.isRightClick(e))&&((ob == table.getTableHeader())||(ob == scrollPane))){
+				ConstructionProtocolContextMenu contextMenu = new ConstructionProtocolContextMenu(app);
+				contextMenu.show(view, e.getPoint().x, e.getPoint().y);
+				
 			}
 		}
 
@@ -819,14 +823,14 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			} else {
 				colData.isVisible = false;
 				model.removeColumn(column);
-				setSize(getWidth() - column.getWidth(), getHeight());
+				//setSize(getWidth() - column.getWidth(), getHeight());
+				//setSize(view.getWidth(), getHeight());
 			}
 			table.tableChanged(new TableModelEvent(data));
 
 			// reinit view to update possible breakpoint changes
 			data.initView();
-
-			//SwingUtilities.updateComponentTreeUI(thisDialog);
+			SwingUtilities.updateComponentTreeUI(view);
 		}
 	}
 

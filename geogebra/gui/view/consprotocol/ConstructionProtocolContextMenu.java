@@ -10,8 +10,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.table.TableColumn;
@@ -86,6 +88,30 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 			}
 		});
 		add(cbUseColors);
+		
+		addSeparator();
+		
+		AbstractAction exportHtmlAction = new AbstractAction(app.getPlain("ExportAsWebpage")
+				+ " (" + Application.FILE_EXT_HTML + ") ...") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setWaitCursor();
+
+				Thread runner = new Thread() {
+					public void run() {
+						JDialog d = new geogebra.export.ConstructionProtocolExportDialog(
+								constprotView);
+						d.setVisible(true);
+					}
+				};
+				runner.start();
+
+				app.setDefaultCursor();
+			}
+		};
+		
+		add(exportHtmlAction);
 		
 	}
 }

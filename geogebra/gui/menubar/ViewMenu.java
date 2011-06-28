@@ -32,7 +32,7 @@ class ViewMenu extends BaseMenu {
 		showInputTopAction,
 		showToolBarAction,
 		showToolBarTopAction,
-		constProtocolAction, 
+//		constProtocolAction, 
 		showConsProtNavigationAction,
 		showConsProtNavigationOpenProtAction,
 		showConsProtNavigationPlayAction,
@@ -44,7 +44,6 @@ class ViewMenu extends BaseMenu {
 		cbShowInputTop, 					// Florian Sonner 2008-09-12
 		cbShowToolBar, 						// Florian Sonner 2009-01-10
 		cbShowToolBarTop, 					// Florian Sonner 2009-01-10
-		cbShowConsProt,
 		cbShowConsProtNavigation,
 		cbShowConsProtNavigationPlay,
 		cbShowConsProtNavigationOpenProt,
@@ -58,7 +57,7 @@ class ViewMenu extends BaseMenu {
 	private JCheckBoxMenuItem[] cbViews;
 	
 	private JMenu
-		menuConsProt, 		
+		menuConsProtNav, 		
 		menuInput,
 		menuToolBar
 	;
@@ -159,9 +158,6 @@ class ViewMenu extends BaseMenu {
 		add(menuToolBar);
 		
 	    // Construction Protocol
-		cbShowConsProt = new JCheckBoxMenuItem(
-				constProtocolAction);
-		app.setEmptyIcon(cbShowConsProt);
 		cbShowConsProtNavigation = new JCheckBoxMenuItem(
 				showConsProtNavigationAction);
 		app.setEmptyIcon(cbShowConsProtNavigation);
@@ -173,13 +169,12 @@ class ViewMenu extends BaseMenu {
 		app.setEmptyIcon(cbShowConsProtNavigationOpenProt);
 
 
-		menuConsProt = new JMenu(app.getPlain("ConstructionProtocol"));
-		menuConsProt.setIcon(app.getImageIcon("table.gif"));
-		menuConsProt.add(cbShowConsProt);
-		menuConsProt.add(cbShowConsProtNavigation);
-		menuConsProt.add(cbShowConsProtNavigationPlay);
-		menuConsProt.add(cbShowConsProtNavigationOpenProt);
-		add(menuConsProt);
+		menuConsProtNav = new JMenu(app.getPlain("ConstructionProtocolNavigation"));
+		menuConsProtNav.setIcon(app.getImageIcon("table.gif"));
+		menuConsProtNav.add(cbShowConsProtNavigation);
+		menuConsProtNav.add(cbShowConsProtNavigationPlay);
+		menuConsProtNav.add(cbShowConsProtNavigationOpenProt);
+		add(menuConsProtNav);
 
 		addSeparator();
 
@@ -370,7 +365,7 @@ class ViewMenu extends BaseMenu {
 				app.setUnsaved();
 			}
 		};
-
+/*
 		constProtocolAction = new AbstractAction(app
 				.getMenu("Show")) {
 			private static final long serialVersionUID = 1L;
@@ -395,7 +390,7 @@ class ViewMenu extends BaseMenu {
 				}
 			}
 		};
-
+*/
 		refreshAction = new AbstractAction(app.getMenu("Refresh"),
 				new ImageIcon(app.getRefreshViewImage())) {
 			private static final long serialVersionUID = 1L;
@@ -442,7 +437,7 @@ class ViewMenu extends BaseMenu {
 		cbShowToolBar.setSelected(app.showToolBar());
 		cbShowToolBarTop.setSelected(app.showToolBarTop());
 		
-		cbShowConsProt.setSelected(app.getGuiManager().isConstructionProtocolVisible());
+		//cbShowConsProt.setSelected(app.getGuiManager().isConstructionProtocolVisible());
 		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());
 		
 		cbShowConsProtNavigationPlay.setSelected(guiMananager
