@@ -152,6 +152,11 @@ public class CopyPaste {
 		    			// or AlgoCirclePointRadius
 		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoCirclePointRadius")) {
 		    				it.remove();
+		    			// or single intersection point
+		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoIntersectSingle")) {
+		    				if (((AlgoElement)geoal.get(0)).getInput()[2].isGeoNumeric()) {
+		    					it.remove();
+		    				}
 		    			}
 		    		}
 		    	}
