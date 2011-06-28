@@ -7,39 +7,32 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
-import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
-import geogebra3D.Application3D;
-import geogebra3D.euclidian3D.Drawable3DLists;
 import geogebra3D.euclidian3D.Drawable3D;
+import geogebra3D.euclidian3D.Drawable3DLists;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.euclidian3D.Hits3D;
 
-
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
-import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 
-//import com.jogamp.opengl.util.BufferUtil;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.GLBuffers;
-import com.jogamp.opengl.util.gl2.GLUT;
 
 /**
  * 
@@ -57,6 +50,12 @@ import com.jogamp.opengl.util.gl2.GLUT;
  * 
  */
 public class Renderer implements GLEventListener {
+
+	/*
+	static {
+		GLProfile.initSingleton(false);
+	}
+	*/
 	
 	// openGL variables
 	private GLU glu= new GLU();
@@ -69,7 +68,8 @@ public class Renderer implements GLEventListener {
 	//private double[] matrixYtoZ = {1,0,0,0, 0,0,1,0, 0,1,0,0, 0,0,0,1}; 
 	
 	/** canvas usable for a JPanel */
-	public GLCanvas canvas;
+	//public GLCanvas canvas;
+	public GLJPanel canvas;
 
 	private GLCapabilities caps;
 	private GL2 gl;
@@ -152,9 +152,10 @@ public class Renderer implements GLEventListener {
 	 * @param view the {@link EuclidianView3D} linked to 
 	 */
 	public Renderer(EuclidianView3D view){
-		super();
+		//super();
 		
 		Application.debug("create gl renderer");
+		
 		
 	    caps = new GLCapabilities(GLProfile.getDefault());
 	    
@@ -178,10 +179,18 @@ public class Renderer implements GLEventListener {
     	*/
     	
     	//canvas
-	    canvas = new GLCanvas(caps);
+	    //canvas = new GLCanvas(caps);
+		//GLProfile.initSingleton(false);
+	    //canvas = new GLCanvas();
+	    //canvas = new GLCanvas(new GLCapabilities(GLProfile.getDefault()));
 	    //canvas = new GLJPanel(caps);
-
-	    
+		/*
+		GLProfile glprofile = GLProfile.get(GLProfile.GL3);
+        GLCapabilities glcapabilities = new GLCapabilities( glprofile );
+        canvas = new GLCanvas( glcapabilities ); 
+	    */
+		//GLProfile.initSingleton(true);
+		canvas = new GLJPanel(caps);
         
         
 	    canvas.addGLEventListener(this);

@@ -21,10 +21,18 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.net.URL;
 
+import javax.media.opengl.GLProfile;
+
 
 public class GeoGebra3D extends GeoGebra
 {
 	
+	
+	static {
+		GLProfile.initSingleton(true);
+	}
+	
+
 	public static void main(String[] cmdArgs) {  
 		CommandLineArguments args = new CommandLineArguments(cmdArgs);
 		
