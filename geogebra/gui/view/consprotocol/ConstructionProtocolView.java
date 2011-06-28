@@ -128,8 +128,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	public JScrollPane scrollPane;
 	
 	public ConstructionProtocolView(final Application app) {
-		//super(app.getFrame());
-		super();
+		super(new BorderLayout());
 		
 		this.app = app;
 		kernel = app.getKernel();
