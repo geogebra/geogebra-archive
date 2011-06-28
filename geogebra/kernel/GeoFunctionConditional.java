@@ -16,8 +16,11 @@ import java.util.ArrayList;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 
 /**
@@ -480,10 +483,9 @@ public class GeoFunctionConditional extends GeoFunction {
 			sb.append(" \\right)");
 			
 		} else {			
-			ArrayList<ExpressionNode> cases, conditions;
-			cases = new ArrayList<ExpressionNode>();
-			conditions = new ArrayList<ExpressionNode>();
-			boolean complete = collectCases(cases,conditions,null);
+			ArrayList<ExpressionNode> cases = new ArrayList<ExpressionNode>();
+			ArrayList<Bounds> conditions = new ArrayList<Bounds>();
+			boolean complete = collectCases(cases,conditions,new Bounds());
 			sb.append("\\left\\{\\begin{array}{ll} ");
 			for(int i=0;i<cases.size();i++){
 				sb.append(cases.get(i).toLaTeXString(!substituteNumbers));
@@ -493,7 +495,7 @@ public class GeoFunctionConditional extends GeoFunction {
 					sb.append(app.getPlain("otherwise"));
 					sb.append("}");
 				} else {
-					sb.append(conditions.get(i).toLaTeXString(!substituteNumbers));
+					sb.append(conditions.get(i).toLaTeXString(!substituteNumbers,getVarString()));
 					if(i!=cases.size()-1)sb.append("\\\\ ");
 				}
 			}
@@ -505,12 +507,10 @@ public class GeoFunctionConditional extends GeoFunction {
 	}
 
 	private boolean collectCases(ArrayList<ExpressionNode> cases,
-			ArrayList<ExpressionNode> conditions,ExpressionNode parentCond) {
+			ArrayList<Bounds> conditions,Bounds parentCond) {
 		boolean complete = elseFun != null;
-		ExpressionNode positiveCond = parentCond == null?condFun.getFunctionExpression():
-			condFun.getFunctionExpression().and(parentCond);
-		ExpressionNode negativeCond = parentCond == null?condFun.getFunctionExpression().negation():
-			condFun.getFunctionExpression().negation().and(parentCond);
+		Bounds positiveCond = parentCond.addRestriction(condFun.getFunctionExpression());
+		Bounds negativeCond = parentCond.addRestriction(condFun.getFunctionExpression().negation());			
 		if(ifFun instanceof GeoFunctionConditional){
 			complete &= ((GeoFunctionConditional)ifFun).collectCases(cases, conditions, positiveCond);
 		}else{
@@ -527,7 +527,64 @@ public class GeoFunctionConditional extends GeoFunction {
 		return complete;
 	}	
 	
+	class Bounds{
+		private boolean lowerSharp,upperSharp;
+		private Double lower,upper;
+		private ExpressionNode condition;
+		
+		public Bounds addRestriction(ExpressionNode e){
+			Bounds b = new Bounds();
+			b.lower = lower;
+			b.upper = upper;
+			b.lowerSharp = lowerSharp;
+			b.upperSharp = upperSharp;
+			b.condition = condition;
+						
+			if(e.getLeft() instanceof FunctionVariable && e.getRight() instanceof MyDouble){
+				double d = ((MyDouble)e.getRight()).getDouble();
+				if(e.getOperation()==ExpressionNode.GREATER && (lower == null || lower<=d))//x > d
+					{b.lower = d; b.lowerSharp = true;}
+				else if(e.getOperation()==ExpressionNode.GREATER_EQUAL && (lower == null || lower<d))//x > d
+					{b.lower = d; b.lowerSharp = false;}
+				else if(e.getOperation()==ExpressionNode.LESS && (upper == null || upper>=d))//x > d
+					{b.upper = d; b.upperSharp = true;}
+				else if(e.getOperation()==ExpressionNode.LESS_EQUAL && (upper == null || upper>d))//x > d
+					{b.upper = d; b.upperSharp = false;}
+			}
+			else if(e.getRight() instanceof FunctionVariable && e.getLeft() instanceof MyDouble){
+				double d = ((MyDouble)e.getLeft()).getDouble();
+				if(e.getOperation()==ExpressionNode.LESS && (lower == null || lower<=d))//x > d
+					{b.lower = d; b.lowerSharp = true;}
+				else if(e.getOperation()==ExpressionNode.LESS_EQUAL && (lower == null || lower<d))//x > d
+					{b.lower = d; b.lowerSharp = false;}
+				else if(e.getOperation()==ExpressionNode.GREATER && (upper == null || upper>=d))//x > d
+					{b.upper = d; b.upperSharp = true;}
+				else if(e.getOperation()==ExpressionNode.GREATER_EQUAL && (upper == null || upper>d))//x > d
+					{b.upper = d; b.upperSharp = false;}
+			}else{
+				if(condition==null)
+					b.condition = e;
+				else b.condition = condition.and(e);
+			}
+			return b;
+		}
 
+		public Object toLaTeXString(boolean b,String varString) {
+			String ret = null;
+			if(upper == null && lower!= null)
+				ret = varString+" "+(lowerSharp?">":Unicode.GREATER_EQUAL)+" "+lower;
+			else if(lower == null && upper != null)
+				ret = varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+upper;
+			else if(lower!=null && upper!=null)
+				ret = lower+" "+(lowerSharp?"<":Unicode.LESS_EQUAL)+" "+varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+upper;
+			if(condition!=null && ret == null)
+				return condition.toLaTeXString(b);
+			else if(condition!=null)
+				ret="("+ret+")\\wedge \\left("+condition.toLaTeXString(b)+"\\right)";	
+			Application.debug(ret);
+			return ret;
+		}
+	}
 
 
 }
