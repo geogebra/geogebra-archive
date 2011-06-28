@@ -746,4 +746,30 @@ public class Coords
 		
 		Application.debug("v1.v1 = "+v1.dotproduct(v1));
 	}
+	
+	/**
+	 * if the ND hom coords is in x-y plane, return this coords
+	 * @param coordsND
+	 * @return
+	 */
+	public Coords getCoordsIn2DView() {
+		
+		int dim = getRows()-1;
+		switch(dim) {
+		case 2:
+			return new Coords(getX(),getY(),getZ());
+		case -1:
+		case 0:
+			return new Coords(0,0,getX());
+		case 1:
+			return new Coords(getX(),0,getY());
+		default:
+			for (int i = 3; i<=dim; i++) {
+				if(Double.isNaN(get(i)) || !Kernel.isZero(get(i)))
+					return new Coords(Double.NaN,Double.NaN,Double.NaN);
+			}
+			// get(3) to get(dim) are all zero
+			return new Coords(get(1),get(2),get(dim+1));
+		}
+	}
 }

@@ -178,7 +178,8 @@ public class AlgoIntersectLineConic3D extends AlgoIntersectND {
 			Coords p2d = new Coords(3);
 			p2d.setX(p[1].getX());p2d.setY(p[1].getY());p2d.setZ(p[1].getW());
 			// check if intersect point is on conic
-			if (c.isOnFullConic(p2d, Kernel.MIN_PRECISION))
+			if (c.isOnFullConic(p2d, Kernel.MIN_PRECISION) 
+					&& g.respectLimitedPath(p[0], Kernel.EPSILON))
 				P[0].setCoords(p[0], false);
 			else
 				setPointsUndefined();

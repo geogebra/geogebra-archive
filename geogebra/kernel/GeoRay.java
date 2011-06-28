@@ -292,17 +292,19 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 	
 	
 	
-    public boolean isOnPath(Coords coords, double eps) {    	
-    	if  (!super.isOnPath(coords, eps))
+    public boolean isOnPath(Coords Pnd, double eps) {    	
+    	Coords P2d = Pnd.getCoordsIn2DView();
+    	if  (!super.isOnPath(P2d, eps))
     		return false;
     	
-    	return respectLimitedPath(coords, eps);
+    	return respectLimitedPath(P2d, eps);
 	   	
     }
     
-    public boolean respectLimitedPath(Coords coords, double eps) {    	
+    public boolean respectLimitedPath(Coords Pnd, double eps) {    	
+    	Coords P2d = Pnd.getCoordsIn2DView();
     	PathParameter pp = getTempPathParameter();
-    	doPointChanged(coords,pp);
+    	doPointChanged(P2d,pp);
     	double t = pp.getT();
 
     	return  t >= -eps;   	

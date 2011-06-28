@@ -1587,13 +1587,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (hits.isEmpty())
 			return null;		
 		
-		/*
-		if (hits.containsGeoPoint())
-			return null;
-			*/
-		
-		//Application.debug(hits+"\nselGeos="+selGeos()+"\nselectionPreview="+selectionPreview);
-
 		// when two objects are selected at once then only one single
 		// intersection point should be created	
 		
@@ -1641,10 +1634,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		// polygons
 		addSelectedPolygon(hits, 10, true);
-		Application.debug(""+hits.toString());
-	//	Application.debug(""+getSelectedPolygons().length);
-		Application.debug(""+selectedPolygons.size());
-
+		
 		//singlePointWanted = singlePointWanted && selGeos() == 2;
 		
 		//if (selGeos() > 2)

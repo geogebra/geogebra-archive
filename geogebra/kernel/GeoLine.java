@@ -146,8 +146,9 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	}	
 	
 	
-	public final boolean isOnFullLine(Coords P, double eps) {						
+	public final boolean isOnFullLine(Coords Pnd, double eps) {						
 			
+		Coords P = Pnd.getCoordsIn2DView();
 			
 		double simplelength =  Math.abs(x) + Math.abs(y);
 		if (Kernel.isZero(P.getZ())) { //infinite point		
@@ -219,8 +220,9 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     
     
     
-    public boolean isOnPath(Coords coords, double eps) {    	
-    	return isOnFullLine(coords, eps);    	
+    public boolean isOnPath(Coords Pnd, double eps) {    	
+    	Coords P2d = Pnd.getCoordsIn2DView();
+    	return isOnFullLine(P2d, eps);    	
     }
     
     public boolean respectLimitedPath(Coords coords, double eps) {    	
