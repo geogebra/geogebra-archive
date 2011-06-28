@@ -21,6 +21,7 @@ import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -30,7 +31,10 @@ import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.TreeSet;
 
 /**
  * Explicit function in one variable ("x"). This is actually a wrapper class for Function
@@ -857,39 +861,22 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @param rt
 	 * @return resulting GeoFunction or GeFunctionNvar
 	 */
-	public static FunctionNVar operationSymb(int op, Functional lt , Functional rt) {
+	public static FunctionNVar operationSymb(int op, FunctionalNVar lt , FunctionalNVar rt) {
 		Kernel kernel = lt.getFunction().getKernel();
-		FunctionVariable x =  new FunctionVariable(kernel,"x");
-		FunctionVariable y =  new FunctionVariable(kernel,"y");
-		FunctionNVar f;
-		ExpressionNode ltExpr,rtExpr;
-		if(lt instanceof Function){			
-			ltExpr = ((Function)lt).getExpression()
-				.replace(((Function)lt).getFunctionVariables()[0],"y".equals(lt.getFunction().getVarString())?y:x);			
+		TreeSet<String> varNames = new TreeSet<String>();
+		for(int i=0;i<lt.getFunction().getVarNumber();i++)
+			varNames.add(lt.getFunction().getVarString(i));
+		for(int i=0;i<rt.getFunction().getVarNumber();i++)
+			varNames.add(rt.getFunction().getVarString(i));
+		HashMap<String,FunctionVariable> varmap = new HashMap<String,FunctionVariable>();
+		for(String name:varNames){
+			varmap.put(name, new FunctionVariable(kernel,name));
 		}
-		else
-			ltExpr = new ExpressionNode(kernel,(GeoFunction)lt,ExpressionNode.FUNCTION,
-					"y".equals(lt.getFunction().getVarString())?y:x);
-		if(rt instanceof Function){
-			rtExpr = ((Function)rt).getExpression()
-			.replace(((Function)rt).getFunctionVariables()[0],"y".equals(rt.getFunction().getVarString())?y:x);
-		}
-		else
-			rtExpr = new ExpressionNode(kernel,(GeoFunction)rt,ExpressionNode.FUNCTION,
-			"y".equals(lt.getFunction().getVarString())?y:x);
-		ExpressionNode sum = new ExpressionNode(kernel,ltExpr,op,rtExpr);
-		if("y".equals(lt.getFunction().getVarString())^"y".equals(rt.getFunction().getVarString())){
-
-			FunctionVariable[] xy=new FunctionVariable[]{x,y};
-			f = new FunctionNVar(sum,xy);
-	    	
-	       	//AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
-	       	//return adf.getFunction();
-		}
-		else{
-			
-    	f = new Function(sum,x);
-		}
+		ExpressionNode ltExpr=toExpr(lt,varmap,kernel),
+			rtExpr=toExpr(rt,varmap,kernel),
+			sum = new ExpressionNode(kernel,ltExpr,op,rtExpr);
+		FunctionNVar f = fromExpr(sum,varmap,varNames);
+		
     	f.initFunction();
     	
     	return f;
@@ -897,6 +884,48 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
        	//return adf.getFunction();
        	
 	}
+	private static FunctionNVar fromExpr(ExpressionNode sum,
+			HashMap<String, FunctionVariable> varmap,TreeSet<String>varNames) {
+		int size = varmap.size();		
+		if(size>1){
+			FunctionVariable[]varArray =new FunctionVariable[size];
+			int i= 0;
+			for(String name:varNames){
+				varArray[i] = varmap.get(name);
+				i++;
+			}
+			FunctionNVar f = new FunctionNVar(sum,varArray);			
+			return f;
+	    	
+	       	//AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
+	       	//return adf.getFunction();
+		}
+		else{
+			Iterator<FunctionVariable> var = varmap.values().iterator();
+			return new Function(sum,var.next());
+		}
+	}
+
+	private static ExpressionNode toExpr(FunctionalNVar lt,
+			HashMap<String, FunctionVariable> varMap,Kernel kernel) {
+		if(lt instanceof GeoFunction)
+			return new ExpressionNode(kernel,(GeoFunction)lt,
+					ExpressionNode.FUNCTION,varMap.get(lt.getVarString()));
+		if(lt instanceof GeoFunctionNVar){
+			MyList varList = new MyList(kernel);
+			for(int i=0;i<lt.getFunction().getVarNumber();i++){
+				varList.addListElement(varMap.get(lt.getFunction().getVarString(i)));
+			}
+			return new ExpressionNode(kernel,(GeoFunctionNVar)lt,
+					ExpressionNode.FUNCTION_NVAR,varList);
+		}
+		if(lt instanceof Function)
+			return ((Function)lt).getExpression().replace(((Function)lt).getFunctionVariables()[0],
+					varMap.get(lt.getVarString()));
+			
+		return null;
+	}
+
 	/**
 	 * Applies an operation on this function and number value
 	 * @param op
@@ -905,30 +934,33 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @param right f op nv for true, nv op f for false
 	 * @return resulting function
 	 */
-	public static Function applyNumberSymb(int op, Functional fun1, ExpressionValue nv,boolean right) {
-		
+	public static FunctionNVar applyNumberSymb(int op, FunctionalNVar fun1, ExpressionValue nv,boolean right) {
 		Kernel kernel = fun1.getFunction().getKernel();
-		
-		FunctionVariable x =  new FunctionVariable(kernel);
-		if(nv instanceof ExpressionNode)
-			((ExpressionNode)nv).replaceVariables(fun1.getFunction().getVarString(), x);
-		else if((nv instanceof FunctionVariable) && nv.toString().equals(fun1.getFunction().getVarString()))
-			nv = x;
-		ExpressionNode sum, myExpr;
-		if(fun1 instanceof Function){
-			myExpr = ((Function)fun1).getExpression()
-				.replace(((Function) fun1).getFunctionVariables()[0],x);
+		TreeSet<String> varNames = new TreeSet<String>();
+		for(int i=0;i<fun1.getFunction().getVarNumber();i++)
+			varNames.add(fun1.getFunction().getVarString(i));		
+		HashMap<String,FunctionVariable> varmap = new HashMap<String,FunctionVariable>();
+		for(String name:varNames){
+			varmap.put(name, new FunctionVariable(kernel,name));
 		}
-		else
-			myExpr = new ExpressionNode(kernel,(GeoFunction)fun1,ExpressionNode.FUNCTION,
-					x);
+		ExpressionNode sum, myExpr;
+		myExpr = toExpr(fun1, varmap, kernel);
+		
+		if(nv instanceof ExpressionNode)
+			for(String name:varNames){
+				((ExpressionNode)nv).replaceVariables(name, varmap.get(name));
+			}
+		else if(nv instanceof FunctionVariable)
+			nv = varmap.get( ((FunctionVariable)nv).toString());
+		
+		
 		if(right){sum = new ExpressionNode(kernel,myExpr,				
 				op, nv);			
 		}
 		else{ sum = new ExpressionNode(kernel,nv,op,
 				myExpr);
 		}
-    	Function f = new Function(sum,x);
+		FunctionNVar f = fromExpr(sum,varmap,varNames);
     	f.initFunction();       	
        	return f;
 	}

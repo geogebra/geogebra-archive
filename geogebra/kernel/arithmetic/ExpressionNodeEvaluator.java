@@ -4,7 +4,6 @@ import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
@@ -109,14 +108,14 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	return myList;
         }
         
-        else if (lt instanceof Functional && rt instanceof Functional) {              	            	
-        	return GeoFunction.operationSymb(operation,(Functional)lt, (Functional)rt);            	            	
+        else if (lt instanceof FunctionalNVar && rt instanceof FunctionalNVar) {              	            	
+        	return GeoFunction.operationSymb(operation,(FunctionalNVar)lt, (FunctionalNVar)rt);            	            	
         }           
-       else if (lt instanceof Functional && rt.isNumberValue() && operation!=FUNCTION) {         	   
-    	   return GeoFunction.applyNumberSymb(operation,(Functional)lt,right,true);              	
+       else if (lt instanceof FunctionalNVar && rt.isNumberValue() && operation!=FUNCTION) {         	   
+    	   return GeoFunction.applyNumberSymb(operation,(FunctionalNVar)lt,right,true);              	
        	}           
        else if (rt instanceof Functional && lt.isNumberValue()) {            	
-    	   return GeoFunction.applyNumberSymb(operation,(Functional)rt,left,false);
+    	   return GeoFunction.applyNumberSymb(operation,(FunctionalNVar)rt,left,false);
        } 
        	 
         // NON-List operations (apart from EQUAL_BOOLEAN and list + text)

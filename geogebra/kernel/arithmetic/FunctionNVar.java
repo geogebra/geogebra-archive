@@ -406,10 +406,13 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		if (ev.isBooleanValue()) {
 			isBooleanFunction = true;
 		} else if (ev.isNumberValue()) {
-			isBooleanFunction = false;
-		} else {
+			isBooleanFunction = false;		
+		} else if (ev instanceof FunctionNVar){
+				expression = ((FunctionNVar)ev).getExpression();
+				fVars = ((FunctionNVar)ev).getFunctionVariables();	
+		}else{
 			Application.debug("InvalidFunction:" + expression.toString() + " "
-					+ ev.toString());
+					+ ev.toString() + ev.getClass().getName());
 			throw new MyError(kernel.getApplication(), "InvalidFunction");
 		}
 	}
