@@ -1390,7 +1390,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	public boolean hasMoveableInputPoints(EuclidianViewInterface view) {
 		//we don't want e.g. DotPlots to be dragged
 		if(!(getParentAlgorithm() == null || getParentAlgorithm() instanceof AlgoDependentList))
-			return false;
+			return false;		
 		for (int i = 0; i < geoList.size(); i++) {
 			GeoElement geo = (GeoElement) geoList.get(i);
 
@@ -1438,13 +1438,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 	}
 
-	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec,
-			Coords endPosition, ArrayList updateGeos,
-			ArrayList tempMoveObjectList) {
-		Application.debug("hghgh");
-		return false;
-	}
-
+	
 	final public boolean isCasEvaluableObject() {
 		return true;
 	}
