@@ -242,6 +242,7 @@ public class CommandDispatcher {
     	cmdTable.put("AngularBisector", new CmdAngularBisector(kernel));
     	cmdTable.put("OrthogonalLine", new CmdOrthogonalLine(kernel));
     	cmdTable.put("Tangent", new CmdTangent(kernel));
+    	cmdTable.put("CommonTangents", new CmdCommonTangents(kernel));
     	cmdTable.put("Segment", new CmdSegment(kernel));
     	cmdTable.put("Slope", new CmdSlope(kernel));	
     	cmdTable.put("Angle", new CmdAngle(kernel));
@@ -395,6 +396,7 @@ public class CommandDispatcher {
     	cmdTable.put("Conic", new CmdConic(kernel));	   
     	cmdTable.put("FirstAxis", new CmdFirstAxis(kernel));	   
     	cmdTable.put("Circle", new CmdCircle(kernel));	 
+    	cmdTable.put("Incircle", new CmdIncircle(kernel));	 
     	cmdTable.put("Semicircle", new CmdSemicircle(kernel));	   
     	cmdTable.put("FirstAxisLength", new CmdFirstAxisLength(kernel));	   
     	cmdTable.put("Parabola", new CmdParabola(kernel));	 

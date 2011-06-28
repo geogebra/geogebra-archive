@@ -22,6 +22,7 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipShape;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.AlgoIncircle; // dsun48 [6/26/2011]
 import geogebra.kernel.AlgoCircleTwoPoints;
 import geogebra.kernel.AlgoEllipseFociPoint;
 import geogebra.kernel.AlgoHyperbolaFociPoint;
@@ -1145,7 +1146,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				cons.removeFromConstructionList(algo2);				
 				initConic((GeoConic) algo2.getCircle());
 				break;		
-				
+
 			case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
 				AlgoEllipseFociPoint algo3 = new AlgoEllipseFociPoint(cons,
 						previewTempPoints[0], 

@@ -5733,6 +5733,23 @@ public class Kernel {
 	}
 	
 	/** 
+	 * incircle with vertex points A, B, C
+	 * dsun48 [6/26/2011]
+	 */
+	final public GeoConic Incircle(
+		String label,
+		GeoPoint A,
+		GeoPoint B,
+		GeoPoint C) {
+		AlgoIncircle algo = new AlgoIncircle(cons, label, A, B, C);
+		GeoConic circle = (GeoConic) algo.getCircle();
+		circle.setToSpecific();
+		circle.update();
+		notifyUpdate(circle);
+		return circle;
+	}
+
+	/** 
 	 * conic arc from conic and parameters
 	 */
 	final public GeoConicPart ConicArc(String label, GeoConic conic, NumberValue a, NumberValue b) {
@@ -6559,6 +6576,19 @@ public class Kernel {
 		return tangents;
 	}
 
+	/** 
+	 * common tangents to c1 and c2
+	 * dsun48 [6/26/2011]
+	 */
+	final public GeoLine[] CommonTangents(
+		String[] labels,
+		GeoConic c1,
+		GeoConic c2) {
+		AlgoCommonTangents algo = new AlgoCommonTangents(cons, labels, c1, c2);
+		GeoLine[] tangents = algo.getTangents();		
+		return tangents;
+	}
+	
 	/** 
 	 * tangents to c parallel to g
 	 */
