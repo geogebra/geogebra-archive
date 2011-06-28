@@ -117,6 +117,26 @@ public class CopyPaste {
 						geos.add(pgeos[0]);
 					if (!geos.contains(pgeos[1]))
 						geos.add(pgeos[1]);
+				} else if (geo.getParentAlgorithm().getClassName().equals("AlgoCircleThreePoints") ||
+							geo.getParentAlgorithm().getClassName().equals("AlgoEllipseFociPoint") ||
+							geo.getParentAlgorithm().getClassName().equals("AlgoHyperbolaFociPoint")) {
+					GeoElement [] pgeos = geo.getParentAlgorithm().getInput();
+					if (!geos.contains(pgeos[0]))
+						geos.add(pgeos[0]);
+					if (!geos.contains(pgeos[1]))
+						geos.add(pgeos[1]);
+					if (!geos.contains(pgeos[2]))
+						geos.add(pgeos[2]);
+				} else if (geo.getParentAlgorithm().getClassName().equals("AlgoConicFivePoints")) {
+					GeoElement [] pgeos = geo.getParentAlgorithm().getInput();
+					for (int j = 0; j < pgeos.length; j++) {
+						if (!geos.contains(pgeos[j]))
+							geos.add(pgeos[j]);
+					}
+				} else if (geo.getParentAlgorithm().getClassName().equals("AlgoCirclePointRadius")) {
+					GeoElement [] pgeos = geo.getParentAlgorithm().getInput();
+					if (!geos.contains(pgeos[0]))
+						geos.add(pgeos[0]);
 				}
 			}
 		}
