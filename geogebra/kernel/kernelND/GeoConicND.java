@@ -140,7 +140,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * @param i
 	 * @return eigen vector in native dimension of the conic
 	 * 	 */
-	protected Coords getEigenvec(int i){
+	public Coords getEigenvec(int i){
 		return new Coords(eigenvec[i].getCoords());
 	}
 	

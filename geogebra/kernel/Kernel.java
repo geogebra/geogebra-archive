@@ -5505,6 +5505,23 @@ public class Kernel {
 	}
 
 	/** 
+	 * IntersectLineConic yields intersection points named label1, label2
+	 * of line g and conic c
+	 * and intersection lines named in lowcase of the label
+	 */
+	final public GeoLine[] IntersectLineConicRegion(
+		String[] labels,
+		GeoLine g,
+		GeoConic c) {
+		AlgoIntersectLineConicRegion algo = new AlgoIntersectLineConicRegion(cons, labels, g, c);
+		
+		GeoLine[] lines = algo.getIntersectionLines();		
+		
+		return lines;
+	}
+
+	
+	/** 
 	 * yields intersection points named label of line g and polygon p (as boundary)
 	 */
 	final public GeoElement[] IntersectLinePolygon(

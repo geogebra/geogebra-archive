@@ -2497,15 +2497,19 @@ public abstract class GeoElement
 	/**
 	 *  set labels for array of GeoElements with given label prefix.
 	 * e.g. labelPrefix = "F", geos.length = 2 sets geo[0].setLabel("F_1")
-	 * and geo[0].setLabel("F_2")
+	 * and geo[1].setLabel("F_2")
+	 * all members in geos are assumed to be initialized.
 	 */
 	public static void setLabels(String labelPrefix, GeoElement[] geos) {
 		if (geos == null) return;
 
 		int visible = 0;
-		for (int i = 0; i < geos.length; i++)
-			if (geos[i].isVisible())
+		int firstVisible = 0;
+		for (int i = geos.length-1; i >=0; i--)
+			if (geos[i].isVisible()) {
+				firstVisible = i;
 				visible++;
+			}
 
 		switch (visible) {
 			case 0 : // no visible geos: they all get the labelPrefix as suggestion
@@ -2514,7 +2518,7 @@ public abstract class GeoElement
 				break;
 
 			case 1 : //	if there is only one visible geo, don't use indices
-				geos[0].setLabel(labelPrefix);
+				geos[firstVisible].setLabel(labelPrefix);
 				break;
 
 			default :
