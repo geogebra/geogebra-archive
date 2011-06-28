@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 import edu.jas.util.ArrayUtil;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -66,6 +68,8 @@ public class AlgoAsymptoteImplicitPoly extends AlgoElement {
         	return;
         }   
         
+        ArrayList<double[]> asymptotes = new ArrayList<double[]>();
+        
         
     	int deg = ip.getDeg();
     	
@@ -93,39 +97,106 @@ public class AlgoAsymptoteImplicitPoly extends AlgoElement {
     			else if(i+j == deg-1)
     				upDiag[m++] = coeff[i][j];
     	
-		int degree = coeffk.length-1;
-		for(int i=degree; coeffk[i]==0; i--)
-			degree--;
-		double [] coeffTmp = new double[degree+1];
-		for(int i=0; i<degree+1; i++)
-			coeffTmp[i] = coeffk[i];
 		
-		coeffk = new double[degree+1];
-		for(int i=0; i<degree+1; i++)
-			coeffk[i] = coeffTmp[i];
+	
+		/**
+		 * Asymptotes parallel to x-axe and y-axe
+		 */
 		
+    	double[] parallelCoeff = new double[deg+1];
+    	
+		// parallel with x-axe
+		if(coeff[0][deg] == 0)
+		{
+			for(int i=deg-1; i>=0; i--)
+				if(sumRow(coeff, i, 2) != 0)
+				{
+					for(int j=0; j<deg; j++)
+						parallelCoeff[j] = coeff[j][i];
+					int numx = solver.polynomialRoots(parallelCoeff);
+					for(int k=0; k<numx; k++)
+					{
+						double [] asy = {1.0, 0.0, -parallelCoeff[k]};
+						asymptotes.add(asy);
+					}
+					break;
+				}
+		}
+		
+		// parallel with y-axe
+		if(coeff[deg][0] == 0)
+		{
+			for(int i=deg; i>=0; i--)
+				if(sumRow(coeff, i, 1) != 0)
+				{
+					for(int j=0; j<deg; j++)
+						parallelCoeff[j] = coeff[i][j];
+					int numx = solver.polynomialRoots(parallelCoeff);
+					for(int k=0; k<numx; k++)
+					{
+						double [] asy = {0.0, 1.0, -parallelCoeff[k]};
+						asymptotes.add(asy);
+					}
+					break;
+				}
+		}
+		
+		
+		/**
+		 * Other asymptotes
+		 */
+	
     	int numk = solver.polynomialRoots(coeffk);
-		
-		for(int k=0; k<numk; k++)
+    	
+    	for(int i=0; i<numk; i++)
 		{
 			double down = 0, up = 0;
-			for(int i=0; i<upDiag.length; i++)
+			for(int j=0; j<upDiag.length; j++)
 			{	
-				up += upDiag[i]*Math.pow(coeffk[k], i);
-				down += (i+1)*diag[i+1]*Math.pow(coeffk[k], i);
+				up += upDiag[j]*Math.pow(coeffk[i], j);
+				down += (j+1)*diag[j+1]*Math.pow(coeffk[i], j);
 			}
+			if(down == 0)
+				continue;
 			
-			double n = (down == 0) ? 0 : -up/down; 
-			
-			sb.append("y = " + coeffk[k] + "*x + " + n + ",");
+			double [] asy = {-coeffk[i], 1, up/down};
+			asymptotes.add(asy);
 		}
-		if(sb.length() > 1)
+    	
+		
+    	for(int i=0; i<asymptotes.size(); i++)
+    		for(int j=1; j<asymptotes.size(); j++)
+    	    	if(Math.abs(asymptotes.get(i)[0] - asymptotes.get(j)[0]) < 1E-2 &&
+    	    			Math.abs(asymptotes.get(i)[1] - asymptotes.get(j)[1]) < 1E-2 &&
+    	    			Math.abs(asymptotes.get(i)[2] - asymptotes.get(j)[2]) < 1E-2 )
+    	    		asymptotes.remove(j);
+    		
+    	for(int i=0; i<asymptotes.size(); i++)
+        	sb.append(asymptotes.get(i)[0] + "*x + " + asymptotes.get(i)[1] + "*y + " + asymptotes.get(i)[2] + "=0,");
+    		
+    	if(sb.length() > 1)
 			sb.deleteCharAt(sb.length()-1);
-        sb.append("}");
+        
+    	sb.append("}");
 
         
 		g.set(kernel.getAlgebraProcessor().evaluateToList(sb.toString()));	
 		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+    }
+    
+    /**
+     * compute a sum of elements from i-th row or column if matrix mat
+     * rc = 1 for rows, rc = 2 for columns
+     */
+    private double sumRow(double [][] mat, int i, int rc)
+    {
+    	double sum = 0;
+    	for(int j=0; j<mat.length; j++)
+    		if(rc == 1)
+    			sum += mat[i][j];
+    		else
+    			sum += mat[j][i];
+    	return sum;
     }
     
     
