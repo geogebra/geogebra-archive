@@ -222,8 +222,8 @@ public class CASmpreduce extends CASgeneric {
 			//mpreduce.evaluate("operator log!-temp");
 			//mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
 			
-			mpreduce.evaluate("load\\_package(\"rsolve\");");
-			mpreduce.evaluate("load\\_package(\"numeric\");");
+			mpreduce.evaluate("load_package(\"rsolve\");");
+			mpreduce.evaluate("load_package(\"numeric\");");
 			
 			//the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
