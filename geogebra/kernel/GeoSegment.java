@@ -158,6 +158,15 @@ GeoSegmentND {
     	endPoint.set((GeoElement) seg.endPoint);    	
 	}   
 
+	public void set(GeoPoint s, GeoPoint e, GeoVec3D direction) {
+		super.set(direction);		
+	
+		setStartPoint(s);
+		setEndPoint(e);
+		calcLength();
+	}   
+
+	
 	public void setVisualStyle(GeoElement geo) {
 		super.setVisualStyle(geo);
 		
@@ -196,6 +205,7 @@ GeoSegmentND {
 	
 	public void setUndefined() {
 		super.setUndefined();
+		length = Double.NaN;
 		defined = false;
 	}
         

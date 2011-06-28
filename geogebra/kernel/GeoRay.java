@@ -40,6 +40,10 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 		setStartPoint(A);
 	}
 	
+	public GeoRay(Construction c) {
+		super(c);
+	}
+
 	public String getClassName() {	
 		return "GeoRay";
  	}
@@ -75,6 +79,11 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 		keepTypeOnGeometricTransform = ray.keepTypeOnGeometricTransform; 
 										
 		startPoint.set((GeoElement) ray.startPoint);		
+	}
+	
+	public void set(GeoPoint s, GeoVec3D direction) {
+		super.set(direction);
+		setStartPoint(s);
 	}
 	
 	public void setVisualStyle(GeoElement geo) {

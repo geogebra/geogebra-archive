@@ -57,7 +57,8 @@ implements Traceable {
     }
     
     public void setUndefined() {     
-    	setCoords(Double.NaN, Double.NaN, Double.NaN);        
+    	setCoords(Double.NaN, Double.NaN, Double.NaN);   
+    	update(); //TODO hide undefined elements in algebraView
     }       
     
     protected boolean showInEuclidianView() {     
@@ -229,6 +230,55 @@ implements Traceable {
 			}
     	}            
     }  
+    
+    /** Calculates the line through the points A and B.
+     * The result is stored in g.
+     */
+    final public static void lineThroughPointsCoords(Coords A, Coords B, GeoLine g) {
+    	// note: this could be done simply using cross(A, B, g)
+    	// but we want to avoid large coefficients in the line
+    	// and we want AB to be the direction vector of the line
+    	if (!(A.getRows()==3 && A.getColumns()==1 && 
+    			B.getRows()==3 && B.getColumns()==1)) {
+    		g.setUndefined();
+    		return;
+    	}
+    	
+    	if (!(A.isFinite() && B.isFinite())) {
+    		g.setUndefined();
+    		return;
+    	}
+    	
+    	if (Kernel.isZero(A.getZ())) {// A is direction
+    		if (Kernel.isZero(B.getZ())) { 
+				// g is undefined
+			    g.setUndefined();
+			} else { 
+				// through point B
+				Coords BInhom = B.getInhomCoords();
+				g.setCoords(A.getY() , 
+						-A.getX(),
+						A.getX() * BInhom.getY() - A.getY() * BInhom.getX());
+			}
+    	}
+    	else { // through point A
+			if (Kernel.isZero(B.getZ())) { 
+				// B is direction
+				Coords AInhom = A.getInhomCoords();
+				g.setCoords(B.getY() , 
+						-B.getX(),
+						B.getX() * AInhom.getY() - B.getY() * AInhom.getX());
+			} else { 
+				// through point B
+				Coords AInhom = A.getInhomCoords();
+				Coords BInhom = B.getInhomCoords();
+				g.setCoords(AInhom.getY() - BInhom.getY(), 
+						BInhom.getX() - AInhom.getX(),
+						AInhom.getX() * BInhom.getY() - AInhom.getY() * BInhom.getX());
+			}
+    	}            
+    }  
+    
     
     /** Calculates the line through the point A with direction v.
      * The result is stored in g.

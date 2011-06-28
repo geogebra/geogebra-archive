@@ -32,10 +32,13 @@ import java.util.ArrayList;
 public class AlgoIntersectLineConic extends AlgoIntersect {    
 
 	private static final long serialVersionUID = 1L;
-	private GeoLine g;  // input
-    private GeoConic c;
+	protected GeoLine g;  // input
+	protected GeoConic c;
 
-    private GeoPoint [] P, D, Q;     // points  
+    private GeoPoint [] D;     // D: old points; Q: new points, not yet permuted
+    protected GeoPoint [] P, Q; //output -- Q permuted according to D
+    protected int intersectionType;
+    
     private int age[]; // of defined points D
     private int permutation[]; // of computed intersection points Q to output points P
     private double [][] distTable;
@@ -55,8 +58,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     // for segments, rays and conic parts we need to check the
     // intersection points at the end of compute()
     private boolean isLimitedPathSituation;              
-    private boolean possibleSpecialCase = false;
-    private int specialCasePointOnCircleIndex = 0; // index of point on line and conic
+    protected boolean possibleSpecialCase = false;
+    protected int specialCasePointOnCircleIndex = 0; // index of point on line and conic
     
     public String getClassName() {
         return "AlgoIntersectLineConic";
@@ -89,36 +92,43 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             isDefinedAsTangent = (tangentPoint != null);            
         }                      
         
-        // g is defined as tangent of c
-        if (isDefinedAsTangent) {
-            P  = new GeoPoint[1];
-            P[0] = new GeoPoint(cons);
-        } 
-        // standard case
-        else {                	
-            P  = new GeoPoint[2];
-            D  = new GeoPoint[2];
-            Q  = new GeoPoint[2];
-            distTable = new double[2][2];                       
-            age = new int[2];
-            permutation= new int[2];
-            isQonPath = new boolean[2];
-            isPalive = new boolean[2];
-            
-            for (i=0; i < 2; i++) {
-                Q[i] = new GeoPoint(cons);
-                P[i] = new GeoPoint(cons); 
-                D[i] = new GeoPoint(cons);                     
-            }
-            
-        	// check possible special case
-            possibleSpecialCase = handleSpecialCase();
-        }
+        initElements();
+
         
         setInputOutput(); // for AlgoElement     
         initForNearToRelationship();
         compute();                      
     }
+    
+    // for subclasses
+    protected void initElements() {
+    	// g is defined as tangent of c
+    	if (isDefinedAsTangent) {
+    		P  = new GeoPoint[1];
+    		P[0] = new GeoPoint(cons);
+    	} 
+    	// standard case
+    	else {                	
+    		P  = new GeoPoint[2];
+        	D  = new GeoPoint[2];
+        	Q  = new GeoPoint[2];
+        	distTable = new double[2][2];                       
+        	age = new int[2];
+        	permutation= new int[2];
+        	isQonPath = new boolean[2];
+        	isPalive = new boolean[2];
+        
+        	for (i=0; i < 2; i++) {
+        		Q[i] = new GeoPoint(cons);
+        		P[i] = new GeoPoint(cons); 
+        		D[i] = new GeoPoint(cons);                     
+        	}
+        
+        	// check possible special case
+        	possibleSpecialCase = handleSpecialCase();
+    	}
+    }
+    
     
     // for AlgoElement
     public void setInputOutput() {
@@ -157,7 +167,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     }
     
     // calc intersections of conic c and line g
-    protected final void compute() {  
+    protected void compute() {  
         // g is defined as tangent of c
         if (isDefinedAsTangent) {
             P[0].setCoords(tangentPoint);
@@ -434,6 +444,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
      * Intersects conic c with line g and always sets two GeoPoints (sol).
      * If there are no real intersections, the coords of GeoPoints are
      * set to Double.NaN. 
+     * 
+     * Also store the intersection type.
      * @returns type of intersection
      */
     private int intersect(GeoConic c, GeoLine g, GeoPoint [] sol) {                                        	
@@ -457,6 +469,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             //Application.debug("INTERSECT LINE CONIC FAILED: epsilon = " + epsilon);
             for (int i=0; i < 2; i++) sol[i].setUndefined();                      
         }    
+        intersectionType = ret;
         return ret;
     }
         
@@ -581,5 +594,5 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         }            
         return foundPoint;
     }
-   
+    
 }

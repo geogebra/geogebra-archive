@@ -47,6 +47,8 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     
 	protected char op = '='; // eg '=', '<' for GeoLinearInequality
 	
+	private boolean showUndefinedInAlgebraView = false;
+	
     private String parameter = "\u03bb";	
     GeoPoint startPoint, endPoint;    
     
@@ -435,9 +437,14 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     public boolean showInAlgebraView() {
         // independent or defined
         //return isIndependent() || isDefined();
-    	return isLabelSet();
+
+    	return isLabelSet() && (isDefined() || showUndefinedInAlgebraView);
     }                
     
+	public void showUndefinedInAlgebraView(boolean flag) {
+		showUndefinedInAlgebraView = flag;
+	}
+	
     public void set(GeoElement geo) { 
     	super.set(geo);
     	
