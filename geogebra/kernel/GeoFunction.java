@@ -1382,7 +1382,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	  * @param curve Curve to be stored to
 	  */
 	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {
-		 curve.setFunctionY((Function)fun.deepCopy(kernel));
+		 //we can't use fun directly here as we want this to work also with conditional functions
+		 curve.setFunctionY((Function)getFunction().deepCopy(kernel));
 		 Function varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
 		 curve.setFunctionX(varFun);
 		 double min = app.getEuclidianView().getXminForFunctions();
@@ -1400,15 +1401,19 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		}
 		FunctionVariable oldX = fun.getFunctionVariable();
 		ExpressionNode newX= new ExpressionNode(kernel,
-				new ExpressionNode(kernel,oldX,ExpressionNode.PLUS,new MyDouble(kernel,a*rd-a)),
-				ExpressionNode.DIVIDE,
-				r);
+				new MyDouble(kernel,1/rd),
+				ExpressionNode.MULTIPLY,
+				new ExpressionNode(kernel,oldX,ExpressionNode.PLUS,new MyDouble(kernel,a*rd-a)));
 		ExpressionNode oldY = fun.getExpression().replace(oldX, newX);
+		if(!isBooleanFunction()){
+			
+		
 		fun.setExpression(new ExpressionNode(kernel,
 				new ExpressionNode(kernel,oldY,ExpressionNode.MULTIPLY,r),
 				ExpressionNode.PLUS,
 				new MyDouble(kernel,-b*rd+b)));
-		
+		}else
+			fun.setExpression(oldY);
 	}
 	
 	/*

@@ -811,21 +811,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			return left.isConstant() && right.isConstant();
 	}
 
-	/* *
-	 * returns true, if all variables are angles (GeoAngle) or if a number
-	 * followed by '�' or "rad" was entered (e.g. 30� or 20 rad)
-	 * 
-	 * final public boolean isAngle() { // check if evaluation states that this
-	 * is an angle // get MyDouble of evaluation ExpressionValue ev =
-	 * evaluate(); if (ev instanceof MyDouble) { if (((MyDouble)ev).isAngle())
-	 * return true; } else return false; // only a number can be an angle
-	 * 
-	 * // all veriables must be angles GeoElement [] vars =
-	 * getGeoElementVariables(); if (vars == null || vars.length == 0) return
-	 * false; for (int i=0; i < vars.length; i++) { if (!(vars[i] instanceof
-	 * GeoAngle)) return false; } return true; }
-	 */
-
+	
 	/**
 	 * returns true, if no variable is a point (GeoPoint)
 	 */
@@ -1895,7 +1881,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 		case POWER:
 			/*
-			 * support for sin�(x) for display, too slow and hacky if
+			 * support for sin^2(x) for display, too slow and hacky if
 			 * (STRING_TYPE == STRING_TYPE_GEOGEBRA &&
 			 * leftStr.startsWith("sin(")) { //&& rightStr.equals("2")) { int
 			 * index; try { index = Integer.parseInt(rightStr); } catch
@@ -1909,7 +1895,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			 * }//
 			 */
 
-			// support for sin�(x) for LaTeX, eg FormulaText[]
+			// support for sin^2(x) for LaTeX, eg FormulaText[]
 			if (STRING_TYPE == STRING_TYPE_LATEX
 					&& (leftStr.startsWith("\\sin ") || leftStr
 							.startsWith("\\cos "))
@@ -3536,10 +3522,31 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		return new ExpressionNode(kernel,this,ExpressionNode.PLUS,v2);
 	}
 	public ExpressionNode multiply(ExpressionValue v2){
-		return new ExpressionNode(kernel,this,ExpressionNode.MULTIPLY,v2);
+		return new ExpressionNode(kernel,v2,ExpressionNode.MULTIPLY,this);
+	}
+	public ExpressionNode power(ExpressionValue v2){
+		return new ExpressionNode(kernel,this,ExpressionNode.POWER,v2);
 	}
 	public ExpressionNode divide(ExpressionValue v2){
 		return new ExpressionNode(kernel,this,ExpressionNode.DIVIDE,v2);
+	}
+	public ExpressionNode and(ExpressionValue v2){
+		return new ExpressionNode(kernel,this,ExpressionNode.AND,v2);
+	}
+	public ExpressionNode negation(){
+		if(operation==GREATER)
+			return new ExpressionNode(kernel,left,LESS_EQUAL,right);
+		if(operation==GREATER_EQUAL)
+			return new ExpressionNode(kernel,left,LESS,right);
+		if(operation==LESS)
+			return new ExpressionNode(kernel,left,GREATER_EQUAL,right);
+		if(operation==LESS_EQUAL)
+			return new ExpressionNode(kernel,left,GREATER,right);
+		if(operation==EQUAL_BOOLEAN)
+			return new ExpressionNode(kernel,left,NOT_EQUAL,right);
+		if(operation==NOT_EQUAL)
+			return new ExpressionNode(kernel,left,EQUAL_BOOLEAN,right);		
+		return new ExpressionNode(kernel,this,ExpressionNode.NOT,null);
 	}
 	
 

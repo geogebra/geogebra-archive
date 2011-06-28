@@ -12,8 +12,11 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 
@@ -210,6 +213,16 @@ public class GeoFunctionConditional extends GeoFunction {
 		ifFun.translate(vx, vy);	
 		if (elseFun != null)
 			elseFun.translate(vx, vy);			
+		uncondFun = null;
+	}
+	
+	public void dilate(NumberValue r, GeoPoint S) {
+		condFun.dilate(r, S);
+		
+		// translate if and else parts too
+		ifFun.dilate(r, S);	
+		if (elseFun != null)
+			elseFun.dilate(r, S);			
 		uncondFun = null;
 	}
 	
@@ -455,6 +468,63 @@ public class GeoFunctionConditional extends GeoFunction {
 		} else {
 			elseFun = null;
 		}
+	}
+
+	public String conditionalLaTeX(boolean substituteNumbers) {
+		StringBuilder sb = new StringBuilder();
+		
+		if (getElseFunction() == null && !ifFun.isGeoFunctionConditional()) {
+			sb.append(getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+			sb.append(" \\;\\;\\;\\; \\left(");
+			sb.append(getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+			sb.append(" \\right)");
+			
+		} else {			
+			ArrayList<ExpressionNode> cases, conditions;
+			cases = new ArrayList<ExpressionNode>();
+			conditions = new ArrayList<ExpressionNode>();
+			boolean complete = collectCases(cases,conditions,null);
+			sb.append("\\left\\{\\begin{array}{ll} ");
+			for(int i=0;i<cases.size();i++){
+				sb.append(cases.get(i).toLaTeXString(!substituteNumbers));
+				sb.append("& : ");				
+				if(i==cases.size()-1 && complete){										
+					sb.append("\\text{");
+					sb.append(app.getPlain("otherwise"));
+					sb.append("}");
+				} else {
+					sb.append(conditions.get(i).toLaTeXString(!substituteNumbers));
+					if(i!=cases.size()-1)sb.append("\\\\ ");
+				}
+			}
+			sb.append(" \\end{array}\\right. ");
+		}
+
+
+		return sb.toString();
+	}
+
+	private boolean collectCases(ArrayList<ExpressionNode> cases,
+			ArrayList<ExpressionNode> conditions,ExpressionNode parentCond) {
+		boolean complete = elseFun != null;
+		ExpressionNode positiveCond = parentCond == null?condFun.getFunctionExpression():
+			condFun.getFunctionExpression().and(parentCond);
+		ExpressionNode negativeCond = parentCond == null?condFun.getFunctionExpression().negation():
+			condFun.getFunctionExpression().negation().and(parentCond);
+		if(ifFun instanceof GeoFunctionConditional){
+			complete &= ((GeoFunctionConditional)ifFun).collectCases(cases, conditions, positiveCond);
+		}else{
+			cases.add(ifFun.getFunctionExpression());
+			conditions.add(positiveCond);
+		}
+		
+		if(elseFun instanceof GeoFunctionConditional){
+			complete &= ((GeoFunctionConditional)elseFun).collectCases(cases, conditions, negativeCond);
+		}else if(elseFun!=null){
+			cases.add(elseFun.getFunctionExpression());
+			conditions.add(negativeCond);
+		}
+		return complete;
 	}	
 	
 

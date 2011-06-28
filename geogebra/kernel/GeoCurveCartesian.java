@@ -202,7 +202,7 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	}
 	
 	
-	// added by Loïc Le Coq 2009/08/12
+	// added by Loic Le Coq 2009/08/12
 	/**
 	 * @return value string x-coord function
 	 */
@@ -215,7 +215,7 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	final public String getFunY(){
 		return funY.toValueString();
 	}
-	// end Loïc Le Coq
+	// end Loic Le Coq
 	
 	final public RealRootFunction getRealRootFunctionX() {
 		return funX;
@@ -697,9 +697,9 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	    		this.translate(-a, -b);
 	    		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
 	    		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
-	    		
+	    		MyDouble d2 = new MyDouble(kernel,2);
 	    		ExpressionNode sf=new ExpressionNode(kernel, new MyDouble(kernel,r*r),ExpressionNode.DIVIDE,
-	    				exprX.multiply(exprX).plus(exprY.multiply(exprY))
+	    				exprX.power(d2).plus(exprY.power(d2))
 	    				);
 	    		ExpressionNode transX = exprX.multiply(sf);
 	    		ExpressionNode transY = exprY.multiply(sf);

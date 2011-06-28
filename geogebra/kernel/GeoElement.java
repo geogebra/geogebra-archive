@@ -557,7 +557,7 @@ public abstract class GeoElement
 	/**
 	 * Returns label of GeoElement. If the label is null then
 	 * algoParent.getCommandDescription() or  toValueString() is returned.
-	 * @return geo's label
+	 * @return geo's label if set, command description otherwise
 	 */
 	public String getLabel() {
 		if (!labelSet && !localVarLabelSet) {
@@ -4926,30 +4926,7 @@ public abstract class GeoElement
 			ret = geoFun.toSymbolicString();
 			//Application.debug(ret);
 			} else if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
-
-				StringBuilder sb = new StringBuilder();
-				
-				if (geoFun.getElseFunction() == null) {
-					sb.append(geoFun.getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-					sb.append(" \\;\\;\\;\\; \\left(");
-					sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-					sb.append(" \\right)");
-					
-				} else {
-				
-					sb.append("\\left\\{ \\begin{array}{ll} ");
-					sb.append(geoFun.getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-					sb.append("& : ");
-					sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-					sb.append("\\\\ ");
-					sb.append(geoFun.getElseFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-					sb.append("& : \\text{");
-					sb.append(app.getPlain("otherwise"));
-					sb.append("} \\end{array} \\right. ");
-				}
-
-				ret = sb.toString();
-
+				ret = geoFun.conditionalLaTeX(substituteNumbers);								
 			}
 
 		} else if (this.isGeoFunction()) {
