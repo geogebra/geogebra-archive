@@ -115,7 +115,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	// stat and data panel objects
 	private JLabel statisticsHeader;
 	private JPanel statPanel;
-	private StatDataPanel dataPanel;
+	private DataPanel dataPanel;
 	private StatTable statTable;
 
 	// regression panel objects
@@ -295,7 +295,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		// Edited data is used by the statTable and statCombo panels. 
 		//================================================
 		if(mode != statDialog.MODE_MULTIVAR){
-			dataPanel = new StatDataPanel(app, this, dataListAll, mode);
+			dataPanel = new DataPanel(app, this, dataListAll, mode);
 			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		}
 

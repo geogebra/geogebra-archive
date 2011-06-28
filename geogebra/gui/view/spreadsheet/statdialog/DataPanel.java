@@ -45,7 +45,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-public class StatDataPanel extends JPanel implements ActionListener  {
+public class DataPanel extends JPanel implements ActionListener, StatPanelInterface  {
 	
 
 	private Application app;
@@ -75,7 +75,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 	/*************************************************
 	 * Construct a DataPanel
 	 */
-	public StatDataPanel(Application app, StatDialog statDialog, GeoList dataListAll, int mode){
+	public DataPanel(Application app, StatDialog statDialog, GeoList dataListAll, int mode){
 
 		this.app = app;	
 		kernel = app.getKernel();
@@ -439,9 +439,9 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		
 		//DefaultListModel model;
 		JTable table;
-		StatDataPanel dataPanel;
+		DataPanel dataPanel;
 
-		public MyRowHeader(StatDataPanel dataPanel, JTable table){
+		public MyRowHeader(DataPanel dataPanel, JTable table){
 			super(selectionList);
 			this.table = table;
 			this.dataPanel = dataPanel;
@@ -741,6 +741,19 @@ public static class CheckBoxIcon {
         	return icon;
         }
 
+}
+
+
+
+public void setLabels() {
+	// TODO Auto-generated method stub
+	
+}
+
+
+public void updatePanel(GeoList selectedData) {
+	// TODO Auto-generated method stub
+	
 }
 
 }

@@ -43,7 +43,7 @@ import javax.swing.event.ChangeListener;
  * @author G.Sturr
  * 
  */
-public class StatComboPanel extends JPanel implements ActionListener{
+public class StatComboPanel extends JPanel implements ActionListener, StatPanelInterface{
 
 	// ggb fields
 	private Application app;
@@ -96,7 +96,7 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	private TwoVarInferencePanel twoVarInferencePanel;
 	private OneVarInferencePanel oneVarInferencePanel;
 	private JPanel metaPlotPanel, northTitlePanel, southTitlePanel;
-	private PlotPanel plotPanel;
+	private PlotPanelEuclidianView plotPanel;
 	private ANOVAPanel anovaPanel;
 	private MultiVarStatPanel multiVarStatPanel;
 	private LinearRegressionPanel regressionPanel;
@@ -241,7 +241,7 @@ public class StatComboPanel extends JPanel implements ActionListener{
 
 		// create display panels 
 
-		plotPanel = new PlotPanel(app.getKernel());
+		plotPanel = new PlotPanelEuclidianView(app.getKernel());
 		//plotPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		//settings.plotPanel = plotPanel;
 
@@ -956,6 +956,20 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		}
 		//	p.setBackground(Color.white);
 		return p;
+	}
+
+
+
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

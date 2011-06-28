@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class StatTable extends JScrollPane {
+public class StatTable extends JScrollPane implements StatPanelInterface {
 
 	// ggb 
 	private Application app;
@@ -375,6 +375,12 @@ public class StatTable extends JScrollPane {
 		}
 
 
+	}
+
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

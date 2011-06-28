@@ -1,11 +1,13 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.kernel.GeoList;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -21,7 +23,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class StatDialogOptionsPanel extends JPanel implements  ActionListener{
+public class StatDialogOptionsPanel extends JPanel implements  ActionListener, StatPanelInterface{
 
 	private Application app;
 	private StatDialog statDialog;
@@ -99,6 +101,16 @@ public class StatDialogOptionsPanel extends JPanel implements  ActionListener{
 		cbShowData.setText(app.getMenu("ShowData"));
 		cbShowCombo2.setText(app.getMenu("ShowPlot2"));
 		cbShowStats.setText(app.getMenu("ShowStatistics"));
+	}
+
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

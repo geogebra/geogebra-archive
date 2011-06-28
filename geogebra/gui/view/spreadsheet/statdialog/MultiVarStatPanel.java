@@ -10,6 +10,7 @@ import geogebra.main.GeoGebraColorConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -24,7 +25,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-public class MultiVarStatPanel extends JPanel{
+public class MultiVarStatPanel extends JPanel implements StatPanelInterface{
 
 	private Application app;
 	private Kernel kernel;
@@ -152,5 +153,22 @@ public class MultiVarStatPanel extends JPanel{
 			setText((value == null) ? "" : value.toString());
 			return this;
 		}
+	}
+
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setLabels() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 }

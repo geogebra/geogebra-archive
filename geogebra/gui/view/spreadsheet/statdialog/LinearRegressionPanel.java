@@ -10,6 +10,7 @@ import geogebra.main.GeoGebraColorConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -30,7 +31,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-public class LinearRegressionPanel extends JPanel{
+public class LinearRegressionPanel extends JPanel implements StatPanelInterface{
 
 	private Application app;
 	private Kernel kernel;
@@ -142,5 +143,22 @@ public class LinearRegressionPanel extends JPanel{
 			setText((value == null) ? "" : value.toString());
 			return this;
 		}
+	}
+
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setLabels() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 }

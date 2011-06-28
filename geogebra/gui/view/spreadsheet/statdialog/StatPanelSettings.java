@@ -34,7 +34,7 @@ public class StatPanelSettings {
 		public double yMaxAuto = 0;
 		public double yIntervalAuto = 1;
 		
-		public PlotPanel plotPanel;
+		public PlotPanelEuclidianView plotPanel;
 		
 		public int stemAdjust = 0;
 

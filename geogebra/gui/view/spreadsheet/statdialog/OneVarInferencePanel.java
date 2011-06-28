@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -40,7 +41,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.JTextComponent;
 
-public class OneVarInferencePanel extends JPanel implements ActionListener {
+public class OneVarInferencePanel extends JPanel implements ActionListener,  StatPanelInterface {
 
 	private Application app;
 	private Kernel kernel;
@@ -296,6 +297,24 @@ public class OneVarInferencePanel extends JPanel implements ActionListener {
 
 		//	p.setBackground(Color.white);
 		return p;
+	}
+
+
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setLabels() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

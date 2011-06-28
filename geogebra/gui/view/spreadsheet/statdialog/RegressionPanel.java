@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet.statdialog;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -11,6 +12,7 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -27,7 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-public class RegressionPanel extends JPanel implements  ActionListener{
+public class RegressionPanel extends JPanel implements  ActionListener, StatPanelInterface{
 
 
 	private Application app;
@@ -349,6 +351,18 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

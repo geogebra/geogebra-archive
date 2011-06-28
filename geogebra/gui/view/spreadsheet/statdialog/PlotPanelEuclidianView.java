@@ -3,10 +3,12 @@ package geogebra.gui.view.spreadsheet.statdialog;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -22,7 +24,7 @@ import javax.swing.JPanel;
  * @author gsturr 2010-6-30
  *
  */
-public class PlotPanel extends EuclidianView implements ComponentListener {
+public class PlotPanelEuclidianView extends EuclidianView implements ComponentListener, StatPanelInterface {
 	
 	
 	private EuclidianController ec;
@@ -47,7 +49,7 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 	/*************************************************
 	 * Construct the panel
 	 */
-	public PlotPanel(Kernel kernel) {
+	public PlotPanelEuclidianView(Kernel kernel) {
 		super(new EuclidianController(kernel), showAxes, showGrid);
 		
 		this.ec = this.getEuclidianController();
@@ -199,6 +201,18 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 		setEVParams();
 	}
 	public void componentShown(ComponentEvent arg0) {
+	}
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void setLabels() {
+		// TODO Auto-generated method stub
+		
+	}
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

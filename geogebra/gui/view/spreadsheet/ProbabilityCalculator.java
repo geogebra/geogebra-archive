@@ -2,7 +2,7 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.GeoGebraIcon;
-import geogebra.gui.view.spreadsheet.statdialog.PlotPanel;
+import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
@@ -106,7 +106,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private JLabel[] lblParmeterArray;
 	private JComponent distPanel;
 	private JPanel probPanel;
-	private PlotPanel plotPanel;
+	private PlotPanelEuclidianView plotPanel;
 	private PlotSettings plotSettings;
 	private JLabel lblBetween;
 	private JPanel mainPanel;
@@ -229,7 +229,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 			// create the plot panel (extension of EuclidianView)
 			//======================================================
-			plotPanel = new PlotPanel(app.getKernel());
+			plotPanel = new PlotPanelEuclidianView(app.getKernel());
 			plotPanel.setMouseEnabled(true);
 			plotPanel.setMouseMotionEnabled(true);
 

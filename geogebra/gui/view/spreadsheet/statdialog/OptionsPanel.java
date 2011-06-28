@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
@@ -8,6 +9,7 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -32,7 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-public class OptionsPanel extends JPanel implements PropertyChangeListener, ActionListener, FocusListener{
+public class OptionsPanel extends JPanel implements PropertyChangeListener, ActionListener, FocusListener, StatPanelInterface{
 
 
 	private Application app;
@@ -483,6 +485,18 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 	public void focusLost(FocusEvent arg0) {
 		System.out.println("================== focus lost =======");
 
+	}
+
+
+	public void updateFonts(Font font) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void updatePanel(GeoList selectedData) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
