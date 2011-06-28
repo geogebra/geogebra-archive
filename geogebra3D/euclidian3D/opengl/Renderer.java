@@ -71,7 +71,7 @@ public class Renderer implements GLEventListener {
 	//public GLCanvas canvas;
 	public GLJPanel canvas;
 
-	private GLCapabilities caps;
+	//private GLCapabilities caps;
 	private GL2 gl;
 	private GLUquadric quadric;
 	private FPSAnimator animator;
@@ -154,10 +154,11 @@ public class Renderer implements GLEventListener {
 	public Renderer(EuclidianView3D view){
 		//super();
 		
+		/*
 		Application.debug("create gl renderer");
 		
 		
-	    caps = new GLCapabilities(GLProfile.getDefault());
+		GLCapabilities caps = new GLCapabilities(GLProfile.getDefault());
 	    
 	    
 	    //anti-aliasing
@@ -169,7 +170,7 @@ public class Renderer implements GLEventListener {
     	
         //stereo
     	Application.debug("stereo: "+caps.getStereo()); 
-    	
+    	*/
     	
     	/*
         caps.setAccumAlphaBits(16);
@@ -190,7 +191,7 @@ public class Renderer implements GLEventListener {
         canvas = new GLCanvas( glcapabilities ); 
 	    */
 		//GLProfile.initSingleton(true);
-		canvas = new GLJPanel(caps);
+		canvas = new JPanel3D();//new GLJPanel(caps);
         
         
 	    canvas.addGLEventListener(this);
@@ -424,8 +425,8 @@ public class Renderer implements GLEventListener {
         
         //init drawing matrix to view3D toScreen matrix
         gl.glPushMatrix();
-        gl.glMultMatrixd(view3D.getToScreenMatrix().get(),0);
-        //gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
+        //gl.glMultMatrixd(view3D.getToScreenMatrix().get(),0);
+        gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         
         
  
@@ -1228,7 +1229,7 @@ public class Renderer implements GLEventListener {
  
         setProjectionMatrix();
         //gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
-    	//gl.glMatrixMode(GLlocal.GL_MODELVIEW);
+    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
     	
         
     	
@@ -1252,8 +1253,8 @@ public class Renderer implements GLEventListener {
     	
         // set the scene matrix
     	gl.glPushMatrix();
-        gl.glMultMatrixd(view3D.getToScreenMatrix().get(),0);
-        
+        //gl.glMultMatrixd(view3D.getToScreenMatrix().get(),0);
+        gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         
 		// picking objects
         drawable3DLists.drawForPicking(this);
@@ -1666,14 +1667,18 @@ public class Renderer implements GLEventListener {
 
 		setProjectionMatrix();
 
-		
+
+    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
 		
 	}
 
 	
 	private void setProjectionMatrix(){
-		viewOrtho();
-		//viewPersp();
+		if (view3D.hasProjectionPerspective())
+			viewPersp();
+		else
+			viewOrtho();
+		
 		//viewEye();
 	}
    
@@ -1686,25 +1691,29 @@ public class Renderer implements GLEventListener {
 
     	gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
     	
-    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
-    	gl.glLoadIdentity();
     }
 
     
     private void viewPersp(){
-
-    	final float h = (float) (right-left) / (float) (top-bottom);
-        glu.gluPerspective(45.0f, h, 1, 1000.0);
-    	//gl.glTranslatef(0, 0, -500);
-        
-        gl.glMatrixMode(GLlocal.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        
-    	glu.gluLookAt(
-    			0,0,500, //eye position
-    			0,0,0, //look at position
-    			0,1,0); //up direction
     	
+    	//distance camera-near plane
+    	double near = 1000;
+    	//distance near plane-origin
+    	double d1 = -getFront(false);
+    	//distance camera-far plane
+    	double far = near+getBack(true)-getFront(true);
+    	//ratio so that distance on origin plane are not changed
+    	double distratio = 1/(d1/near+1);
+    	//double tangent = tan(fovY/2 * DEG2RAD);
+    	//frustum    	
+    	double left = getLeft()*distratio;
+    	double right = getRight()*distratio;
+    	double bottom = getBottom()*distratio;
+    	double top = getTop()*distratio;
+        //glu.gluPerspective(45.0f, h, 1, 1000.0);
+    	gl.glFrustum(left,right,bottom,top,near,far);
+    	gl.glTranslated(0, 0, getFront(false)-near);
+        
     	
     }
     

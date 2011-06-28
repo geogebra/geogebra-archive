@@ -3498,4 +3498,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return algoParent.getFreeInputPoints();
 	}
 	
+	
+	/////////////////////////////////////////////////
+	// PROJECTION (ORTHO/PERSPECTIVE)
+	/////////////////////////////////////////////////
+	
+	private boolean projectionPerspective = false;
+	
+	public void setProjectionPerspective(boolean flag){
+		projectionPerspective = flag;
+	}
+	
+	public boolean hasProjectionPerspective(){
+		return projectionPerspective;
+	}
+	
+	
 }
