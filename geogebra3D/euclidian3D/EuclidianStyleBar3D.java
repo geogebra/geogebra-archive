@@ -203,7 +203,7 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 				this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);	  
 			}
 		};		
-		btnViewPerspective.setIcon(app.getImageIcon("stylebar_rotateview.gif"));
+		btnViewPerspective.setIcon(app.getImageIcon("stylebar_viewperspective.gif"));
 		btnViewPerspective.getMySlider().setMinimum(0);
 		btnViewPerspective.getMySlider().setMaximum(60);
 		btnViewPerspective.getMySlider().setMajorTickSpacing(45);
@@ -213,6 +213,7 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		btnViewPerspective.getMySlider().setPaintTrack(true);
 		btnViewPerspective.getMySlider().setSnapToTicks(true);
 		btnViewPerspective.setSliderValue(45);
+		((EuclidianView3D) ev).setProjectionPerspectiveValue(45);
 		btnViewPerspective.addActionListener(this);
 		
 	}	
