@@ -27,9 +27,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.optimization.NegativeRealRootFunction;
 import geogebra.kernel.roots.RealRootFunction;
-import geogebra.kernel.statistics.AlgoMedian;
-import geogebra.kernel.statistics.AlgoQ1;
-import geogebra.kernel.statistics.AlgoQ3;
 import geogebra.main.Application;
 
 
@@ -84,13 +81,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	/** Histogram from(class boundaries, raw data) with given density **/
 	public static final int TYPE_HISTOGRAM_DENSITY = 22;
 	
-	
-	/** Boxplot**/
-	public static final int TYPE_BOXPLOT = 30;
-	/** Boxplot from raw data**/
-	public static final int TYPE_BOXPLOT_RAWDATA = 31;
-	
-	
+		
 	/** barchart of a discrete probability distribution **/
 	public static final int TYPE_BARCHART_BINOMIAL = 40;
 	public static final int TYPE_BARCHART_PASCAL = 41;
@@ -127,9 +118,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 
 	private NumberValue d;  // input: divider for Rectangle sum, 0..1
-	private GeoList list1, list2; // input
-	private GeoList tempList;
-	private GeoElement ageo, bgeo, ngeo, dgeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, 
+	private GeoList list1, list2; // input	
+	private GeoElement ageo, bgeo, ngeo, dgeo,  
 	                   widthGeo, densityGeo, useDensityGeo, isCumulative, p1geo, p2geo, p3geo;
 	/**
 	 * @return the densityGeo
@@ -559,99 +549,6 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	
 	
 			
-	/**
-	 *  BOXPLOT
-	 * @param cons
-	 * @param label
-	 * @param min
-	 * @param Q1
-	 * @param median
-	 * @param Q3
-	 * @param max
-	 * @param a
-	 * @param b
-	 */
-	public AlgoFunctionAreaSums(Construction cons, String label,  
-			NumberValue min, NumberValue Q1,
-			NumberValue median, NumberValue Q3, NumberValue max, NumberValue a, NumberValue b) {
-		
-		super(cons);
-		
-		type = TYPE_BOXPLOT;
-		
-		this.a=a;
-		this.b=b;
-		ageo = a.toGeoElement();
-		bgeo = b.toGeoElement(); 
-		minGeo = min.toGeoElement();
-		Q1geo = Q1.toGeoElement();
-		medianGeo = median.toGeoElement();
-		Q3geo = Q3.toGeoElement();
-		maxGeo = max.toGeoElement();
-
-		
-		sum = new GeoNumeric(cons); // output
-		//sum.setLabelVisible(false);
-		setInputOutput(); // for AlgoElement	
-		compute();
-		sum.setLabel(label);
-		sum.setDrawable(true);
-	}
-	
-	public AlgoFunctionAreaSums( 
-			NumberValue min, NumberValue Q1,
-			NumberValue median, NumberValue Q3, NumberValue max, NumberValue a, NumberValue b) {
-				
-		this.a=a;
-		this.b=b;
-		ageo = a.toGeoElement();
-		bgeo = b.toGeoElement(); 
-		minGeo = min.toGeoElement();
-		Q1geo = Q1.toGeoElement();
-		medianGeo = median.toGeoElement();
-		Q3geo = Q3.toGeoElement();
-		maxGeo = max.toGeoElement();
-	}
-
-	/**
-	 *  BOXPLOT (raw data)
-	 * @param cons
-	 * @param label
-	 * @param list1
-	 * @param a
-	 * @param b
-	 */
-	public AlgoFunctionAreaSums(Construction cons, String label,  
-			GeoList list1, NumberValue a, NumberValue b) {
-		
-		super(cons);
-		
-		type = TYPE_BOXPLOT_RAWDATA;
-		
-		this.a=a;
-		this.b=b;
-		ageo = a.toGeoElement();
-		bgeo = b.toGeoElement(); 
-		this.list1 = list1;
-
-		
-		sum = new GeoNumeric(cons); // output
-		//sum.setLabelVisible(false);
-		setInputOutput(); // for AlgoElement	
-		compute();
-		sum.setLabel(label);
-		sum.setDrawable(true);
-	}
-	
-	public AlgoFunctionAreaSums(  
-			GeoList list1, NumberValue a, NumberValue b) {
-
-		type = TYPE_BOXPLOT_RAWDATA;
-		
-		this.a=a;
-		this.b=b;
-		this.list1 = list1;		
-	}
 	
 
 	/**
@@ -800,22 +697,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				}
 			}
 			break;
-		case TYPE_BOXPLOT:
-			input = new GeoElement[7];
-			input[0] = ageo;		
-			input[1] = bgeo;		
-			input[2] = minGeo;		
-			input[3] = Q1geo;		
-			input[4] = medianGeo;		
-			input[5] = Q3geo;		
-			input[6] = maxGeo;		
-			break;
-		case TYPE_BOXPLOT_RAWDATA:
-			input = new GeoElement[3];
-			input[0] = ageo;		
-			input[1] = bgeo;		
-			input[2] = list1;		
-			break;
+		
 			
 		case TYPE_BARCHART_BINOMIAL:
 		case TYPE_BARCHART_PASCAL:
@@ -888,16 +770,16 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	}
 	
 	/**
-	 * Returns lower bound for sums and y-offset for boxplots
-	 * @return lower bound for sums and y-offset for boxplots
+	 * Returns lower bound for sums
+	 * @return lower bound for sums
 	 */
 	public NumberValue getA() {
 		return a == null ? new MyDouble(kernel,Double.NaN):a;
 	}
 	
 	/**
-	 * Returns upper bound for sums and y-scale for boxplots
-	 * @return upper bound for sums and y-scale for boxplots
+	 * Returns upper bound for sums
+	 * @return upper bound for sums
 	 */
 	public NumberValue getB() {
 		return b == null ? new MyDouble(kernel,Double.NaN):b;
@@ -920,8 +802,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	}
 	
 	/**
-	 * Returns list of raw data for boxplot
-	 * @return list of raw data for boxplot
+	 * Returns list of raw data
+	 * @return list of raw data
 	 */
 	public GeoList getList1(){
 		return list1;
@@ -935,46 +817,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		return list2;
 	}
 	
-	/**
-	 * Returns minimum
-	 * @return minimum
-	 */
-	public GeoElement getMinGeo() {
-		return minGeo;
-	}
-
-	/**
-	 * Returns maximum
-	 * @return maximum
-	 */
-	public GeoElement getMaxGeo() {
-		return maxGeo;
-	}
-
-	/**
-	 * Returns Q1
-	 * @return Q1
-	 */
-	public GeoElement getQ1geo() {
-		return Q1geo;
-	}
-
-	/**
-	 * Returns Q3
-	 * @return Q3
-	 */
-	public GeoElement getQ3geo() {
-		return Q3geo;
-	}
-
-	/**
-	 * Returns median
-	 * @return median
-	 */
-	public GeoElement getMedianGeo() {
-		return medianGeo;
-	}
-
+	
 	protected final void compute() {	
 		GeoElement geo; // temporary variable	
 		
@@ -1726,75 +1569,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			
 			break;
 			
-		case TYPE_BOXPLOT_RAWDATA:
-			
-			// list1 = rawData
-			if (tempList == null) tempList = new GeoList(cons);
-			tempList.clear();
-			AlgoListMin min2 = new AlgoListMin(cons,list1);
-			cons.removeFromConstructionList(min2);
-			tempList.add(min2.getMin());
-			AlgoQ1 Q1 = new AlgoQ1(cons,list1);
-			cons.removeFromConstructionList(Q1);
-			tempList.add(Q1.getQ1());
-			AlgoMedian median = new AlgoMedian(cons,list1);
-			cons.removeFromConstructionList(median);
-			tempList.add(median.getMedian());
-			AlgoQ3 Q3 = new AlgoQ3(cons,list1);
-			cons.removeFromConstructionList(Q3);
-			tempList.add(Q3.getQ3());
-			AlgoListMax max = new AlgoListMax(cons,list1);
-			cons.removeFromConstructionList(max);
-			tempList.add(max.getMax());
-
-			N=5;
-			
-			calcBoxPlot();
-				
-			break;
-			
-		case TYPE_BOXPLOT:
-
-		if (tempList == null) tempList = new GeoList(cons);
-		tempList.clear();
-		tempList.add(minGeo);
-		tempList.add(Q1geo);
-		tempList.add(medianGeo);
-		tempList.add(Q3geo);
-		tempList.add(maxGeo);
-		
-		N=5;
-
-		calcBoxPlot();
-		
-		break;
-		}
+				}
 	}
 	
-	private void calcBoxPlot() {
-		if (yval == null || yval.length < N) {
-			yval = new double[N];
-			leftBorder = new double[N];
-		}				
 		
-		for (int i=0; i < N; i++) {
-			
-			GeoElement geo = tempList.get(i);
-			//if (i == 0) {
-			//	if (geo.isNumberValue()) b = (NumberValue)geo; // dummy value, not used
-			//	else { sum.setUndefined(); return; }
-			//}
-			if (geo.isGeoNumeric())	leftBorder[i] = ((GeoNumeric)geo).getDouble(); 
-			else { sum.setUndefined(); return; }
-			
-			yval[i] = 1.0; // dummy value
-			
-			
-		}
-
-		sum.setValue(leftBorder[2]);	 // median
-	}
-	
 	public String toString() {
 		return getCommandDescription();
 	}
@@ -1836,22 +1614,6 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		return type;
 	}
 	
-	/**
-	 * Returns true iff this is boxplot
-	 * @return true iff this is boxplot
-	 */
-	public boolean isBoxPlot() {
-		switch (type)
-		{
-		case TYPE_BOXPLOT:
-		case TYPE_BOXPLOT_RAWDATA:
-			return true;
-		default :
-			return false;
-		}
-	}
-	
-
 	/**
 	 * Prepares list1 and list2 for use with probability distribution bar charts
 	 */

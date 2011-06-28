@@ -16,6 +16,7 @@ import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableList.DrawableIterator;
+import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoIntegralDefinite;
@@ -407,7 +408,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected int pointCapturingMode; // snap to grid points
 
-	// added by Lo�c BEGIN
+	// added by Loic BEGIN
 	// right angle
 	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 
@@ -617,7 +618,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// showGrid = false;
 		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
 
-		// added by Lo�c BEGIN
+		// added by Loic BEGIN
 		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 		// END
 			
@@ -770,7 +771,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return pointStyle;
 	}
 
-	// added by Lo�c BEGIN
+	// added by Loic BEGIN
 	/**
 	 * Sets the global style for rightAngle drawing.
 	 */
@@ -3541,6 +3542,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				d = new DrawIntegralFunctions(this, (GeoNumeric) geo);
 			} else if (algo instanceof AlgoFunctionAreaSums) {
 				d = new DrawUpperLowerSum(this, (GeoNumeric) geo);
+			}
+			else if (algo instanceof AlgoBoxPlot) {
+				d = new DrawBoxPlot(this, (GeoNumeric) geo);
 			}
 			if (d != null) {
 				if (!geo.isColorSet()) {

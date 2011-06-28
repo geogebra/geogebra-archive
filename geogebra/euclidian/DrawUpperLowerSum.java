@@ -36,7 +36,7 @@ public class DrawUpperLowerSum extends Drawable {
     private double [] coords = new double[2];
     private boolean trapeziums;
     private boolean histogram;
-    private boolean boxplot, barchartFreqs, barchartFreqsWidth;
+    private boolean barchartFreqs, barchartFreqsWidth;
    
     /**
      * Creates graphical representation of the sum / barchart /...
@@ -57,8 +57,7 @@ public class DrawUpperLowerSum extends Drawable {
     private void init() {
     	algo = (AlgoFunctionAreaSums) geo.getDrawAlgorithm();    	
 		this.trapeziums = algo.useTrapeziums();
-		this.histogram = algo.isHistogram();
-		this.boxplot = algo.isBoxPlot();
+		this.histogram = algo.isHistogram();		
 		this.barchartFreqs = algo.getType() == AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE;
 		this.barchartFreqsWidth = algo.getType() == AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE_WIDTH;
         a = algo.getA();
@@ -75,13 +74,7 @@ public class DrawUpperLowerSum extends Drawable {
 		
 		if (gp == null)
 			gp = new GeneralPathClipped(view);
-		
-		if (boxplot)
-		{
-			updateBoxPlot();
-			return;
-		}
-		
+				
 		if (barchartFreqs || histogram)
 		{
 			updateBarChart();
@@ -162,107 +155,7 @@ public class DrawUpperLowerSum extends Drawable {
 		}
     }
 
-    private void updateBoxPlot()
-    {
-		// init gp
-		gp.reset();
-		double yOff = a.getDouble();
-		double yScale = b.getDouble();
-	
-		// plot upper/lower sum rectangles
-		double [] leftBorder = algo.getLeftBorders();
-		
-		coords[0] = leftBorder[0];						
-		coords[1] = -yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.moveTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[0];						
-		coords[1] = yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[0];						
-		coords[1] = 0 + yOff;
-		view.toScreenCoords(coords);
-		gp.moveTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[1];						
-		coords[1] = 0 + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[1];						
-		coords[1] = yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[3];						
-		coords[1] = yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[3];						
-		coords[1] = -yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[1];						
-		coords[1] = -yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[1];						
-		coords[1] = 0 + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[3];						
-		coords[1] = 0 + yOff;
-		view.toScreenCoords(coords);
-		gp.moveTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[4];						
-		coords[1] = 0 + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[4];						
-		coords[1] = yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.moveTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[4];						
-		coords[1] = -yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[2];						
-		coords[1] = yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.moveTo((double)coords[0], (double)coords[1]);
-			
-		coords[0] = leftBorder[2];						
-		coords[1] = -yScale + yOff;
-		view.toScreenCoords(coords);
-		gp.lineTo((double)coords[0], (double)coords[1]);
-			
-
-		// gp on screen?		
-		if (!gp.intersects(0,0, view.width, view.height)) {				
-			isVisible = false;
-        	// don't return here to make sure that getBounds() works for offscreen points too
-		}		
-
-		if (labelVisible) {
-			xLabel = (int)coords[0];
-			yLabel = (int)coords[1] - view.fontSize;
-			labelDesc = geo.getLabelDescription();
-			addLabelOffset();
-		}
     
-
-    }
     private void updateBarChart() {
 		gp.reset();
 		double base = (double) view.yZero;
