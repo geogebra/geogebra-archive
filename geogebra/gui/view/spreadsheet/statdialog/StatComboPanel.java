@@ -727,7 +727,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 		case PLOT_ONEVAR_INFERENCE:
-			oneVarInferencePanel.updateOneVarPanel();
+			oneVarInferencePanel.updatePanel(dataListSelected);
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "oneVarInferencePanel");
 			optionsButton.setVisible(false);
 			//	if(hasControlPanel)

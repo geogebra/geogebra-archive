@@ -229,23 +229,26 @@ public class StatTable extends JScrollPane implements StatPanelInterface {
 	}
 
 
-
-
 	public void updateFonts(Font font) {
+		
+	}
 
-		int size = font.getSize();
-		if (size < 12) size = 12; // minimum size
-		double multiplier = (size)/12.0;
+	public void setFont(Font font) {
 
-		statTable.setFont(font);  
-		rowHeader.setFont(font);
-		int h = statTable.getCellRenderer(0,0).getTableCellRendererComponent(statTable, "X",
-				false, false, 0, 0).getPreferredSize().height; 
-		statTable.setRowHeight(h);
-		rowHeader.setFixedCellHeight(h);
+		super.setFont(font);
+		if(statTable != null){
+			statTable.setFont(font);  
+			rowHeader.setFont(font);
+			int h = statTable.getCellRenderer(0,0).getTableCellRendererComponent(statTable, "X",
+					false, false, 0, 0).getPreferredSize().height; 
+			statTable.setRowHeight(h);
+			rowHeader.setFixedCellHeight(h);
+			rowHeader.repaint();
+			statTable.repaint();
 
-		//preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
-		//columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+			//preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
+			//columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
+		}
 
 	}
 

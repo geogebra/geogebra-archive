@@ -19,6 +19,8 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -48,7 +50,6 @@ import javax.swing.JToggleButton;
 
 public class StatDialog extends JDialog  implements ActionListener, View, Printable   {
 
-
 	// ggb 
 	private Application app;
 	private Kernel kernel; 
@@ -58,13 +59,11 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private StatDialog statDialog;	
 	private StatGeo statGeo;
 
-
 	// modes
 	public static final int MODE_ONEVAR = 0;
 	public static final int MODE_REGRESSION = 1;
 	public static final int MODE_MULTIVAR = 2;
 	private int mode;
-
 
 	// data collections
 	private GeoElement geoRegression;
@@ -72,7 +71,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	private ArrayList<String> dataTitles ;
 	private Object dataSource;
-
 
 	// flags
 	private boolean showDataPanel = false;
@@ -90,7 +88,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public static final Color DOTPLOT_COLOR = new Color(0,204,204); // blue-green   
 	public static final Color REGRESSION_COLOR = Color.RED;    
 
-
 	// regression types
 	public static final int REG_NONE = 0;
 	public static final int REG_LINEAR = 1;
@@ -106,7 +103,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private int regressionOrder = 2;
 	private String[] regressionLabels, regCmd;
 	private String regEquation;
-
 
 	// oneVar title panel objects
 	private JLabel lblOneVarTitle;
@@ -128,7 +124,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private MyTextField fldInputX;
 	private JLabel lblOutputY;
 
-
 	// plot display objects 
 	private StatComboPanel comboStatPanel, comboStatPanel2;;
 
@@ -136,7 +131,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private JButton btnClose, btnPrint;
 	private PopupMenuButton btnOptions;
 	private StatDialogOptionsPanel dialogOptionsPanel;
-
 
 	// main GUI panel objects
 	private JSplitPane statDataPanel, displayPanel, comboPanelSplit; 
@@ -146,7 +140,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private NumberFormat nf;
 	private int numDigits = 4;
 	
-
 
 
 	//=================================
@@ -742,18 +735,25 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		btnPrint.setText(app.getMenu("Print"));	
 		btnOptions.setText(app.getMenu("Options"));
 
-		comboStatPanel.setLabels();
-		comboStatPanel2.setLabels();
-
-		dialogOptionsPanel.setLabels();
-		if(statTable != null)
-			statTable.setLabels();
-		statTable.repaint();
+		setLabelsRecursive(this.getContentPane()); 
 		
-
 	}
 
-
+	
+	public void setLabelsRecursive(Container c) {
+		
+	    Component[] components = c.getComponents();
+	    for(Component com : components) {
+	    	if(com instanceof StatPanelInterface){
+	    		System.out.println(c.getClass().getSimpleName());
+	    		((StatPanelInterface)com).setLabels();
+	    	}
+	    	else if(com instanceof Container) 
+	        	setLabelsRecursive((Container) com);
+	    }
+	}
+	
+	
 
 	private JPanel createOneVarTitlePanel(){
 
@@ -901,6 +901,9 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			displayPanel.setLeftComponent(null);
 			displayPanel.setDividerSize(0);
 		}
+		
+		setLabels();
+		updateFonts();
 	}
 
 
@@ -922,8 +925,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		else if(source == btnPrint){
 			new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
 		}
-
-
 
 		btnClose.requestFocus();
 	}
@@ -1018,32 +1019,30 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public void updateFonts() {
 
 		Font font = app.getPlainFont();
+		setFont(font);
+		setFontRecursive(this.getContentPane(),font);
 
-		int size = font.getSize();
-		if (size < 12) size = 12; // minimum size
-		double multiplier = (size)/12.0;
-
-		switch(mode){
-		case MODE_ONEVAR:
-			lblOneVarTitle.setFont(font);
-			statisticsHeader.setFont(font);
-			break;
-		case MODE_REGRESSION:
-			statisticsHeader.setFont(font);
-			regressionPanel.setFont(font);
-			break;
-		}
-
-		btnClose.setFont(font);
-		btnPrint.setFont(font);
-		btnOptions.setFont(font);
-		
-		if(mode != MODE_MULTIVAR){
-			dataPanel.updateFonts(font);
-			statTable.updateFonts(font);
-		}
 	}
 
+	
+	
+	public void setFontRecursive(Container c, Font font) {
+	    Component[] components = c.getComponents();
+	    for(Component com : components) {
+	    	com.setFont(font);
+	        if(com instanceof Container) 
+	            setFontRecursive((Container) com, font);
+	    }
+	    this.pack();
+	}
+	
+	
+	
+	
+	
+	
+	
+		
 	/**
 	 * Removes all geos maintained by this dialog and its child components
 	 */

@@ -9,37 +9,25 @@ import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.text.JTextComponent;
 
 public class OneVarInferencePanel extends JPanel implements ActionListener,  StatPanelInterface {
 
@@ -85,7 +73,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 	}
 
 
-	public void updateOneVarPanel(){
+	public void updatePanel(GeoList selectedData){
 
 		String P = app.getMenu("PValue");
 		String t = app.getMenu("TStatistic");
@@ -121,37 +109,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 
 		taResult.setText(testSB.toString());
 
-		nullHypName = new String[3];
-		nullHypName[MODE_ZTEST] = app.getMenu("HypothesizedMean.short");
-		nullHypName[MODE_TTEST] = app.getMenu("HypothesizedMean.short");
 		
-		
-		String[] procedureName = new String[7];
-
-		procedureName[MODE_ZTEST] = app.getMenu("ZMeanTest");
-		procedureName[MODE_TTEST] = app.getMenu("TMeanTest");
-		procedureName[MODE_ZINT] = app.getMenu("ZMeanInterval");
-		procedureName[MODE_TINT] = app.getMenu("TMeanInterval");
-	
-
-		DefaultComboBoxModel model = new DefaultComboBoxModel(procedureName);
-		cbProcedure.setModel(model);
-
-		lblNull.setText(app.getMenu("NullHypothesis") + ": ");
-		lblTailType.setText(app.getMenu("AlternativeHypothesis") + ": ");
-
-		
-		lblIntLevel.setText(app.getMenu("ConfidenceLevel") + ": ");
-
-		cbIntOptions.removeAllItems();
-		cbIntOptions.addItem("90%");
-		cbIntOptions.addItem("95%");
-		cbIntOptions.addItem("98%");
-		cbIntOptions.addItem("99%");
-		cbIntOptions.addItem("99.9%");
-
-		btnCalcTest.setText(app.getMenu("Calculate"));
-		resultPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Result")));
 
 	}
 
@@ -174,14 +132,17 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 		lblNull = new JLabel();
 		lblHypParameter = new JLabel();
 		lblTailType = new JLabel();
-
+		
 		fldNullHyp = new MyTextField(app.getGuiManager());
 		fldNullHyp.setColumns(4);
-
+		
 		lblIntLevel = new JLabel();
 		cbIntOptions = new JComboBox();
 		cbIntOptions.addActionListener(this);
 
+		
+		
+		
 		btnCalcTest = new JButton();
 
 		taResult = new JTextArea();
@@ -202,7 +163,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 
 		cardProcedure = new JPanel(new CardLayout());
 		cardProcedure.add("testPanel", testPanel);
-		cardProcedure.add("intPanel", intPanel);
+		cardProcedure.add("intervalPanel", intPanel);
 
 		((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "testPanel");
 
@@ -222,7 +183,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "testPanel");
 			lblHypParameter.setText(nullHypName[mode] + " = " );
 		} else{
-			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "intPanel");
+			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "intervalPanel");
 		}
 		
 	}
@@ -302,20 +263,46 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 
 	public void updateFonts(Font font) {
 		// TODO Auto-generated method stub
-		
+	
 	}
-
+	
 
 	public void setLabels() {
-		// TODO Auto-generated method stub
+		
+		nullHypName = new String[2];
+		nullHypName[MODE_ZTEST] = app.getMenu("HypothesizedMean.short");
+		nullHypName[MODE_TTEST] = app.getMenu("HypothesizedMean.short");
+		
+		
+		String[] procedureName = new String[4];
+		procedureName[MODE_ZTEST] = app.getMenu("ZMeanTest");
+		procedureName[MODE_TTEST] = app.getMenu("TMeanTest");
+		procedureName[MODE_ZINT] = app.getMenu("ZMeanInterval");
+		procedureName[MODE_TINT] = app.getMenu("TMeanInterval");
+	
+
+		DefaultComboBoxModel model = new DefaultComboBoxModel(procedureName);
+		cbProcedure.setModel(model);
+
+		lblNull.setText(app.getMenu("NullHypothesis") + ": ");
+		lblTailType.setText(app.getMenu("AlternativeHypothesis") + ": ");
+
+		lblIntLevel.setText(app.getMenu("ConfidenceLevel") + ": ");
+
+		cbIntOptions.removeAllItems();
+		cbIntOptions.addItem("90%");
+		cbIntOptions.addItem("95%");
+		cbIntOptions.addItem("98%");
+		cbIntOptions.addItem("99%");
+		cbIntOptions.addItem("99.9%");
+
+		btnCalcTest.setText(app.getMenu("Calculate"));
+		resultPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Result")));
 		
 	}
 
 
-	public void updatePanel(GeoList selectedData) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 
