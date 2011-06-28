@@ -28,6 +28,8 @@
  *************************************************************************/
 package org.mathpiper.mpreduce;
 
+import geogebra.main.Application;
+
 import java.applet.Applet;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
@@ -128,6 +130,8 @@ public class Interpreter2 extends Applet {
         }
 
         send = send + "\n";
+        
+        System.err.println("Expression for MPReduce "+send);
 
         this.sendString = send;
 
@@ -143,6 +147,8 @@ public class Interpreter2 extends Applet {
         String responseString = this.inputBuffer.toString();
 
         inputBuffer.delete(0, inputBuffer.length());
+        
+        System.err.println(responseString);
 
         return responseString;
 
