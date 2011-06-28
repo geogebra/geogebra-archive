@@ -271,7 +271,7 @@ public class AlgebraProcessor {
 		} catch (Exception ex) {
 			Application.debug("Exception");
 			ex.printStackTrace();
-			throw new Exception("InvalidInput" + ":\n" + ex.getLocalizedMessage());
+			throw new Exception(app.getError("Error") + ":\n" + ex.getLocalizedMessage());
 		}
 		return geoElements;
 	}
