@@ -102,8 +102,10 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		}else if (source.equals(btnViewYZ)) {
 			((EuclidianView3D) ev).setRotAnimation(0,0,true);
 		}else if (source.equals(btnViewPerspective)) {
-			if (btnViewPerspective.getMySlider().isShowing()){//if slider is showing, start rotation
-				Application.debug(btnViewPerspective.getSliderValue());
+			if (btnViewPerspective.getMySlider().isShowing()){//if slider is showing, start perspective
+				((EuclidianView3D) ev).setProjectionPerspectiveValue(btnViewPerspective.getSliderValue());
+				((EuclidianView3D) ev).setProjectionPerspective(true);
+				//Application.debug(btnViewPerspective.getSliderValue());
 			}else{//if button has been clicked, toggle perspective/orthographic
 				if (((EuclidianView3D) ev).hasProjectionPerspective()){
 					//Application.debug("to orthographic");
@@ -195,7 +197,7 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		btnViewYZ.addActionListener(this);	
 		
 		//========================================
-		// rotate view button
+		// perspective view button
 		btnViewPerspective = new PopupMenuButton(app, null, -1, -1, null, -1,  false,  true){
 			public void update(Object[] geos) {
 				this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);	  
@@ -203,14 +205,14 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		};		
 		btnViewPerspective.setIcon(app.getImageIcon("stylebar_rotateview.gif"));
 		btnViewPerspective.getMySlider().setMinimum(0);
-		btnViewPerspective.getMySlider().setMaximum(20);
-		btnViewPerspective.getMySlider().setMajorTickSpacing(10);
-		btnViewPerspective.getMySlider().setMinorTickSpacing(1);
+		btnViewPerspective.getMySlider().setMaximum(60);
+		btnViewPerspective.getMySlider().setMajorTickSpacing(45);
+		btnViewPerspective.getMySlider().setMinorTickSpacing(5);
 		btnViewPerspective.getMySlider().setPaintTicks(true);
-		//btnRotateView.getMySlider().setPaintLabels(true);
+		btnViewPerspective.getMySlider().setPaintLabels(false);
 		btnViewPerspective.getMySlider().setPaintTrack(true);
 		btnViewPerspective.getMySlider().setSnapToTicks(true);
-		btnViewPerspective.setSliderValue(5);
+		btnViewPerspective.setSliderValue(45);
 		btnViewPerspective.addActionListener(this);
 		
 	}	

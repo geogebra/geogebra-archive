@@ -8,7 +8,6 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
@@ -19,8 +18,8 @@ import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoPolyLine;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.kernelND.GeoConicND;
@@ -33,7 +32,6 @@ import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterCursor;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 import geogebra3D.kernel3D.GeoElement3D;
@@ -46,7 +44,6 @@ import geogebra3D.kernel3D.GeoSurfaceCartesian3D;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -83,7 +80,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	protected Application app;
 	private EuclidianController3D euclidianController3D;
 	private Renderer renderer;
-	private RendererFreezingPanel freezingPanel;
 	
 	//viewing values
 	private double XZero = 0;
@@ -281,20 +277,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		renderer.setDrawable3DLists(drawable3DLists);
 		
 		
-
-		freezingPanel = new RendererFreezingPanel(renderer);
-		//add(BorderLayout.CENTER, freezingPanel);
-		freezingPanel.setVisible(true);
+		
+        //JPanel canvas = this;
 		
         JPanel canvas = renderer.canvas;
-		
-
-        
-
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, canvas);
-		//addRendererCanvas();
-
+		
 		
 		
 		attachView();
@@ -3505,12 +3494,24 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	private boolean projectionPerspective = false;
 	
+	
 	public void setProjectionPerspective(boolean flag){
 		projectionPerspective = flag;
 	}
 	
 	public boolean hasProjectionPerspective(){
 		return projectionPerspective;
+	}
+	
+	/**
+	 * set the near distance regarding the angle (in degrees)
+	 * @param angle
+	 */
+	public void setProjectionPerspectiveValue(double angle){
+		if (angle<5)
+			renderer.setNear(0);
+		else
+			renderer.setNear(1/Math.tan(Math.toRadians(angle/2)));
 	}
 	
 	

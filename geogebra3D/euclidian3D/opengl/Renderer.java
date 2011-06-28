@@ -152,47 +152,10 @@ public class Renderer implements GLEventListener {
 	 * @param view the {@link EuclidianView3D} linked to 
 	 */
 	public Renderer(EuclidianView3D view){
-		//super();
-		
-		/*
-		Application.debug("create gl renderer");
 		
 		
-		GLCapabilities caps = new GLCapabilities(GLProfile.getDefault());
-	    
-	    
-	    //anti-aliasing
-    	caps.setSampleBuffers(true);caps.setNumSamples(4);    	
-    	//caps.setSampleBuffers(false);
-       
-        //avoid flickering
-    	caps.setDoubleBuffered(true);	  
-    	
-        //stereo
-    	Application.debug("stereo: "+caps.getStereo()); 
-    	*/
-    	
-    	/*
-        caps.setAccumAlphaBits(16);
-        caps.setAccumBlueBits(16);
-        caps.setAccumGreenBits(16);
-        caps.setAccumRedBits(16);
-    	*/
-    	
-    	//canvas
-	    //canvas = new GLCanvas(caps);
-		//GLProfile.initSingleton(false);
-	    //canvas = new GLCanvas();
-	    //canvas = new GLCanvas(new GLCapabilities(GLProfile.getDefault()));
-	    //canvas = new GLJPanel(caps);
-		/*
-		GLProfile glprofile = GLProfile.get(GLProfile.GL3);
-        GLCapabilities glcapabilities = new GLCapabilities( glprofile );
-        canvas = new GLCanvas( glcapabilities ); 
-	    */
-		//GLProfile.initSingleton(true);
-		canvas = new JPanel3D();//new GLJPanel(caps);
-        
+		//canvas = view;
+        canvas = new JPanel3D();
         
 	    canvas.addGLEventListener(this);
 	    
@@ -1674,9 +1637,12 @@ public class Renderer implements GLEventListener {
 
 	
 	private void setProjectionMatrix(){
-		if (view3D.hasProjectionPerspective())
-			viewPersp();
-		else
+		if (view3D.hasProjectionPerspective()){
+			if (near==0)
+				viewOrtho();
+			else
+				viewPersp();
+		}else
 			viewOrtho();
 		
 		//viewEye();
@@ -1694,30 +1660,37 @@ public class Renderer implements GLEventListener {
     }
 
     
+    private double near = 0;
+    //private double distratio;
+    
+    public void setNear(double val){
+    	near = val;
+    	
+    }
+    
     private void viewPersp(){
     	
-    	//distance camera-near plane
-    	double near = 1000;
     	//distance near plane-origin
     	double d1 = -getFront(false);
-    	//distance camera-far plane
-    	double far = near+getBack(true)-getFront(true);
+       	//distance camera-near plane
+    	double near = -d1-getLeft()*this.near;
+    	//Application.debug(near+"\nleft="+getLeft()+"\nd1="+d1);
     	//ratio so that distance on origin plane are not changed
-    	double distratio = 1/(d1/near+1);
-    	//double tangent = tan(fovY/2 * DEG2RAD);
+    	double distratio = near/(near+d1);
     	//frustum    	
     	double left = getLeft()*distratio;
     	double right = getRight()*distratio;
     	double bottom = getBottom()*distratio;
     	double top = getTop()*distratio;
-        //glu.gluPerspective(45.0f, h, 1, 1000.0);
+    	//distance camera-far plane
+    	double far = near+getBack(true)-getFront(true);
+       //glu.gluPerspective(45.0f, h, 1, 1000.0);
     	gl.glFrustum(left,right,bottom,top,near,far);
     	gl.glTranslated(0, 0, getFront(false)-near);
         
     	
     }
-    
-    private static final double near = 0.1; 
+     
     private static final double fo = 500;//1000;
     private static final double cameraZ = 1000;
     private static final double aperture = 0.7*Math.PI;
