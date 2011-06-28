@@ -277,6 +277,13 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				table.isDragging2 = false;
 				table.repaint();
 			}
+			
+			if(table.isOverDot){
+				// prevent UI manager from changing selection when mouse 
+				// is in a neighbor cell but is still over the dot region 
+				e.consume();  
+			}
+			
 			if (table.isDragingDot) {
 				if (table.dragingToColumn == -1 || table.dragingToRow == -1) return;
 				int x1 = -1;
@@ -310,26 +317,31 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 					x2 = table.dragingToColumn;
 					y2 = table.maxSelectionRow;
 				}
+				
+				// copy the cells
 				boolean succ = relativeCopy.doCopy(table.minSelectionColumn, table.minSelectionRow, table.maxSelectionColumn, table.maxSelectionRow, x1, y1, x2, y2);
 				if (succ) {
-					app.storeUndoInfo();
-					//	table.minSelectionColumn = -1;
-					//	table.minSelectionRow = -1;
-					//	table.maxSelectionColumn = -1;
-					//	table.maxSelectionRow = -1;						
+					app.storeUndoInfo();				
 				}
 
-				//(G.Sturr 2009-9-12) extend the selection to include the drag copy selection
-				// and un-highlight dragging dot 
-				table.changeSelection(table.dragingToRow, table.dragingToColumn, true, true);
+				//extend the selection to include the drag copy selection 
+				table.setSelection(Math.min(x1, table.minSelectionColumn), 
+						Math.min(y1,table.minSelectionRow), 
+						Math.max(x2, table.maxSelectionColumn),
+						Math.max(y2, table.maxSelectionRow));
+				
+				// reset flags and cursor
 				table.isOverDot = false;
-				//(G.Sturr)
-
 				table.isDragingDot = false;
 				table.dragingToRow = -1;
 				table.dragingToColumn = -1;
 				setTableCursor();
+				
+				// prevent UI manager from changing selection
+				e.consume();
+				
 				table.repaint();
+				
 			}
 		}
 
@@ -427,10 +439,10 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			Point mouseCell = table.getIndexFromPixel(mouseX, mouseY);
 
 			//save the selected cell position so it can be re-selected if needed
-			int row = table.getSelectedRow();
-			int column = table.getSelectedColumn();
+			CellRange oldSelection = table.getSelectedCellRanges().get(0);
+			
 
-			if (mouseCell == null) { // drag to left or above the table
+			if (mouseCell == null) { // user has dragged outside the table, to left or above
 				table.dragingToRow = -1;
 				table.dragingToColumn = -1;
 			}
@@ -449,8 +461,8 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				if (table.dragingToColumn + 1 == table.getColumnCount() && table.dragingToColumn < SpreadsheetView.MAX_COLUMNS) {
 					table.setMyColumnCount(table.getColumnCount() +1);		
 					view.getColumnHeader().revalidate();
-					// Java's addColumn will clear selection, so re-select our cell 
-					table.changeSelection(row, column, false, false);
+					// Java's addColumn method will clear selection, so re-select our cell 
+					table.setSelection(oldSelection);
 				}
 
 				// scroll to show "highest" selected cell
@@ -499,7 +511,6 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 					}
 					table.repaint();
 				}
-
 
 
 				// handle ctrl-select dragging of cell blocks
