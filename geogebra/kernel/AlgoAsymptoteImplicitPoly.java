@@ -165,7 +165,7 @@ public class AlgoAsymptoteImplicitPoly extends AlgoElement {
     	
 		
     	for(int i=0; i<asymptotes.size(); i++)
-    		for(int j=1; j<asymptotes.size(); j++)
+    		for(int j=i+1; j<asymptotes.size(); j++)
     	    	if(Math.abs(asymptotes.get(i)[0] - asymptotes.get(j)[0]) < 1E-2 &&
     	    			Math.abs(asymptotes.get(i)[1] - asymptotes.get(j)[1]) < 1E-2 &&
     	    			Math.abs(asymptotes.get(i)[2] - asymptotes.get(j)[2]) < 1E-2 )
