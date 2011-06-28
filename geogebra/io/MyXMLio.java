@@ -300,7 +300,7 @@ public class MyXMLio {
 		boolean oldVal2 = app.isUsingInternalCommandNames();
 		app.setUseInternalCommandNames(true);
 		
-		if (!isGGTFile) {
+		if (!isGGTFile && clearConstruction) {
 			kernel.setNotifyViewsActive(false);
 		}
 
@@ -319,7 +319,7 @@ public class MyXMLio {
 			throw e;
 		} finally {
 			app.setUseInternalCommandNames(oldVal2);
-			if (!isGGTFile) {
+			if (!isGGTFile && clearConstruction) {
 				kernel.updateConstruction();
 				kernel.setNotifyViewsActive(oldVal);				
 			}
