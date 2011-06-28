@@ -575,9 +575,11 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 		if(table.isOverDot){
 			if(table.isDragingDot)
-				table.setCursor(table.largeCrossCursor);
+				//table.setCursor(table.largeCrossCursor);
+				table.setCursor(table.crossHairCursor);
 			else
-				table.setCursor(table.largeCrossCursor);
+				//table.setCursor(table.largeCrossCursor);
+				table.setCursor(table.crossHairCursor);
 		}
 		//else if(table.isOverDnDRegion)
 		//table.setCursor(table.grabCursor);
