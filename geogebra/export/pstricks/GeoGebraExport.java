@@ -49,11 +49,11 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.StringTokenizer;
-
+/*
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-
+*/
 public abstract class GeoGebraExport implements ActionListener{
 	protected int beamerSlideNumber=1;
 	protected final double PRECISION_XRANGE_FUNCTION=0.00001;
@@ -218,6 +218,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	 * This method is generic method to generate code according to GeoElement nature
 	 * @param g GeoElement g
 	 * @param fromGeoList if GeoElement comes from a GeoList object
+	 * @param trimmedInter 
 	 */
     protected void drawGeoElement(GeoElement g,boolean fromGeoList,boolean trimmedInter){
     	if (g.isGeoList()){
@@ -588,7 +589,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	 * Export as PStricks or PGF segment mark
 	 * @param geo geo Object
 	 * @param vertex 
-	 * @param angletick angle 
+	 * @param angleTick angle 
 	 */
 	abstract protected void drawTick(GeoAngle geo,double[] vertex, double angleTick);
 	
@@ -600,7 +601,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	/**
 	 * Export as PSTricks or PGF/TikZ color's code
 	 * @param color The color
-	 * @param The StringBuilder to complete
+	 * @param sb The StringBuilder to complete
 	 */
 	
 	abstract protected void ColorCode(Color color, StringBuilder sb);

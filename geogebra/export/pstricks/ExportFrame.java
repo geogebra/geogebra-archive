@@ -45,9 +45,9 @@ abstract public class ExportFrame extends JFrame{
 	 // end changes
 	protected JPanel panel;
 	protected JButton button,button_copy;
-	protected JCheckBox jcbPointSymbol,jcbGrayscale,  
+	protected JCheckBox jcbPointSymbol, jcbGrayscale,  
 	 // Andy Zhu - for use in Asymptote Frame
-	                    jcbShowAxes,jcbAsyCompact,jcbAsyCse5,jcbDotColors;
+	                    jcbShowAxes, jcbAsyCompact, jcbAsyCse5, jcbDotColors, jcbPairName;
 	 // end changes
 	protected JScrollPane js;
 	protected JTextArea textarea;
@@ -107,6 +107,7 @@ abstract public class ExportFrame extends JFrame{
 		jcbAsyCompact = new JCheckBox(app.getMenu("ConciseCode"));
 		jcbAsyCse5    = new JCheckBox(app.getMenu("ConciseUsingCSE5"));
 		jcbDotColors  = new JCheckBox(app.getMenu("KeepDotColors"));
+		jcbPairName   = new JCheckBox(app.getMenu("UsePairNames"));
 		jcbShowAxes.setSelected(true);
 		jcbAsyCompact.setSelected(false);
 		jcbAsyCse5.setSelected(false);
@@ -114,15 +115,17 @@ abstract public class ExportFrame extends JFrame{
 		jcbDotColors.setSelected(false);
 		jcbAsyCompact.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				if(jcbAsyCompact.isSelected())
+				if(jcbAsyCompact.isSelected()) {
 					jcbAsyCse5.setEnabled(true);
+				    jcbPairName.setSelected(true);
+				}
 				else {
 					jcbAsyCse5.setSelected(false);
 					jcbAsyCse5.setEnabled(false);
 				}
 			}
 		});
-		final String[] comboFillText={app.getMenu("None"),app.getMenu("OnlyOpaqueFills"),app.getMenu("WithOpacityPen") ,app.getMenu("ByLayering")};
+		final String[] comboFillText={app.getMenu("None"),app.getMenu("OnlyOpaqueFills"),app.getMenu("WithOpacityPen"), app.getMenu("ByLayering")};
 
 		comboFill = new JComboBox(comboFillText);
 		labelFill = new JLabel(app.getMenu("FillType")+":");
@@ -236,19 +239,22 @@ abstract public class ExportFrame extends JFrame{
 	}
 	 // Andy Zhu - for use in Asymptote frame
 	protected boolean getShowAxes(){
-		return jcbShowAxes.isSelected();
+	    return jcbShowAxes.isSelected();
 	}
 	protected boolean getAsyCompact(){
-		return jcbAsyCompact.isSelected();
+	    return jcbAsyCompact.isSelected();
 	}
 	protected boolean getAsyCompactCse5(){
-		return jcbAsyCse5.isSelected();
+	    return jcbAsyCse5.isSelected();
 	}
 	protected boolean getKeepDotColors(){
-		return jcbDotColors.isSelected();
+	    return jcbDotColors.isSelected();
 	}
+	protected boolean getUsePairNames(){
+        return jcbPairName.isSelected();
+    }
 	protected int getFillType(){
-		return comboFill.getSelectedIndex();
+	    return comboFill.getSelectedIndex();
 	}
 	 // end changes
 
