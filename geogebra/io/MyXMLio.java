@@ -288,19 +288,19 @@ public class MyXMLio {
 		InputStreamReader ir = new InputStreamReader(bs, "UTF8");
 
 		// process xml file
-		doParseXML(ir, clearConstruction, isGGTFile);
+		doParseXML(ir, clearConstruction, isGGTFile, true);
 
 		ir.close();
 		bs.close();
 	}
 
 	private void doParseXML(Reader ir, boolean clearConstruction,
-			boolean isGGTFile) throws Exception {
+			boolean isGGTFile, boolean mayZoom) throws Exception {
 		boolean oldVal = kernel.isNotifyViewsActive();
 		boolean oldVal2 = app.isUsingInternalCommandNames();
 		app.setUseInternalCommandNames(true);
 		
-		if (!isGGTFile) {
+		if (!isGGTFile && mayZoom) {
 			kernel.setNotifyViewsActive(false);
 		}
 
@@ -319,7 +319,7 @@ public class MyXMLio {
 			throw e;
 		} finally {
 			app.setUseInternalCommandNames(oldVal2);
-			if (!isGGTFile) {
+			if (!isGGTFile && mayZoom) {
 				kernel.updateConstruction();
 				kernel.setNotifyViewsActive(oldVal);				
 			}
@@ -346,7 +346,7 @@ public class MyXMLio {
 		ZipEntry entry = zip.getNextEntry();
 		if (entry != null && entry.getName().equals(XML_FILE)) {
 			// process xml file
-			doParseXML(new InputStreamReader(zip, "UTF8"), true, false);
+			doParseXML(new InputStreamReader(zip, "UTF8"), true, false, true);
 			zip.close();
 		} else {
 			zip.close();
@@ -359,7 +359,7 @@ public class MyXMLio {
 	public void processXMLString(String str, boolean clearAll, boolean isGGTfile)
 			throws Exception {
 		StringReader rs = new StringReader(str);
-		doParseXML(rs, clearAll, isGGTfile);
+		doParseXML(rs, clearAll, isGGTfile, clearAll);
 		rs.close();
 	}
 
