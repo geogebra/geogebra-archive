@@ -5564,7 +5564,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return null;
 
 		boolean found=false;
-		found = addSelectedConic(hits, 1, false) != 0;
+		found = addSelectedConic(hits, 2, false) != 0;
 		if (!found)
 			found = addSelectedFunction(hits, 1, false) != 0;
 		if (!found)
@@ -5593,6 +5593,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				// create new line
 				return kernel.Tangent(null, lines[0], conics[0]);
 			}
+		} 
+		else if (selConics() == 2) {
+			GeoConic[] conics = getSelectedConics();
+			// create new tangents
+			return kernel.CommonTangents(null, conics[0], conics[1]);
 		} 
 		else if (selFunctions() == 1) {
 			if (selPoints() == 1) {

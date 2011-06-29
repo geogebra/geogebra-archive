@@ -154,6 +154,14 @@ public class AlgoCommonTangents extends AlgoElement {
 
     // calc tangents
     protected final void compute() {
+
+        if( !c1.isCircle() || !c2.isCircle() ) {
+            for(int i=0; i<4; i++) {
+                tangents[i].setUndefined();
+            }
+            return;
+        }
+
         double r1 = c1.getCircleRadius();
         double r2 = c2.getCircleRadius();
         
