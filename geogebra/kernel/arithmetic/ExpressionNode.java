@@ -3149,16 +3149,16 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			}
 			break;
 
-		case FUNCTION:
+		case FUNCTION:			
 			// GeoFunction and GeoFunctionConditional should not be expanded
-			if (left.isGeoElement() && ((GeoElement) left).isGeoFunction()) {
+			if (left instanceof GeoFunction) {
 				GeoFunction geo = (GeoFunction) left;
 				if (geo.isLabelSet()) {
 					sb.append(geo.getLabel());
 					sb.append(leftBracket(STRING_TYPE));
 					sb.append(rightStr);
 					sb.append(rightBracket(STRING_TYPE));
-				} else {
+				} else {					
 					// inline function: replace function var by right side
 					FunctionVariable var = geo.getFunction()
 							.getFunctionVariable();
@@ -3167,7 +3167,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					sb.append(geo.getLabel());
 					var.setVarString(oldVarStr);
 				}
-			} else if (valueForm && left.isExpressionNode()) {
+			} else if (valueForm && left.isExpressionNode()) {				
 				ExpressionNode en = (ExpressionNode) left;
 				// left could contain $ nodes to wrap a GeoElement
 				// e.g. A1(x) = x^2 and B1(x) = $A$1(x)
