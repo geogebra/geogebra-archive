@@ -56,7 +56,8 @@ public abstract class AlgoStats2D extends AlgoElement {
     final static int STATS_SIGMAYY = 9;
     final static int STATS_SAMPLESDX = 10;
     final static int STATS_SAMPLESDY = 11;
-
+    final static int STATS_SDX = 12;
+    final static int STATS_SDY = 13;
     
     public AlgoStats2D(Construction cons, String label, GeoList geoListx, GeoList geoListy, int stat) {
         super(cons);
@@ -84,8 +85,8 @@ public abstract class AlgoStats2D extends AlgoElement {
         input = new GeoElement[1];
         input[0] = geoListx;
 
-        output = new GeoElement[1];
-        output[0] = result;
+        setOutputLength(1);
+        setOutput(0,result);
         setDependencies(); // done by AlgoElement
         compute();
         result.setLabel(label);
@@ -100,8 +101,8 @@ public abstract class AlgoStats2D extends AlgoElement {
         input[0] = geoListx;
         input[1] = geoListy;
 
-        output = new GeoElement[1];
-        output[0] = result;
+        setOutputLength(1);
+        setOutput(0,result);
         setDependencies(); // done by AlgoElement
     }
 
@@ -214,6 +215,14 @@ public abstract class AlgoStats2D extends AlgoElement {
         	break;
         case  STATS_SAMPLESDY:
         	var=(sumyy - sumy * sumy / sizey) / (sizey -1);
+			result.setValue(Math.sqrt(var));
+        	break;
+        case  STATS_SDX:
+        	var=(sumxx - sumx * sumx / sizex) / sizex;
+			result.setValue(Math.sqrt(var));
+        	break;
+        case  STATS_SDY:
+        	var=(sumyy - sumy * sumy / sizey) / sizey;
 			result.setValue(Math.sqrt(var));
         	break;
         }

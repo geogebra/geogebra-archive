@@ -492,7 +492,9 @@ public class CommandDispatcher {
     	cmdTable.put("PMCC", new CmdPMCC(kernel));
     	cmdTable.put("SampleSDX", new CmdSampleSDX(kernel));
     	cmdTable.put("SampleSDY", new CmdSampleSDY(kernel));
-    	  	
+    	cmdTable.put("SDX", new CmdSDX(kernel));
+    	cmdTable.put("SDY", new CmdSDY(kernel));
+    	
     	cmdTable.put("FitLineY", new CmdFitLineY(kernel));
     	cmdTable.put("FitLineX", new CmdFitLineX(kernel));
     	cmdTable.put("FitPoly", new CmdFitPoly(kernel));
@@ -526,6 +528,7 @@ public class CommandDispatcher {
     	cmdTable.put("Percentile", new CmdPercentile(kernel));
     	cmdTable.put("GeometricMean", new CmdGeometricMean(kernel));
     	cmdTable.put("HarmonicMean", new CmdHarmonicMean(kernel));
+    	cmdTable.put("RootMeanSquare", new CmdRootMeanSquare(kernel));
     	
     	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
     	cmdTable.clear();

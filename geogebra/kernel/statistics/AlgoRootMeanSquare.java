@@ -26,7 +26,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * Returns the harmonic mean for a list of numbers
  */
 
-public class AlgoHarmonicMean extends AlgoElement {
+public class AlgoRootMeanSquare extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
@@ -36,7 +36,7 @@ public class AlgoHarmonicMean extends AlgoElement {
 
 
 
-	public AlgoHarmonicMean(Construction cons, String label, GeoList inputList) {
+	public AlgoRootMeanSquare(Construction cons, String label, GeoList inputList) {
 		super(cons);
 		this.inputList = inputList;
 		result = new GeoNumeric(cons);
@@ -47,7 +47,7 @@ public class AlgoHarmonicMean extends AlgoElement {
 	}
 
 	public String getClassName() {
-		return "AlgoHarmonicMean";
+		return "AlgoRootMeanSquare";
 	}
 
 	protected void setInputOutput(){
@@ -83,15 +83,15 @@ public class AlgoHarmonicMean extends AlgoElement {
 		for (int i=0; i < size; i++) {
 			GeoElement geo = inputList.get(i);
 			if (geo.isNumberValue()) {
-				NumberValue num = (NumberValue) geo;
-				sum += 1/num.getDouble();	
+				double d = ((NumberValue) geo).getDouble();
+				sum += d*d;	
 			} else {
 				result.setUndefined();
 				return;
 			}    		    		
 		}   
 
-		result.setValue(size/sum);
+		result.setValue(Math.sqrt(sum/size));
 	}
 
 

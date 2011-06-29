@@ -92,6 +92,8 @@ import geogebra.kernel.statistics.AlgoListCovariance;
 import geogebra.kernel.statistics.AlgoListMeanX;
 import geogebra.kernel.statistics.AlgoListMeanY;
 import geogebra.kernel.statistics.AlgoListPMCC;
+import geogebra.kernel.statistics.AlgoListSDX;
+import geogebra.kernel.statistics.AlgoListSDY;
 import geogebra.kernel.statistics.AlgoListSXX;
 import geogebra.kernel.statistics.AlgoListSXY;
 import geogebra.kernel.statistics.AlgoListSYY;
@@ -119,6 +121,7 @@ import geogebra.kernel.statistics.AlgoRandomBinomial;
 import geogebra.kernel.statistics.AlgoRandomNormal;
 import geogebra.kernel.statistics.AlgoRandomPoisson;
 import geogebra.kernel.statistics.AlgoRandomUniform;
+import geogebra.kernel.statistics.AlgoRootMeanSquare;
 import geogebra.kernel.statistics.AlgoSXX;
 import geogebra.kernel.statistics.AlgoSample;
 import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
@@ -3706,6 +3709,18 @@ public class Kernel {
 		return num;
 	}
 	
+	final public GeoNumeric SDY(String label, GeoList list) {
+		AlgoListSDY algo = new AlgoListSDY(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric SDX(String label, GeoList list) {
+		AlgoListSDX algo = new AlgoListSDX(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
 	
 	/** 
 	 * PMCC[list]
@@ -5070,6 +5085,17 @@ public class Kernel {
 		return num;
 	}
 	
+	/**
+	 * 
+	 * @param label
+	 * @param list
+	 * @return
+	 */
+	final public GeoNumeric RootMeanSquare(String label, GeoList list) {
+		AlgoRootMeanSquare algo = new AlgoRootMeanSquare(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
 	
 	
 	/** 

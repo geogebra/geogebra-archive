@@ -204,8 +204,10 @@ Transformable, GeoVectorND {
 		if (isAlgoMacroOutput()) return; 				
     	
 		// check for circular definition
-		if (isParentOf(p))
-			throw new CircularDefinitionException();
+		if (isParentOf(p)){
+			Application.debug(this+" startpoint "+p);
+			//throw new CircularDefinitionException();
+		}
 		
 		// remove old dependencies
 		if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);	
