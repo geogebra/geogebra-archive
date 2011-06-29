@@ -395,9 +395,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			startPoint.setLocation((view.getXmin() + view.getXmax()) / 2, (view.getYmin() + view.getYmax()) / 2);
 		}
 		if (pastePreviewSelected != null && !pastePreviewSelected.isEmpty()) {
-			transformCoords();
-			updatePastePreviewPosition();
-			kernel.notifyRepaint();
+			if (mouseLoc != null) {
+				transformCoords();
+				updatePastePreviewPosition();
+				kernel.notifyRepaint();
+			}
 		}
 	}
 
