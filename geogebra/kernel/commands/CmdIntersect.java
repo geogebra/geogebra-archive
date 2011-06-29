@@ -263,6 +263,34 @@ public  GeoElement[] process(Command c) throws MyError {
                             (NumberValue) arg[2])};
                 return ret;
             }
+            // Line - Conic with startPoint
+            if ((ok[0] = (arg[0] .isGeoLine()))
+                    && (ok[1] = (arg[1] .isGeoConic()))
+                    && (ok[2] = (arg[2] .isGeoPoint()))) {
+                    GeoElement[] ret =
+                        {
+                             kernel.IntersectLineConicSingle(
+                                c.getLabel(),
+                                (GeoLine) arg[0],
+                                (GeoConic) arg[1],
+                                (GeoPoint) arg[2])};
+                    return ret;
+                }
+                // Conic - Line
+                else if (
+                    (ok[0] = (arg[0] .isGeoConic()))
+                        && (ok[1] = (arg[1] .isGeoLine()))
+                        && (ok[2] = (arg[2] .isGeoPoint()))) {
+                    GeoElement[] ret =
+                        {
+                             kernel.IntersectLineConicSingle(
+                                c.getLabel(),
+                                (GeoLine) arg[1],
+                                (GeoConic) arg[0],
+                                (GeoPoint) arg[2])};
+                    return ret;
+                }
+            
             // Conic - Conic
             else if (
                 (ok[0] = (arg[0] .isGeoConic()))
@@ -275,6 +303,20 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoConic) arg[0],
                             (GeoConic) arg[1],
                             (NumberValue) arg[2])};
+                return ret;
+            }
+            // Conic - Conic with referece Point
+            else if (
+                (ok[0] = (arg[0] .isGeoConic()))
+                    && (ok[1] = (arg[1] .isGeoConic()))
+                    && (ok[2] = (arg[2] .isGeoPoint()))) {
+                GeoElement[] ret =
+                    {
+                         kernel.IntersectConicsSingle(
+                            c.getLabel(),
+                            (GeoConic) arg[0],
+                            (GeoConic) arg[1],
+                            (GeoPoint) arg[2])};
                 return ret;
             }
             // Polynomial - Line with index of point

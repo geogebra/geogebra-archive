@@ -6167,6 +6167,20 @@ public class Kernel {
 		return point;
 	}
 	
+	/** 
+	 * get only one intersection point of two conics that is near to the given
+	 * GeoPoint refP
+	 */
+	final public GeoPoint IntersectLineConicSingle(
+		String label,
+		GeoLine g,
+		GeoConic c, GeoPoint refP) {
+		AlgoIntersectLineConic algo = getIntersectionAlgorithm(g, c);
+		
+		AlgoIntersectSingle salgo = new AlgoIntersectSingle(label, algo, refP);
+		GeoPoint point = salgo.getPoint();
+		return point;
+	}
 	
 	/** 
 	 * get only one intersection point of a line and a conic 
@@ -6203,6 +6217,17 @@ public class Kernel {
 			String label, GeoConic a, GeoConic b, NumberValue index) {
 		AlgoIntersectConics algo = getIntersectionAlgorithm(a, b);		// index - 1 to start at 0
 		AlgoIntersectSingle salgo = new AlgoIntersectSingle(label, algo, (int) index.getDouble() - 1);
+		GeoPoint point = salgo.getPoint();
+		return point;
+	}
+	
+	/** 
+	 * get only one intersection point of two conics 
+	 */
+	final public GeoPoint IntersectConicsSingle(
+			String label, GeoConic a, GeoConic b, GeoPoint refPoint) {
+		AlgoIntersectConics algo = getIntersectionAlgorithm(a, b);		// index - 1 to start at 0
+		AlgoIntersectSingle salgo = new AlgoIntersectSingle(label, algo, refPoint);
 		GeoPoint point = salgo.getPoint();
 		return point;
 	}
