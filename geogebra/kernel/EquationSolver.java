@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+import edu.jas.ps.Coefficients;
 import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootDerivAdapter;
@@ -54,8 +55,17 @@ public class EquationSolver {
 	 * @return number of realRoots found
 	 */
 	final public int polynomialRoots(double [] roots) {			
-		int realRoots;						
-		switch (roots.length - 1) { // degree of polynomial
+		int realRoots;
+		
+		/* update: if roots[n], roots[n-1], ..., we need to determine "real" degree
+		 * Darko Drakulic, 28.6.2011.
+		 */
+	
+		int degree = roots.length-1;
+		for(int i=degree; roots[i]==0; i--)
+			degree--;
+		
+		switch (degree) { // degree of polynomial
 			case 0:
 				realRoots = 0;
 				break;
