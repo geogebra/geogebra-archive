@@ -1,45 +1,31 @@
-package geogebra.kernel;
+package geogebra3D.kernel3D;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 
 
 /**
  * Single intersection point 
  */
-public class AlgoIntersectSingle extends AlgoIntersect {
+public class AlgoIntersectSingle3D extends AlgoIntersect3D {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	// input
-	private AlgoIntersect algo;
-	private int index; // index of point in algo, can be input directly or be calculated from refPoint
-	private GeoPoint refPoint; // reference point in algo to calculate index; can be null or undefined
+	private AlgoIntersect3D algo;
+	private int index; // index of point in algo	
 	
 	// output
-	private GeoPoint point;
+	private GeoPoint3D point;
 	
-	private GeoPoint [] parentOutput;
+	private GeoPoint3D [] parentOutput;
 
-	// intersection point is the (a) nearest to refPoint
-	AlgoIntersectSingle(String label, AlgoIntersect algo, GeoPoint refPoint) {
-		super(algo.cons);
-		this.algo = algo;
-		algo.addUser(); // this algorithm is a user of algo			
-		this.refPoint = refPoint;
-		
-		point = new GeoPoint(algo.cons);								
-		
-		setInputOutput(); 
-		initForNearToRelationship();
-		compute();
-		point.setLabel(label);		
-	}
-	
 	// intersection point is index-th intersection point of algo
-	AlgoIntersectSingle(String label, AlgoIntersect algo, int index) {
-		super(algo.cons);
+	AlgoIntersectSingle3D(String label, AlgoIntersect3D algo, int index) {
+		super(algo.getConstruction());
 		this.algo = algo;
 		algo.addUser(); // this algorithm is a user of algo			
 		
@@ -49,9 +35,7 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		else 
 			this.index = index;
 		
-		refPoint = new GeoPoint(algo.cons);
-		
-		point = new GeoPoint(algo.cons);								
+		point = new GeoPoint3D(algo.getConstruction());								
 		
 		setInputOutput(); 
 		initForNearToRelationship();
@@ -64,7 +48,7 @@ public class AlgoIntersectSingle extends AlgoIntersect {
     }
 	
 	public String getClassName() {
-		return "AlgoIntersectSingle";
+		return "AlgoIntersectSingle3D";
 	}
     
     public int getRelatedModeID() {
@@ -73,30 +57,29 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 	
 	// for AlgoElement
 	public void setInputOutput() {
-		input = new GeoElement[4];
-		input[0] = algo.input[0];
-		input[1] = algo.input[1];
+		input = new GeoElement[3];
+		input[0] = algo.getInput()[0];
+		input[1] = algo.getInput()[1];
 
 		//	dummy value to store the index of the intersection point
 		// index + 1 is used here to let numbering start at 1
 		input[2] = new GeoNumeric(cons, index+1); 
-		input[3] = refPoint;
 		
-		output = new GeoPoint[1];
+		output = new GeoPoint3D[1];
 		output[0] = point;
 	                   
 		setDependencies(); // done by AlgoElement
 	}
 	
-	public GeoPoint getPoint() {
+	public GeoPoint3D getPoint() {
 		return point;
 	}
 	
-	protected GeoPoint [] getIntersectionPoints() {
-		return (GeoPoint []) output;
+	protected GeoPoint3D [] getIntersectionPoints() {
+		return (GeoPoint3D []) output;
 	}
 		
-	protected GeoPoint[] getLastDefinedIntersectionPoints() {	
+	protected GeoPoint3D[] getLastDefinedIntersectionPoints() {	
 		return null;
 	}
 
@@ -118,14 +101,9 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 	protected void compute() {
 		parentOutput = algo.getIntersectionPoints();
 		
-		//update index if reference point has been defined
-		if (refPoint!=null)
-			if (refPoint.isDefined())
-				index = algo.getClosestPointIndex(refPoint);
-		
 		if (input[0].isDefined() && input[1].isDefined() && index < parentOutput.length) {	
 			// 	get coordinates from helper algorithm
-			point.setCoords(parentOutput[index]);
+			point.setCoords(parentOutput[index].getCoords());
 		} else {
 			point.setUndefined();
 		}

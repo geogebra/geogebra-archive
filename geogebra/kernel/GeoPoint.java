@@ -81,6 +81,10 @@ GeoPointND, Animatable, Transformable  {
     // if this point is removed, the Locateables have to be notified
     private LocateableList locateableList;         
     
+    /**
+     * create an undefined GeoPoint
+     * @param c
+     */
     public GeoPoint(Construction c) {     	 
     	super(c);
     	setAnimationType(ANIMATION_INCREASING);

@@ -1,10 +1,13 @@
 package geogebra3D.kernel3D.commands;
 
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSurfaceFinite;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.CmdIntersect;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
@@ -174,24 +177,50 @@ public  GeoElement[] process(Command c) throws MyError {
 
         	return super.process(c);
 
-            	
+     	 case 3 :
+     		arg = resArgs(c);
+     		if ((arg[0].isGeoElement3D())||(arg[1].isGeoElement3D())||(arg[2].isGeoElement3D())){
 
-        	/*
-        case 3 :
-        	arg = resArgs(c);
-        	if ((arg[0] instanceof GeoQuadricND) && (arg[1] instanceof GeoPointND) && (arg[2] instanceof GeoPointND)){
-    			GeoElement[] ret =
-    			{
-    					kernel.getManager3D().Intersect(
-    							c.getLabel(),
-    							(GeoQuadricND) arg[0],
-    							(GeoPointND) arg[1],
-    							(GeoPointND) arg[2])};
-    			return ret;
-    		} 
+                // Line - Conic
+                if ((arg[0] .isGeoLine())
+                    && arg[1] .isGeoConic()
+                    && arg[2] .isNumberValue()) {
+                    GeoElement[] ret =
+                        {
+                             kernel.getManager3D().IntersectLineConicSingle(
+                                c.getLabel(),
+                                (GeoLineND) arg[0],
+                                (GeoConicND) arg[1],
+                                (NumberValue) arg[2])};
+                    return ret;
+                } else if ((arg[1] .isGeoLine())
+                        && arg[0] .isGeoConic()
+                        && arg[2] .isNumberValue()) {
+                        GeoElement[] ret =
+                            {
+                                 kernel.getManager3D().IntersectLineConicSingle(
+                                    c.getLabel(),
+                                    (GeoLineND) arg[1],
+                                    (GeoConicND) arg[0],
+                                    (NumberValue) arg[2])};
+                        return ret;
+                }
+                	/*
+                	else if ((arg[0] instanceof GeoQuadricND) && (arg[1] instanceof GeoPointND) && (arg[2] instanceof GeoPointND)){
+            			GeoElement[] ret =
+            			{
+            					kernel.getManager3D().Intersect(
+            							c.getLabel(),
+            							(GeoQuadricND) arg[0],
+            							(GeoPointND) arg[1],
+            							(GeoPointND) arg[2])};
+            			return ret;
+            		} 
+                	
+                	*/
+
+     		}
         	
-        	return super.process(c);
-        	*/
 
         default :
             return super.process(c);

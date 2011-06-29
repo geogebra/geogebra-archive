@@ -42,7 +42,7 @@ import geogebra.main.Application;
  * @author  Markus
  * @version 
  */
-public class AlgoIntersectLineConic3D extends AlgoIntersectND {
+public class AlgoIntersectLineConic3D extends AlgoIntersect3D {
 
     /**
 	 * 
@@ -142,9 +142,6 @@ public class AlgoIntersectLineConic3D extends AlgoIntersectND {
         return D;
     }
     
-    protected void setCoords(GeoPointND destination, GeoPointND source){
-    	destination.setCoords(source.getCoordsInD(3),false);
-    }
     
     /**
      * 
@@ -221,7 +218,7 @@ public class AlgoIntersectLineConic3D extends AlgoIntersectND {
      * that is closest to the coordinates (xRW, yRW)
      * TODO: move to an interface
      */
-    int getClosestPointIndex(double xRW, double yRW, CoordMatrix4x4 mat) {
+    /*int getClosestPointIndex(double xRW, double yRW, CoordMatrix4x4 mat) {
         GeoPoint3D[] P = getIntersectionPoints();
         double x, y, lengthSqr, mindist = Double.POSITIVE_INFINITY;
         int minIndex = 0;
@@ -237,5 +234,9 @@ public class AlgoIntersectLineConic3D extends AlgoIntersectND {
         }
 
         return minIndex;
+    }*/
+	
+    protected final void initForNearToRelationship() {   
+
     }
 }

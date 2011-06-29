@@ -4,6 +4,7 @@ import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoIntersectConics;
 import geogebra.kernel.AlgoIntersectLineConic;
 import geogebra.kernel.AlgoIntersectSingle;
 import geogebra.kernel.AlgoLinePointLine;
@@ -828,31 +829,37 @@ public class Manager3D implements Manager3DInterface {
 		String label,
 		GeoLineND g,
 		GeoConicND c, double xRW, double yRW, CoordMatrix4x4 mat) {
-		/*
+		
 		AlgoIntersectLineConic3D algo = getIntersectionAlgorithm(g, c);
-		algo.setPrintedInXML(true);
-		GeoPoint3D[] points = algo.getIntersectionPoints();		
-		GeoElement.setLabels(new String[] {label}, new GeoPoint3D[] {points[0]});	
-		return points[0];
-		*/
-		//TODO
-		AlgoIntersectLineConic3D algo = getIntersectionAlgorithm(g, c);
-		algo.setPrintedInXML(true);
-		GeoPoint3D[] points = algo.getIntersectionPoints();		
+		//algo.setPrintedInXML(true);
+		//GeoPoint3D[] points = algo.getIntersectionPoints();		
 		
 		int index = algo.getClosestPointIndex(xRW, yRW, mat);
 		//AlgoIntersectSingle salgo = new AlgoIntersectSingle(label, algo, index);
 		//TODO: move to a stand-alone algorithm, otherwise undo does not work.
 		//See AlgoIntersectSingle.
-		if (index-1 < points.length) {	
+		/*if (index-1 < points.length) {	
 			points[index].setLabel(null);
 			return points[index];
 		} else {
 			return null;
-		}
+		}*/
+		AlgoIntersectSingle3D salgo = new AlgoIntersectSingle3D(label, algo, index);
+		GeoPoint3D point = salgo.getPoint();
+		return point;
 	}
 	
-	
+	/** 
+	 * get only one intersection point of two conics
+	 * choice depends on command input
+	 */
+	final public GeoPoint3D IntersectLineConicSingle(
+			String label, GeoLineND g, GeoConicND c, NumberValue index) {
+		AlgoIntersectLineConic3D algo = getIntersectionAlgorithm(g, c);		// index - 1 to start at 0
+		AlgoIntersectSingle3D salgo = new AlgoIntersectSingle3D(label, algo, (int) index.getDouble() - 1);
+		GeoPoint3D point = salgo.getPoint();
+		return point;
+	}
 	/**
 	 * intersect conics
 	 */

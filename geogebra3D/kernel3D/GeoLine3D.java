@@ -116,8 +116,9 @@ public class GeoLine3D extends GeoCoordSys1D {
 		return "GeoLine3D";
 	}
 	
-	
-	
+	final public boolean isGeoLine() {
+		return true;
+	}
 	
 	
 	

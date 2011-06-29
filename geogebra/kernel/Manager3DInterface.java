@@ -473,6 +473,12 @@ public interface Manager3DInterface {
 				GeoLineND g,
 				GeoConicND c, double xRW, double yRW, CoordMatrix4x4 mat);
 			 
+			/** 
+			 * get only one intersection point of two conics 
+			 */
+			public GeoPoint3D IntersectLineConicSingle(
+					String label, GeoLineND g, GeoConicND c, NumberValue index);
+			
 			 /**
 			  * intersection between two 3D conics
 			  * @param labels
