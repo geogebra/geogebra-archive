@@ -10,9 +10,9 @@ import javax.media.opengl.GLProfile;
  * @author matthieu
  *
  */
-public class JPanel3DCapabilities extends GLCapabilities{
+public class Component3DCapabilities extends GLCapabilities{
 
-	public JPanel3DCapabilities() {
+	public Component3DCapabilities() {
 		super(GLProfile.getDefault());
 		
 		//anti-aliasing

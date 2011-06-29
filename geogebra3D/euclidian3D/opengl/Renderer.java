@@ -30,6 +30,7 @@ import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
+import javax.swing.JPanel;
 
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.GLBuffers;
@@ -69,7 +70,7 @@ public class Renderer implements GLEventListener {
 	
 	/** canvas usable for a JPanel */
 	//public GLCanvas canvas;
-	public GLJPanel canvas;
+	public Component3D canvas;
 
 	//private GLCapabilities caps;
 	private GL2 gl;
@@ -155,7 +156,7 @@ public class Renderer implements GLEventListener {
 		
 		
 		//canvas = view;
-        canvas = new JPanel3D();
+        canvas = new Component3D();
         
 	    canvas.addGLEventListener(this);
 	    

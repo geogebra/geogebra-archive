@@ -45,6 +45,7 @@ import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -280,7 +281,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
         //JPanel canvas = this;
 		
-        JPanel canvas = renderer.canvas;
+        Component canvas = renderer.canvas;
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, canvas);
 		
