@@ -490,6 +490,11 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 		public  void toGeoCurveCartesian(GeoCurveCartesian curve){
 			curve.setFromPolyLine(points, false);
 	    }
+
+
+		public Path getBoundary() {
+			return this;
+		}
 		
 		
 

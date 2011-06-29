@@ -26,4 +26,6 @@ public interface GeoPolyLineInterface {
 	 */
 	public void toGeoCurveCartesian(GeoCurveCartesian outGeo);
 
+	public Path getBoundary();
+
 }

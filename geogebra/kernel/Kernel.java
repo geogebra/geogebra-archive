@@ -183,11 +183,11 @@ public class Kernel {
 	public final static double INV_MAX_DOUBLE_PRECISION = 1E15;	
 	
 	 // style of point/vector coordinates
-	/** A = (3, 2)  and 	B = (3; 90�)*/
+	/** A = (3, 2)  and 	B = (3; 90���)*/
     public static final int COORD_STYLE_DEFAULT = 0;		
-    /** A(3|2)  	   and	B(3; 90�)*/
+    /** A(3|2)  	   and	B(3; 90���)*/
 	public static final int COORD_STYLE_AUSTRIAN = 1;		
-	/** A: (3, 2)   and	B: (3; 90�) */
+	/** A: (3, 2)   and	B: (3; 90���) */
 	public static final int COORD_STYLE_FRENCH = 2;			
 	private int coordStyle = 0;
 
@@ -2108,7 +2108,7 @@ public class Kernel {
 
 	
 
-	/** Conic label with equation ax� + bxy + cy� + dx + ey + f = 0  */
+	/** Conic label with equation ax��� + bxy + cy��� + dx + ey + f = 0  */
 	final public GeoConic Conic(
 		String label,
 		double a,
@@ -2143,7 +2143,7 @@ public class Kernel {
 		return angle;
 	}
 
-	/** Function in x,  e.g. f(x) = 4 x� + 3 x�
+	/** Function in x,  e.g. f(x) = 4 x��� + 3 x���
 	 */
 	final public GeoFunction Function(String label, Function fun) {
 		GeoFunction f = new GeoFunction(cons, label, fun);
@@ -2358,7 +2358,7 @@ public class Kernel {
 	
 
 	/** Conic dependent on coefficients of arithmetic expressions with variables,
-	 * represented by trees. e.g. y� = 2 p x 
+	 * represented by trees. e.g. y��� = 2 p x 
 	 */
 	final public GeoConic DependentConic(String label, Equation equ) {
 		AlgoDependentConic algo = new AlgoDependentConic(cons, label, equ);
@@ -2373,7 +2373,7 @@ public class Kernel {
 	}
 
 	/** Function dependent on coefficients of arithmetic expressions with variables,
-	 * represented by trees. e.g. f(x) = a x� + b x�
+	 * represented by trees. e.g. f(x) = a x��� + b x���
 	 */
 	final public GeoFunction DependentFunction(
 		String label,
@@ -5554,7 +5554,7 @@ public class Kernel {
 		String[] labels,
 		GeoLine g,
 		GeoPolygon p) {
-		AlgoIntersectLinePolygon algo = new AlgoIntersectLinePolygon(cons, labels, g, p);
+		AlgoIntersectLinePolyLine algo = new AlgoIntersectLinePolyLine(cons, labels, g, p);
 		return algo.getOutput();
 	}
 	
@@ -7793,22 +7793,22 @@ public class Kernel {
 	}
 	private StringBuilder sbBuildLHS = new StringBuilder(80);
 
-	// form: y� = f(x) (coeff of y = 0)
+	// form: y��� = f(x) (coeff of y = 0)
 	public final StringBuilder buildExplicitConicEquation(
 		double[] numbers,
 		String[] vars,
 		int pos,
 		boolean KEEP_LEADING_SIGN) {
-		// y�-coeff is 0
+		// y���-coeff is 0
 		double d, dabs, q = numbers[pos];
-		// coeff of y� is 0 or coeff of y is not 0
+		// coeff of y��� is 0 or coeff of y is not 0
 		if (isZero(q))
 			return buildImplicitEquation(numbers, vars, KEEP_LEADING_SIGN, true, '=');
 
 		int i, leadingNonZero = numbers.length;
 		for (i = 0; i < numbers.length; i++) {
 			if (i != pos
-				&& // except y� coefficient                
+				&& // except y��� coefficient                
 				(Math.abs(numbers[i]) >= PRINT_PRECISION || useSignificantFigures)) {
 				leadingNonZero = i;
 				break;

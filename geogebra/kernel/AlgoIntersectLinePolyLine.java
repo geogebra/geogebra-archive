@@ -42,6 +42,7 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
 	
 	protected GeoLineND g; // input
 	protected GeoPolyLine p; //input
+	protected GeoPolyLineInterface pi;
 	protected OutputHandler<GeoElement> outputPoints; // output
 	//protected OutputHandler<GeoElement> outputSegments; // output 
     
@@ -59,14 +60,15 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
      * @param g
      * @param p
      */
-    protected AlgoIntersectLinePolyLine(Construction c, String[] labels, GeoLineND g, GeoPolyLine p) {
+    protected AlgoIntersectLinePolyLine(Construction c, String[] labels, GeoLineND g, GeoPolyLineInterface p) {
 
     	super(c);
         
 		outputPoints=createOutputPoints();
 
         this.g = g;
-        this.p = p;
+        this.pi = p;
+        this.p = (GeoPolyLine)p.getBoundary();
 
         newCoords = new TreeMap<Double, Coords>(Kernel.DoubleComparator(Kernel.STANDARD_PRECISION));
     
@@ -122,7 +124,7 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
     protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = (GeoElement) g;
-        input[1] = p;
+        input[1] = (GeoElement) pi;
         
         setDependencies(); // done by AlgoElement
     }
@@ -186,7 +188,7 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
 
 
 	final public String toString() {
-        return app.getPlain("IntersectionPointOfAB",((GeoElement) g).getLabel(),p.getLabel());
+        return app.getPlain("IntersectionPointOfAB",((GeoElement) g).getLabel(),((GeoElement)pi).getLabel());
     }
     
     
