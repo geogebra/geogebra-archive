@@ -350,6 +350,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						if (!((GeoNumeric)geo).isAbsoluteScreenLocActive()) {
 							startPoint.setLocation(((GeoNumeric)geo).getRealWorldLocX(), ((GeoNumeric)geo).getRealWorldLocY());
 							firstMoveable = false;
+						} else {
+							startPoint.setLocation(view.toRealWorldCoordX(((GeoNumeric)geo).getAbsoluteScreenLocX()), view.toRealWorldCoordY(((GeoNumeric)geo).getAbsoluteScreenLocY()));
+							firstMoveable = false;
 						}
 					} else if (geo.isGeoImage()) {
 						if (((GeoImage)geo).hasAbsoluteLocation()) {
