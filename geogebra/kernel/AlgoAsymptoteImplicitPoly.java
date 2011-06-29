@@ -163,13 +163,12 @@ public class AlgoAsymptoteImplicitPoly extends AlgoElement {
 			asymptotes.add(asy);
 		}
     	
-		
     	for(int i=0; i<asymptotes.size(); i++)
     		for(int j=i+1; j<asymptotes.size(); j++)
-    	    	if(Math.abs(asymptotes.get(i)[0] - asymptotes.get(j)[0]) < 1E-2 &&
-    	    			Math.abs(asymptotes.get(i)[1] - asymptotes.get(j)[1]) < 1E-2 &&
-    	    			Math.abs(asymptotes.get(i)[2] - asymptotes.get(j)[2]) < 1E-2 )
-    	    		asymptotes.remove(j);
+    	    	if(Math.abs(Math.abs(asymptotes.get(i)[0]) - Math.abs(asymptotes.get(j)[0])) < 1E-2 &&
+    	    			Math.abs(Math.abs(asymptotes.get(i)[1]) - Math.abs(asymptotes.get(j)[1])) < 1E-2 &&
+    	    			Math.abs(Math.abs(asymptotes.get(i)[2]) - Math.abs(asymptotes.get(j)[2])) < 1E-2 )
+    	    		asymptotes.remove(j--);
     		
     	for(int i=0; i<asymptotes.size(); i++)
         	sb.append(asymptotes.get(i)[0] + "*x + " + asymptotes.get(i)[1] + "*y + " + asymptotes.get(i)[2] + "=0,");
