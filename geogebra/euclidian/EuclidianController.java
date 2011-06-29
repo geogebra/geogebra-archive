@@ -2668,11 +2668,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (hits.size() == 1) {
 				GeoElement hit = ((GeoElement)hits.get(0));
 				if (hit.isGeoNumeric() && ((GeoNumeric)hit).isSlider()) {
-					startPoint.setLocation(((GeoNumeric) hit).getSliderX(), ((GeoNumeric) hit).getSliderY());
+
+					// only do this if we are not pasting something from the clipboard right now
+					// because moving on the label of a slider might move the pasted objects away otherwise 
+					if ((pastePreviewSelected == null)?(true):(pastePreviewSelected.isEmpty())) {
+
+						startPoint.setLocation(((GeoNumeric) hit).getSliderX(), ((GeoNumeric) hit).getSliderY());
 					
-					// preview just for fixed sliders
-					if (((GeoNumeric) hit).isSliderFixed())					
-						sliderValue = kernel.format(getSliderValue((GeoNumeric) hit));
+						// preview just for fixed sliders
+						if (((GeoNumeric) hit).isSliderFixed())					
+							sliderValue = kernel.format(getSliderValue((GeoNumeric) hit));
+					}
 				} 
 			}
 			
