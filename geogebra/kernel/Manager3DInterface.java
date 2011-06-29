@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -14,6 +16,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra3D.kernel3D.AlgoPolyLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 /**
  * Interface for managing all 3D methods in Kernel.
@@ -460,6 +463,15 @@ public interface Manager3DInterface {
 					 String[] labels,
 					 GeoLineND g,
 					 GeoConicND c);
+			 
+			/** 
+			 * get only one intersection point of two conics that is near to the given
+			 * location (xRW, yRW)
+			 */
+			public GeoPoint3D IntersectLineConicSingle(
+				String label,
+				GeoLineND g,
+				GeoConicND c, double xRW, double yRW, CoordMatrix4x4 mat);
 			 
 			 /**
 			  * intersection between two 3D conics

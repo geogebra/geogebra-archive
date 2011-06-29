@@ -1591,33 +1591,23 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// intersection point should be created	
 		
 		//not working
-		//boolean singlePointWanted = selGeos() == 0;
+		boolean singlePointWanted = selGeos() == 0;
 		
 		// check how many interesting hits we have
 		if (!selectionPreview  && hits.size() > 2 - selGeos()) {
-			Hits goodHits = new Hits();
 			
-			//hits.getHits(GeoLineND.class, tempArrayList);
-			//hits.getHits(GeoCoordSys2D.class, tempArrayList2);
-			//hits.getHits(GeoConicND.class, tempArrayList3);
-			//goodHits.addAll(tempArrayList);
-			//goodHits.addAll(tempArrayList2);
-			//goodHits.addAll(tempArrayList3);
+			Hits goodHits = new Hits();
 
 			hits.getHits(GeoLineND.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-			
 			hits.getHits(GeoCoordSys2D.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			
+			goodHits.addAll(tempArrayList);			
 			hits.getHits(GeoConicND.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-			
 			hits.getHits(GeoPolygon.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
 
 			hits = goodHits;
-			
 		}
 		
 		//not working
@@ -1625,23 +1615,22 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		// get lines, segments, etc.
 		addSelectedLine(hits, 10, true);
-		
 		// currently tested only for 3D conics
 		addSelectedConic(hits, 10, true);
-		
 		// currently tested only for planes
 		addSelectedCS2D(hits, 10, true);
 		
 		// polygons
 		addSelectedPolygon(hits, 10, true);
 		
-		//singlePointWanted = singlePointWanted && selGeos() == 2;
+		singlePointWanted = singlePointWanted && selGeos() == 2;
 		
 		//if (selGeos() > 2)
 		//	return null;
 
 		//Application.debug("lines="+selLines()+"\ncs2D="+selCS2D()+"\nconics="+selConicsND());
-			
+		
+		
 		if (selLines() >= 2) {// two lines	
 			GeoLineND[] lines = getSelectedLinesND();
 			GeoElement[] ret = { null };
@@ -1653,9 +1642,22 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoLineND line = getSelectedLinesND()[0];
 				GeoConicND conic = getSelectedConicsND()[0];
 				GeoElement[] ret = new GeoElement[2];
-				GeoPointND[] points = getKernel().getManager3D().IntersectLineConic(null, line, conic);
-				for(int i=0;i<2; i++)
-					ret[i] = (GeoElement) points[i];
+
+				if (singlePointWanted) {
+					Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+				
+					
+					ret[0] = getKernel().getManager3D().IntersectLineConicSingle(null, line, conic, 
+							picked.getX(),picked.getY(), view3D.getToSceneMatrix());
+				} else {
+					GeoPointND[] points = getKernel().getManager3D().IntersectLineConic(null, line, conic);
+					for(int i=0;i<2; i++)
+						ret[i] = (GeoElement) points[i];
+				}
+
+				
+				
+	
 				return ret;
 			}else if (selCS2D()>=1) {// line-CS2D
 				

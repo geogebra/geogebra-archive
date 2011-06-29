@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
@@ -214,4 +215,27 @@ public class AlgoIntersectLineConic3D extends AlgoIntersectND {
             P[i].setUndefined();                  
         
 	}
+	
+    /**
+     * Returns the index in output[] of the intersection point
+     * that is closest to the coordinates (xRW, yRW)
+     * TODO: move to an interface
+     */
+    int getClosestPointIndex(double xRW, double yRW, CoordMatrix4x4 mat) {
+        GeoPoint3D[] P = getIntersectionPoints();
+        double x, y, lengthSqr, mindist = Double.POSITIVE_INFINITY;
+        int minIndex = 0;
+        for (int i = 0; i < P.length; i++) {
+        	Coords toSceneInhomCoords = mat.mul(P[i].getCoords().getCoordsLast1()).getInhomCoords();
+        	x = (toSceneInhomCoords.getX() - xRW);
+            y = (toSceneInhomCoords.getY() - yRW);
+            lengthSqr = x * x + y * y;
+            if (lengthSqr < mindist) {
+                mindist = lengthSqr;
+                minIndex = i;
+            }
+        }
+
+        return minIndex;
+    }
 }
