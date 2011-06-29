@@ -580,8 +580,7 @@ public class GeoFunctionConditional extends GeoFunction {
 			if(condition!=null && ret == null)
 				return condition.toLaTeXString(b);
 			else if(condition!=null)
-				ret="("+ret+")\\wedge \\left("+condition.toLaTeXString(b)+"\\right)";	
-			Application.debug(ret);
+				ret="("+ret+")\\wedge \\left("+condition.toLaTeXString(b)+"\\right)";			
 			return ret;
 		}
 	}

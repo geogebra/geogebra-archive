@@ -115,7 +115,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
        else if (lt instanceof FunctionalNVar && rt.isNumberValue() && operation<FUNCTION) {         	   
     	   return GeoFunction.applyNumberSymb(operation,(FunctionalNVar)lt,right,true);              	
        	}           
-       else if (rt instanceof Functional && lt.isNumberValue()) {            	
+       else if (rt instanceof FunctionalNVar && lt.isNumberValue()) {            	
     	   return GeoFunction.applyNumberSymb(operation,(FunctionalNVar)rt,left,false);
        } 
        	 

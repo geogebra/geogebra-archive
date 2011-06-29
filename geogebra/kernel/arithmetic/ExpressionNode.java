@@ -3197,6 +3197,11 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 		case FUNCTION_NVAR:
 		case ELEMENT_OF:
+			if(valueForm){
+				sb.append(leftBracket(STRING_TYPE));
+				sb.append(leftStr);
+				sb.append(rightBracket(STRING_TYPE));
+			}else{
 			// multivariate functions
 			if (left.isGeoElement()) {
 				sb.append(((GeoElement) left).getLabel());
@@ -3207,6 +3212,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			// drop the curly braces { and }
 			sb.append(rightStr.substring(1, rightStr.length() - 1));
 			sb.append(rightBracket(STRING_TYPE));
+			}
 			break;
 
 		case VEC_FUNCTION:

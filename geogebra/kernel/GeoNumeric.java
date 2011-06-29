@@ -892,8 +892,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		boolean okMax = !Double.isNaN(getIntervalMax()) && !Double.isInfinite(getIntervalMax());
 		boolean ok =  (getIntervalMin() <= getIntervalMax());
 		intervalMinActive = ok && okMin;
-		intervalMaxActive = ok && okMax;
-			Application.debug(Double.isInfinite(getIntervalMax())+","+intervalMaxActive);
+		intervalMaxActive = ok && okMax;			
 		if(ok && okMin && okMax)
 			setValue(isDefined() ? value : 1.0);		
 		else if(okMin && okMax) 

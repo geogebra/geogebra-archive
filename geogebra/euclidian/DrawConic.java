@@ -128,7 +128,7 @@ final public class DrawConic extends Drawable implements Previewable {
     
 	public Area getShape(){
 		Area a = super.getShape()!=null? 
-				super.getShape():new Area(shape);
+				super.getShape():(shape==null?new Area():new Area(shape));
 		if(conic.isInverseFill()){                    	        	
         	Area b = new Area(view.getBoundingPath());
         	b.subtract(a);

@@ -148,6 +148,8 @@ public class DrawImplicitPoly extends Drawable {
         	setLabelPosition();
 			addLabelOffset();
         }
+        if(gps==null)
+        	gps=new ArrayList<GeneralPath>();
 	}
 	
 	// set label position (xLabel, yLabel) fixed #255

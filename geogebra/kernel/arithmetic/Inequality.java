@@ -24,6 +24,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 /**
  * stores left and right hand side of an inequality as Expressions
@@ -92,7 +93,7 @@ public class Inequality {
 		update();
 	}
 
-	private void update() {
+	private void update() {		
 		if (fv.length == 1) {
 			init1varFunction(0);
 			if(!funBorder.isPolynomialFunction(false)){
@@ -146,9 +147,9 @@ public class Inequality {
 					INEQUALITY_1VAR_X:INEQUALITY_INVALID;
 		}
 
-		else {			
+		else {						
 			GeoElement newBorder = kernel.getAlgebraProcessor()
-					.evaluateToGeoElement(normal.toString() + "=0", false);
+					.evaluateToGeoElement(normal.toValueString() + "=0", false);
 			if (newBorder == null)
 				return;
 			if (newBorder.isGeoImplicitPoly()) {
@@ -169,6 +170,13 @@ public class Inequality {
 				if (conicBorder.type == GeoConic.CONIC_INTERSECTING_LINES) {
 				   isAboveBorder = true;
 				} else setAboveBorderFromConic();
+			}
+			if (newBorder.isGeoLine()) {
+				type = INEQUALITY_CONIC;
+				if (conicBorder == null)
+					conicBorder = new GeoConic(kernel.getConstruction());
+				((GeoLine)newBorder).toGeoConic(conicBorder);
+				border = conicBorder;
 			}
 		}
 		if (type == INEQUALITY_PARAMETRIC_X || type == INEQUALITY_PARAMETRIC_Y) {

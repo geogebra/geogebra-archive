@@ -919,10 +919,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			return new ExpressionNode(kernel,(GeoFunctionNVar)lt,
 					ExpressionNode.FUNCTION_NVAR,varList);
 		}
-		if(lt instanceof Function)
-			return ((Function)lt).getExpression().replace(((Function)lt).getFunctionVariables()[0],
-					varMap.get(lt.getVarString()));
-			
+		if(lt instanceof FunctionNVar){
+			ExpressionNode ret =((FunctionNVar)lt).getExpression();
+			for(int i=0; i<((FunctionNVar)lt).getVarNumber();i++)
+			ret = ret.replace(((FunctionNVar)lt).getFunctionVariables()[i],
+					varMap.get(((FunctionNVar)lt).getVarString(i)));
+			return ret;
+		}
 		return null;
 	}
 
