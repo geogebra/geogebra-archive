@@ -4764,11 +4764,13 @@ public abstract class GeoElement
 					movedGeo = true;
 				}
 				else if (isGeoNumeric()) {
-					// real world screen position - GeoNumeric
-					((GeoNumeric)geo).setRealWorldLoc(
-							((GeoNumeric)geo).getRealWorldLocX() + rwTransVec.getX(),
-							((GeoNumeric)geo).getRealWorldLocY() + rwTransVec.getY());
-					movedGeo = true;
+					if (!((GeoNumeric)geo).isSliderFixed()) {
+						// real world screen position - GeoNumeric
+						((GeoNumeric)geo).setRealWorldLoc(
+								((GeoNumeric)geo).getRealWorldLocX() + rwTransVec.getX(),
+								((GeoNumeric)geo).getRealWorldLocY() + rwTransVec.getY());
+						movedGeo = true;
+					}
 				}
 				else if (isGeoText()) {
 					// check for GeoText with unlabeled start point

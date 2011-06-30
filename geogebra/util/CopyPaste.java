@@ -19,6 +19,7 @@ import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.AlgoPolygonRegular;
 import geogebra.kernel.AlgoPolyLine;
 import geogebra.kernel.GeoPolyLine;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -49,6 +50,23 @@ public class CopyPaste {
 			return true;
 		
 		return (copiedXML.length() == 0);
+	}
+
+	/**
+	 * copyToXML - Step 0.33
+	 * Remove fixed geos
+	 * @param geos input and output
+	 */
+	public static void removeFixedSliders(ArrayList<ConstructionElement> geos) {
+		GeoElement geo;
+		for (int i = geos.size() - 1; i >= 0; i--)
+		{
+			geo = (GeoElement) geos.get(i);
+			if (geo.isGeoNumeric())
+				if (((GeoNumeric)geo).isSliderFixed()) {
+					geos.remove(geo);
+				}
+		}
 	}
 
 	/**
@@ -361,6 +379,8 @@ public class CopyPaste {
 		// create geoslocal and geostohide
 		ArrayList<ConstructionElement> geoslocal = new ArrayList<ConstructionElement>();
 		geoslocal.addAll(geos);
+		removeFixedSliders(geoslocal);
+		
 		addSubGeos(geoslocal);
 		dropGeosDependentFromOutside(geoslocal);
 		
