@@ -11,6 +11,7 @@ public class AlgoCompleteSquare extends AlgoElement {
 	private FunctionVariable fv;
 	private MyDouble a,h,k; //a(x-h)^2+k
 	private int lastDeg;
+	private AlgoCoefficients algoCoef;
 	public AlgoCompleteSquare(Construction cons,String label,GeoFunction f){
 		super(cons);
 		this.f=f;
@@ -25,19 +26,32 @@ public class AlgoCompleteSquare extends AlgoElement {
 		squareF.initFunction();
 		square = new GeoFunction(cons);		
 		setInputOutput();
-		square.setFunction(squareF);		
+		square.setFunction(squareF);
+		algoCoef = new AlgoCoefficients(cons,f);
+		algoCoef.remove();
 		compute();		
 		lastDeg = 0;
 		square.setLabel(label);
+		
 	}
 	@Override
 	protected void compute() {		
-		double deg = f.getFunctionExpression().getDegree(f.getFunction().getFunctionVariables()[0]);
-		int degInt = (int) deg;
-		if(!Kernel.isEqual(deg, degInt) || degInt %2 == 1 || deg < 2){
+		algoCoef.compute();
+		GeoList coefs = algoCoef.getResult();
+		int degInt = algoCoef.getResult().size()-1;
+		
+		if(degInt %2 == 1 || degInt < 2 || f.isGeoFunctionConditional()){
 			square.setUndefined();
 			return;
 		}
+		
+		for(int i=1;i<degInt;i++){
+			if(2*i != degInt && !Kernel.isZero(((GeoNumeric)coefs.get(i)).getDouble())){
+				square.setUndefined();
+				return;
+			}
+		}
+		
 		if(lastDeg != degInt){
 			ExpressionNode squareE;
 			if(degInt == 2)
@@ -52,29 +66,16 @@ public class AlgoCompleteSquare extends AlgoElement {
 		}
 		lastDeg = degInt;
 		fv.setVarString(f.getVarString());
-		//px^2+qx+r; p+q+r=s;		
-		double r = f.evaluate(0);
-		double s = f.evaluate(1);
-		//          p*2^d+q*(2^d/2)  => p*2^(d/2)+q  => p*(2^(d/2)-1)  => p
-		double p = ((f.evaluate(2)-r)*Math.pow(2, -deg/2) - (s-r))  / (Math.pow(2, deg/2)-1);
-		double q = s-p-r;		
-		
-		boolean isQuadratic = !f.isGeoFunctionConditional();
-		double[] checkpoints = {Math.pow(10000,2/degInt),-Math.pow(10000,2/degInt),Math.PI,Math.E};
-		for(int i=0;i<checkpoints.length;i++){
-			double x=checkpoints[i];
-			double dif = p*Math.pow(x,deg)+q*Math.pow(x,deg/2)+r- f.evaluate(x);
-			if(!Kernel.isZero(dif*dif))				
-				isQuadratic = false;			
-		}
-		if(!isQuadratic){
-			square.setUndefined();
-		}else{
-			square.setDefined(true);
-			a.set(p);
-			h.set(-q/(2*p));
-			k.set(r-q*q/(p*4));		
-		}		
+		//px^2+qx+r		
+		double r = ((GeoNumeric)coefs.get(0)).getDouble();
+		double q = ((GeoNumeric)coefs.get(degInt/2)).getDouble();
+		double p = ((GeoNumeric)coefs.get(degInt)).getDouble();
+		//if one is undefined, others are as well
+		square.setDefined(!Double.isNaN(r));
+		a.set(p);
+		h.set(-q/(2*p));
+		k.set(r-q*q/(p*4));		
+				
 	}
 
 	@Override

@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
 /**
  * Try to expand the given function 
  * 
@@ -28,16 +26,20 @@ public class AlgoCoefficients extends AlgoElement {
     private StringBuilder sb = new StringBuilder();
    
     public AlgoCoefficients(Construction cons, String label, GeoFunction f) {
+    	this(cons,f);
+        g.setLabel(label);
+    }
+    
+    public AlgoCoefficients(Construction cons, GeoFunction f) {
     	super(cons);
         this.f = f;            	
     	
         g = new GeoList(cons);                
         setInputOutput(); // for AlgoElement        
         compute();
-        g.setLabel(label);
-    }
-    
-    public String getClassName() {
+	}
+
+	public String getClassName() {
         return "AlgoCoefficients";
     }
     
@@ -46,8 +48,8 @@ public class AlgoCoefficients extends AlgoElement {
         input = new GeoElement[1];
         input[0] = f;
 
-        output = new GeoElement[1];
-        output[0] = g;
+        setOutputLength(1);
+        setOutput(0,g);
         setDependencies(); // done by AlgoElement
     }
 
