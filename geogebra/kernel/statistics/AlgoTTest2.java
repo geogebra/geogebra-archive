@@ -77,7 +77,7 @@ public class AlgoTTest2 extends AlgoElement {
 
 
 	public String getClassName() {
-		return "AlgoTTest";
+		return "AlgoTTest2";
 	}
 
 	protected void setInputOutput(){
@@ -188,11 +188,17 @@ public class AlgoTTest2 extends AlgoElement {
 				// get the test statistic and p
 				if(tTestImpl == null)
 					tTestImpl = new TTestImpl();
-				testStat = tTestImpl.t(val0,val1);
-				p = tTestImpl.tTest(val0, val1);
-				p = adjustedPValue(p, testStat);
-
-
+				
+				if(pooled.getBoolean()){
+					testStat = tTestImpl.homoscedasticT(val0, val1);
+					p = tTestImpl.homoscedasticTTest(val0, val1);
+					p = adjustedPValue(p, testStat);
+				}else{
+					testStat = tTestImpl.t(val0, val1);
+					p = tTestImpl.tTest(val0, val1);
+					p = adjustedPValue(p, testStat);
+				}
+				
 				// put these results into the output list
 				result.clear();
 				result.add(new GeoNumeric(cons, p));

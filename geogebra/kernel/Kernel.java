@@ -46,6 +46,7 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
+import geogebra.kernel.statistics.AlgoANOVA;
 import geogebra.kernel.statistics.AlgoBernoulliBarChart;
 import geogebra.kernel.statistics.AlgoBinomialDist;
 import geogebra.kernel.statistics.AlgoBinomialDistBarChart;
@@ -4255,6 +4256,14 @@ public class Kernel {
 		return num;
 	}
 	
+	
+	
+	/** ANOVATest[]  */
+	final public GeoList ANOVATest(String label, GeoList dataArrayList) {
+		AlgoANOVA algo = new AlgoANOVA(cons, label, dataArrayList);
+		GeoList result = algo.getResult();
+		return result;
+	}
 	
 	/** TTest[] with sample data */
 	final public GeoList TTest(String label, GeoList sampleList, GeoNumeric hypMean, GeoText tail) {
