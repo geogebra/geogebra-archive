@@ -61,6 +61,7 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 
 	private Boolean[] selectionList;
 	private StatDialog statDialog;
+	private StatDialogController statController;
 	private int mode;
 
 	public int preferredColumnWidth = MyTable.TABLE_CELL_WIDTH; 
@@ -81,7 +82,7 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 		kernel = app.getKernel();
 		this.statDialog = statDialog;
 		this.mode = mode;
-
+		this.statController = statDialog.getStatDialogController();
 		//	this.dataListAll = dataAll;
 
 		selectionList = new Boolean[dataListAll.size()];
@@ -328,10 +329,10 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 	}
 
 	public void updateFonts(Font font) {
-		
+
 	}
 
-		
+
 	public void setFont(Font font) {
 		super.setFont(font);
 
@@ -344,13 +345,13 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 			rowHeader.setFont(font);
 			int h = dataTable.getCellRenderer(0,0).getTableCellRendererComponent(dataTable, "X",
 					false, false, 0, 0).getPreferredSize().height; 
-			
+
 			dataTable.setRowHeight(h);
 			rowHeader.setFixedCellHeight(h);
 
 			preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
 			//columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
-			
+
 		}
 
 	}
@@ -554,7 +555,7 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 			if (iconClicked) {
 				// icon clicked: toggle enable/disable data
 				selectionList[this.getSelectedIndex()] = !selectionList[this.getSelectedIndex()];
-				statDialog.updateSelectedDataList(this.getSelectedIndex(), selectionList[this.getSelectedIndex()] );
+				statController.updateSelectedDataList(this.getSelectedIndex(), selectionList[this.getSelectedIndex()] );
 
 				btnEnableAll.setEnabled(!isAllEnabled());
 
@@ -581,7 +582,7 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 
 			for(int i=0; i< selectionList.length; ++i){
 				if(selectionList[i] == false){
-					statDialog.updateSelectedDataList(i,true);
+					statController.updateSelectedDataList(i,true);
 					selectionList[i] = true;
 				}
 			}	
@@ -728,8 +729,8 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 						for (int i=10 ; i<=18 ; i++)
 							g.drawLine(x+i, y+24-i, x+i, y+29-i);
 
-					for (int i=5 ; i<=9 ; i++)
-						g.drawLine(x+i, y+i+4, x+i, y+i+9);	  
+						for (int i=5 ; i<=9 ; i++)
+							g.drawLine(x+i, y+i+4, x+i, y+i+9);	  
 
 					}
 				}

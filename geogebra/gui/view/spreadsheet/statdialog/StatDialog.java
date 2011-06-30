@@ -15,6 +15,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -53,11 +54,14 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	// ggb 
 	private Application app;
 	private Kernel kernel; 
-	private Construction cons;
-	private SpreadsheetView spView;
-	private MyTable spreadsheetTable;
-	private StatDialog statDialog;	
+	private SpreadsheetView spView;	
 	private StatGeo statGeo;
+	private StatDialogController sdc;
+	
+
+	public StatDialogController getStatDialogController() {
+		return sdc;
+	}
 
 	// modes
 	public static final int MODE_ONEVAR = 0;
@@ -66,22 +70,20 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private int mode;
 
 	// data collections
-	private GeoElement geoRegression;
-	private GeoList dataListAll, dataListSelected;
+	//protected GeoElement geoRegression;
+	//protected GeoList dataAll, dataSelected;
 
-	private ArrayList<String> dataTitles ;
-	private Object dataSource;
+	
 
 	// flags
 	private boolean showDataPanel = false;
 	private boolean showStatPanel = false;
 	private boolean showComboPanel2 = false;
-	private boolean isIniting;
-	private Dimension defaultDialogDimension;
-	private boolean leftToRight = true;
+	protected boolean isIniting;
+	protected boolean leftToRight = true;
 
 	// colors
-	public static final Color TABLE_GRID_COLOR = Color.GRAY;
+	public static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
 	public static final Color TABLE_HEADER_COLOR = new Color(240,240,240);   
 	public static final Color HISTOGRAM_COLOR = new Color(0,0,255); // blue with alpha 0.25   
 	public static final Color BOXPLOT_COLOR = new Color(204,0,0);  // rose with alpha 0.25 
@@ -101,31 +103,21 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public static final int regressionTypes = 8;
 	private int regressionMode = REG_NONE;
 	private int regressionOrder = 2;
-	private String[] regressionLabels, regCmd;
-	private String regEquation;
+	
 
 	// oneVar title panel objects
 	private JLabel lblOneVarTitle;
 	private MyTextField fldOneVarTitle;
 
 	// stat and data panel objects
-	private JLabel statisticsHeader;
-	private JPanel statPanel;
-	private DataPanel dataPanel;
-	private StatTable statTable;
-
-	// regression panel objects
-	private JLabel lblRegression, lblRegEquation, lblEqn;
-	private JLabel lblTitleX, lblTitleY;
-	private MyTextField fldTitleX, fldTitleY;
-	private JComboBox cbRegression, cbPolyOrder;
-	private JToggleButton btnToggleXY;
-	private JLabel lblEvaluate;
-	private MyTextField fldInputX;
-	private JLabel lblOutputY;
+	protected JLabel statisticsHeader;
+	protected JPanel statPanel;
+	protected DataPanel dataPanel;
+	protected StatTable statTable;
+	protected RegressionPanel regressionPanel;
 
 	// plot display objects 
-	private StatComboPanel comboStatPanel, comboStatPanel2;;
+	protected StatComboPanel comboStatPanel, comboStatPanel2;;
 
 	// button panel objects
 	private JButton btnClose, btnPrint;
@@ -136,10 +128,9 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private JSplitPane statDataPanel, displayPanel, comboPanelSplit; 
 	private JPanel cardPanel, buttonPanel;
 	private int defaultDividerSize;
-	private RegressionPanel regressionPanel;
 	private NumberFormat nf;
 	private int numDigits = 4;
-	
+	private Dimension defaultDialogDimension;
 
 
 	//=================================
@@ -160,19 +151,15 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	
 	
 	public GeoElement getRegressionModel() {
-		return geoRegression;
+		return sdc.getRegressionModel();
 	}
-	public void setRegressionModel(GeoElement regressionModel) {
-		this.geoRegression = regressionModel;
-	}
-
+	
 
 	public StatGeo getStatGeo() {
 		if(statGeo == null)
 			statGeo = new StatGeo(app);
 		return statGeo;
 	}
-
 
 	public int getRegressionOrder() {
 		return regressionOrder;
@@ -196,7 +183,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	}
 
 	public void setLeftToRight(boolean leftToRight) {
-		this.leftToRight = leftToRight;
+		sdc.setLeftToRight(leftToRight);
 	}
 
 	public int getMode(){
@@ -210,21 +197,22 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public StatDialog(SpreadsheetView spView, Application app, int mode){
 		super(app.getFrame(),false);
 
+		
+		
 		isIniting = true;
 		this.app = app;
+		this.kernel = app.getKernel();
 		this.spView = spView;
-		this.spreadsheetTable = spView.getTable();
 		this.mode = mode;
-		kernel = app.getKernel();
-		cons = kernel.getConstruction();
-		statDialog = this;
-
+		
+		sdc = new StatDialogController(app, spView, this);
+		
 		defaultDialogDimension = new Dimension(700,500);
 		
-		boolean dataOK = setDataSource();
+		boolean dataOK = sdc.setDataSource();
 		if(dataOK){
 			//load data from the data source (based on currently selected geos)
-			loadDataLists();
+			sdc.loadDataLists();
 		}else{
 			//TODO is dispose needed ?
 			//dispose();
@@ -241,6 +229,9 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	private void createGUI(){
 		
+		GeoList dataAll = sdc.getDataAll();
+		GeoList dataSelected = sdc.getDataSelected();
+		
 		
 		// Create two StatCombo panels with default plots.
 		// StatCombo panels display various plots and tables
@@ -249,20 +240,20 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		switch(mode){
 
 		case MODE_ONEVAR:
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_HISTOGRAM, dataListSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_BOXPLOT, dataListSelected, mode, true);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_HISTOGRAM, dataSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_BOXPLOT, dataSelected, mode, true);
 			break;
 
 		case MODE_REGRESSION:
 			//showComboPanel2 = true;
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_RESIDUAL, dataListSelected, mode, true);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_RESIDUAL, dataSelected, mode, true);
 			break;
 
 		case MODE_MULTIVAR:
 			showComboPanel2 = true;
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_MULTIBOXPLOT, dataListSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_MULTIVARSTATS, dataListSelected, mode, true);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_MULTIBOXPLOT, dataSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_MULTIVARSTATS, dataSelected, mode, true);
 			break;		
 
 		}
@@ -271,14 +262,14 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		
 		// Create a StatPanel to display basic statistics for the current data set
 		//================================================
-		if(mode == statDialog.MODE_ONEVAR){
+		if(mode == MODE_ONEVAR){
 			statTable = new StatTable(app, this, mode);
-			statTable.evaluateStatTable(dataListSelected);
+			statTable.evaluateStatTable(dataSelected);
 		}
 		
-		else if(mode == statDialog.MODE_REGRESSION){
+		else if(mode == MODE_REGRESSION){
 			statTable = new StatTable(app, this, mode);
-			statTable.evaluateStatTable(dataListSelected);
+			statTable.evaluateStatTable(dataSelected);
 		}
 
 
@@ -287,8 +278,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		// Data panels display the current data set(s) and allow temporary editing. 
 		// Edited data is used by the statTable and statCombo panels. 
 		//================================================
-		if(mode != statDialog.MODE_MULTIVAR){
-			dataPanel = new DataPanel(app, this, dataListAll, mode);
+		if(mode != MODE_MULTIVAR){
+			dataPanel = new DataPanel(app, this, dataAll, mode);
 			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		}
 
@@ -309,277 +300,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	
 	
 		
-	
 
-	//=================================================
-	//       Data Handling
-	//=================================================
-
-
-	/**
-	 * Sets the data source. Returns false if data is invalid. Data may come
-	 * from either a selected GeoList or the currently selected spreadsheet cell
-	 * range.
-	 */
-	private boolean setDataSource(){
-		
-		dataSource = null;
-		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
-		boolean success = true;
-
-		try {
-			GeoElement geo = app.getSelectedGeos().get(0);
-			if(geo.isGeoList()){
-				// TODO: handle validation for a geoList source
-				dataSource = geo;
-			} else {
-				ArrayList<CellRange> rangeList = spreadsheetTable.selectedCellRanges;			
-				if(mode == MODE_ONEVAR){
-					success = cr.isOneVarStatsPossible(rangeList);
-				}
-				else if(mode == MODE_REGRESSION){
-					success = cr.isCreatePointListPossible(rangeList);
-				}
-				else if(mode == MODE_MULTIVAR){
-					success = cr.isMultiVarStatsPossible(rangeList);
-				}
-
-				if(success)
-					dataSource = (ArrayList<CellRange>) rangeList.clone();		
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			success = false;
-		}
-
-		return success;
-	}
-
-	
-	
-	/**
-	 * Returns true if the current data source contains the specified GeoElement
-	 */
-	public boolean isInDataSource(GeoElement geo){
-		
-		if(dataSource == null) return false;
-		
-		// TODO handle case of GeoList data source
-		if(dataSource instanceof GeoList){
-			return geo.equals(((GeoList)dataSource));
-		}else{
-
-			Point location = geo.getSpreadsheetCoords();
-			boolean isCell = (location != null && location.x < SpreadsheetView.MAX_COLUMNS && location.y < SpreadsheetView.MAX_ROWS);
-
-			if(isCell){	
-				//Application.debug("---------> is cell:" + geo.toString());
-				for(CellRange cr: (ArrayList<CellRange>)dataSource)
-					if(cr.contains(geo)) return true;		
-
-				//Application.debug("---------> is not in data source:" + geo.toString());
-			}
-		}
-
-		return false;
-	}
-	
-
-	/**
-	 * Copies values from the current DataSource into the GeoList dataListAll
-	 * and then stores references to these values in the GeoList dataListSelected.
-	 */
-	private void loadDataLists(){
-
-		if(dataSource == null) return;
-		
-		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
-		String text = "";
-
-		boolean scanByColumn = true;
-		boolean isSorted = false;
-		boolean copyByValue = true;
-		boolean doStoreUndo = false;
-
-		
-		//=======================================
-		// create/update dataListAll 
-		if(dataListAll != null) dataListAll.remove();
-		
-		if(dataSource instanceof GeoList){
-			//dataListAll = dataSource;
-			text = ((GeoList)dataSource).getLabel();
-			if(isSorted)
-				text = "Sort[" + text + "]";
-			//text = ((GeoList)dataSource).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
-
-		}else{
-
-			switch (mode){
-
-			case MODE_ONEVAR:
-				dataListAll = (GeoList) cr.createList(
-						(ArrayList<CellRange>) dataSource, 
-						scanByColumn,
-						copyByValue, 
-						isSorted, 
-						doStoreUndo, 
-						GeoElement.GEO_CLASS_NUMERIC);
-
-				break;
-
-			case MODE_REGRESSION:
-				dataListAll = (GeoList) cr.createPointList(
-						(ArrayList<CellRange>) dataSource, 
-						copyByValue, 
-						leftToRight,
-						isSorted, 
-						doStoreUndo);
-
-				break;
-
-				//TODO: dataListAll needs to be created as copy by value
-			case MODE_MULTIVAR:
-				text = cr.createColumnMatrixExpression((ArrayList<CellRange>) dataSource); 							
-				dataListAll = new GeoList(cons);
-				try {
-					dataListAll = (GeoList) kernel.getAlgebraProcessor()
-					.changeGeoElementNoExceptionHandling((GeoElement)dataListAll, text, true, false);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}				
-				break;
-
-			}
-
-		}	
-
-		if(dataListAll != null){
-			dataListAll.setAuxiliaryObject(true);
-			dataListAll.setLabel("dataListAll");
-		}
-
-
-		//=======================================
-		// create/update dataListSelected
-
-		if(dataListSelected == null){
-			dataListSelected = new GeoList(cons);			
-		}
-		dataListSelected.setAuxiliaryObject(true);
-		dataListSelected.setLabel("dataListSelected");
-
-
-		try {			
-			dataListSelected.clear();
-			for(int i=0; i<dataListAll.size(); ++i)
-				dataListSelected.add(dataListAll.get(i));		
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		if( !isIniting && dataPanel != null){
-			dataPanel.updateDataTable(this.dataListAll);
-		}
-
-	}
-
-
-
-	/**
-	 * Add/remove elements from the selected data list. 
-	 * Called by the data panel on checkbox click.
-	 */
-	public void updateSelectedDataList(int index, boolean doAdd) {
-
-		GeoElement geo = dataListAll.get(index);
-
-		if(doAdd){
-			dataListSelected.add(geo);
-		}else{
-			dataListSelected.remove(geo);
-		}
-
-		dataListSelected.updateCascade();
-		updateAllComboPanels(false);
-		if(regressionPanel != null)
-			regressionPanel.updateRegressionPanel();
-		//Application.debug("updateSelectedList: " + index + doAdd);
-
-	}
-
-
-	/**
-	 * Gets the data titles from the source cells.
-	 */
-	public String[] getDataTitles(){
-
-		if(dataSource == null) return null;
-		
-		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
-		String[] title = null;
-		
-		switch(mode){
-
-		case MODE_ONEVAR:
-
-			title = new String[1];		
-
-			if(dataSource instanceof GeoList){
-				title[0] = ((GeoList) dataSource).getLabel();
-
-			}else{
-
-				CellRange range = ((ArrayList<CellRange>)dataSource).get(0);
-				if(range.isColumn()) {
-					GeoElement geo = RelativeCopy.getValue(spreadsheetTable, range.getMinColumn(), range.getMinRow());
-					if(geo != null && geo.isGeoText())
-						title[0] = geo.toDefinedValueString();
-					else
-						title[0]= app.getCommand("Column") + " " + 
-						GeoElement.getSpreadsheetColumnName(range.getMinColumn());		
-
-				}else{
-					title[0] = app.getMenu("Untitled");
-				}
-			}
-
-			break;
-
-		case MODE_REGRESSION:
-			if(dataSource instanceof GeoList){
-				//TODO -- handle geolist data source titles
-				//title[0] = ((GeoList) dataSource).getLabel();
-			}else{
-				title = cr.getPointListTitles((ArrayList<CellRange>)dataSource, leftToRight);
-			}
-			break;
-
-		case MODE_MULTIVAR:
-			if(dataSource instanceof GeoList){
-				//TODO -- handle geolist data source titles
-				//title[0] = ((GeoList) dataSource).getLabel();
-			}else{
-				title = cr.getColumnTitles((ArrayList<CellRange>)dataSource);
-			}
-			break;
-
-		}
-
-		return title;
-	}
-
-
-	public void swapXY(){
-		leftToRight = !leftToRight;
-		updateDialog(false);
-	}
-
-	
-	
-	
 	
 
 	//=================================================
@@ -624,7 +345,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		//===========================================
 		// statData panel
 
-		if(mode != statDialog.MODE_MULTIVAR){
+		if(mode != MODE_MULTIVAR){
 			statisticsHeader = new JLabel();
 			statisticsHeader.setHorizontalAlignment(JLabel.LEFT);		
 			statisticsHeader.setBorder(BorderFactory.createCompoundBorder(
@@ -712,18 +433,21 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	public void setLabels(){
 
+		GeoList dataAll = sdc.getDataAll();
+		GeoList dataSelected = sdc.getDataSelected();
+		
 		switch(mode){
 		case MODE_ONEVAR:
 			setTitle(app.getMenu("OneVariableStatistics"));	
 			lblOneVarTitle.setText(app.getMenu("DataTitle") + ": ");
 			statisticsHeader.setText(app.getMenu("Statistics"));
-			statTable.evaluateStatTable(dataListSelected);
+			statTable.evaluateStatTable(dataSelected);
 			break;
 		case MODE_REGRESSION:
 			setTitle(app.getMenu("RegressionAnalysis"));	
 			statisticsHeader.setText(app.getMenu("Statistics"));
 			regressionPanel.setLabels();
-			statTable.evaluateStatTable(dataListSelected);
+			statTable.evaluateStatTable(dataSelected);
 			break;
 
 		case MODE_MULTIVAR:
@@ -946,74 +670,26 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}else{
 			//Application.printStacktrace("statDialog not visible");
 			//spView.setColumnSelect(false);
-			removeStatGeos();		
+			sdc.removeStatGeos();		
 			this.detachView();		
 		}
 	}
 
 
-	public void setRegressionGeo(){
-
-		if(geoRegression != null){
-			geoRegression.remove();
-		}
-
-		geoRegression = statGeo.createRegressionPlot(dataListSelected, regressionMode, regressionOrder);
-		geoRegression.removeView(app.getEuclidianView());
-		geoRegression.setAuxiliaryObject(true);
-		app.getEuclidianView().remove(geoRegression);
-		geoRegression.setLabel("regressionModel");
-		this.updateAllComboPanels(true);
-	}
-
-
+	
+	
+	
+	
 	private void updateGUI(){
 
 		if(isIniting) return;
-
-
-	}
-
-
-
-	public void updateDialog(boolean doSetDataSource){
-
-		removeStatGeos();
-		boolean hasValidDataSource = doSetDataSource? setDataSource() : true;
-		if(dataSource == null) return;
-		
-		if(hasValidDataSource){
-			loadDataLists();
-
-			updateAllComboPanels(true);
-			if(mode == MODE_ONEVAR){
-				fldOneVarTitle.setText(getDataTitles()[0]);
-			}
-			if(mode == MODE_REGRESSION){
-				setRegressionGeo();
-				if(regressionPanel != null)
-					regressionPanel.updateRegressionPanel();
-			}
-		}else{
-			//TODO --- handle bad data	
+		if(mode == StatDialog.MODE_ONEVAR){
+			fldOneVarTitle.setText(sdc.getDataTitles()[0]);
 		}
 
 	}
 
-	public void updateAllComboPanels(boolean doCreateGeo){
-		//loadDataLists();	
-		comboStatPanel.updateData(dataListSelected);
-		comboStatPanel2.updateData(dataListSelected);
-		comboStatPanel.updatePlot(doCreateGeo);
-		comboStatPanel2.updatePlot(doCreateGeo);
 
-		if(mode == statDialog.MODE_ONEVAR){
-			statTable.evaluateStatTable(dataListSelected);
-		}
-		else if(mode == statDialog.MODE_REGRESSION){
-			statTable.evaluateStatTable(dataListSelected);
-		}
-	}
 
 
 	public void updateFonts() {
@@ -1024,7 +700,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	}
 
-	
 	
 	public void setFontRecursive(Container c, Font font) {
 	    Component[] components = c.getComponents();
@@ -1039,33 +714,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	
 	
 	
-	
-	
-	
-		
-	/**
-	 * Removes all geos maintained by this dialog and its child components
-	 */
-	public void removeStatGeos(){
-
-		removeStatGeo(dataListAll);
-		removeStatGeo(dataListSelected);
-		removeStatGeo(geoRegression);
-
-		if(comboStatPanel != null)
-			comboStatPanel.removeGeos();
-
-		if(comboStatPanel2 != null)
-			comboStatPanel2.removeGeos();
-
-	}
-
-	private void removeStatGeo(GeoElement statGeo){
-		if(statGeo != null){
-			statGeo.remove();
-			statGeo = null;
-		}
-	}
 
 
 	//=================================================
@@ -1087,47 +735,32 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public void remove(GeoElement geo) {
 
 		//System.out.println("removed: " + geo.toString());
-		if (isInDataSource(geo)) {	
-			System.out.println("stat dialog removed: " + geo.toString());
-			//removeStatGeos();
-			dataSource = null;
-			this.updateDialog(false);
-		}
+		sdc.handleRemovedDataGeo(geo);
 
 	}
 
-	public void rename(GeoElement geo) {
-	}
-
-	public void repaintView() {
-	}
-
+	public void rename(GeoElement geo) {}
+	public void repaintView() {}
+	public void updateAuxiliaryObject(GeoElement geo) {}
+	
 	public void reset() {
 		//removeGeos();
 	}
 
-	public void setMode(int mode) {
-		// ignore..
-	}
+	public void setMode(int mode) {}
 
 	public void update(GeoElement geo) {
-
 		//Application.debug("------> update:" + geo.toString());
-		if (!isIniting && isInDataSource(geo)) {
+		if (!isIniting && sdc.isInDataSource(geo)) {
 			//Application.debug("geo is in data source: " + geo.toString());
 			//removeStatGeos();
 			//dataSource = null;
-			this.updateDialog(false);
+			sdc.updateDialog(false);
 
 		}
-
-
 	}
 
 	
-	public void updateAuxiliaryObject(GeoElement geo) {
-	}
-
 	public void attachView() {
 		//clearView();
 		//kernel.notifyAddAll(this);
@@ -1145,6 +778,14 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	}
 
 
+	public void updateDialog(boolean doSetDataSource){
+		sdc.updateDialog(doSetDataSource);
+	}
+	
+	public String[] getDataTitles(){
+		return sdc.getDataTitles();
+	}
+	
 	//=================================================
 	//      Printing
 	//=================================================
