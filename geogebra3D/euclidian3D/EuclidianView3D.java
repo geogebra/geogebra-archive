@@ -2198,9 +2198,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void updateCursor3D(Hits hits){
 
-		//Application.debug(hits.toString());
-		
-		
 		if (hasMouse){
 			getEuclidianController().updateNewPoint(true, 
 				hits, 
@@ -2219,7 +2216,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * update the 3D cursor with current hits
 	 */
 	public void updateCursor3D(){
-		updateCursor3D(getHits().getTopHits());
+		//updateCursor3D(getHits().getTopHits()); 
+		
+	
+		//we also want to see different pick orders in preview, e.g. line/plane intersection
+		//For now we follow the practice of EView2D: we reserve only points if there are any, 
+		//and return the clone if there are no points.
+		//TODO: define this behavior better
+		if (getHits().containsGeoPoint())
+			updateCursor3D(getHits().getTopHits());
+		else
+			updateCursor3D(getHits());
+		
 	}
 
 	/**
@@ -2445,7 +2453,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawCursor(Renderer renderer){
 
 		
-		//Application.debug("cursor="+cursor+"\ngetCursor3DType()="+getCursor3DType());		
+		//Application.debug("hasMouse="+hasMouse+"\n!getEuclidianController().mouseIsOverLabel() "+!getEuclidianController().mouseIsOverLabel() +"\ngetEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())" + getEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())+
+		//"\ncursor="+cursor+"\ngetCursor3DType()="+getCursor3DType());		
 		
 		if (hasMouse 
 				&& !getEuclidianController().mouseIsOverLabel() 

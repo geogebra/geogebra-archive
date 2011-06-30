@@ -703,7 +703,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// tries to get a single intersection point for the given hits
 	// i.e. hits has to include two intersectable objects.
 	protected GeoPointND getSingleIntersectionPoint(Hits hits) {
-
+		//Application.debug(hits);
 		
 		if (hits.isEmpty() || hits.size() != 2)
 			return null;
@@ -719,11 +719,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		kernel.setSilentMode(true);
 		
 		
-    	if (a instanceof GeoCoordSys1D){
-    		if (b instanceof GeoCoordSys1D){
-    			point = (GeoPoint3D) getKernel().getManager3D().Intersect(null, (GeoCoordSys1D) a, (GeoCoordSys1D) b);
+    	if ( (a instanceof GeoCoordSys1D || a instanceof GeoCoordSys2D) &&
+    			(b instanceof GeoCoordSys1D || b instanceof GeoCoordSys2D) ){
+    			point = (GeoPoint3D) getKernel().getManager3D().Intersect(null,  a,  b);
     		}
-    	}
+    	//TODO: enable other intersectionPoints  to be previewable
+    	//TODO: enable intersectionPaths to be previewable
     	
     	kernel.setSilentMode(false);
 		
@@ -2125,6 +2126,23 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				return true;//!mousePressed; //don't display cursor if dragging 
 			default:
 				return false;			
+			}		
+		} if (cursorType==EuclidianView3D.PREVIEW_POINT_DEPENDENT) {
+			switch(mode){
+			//modes in which the result is not a dependent point 
+			case EuclidianView.MODE_MOVE:
+				
+			case EuclidianView.MODE_PARALLEL:
+			case EuclidianView.MODE_ORTHOGONAL:
+
+			case EuclidianView.MODE_CIRCLE_AXIS_POINT:
+
+			case EuclidianView.MODE_PLANE_POINT_LINE:
+			case EuclidianView.MODE_ORTHOGONAL_PLANE:
+				return false;
+
+			default:
+				return true;					
 			}		
 		}else{
 			switch(mode){
