@@ -4763,6 +4763,13 @@ public abstract class GeoElement
 					screenLoc.setAbsoluteScreenLoc(x, y);
 					movedGeo = true;
 				}
+				else if (isGeoNumeric()) {
+					// real world screen position - GeoNumeric
+					((GeoNumeric)geo).setRealWorldLoc(
+							((GeoNumeric)geo).getRealWorldLocX() + rwTransVec.getX(),
+							((GeoNumeric)geo).getRealWorldLocY() + rwTransVec.getY());
+					movedGeo = true;
+				}
 				else if (isGeoText()) {
 					// check for GeoText with unlabeled start point
 					GeoText movedGeoText = (GeoText) this;
