@@ -3,16 +3,11 @@ package geogebra3D.kernel3D;
 
 import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
-import geogebra.kernel.AlgoIntersectLinePolygon;
 import geogebra.kernel.AlgoIntersectLinePolygonalRegion;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
-
 import geogebra.kernel.GeoPolygon;
-
 import geogebra.kernel.Kernel;
-
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
