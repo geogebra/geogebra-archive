@@ -228,7 +228,8 @@ public class CommandDispatcher {
     	cmdTable.put("Expand", new CmdExpand(kernel));
     	cmdTable.put("Factor", new CmdFactor(kernel));
     	cmdTable.put("Simplify", new CmdSimplify(kernel));   
-    	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));    	
+    	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));
+    	cmdTable.put("CompleteSquare", new CmdCompleteSquare(kernel));
     	
     	cmdSubTable[TABLE_ALGEBRA].putAll(cmdTable);
     	cmdTable.clear();
@@ -776,7 +777,7 @@ public class CommandDispatcher {
     	
     	for(int i = 0; i < tableCount; i++)
     		cmdTable.putAll(cmdSubTable[i]);
-    		
+    		app.checkCommands(cmdTable);
     	
     	// internal command table for commands that should not be visible to the user
     	internalCmdTable = new HashMap<String,CommandProcessor>();

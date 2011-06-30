@@ -41,6 +41,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.commands.CommandProcessor;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
@@ -5319,6 +5320,23 @@ public class Application implements KeyEventDispatcher {
 			return text;
 		}
 		
+	}
+	
+	public void checkCommands(HashMap<String,CommandProcessor>map){
+		initTranslatedCommands();
+		Enumeration<String> e= rbcommand.getKeys();
+		while(e.hasMoreElements()){
+			String s = e.nextElement();			
+			if(!s.contains("Syntax") && map.get(s)==null){
+				boolean write = true;
+				try{
+					rbcommand.getString(s+"Syntax");
+				}catch(Exception ex){
+					write = false;
+				}
+				if(write)System.out.println(s);
+			}
+		}
 	}
 
 		

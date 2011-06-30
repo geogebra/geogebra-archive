@@ -7021,6 +7021,11 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
+	final public GeoElement CompleteSquare(String label, GeoFunction func) {		
+		AlgoCompleteSquare algo = new AlgoCompleteSquare(cons, label, func);
+		return algo.getResult();			
+	}
+	
 	/**
 	 * Factors
 	 * Michael Borcherds 

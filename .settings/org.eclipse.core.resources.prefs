@@ -1,4 +1,4 @@
-#Sun Sep 19 21:50:39 BST 2010
+#Thu Jun 30 00:24:42 CEST 2011
 eclipse.preferences.version=1
 encoding//geogebra/kernel/discrete/tsp/AppletMain.java=UTF-8
 encoding//geogebra/kernel/discrete/tsp/Main.java=UTF-8
@@ -23,3 +23,4 @@ encoding//geogebra/kernel/discrete/tsp/model/Edge.java=UTF-8
 encoding//geogebra/kernel/discrete/tsp/model/Node.java=UTF-8
 encoding//geogebra/kernel/discrete/tsp/util/Heap.java=UTF-8
 encoding//geogebra/kernel/discrete/tsp/util/IntegerSet.java=UTF-8
+encoding/<project>=UTF-8
