@@ -17,10 +17,11 @@ import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra3D.kernel3D.AlgoPolyLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Manager3D;
 
 /**
- * Interface for managing all 3D methods in Kernel.
- * 
+ * Interface for managing all 3D methods in Kernel. <br/>
+ * See Also {@link Manager3D}.
  * @author mathieu
  *
  */
