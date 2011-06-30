@@ -274,7 +274,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     protected void drawHistogram(GeoNumeric geo){
     	AlgoFunctionAreaSums algo=(AlgoFunctionAreaSums)geo.getParentAlgorithm();
         double[] y=algo.getValues();
-        double[] x=algo.getLeftBorders();
+        double[] x=algo.getLeftBorder();
 		startBeamer(codeFilledObject);
         for (int i=0;i<x.length-1;i++){
     		codeFilledObject.append("\\psframe");
@@ -295,7 +295,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
        	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
     	int n=algo.getIntervals();
         double[] y=algo.getValues();
-        double[] x=algo.getLeftBorders();
+        double[] x=algo.getLeftBorder();
 		startBeamer(codeFilledObject);
        	for (int i=0;i<n;i++){
     		codeFilledObject.append("\\pspolygon");
@@ -324,7 +324,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	int n=algo.getIntervals();
         double step=algo.getStep();
         double[] y=algo.getValues();
-        double[] x=algo.getLeftBorders();
+        double[] x=algo.getLeftBorder();
 		startBeamer(codeFilledObject);
        	for (int i=0;i<n;i++){
         		codeFilledObject.append("\\psframe");

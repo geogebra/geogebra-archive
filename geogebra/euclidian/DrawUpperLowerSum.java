@@ -93,14 +93,14 @@ public class DrawUpperLowerSum extends Drawable {
 				
 		// plot upper/lower sum rectangles
 		int N = algo.getIntervals();		
-		double [] leftBorder = algo.getLeftBorders();		
+		double [] leftBorder = algo.getLeftBorder();		
 		double [] yval = algo.getValues();
 		
 		// first point 						
 		double x = ax;
 		double y = y0;		
 		gp.moveTo(x, y);					
-		for (int i=0; i < N; i++) {
+		for (int i=0; i < N; i++) {			
 			coords[0] = leftBorder[i];						
 			coords[1] = yval[i];
 			view.toScreenCoords(coords);
@@ -161,7 +161,7 @@ public class DrawUpperLowerSum extends Drawable {
 		double base = (double) view.yZero;
 				
 		int N = algo.getIntervals();		
-		double [] leftBorder = algo.getLeftBorders();
+		double [] leftBorder = algo.getLeftBorder();
 		double [] yval = algo.getValues();
 		
 		gp.moveTo(view.toScreenCoordXd(leftBorder[0]), base);	

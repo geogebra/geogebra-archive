@@ -292,7 +292,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     protected void drawHistogram(GeoNumeric geo){
     	AlgoFunctionAreaSums algo=(AlgoFunctionAreaSums)geo.getParentAlgorithm();
         double[] y=algo.getValues();
-        double[] x=algo.getLeftBorders();
+        double[] x=algo.getLeftBorder();
 		startBeamer(codeFilledObject);
         for (int i=0;i<x.length-1;i++){
           	codeFilledObject.append("\\draw");
@@ -310,7 +310,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
        	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
     	int n=algo.getIntervals();
         double[] y=algo.getValues();
-        double[] x=algo.getLeftBorders();
+        double[] x=algo.getLeftBorder();
         // Trapezoidal sum
 		startBeamer(codeFilledObject);
     	for (int i=0;i<n;i++){
@@ -335,7 +335,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	int n=algo.getIntervals();
         double step=algo.getStep();
         double[] y=algo.getValues();
-        double[] x=algo.getLeftBorders();
+        double[] x=algo.getLeftBorder();
 		startBeamer(codeFilledObject);
         for (int i=0;i<n;i++){     	
         	codeFilledObject.append("\\draw");

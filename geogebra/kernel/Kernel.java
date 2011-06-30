@@ -46,6 +46,7 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
+import geogebra.kernel.statistics.AlgoBernoulliBarChart;
 import geogebra.kernel.statistics.AlgoBinomialDist;
 import geogebra.kernel.statistics.AlgoBinomialDistBarChart;
 import geogebra.kernel.statistics.AlgoCauchy;
@@ -4224,6 +4225,16 @@ public class Kernel {
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+
+
+	public GeoNumeric Bernoulli(String label, NumberValue probability,
+			GeoBoolean cumulative) {
+		AlgoBernoulliBarChart algo = new AlgoBernoulliBarChart(cons, label, probability, cumulative);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
 	/** Binomial[] bar chart */
 	final public GeoNumeric BinomialDist(String label, NumberValue a, NumberValue b) {
 		AlgoBinomialDistBarChart algo = new AlgoBinomialDistBarChart(cons, label, a, b);

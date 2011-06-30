@@ -336,7 +336,7 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
     protected void drawHistogram(GeoNumeric geo){
         AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
         double[] y = algo.getValues();
-        double[] x = algo.getLeftBorders();
+        double[] x = algo.getLeftBorder();
 
         for (int i=0; i<x.length-1; i++){
             startTransparentFill(codeFilledObject);
@@ -355,7 +355,7 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
         AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums) geo.getParentAlgorithm();
         int n = algo.getIntervals();
         double[] y = algo.getValues();
-        double[] x = algo.getLeftBorders();
+        double[] x = algo.getLeftBorder();
         for (int i = 0; i < n; i++){
             startTransparentFill(codeFilledObject);
             codeFilledObject.append("(");
@@ -380,7 +380,7 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
         int n = algo.getIntervals();
         double step = algo.getStep();
         double[] y = algo.getValues();
-        double[] x = algo.getLeftBorders();
+        double[] x = algo.getLeftBorder();
 
         for (int i=0; i<n; i++){
             startTransparentFill(codeFilledObject);

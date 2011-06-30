@@ -87,6 +87,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	public static final int TYPE_BARCHART_PASCAL = 41;
 	public static final int TYPE_BARCHART_POISSON = 42;
 	public static final int TYPE_BARCHART_HYPERGEOMETRIC = 43;
+	public static final int TYPE_BARCHART_BERNOULLI = 44;
 	
 	
 	
@@ -178,7 +179,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * Returns left class borders of a bar chart or histogram
 	 * @return left class borders of a bar chart or histogram
 	 */
-	public double[] getLeftBorder() {
+	public double[] getLeftBorder() {		
 		return leftBorder;
 	}
 	
@@ -540,7 +541,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		this.isCumulative = isCumulative;
 		this.N=N;
 		this.density = density;
-		this.useDensityGeo = useDensity;		
+		this.useDensityGeo = useDensity;	
+		
 		this.leftBorder = borders;
 		this.yval = vals;		
 	}
@@ -581,8 +583,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
-		yval = new double[0];
-		leftBorder= new double[0];
+		if(yval == null){
+			yval = new double[0];
+			leftBorder= new double[0];
+		}
 	}
 
 	protected AlgoFunctionAreaSums( 
@@ -601,6 +605,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		this.a = a;
 		this.b = b;
 		this.yval = vals;
+		
 		this.leftBorder = borders;
 		this.N=N;
 		
@@ -698,7 +703,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			}
 			break;
 		
-			
+		case TYPE_BARCHART_BERNOULLI:	
 		case TYPE_BARCHART_BINOMIAL:
 		case TYPE_BARCHART_PASCAL:
 		case TYPE_BARCHART_HYPERGEOMETRIC:
@@ -753,13 +758,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		return yval;
 	}
 
-	/**
-	 * Returns list of left borders of columns
-	 * @return list of left borders of columns
-	 */
-	public double [] getLeftBorders() {
-		return leftBorder;
-	}	
+	
 	
 	/**
 	 * Returns the resulting sum
@@ -820,7 +819,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	
 	protected final void compute() {	
 		GeoElement geo; // temporary variable	
-		
+		Application.debug(type);
 		switch (type)
 		{
 		case TYPE_LOWERSUM:
@@ -845,7 +844,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			}
 			STEP = (bd - ad) / N;	 		
 			
-			// calc minimum in every interval		
+			// calc minimum in every interval
+			
 			if (yval == null || yval.length < N) {
 				yval = new double[N]; 			
 				leftBorder = new double[N];		
@@ -955,7 +955,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			}
 			STEP = (bd - ad) / N;	 		
 			
-
+			
 			
 			// calc minimum in every interval		
 			if (yval == null || yval.length < N+1) {// N+1 for trapezoids
@@ -1022,7 +1022,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				N = (int) Math.round(ints);
 			}
 			STEP = (bd - ad) / N;	 		
-
+			
 			if (yval == null || yval.length < N) {
 				yval = new double[N];
 				leftBorder = new double[N];
@@ -1120,7 +1120,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			//Application.debug("N = "+N+" maxi = "+maxi+" mini = "+mini);
 							
 
-				
+			
 				
 			if (yval == null || yval.length < N) {
 				yval = new double[N];
@@ -1216,6 +1216,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			
 			if (N == 2) {
 				// special case, 1 bar
+				
 				yval = new double[2];
 				leftBorder = new double[2];
 				yval[0] = ((GeoNumeric)(list2.get(0))).getDouble(); 	
@@ -1286,6 +1287,37 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 			
 			break;
+		case TYPE_BARCHART_BERNOULLI:
+			double p = p1.getDouble();
+			if(p < 0 || p > 1){
+				sum.setUndefined();
+				return;
+			}
+			N = 3;
+			
+
+				
+				// special case, 2 bars
+			
+				leftBorder = new double[3];
+				yval = new double[3];
+				
+				boolean cumulative = ((GeoBoolean)isCumulative).getBoolean();
+				yval[0] = p;
+				yval[1] = cumulative ? 1:1-p;				
+				leftBorder[0] = - 0.5;
+				leftBorder[1] = 0.5;
+				leftBorder[2] = 1.5;
+				ageo = new GeoNumeric(cons,leftBorder[0]);
+				bgeo = new GeoNumeric(cons,leftBorder[1]);
+				a = (NumberValue)ageo;
+				b = (NumberValue)bgeo;
+				
+				sum.setValue(yval[0]+yval[1]);
+
+				
+		 
+		return;
 			
 		case TYPE_BARCHART_FREQUENCY_TABLE_WIDTH:
 			// BarChart[{1,2,3,4,5},{1,5,0,13,4}, 0.5]
@@ -1325,7 +1357,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			
 							
 				
-				
+			
 			if (yval == null || yval.length < NN-1) {
 				yval = new double[NN-1];
 				leftBorder = new double[NN-1];
@@ -1410,7 +1442,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			// fix for now is to check if other parameters are present, then it must be raw data
 			if (N-1 != list2.size() || useDensityGeo != null || isCumulative !=null)
 			{ 
-
+				
 				if (yval == null || yval.length < N) {
 					yval = new double[N];
 					leftBorder = new double[N];
@@ -1523,7 +1555,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			}
 			else
 			{ // list2 contains the heights
-	
+				
 				if (yval == null || yval.length < N) {
 					yval = new double[N];
 					leftBorder = new double[N];
@@ -1618,7 +1650,6 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * Prepares list1 and list2 for use with probability distribution bar charts
 	 */
 	private boolean prepareDistributionLists(){
-
 		IntegerDistribution dist = null;
 		int first = 0, last = 0;
 		try{
