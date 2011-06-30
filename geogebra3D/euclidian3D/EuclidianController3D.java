@@ -506,8 +506,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.PREVIEW_POINT_DEPENDENT:
 			if (intersectPossible){
 				point3D = (GeoPoint3D) getKernel().getManager3D().Intersect(null, 
-						(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(0), 
-						(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(1));
+						 view3D.getCursor3DIntersectionOf(0), 
+						 view3D.getCursor3DIntersectionOf(1));
 			}else
 				point3D = null;
 			return point3D;
@@ -719,8 +719,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		kernel.setSilentMode(true);
 		
 		
-    	if ( (a instanceof GeoCoordSys1D || a instanceof GeoCoordSys2D) &&
-    			(b instanceof GeoCoordSys1D || b instanceof GeoCoordSys2D) ){
+    	if ( (a instanceof GeoCoordSys1D || a instanceof GeoCoordSys2D) && (b instanceof GeoCoordSys1D)
+    			||(a instanceof GeoCoordSys1D && b instanceof GeoCoordSys2D) ){
     			point = (GeoPoint3D) getKernel().getManager3D().Intersect(null,  a,  b);
     		}
     	//TODO: enable other intersectionPoints  to be previewable
@@ -1497,13 +1497,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_PLANE_POINT_LINE:
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, false, true, true);
+			createNewPoint(hits, false, false, true);
 			break;	
 			
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, true, false, true, true);
+			createNewPoint(hits, true, false, false, true);
 			break;	
 			
 		case EuclidianView3D.MODE_RIGHT_PRISM:
