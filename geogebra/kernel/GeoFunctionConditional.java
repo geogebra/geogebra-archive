@@ -19,7 +19,6 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 
@@ -533,6 +532,9 @@ public class GeoFunctionConditional extends GeoFunction {
 		private ExpressionNode condition;
 		
 		public Bounds addRestriction(ExpressionNode e){
+			if(e.getOperation()==ExpressionNode.AND){
+				return addRestriction(e.getLeftTree()).addRestriction(e.getRightTree());
+			}
 			Bounds b = new Bounds();
 			b.lower = lower;
 			b.upper = upper;
