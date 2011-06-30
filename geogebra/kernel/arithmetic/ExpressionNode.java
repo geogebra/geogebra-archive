@@ -3554,6 +3554,28 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			return new ExpressionNode(kernel,left,EQUAL_BOOLEAN,right);		
 		return new ExpressionNode(kernel,this,ExpressionNode.NOT,null);
 	}
+
+	public double getDegree(FunctionVariable fv) {
+		if (this.isLeaf()) {
+			if (this.equals(fv) || left.equals(fv)) {
+				return 1.0;
+			}
+
+			return 0.0;
+
+		}
+		if(operation == POWER && left == fv){
+			ExpressionValue rt = right.evaluate();
+			if(rt.isNumberValue())
+				return ((NumberValue)rt).getDouble();
+		}
+		if(operation == MULTIPLY)
+			return getLeftTree().getDegree(fv)+getRightTree().getDegree(fv);
+		if(operation == PLUS || operation == MINUS)
+			return Math.max(getLeftTree().getDegree(fv),getRightTree().getDegree(fv));
+		return 0;
+		
+	}
 	
 
 }

@@ -10,13 +10,14 @@ public class AlgoCompleteSquare extends AlgoElement {
 	private GeoFunction f,square;
 	private FunctionVariable fv;
 	private MyDouble a,h,k; //a(x-h)^2+k
-	
+	private int lastDeg;
 	public AlgoCompleteSquare(Construction cons,String label,GeoFunction f){
 		super(cons);
 		this.f=f;
 		a = new MyDouble(kernel);
 		h = new MyDouble(kernel);
 		k = new MyDouble(kernel);
+		
 		fv = new FunctionVariable(kernel);	
 		ExpressionNode squareE = new ExpressionNode(kernel,fv,ExpressionNode.MINUS,h)
 					.power(new MyDouble(kernel,2)).multiply(a).plus(k);
@@ -26,21 +27,43 @@ public class AlgoCompleteSquare extends AlgoElement {
 		setInputOutput();
 		square.setFunction(squareF);		
 		compute();		
+		lastDeg = 0;
 		square.setLabel(label);
 	}
 	@Override
 	protected void compute() {		
+		double deg = f.getFunctionExpression().getDegree(f.getFunction().getFunctionVariables()[0]);
+		int degInt = (int) deg;
+		if(!Kernel.isEqual(deg, degInt) || degInt %2 == 1 || deg < 2){
+			square.setUndefined();
+			return;
+		}
+		if(lastDeg != degInt){
+			ExpressionNode squareE;
+			if(degInt == 2)
+			 squareE = new ExpressionNode(kernel,fv,ExpressionNode.MINUS,h)
+			.power(new MyDouble(kernel,2)).multiply(a).plus(k);
+			else
+			squareE = new ExpressionNode(kernel,
+						new ExpressionNode(kernel,fv,ExpressionNode.POWER,new MyDouble(kernel,degInt/2))
+					,ExpressionNode.MINUS,h)
+					.power(new MyDouble(kernel,2)).multiply(a).plus(k);
+			square.getFunction().setExpression(squareE);
+		}
+		
 		fv.setVarString(f.getVarString());
-		//px^2+qx+r; p+q+r=s;
+		//px^2+qx+r; p+q+r=s;		
 		double r = f.evaluate(0);
-		double s = f.evaluate(1);		
-		double p = 0.5*(s+f.evaluate(-1))-r;
+		double s = f.evaluate(1);
+		//          p*2^d+q*(2^d/2)  => p*2^(d/2)+q  => p*(2^(d/2)-1)  => p
+		double p = ((f.evaluate(2)-r)*Math.pow(2, -deg/2) - (s-r))  / (Math.pow(2, deg/2)-1);
 		double q = s-p-r;
+		
 		boolean isQuadratic = !f.isGeoFunctionConditional();
-		double[] checkpoints = {1000,-1000,Math.PI,Math.E};
+		double[] checkpoints = {Math.pow(10000,2/degInt),-Math.pow(10000,2/degInt),Math.PI,Math.E};
 		for(int i=0;i<checkpoints.length;i++){
 			double x=checkpoints[i];
-			if(!Kernel.isEqual(p*x*x+q*x+r, f.evaluate(x)))
+			if(!Kernel.isEqual(p*Math.pow(x,deg)+q*Math.pow(x,deg/2)+r, f.evaluate(x)))
 				isQuadratic = false;
 		}
 		if(!isQuadratic){
@@ -48,8 +71,8 @@ public class AlgoCompleteSquare extends AlgoElement {
 		}else{
 			square.setDefined(true);
 			a.set(p);
-			h.set(-q/2*p);
-			k.set(r-q*q/p/4);		
+			h.set(-q/(2*p));
+			k.set(r-q*q/(p*4));		
 		}		
 	}
 
