@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
@@ -20,6 +21,7 @@ import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoQuadricND;
@@ -27,6 +29,7 @@ import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
@@ -578,6 +581,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_DEPENDENT);
 		
 	}
+	
 
 	
 	/**
@@ -740,14 +744,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
     		return null;
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -2127,42 +2123,39 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			default:
 				return false;			
 			}		
-		} if (cursorType==EuclidianView3D.PREVIEW_POINT_DEPENDENT) {
+		} else if (cursorType==EuclidianView3D.PREVIEW_POINT_DEPENDENT) {
 			switch(mode){
 			//modes in which the result is not a dependent point 
-			case EuclidianView.MODE_MOVE:
-				
-			case EuclidianView.MODE_PARALLEL:
-			case EuclidianView.MODE_ORTHOGONAL:
-
-			case EuclidianView.MODE_CIRCLE_AXIS_POINT:
-
-			case EuclidianView.MODE_PLANE_POINT_LINE:
-			case EuclidianView.MODE_ORTHOGONAL_PLANE:
-				return false;
-
-			default:
-				return true;					
-			}		
-		}else{
-			switch(mode){
-			//modes where point can't be created on path/region
-			case EuclidianView.MODE_MOVE:
-				
+			case EuclidianView.MODE_POINT:
 			case EuclidianView.MODE_INTERSECT:
-			case EuclidianView.MODE_INTERSECTION_CURVE:
-				
-			case EuclidianView.MODE_PARALLEL:
-			case EuclidianView.MODE_ORTHOGONAL:
-
-			case EuclidianView.MODE_CIRCLE_AXIS_POINT:
-
-			case EuclidianView.MODE_PLANE_POINT_LINE:
-			case EuclidianView.MODE_ORTHOGONAL_PLANE:
-				return false;
+				return true;
 
 			default:
-				return true;			
+				return false;					
+			}
+		} else{
+			switch(mode){
+			//modes where point can be created on path/region
+			
+			case EuclidianView.MODE_POINT_ON_OBJECT:
+				
+			case EuclidianView.MODE_JOIN:
+			case EuclidianView.MODE_SEGMENT:
+				
+			case EuclidianView.MODE_RAY:
+			case EuclidianView.MODE_VECTOR:
+
+			case EuclidianView.MODE_VECTOR_FROM_POINT:
+
+			case EuclidianView.MODE_POLYGON:
+			case EuclidianView.MODE_POLYLINE:
+			case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
+			case EuclidianView.MODE_PLANE_THREE_POINTS:
+			case EuclidianView.MODE_SPHERE_TWO_POINTS:
+				return true;
+
+			default:
+				return false;			
 			}
 		}
 	}
@@ -2288,6 +2281,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	}
 	
+
 	
 }
 
