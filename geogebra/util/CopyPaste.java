@@ -156,6 +156,14 @@ public class CopyPaste {
 					if (!geos.contains(pgeos[0]))
 						geos.add(pgeos[0]);
 				}
+			} else if (geo.isGeoList()) {
+				if (geo.getParentAlgorithm().getClassName().equals("AlgoSequence")) {
+					GeoElement [] pgeos = geo.getParentAlgorithm().getInput();
+					if (pgeos.length > 1) {
+						if (!geos.contains(pgeos[0]))
+							geos.add(pgeos[0]);
+					}
+				}
 			}
 		}
 	}
@@ -195,7 +203,26 @@ public class CopyPaste {
 		    				if (((AlgoElement)geoal.get(0)).getInput()[2].isGeoNumeric()) {
 		    					it.remove();
 		    				}
-		    			}
+		    			} else if (((GeoElement)geo).isGeoList()) {
+		    				// GeoNumerics: from, to, step
+		    				if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoSequence")) {
+		    					it.remove();
+		    				} else if (geoal.size() == 2) { // var
+		    					if (((AlgoElement)geoal.get(0)).getClassName().equals("AlgoSequence")) {
+		    						if (((AlgoElement)geoal.get(0)).getInput().length > 1) {
+			    						if (((AlgoElement)geoal.get(0)).getInput()[1] == geo2) {
+			    							it.remove();
+			    						}
+		    						}
+		    					} else if (((AlgoElement)geoal.get(1)).getClassName().equals("AlgoSequence")) {
+		    						if (((AlgoElement)geoal.get(1)).getInput().length > 1) {
+			    						if (((AlgoElement)geoal.get(1)).getInput()[1] == geo2) {
+			    							it.remove();
+			    						}
+		    						}
+		    					}
+		    				}
+		    			} 
 		    		}
 		    	}
 
