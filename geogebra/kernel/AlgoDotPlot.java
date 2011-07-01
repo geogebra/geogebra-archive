@@ -12,8 +12,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.Iterator;
-import java.util.TreeSet;
+import geogebra.kernel.arithmetic.NumberValue;
+
+import java.util.Arrays;
 
 
 /**
@@ -41,6 +42,7 @@ public class AlgoDotPlot extends AlgoElement {
 	private GeoList inputList; //input
     private GeoList outputList; //output	
     private int size;
+	private double[] sortedData;
 
     AlgoDotPlot(Construction cons, String label, GeoList inputList) {
         super(cons);
@@ -51,8 +53,10 @@ public class AlgoDotPlot extends AlgoElement {
         setInputOutput();
         compute();
         outputList.setLabel(label);
+        
     }
 
+    
     public String getClassName() {
         return "AlgoDotPlot";
     }
@@ -81,60 +85,59 @@ public class AlgoDotPlot extends AlgoElement {
     	//========================================
     	// sort the raw data
     	
-    	GeoElement geo0 = inputList.get(0);     	    	 	
-    	TreeSet<GeoNumeric> sortedSet;
-    		
-    	if (geo0.isNumberValue()) {
-    		sortedSet = new TreeSet<GeoNumeric>(GeoNumeric.getComparator());
-    		
-    	} else {
-    		outputList.setUndefined();
-    		return;    		
-    	}
-    	
-    
-        for (int i=0 ; i<size ; i++)
-        {
-	      	GeoElement geo = inputList.get(i); 
-	   		if (geo instanceof GeoNumeric) {
-	   			sortedSet.add((GeoNumeric)geo);
-	   		}
-	   		else
-	   		{
-	   		  outputList.setUndefined();
-	       	  return;			
-	   		}
-        }
+    	// convert geoList to sorted array of double
+		sortedData = new double[size];
+		for (int i=0; i < size; i++) {
+			GeoElement geo = inputList.get(i);
+			if (geo.isNumberValue()) {
+				NumberValue num = (NumberValue) geo;
+				sortedData[i] = num.getDouble();
+
+			} else {
+				outputList.setUndefined();
+				return;
+			}    		    		
+		}   
+		Arrays.sort(sortedData);
+	       
         
-        
+		// prepare output list. Pre-existing geos will be recycled, 
+		// but extra geos are removed when outputList is too long
+		outputList.setDefined(true);
+		for(int i = size; i< outputList.size(); i++){
+			GeoElement extraGeo = outputList.get(i);
+			extraGeo.remove();
+			outputList.remove(extraGeo);
+			
+		}	
+		int oldListSize = outputList.size();
+    	 
+                     
         //========================================
         // iterate through the sorted data and 
         // create dot plot points
-    	 
-        outputList.setDefined(true);
-        outputList.clear();
-        
         boolean suppressLabelCreation = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
-	
-        Iterator<GeoNumeric> iterator = sortedSet.iterator();    
+
         double k = 1.0;
-        double prevValue;
-        double currentValue = (double)((GeoNumeric) iterator.next()).getDouble(); 
         
         // first point
-        outputList.add(new GeoPoint(cons, null, currentValue, k, 1.0));
+        if(outputList.size()>0)
+			((GeoPoint)outputList.get(0)).setCoords(sortedData[0], k, 1.0);
+    	else
+    	 outputList.add(new GeoPoint(cons, null, sortedData[0], k, 1.0));
         
         // remaining points
-        while (iterator.hasNext()) {
-        	prevValue = currentValue;
-        	currentValue = (double)((GeoNumeric) iterator.next()).getDouble(); 
-        	// check is same as previous element
-        	if(currentValue == prevValue ) 
-				++k;
-			else
-				k = 1;
-        	outputList.add(new GeoPoint(cons, null, currentValue, k, 1.0));
+        for(int i = 1; i< size; i++){
+        	// stack repeated values
+        	if(sortedData[i] == sortedData[i-1]) 
+        		++k;
+        	else
+        		k = 1;
+        	if(i<oldListSize)
+				((GeoPoint)outputList.get(i)).setCoords(sortedData[i], k, 1.0);
+        	else
+        	 outputList.add(new GeoPoint(cons, null, sortedData[i], k, 1.0));
         }      
 		
         cons.setSuppressLabelCreation(suppressLabelCreation);
