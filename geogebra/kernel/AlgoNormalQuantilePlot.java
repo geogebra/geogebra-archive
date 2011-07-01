@@ -48,7 +48,7 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 	private GeoList outputList; //output	
 	private int size;
 	private double[] zValues;
-	private double[] dataValues;
+	private double[] sortedData;
 
 	AlgoNormalQuantilePlot(Construction cons, String label, GeoList inputList) {
 		super(cons);
@@ -106,17 +106,17 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 	private String getQQLineText(){
 
 		SummaryStatistics stats = new SummaryStatistics();
-		for (int i = 0; i < dataValues.length; i++) {
-			stats.addValue(dataValues[i]);
+		for (int i = 0; i < sortedData.length; i++) {
+			stats.addValue(sortedData[i]);
 		}
 		double sd = stats.getStandardDeviation();
 		double mean = stats.getMean();
 		double min = stats.getMin();
 		double max = stats.getMax();
-		
+
 		// qq line: y = (1/sd)x - mean/sd 
 		String text = "Function[ 1/" + sd + " x - " + mean/sd + "," + min + "," + max + "]";
-		
+
 		return text;
 	}
 
@@ -133,32 +133,45 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 		} 
 
 		// convert geoList to sorted array of double
-		dataValues = new double[size];
+		sortedData = new double[size];
 		for (int i=0; i < size; i++) {
 			GeoElement geo = inputList.get(i);
 			if (geo.isNumberValue()) {
 				NumberValue num = (NumberValue) geo;
-				dataValues[i] = num.getDouble();
+				sortedData[i] = num.getDouble();
 
 			} else {
 				outputList.setUndefined();
 				return;
 			}    		    		
 		}   
-		Arrays.sort(dataValues);
+		Arrays.sort(sortedData);
 
-		
+
 		// create the z values
 		calculateZValues(size);
 
-		// iterate through the sorted data and create the normal quantile points 
+		// prepare output list. Pre-existing geos will be recycled, 
+		// but extra geos are removed when outputList is too long
 		outputList.setDefined(true);
-		outputList.clear(); 
+		for(int i = size; i< outputList.size(); i++){
+			GeoElement extraGeo = outputList.get(i);
+			outputList.remove(extraGeo);
+			extraGeo.remove();
+		}	
+		int oldListSize = outputList.size();
+
+
+		// iterate through the sorted data and create the normal quantile points 
+
 		boolean suppressLabelCreation = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 
-		for(int i = 0; i<dataValues.length; i++) {
-			outputList.add(new GeoPoint(cons, null, dataValues[i], zValues[i], 1.0));
+		for(int i = 0; i<sortedData.length; i++) {
+			if(i<oldListSize)
+				((GeoPoint)outputList.get(i)).setCoords(sortedData[i], zValues[i], 1.0);
+			else
+				outputList.add(new GeoPoint(cons, null, sortedData[i], zValues[i], 1.0));
 		}      
 
 		// create qq line and add it to the list
