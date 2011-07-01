@@ -7,6 +7,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoPlaneND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -415,4 +416,5 @@ public interface EuclidianViewInterface {
 	 */
 	public boolean isMoveable(GeoElement geo);
 
+	public ArrayList<GeoPointND> getStickyPointList();
 }

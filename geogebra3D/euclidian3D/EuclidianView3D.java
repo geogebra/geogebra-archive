@@ -359,8 +359,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 			
 	}
-	
-	
+
+	// POINT_CAPTURING_STICKY_POINTS locks onto these points
+	// not implemented yet in 3D
+	public ArrayList<GeoPointND> getStickyPointList() {
+		return null;
+	}
 	
 	
 	/** return the 3D kernel

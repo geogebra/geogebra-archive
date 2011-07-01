@@ -235,6 +235,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public static final int POINT_CAPTURING_ON = 1;
 	public static final int POINT_CAPTURING_ON_GRID = 2;
 	public static final int POINT_CAPTURING_AUTOMATIC = 3;
+	public static final int POINT_CAPTURING_STICKY_POINTS = 4;
 	
 //	 Michael Borcherds 2008-04-28 
 	public static final int GRID_CARTESIAN = 0;
@@ -458,6 +459,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	// Map (geo, drawable) for GeoElements and Drawables
 	protected HashMap DrawableMap = new HashMap(500);
+	
+	protected ArrayList<GeoPointND> stickyPointList = new ArrayList<GeoPointND>();
 
 	protected DrawableList allDrawableList = new DrawableList();
 	
@@ -662,12 +665,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected void resetLists() {
 		DrawableMap.clear();
+		stickyPointList.clear();
 		allDrawableList.clear();
 		bgImageList.clear();
 		
 		for (int i=0 ; i<=MAX_LAYER_USED ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
 
 		setToolTipText(null);
+	}
+
+	public ArrayList<GeoPointND> getStickyPointList() {
+		return stickyPointList;
 	}
 
 	public void attachView() {
@@ -3615,6 +3623,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		if (d != null) {			
 			DrawableMap.put(geo, d);
+			if (geo.isGeoPoint())
+				stickyPointList.add((GeoPointND)geo);
 		}
 
 		return d;
@@ -3697,6 +3707,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			allDrawableList.remove(d);
 
 			DrawableMap.remove(geo);
+			if (geo.isGeoPoint())
+				stickyPointList.remove(geo);
 			repaint();
 		}
 	}		

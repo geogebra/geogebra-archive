@@ -277,6 +277,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	boolean allowSelectionRectangleForTranslateByVector = true;
 	
+	int previousPointCapturing;
+	
 	
 	/*********************************************** 
 	 * Creates new EuclidianController 
@@ -398,6 +400,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			startPoint.setLocation((view.getXmin() + view.getXmax()) / 2, (view.getYmin() + view.getYmax()) / 2);
 		}
 		if (pastePreviewSelected != null && !pastePreviewSelected.isEmpty()) {
+			previousPointCapturing = view.getPointCapturingMode();
+			view.setPointCapturing(EuclidianView.POINT_CAPTURING_STICKY_POINTS);
 			if (mouseLoc != null) {
 				transformCoords();
 				updatePastePreviewPosition();
@@ -2075,6 +2079,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		boolean changedKernel0 = false;
 		if (pastePreviewSelected != null) {
 			pastePreviewSelected.clear();
+			view.setPointCapturing(previousPointCapturing);
 			changedKernel0 = true;
 		}
 
@@ -3532,7 +3537,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		//	point capturing to grid
 		double pointCapturingPercentage = 1;
-		switch (view.getPointCapturingMode()) {	
+		switch (view.getPointCapturingMode()) {
+
+		case EuclidianView.POINT_CAPTURING_STICKY_POINTS:
+			pointCapturingPercentage = 0.125;
+			ArrayList<GeoPointND> spl = view.getStickyPointList();
+			if (spl != null) {
+				for (int i = 0; i < spl.size(); i++) {
+					GeoPoint gp = (GeoPoint)spl.get(i);
+					if (Math.abs(gp.getInhomX() - xRW) < view.getGridDistances(0) * pointCapturingPercentage &&
+						Math.abs(gp.getInhomY() - yRW) < view.getGridDistances(1) * pointCapturingPercentage) {
+						xRW = gp.getInhomX();
+						yRW = gp.getInhomY();
+						break;
+					}
+				}
+			}
+			break;
+
 		case EuclidianView.POINT_CAPTURING_AUTOMATIC:				
 			if (!view.isGridOrAxesShown())break;
 
