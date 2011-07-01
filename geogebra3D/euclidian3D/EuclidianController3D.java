@@ -1223,6 +1223,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			previewDrawable = view3D.createPreviewRightPrism(selectedPolygons);
 			break;
 			
+		case EuclidianView.MODE_INTERSECTION_CURVE: // line through two points
+			
+			//only for two planes
+			previewDrawable = view3D.createPreviewLineFromPlanes(selectedCoordSys2D);
+			break;
 			
 		default:
 			previewDrawable = super.switchPreviewableForInitNewMode(mode);
@@ -1525,7 +1530,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (hits.size() == 0)
 				createNewPoint(hits, false, true, true);
 			break;
-			
+		case EuclidianView.MODE_INTERSECTION_CURVE:
+			//no need to do anything for preview when mouse is pressed
+			break;
 		default:
 			super.switchModeForMousePressed(e);
 		}
@@ -1737,7 +1744,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				return false;	
 
 			//////////////////////////////////////////////////
-			/* TODO ???
+			/* TODO too many hits
 			if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 				Hits goodHits = new Hits();
 				
@@ -1752,48 +1759,17 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 			}
 			*/
-		
-			/*
+
 			addSelectedCS2D(hits, 10, true);
 			addSelectedQuadric(hits, 10, true);
-			*/
-			
-			//only add first correct hit
-			//Application.debug(hits);//+"\ntop"+hits.getTopHits());
-			boolean found = false;
-			for (int i=0; i<hits.size() && !found; i++){
-				if (hits.get(i) instanceof GeoCoordSys2D){
-					//Application.debug("cs2D");
-					addSelectedCS2D(hits, 10, false);
-					found=true;
-				}else if (hits.get(i) instanceof GeoQuadric3D){
-					//Application.debug("quadric");
-					addSelectedQuadric(hits, 10, false);
-					found=true;
-				}
-				
-			}
 
-			//singlePointWanted = singlePointWanted && selGeos() == 2;
 			
-			//if (selGeos() > 2)
-			//	return null;
-	
-			//Application.debug("cs2D="+selCS2D()+"\nquadrics="+selQuadric());
-			/*
-			if (selPolygons()>=1 && selCS2D()>=1)  { // plane-polygon
-				GeoCoordSys2D plane = getSelectedCS2D()[0];
-				GeoSurfaceFinite polygon = getSelectedPolygons()[0];
-				GeoElement[] ret = { null };
-				ret = getKernel().getManager3D().Intersect(null, (GeoPlane3D) plane, polygon);
-				ret[0].setObjColor(intersectionCurveColorPlanarPlanar);
-				return ret[0].isDefined();
-			}
-			
-			else*/ 
 			if (selCS2D()>=2)  { // cs2D-cs2D
+				
+				Application.debug(selCS2D());
+				
 				GeoCoordSys2D[] cs2Ds = getSelectedCS2D();
-
+			
 				int pIndex = 0;
 				int npIndex = 0;
 				boolean foundP = false;
@@ -1936,7 +1912,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	/** return selected 2D coord sys
-	 * then also clear all selected 2D coord sys. 
+	 * also clear all selected 2D coord sys. 
 	 * @return selected 2D coord sys
 	 */
 	@SuppressWarnings("unchecked")
