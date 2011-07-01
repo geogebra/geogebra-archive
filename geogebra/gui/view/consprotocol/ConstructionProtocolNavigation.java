@@ -167,10 +167,12 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 		btOpenWindow.setIcon(app.getImageIcon("table.gif"));			
 		btOpenWindow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().showConstructionProtocol();					
+				//app.getGuiManager().showConstructionProtocol();
+				if(!app.getGuiManager().showView(Application.VIEW_CONSTRUCTION_PROTOCOL))
+					app.getGuiManager().setShowView(true, Application.VIEW_CONSTRUCTION_PROTOCOL);
 			}				
-		});			
-			
+		});
+		
 		// add panels together to center
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));		
 		add(leftPanel);

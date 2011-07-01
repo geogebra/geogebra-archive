@@ -17,7 +17,6 @@ import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
@@ -64,11 +63,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -101,10 +96,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	private Application app;
 	private Kernel kernel;
 
-	private JMenuBar menuBar = new JMenuBar();
-	private JCheckBoxMenuItem cbUseColors, cbShowOnlyBreakpoints;
 	private TableColumn[] tableColumns;
-	private JDialog thisDialog;
 
 	private AbstractAction printPreviewAction, exportHtmlAction;
 
@@ -132,7 +124,6 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		
 		this.app = app;
 		kernel = app.getKernel();
-		//thisDialog = this;
 		data = new ConstructionTableData();
 		useColors = true;
 		addIcons = false;
@@ -174,18 +165,15 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 
 		scrollPane = new JScrollPane(table);
 		scrollPane.getViewport().setBackground(Color.white);
-		//getContentPane().add(scrollPane, BorderLayout.CENTER);
 		add(scrollPane, BorderLayout.CENTER);
 		
 		// clicking
 		ConstructionMouseListener ml = new ConstructionMouseListener();
 		table.addMouseListener(ml);
 		table.addMouseMotionListener(ml);
-		header.addMouseListener(ml); // double clicking
-		scrollPane.addMouseListener(ml);
+		header.addMouseListener(ml); // double clicking, right-click menu
+		scrollPane.addMouseListener(ml); //right-click menu
 		
-		
-
 		// keys
 		ConstructionKeyListener keyListener = new ConstructionKeyListener();
 		table.addKeyListener(keyListener);
@@ -194,62 +182,12 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		protNavBar = new ConstructionProtocolNavigation(this);
 		protNavBar.setPlayButtonVisible(false);
 		protNavBar.setConsProtButtonVisible(false);
-		//getContentPane().add(protNavBar, BorderLayout.SOUTH);
 		add(protNavBar, BorderLayout.SOUTH);
 		Util.addKeyListenerToAll(protNavBar, keyListener);
 
-		/*
-		addWindowListener(new WindowListener() {
-			public void windowClosed(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-						
-			}
 
-			public void windowActivated(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void windowClosing(WindowEvent arg0) {
-				GuiManager gm = app.getGuiManager();
-				gm.hideConstructionProtocol();
-				gm.updateMenubar();
-			}
-
-			public void windowDeactivated(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void windowDeiconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void windowIconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void windowOpened(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		*/
 		initGUI();
 		
-		// setSize(500, 200);
-		//pack();
-
-		// center dialog
-		/*
-		Dimension d1 = getSize();
-		Dimension d2 = app.getMainComponent().getSize();
-		int x = Math.max((d2.width - d1.width) / 2, 0);
-		int y = Math.max((d2.width - d1.width) / 2, 0);
-		setBounds(x, y, d1.width, d1.height);
-		*/
 		
 	}
 
@@ -299,8 +237,6 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 	public void initProtocol() {
 		if (!isViewAttached)
 			data.initView();
-
-		updateMenubar();
 	}
 
 	public void setConstructionStep(int step) {
@@ -365,13 +301,8 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		data.updateAll();
 	}
 
-	public void updateMenubar() {
-		cbShowOnlyBreakpoints.setSelected(kernel.showOnlyBreakpoints());
-	}
-
 	public void setUseColors(boolean flag) {
 		useColors = flag;
-		cbUseColors.setSelected(flag);
 		data.updateAll();
 	}
 
@@ -397,85 +328,6 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		return useColors;
 	}
 	
-	/*
-	private void setMenuBar() {
-		menuBar.removeAll();
-
-		initActions();
-
-		JMenu mFile = new JMenu(app.getMenu("File"));
-		mFile.add(printPreviewAction);
-		mFile.add(exportHtmlAction);
-
-		mFile.addSeparator();
-
-		JMenuItem mExit = new JMenuItem(app.getMenu("Close"),
-				app.getEmptyIcon());
-		ActionListener lstExit = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-			}
-		};
-		mExit.addActionListener(lstExit);
-		mFile.add(mExit);
-		menuBar.add(mFile);
-
-		JMenu mView = new JMenu(app.getMenu("View"));
-		// TableColumnModel model = table.getColumnModel();
-
-		for (int k = 1; k < tableColumns.length; k++) {
-			JCheckBoxMenuItem item = new JCheckBoxMenuItem(
-					data.columns[k].getTranslatedTitle());
-			TableColumn column = tableColumns[k];
-			ColumnKeeper colKeeper = new ColumnKeeper(column, data.columns[k]);
-			item.setSelected(isColumnInModel(column));
-			item.addActionListener(colKeeper);
-			mView.add(item);
-			
-		}
-		mView.addSeparator();
-
-		cbShowOnlyBreakpoints = new JCheckBoxMenuItem(
-				app.getPlain("ShowOnlyBreakpoints"));
-
-		cbShowOnlyBreakpoints.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				kernel.setShowOnlyBreakpoints(cbShowOnlyBreakpoints
-						.isSelected());
-				data.initView();
-				repaint();
-			}
-		});
-		mView.add(cbShowOnlyBreakpoints);
-
-		cbUseColors = new JCheckBoxMenuItem(
-				app.getPlain("ColorfulConstructionProtocol"));
-		cbUseColors.setSelected(useColors);
-		cbUseColors.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				useColors = cbUseColors.isSelected();
-				data.updateAll();
-			}
-		});
-		mView.add(cbUseColors);
-		menuBar.add(mView);
-
-		JMenu mHelp = new JMenu(app.getMenu("Help"));
-		JMenuItem mi = new JMenuItem(app.getMenu("FastHelp"),
-				app.getImageIcon("help.png"));
-		ActionListener lstHelp = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				app.showHelp("ConstructionProtocolHelp");
-				requestFocus();
-			}
-		};
-		mi.addActionListener(lstHelp);
-		mHelp.add(mi);
-		menuBar.add(mHelp);
-		//setJMenuBar(menuBar);
-		updateMenubar();
-	}
-*/
 	private void initActions() {
 
 		printPreviewAction = new AbstractAction(app.getMenu("Print")
@@ -533,27 +385,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 				app.setDefaultCursor();
 			}
 		};
-/*
-		exportHtmlAction = new AbstractAction(app.getPlain("ExportAsWebpage")
-				+ " (" + Application.FILE_EXT_HTML + ") ...") {
-			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e) {
-				app.setWaitCursor();
-
-				Thread runner = new Thread() {
-					public void run() {
-						JDialog d = new geogebra.export.ConstructionProtocolExportDialog(
-								ConstructionProtocolView.this);
-						d.setVisible(true);
-					}
-				};
-				runner.start();
-
-				app.setDefaultCursor();
-			}
-		};
-*/
 	}
 
 	public boolean isColumnInModel(TableColumn col) {
@@ -817,7 +649,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 				// show breakPointColumn => show all lines
 				if (isBreakPointColumn) {
 					kernel.setShowOnlyBreakpoints(false);
-					cbShowOnlyBreakpoints.setSelected(false);
+					//cbShowOnlyBreakpoints.setSelected(false);
 				}
 			} else {
 				colData.isVisible = false;
@@ -916,9 +748,6 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			}
 			
 			if(table.getColumnName(column).equals("Caption")){
-				//tfTemp.setColumns(14);
-				//tfTemp.setShowSymbolTableIcon(true);
-				//tfTemp.setText((String)value);
 				inputPanel = new InputPanel(value.toString(), app, 20,false);
 				return inputPanel;
 			}

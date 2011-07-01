@@ -749,20 +749,21 @@ public class GuiManager {
 
 	/**
 	 * Displays the construction protocol dialog
-	 */
+	 *//*
 	public void hideConstructionProtocol() {
 		if (constructionProtocolView == null) return;
 		app.getEuclidianView().resetMode();
 		constructionProtocolView.setVisible(false);
-	}
+	}*/
 
 	/**
 	 * returns whether the construction protocol is visible
 	 */
+	/*
 	public boolean isConstructionProtocolVisible() {
 		if (constructionProtocolView == null) return false;
 		return constructionProtocolView.isVisible();
-	}
+	}*/
 /*
 	public JPanel getConstructionProtocol() {
 		if (constProtocol == null) {		
@@ -2994,7 +2995,6 @@ public class GuiManager {
 	        *  Exports construction protocol as html 
 	        */
 	    final public void exportConstructionProtocolHTML() {
-	       // getConstructionProtocol();
 	    	constructionProtocolView.initProtocol();
 	    	constructionProtocolView.showHTMLExportDialog();
 	    }
@@ -3007,11 +3007,7 @@ public class GuiManager {
 		public void closeOpenDialogs() {
 			// close open windows
 	    	if (propDialog != null && propDialog.isShowing())
-	    		propDialog.cancel();    	
-	    	/*if (constProtocol != null && constProtocol.isShowing())
-	    		constProtocol.setVisible(false);
-	    		*/
-	    	
+	    		propDialog.cancel();    
 		}
 		
 		public AbstractAction getRedoAction() {

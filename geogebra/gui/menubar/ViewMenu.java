@@ -171,7 +171,8 @@ class ViewMenu extends BaseMenu {
 
 
 		menuConsProtNav = new JMenu(app.getPlain("ConstructionProtocolNavigation"));
-		menuConsProtNav.setIcon(app.getImageIcon("table.gif"));
+		//menuConsProtNav.setIcon(app.getImageIcon("table.gif"));
+		menuConsProtNav.setIcon(app.getEmptyIcon());
 		menuConsProtNav.add(cbShowConsProtNavigation);
 		menuConsProtNav.add(cbShowConsProtNavigationPlay);
 		menuConsProtNav.add(cbShowConsProtNavigationOpenProt);
@@ -327,7 +328,7 @@ class ViewMenu extends BaseMenu {
 		};
 
 		showConsProtNavigationAction = new AbstractAction(app
-				.getPlain("ConstructionProtocolNavigation")) {
+				.getPlain("Show")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
