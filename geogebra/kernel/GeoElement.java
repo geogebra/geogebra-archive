@@ -2812,7 +2812,8 @@ public abstract class GeoElement
 		}
 
 		// remove from selection
-		app.removeSelectedGeo(this, false);
+		if(isSelected())
+			app.removeSelectedGeo(this, false);
 
 		// notify views before we change labelSet
 		notifyRemove();
