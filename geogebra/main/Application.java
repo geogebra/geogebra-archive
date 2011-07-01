@@ -5211,10 +5211,10 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * In Hungarian, a properties file cannot completely describe translations.
+	 * In some languages, a properties file cannot completely describe translations.
 	 * This method tries to rewrite a text to the correct form.
-	 * @param text
-	 * @return
+	 * @param the translation text to fix 
+	 * @return text the fixed text
 	 */
 	public String translationFix(String text) {
 		// Currently no other language is supported than Hungarian.
@@ -5225,49 +5225,128 @@ public class Application implements KeyEventDispatcher {
 		return translationFixHu(text);
 	}
 	
+	/**
+	 * Text fixer for the Hungarian language
+	 * @param text the translation text to fix
+	 * @return the fixed text
+	 */
+	
 	private String translationFixHu(String text) {
 		// Pass 1: Fixing affixes.
-		// We assume that object names are usual object names like "P", "O_1" etc.
+		// We assume that object names are usual object names like "P", "O_1"
+		// etc.
 		// FIXME: This will not work for longer object names, e.g. "X Triangle",
 		// "mypoint". To solve this problem, we should check the whole word and
 		// its vowels.
-		// TODO: The used method is not as fast as it could be, so speedup is possible. 
-		String[] affixesList = {"-ra/-re", "-nak/-nek", "-ba/-be", "-ban/-ben", "-hoz/-hez", "-val/-vel"};
-		String[] endE2 = {"10", "40", "50", "70", "90"};
-		String[] endE3 = {"000"};
+		// TODO: The used method is not as fast as it could be, so speedup is
+		// possible.
+		String[] affixesList = { "-ra/-re", "-nak/-nek", "-ba/-be",
+				"-ban/-ben", "-hoz/-hez", "-val/-vel" };
+		String[] endE2 = { "10", "40", "50", "70", "90" };
+		String[] endE3 = { "000" };
 
 		for (String affixes : affixesList) {
 			int match;
 			do {
 				match = text.indexOf(affixes);
-				// match>0 can be assumed because an affix will not start the text
+				// match>0 can be assumed because an affix will not start the
+				// text
 				if (match > -1 && match > 0) {
 					// Affix found. Get the previous character.
-					String prevChar = text.substring(match-1, match).toLowerCase();
-					if (Unicode.translationFixHu_endE1.indexOf(prevChar) > -1) {
-						text = translationFixHuAffixChange(text, match, affixes, "e");
+					String prevChars = translationFixPronouncedPrevChars(text, match, 1); 
+					if (Unicode.translationFixHu_endE1.indexOf(prevChars) > -1) {
+						text = translationFixHuAffixChange(text, match,
+								affixes, "e");
+					} else if (Unicode.translationFixHu_endO1
+							.indexOf(prevChars) > -1) {
+						text = translationFixHuAffixChange(text, match,
+								affixes, "o");
+					} else if (Unicode.translationFixHu_endOE1
+							.indexOf(prevChars) > -1) {
+						text = translationFixHuAffixChange(text, match,
+								affixes, Unicode.translationFixHu_oe);
+					} else if (match > 1) {
+						// Append the previous character.
+						// TODO: This could be quicker: to add only the second char beyond prevChars
+						prevChars = translationFixPronouncedPrevChars(text, match, 2);
+						boolean found2 = false;
+						for (String last2fit : endE2) {
+							if (!found2 && last2fit.equals(prevChars)) {
+								text = translationFixHuAffixChange(text, match,
+										affixes, "e");
+								found2 = true;
+							}
+						}
+
+						if (!found2 && match > 2) {
+							// Append the previous character.
+							// TODO: This could be quicker: to add only the third char beyond prevChars
+							prevChars = translationFixPronouncedPrevChars(text, match, 3);
+							boolean found3 = false;
+							for (String last3fit : endE3) {
+								if (!found3 && last3fit.equals(prevChars)) {
+									text = translationFixHuAffixChange(text,
+											match, affixes, "e");
+									found3 = true;
+								}
+							}
+
+							if (!found3) {
+								// Use heuristics:
+								text = translationFixHuAffixChange(text, match,
+										affixes, "o");
+							}
+						}
 					}
-					else if (Unicode.translationFixHu_endO1.indexOf(prevChar) > -1) {
-							text = translationFixHuAffixChange(text, match, affixes, "o");
-						}
-					else if (Unicode.translationFixHu_endOE1.indexOf(prevChar) > -1) {
-								text = translationFixHuAffixChange(text, match, affixes,
-										Unicode.translationFixHu_oe);
-						} else {
+					else {
 						// Use heuristics:
-						// FIXME: endE2 and endE3 are not used yet.
-						text = translationFixHuAffixChange(text, match, affixes, "o");
-						}
+						text = translationFixHuAffixChange(text, match,
+								affixes, "o");
+					}
 				}
-			}
-			while (match > -1);
-			
-			}
+			} while (match > -1);
+
+		}
 		// Pass 2. Fixing "-val/-vel". TODO
 
 		return text;
 	}
 
+	/**
+	 * Gets the previous "pronounced" characters from text before the match position for the given length.
+	 * The returned text will be lowercased.
+	 * 
+	 * Example: translationFixPrevChars("ABC_{123}", 8, 4) gives "c123" 
+	 * @param text the text to pronounce
+	 * @param match starting position
+	 * @param length required length for the output
+	 * @return lowercased output
+	 */
+	private String translationFixPronouncedPrevChars(String text, int match, int length) {
+		String rettext = "";
+		int rettextlen = 0;
+		String thisChar;
+		String ignoredChars = "_{}";
+		
+		while (rettextlen < length && match > 0) {
+			thisChar = text.substring(match - 1, match);
+			if (ignoredChars.indexOf(thisChar) == -1) {
+				rettext = thisChar.toLowerCase() + rettext;
+				rettextlen++;
+			}
+			match--;
+		}
+		return rettext;
+	}
+
+	/**
+	 * Changes a set of possible affixes to the right one
+	 * @param text the text to be corrected
+	 * @param match starting position of possible change
+	 * @param affixes possible affixes to change
+	 * @param affixForm abbreviation for the change type ("o"/"a"/"e")
+	 * @return the corrected text
+	 */
 	private String translationFixHuAffixChange(String text, int match,
 			String affixes, String affixForm) {
 				String replace = "";
