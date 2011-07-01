@@ -5263,15 +5263,15 @@ public class Application implements KeyEventDispatcher {
 					String prevChars = translationFixPronouncedPrevChars(text, match, 1); 
 					if (Unicode.translationFixHu_endE1.indexOf(prevChars) > -1) {
 						text = translationFixHuAffixChange(text, match,
-								affixes, "e");
+								affixes, "e", prevChars);
 					} else if (Unicode.translationFixHu_endO1
 							.indexOf(prevChars) > -1) {
 						text = translationFixHuAffixChange(text, match,
-								affixes, "o");
+								affixes, "o", prevChars);
 					} else if (Unicode.translationFixHu_endOE1
 							.indexOf(prevChars) > -1) {
 						text = translationFixHuAffixChange(text, match,
-								affixes, Unicode.translationFixHu_oe);
+								affixes, Unicode.translationFixHu_oe, prevChars);
 					} else if (match > 1) {
 						// Append the previous character.
 						// TODO: This could be quicker: to add only the second char beyond prevChars
@@ -5280,7 +5280,7 @@ public class Application implements KeyEventDispatcher {
 						for (String last2fit : endE2) {
 							if (!found2 && last2fit.equals(prevChars)) {
 								text = translationFixHuAffixChange(text, match,
-										affixes, "e");
+										affixes, "e", prevChars);
 								found2 = true;
 							}
 						}
@@ -5293,7 +5293,7 @@ public class Application implements KeyEventDispatcher {
 							for (String last3fit : endE3) {
 								if (!found3 && last3fit.equals(prevChars)) {
 									text = translationFixHuAffixChange(text,
-											match, affixes, "e");
+											match, affixes, "e", prevChars);
 									found3 = true;
 								}
 							}
@@ -5301,14 +5301,14 @@ public class Application implements KeyEventDispatcher {
 							if (!found3) {
 								// Use heuristics:
 								text = translationFixHuAffixChange(text, match,
-										affixes, "o");
+										affixes, "o", prevChars);
 							}
 						}
 					}
 					else {
 						// Use heuristics:
 						text = translationFixHuAffixChange(text, match,
-								affixes, "o");
+								affixes, "o", prevChars);
 					}
 				}
 			} while (match > -1);
@@ -5352,10 +5352,11 @@ public class Application implements KeyEventDispatcher {
 	 * @param match starting position of possible change
 	 * @param affixes possible affixes to change
 	 * @param affixForm abbreviation for the change type ("o"/"a"/"e")
+	 * @param prevChars 
 	 * @return the corrected text
 	 */
 	private String translationFixHuAffixChange(String text, int match,
-			String affixes, String affixForm) {
+			String affixes, String affixForm, String prevChars) {
 				String replace = "";
 		if ("-ra/-re".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
@@ -5395,6 +5396,42 @@ public class Application implements KeyEventDispatcher {
 			} else {
 				replace = "-vel";
 			}
+
+			// FIXME: -val/-vel should not be handled here in general,
+			// but in translationFixHu, because there are many cases to check.
+			// E.g.: "20-val" -> "20-szal", "30-val" -> "30-cal".
+			// Handling some special cases:
+			if (prevChars.length() == 1) {
+				// -fel, -lel, -mel, -nel, -rel, -sel (-> computable affix)
+				String valVel = "flmnrs";
+				int index = valVel.indexOf(prevChars);
+				if (index > -1) {
+					replace = "-" + valVel.charAt(index) + "el"; 
+				} 
+				// other cases are not computable
+				// (TODO: it would be more elegant to use a table here):
+				else if ("x".equals(prevChars)) {
+						replace = "-szel";
+				} else if ("y".equals(prevChars)) {
+					replace = "-nal";
+				} else if ("1".equals(prevChars)) {
+					replace = "-gyel";
+				} else if ("3".equals(prevChars)) {
+					replace = "-mal";
+				} else if ("4".equals(prevChars)) {
+					replace = "-gyel";
+				} else if ("5".equals(prevChars)) {
+					replace = "-tel";
+				} else if ("6".equals(prevChars)) {
+					replace = "-tal";
+				} else if ("7".equals(prevChars)) {
+					replace = "-tel";
+				} else if ("8".equals(prevChars)) {
+					replace = "-cal";
+				} else if ("9".equals(prevChars)) {
+					replace = "-cel";
+				}
+			}
 		}
 		
 		if ("".equals(replace)) {
@@ -5402,7 +5439,7 @@ public class Application implements KeyEventDispatcher {
 		}
 		else {
 			int affixesLength = affixes.length();
-			text = text.substring(0,match) + replace + text.substring(match+affixesLength);
+			text = text.substring(0, match) + replace + text.substring(match + affixesLength);
 			return text;
 		}
 		
