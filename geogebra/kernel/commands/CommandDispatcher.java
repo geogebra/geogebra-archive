@@ -457,10 +457,11 @@ public class CommandDispatcher {
     	cmdTable.put("BarChart", new CmdBarChart(kernel));    	
     	cmdTable.put("BoxPlot", new CmdBoxPlot(kernel));    	
     	cmdTable.put("Histogram", new CmdHistogram(kernel)); 
-    	cmdTable.put("DotPlot", new CmdDotPlot(kernel)); //G.Sturr 2010-8-10
+    	cmdTable.put("DotPlot", new CmdDotPlot(kernel)); 
     	cmdTable.put("StemPlot", new CmdStemPlot(kernel));  
     	cmdTable.put("ResidualPlot", new CmdResidualPlot(kernel));  
-    	cmdTable.put("FrequencyPolygon", new CmdFrequencyPolygon(kernel));  
+    	cmdTable.put("FrequencyPolygon", new CmdFrequencyPolygon(kernel));
+    	cmdTable.put("NormalQuantilePlot", new CmdNormalQuantilePlot(kernel));
     	
     	cmdSubTable[TABLE_CHARTS].putAll(cmdTable);
     	cmdTable.clear();

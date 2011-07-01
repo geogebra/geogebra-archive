@@ -3233,6 +3233,17 @@ public class Kernel {
 	}
 	
 	
+	/** 
+	 * NormalQuantilePlot
+	 * G.Sturr 2011-6-29
+	 */
+	final public GeoList NormalQuantilePlot(String label, GeoList list) {
+		AlgoNormalQuantilePlot algo = new AlgoNormalQuantilePlot(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	
 	
 	/** 
 	 * UpperSum of function f 
