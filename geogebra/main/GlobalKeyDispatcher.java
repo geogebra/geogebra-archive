@@ -17,6 +17,7 @@ import geogebra.kernel.GeoTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.util.CopyPaste;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -304,6 +305,13 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				if (event.isShiftDown()) {
 					app.copyGraphicsViewToClipboard();	
 					consumed = true;
+				} else {
+					// Copy selected geos
+					app.setWaitCursor();
+					CopyPaste.copyToXML(app, app.getSelectedGeos());
+					app.updateMenubar();
+					app.setDefaultCursor();
+					consumed = true;
 				}
 				break;
 			
@@ -385,6 +393,13 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					app.getGuiManager().redo();
 				else
 					app.getGuiManager().undo();
+				consumed = true;
+				break;
+				
+			case KeyEvent.VK_V:
+				app.setWaitCursor();
+				CopyPaste.pasteFromXML(app);
+				app.setDefaultCursor();
 				consumed = true;
 				break;
 						
