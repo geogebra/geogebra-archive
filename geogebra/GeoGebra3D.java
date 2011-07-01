@@ -17,11 +17,11 @@
  */
 package geogebra;
 
+import geogebra3D.euclidian3D.opengl.Component3DCapabilities;
+
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.net.URL;
-
-import javax.media.opengl.GLProfile;
 
 
 public class GeoGebra3D extends GeoGebra
@@ -29,7 +29,7 @@ public class GeoGebra3D extends GeoGebra
 	
 	
 	static {
-		GLProfile.initSingleton(true);
+		Component3DCapabilities.initSingleton();
 	}
 	
 

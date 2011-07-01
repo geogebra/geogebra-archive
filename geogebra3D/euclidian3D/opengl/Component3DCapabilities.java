@@ -23,6 +23,10 @@ public class Component3DCapabilities extends GLCapabilities{
     	Application.debug("stereo: "+getStereo()); 
 	}
 	
+	final static public void initSingleton(){
+		GLProfile.initSingleton(true);
+	}
+	
 	
 
 }
