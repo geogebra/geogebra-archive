@@ -23,6 +23,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
@@ -2143,6 +2144,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 
 		return new DrawLine3D(this, selectedPoints);
+		
+	}
+
+	public Previewable createPreviewLineFromPlanes(ArrayList selectedPlanes){
+
+		return new DrawLine3D(this, selectedPlanes, 2);
 		
 	}
 	

@@ -1766,7 +1766,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 			if (selCS2D()>=2)  { // cs2D-cs2D
 				
-				Application.debug(selCS2D());
+				//Application.debug(selCS2D());
 				
 				GeoCoordSys2D[] cs2Ds = getSelectedCS2D();
 			

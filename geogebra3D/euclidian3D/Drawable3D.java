@@ -262,7 +262,7 @@ public abstract class Drawable3D extends DrawableND {
 			updateLabel();
 			labelWaitForUpdate = false;
 		}
-		Application.debug("waitForUpdate="+waitForUpdate);
+		
 		if (waitForUpdate){
 			if (updateForItSelf())
 				waitForUpdate = false;

@@ -2597,7 +2597,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void processMouseMoved(MouseEvent e) {	
 		
 		boolean repaintNeeded;
-
+		
 		// reset icon
 		if (hitResetIcon()) {
 			view.setToolTipText(app.getPlainTooltip("resetConstruction"));
@@ -2697,7 +2697,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			} else
 				view.setToolTipText(null);
 		//}
-
+		
 		// update previewable
 		if (view.getPreviewDrawable() != null) {	
 			view.updatePreviewable();
@@ -3134,7 +3134,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			hits = new Hits();
 
 		changedKernel = switchModeForProcessMode(hits, e);
-
+		
 		// update preview
 		if (view.getPreviewDrawable() != null) {
 			view.getPreviewDrawable().updatePreview();
@@ -4482,6 +4482,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// get two objects (lines or conics) and create intersection point
 	protected GeoElement[] intersect(Hits hits) {
+		Application.debug(selectedLines);
+		
+		
 		if (hits.isEmpty())
 			return null;
 
