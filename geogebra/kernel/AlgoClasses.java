@@ -158,9 +158,11 @@ public class AlgoClasses extends AlgoElement {
 		//=======================================================
 		if(input.length == 3){
 			double value = start.getDouble();
-			while (value <= maxGeoValue){
-				classList.add(new GeoNumeric(cons,value));
+			classList.add(new GeoNumeric(cons,value));
+			while (value < maxGeoValue){
 				value = value + width.getDouble();
+				//System.out.println("value: " + value + "max: " + maxGeoValue);
+				classList.add(new GeoNumeric(cons,value));
 			}
 			if(classList.size()<2)
 				classList.setUndefined();
