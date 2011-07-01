@@ -563,6 +563,43 @@ public class StatGeo   {
 
 	}
 
+	
+	public GeoElement createNormalQuantilePlot(GeoList dataList){
+
+		String label = dataList.getLabel();	
+		GeoElement geo;
+
+		String text = "NormalQuantilePlot[" + label + "]";
+		geo  = createGeoFromString(text);
+		geo.setObjColor(StatDialog.NQPLOT_COLOR);
+		geo.setAlphaValue(0.25f);
+
+		return geo;	
+	}
+
+
+	public PlotSettings updateNormalQuantilePlot(GeoList dataList){
+
+		PlotSettings ps = new PlotSettings();
+
+		getDataBounds(dataList);
+		String label = dataList.getLabel();	
+
+		double buffer = .25*(xMaxData - xMinData);		
+		ps.xMin = xMinData - buffer;
+		ps.xMax = xMaxData + buffer;
+		ps.yMin = -4.0;
+		ps.yMax = 4.0;
+		ps.showYAxis = true;
+		ps.isEdgeAxis[1]=true;
+		ps.forceXAxisBuffer = false;
+
+		return ps;
+
+	}
+	
+	
+	
 
 	public GeoElement createScatterPlot(GeoList dataList){
 

@@ -88,6 +88,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public static final Color HISTOGRAM_COLOR = new Color(0,0,255); // blue with alpha 0.25   
 	public static final Color BOXPLOT_COLOR = new Color(204,0,0);  // rose with alpha 0.25 
 	public static final Color DOTPLOT_COLOR = new Color(0,204,204); // blue-green   
+	public static final Color NQPLOT_COLOR =  new Color(0,0,255); // blue with alpha 0.25     
 	public static final Color REGRESSION_COLOR = Color.RED;    
 
 	// regression types

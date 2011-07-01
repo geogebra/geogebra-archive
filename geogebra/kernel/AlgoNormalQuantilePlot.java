@@ -161,8 +161,10 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 			outputList.add(new GeoPoint(cons, null, dataValues[i], zValues[i], 1.0));
 		}      
 
+		// create qq line and add it to the list
 		GeoElement[] geos = kernel.getAlgebraProcessor()
-		.processAlgebraCommandNoExceptions(getQQLineText(), false);	
+		.processAlgebraCommandNoExceptions(getQQLineText(), false);
+		geos[0].setEuclidianVisible(true);
 		outputList.add(geos[0]);
 
 		cons.setSuppressLabelCreation(suppressLabelCreation);

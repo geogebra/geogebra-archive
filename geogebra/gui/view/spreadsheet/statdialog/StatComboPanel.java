@@ -720,9 +720,11 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			break;
 
 		case PLOT_NORMALQUANTILE:
-			imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
-			optionsButton.setVisible(false);
+			if(doCreate){
+				plotGeoList.add(statGeo.createNormalQuantilePlot( dataListSelected));
+			}
+				plotPanel.setPlotSettings(statGeo.updateNormalQuantilePlot(dataListSelected));
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
 
