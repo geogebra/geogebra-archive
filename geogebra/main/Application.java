@@ -5220,7 +5220,7 @@ public class Application implements KeyEventDispatcher {
 	/**
 	 * In some languages, a properties file cannot completely describe translations.
 	 * This method tries to rewrite a text to the correct form.
-	 * @param the translation text to fix 
+	 * @param text the translation text to fix 
 	 * @return text the fixed text
 	 */
 	public String translationFix(String text) {
@@ -5314,7 +5314,9 @@ public class Application implements KeyEventDispatcher {
 			} while (match > -1);
 
 		}
-		// Pass 2. Fixing "-val/-vel". TODO
+		// Pass 2. Fixing "-val/-vel".
+		// FIXME: Currently this has been handled in Pass 1, but it works
+		// only for some special cases. See translationFixHuAffixChange() for details.
 
 		return text;
 	}
@@ -5398,38 +5400,27 @@ public class Application implements KeyEventDispatcher {
 			}
 
 			// FIXME: -val/-vel should not be handled here in general,
-			// but in translationFixHu, because there are many cases to check.
+			// but in translationFixHu, because there are more cases to check
+			// than for the other affixes.
 			// E.g.: "20-val" -> "20-szal", "30-val" -> "30-cal".
+			// These are not handled correctly at the moment.
+
 			// Handling some special cases:
 			if (prevChars.length() == 1) {
 				// -fel, -lel, -mel, -nel, -rel, -sel (-> computable affix)
 				String valVel = "flmnrs";
 				int index = valVel.indexOf(prevChars);
 				if (index > -1) {
-					replace = "-" + valVel.charAt(index) + "el"; 
-				} 
-				// other cases are not computable
-				// (TODO: it would be more elegant to use a table here):
-				else if ("x".equals(prevChars)) {
-						replace = "-szel";
-				} else if ("y".equals(prevChars)) {
-					replace = "-nal";
-				} else if ("1".equals(prevChars)) {
-					replace = "-gyel";
-				} else if ("3".equals(prevChars)) {
-					replace = "-mal";
-				} else if ("4".equals(prevChars)) {
-					replace = "-gyel";
-				} else if ("5".equals(prevChars)) {
-					replace = "-tel";
-				} else if ("6".equals(prevChars)) {
-					replace = "-tal";
-				} else if ("7".equals(prevChars)) {
-					replace = "-tel";
-				} else if ("8".equals(prevChars)) {
-					replace = "-cal";
-				} else if ("9".equals(prevChars)) {
-					replace = "-cel";
+					replace = "-" + valVel.charAt(index) + "el";
+				} else {
+					// other cases are taken from a table:
+					String valVelSpecChars = "xy13456789";
+					String[] valVelSpecCharAffixes = { "szel", "nal", "gyel",
+							"mal", "gyel", "tel", "tal", "tel", "cal", "cel" };
+					index = valVelSpecChars.indexOf(prevChars);
+					if (index > -1) {
+						replace = "-" + valVelSpecCharAffixes[index];
+					}
 				}
 			}
 		}
