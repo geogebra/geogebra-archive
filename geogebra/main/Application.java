@@ -740,6 +740,8 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		getEuclidianView().resetMaxLayerUsed();
+		
+		kernel.resetLibraryJavaScript();
 	}
 
 	/**
@@ -3350,6 +3352,11 @@ public class Application implements KeyEventDispatcher {
 	final public boolean loadXML(URL url, boolean isMacroFile) {
 		try {
 			boolean success = loadXML(url.openStream(), isMacroFile);
+			
+			// clear global JavaScript
+			if (success && !isMacroFile) {
+				kernel.resetLibraryJavaScript();
+			}
 			
 			// set current file
 			if (!isMacroFile && url.toExternalForm().startsWith("file")) {

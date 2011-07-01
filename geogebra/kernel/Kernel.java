@@ -8718,6 +8718,10 @@ public class Kernel {
 
 	private boolean wantAnimationStarted = false;
 	
+	public void resetLibraryJavaScript() {
+		libraryJavaScript = defaultLibraryJavaScript;
+	}
+	
 	public void setLibraryJavaScript(String str) {
 		Application.debug(str);
 		libraryJavaScript = str;
