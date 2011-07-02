@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,12 +26,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -57,10 +59,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	public static final int PLOT_HISTOGRAM = 0;
 	public static final int PLOT_BOXPLOT = 1;
 	public static final int PLOT_DOTPLOT = 2;
-	private static final int PLOT_NORMALQUANTILE = 4;
-	private static final int PLOT_FREQUENCYTABLE = 5;
-	private static final int PLOT_STEMPLOT = 6;
-	private static final int PLOT_ONEVAR_INFERENCE = 7;
+	public static final int PLOT_NORMALQUANTILE = 4;
+	public static final int PLOT_FREQUENCYTABLE = 5;
+	public static final int PLOT_STEMPLOT = 6;
+	public static final int PLOT_ONEVAR_INFERENCE = 7;
 
 
 	// two variable plot types
@@ -78,9 +80,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private int selectedPlot;
 
 	// plot reference vars
-	private HashMap<Integer, String> plotMap;
+	protected static HashMap<Integer, String> plotMap;
 	private HashMap<String, Integer> plotMapReverse;
 
+	
 	private StatPanelSettings settings;
 
 
@@ -113,7 +116,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	// options button and sidebar panel
 	private OptionsPanel optionsPanel; 
-	private JToggleButton optionsButton;
+	private JButton optionsButton;
 
 	// numClasses panel 
 	private int numClasses = 6;
@@ -207,8 +210,9 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		// create options button and panel
 		optionsPanel= new OptionsPanel(app, settings);
-		optionsButton = new JToggleButton();
-		optionsButton.setIcon(app.getImageIcon("tool.png"));
+		optionsButton = new JButton();
+		optionsButton.setFocusable(false);
+		//optionsButton.setIcon(app.getImageIcon("tool.png"));
 		optionsButton.addActionListener(this);
 
 
@@ -366,6 +370,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
 
+		optionsButton.setText(app.getMenu("Options"));
 		optionsPanel.setLabels();
 
 	}
@@ -549,12 +554,14 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		d.height = fldStart.getPreferredSize().height;
 		fldStart.setMaximumSize(d);
 		fldStart.addActionListener(this);
+		fldStart.setText("" + (int)settings.classStart);
 
 		fldWidth = new MyTextField(app.getGuiManager());
 		fldWidth.setMaximumSize(d);
 		fldStart.setColumns(4);
 		fldWidth.setColumns(4);
 		fldWidth.addActionListener(this);
+		fldWidth.setText("" + (int)settings.classWidth);
 
 		manualClassesPanel = new JToolBar();
 		manualClassesPanel.setFloatable(false);
@@ -633,6 +640,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	}
 
+	
 
 	//==============================================
 	//              DISPLAY UPDATE
@@ -656,6 +664,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		case PLOT_HISTOGRAM:			
 			if(doCreate){
+				if(histogram != null)
+					histogram.remove();
 				histogram = statGeo.createHistogram( dataListSelected, numClasses, settings, false);
 				plotGeoList.add(histogram);
 			}
@@ -671,10 +681,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				normalCurve = statGeo.createNormalCurveOverlay(dataListSelected);
 				plotGeoList.add(normalCurve);
 			}
-			
-			
-			
-			
+
+
 			plotPanel.setPlotSettings(statGeo.getHistogramSettings( dataListSelected, histogram, settings));
 
 			if(hasControlPanel)
@@ -696,6 +704,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		case PLOT_DOTPLOT:
 			if(doCreate){
+				if(dotPlot != null)
+					dotPlot.remove();
 				dotPlot = statGeo.createDotPlot( dataListSelected);
 				plotGeoList.add(dotPlot);
 			}
@@ -818,8 +828,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				// add the geo to our view and remove it from EV		
 				listGeo.addView(plotPanel);
 				plotPanel.add(listGeo);
-				listGeo.removeView(app.getEuclidianView());
-				app.getEuclidianView().remove(listGeo);
+			//	listGeo.removeView(app.getEuclidianView());
+			//	app.getEuclidianView().remove(listGeo);
 			}
 		}
 	}
@@ -850,8 +860,23 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 
 		else if(source == optionsButton){
-			optionsPanel.setVisible(optionsButton.isSelected());
-			optionsPanel.setMode(selectedPlot);
+			
+			optionsPanel.reInit(selectedPlot);
+			OptionsDialog dlg = new OptionsDialog(new JFrame(), app.getMenu("Options"));
+			
+			
+			Point p = optionsButton.getLocationOnScreen();
+			Dimension dlgDim  = dlg.getPreferredSize();
+			dlgDim.height = statDialog.getHeight() - 100;
+			p.x = statDialog.getX() + statDialog.getWidth() - dlgDim.width + 20;
+			p.y = p.y + optionsButton.getHeight() + 20;
+			
+			dlg.setLocation(p);
+			dlg.setVisible(true);
+			
+			
+			//optionsPanel.setVisible(optionsButton.isSelected());
+			//optionsPanel.setMode(selectedPlot);
 		}
 
 		else if(source == cbDisplayType){
@@ -974,6 +999,21 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		
 	}
 
+
+	public class OptionsDialog extends JDialog implements ActionListener {
+		public OptionsDialog(JFrame parent, String title) {
+			super(parent, title, true);
+			optionsPanel.setVisible(true);
+			getContentPane().add(optionsPanel, BorderLayout.CENTER);
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			pack(); 
+		}
+		public void actionPerformed(ActionEvent e) {
+			setVisible(false); 
+			dispose(); 
+		}
+
+	}
 
 
 

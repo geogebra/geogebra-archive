@@ -34,6 +34,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+/**
+ * JPanel to display settings options for a ComboStatPanel
+ * @author gsturr
+ *
+ */
 public class OptionsPanel extends JPanel implements PropertyChangeListener, ActionListener, FocusListener, StatPanelInterface{
 
 
@@ -63,6 +68,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 	private JLabel lblOverlay;
 
 	private boolean isUpdating = false;
+	private int plotType;
 
 
 	public OptionsPanel(Application app, StatPanelSettings settings){
@@ -75,53 +81,75 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		createGraphPanel();
 		createClassesPanel();
 		createScatterplotPanel();
-		/*
+		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		setLayout(new BorderLayout());
-		add(new JScrollPane(mainPanel),BorderLayout.CENTER);
-		 */
-
+		mainPanel.add(classesPanel);
+		mainPanel.add(histogramPanel);
+		mainPanel.add(scatterplotPanel);
+		
 		tabbedPane = new JTabbedPane();
-		tabbedPane.addTab(app.getMenu("Classes"), new JScrollPane(classesPanel));
-		tabbedPane.addTab(app.getMenu("Histogram"), new JScrollPane(histogramPanel));
-		tabbedPane.addTab(app.getMenu("Scatterplot"), new JScrollPane(scatterplotPanel));
-		tabbedPane.addTab(app.getMenu("Graph"), new JScrollPane(graphPanel));
+		tabbedPane.addFocusListener(this);
+	
 		setLayout(new BorderLayout());
 		add(tabbedPane, BorderLayout.CENTER);
-
-		tabbedPane.addFocusListener(this);
+	
+		
 		// update
 		setLabels();
 		updateGUI();
+		//this.setPreferredSize(tabbedPane.getPreferredSize());
 
 	}
 
 
-	public void setMode(int mode){
+	public void reInit(int plotType){
 
-		showYSettings = false;
+		this.plotType = plotType;
 		tabbedPane.removeAll();
-		switch(mode){
+		tabbedPane.insertTab(StatComboPanel.plotMap.get(plotType), null, new JScrollPane(mainPanel),null, 0);
+		tabbedPane.addTab(app.getMenu("Graph"), new JScrollPane(graphPanel));
+		showYSettings = false;
+		
+		switch(plotType){
+		
 		case StatComboPanel.PLOT_HISTOGRAM:
-			tabbedPane.addTab(app.getMenu("Classes"), new JScrollPane(classesPanel));
-			tabbedPane.addTab(app.getMenu("Histogram"), new JScrollPane(histogramPanel));			
-			tabbedPane.addTab(app.getMenu("Graph"), new JScrollPane(graphPanel));
+			classesPanel.setVisible(true);
+			histogramPanel.setVisible(true);
+			graphPanel.setVisible(true);
+			scatterplotPanel.setVisible(false);		
 			break;
+			
 		case StatComboPanel.PLOT_DOTPLOT:
 		case StatComboPanel.PLOT_BOXPLOT:
-			tabbedPane.addTab(app.getMenu("Graph"), new JScrollPane(graphPanel));
+		case StatComboPanel.PLOT_NORMALQUANTILE:
+			tabbedPane.removeTabAt(0);
+			showYSettings = true;
+			classesPanel.setVisible(false);
+			histogramPanel.setVisible(false);
+			graphPanel.setVisible(true);
+			scatterplotPanel.setVisible(false);
 			break;
+			
 		case StatComboPanel.PLOT_SCATTERPLOT:	
 			showYSettings = true;
-			tabbedPane.addTab(app.getMenu("Scatterplot"), new JScrollPane(scatterplotPanel));
-			tabbedPane.addTab(app.getMenu("Graph"), new JScrollPane(graphPanel));
+			classesPanel.setVisible(false);
+			histogramPanel.setVisible(false);
+			graphPanel.setVisible(true);
+			scatterplotPanel.setVisible(true);
 			break;
-		case StatComboPanel.PLOT_RESIDUAL:	
+			
+		case StatComboPanel.PLOT_RESIDUAL:
+			tabbedPane.removeTabAt(0);
 			showYSettings = true;
-			tabbedPane.addTab(app.getMenu("Graph"), new JScrollPane(graphPanel));
+			classesPanel.setVisible(false);
+			histogramPanel.setVisible(false);
+			graphPanel.setVisible(true);
+			scatterplotPanel.setVisible(false);
 			break;
 		}
+
+		setLabels();
 		updateGUI();
 	}
 
@@ -155,26 +183,37 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 
 
 		// layout
-		JPanel p = new JPanel(new GridBagLayout()); 
+		JPanel freqPanel = new JPanel(new GridBagLayout()); 
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx=0;
 		c.anchor=GridBagConstraints.WEST;
-
-		p.add(insetPanel(tab1, lblFreqType),c);
-		p.add(insetPanel(tab2,ckCumulative),c);
-		p.add(insetPanel(tab2, ckFreq),c);
-		p.add(insetPanel(tab2, ckRelative),c);
-		p.add(insetPanel(tab2, ckNormalized),c);
-
-		p.add(Box.createRigidArea(new Dimension(0,10)));
-		p.add(insetPanel(tab1, lblOverlay),c);
-		p.add(insetPanel(tab2, ckOverlayNormal),c);
-		p.add(insetPanel(tab2, ckOverlayPolygon),c);
-
+		freqPanel.add(insetPanel(tab2,ckCumulative),c);
+		freqPanel.add(insetPanel(tab2, ckFreq),c);
+		freqPanel.add(insetPanel(tab2, ckRelative),c);
+		freqPanel.add(insetPanel(tab2, ckNormalized),c);
+		freqPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("FrequencyType")));
+		
+		
+		JPanel overlayPanel = new JPanel(new GridBagLayout()); 
+		c = new GridBagConstraints();
+		c.gridx=0;
+		c.anchor=GridBagConstraints.WEST;
+		overlayPanel.add(Box.createRigidArea(new Dimension(0,10)));
+		//overlayPanel.add(insetPanel(tab1, lblOverlay),c);
+		overlayPanel.add(insetPanel(tab2, ckOverlayNormal),c);
+		overlayPanel.add(insetPanel(tab2, ckOverlayPolygon),c);
+		overlayPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Overlay")));
+		
+		
 		histogramPanel = new JPanel(new BorderLayout());
-		histogramPanel.add(p, BorderLayout.NORTH);
+		histogramPanel.add(freqPanel, BorderLayout.NORTH);
+		histogramPanel.add(overlayPanel, BorderLayout.SOUTH);
 	}
 
+	
+	
+	
+	
 	private void createClassesPanel(){
 
 		// create components
@@ -293,7 +332,10 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 
 
 	public void setLabels(){
-
+		
+		// titled borders
+		classesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Classes")));				
+		
 		// histogram options
 		ckManual.setText(app.getMenu("SetClasssesManually"));		
 		lblFreqType.setText(app.getMenu("FrequencyType") + ":");
@@ -319,6 +361,8 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		lblYInterval.setText("Y " + app.getMenu("Interval") + ":");
 
 		ckShowLines.setText(app.getMenu("LineGraph"));
+		
+		repaint();
 	}
 
 
@@ -376,6 +420,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		}
 
 		isUpdating  = false;
+		repaint();
 	}
 
 
@@ -483,8 +528,6 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 
 
 	public void focusLost(FocusEvent arg0) {
-		System.out.println("================== focus lost =======");
-
 	}
 
 

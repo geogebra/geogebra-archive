@@ -458,7 +458,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 		btnClose.setText(app.getMenu("Close"));
 		btnPrint.setText(app.getMenu("Print"));	
-		btnOptions.setText(app.getMenu("Options"));
+		btnOptions.setText(app.getMenu("Show"));
 
 		setLabelsRecursive(this.getContentPane()); 
 		

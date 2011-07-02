@@ -1309,7 +1309,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	// test all components of SpreadsheetView for hasFocus 
 	public boolean hasFocus() {
-		Application.debug("hasfucus called");
 		if (table == null)
 			return false;
 		return table.hasFocus()
@@ -1324,7 +1323,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 
 	public void focusLost(FocusEvent arg0) {
-		//System.out.println("focus lost");
 		getTable().repaint();
 
 	}

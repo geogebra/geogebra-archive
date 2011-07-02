@@ -77,7 +77,7 @@ public class StatGeo   {
 
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(true);
-			Application.debug(text);
+			//Application.debug(text);
 			
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
@@ -371,8 +371,7 @@ public class StatGeo   {
 		}else{
 			classes = "Classes[" + label + "," + numClasses + "]";
 		}
-		//Application.debug(classWidth);
-
+		
 		double density = -1;
 		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
 			density = 1.0*classWidth/dataList.size();

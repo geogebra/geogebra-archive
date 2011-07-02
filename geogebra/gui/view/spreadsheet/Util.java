@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import javax.swing.JOptionPane;
 
 public class Util {
-	
+
 	public static void handleException(Component component, String message) {
 		try {
 			throw new RuntimeException(message);
@@ -24,4 +24,20 @@ public class Util {
 		JOptionPane.showMessageDialog(component, output.toString(), "Exception", JOptionPane.ERROR_MESSAGE);
 	}
 
+
+	public static final void memoryWatch(){
+		
+		long heapSize = Runtime.getRuntime().totalMemory();
+		long heapMaxSize = Runtime.getRuntime().maxMemory();
+		long heapFreeSize = Runtime.getRuntime().freeMemory();
+		long usedMem = heapSize - heapFreeSize;
+
+		System.out.println("max: " + heapMaxSize/1e6 + "  allocated: " + heapSize/1e6 + "  used: " + usedMem/1e6);
+				
+	}
+
+	
+	
 }
+
+
