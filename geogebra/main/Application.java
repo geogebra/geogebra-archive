@@ -5248,7 +5248,7 @@ public class Application implements KeyEventDispatcher {
 		// FIXME: This will not work for longer object names, e.g. "X Triangle",
 		// "mypoint". To solve this problem, we should check the whole word and
 		// its vowels. Probably hunspell for JNA could help (but it can be
-		// to big solution for us), http://dren.dk/hunspell.html.
+		// too big solution for us), http://dren.dk/hunspell.html.
 		// TODO: The used method is not as fast as it could be, so speedup is
 		// possible.
 		String[] affixesList = { "-ra/-re", "-nak/-nek", "-ba/-be",
