@@ -3180,6 +3180,9 @@ public class Application implements KeyEventDispatcher {
 	private void updateSelection() {
 		if (!showMenuBar || !hasFullGui())
 			return;
+		
+		// put in to check possible bottleneck
+		Application.debug("Update Selection");
 
 		getGuiManager().updateMenubarSelection();
 		
