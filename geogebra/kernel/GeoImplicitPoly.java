@@ -607,7 +607,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		algo.remove();
 		algo.compute();
 		GeoPoint [] ip = (GeoPoint[]) algo.getIntersectionPoints();
-		while(c < 10000)
+		while(ip.length == 0 && c < 10000)
 		{
 			c += 0.5;
 			line.setCoords(0, 1, c);
