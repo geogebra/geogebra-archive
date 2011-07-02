@@ -5239,7 +5239,8 @@ public class Application implements KeyEventDispatcher {
 	 */
 	
 	private String translationFixHu(String text) {
-		// Pass 1: Fixing affixes.
+		// Fixing affixes.
+		
 		// We assume that object names are usual object names like "P", "O_1"
 		// etc.
 		// FIXME: This will not work for longer object names, e.g. "X Triangle",
@@ -5250,14 +5251,15 @@ public class Application implements KeyEventDispatcher {
 		String[] affixesList = { "-ra/-re", "-nak/-nek", "-ba/-be",
 				"-ban/-ben", "-hoz/-hez", "-val/-vel" };
 		String[] endE2 = { "10", "40", "50", "70", "90" };
-		String[] endE3 = { "000" };
-
+		// FIXME: Numbers in endings wchich greater than 999 are not supported yet.
+		// Special endings for -val/-vel:
+		String[] endO2 = { "00", "20", "30", "60", "80" };
+		
 		for (String affixes : affixesList) {
 			int match;
 			do {
 				match = text.indexOf(affixes);
-				// match>0 can be assumed because an affix will not start the
-				// text
+				// match > 0 can be assumed because an affix will not start the text
 				if (match > -1 && match > 0) {
 					// Affix found. Get the previous character.
 					String prevChars = translationFixPronouncedPrevChars(text, match, 1); 
@@ -5285,25 +5287,23 @@ public class Application implements KeyEventDispatcher {
 							}
 						}
 
-						if (!found2 && match > 2) {
-							// Append the previous character.
-							// TODO: This could be quicker: to add only the third char beyond prevChars
-							prevChars = translationFixPronouncedPrevChars(text, match, 3);
-							boolean found3 = false;
-							for (String last3fit : endE3) {
-								if (!found3 && last3fit.equals(prevChars)) {
-									text = translationFixHuAffixChange(text,
-											match, affixes, "e", prevChars);
-									found3 = true;
+						// Special check for preparing -val/-vel: 
+						if (!found2) {
+							for (String last2fit : endO2) {
+								if (!found2 && last2fit.equals(prevChars)) {
+									text = translationFixHuAffixChange(text, match,
+											affixes, "o", prevChars);
+									found2 = true;
 								}
 							}
-
-							if (!found3) {
-								// Use heuristics:
-								text = translationFixHuAffixChange(text, match,
-										affixes, "o", prevChars);
-							}
 						}
+
+						if (!found2) {
+							// Use heuristics:
+							text = translationFixHuAffixChange(text, match,
+								affixes, "o", prevChars);
+						}
+						
 					}
 					else {
 						// Use heuristics:
@@ -5312,11 +5312,7 @@ public class Application implements KeyEventDispatcher {
 					}
 				}
 			} while (match > -1);
-
 		}
-		// Pass 2. Fixing "-val/-vel".
-		// FIXME: Currently this has been handled in Pass 1, but it works
-		// only for some special cases. See translationFixHuAffixChange() for details.
 
 		return text;
 	}
@@ -5359,7 +5355,10 @@ public class Application implements KeyEventDispatcher {
 	 */
 	private String translationFixHuAffixChange(String text, int match,
 			String affixes, String affixForm, String prevChars) {
-				String replace = "";
+
+		debug("tFHAFC " + text + " " + match + " " + affixes + " " + affixForm + " " + prevChars);
+		String replace = "";
+				
 		if ("-ra/-re".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
 				replace = "ra";
@@ -5425,6 +5424,23 @@ public class Application implements KeyEventDispatcher {
 					}
 				}
 			}
+			else if (prevChars.length() == 2 && prevChars.substring(1).equals("0")) {
+				// (Currently the second part of the conditional is unnecessary.)
+				// 00-zal, 10-zel, 30-cal etc.
+				// FIXME: A_{00}-val will be replaced to A_{00}-zal currently,
+				// because we silently assume that 00 is preceeded by another number.
+				String valVelFrom = "013456789";
+				String valVelTo   = "zzcnnnnnn";
+				int index = valVelFrom.indexOf(prevChars.charAt(0));
+				if (index > -1) {
+					replace = valVelTo.charAt(index) + replace.substring(1);
+				} else {
+					// 20-szal
+					if (prevChars.charAt(0) == '2') {
+						replace = "sz" + replace.substring(1);
+					}
+				}
+			}
 		}
 		
 		if ("".equals(replace)) {
@@ -5437,7 +5453,6 @@ public class Application implements KeyEventDispatcher {
 			text = text.substring(0, match) + "-" + replace + text.substring(match + affixesLength);
 			return text;
 		}
-		
 	}
 	
 	public void checkCommands(HashMap<String,CommandProcessor>map){
