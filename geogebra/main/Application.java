@@ -5222,6 +5222,7 @@ public class Application implements KeyEventDispatcher {
 	 * This method tries to rewrite a text to the correct form.
 	 * @param text the translation text to fix 
 	 * @return text the fixed text
+	 * @author Zoltan Kovacs <zoltan@geogebra.org>
 	 */
 	public String translationFix(String text) {
 		// Currently no other language is supported than Hungarian.
@@ -5236,6 +5237,7 @@ public class Application implements KeyEventDispatcher {
 	 * Text fixer for the Hungarian language
 	 * @param text the translation text to fix
 	 * @return the fixed text
+	 * @author Zoltan Kovacs <zoltan@geogebra.org>
 	 */
 	
 	private String translationFixHu(String text) {
@@ -5245,13 +5247,14 @@ public class Application implements KeyEventDispatcher {
 		// etc.
 		// FIXME: This will not work for longer object names, e.g. "X Triangle",
 		// "mypoint". To solve this problem, we should check the whole word and
-		// its vowels.
+		// its vowels. Probably hunspell for JNA could help (but it can be
+		// to big solution for us), http://dren.dk/hunspell.html.
 		// TODO: The used method is not as fast as it could be, so speedup is
 		// possible.
 		String[] affixesList = { "-ra/-re", "-nak/-nek", "-ba/-be",
 				"-ban/-ben", "-hoz/-hez", "-val/-vel" };
 		String[] endE2 = { "10", "40", "50", "70", "90" };
-		// FIXME: Numbers in endings wchich greater than 999 are not supported yet.
+		// FIXME: Numbers in endings which greater than 999 are not supported yet.
 		// Special endings for -val/-vel:
 		String[] endO2 = { "00", "20", "30", "60", "80" };
 		
@@ -5356,7 +5359,6 @@ public class Application implements KeyEventDispatcher {
 	private String translationFixHuAffixChange(String text, int match,
 			String affixes, String affixForm, String prevChars) {
 
-		debug("tFHAFC " + text + " " + match + " " + affixes + " " + affixForm + " " + prevChars);
 		String replace = "";
 				
 		if ("-ra/-re".equals(affixes)) {
@@ -5397,12 +5399,6 @@ public class Application implements KeyEventDispatcher {
 			} else {
 				replace = "vel";
 			}
-
-			// FIXME: -val/-vel should not be handled here in general,
-			// but in translationFixHu, because there are more cases to check
-			// than for the other affixes.
-			// E.g.: "20-val" -> "20-szal", "30-val" -> "30-cal".
-			// These are not handled correctly at the moment.
 
 			// Handling some special cases:
 			if (prevChars.length() == 1) {
