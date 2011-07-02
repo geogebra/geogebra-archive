@@ -182,9 +182,9 @@ public class StatTable extends JScrollPane implements StatPanelInterface {
 				{app.getMenu("Sy") ,"SampleSDY"},
 				{app.getMenu("CorrelationCoefficient.short") ,"PMCC"},
 				{app.getMenu("Spearman.short") ,"Spearman"},
-				{app.getMenu("Sxx") ,"Sxx"},
-				{app.getMenu("Syy") ,"Syy"},
-				{app.getMenu("Sxy") ,"Sxy"},
+				{app.getMenu("Sxx") ,"SXX"},
+				{app.getMenu("Syy") ,"SYY"},
+				{app.getMenu("Sxy") ,"SXY"},
 				{null , null},
 				//TODO --- these cmds won't work, why?
 				//{app.getMenu("RSquare") ,"RSquare"}
