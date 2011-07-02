@@ -5362,41 +5362,41 @@ public class Application implements KeyEventDispatcher {
 				String replace = "";
 		if ("-ra/-re".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-ra";
+				replace = "ra";
 			} else {
-				replace = "-re";
+				replace = "re";
 			}
 		} else if ("-nak/-nek".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-nak";
+				replace = "nak";
 			} else {
-				replace = "-nek";
+				replace = "nek";
 			}
 		} else if ("-ba/-be".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-ba";
+				replace = "ba";
 			} else {
-				replace = "-be";
+				replace = "be";
 			}
 		} else if ("-ban/-ben".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-ban";
+				replace = "ban";
 			} else {
-				replace = "-ben";
+				replace = "ben";
 			}
 		} else if ("-hoz/-hez".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-hoz";
+				replace = "hoz";
 			} else if ("e".equals(affixForm)) {
-				replace = "-hez";
+				replace = "hez";
 			} else {
 				replace = Unicode.translationFixHu_hoez;
 			}
 		} else if ("-val/-vel".equals(affixes)) {
 			if ("a".equals(affixForm) || "o".equals(affixForm)) {
-				replace = "-val";
+				replace = "val";
 			} else {
-				replace = "-vel";
+				replace = "vel";
 			}
 
 			// FIXME: -val/-vel should not be handled here in general,
@@ -5407,30 +5407,34 @@ public class Application implements KeyEventDispatcher {
 
 			// Handling some special cases:
 			if (prevChars.length() == 1) {
-				// -fel, -lel, -mel, -nel, -rel, -sel (-> computable affix)
-				String valVel = "flmnrs";
-				int index = valVel.indexOf(prevChars);
+				// f-fel, l-lel etc.
+				String sameChars = "flmnrs";
+				// y-nal, 3-mal etc.
+				String valVelFrom = sameChars + "y356789";
+				String valVelTo   = sameChars + "nmtttcc";
+				int index = valVelFrom.indexOf(prevChars);
 				if (index > -1) {
-					replace = "-" + valVel.charAt(index) + "el";
+					replace = valVelTo.charAt(index) + replace.substring(1);
 				} else {
-					// other cases are taken from a table:
-					String valVelSpecChars = "xy13456789";
-					String[] valVelSpecCharAffixes = { "szel", "nal", "gyel",
-							"mal", "gyel", "tel", "tal", "tel", "cal", "cel" };
-					index = valVelSpecChars.indexOf(prevChars);
+					// x-szel, 1-gyel etc.
+					String valVelFrom2 = "x14";
+					String[] valVelTo2 = { "sz", "gy", "gy" };
+					index = valVelFrom2.indexOf(prevChars);
 					if (index > -1) {
-						replace = "-" + valVelSpecCharAffixes[index];
+						replace = valVelTo2[index] + replace.substring(1);
 					}
 				}
 			}
 		}
 		
 		if ("".equals(replace)) {
+			// No replace.
 			return text;
 		}
 		else {
 			int affixesLength = affixes.length();
-			text = text.substring(0, match) + replace + text.substring(match + affixesLength);
+			// Replace.
+			text = text.substring(0, match) + "-" + replace + text.substring(match + affixesLength);
 			return text;
 		}
 		
