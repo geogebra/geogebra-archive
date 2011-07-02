@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="JOGL1" systemlibrary="false">
+        <archive nativelibpaths="geogebra/jogl1/windows-amd64" path="/geogebra/jogl1/jar/gluegen-rt.jar"/>
+        <archive nativelibpaths="geogebra/jogl1/windows-amd64" path="/geogebra/jogl1/jar/jogl.jar"/>
+    </library>
+</eclipse-userlibraries>
