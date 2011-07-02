@@ -154,7 +154,7 @@ KeyListener, ActionListener{
 
 		// setup InputDialog GUI
 		isIniting = true;
-		String title = app.getPlain("Inspector");
+		String title = app.getMenu("FunctionInspector");
 		createGUI(title, "", false, 16, 1, false, false, false, false, false, showApply, false);
 		this.btOK.setVisible(false);
 		this.btCancel.setVisible(false);

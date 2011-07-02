@@ -132,7 +132,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		boolean showApply = false;
 
 		// setup InputDialog GUI
-		String title = app.getPlain("Inspector");
+		String title = app.getMenu("FunctionInspector");
 		createGUI(title, "", false, 16, 1, false, false, false, false, false, showApply, false);
 		this.btOK.setVisible(false);
 		this.btCancel.setVisible(false);
