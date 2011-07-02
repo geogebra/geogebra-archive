@@ -20,20 +20,17 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.swing.JPanel;
 
-import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.GLBuffers;
+import com.sun.opengl.util.BufferUtil;
+import com.sun.opengl.util.FPSAnimator;
+
 
 /**
  * 
@@ -59,7 +56,7 @@ public class Renderer implements GLEventListener {
 	*/
 	
 	// openGL variables
-	private GLU glu= new GLU();
+	protected GLU glu = new GLU();
 	//private GLUT glut = new GLUT();
 	//private TextRenderer textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 16));
 	/** default text scale factor */
@@ -73,7 +70,7 @@ public class Renderer implements GLEventListener {
 	public Component3D canvas;
 
 	//private GLCapabilities caps;
-	private GL2 gl;
+	protected GL gl;
 	private GLUquadric quadric;
 	private FPSAnimator animator;
 	
@@ -176,6 +173,17 @@ public class Renderer implements GLEventListener {
 		textures = new Textures(view3D.getApplication().getImageManager());
 		
 		
+	}
+	
+	/*
+	public GL getGL(){
+		return gl;
+	}
+	*/
+	
+	public GL getGL(GLAutoDrawable gLDrawable){
+		return gLDrawable.getGL();
+		//return gLDrawable.getGL().getGL2();
 	}
 	
 	
@@ -289,8 +297,7 @@ public class Renderer implements GLEventListener {
 
     	//double displayTime = System.currentTimeMillis();
         
-        //gl = gLDrawable.getGL();
-        gl = gLDrawable.getGL().getGL2();
+        gl = getGL(gLDrawable);
                
         
         
@@ -1157,8 +1164,8 @@ public class Renderer implements GLEventListener {
     	//double pickTime = System.currentTimeMillis();
 
     	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
-    	//selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
-    	selectBuffer =  GLBuffers.newDirectIntBuffer(BUFSIZE); // Set Up A Selection Buffer
+    	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
+    	//selectBuffer =  GLBuffers.newDirectIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
         
@@ -1393,8 +1400,7 @@ public class Renderer implements GLEventListener {
     	
     	//Application.printStacktrace("");
         
-        //gl = drawable.getGL();
-        gl = drawable.getGL().getGL2();
+        gl = getGL(drawable);
                
         
         // check openGL version
@@ -1416,7 +1422,7 @@ public class Renderer implements GLEventListener {
         
         //TODO use gl lists / VBOs
         //geometryManager = new GeometryManager(gl,GeometryManager.TYPE_DIRECT);
-        geometryManager = new ManagerGLList(gl,glu,view3D);
+        geometryManager = new ManagerGLList(this,view3D);
         
         
         

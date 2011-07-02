@@ -4,8 +4,7 @@ import java.awt.BorderLayout;
 
 import geogebra.main.Application;
 
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.awt.GLJPanel;
+import javax.media.opengl.GLCanvas;
 import javax.swing.JPanel;
 
 /**

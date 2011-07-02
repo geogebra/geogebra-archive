@@ -1,11 +1,10 @@
 package geogebra3D.euclidian3D.opengl;
 
-import java.nio.FloatBuffer;
-
 import geogebra3D.euclidian3D.EuclidianView3D;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
+import java.nio.FloatBuffer;
+
+
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 
@@ -27,12 +26,11 @@ public class ManagerGLList extends Manager {
 	
 
 	/** common constructor
-	 * @param gl
-	 * @param glu 
+	 * @param renderer 
 	 * @param view3D 3D view
 	 */
-	public ManagerGLList(GL2 gl, GLU glu, EuclidianView3D view3D) {
-		super(gl,glu,view3D);
+	public ManagerGLList(Renderer renderer, EuclidianView3D view3D) {
+		super(renderer,view3D);
 	}
 
 	
@@ -42,7 +40,7 @@ public class ManagerGLList extends Manager {
 
 
 	private int genLists(int nb){
-		return gl.glGenLists(nb);
+		return renderer.gl.glGenLists(nb);
 	}
 	
 	
@@ -58,28 +56,28 @@ public class ManagerGLList extends Manager {
 		// generates a new list
 		int ret = genLists(1);
 		
-		gl.glNewList(ret, GLlocal.GL_COMPILE);
+		renderer.gl.glNewList(ret, GLlocal.GL_COMPILE);
 		
 		return ret;
 	}
 	
 	private void newList(int index){
-		gl.glNewList(index, GLlocal.GL_COMPILE);
+		renderer.gl.glNewList(index, GLlocal.GL_COMPILE);
 	}
 	
 	
 	
 	public void endList(){
 		
-		gl.glEndList();
+		renderer.gl.glEndList();
 	}
 	
 	public void startGeometry(int type){
-		gl.glBegin(type);
+		renderer.gl.glBegin(type);
 	}
 	
 	public void endGeometry(){
-		gl.glEnd();
+		renderer.gl.glEnd();
 	}
 
 	
@@ -108,25 +106,25 @@ public class ManagerGLList extends Manager {
 		if (ret == 0)
 			return 0;
 		
-	    RendererTesselCallBack tessCallback = new RendererTesselCallBack(gl, glu);
+	    RendererTesselCallBack tessCallback = new RendererTesselCallBack(renderer);
 	    
-	    tesselator = glu.gluNewTess();
+	    tesselator = renderer.glu.gluNewTess();
 
-	    glu.gluTessCallback(tesselator, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
-	    glu.gluTessCallback(tesselator, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-	    glu.gluTessCallback(tesselator, GLU.GLU_TESS_END, tessCallback);// endCallback);
-	    glu.gluTessCallback(tesselator, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
-	    glu.gluTessCallback(tesselator, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
+	    renderer.glu.gluTessCallback(tesselator, GLU.GLU_TESS_VERTEX, tessCallback);// vertexCallback);
+	    renderer.glu.gluTessCallback(tesselator, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+	    renderer.glu.gluTessCallback(tesselator, GLU.GLU_TESS_END, tessCallback);// endCallback);
+	    renderer.glu.gluTessCallback(tesselator, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+	    renderer.glu.gluTessCallback(tesselator, GLU.GLU_TESS_COMBINE, tessCallback);// combineCallback);
 
 	    
 	    newList(ret);
 	    
     	//normal(nx, ny, nz);
     	
-	    glu.gluTessBeginPolygon(tesselator, null);
-	    glu.gluTessBeginContour(tesselator);
+	    renderer.glu.gluTessBeginPolygon(tesselator, null);
+	    renderer.glu.gluTessBeginContour(tesselator);
 	    
-	    glu.gluTessNormal(tesselator,nx,ny,nz);
+	    renderer.glu.gluTessNormal(tesselator,nx,ny,nz);
 		normal(nx, ny, nz);
 		texture(0,0);
 		/*
@@ -149,11 +147,11 @@ public class ManagerGLList extends Manager {
     public void endPolygon(){
     	
     	
-	    glu.gluTessEndContour(tesselator);
-	    glu.gluTessEndPolygon(tesselator);
-	    gl.glEndList();
+    	renderer.glu.gluTessEndContour(tesselator);
+    	renderer.glu.gluTessEndPolygon(tesselator);
+	    renderer.gl.glEndList();
 	    
-	    glu.gluDeleteTess(tesselator);
+	    renderer.glu.gluDeleteTess(tesselator);
 	    
     	
     	//endGeometry(null);
@@ -167,7 +165,7 @@ public class ManagerGLList extends Manager {
      */
     public void remove(int index){
     	
-    	gl.glDeleteLists(index, 1);
+    	renderer.gl.glDeleteLists(index, 1);
     	
     }
 
@@ -180,7 +178,7 @@ public class ManagerGLList extends Manager {
 	/////////////////////////////////////////////
 
 	public void draw(int index){
-		gl.glCallList(index);
+		renderer.gl.glCallList(index);
 	}
 	
 	
@@ -188,39 +186,39 @@ public class ManagerGLList extends Manager {
 	
 	protected void texture(float x, float y){
 		
-		gl.glTexCoord2f(x,y);
+		renderer.gl.glTexCoord2f(x,y);
 		
 	}
 
 	
 	protected void normal(float x, float y, float z){
 		
-		gl.glNormal3f(x,y,z); 
+		renderer.gl.glNormal3f(x,y,z); 
 		
 	}
 	
 	
 	protected void vertex(float x, float y, float z){
 		
-		gl.glVertex3f(x,y,z); 
+		renderer.gl.glVertex3f(x,y,z); 
 		
 	}
 	
 	protected void vertices(FloatBuffer v, int count){
 		v.rewind();
-		gl.glEnableClientState(GLlocal.GL_VERTEX_ARRAY);
-		gl.glVertexPointer(3, GLlocal.GL_FLOAT, 0, v);
-		gl.glDrawArrays(GLlocal.GL_TRIANGLES, 0, 3);
-		gl.glDisableClientState(GLlocal.GL_VERTEX_ARRAY);
+		renderer.gl.glEnableClientState(GLlocal.GL_VERTEX_ARRAY);
+		renderer.gl.glVertexPointer(3, GLlocal.GL_FLOAT, 0, v);
+		renderer.gl.glDrawArrays(GLlocal.GL_TRIANGLES, 0, 3);
+		renderer.gl.glDisableClientState(GLlocal.GL_VERTEX_ARRAY);
 	}
 	
 	
 	protected void color(float r, float g, float b){
-		gl.glColor3f(r,g,b);
+		renderer.gl.glColor3f(r,g,b);
 	}
 	
 	protected void color(float r, float g, float b, float a){
-		gl.glColor4f(r,g,b,a);
+		renderer.gl.glColor4f(r,g,b,a);
 	}
 	
 	/////////////////////////////////////////////
@@ -232,7 +230,7 @@ public class ManagerGLList extends Manager {
 		
 		
 		double[] point = {x,y,z};
-		glu.gluTessVertex(tesselator, point, 0, point);
+		renderer.glu.gluTessVertex(tesselator, point, 0, point);
 		
 		
 		//vertex((float) x, (float) y,(float)  z);

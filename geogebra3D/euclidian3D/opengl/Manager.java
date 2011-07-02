@@ -1,15 +1,9 @@
 package geogebra3D.euclidian3D.opengl;
 
 import geogebra.Matrix.Coords;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
-import java.awt.Color;
 import java.nio.FloatBuffer;
-
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.glu.GLU;
 
 /**
  * Class that manage all geometry objects
@@ -32,10 +26,6 @@ abstract public class Manager {
 	/** color factor for highlighting */
 	private float colorFactor;
 	
-	// GL 
-	protected GL2 gl;
-	protected GLU glu;
-
 	
 	
 	// geometries
@@ -55,6 +45,8 @@ abstract public class Manager {
 	//geogebra stuff
 	private EuclidianView3D view3D;
 	
+	protected Renderer renderer;
+	
 	//coords stuff
 	/** when drawing a cylinder, clock vectors to describe a circle */
 	private Coords clockU = null;
@@ -65,14 +57,12 @@ abstract public class Manager {
 	private float textureStart, textureEnd;
 	
 	/** create a manager for geometries
-	 * @param gl 
-	 * @param glu 
+	 * @param renderer 
 	 * @param view3D 3D view
 	 */
-	public Manager(GL2 gl, GLU glu, EuclidianView3D view3D){
+	public Manager(Renderer renderer, EuclidianView3D view3D){
 		
-		this.gl = gl;
-		this.glu = glu;
+		this.renderer = renderer;
 		
 		
 		
@@ -136,24 +126,6 @@ abstract public class Manager {
 		//colorFactor = (float) Math.abs(Math.sin(System.currentTimeMillis()/300.0))*2;
 	}
 	
-	/////////////////////////////////////////////
-	// GL METHODS
-	/////////////////////////////////////////////
-	
-	/**
-	 * @return gl context
-	 */
-	public GL2 getGL(){
-		return gl;
-	}
-
-	/**
-	 * @return glu context
-	 */
-	public GLU getGLU(){
-		return glu;
-	}
-
 	
 	/////////////////////////////////////////////
 	// LIST METHODS

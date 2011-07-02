@@ -15,8 +15,8 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 
-import com.jogamp.opengl.util.GLBuffers;
-//import com.sun.opengl.util.BufferUtil;
+//import com.jogamp.opengl.util.GLBuffers;
+import com.sun.opengl.util.BufferUtil;
 
 
 
@@ -348,8 +348,8 @@ public class Textures {
 			}
 
 			int bytesPerPixel = storeAlphaChannel ? 4 : 3;
-			//ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
-			ByteBuffer unpackedPixels = GLBuffers.newDirectByteBuffer(packedPixels.length * bytesPerPixel);
+			ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
+			//ByteBuffer unpackedPixels = GLBuffers.newDirectByteBuffer(packedPixels.length * bytesPerPixel);
 
 			for (int row = img.getHeight() - 1; row >= 0; row--) {
 				for (int col = 0; col < img.getWidth(); col++) {

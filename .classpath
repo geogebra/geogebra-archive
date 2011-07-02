@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="jlm_greek.jar"/>
 	<classpathentry kind="lib" path="jlm_cyrillic.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL1"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

@@ -2,30 +2,25 @@ package geogebra3D.euclidian3D.opengl;
 
 import geogebra.main.Application;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellatorCallback;
 
 public class RendererTesselCallBack implements GLUtessellatorCallback
   {
-    private GL2 gl;
-    private GLU glu;
+    private Renderer renderer;
 
-    public RendererTesselCallBack(GL2 gl, GLU glu)
+    public RendererTesselCallBack(Renderer renderer)
     {
-      this.gl = gl;
-      this.glu = glu;
+      this.renderer = renderer;
     }
 
     public void begin(int type)
     {
-      gl.glBegin(type);
+      renderer.gl.glBegin(type);
     }
 
     public void end()
     {
-      gl.glEnd();
+    	renderer.gl.glEnd();
     }
 
     public void vertex(Object vertexData)
@@ -36,7 +31,7 @@ public class RendererTesselCallBack implements GLUtessellatorCallback
       {
         pointer = (double[]) vertexData;
         //if (pointer.length == 6) gl.glColor3dv(pointer, 3);
-        gl.glVertex3dv(pointer, 0);
+        renderer.gl.glVertex3dv(pointer, 0);
       }
       
     	
@@ -85,7 +80,7 @@ public class RendererTesselCallBack implements GLUtessellatorCallback
     {
       String estring;
 
-      estring = glu.gluErrorString(errnum);
+      estring = renderer.glu.gluErrorString(errnum);
       Application.debug("Tessellation Error: " + estring);
       //System.exit(0);
     }
