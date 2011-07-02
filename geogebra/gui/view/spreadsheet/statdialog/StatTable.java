@@ -1,5 +1,6 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -149,6 +150,7 @@ public class StatTable extends JScrollPane implements StatPanelInterface {
 			statMap = createTwoVarStatMap();
 	}
 
+	
 	private String[][]  createOneVarStatMap(){
 
 
@@ -186,9 +188,8 @@ public class StatTable extends JScrollPane implements StatPanelInterface {
 				{app.getMenu("Syy") ,"SYY"},
 				{app.getMenu("Sxy") ,"SXY"},
 				{null , null},
-				//TODO --- these cmds won't work, why?
-				//{app.getMenu("RSquare") ,"RSquare"}
-				//{app.getMenu("SSE") ,"SumSquaredErrors"}
+				{app.getMenu("RSquare.Short") ,"RSquare", "regression"},
+				{app.getMenu("SumSquaredErrors.short") ,"SumSquaredErrors", "regression"}
 		};
 
 		return statMap2;
@@ -201,20 +202,34 @@ public class StatTable extends JScrollPane implements StatPanelInterface {
 	 * 
 	 * @param dataList
 	 */
-	public void evaluateStatTable(GeoList dataList){
+	public void evaluateStatTable(GeoList dataList, GeoElement geoRegression){
 
 		NumberFormat nf = statDialog.getNumberFormat();
-
-		String geoLabel = dataList.getLabel();
+		String regressionLabel = null;
+		String dataLabel = dataList.getLabel();
+		if(geoRegression != null){
+			regressionLabel = geoRegression.getLabel();
+		}
+	
 		String expr;
 		double value;
 		for(int row=0; row < statMap.length; row++){
 			for(int column=0; column < 1; column++){
-				if(statMap[row][1] != null){
-					expr = statMap[row][1] + "[" + geoLabel + "]";
-					value = evaluateExpression(expr);
-					model.setValueAt(nf.format(value), row, 0);
+				if(statMap[row].length == 2){
+					if(statMap[row][1] != null){
+						expr = statMap[row][1] + "[" + dataLabel + "]";
+						value = evaluateExpression(expr);
+						model.setValueAt(nf.format(value), row, 0);
+					}
 				}
+				else if(statMap[row].length == 3){
+					if(statMap[row][1] != null && geoRegression != null){
+						expr = statMap[row][1] + "[" + dataLabel + " , " + regressionLabel + "]";
+						value = evaluateExpression(expr);
+						model.setValueAt(nf.format(value), row, 0);
+					}
+				}
+
 			}
 		}
 	}
@@ -223,8 +238,13 @@ public class StatTable extends JScrollPane implements StatPanelInterface {
 	private double evaluateExpression(String expr){
 
 		NumberValue nv;
-		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);	
-
+		
+		try {
+			nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Double.NaN;
+		}	
 		return nv.getDouble();
 	}
 
@@ -255,6 +275,7 @@ public class StatTable extends JScrollPane implements StatPanelInterface {
 
 	public void setLabels(){
 		setStatMap();
+		repaint(); // update all row header labels
 	}
 
 	/**

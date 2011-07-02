@@ -362,10 +362,10 @@ public class StatDialogController {
 		sd.comboStatPanel2.updatePlot(doCreateGeo);
 
 		if(mode == sd.MODE_ONEVAR){
-			sd.statTable.evaluateStatTable(dataSelected);
+			sd.statTable.evaluateStatTable(dataSelected, null);
 		}
 		else if(mode == sd.MODE_REGRESSION){
-			sd.statTable.evaluateStatTable(dataSelected);
+			sd.statTable.evaluateStatTable(dataSelected, geoRegression);
 		}
 	}
 

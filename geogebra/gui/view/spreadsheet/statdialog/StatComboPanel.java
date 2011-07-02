@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -116,7 +117,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	// options button and sidebar panel
 	private OptionsPanel optionsPanel; 
-	private JButton optionsButton;
+	private JToggleButton optionsButton;
 
 	// numClasses panel 
 	private int numClasses = 6;
@@ -210,7 +211,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		// create options button and panel
 		optionsPanel= new OptionsPanel(app, settings);
-		optionsButton = new JButton();
+		optionsButton = new JToggleButton();
+		//optionsButton.setIcon(app.getImageIcon("document-properties.png"));
 		optionsButton.setFocusable(false);
 		//optionsButton.setIcon(app.getImageIcon("tool.png"));
 		optionsButton.addActionListener(this);
@@ -860,7 +862,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 
 		else if(source == optionsButton){
-			
+			/*
 			optionsPanel.reInit(selectedPlot);
 			OptionsDialog dlg = new OptionsDialog(new JFrame(), app.getMenu("Options"));
 			
@@ -873,10 +875,11 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			
 			dlg.setLocation(p);
 			dlg.setVisible(true);
+			*/
 			
+			optionsPanel.reInit(selectedPlot);
+			optionsPanel.setVisible(optionsButton.isSelected());
 			
-			//optionsPanel.setVisible(optionsButton.isSelected());
-			//optionsPanel.setMode(selectedPlot);
 		}
 
 		else if(source == cbDisplayType){

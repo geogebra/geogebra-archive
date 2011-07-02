@@ -230,8 +230,12 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	private void createGUI(){
 		
+		//TODO: GUI elements should be created without supplying data. 
+		// Data should be passed later when update methods are called
+		
 		GeoList dataAll = sdc.getDataAll();
 		GeoList dataSelected = sdc.getDataSelected();
+		GeoElement geoRegression = sdc.getRegressionModel();
 		
 		
 		// Create two StatCombo panels with default plots.
@@ -265,12 +269,12 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		//================================================
 		if(mode == MODE_ONEVAR){
 			statTable = new StatTable(app, this, mode);
-			statTable.evaluateStatTable(dataSelected);
+			statTable.evaluateStatTable(dataSelected,null);
 		}
 		
 		else if(mode == MODE_REGRESSION){
 			statTable = new StatTable(app, this, mode);
-			statTable.evaluateStatTable(dataSelected);
+			statTable.evaluateStatTable(dataSelected,geoRegression);
 		}
 
 
@@ -434,21 +438,17 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	public void setLabels(){
 
-		GeoList dataAll = sdc.getDataAll();
-		GeoList dataSelected = sdc.getDataSelected();
-		
 		switch(mode){
 		case MODE_ONEVAR:
 			setTitle(app.getMenu("OneVariableStatistics"));	
 			lblOneVarTitle.setText(app.getMenu("DataTitle") + ": ");
-			statisticsHeader.setText(app.getMenu("Statistics"));
-			statTable.evaluateStatTable(dataSelected);
+			statisticsHeader.setText(app.getMenu("Statistics")); 
 			break;
+			
 		case MODE_REGRESSION:
 			setTitle(app.getMenu("RegressionAnalysis"));	
 			statisticsHeader.setText(app.getMenu("Statistics"));
 			regressionPanel.setLabels();
-			statTable.evaluateStatTable(dataSelected);
 			break;
 
 		case MODE_MULTIVAR:
@@ -456,10 +456,12 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			break;
 		}
 
+		
 		btnClose.setText(app.getMenu("Close"));
 		btnPrint.setText(app.getMenu("Print"));	
 		btnOptions.setText(app.getMenu("Show"));
 
+		// call setLabels() for all child panels
 		setLabelsRecursive(this.getContentPane()); 
 		
 	}
