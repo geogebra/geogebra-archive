@@ -30,15 +30,14 @@ public class StatTable extends JScrollPane {
 
 	private JTable statTable;
 	private MyRowHeader rowHeader;
-	String[] rowNames;
+	private String[] rowNames;
 	
 	// layout
 	private static final Color TABLE_GRID_COLOR = StatDialog.TABLE_GRID_COLOR ;
 	private static final Color TABLE_HEADER_COLOR = StatDialog.TABLE_HEADER_COLOR;  
 
 	protected DefaultTableModel tableModel;
-	private DefaultListModel rowHeaderModel;
-
+	
 
 	/*************************************************
 	 * Construct the panel

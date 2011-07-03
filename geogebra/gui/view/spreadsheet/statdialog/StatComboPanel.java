@@ -9,10 +9,10 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,13 +29,17 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -60,22 +64,27 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	public static final int PLOT_HISTOGRAM = 0;
 	public static final int PLOT_BOXPLOT = 1;
 	public static final int PLOT_DOTPLOT = 2;
-	public static final int PLOT_NORMALQUANTILE = 4;
-	public static final int PLOT_FREQUENCYTABLE = 5;
-	public static final int PLOT_STEMPLOT = 6;
-	public static final int PLOT_ONEVAR_INFERENCE = 7;
+	public static final int PLOT_NORMALQUANTILE = 3;
+	public static final int PLOT_FREQUENCYTABLE = 4;
+	public static final int PLOT_STEMPLOT = 5;
+	public static final int PLOT_ONEVAR_INFERENCE = 6;
 
+	public static final int PLOT_ZTEST = 7;
+	public static final int PLOT_ZINT = 8;
+	public static final int PLOT_TTEST = 9;
+	public static final int PLOT_TINT = 10;
+	
 
 	// two variable plot types
-	public static final int PLOT_SCATTERPLOT = 8;
-	public static final int PLOT_RESIDUAL = 9;
-	public static final int PLOT_REGRESSION_INFERENCE= 10;
+	public static final int PLOT_SCATTERPLOT = 20;
+	public static final int PLOT_RESIDUAL = 21;
+	public static final int PLOT_REGRESSION_INFERENCE= 22;
 
 	// multi variable plot types
-	public static final int PLOT_MULTIBOXPLOT = 11;
-	public static final int PLOT_MULTIVARSTATS = 12;
-	public static final int PLOT_ANOVA= 13;
-	public static final int PLOT_TWOVAR_INFERENCE = 14;
+	public static final int PLOT_MULTIBOXPLOT = 30;
+	public static final int PLOT_MULTIVARSTATS = 31;
+	public static final int PLOT_ANOVA= 32;
+	public static final int PLOT_TWOVAR_INFERENCE = 33;
 
 	// currently selected plot type
 	private int selectedPlot;
@@ -385,6 +394,9 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		if(cbDisplayType == null){
 			cbDisplayType = new JComboBox();
+			cbDisplayType.setRenderer(new ComboBoxRenderer());
+			
+			
 		}else{
 			cbDisplayType.removeActionListener(this);
 			cbDisplayType.removeAllItems();
@@ -399,7 +411,14 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			cbDisplayType.addItem(plotMap.get(PLOT_STEMPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_FREQUENCYTABLE));
 			cbDisplayType.addItem(plotMap.get(PLOT_NORMALQUANTILE));
-			cbDisplayType.addItem(plotMap.get(PLOT_ONEVAR_INFERENCE));
+			cbDisplayType.addItem(SEPARATOR);
+			cbDisplayType.addItem(plotMap.get(PLOT_ZTEST));
+			cbDisplayType.addItem(plotMap.get(PLOT_ZINT));
+			cbDisplayType.addItem(plotMap.get(PLOT_TTEST));
+			cbDisplayType.addItem(plotMap.get(PLOT_TINT));
+			
+			//cbDisplayType.addItem(plotMap.get(PLOT_ONEVAR_INFERENCE));
+			
 			break;
 
 		case StatDialog.MODE_REGRESSION:
@@ -418,6 +437,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		cbDisplayType.setSelectedItem(plotMap.get(selectedPlot));
 		cbDisplayType.addActionListener(this);
+		cbDisplayType.setMaximumRowCount(cbDisplayType.getItemCount());
 
 	}
 
@@ -624,6 +644,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		plotMap.put(PLOT_FREQUENCYTABLE, app.getMenu("FrequencyTable"));
 		plotMap.put(PLOT_STEMPLOT, app.getMenu("StemPlot"));
 		plotMap.put(PLOT_ONEVAR_INFERENCE, app.getMenu("OneVariableInference"));
+		
+		plotMap.put(PLOT_TTEST, app.getMenu("TMeanTest"));
+		plotMap.put(PLOT_TINT, app.getMenu("TMeanInterval"));
+		plotMap.put(PLOT_ZTEST, app.getMenu("ZMeanTest"));
+		plotMap.put(PLOT_ZINT, app.getMenu("ZMeanInterval"));
+		
 
 		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
 		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
@@ -741,7 +767,11 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			break;
 
 
-		case PLOT_ONEVAR_INFERENCE:
+		case PLOT_ZTEST:
+		case PLOT_TTEST:
+		case PLOT_ZINT:
+		case PLOT_TINT:
+			oneVarInferencePanel.setSelectedPlot(selectedPlot);
 			oneVarInferencePanel.updatePanel();
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "oneVarInferencePanel");
 			optionsButton.setVisible(false);
@@ -884,8 +914,13 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 
 		else if(source == cbDisplayType){
+			if(cbDisplayType.getSelectedItem().equals(SEPARATOR)){
+				cbDisplayType.setSelectedItem(plotMap.get(selectedPlot));
+			}
+			else{
 			selectedPlot = plotMapReverse.get(cbDisplayType.getSelectedItem());
 			updatePlot(true);
+			}
 		}
 
 
@@ -1007,6 +1042,37 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 
+	
+	final String SEPARATOR = "SEPARATOR";
+	class ComboBoxRenderer extends JLabel implements ListCellRenderer {
+	    JSeparator separator;
+
+	    public ComboBoxRenderer() {
+	      setOpaque(true);
+	      setBorder(new EmptyBorder(1, 1, 1, 1));
+	      separator = new JSeparator(JSeparator.HORIZONTAL);
+	    }
+
+	    public Component getListCellRendererComponent(JList list, Object value,
+	        int index, boolean isSelected, boolean cellHasFocus) {
+	      String str = (value == null) ? "" : value.toString();
+	      if (SEPARATOR.equals(str)) {
+	        return separator;
+	      }
+	      if (isSelected) {
+	        setBackground(list.getSelectionBackground());
+	        setForeground(list.getSelectionForeground());
+	      } else {
+	        setBackground(list.getBackground());
+	        setForeground(list.getForeground());
+	      }
+	      setFont(list.getFont());
+	      setText(str);
+	      return this;
+	    }
+	  }
+
+	
 	
 
 

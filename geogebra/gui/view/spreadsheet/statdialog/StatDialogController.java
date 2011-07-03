@@ -9,6 +9,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 import java.awt.Point;
@@ -191,7 +192,7 @@ public class StatDialogController {
 
 				break;
 
-				//TODO: dataListAll needs to be created as copy by value
+				//TODO: dataListAll needs to be created as copy by value ?
 			case StatDialog.MODE_MULTIVAR:
 				text = cr.createColumnMatrixExpression((ArrayList<CellRange>) dataSource); 							
 				dataAll = new GeoList(cons);
@@ -207,7 +208,7 @@ public class StatDialogController {
 
 		}	
 
-		System.out.println(" dataAll text: " + text);
+		//System.out.println(" dataAll text: " + text);
 		if(dataAll != null){
 			dataAll.setAuxiliaryObject(true);
 			dataAll.setLabel("dataListAll");
@@ -423,6 +424,24 @@ public class StatDialogController {
 		}
 	}
 	
+	
+	
+	
+	public double[] getValueArray(GeoList dataList){
+		ArrayList<Double> list = new ArrayList<Double>();
+		for (int i=0; i < dataList.size(); i++) {
+			GeoElement geo = dataList.get(i);
+			if (geo.isNumberValue()) {
+				NumberValue num = (NumberValue) geo;
+				list.add(num.getDouble());
+			}    		    		
+		}   		
+		double[] val = new double[list.size()];
+		for (int i=0; i < list.size(); i++) 
+			val[i] = list.get(i);
+		
+		return val;
+	}
 	
 	
 	
