@@ -267,7 +267,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				}
 			});	 
 			addSubItem(subMenu,item);	
-			item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
+			item.setEnabled(cp.isCreateOperationTablePossible(selectedCellRanges));
 
 
 		}

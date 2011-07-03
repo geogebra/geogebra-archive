@@ -57,6 +57,32 @@ public class CellRangeProcessor {
 
 		return false;
 	}
+	
+	/*
+	 * top-left must be a function of 2 variables eg A4(x,y)=x y^2
+	 * top row and left column must be numbers
+	 * other cells can be anything (will be erased)
+	 */
+	public boolean isCreateOperationTablePossible(ArrayList<CellRange> rangeList){
+		
+		if (rangeList.size() != 1) return false;
+		
+		CellRange cr = rangeList.get(0);
+		int r1 = cr.getMinRow();
+		int c1 = cr.getMinColumn();
+
+		if (!(RelativeCopy.getValue(table, c1,r1) instanceof GeoFunctionNVar)) return false;
+
+		for(int r = r1+1; r <= cr.getMaxRow(); ++r){
+			if (!(RelativeCopy.getValue(table, c1,r) instanceof GeoNumeric)) return false;
+		}
+		
+		for(int c = c1+1; c <= cr.getMaxColumn(); ++c){
+			if (!(RelativeCopy.getValue(table, c,r1) instanceof GeoNumeric)) return false;
+		}
+
+		return true;
+	}
 
 
 	public boolean isCreateMatrixPossible(ArrayList<CellRange> rangeList){
@@ -955,7 +981,7 @@ public class CellRangeProcessor {
 		int c1 = cr.getMinColumn();
 		String text = "";
 		GeoElement[] geos;
-		fcn = (GeoFunctionNVar) RelativeCopy.getValue(table, r1,c1);
+		fcn = (GeoFunctionNVar) RelativeCopy.getValue(table, c1,r1);
 
 		for(int r = r1+1; r <= cr.getMaxRow(); ++r){
 			for(int c = c1+1; c <= cr.getMaxColumn(); ++c){
