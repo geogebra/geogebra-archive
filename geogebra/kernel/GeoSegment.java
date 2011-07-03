@@ -158,8 +158,8 @@ GeoSegmentND {
     	endPoint.set((GeoElement) seg.endPoint);    	
 	}   
 
-	public void set(GeoPoint s, GeoPoint e, GeoVec3D direction) {
-		super.set(direction);		
+	public void set(GeoPoint s, GeoPoint e, GeoVec3D line) {
+		super.set(line);		
 	
 		setStartPoint(s);
 		setEndPoint(e);

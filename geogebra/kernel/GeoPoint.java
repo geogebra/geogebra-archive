@@ -581,6 +581,7 @@ GeoPointND, Animatable, Transformable  {
 			this.y = v.getY();
 			this.z = v.getLast();	
 		}
+		updateCoords();
 	}
 	
 	private PathParameter tempPathParameter;

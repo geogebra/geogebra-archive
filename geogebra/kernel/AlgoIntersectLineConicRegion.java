@@ -22,6 +22,9 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 
 import java.awt.Color;
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.SortedSet;
 
 /**
  *
@@ -36,7 +39,13 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 	private int numberOfLineParts;
 	private int numberOfOutputLines;
 	String labelPrefixForLines;
-
+	//private SortedSet<Double> paramSet; 
+	private Double tMin, tMax;
+	//private GeoPoint[] outputPoints;
+	private boolean currentPartIsInRegion;
+	private GeoPoint[] outputPoints;
+	private GeoLine[] outputLines;
+	
     public String getClassName() {
         return "AlgoIntersectLineConicRegion";
     }
@@ -49,31 +58,49 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
     AlgoIntersectLineConicRegion(Construction cons, String[] labels, GeoLine g, GeoConic c) {
         super(cons, g, c);
         
-        setLabels(labels);
+        //setLabels(labels);
     }
     
     protected void initElements() {
     	super.initElements();
-    	numberOfPoints = P.length;
-        for (int i = 0; i<numberOfPoints; i++) {
-        	setOutputDependencies(P[i]);
+    
 
+    	/*NewQ = new GeoPoint [numberOfPoints];
+        for (int i = 0; i<numberOfPoints; i++) {
+        	NewQ[i] = new GeoPoint(cons);
+        	setOutputDependencies(NewQ[i]);
+        }*/
+   	
+        for (int i = 0; i<P.length; i++) {
+        	setOutputDependencies(P[i]);
         }
     	
+        tMin = g.getMinParameter();
+        tMax = g.getMaxParameter();
         
         Color BLUE_VIOLET= new Color(153,0,255);
         int THICK_LINE_WITHIN_LINE = 4;
         
         lines = new GeoLine[4];
-        lines[0] = new GeoLine(cons);
-        lines[1] = new GeoRay(cons);
+        lines[0] = (GeoLine) g.copyInternal(cons);
+        if (Double.isInfinite(tMin))
+        	lines[1] = new GeoRay(cons);
+        else
+        	lines[1] = new GeoSegment(cons);
         lines[2] = new GeoSegment(cons);
-        lines[3] = new GeoRay(cons);
+        if (Double.isInfinite(tMax)) 
+        	lines[3] = new GeoRay(cons);
+        else
+        	lines[3] = new GeoSegment(cons);
+
         for (int i = 0; i<4; i++) {
         	setOutputDependencies(lines[i]);
            	lines[i].setLineThickness(THICK_LINE_WITHIN_LINE); 
             lines[i].setObjColor(BLUE_VIOLET);
         }
+        
+        //paramSet.add(tMin);
+        //paramSet.add(tMax);
     }
 
 	protected GeoLine[] getIntersectionLines() {
@@ -93,154 +120,233 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 	protected void compute() {
         super.compute();
         
-        //build lines
+        /*
+        for (int i = 0; i<numberOfPoints; i++) 
+        	NewQ[i].setCoords(Q[i].getCoords(),false);
+        */
+        numberOfPoints=0;
+        for (int i = 0; i<P.length; i++) {
+        	if (P[i].isDefined())
+        		numberOfPoints++;
+        }
         
+      
+        //build lines
+    	
+        numberOfOutputLines = 0;
         switch (intersectionType) {
         case INTERSECTION_PRODUCING_LINE: //contained in degenerate conic
 		case INTERSECTION_ASYMPTOTIC_LINE: //intersect at no point
 		case INTERSECTION_PASSING_LINE: //intersect at no point
 			numberOfLineParts = 1;
-    		lines[0].set(g);
-
     		lines[1].setUndefined();
     		lines[2].setUndefined();
 			lines[3].setUndefined();
-
+			
+			if (!currentPartIsInRegion)
+				lines[0].setUndefined();
+			else 
+				numberOfOutputLines ++;
     		break;
 		case INTERSECTION_MEETING_LINE:
 			numberOfLineParts = 2;
 			lines[0].setUndefined();
+			lines[2].setUndefined();
 			
-    		((GeoRay)lines[3]).set(Q[0], g);
-    		lines[2].setUndefined();
-    		((GeoRay)lines[1]).set(Q[0], g); lines[1].changeSign();
-    		
+			initCurrentPartIsInRegion();
+			
+			if (currentPartIsInRegion)
+			{
+				lines[3].setUndefined();
+				//set line[1]
+				double t = g.getPossibleParameter(Q[0].getCoords());
+				
+				if (tMin.isInfinite()) {
+					((GeoRay)lines[1]).set(Q[0], g);
+					lines[1].changeSign();
+					numberOfOutputLines ++;
+				} else {
+					if (Kernel.isGreater(tMin, t))
+						lines[1].setUndefined();
+					else {
+						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						numberOfOutputLines ++;
+					}
+				}
+				
+			}else{
+				lines[1].setUndefined();
+				//set line[3]
+				double t = g.getPossibleParameter(Q[0].getCoords());
+				
+				if (tMax.isInfinite()) {
+					((GeoRay)lines[3]).set(Q[0], g);
+					numberOfOutputLines ++;
+				} else {
+					if (Kernel.isGreater(tMin, t))
+						lines[1].setUndefined();
+					else {
+						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						numberOfOutputLines ++;
+					}
+				}
+			}
     		break;
     		
 		case INTERSECTION_TANGENT_LINE: //tangent at one point
 			numberOfLineParts = 3;
 			lines[0].setUndefined();
-			((GeoRay)lines[3]).set(Q[0], g);
-			((GeoSegment)lines[2]).set(Q[0], Q[0], g);
-			((GeoRay)lines[1]).set(Q[0], g); lines[1].changeSign();
 			
+			if (currentPartIsInRegion)
+			{
+				//set line[1] and line[3]
+				double t = g.getPossibleParameter(Q[0].getCoords());
+				
+				if (tMin.isInfinite()) {
+					((GeoRay)lines[1]).set(Q[0], g);
+					lines[1].changeSign();
+					
+					numberOfOutputLines ++;
+				} else {
+					if (Kernel.isGreater(tMin, t))
+						lines[1].setUndefined();
+					else {
+						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						numberOfOutputLines ++;
+					}
+				}
+				
+				if (tMax.isInfinite()) {
+					((GeoRay)lines[3]).set(Q[0], g);
+					numberOfOutputLines ++;
+				} else {
+					if (Kernel.isGreater(tMin, t))
+						lines[1].setUndefined();
+					else {
+						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						numberOfOutputLines ++;
+					}
+				}
+			}
+			else{
+				lines[1].setUndefined();
+				lines[3].setUndefined();
+			}
     		break;
-    		
 		case INTERSECTION_SECANT_LINE: //intersect at two points
 			numberOfLineParts = 3;
 			lines[0].setUndefined();
-
-			((GeoRay)lines[3]).set(Q[1], g);
-			((GeoSegment)lines[2]).set(Q[0], Q[1], g);
-			((GeoRay)lines[1]).set(Q[0], g); lines[1].changeSign();
-
-    		break;
+			if (currentPartIsInRegion)
+			{
+				lines[2].setUndefined();
+				
+				//set line[1] and line[3]
+				double t1 = g.getPossibleParameter(Q[0].getCoords());
+				double t2 = g.getPossibleParameter(Q[1].getCoords());
+				
+				if (tMin.isInfinite()) {
+					((GeoRay)lines[1]).set(Q[0], g);
+					lines[1].changeSign();
+					numberOfOutputLines ++;
+				} else {
+					if (Kernel.isGreater(tMin, t1))
+						lines[1].setUndefined();
+					else {
+						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						numberOfOutputLines ++;
+					}
+				}
+				
+				if (tMax.isInfinite()) {
+					((GeoRay)lines[3]).set(Q[0], g);
+					numberOfOutputLines ++;
+				} else {
+					if (Kernel.isGreater(t2, tMax))
+						lines[3].setUndefined();
+					else {
+						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						numberOfOutputLines ++;
+					}
+				}
+			} else {
+				lines[1].setUndefined();
+				lines[3].setUndefined();
+				
+				//set line[2]
+				double t1 = g.getPossibleParameter(Q[0].getCoords());
+				double t2 = g.getPossibleParameter(Q[1].getCoords());
+				
+				if (Kernel.isGreater(t1,tMax)||Kernel.isGreater(tMin,t2))
+					lines[2].setUndefined();
+				else {
+					((GeoSegment)lines[2]).set(
+							Kernel.isGreater(tMin, t1)? g.startPoint : Q[0],
+							Kernel.isGreater(t2, tMax)? g.endPoint : Q[1],
+							g);
+					numberOfOutputLines ++;
+				}	
+			}
+			break;
         }
 
         //set visibility according to number of points and type of intersection
-
-        boolean currentPartIsInRegion = false;
-        Coords ex = null;
-        double t0, t1 = 0;
-        switch (c.type){
-        case GeoConic.CONIC_PARABOLA:
-        	ex = c.getEigenvec(0);
-        	if (numberOfLineParts == 2) {
-        	
-        	currentPartIsInRegion = Kernel.isGreater(0, 
-        				g.getCoords().dotproduct(ex));
-        	}
-        	break;
-        case GeoConic.CONIC_HYPERBOLA:
-        	ex = c.getEigenvec(0);
-        	
-        	if (numberOfLineParts == 2) {
-        		c.pointChanged(Q[0]);
-        		t0 = Q[0].getPathParameter().getT();
-        		currentPartIsInRegion = Kernel.isGreater(1, t0) ^
-        				Kernel.isGreater(g.getCoords().dotproduct(ex), 0);
-        	} else if (numberOfLineParts == 3) {
-        		c.pointChanged(Q[0]);
-        		c.pointChanged(Q[1]);
-        		t0 = Q[0].getPathParameter().getT();
-        		t1 = Q[1].getPathParameter().getT();
-        		currentPartIsInRegion = Kernel.isGreater(1, t0) ^
-        				Kernel.isGreater(1, t1); 
-        	}
-        	break;
-        case GeoConic.CONIC_INTERSECTING_LINES:
-        	if (numberOfLineParts == 1) {
-        		currentPartIsInRegion = true;
-        	} else if (numberOfLineParts == 2) {
-        		c.pointChanged(Q[0]);
-        		t0 = Q[0].getPathParameter().getT();
-        		currentPartIsInRegion = 
-        			(inOpenInterval(t0,1,2) || inOpenInterval(t0,-1,0)) 
-        			^ Kernel.isGreater(g.getCoords().dotproduct(ex), 0);
-        	} else if (numberOfLineParts == 3) {
-        		c.pointChanged(Q[0]);
-        		c.pointChanged(Q[1]);
-        		t0 = Q[0].getPathParameter().getT();
-        		t1 = Q[1].getPathParameter().getT();
-        		currentPartIsInRegion = 
-        			(inOpenInterval(t0,-1,0) && inOpenInterval(t1,1,2)) ||
-        			(inOpenInterval(t1,-1,0) && inOpenInterval(t0,1,2)) ||
-        			(inOpenInterval(t0,0,1) && inOpenInterval(t1,2,3)) ||
-        			(inOpenInterval(t1,0,1) && inOpenInterval(t0,2,3));
-        	}
-        	break;
-        case GeoConic.CONIC_PARALLEL_LINES:
-        	if (numberOfLineParts == 1) {
-        		if (Kernel.isGreater( -g.z/((g.x)*(g.x)+(g.y)*(g.y)), 0))
-        			currentPartIsInRegion = true;
-        	}
-        	break;
-        default:
-        	//currentPartIsInRegion = false;
-        	break;
-        }
-        currentPartIsInRegion ^= c.isInverseFill();
+ 
         
-        //choose the right lines and update output
-        numberOfOutputLines = 0;
 
+        //choose the right lines and update output
+        
+        
+        
+        //numberOfOutputLines = 0;
+/*
         for (int i = 0; i<lines.length; i++) {
         	if (!lines[i].isDefined()) {
         		continue;
         	}
-        	
         	if (!currentPartIsInRegion) {
         		lines[i].setUndefined();
         	} else {
-        		//output[numberOfPoints+outputSize] = lines[outputSize];
         		numberOfOutputLines++;
         	}
         	currentPartIsInRegion = !currentPartIsInRegion;
         }
-        
+        */
         output = new GeoElement[numberOfPoints+numberOfOutputLines];
+        outputPoints =  new GeoPoint[numberOfPoints];
+        outputLines =  new GeoLine[numberOfOutputLines];
+        
         int index=0;
-        for (index = 0; index<numberOfPoints; index++) {
-        	output[index]=P[index];
+        for (int i = 0; i<P.length; i++) {
+        	if (P[i].isDefined()) {
+        		output[index]=P[i];
+        		outputPoints[index]=P[i];
+        		index++;
+        	}
         }
         for (int i = 0; i<lines.length; i++) {
         	if (lines[i].isDefined()) {
+        		//setOutputDependencies(lines[i]);
         		output[index] = lines[i];
+        		outputLines[index-numberOfPoints]=lines[i];
         		index++;
         	}
         }
         
-        GeoElement.setLabels(new String[] {null}, P);
+        GeoElement.setLabels(new String[] {null}, outputPoints);
         
-        if (labelPrefixForLines!=null && labelPrefixForLines != "") {
-        	for (int i = numberOfPoints; i<output.length; i++){
-        		if (!output[i].labelSet)
-        			output[i].setLabel(lines[i].getIndexLabel(labelPrefixForLines));
-        	}
-        } 
         
-   
-
+        
+        
+        
+        if ( (labelPrefixForLines==null || labelPrefixForLines == "") &&
+        		numberOfPoints!=0 && numberOfOutputLines!=0)
+    				labelPrefixForLines = ((GeoElement)P[0]).getFreeLabel(P[0].getLabel().toLowerCase());
+        
+       
+        
+        
+        GeoElement.setLabels(labelPrefixForLines,outputLines);
+        
 	}
     // for AlgoElement
     public void setInputOutput() {
@@ -253,7 +359,7 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
         setDependencies(); // done by AlgoElement
     }    
     
-
+/*
 	protected void setLabels(String[] labels) {
 		if (P == null || P.length==0)
 			GeoElement.setLabels(new String[] {null}, output);
@@ -262,15 +368,144 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 			if (numberOfOutputLines!=0) {
 				labelPrefixForLines = ((GeoElement)P[0]).getFreeLabel(P[0].getLabel().toLowerCase());
 			}
-			/*
-        	for (int i = numberOfPoints; i<output.length; i++){
-        		if (!output[i].labelSet)
-        			output[i].setLabel(lines[i].getIndexLabel(labelPrefixForLines));
-        	}*/
+
 			GeoElement.setLabels(labelPrefixForLines,lines);
 		}
 	}
+	*/
 	private boolean inOpenInterval(double t, double a, double b) {
 		return Kernel.isGreater(b, t) && Kernel.isGreater(t, a);
 	}
+	/*
+	private void bipartLineBy(GeoPoint node) {
+
+		double t = g.getPossibleParameter(node.getCoords());
+		
+		if (tMax.isInfinite())
+			((GeoRay)lines[3]).set(node, g);
+		else {
+			if (Kernel.isGreater(t, tMax))
+				lines[3].setUndefined();
+			else
+				((GeoSegment)lines[3]).set(node,g.endPoint, g);
+		}
+		
+		lines[2].setUndefined();
+		
+		if (tMin.isInfinite()) {
+			((GeoRay)lines[1]).set(node, g); lines[1].changeSign();
+		}
+		else {
+			if (Kernel.isGreater(tMin, t))
+				lines[1].setUndefined();
+			else
+				((GeoSegment)lines[1]).set(g.startPoint, node, g);
+		}
+	}
+	
+	*/
+/*
+	private void tripartLineBy(GeoPoint firstNode, GeoPoint secondNode) {
+
+
+		double t1 = g.getPossibleParameter(firstNode.getCoords());
+		double t2 = g.getPossibleParameter(secondNode.getCoords());
+		
+		
+		if (tMax.isInfinite())
+			((GeoRay)lines[3]).set(secondNode, g);
+		else {
+			if (Kernel.isGreater(t2, tMax)) {
+				lines[3].setUndefined();
+				secondNode.setCoords(g.endPoint.getCoords(), false);
+			}
+			else
+				((GeoSegment)lines[3]).set(secondNode,g.endPoint, g);
+		}
+
+		if (tMin.isInfinite()) {
+			((GeoRay)lines[1]).set(firstNode, g); lines[1].changeSign();
+		}
+		else {
+			if (Kernel.isGreater(tMin, t1)) {
+				lines[1].setUndefined();
+				firstNode.setCoords(g.startPoint.getCoords(), false);
+			}
+			else
+				((GeoSegment)lines[1]).set(g.startPoint, firstNode, g);
+		}
+		
+		if (Kernel.isGreater(t1,tMax)||Kernel.isGreater(tMin,t2))
+			lines[2].setUndefined();
+		else
+			((GeoSegment)lines[2]).set(firstNode,secondNode, g);
+		
+
+	}
+	
+	*/
+	  void initCurrentPartIsInRegion() {
+      //decide whether the full line starts inside or outside the region
+      currentPartIsInRegion = false;
+      Coords ex = null;
+      double t0, t1 = 0;
+      switch (c.type){
+      case GeoConic.CONIC_PARABOLA:
+      	ex = c.getEigenvec(0);
+      	if (numberOfLineParts == 2) {
+      	
+      	currentPartIsInRegion = Kernel.isGreater(0, 
+      				g.getCoords().dotproduct(ex));
+      	}
+      	break;
+      case GeoConic.CONIC_HYPERBOLA:
+      	ex = c.getEigenvec(0);
+      	
+      	if (numberOfLineParts == 2) {
+      		c.pointChanged(Q[0]);
+      		t0 = Q[0].getPathParameter().getT();
+      		currentPartIsInRegion = Kernel.isGreater(1, t0) ^
+      				Kernel.isGreater(g.getCoords().dotproduct(ex), 0);
+      	} else if (numberOfLineParts == 3) {
+      		c.pointChanged(Q[0]);
+      		c.pointChanged(Q[1]);
+      		t0 = Q[0].getPathParameter().getT();
+      		t1 = Q[1].getPathParameter().getT();
+      		currentPartIsInRegion = Kernel.isGreater(1, t0) ^
+      				Kernel.isGreater(1, t1); 
+      	}
+      	break;
+      case GeoConic.CONIC_INTERSECTING_LINES:
+      	if (numberOfLineParts == 1) {
+      		currentPartIsInRegion = true;
+      	} else if (numberOfLineParts == 2) {
+      		c.pointChanged(Q[0]);
+      		t0 = Q[0].getPathParameter().getT();
+      		currentPartIsInRegion = 
+      			(inOpenInterval(t0,1,2) || inOpenInterval(t0,-1,0)) 
+      			^ Kernel.isGreater(g.getCoords().dotproduct(ex), 0);
+      	} else if (numberOfLineParts == 3) {
+      		c.pointChanged(Q[0]);
+      		c.pointChanged(Q[1]);
+      		t0 = Q[0].getPathParameter().getT();
+      		t1 = Q[1].getPathParameter().getT();
+      		currentPartIsInRegion = 
+      			(inOpenInterval(t0,-1,0) && inOpenInterval(t1,1,2)) ||
+      			(inOpenInterval(t1,-1,0) && inOpenInterval(t0,1,2)) ||
+      			(inOpenInterval(t0,0,1) && inOpenInterval(t1,2,3)) ||
+      			(inOpenInterval(t1,0,1) && inOpenInterval(t0,2,3));
+      	}
+      	break;
+      case GeoConic.CONIC_PARALLEL_LINES:
+      	if (numberOfLineParts == 1) {
+      		if (Kernel.isGreater( -g.z/((g.x)*(g.x)+(g.y)*(g.y)), 0))
+      			currentPartIsInRegion = true;
+      	}
+      	break;
+      default:
+      	//currentPartIsInRegion = false;
+      	break;
+      }
+      currentPartIsInRegion ^= c.isInverseFill();
+}
 }

@@ -79,7 +79,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
         setInputOutput(); // for AlgoElement
         
         setLabels(labels);
-        //update();    
+        update();    
 
 	}
 

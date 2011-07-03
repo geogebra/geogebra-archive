@@ -3,6 +3,7 @@ package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.CmdIntersect;
+import geogebra.kernel.commands.CmdIntersectionPaths;
 import geogebra.kernel.commands.CmdMidpoint;
 import geogebra.kernel.commands.CmdUnitOrthogonalVector;
 import geogebra.kernel.commands.CommandDispatcher;
@@ -36,7 +37,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		
 		
 		cmdTable.put("CurveCartesian", new CmdCurveCartesian3D(kernel));
-		
+		cmdTable.put("IntersectionPaths", new CmdIntersectionPaths(kernel));
 		
 		cmdTable.put("Plane", new CmdPlane(kernel));
 		cmdTable.put("OrthogonalPlane", new CmdOrthogonalPlane(kernel));

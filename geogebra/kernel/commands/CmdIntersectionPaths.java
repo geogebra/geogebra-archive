@@ -181,9 +181,9 @@ public  GeoElement[] process(Command c) throws MyError {
             
 			else {
                 if (!ok[0])
-                    throw argErr(app, "Intersect", arg[0]);
+                    throw argErr(app, "IntersectionPaths", arg[0]);
                 else
-                    throw argErr(app, "Intersect", arg[1]);
+                    throw argErr(app, "IntersectionPaths", arg[1]);
             }
 /*
         case 3 : // only one of the intersection points: the third argument
@@ -433,7 +433,7 @@ public  GeoElement[] process(Command c) throws MyError {
      	
 */
         default :
-            throw argNumErr(app, "Intersect", n);
+            throw argNumErr(app, "IntersectionPaths", n);
     }
 }
 }
