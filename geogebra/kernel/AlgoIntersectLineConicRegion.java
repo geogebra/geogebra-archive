@@ -134,6 +134,8 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
         //build lines
     	
         numberOfOutputLines = 0;
+        initCurrentPartIsInRegion();
+        
         switch (intersectionType) {
         case INTERSECTION_PRODUCING_LINE: //contained in degenerate conic
 		case INTERSECTION_ASYMPTOTIC_LINE: //intersect at no point
@@ -143,17 +145,19 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
     		lines[2].setUndefined();
 			lines[3].setUndefined();
 			
+			
 			if (!currentPartIsInRegion)
 				lines[0].setUndefined();
-			else 
+			else  {
+				lines[0].set(g);
 				numberOfOutputLines ++;
+			}
     		break;
 		case INTERSECTION_MEETING_LINE:
 			numberOfLineParts = 2;
 			lines[0].setUndefined();
 			lines[2].setUndefined();
 			
-			initCurrentPartIsInRegion();
 			
 			if (currentPartIsInRegion)
 			{
@@ -252,19 +256,19 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 					if (Kernel.isGreater(tMin, t1))
 						lines[1].setUndefined();
 					else {
-						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						((GeoSegment)lines[1]).set(Q[0],g.endPoint, g);
 						numberOfOutputLines ++;
 					}
 				}
 				
 				if (tMax.isInfinite()) {
-					((GeoRay)lines[3]).set(Q[0], g);
+					((GeoRay)lines[3]).set(Q[1], g);
 					numberOfOutputLines ++;
 				} else {
 					if (Kernel.isGreater(t2, tMax))
 						lines[3].setUndefined();
 					else {
-						((GeoSegment)lines[3]).set(Q[0],g.endPoint, g);
+						((GeoSegment)lines[3]).set(Q[1],g.endPoint, g);
 						numberOfOutputLines ++;
 					}
 				}
