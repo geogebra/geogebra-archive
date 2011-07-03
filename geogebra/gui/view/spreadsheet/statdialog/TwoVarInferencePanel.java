@@ -103,7 +103,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Stat
 		String me = app.getMenu("MarginOfError");
 		String SE = app.getMenu("StandardError.short");
 		String level = app.getMenu("ConfidenceLevel");
-		String df = app.getMenu("DegreeofFreedom.short");
+		String df = app.getMenu("DegreesOfFreedom.short");
 		String stats = app.getMenu("Statistics") ;
 		String se = app.getMenu("StandardError");
 		
