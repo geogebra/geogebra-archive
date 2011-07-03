@@ -6,13 +6,13 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoPolyLine;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 
@@ -35,6 +35,8 @@ public  GeoElement[] process(Command c) throws MyError {
     int n = c.getArgumentNumber();
     boolean[] ok = new boolean[n];
     GeoElement[] arg;
+    
+    Application.debug(n,1);
 
     switch (n) {
         case 2 :
@@ -234,8 +236,11 @@ public  GeoElement[] process(Command c) throws MyError {
             }
 
         case 3 : // only one of the intersection points: the third argument
-					 // states wich one
+					 // states which one
             arg = resArgs(c);
+        	Application.debug(arg[0] .isGeoConic());
+        	Application.debug(arg[1] .isGeoConic());
+        	Application.debug(arg[2] .isNumberValue());
             // Line - Conic
             if ((ok[0] = (arg[0] .isGeoLine()))
                 && (ok[1] = (arg[1] .isGeoConic()))
@@ -263,34 +268,6 @@ public  GeoElement[] process(Command c) throws MyError {
                             (NumberValue) arg[2])};
                 return ret;
             }
-            // Line - Conic with startPoint
-            if ((ok[0] = (arg[0] .isGeoLine()))
-                    && (ok[1] = (arg[1] .isGeoConic()))
-                    && (ok[2] = (arg[2] .isGeoPoint()))) {
-                    GeoElement[] ret =
-                        {
-                             kernel.IntersectLineConicSingle(
-                                c.getLabel(),
-                                (GeoLine) arg[0],
-                                (GeoConic) arg[1],
-                                (GeoPoint) arg[2])};
-                    return ret;
-                }
-                // Conic - Line
-                else if (
-                    (ok[0] = (arg[0] .isGeoConic()))
-                        && (ok[1] = (arg[1] .isGeoLine()))
-                        && (ok[2] = (arg[2] .isGeoPoint()))) {
-                    GeoElement[] ret =
-                        {
-                             kernel.IntersectLineConicSingle(
-                                c.getLabel(),
-                                (GeoLine) arg[1],
-                                (GeoConic) arg[0],
-                                (GeoPoint) arg[2])};
-                    return ret;
-                }
-            
             // Conic - Conic
             else if (
                 (ok[0] = (arg[0] .isGeoConic()))
@@ -303,20 +280,6 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoConic) arg[0],
                             (GeoConic) arg[1],
                             (NumberValue) arg[2])};
-                return ret;
-            }
-            // Conic - Conic with referece Point
-            else if (
-                (ok[0] = (arg[0] .isGeoConic()))
-                    && (ok[1] = (arg[1] .isGeoConic()))
-                    && (ok[2] = (arg[2] .isGeoPoint()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.IntersectConicsSingle(
-                            c.getLabel(),
-                            (GeoConic) arg[0],
-                            (GeoConic) arg[1],
-                            (GeoPoint) arg[2])};
                 return ret;
             }
             // Polynomial - Line with index of point
