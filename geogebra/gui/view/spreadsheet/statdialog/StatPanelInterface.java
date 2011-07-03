@@ -1,7 +1,5 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
-import geogebra.kernel.GeoList;
-
 import java.awt.Font;
 
 public interface StatPanelInterface {
@@ -10,6 +8,6 @@ public interface StatPanelInterface {
 	
 	public void setLabels();
 	
-	public void updatePanel(GeoList selectedData);
+	public void updatePanel();
 	
 }

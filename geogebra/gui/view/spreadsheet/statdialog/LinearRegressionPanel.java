@@ -35,18 +35,16 @@ public class LinearRegressionPanel extends JPanel implements StatPanelInterface{
 
 	private Application app;
 	private Kernel kernel;
-	private GeoList dataList;
 	private JList dataSourceList;
 	private DefaultTableModel model;
 	private StatDialog statDialog;
 	private DefaultListModel headerModel;
 	
 
-	public LinearRegressionPanel(Application app, GeoList dataList, StatDialog statDialog){
+	public LinearRegressionPanel(Application app, StatDialog statDialog){
 
 		this.app = app;
 		kernel = app.getKernel();
-		this.dataList = dataList;
 		this.statDialog = statDialog;
 
 		this.setOpaque(true);
@@ -157,7 +155,7 @@ public class LinearRegressionPanel extends JPanel implements StatPanelInterface{
 	}
 
 
-	public void updatePanel(GeoList selectedData) {
+	public void updatePanel() {
 		// TODO Auto-generated method stub
 		
 	}

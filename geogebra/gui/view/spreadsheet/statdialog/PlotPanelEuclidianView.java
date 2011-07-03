@@ -24,7 +24,7 @@ import javax.swing.JPanel;
  * @author gsturr 2010-6-30
  *
  */
-public class PlotPanelEuclidianView extends EuclidianView implements ComponentListener, StatPanelInterface {
+public class PlotPanelEuclidianView extends EuclidianView implements ComponentListener {
 	
 	
 	private EuclidianController ec;
@@ -202,18 +202,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 	}
 	public void componentShown(ComponentEvent arg0) {
 	}
-	public void updateFonts(Font font) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void setLabels() {
-		// TODO Auto-generated method stub
-		
-	}
-	public void updatePanel(GeoList selectedData) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 }

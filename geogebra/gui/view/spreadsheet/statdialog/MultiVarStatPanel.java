@@ -1,174 +1,97 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
-import geogebra.main.GeoGebraColorConstants;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.text.NumberFormat;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-public class MultiVarStatPanel extends JPanel implements StatPanelInterface{
+public class MultiVarStatPanel extends BasicStatTable {
 
-	private Application app;
-	private Kernel kernel;
-	private GeoList dataList;
-	private JList dataSourceList;
-	private DefaultTableModel model;
-	private StatDialog statDialog;
-	private DefaultListModel headerModel;
-	
-
-	public MultiVarStatPanel(Application app, GeoList dataList, StatDialog statDialog){
-
-		this.app = app;
-		kernel = app.getKernel();
-		this.dataList = dataList;
-		this.statDialog = statDialog;
-
-		this.setOpaque(true);
-		this.setBackground(Color.WHITE);
-		this.setLayout(new BorderLayout());
-
-		
-		headerModel = new DefaultListModel();
-		
-		
-		// set up table
-		model = new DefaultTableModel();
-		JTable table = new JTable(model);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
-		table.setShowGrid(true);
-
-		// set up row header
-		JList rowHeader = new JList(headerModel);
-		rowHeader.setFixedCellWidth(50);
-		rowHeader.setFixedCellHeight(table.getRowHeight() + table.getRowMargin()); 
-		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
-
-		
-		// add table to scroll pane
-		JScrollPane scroll = new JScrollPane(table);
-		scroll.setRowHeaderView(rowHeader);
-		
-		this.add(scroll, BorderLayout.CENTER);
-
-
-
+	public MultiVarStatPanel(Application app, StatDialog statDialog, int rows){
+		super(app,statDialog, -1);			
 	}
 
-
-	public void updateMultiVarStatPanel(){
+	public String[] getRowNames(){
+		return statDialog.getDataTitles();
+	}
+	
+	public String[] getColumnNames(){
 		
-		String[][]statMap = { 
+		String[][] cmdMap = getCmdMap();
+		String [] names = new String[cmdMap.length];
+		for(int i= 0; i< cmdMap.length; i++){
+			names[i] = cmdMap[i][0];
+		}
+		return names;
+	}
+	
+	public int getRowCount(){
+		return getRowNames().length;
+	}
+	
+	public int getColumnCount(){
+		return getColumnNames().length;
+	}
+	
+		
+	private String[][] getStatMap(){	
+		String[][] cmdMap = getCmdMap();
+		String[] titles = statDialog.getDataTitles();
+		String[][] statMap = new String[titles.length][cmdMap.length];
+		return statMap;
+	}
+	
+	
+	public void updatePanel(){
+		GeoList dataList = statDialog.getStatDialogController().getDataSelected();
+		DefaultTableModel model = statTable.getModel();
+		NumberFormat nf = statDialog.getNumberFormat();
+		String[] titles = statDialog.getDataTitles();
+		String[][] cmdMap = getCmdMap();
+		String expr;
+		String dataLabel;
+		Double value;
+		
+		for(int row = 0; row < titles.length; row++ ){
+			// get the geoLabel for the current row list
+			dataLabel = dataList.get(row).getLabel();
+			// get the stats for this list
+			for(int col = 0; col < cmdMap.length; col++){
+				expr = cmdMap[col][1] + "[" + dataLabel + "]";
+				value = evaluateExpression(expr);
+				model.setValueAt(nf.format(value), row, col);
+			}
+		}
+		statTable.repaint();
+	}
+	
+	
+	private String[][] getCmdMap(){
+		String[][] map = { 
 				{app.getMenu("Length.short") ,"Length"},
 				{app.getMenu("Mean") ,"Mean"},
 				{app.getMenu("StandardDeviation.short") ,"SD"},
 				{app.getMenu("SampleStandardDeviation.short") ,"SampleSD"},
-				{app.getMenu("Sum") ,"Sum"},
-				{app.getMenu("Sum2") ,"SigmaXX"},
 				{app.getMenu("Minimum.short") ,"Min"},
 				{app.getMenu("LowerQuartile.short") ,"Q1"},
 				{app.getMenu("Median") ,"Median"},
 				{app.getMenu("UpperQuartile.short") ,"Q3"},
-				{app.getMenu("Maximum.short") ,"Max"}
+				{app.getMenu("Maximum.short") ,"Max"},
+				{app.getMenu("Sum") ,"Sum"},
+				{app.getMenu("Sum2") ,"SigmaXX"}
 		};
-		
-		
-		model.setColumnCount(0);
-		for(int i=0; i<statMap.length; i++)
-			model.addColumn(statMap[i][0]);
-
-		// temporary number format
-		//TODO ----- use ggb format
-		NumberFormat nf;
-		nf = NumberFormat.getInstance(Locale.ENGLISH);
-		nf.setMaximumFractionDigits(4);
-		nf.setGroupingUsed(false);
-		// -------------------------------
-		
-		
-		model.setRowCount(dataList.size());
-		String geoLabel, expr;
-		double value;
-		for(int row=0; row < dataList.size(); row++){
-			geoLabel = dataList.get(row).getLabel();
-			for(int column=0; column < statMap.length; column++){
-				expr = statMap[column][1] + "[" + geoLabel + "]";
-				value = evaluateExpression(expr);
-				model.setValueAt(nf.format(value), row, column);
-			}
-		}
-
-		headerModel.setSize(0);
-		String[] dataTitles = statDialog.getDataTitles();
-		for(int i=0; i < dataTitles.length; i++){
-			headerModel.addElement(dataTitles[i]);
-		}
-
-
+		return map;
 	}
 
-
-	private double evaluateExpression(String expr){
-
-		NumberValue nv;
-		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);	
-
-		return nv.getDouble();
-	}
-
-	class RowHeaderRenderer extends JLabel implements ListCellRenderer {
-
-		RowHeaderRenderer(JTable table) {
-			JTableHeader header = table.getTableHeader();
-			setOpaque(true);
-			setBorder(BorderFactory.createLineBorder(Color.black));
-			setHorizontalAlignment(LEFT);
-			setForeground(header.getForeground());
-			setBackground(header.getBackground());
-			setFont(app.getPlainFont());
-		}
-
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			setText((value == null) ? "" : value.toString());
-			return this;
-		}
-	}
-
-	public void updateFonts(Font font) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void setLabels() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void updatePanel(GeoList selectedData) {
-		// TODO Auto-generated method stub
-		
-	}
 }

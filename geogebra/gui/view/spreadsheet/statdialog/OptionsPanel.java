@@ -537,7 +537,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 	}
 
 
-	public void updatePanel(GeoList selectedData) {
+	public void updatePanel() {
 		// TODO Auto-generated method stub
 		
 	}

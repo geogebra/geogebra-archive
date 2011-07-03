@@ -89,7 +89,6 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 	// geos
-	private GeoList dataListSelected;
 	private GeoList regressionAnalysisList;
 	private ArrayList<GeoElement> plotGeoList;
 	private GeoElement histogram, dotPlot, boxPlotTitles, frequencyPolygon, normalCurve;
@@ -101,7 +100,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private OneVarInferencePanel oneVarInferencePanel;
 	private JPanel metaPlotPanel, northTitlePanel, southTitlePanel;
 	private PlotPanelEuclidianView plotPanel;
-	private ANOVAPanel anovaPanel;
+	private ANOVATable anovaTable;
 	private MultiVarStatPanel multiVarStatPanel;
 	private LinearRegressionPanel regressionPanel;
 
@@ -153,6 +152,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	private JLabel lblTitleX, lblTitleY;
 	private MyTextField fldTitleX, fldTitleY;
+	
 
 
 	//unused
@@ -177,9 +177,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	/***************************************** 
 	 * Constructs a ComboStatPanel
 	 */
-	public  StatComboPanel( StatDialog statDialog, int defaultPlotIndex, GeoList dataListSelected, int mode, boolean hasControlPanel){
+	public  StatComboPanel( StatDialog statDialog, int defaultPlotIndex, int mode, boolean hasControlPanel){
 
-		this.dataListSelected = dataListSelected;
 		this.statDialog = statDialog;
 		this.app = statDialog.getApp();
 		this.mode = mode;
@@ -275,17 +274,17 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		createImagePanel();
 
 		if(mode == statDialog.MODE_ONEVAR){
-			oneVarInferencePanel =new OneVarInferencePanel(app, dataListSelected, statDialog);
+			oneVarInferencePanel =new OneVarInferencePanel(app, statDialog);
 		}
 
 		else if(mode == statDialog.MODE_REGRESSION){
-			regressionPanel = new LinearRegressionPanel(app, dataListSelected, statDialog);
+			regressionPanel = new LinearRegressionPanel(app, statDialog);
 		}
 
 		else if(mode == statDialog.MODE_MULTIVAR){
-			twoVarInferencePanel =new TwoVarInferencePanel(app, dataListSelected, statDialog);
-			multiVarStatPanel = new MultiVarStatPanel(app, dataListSelected, statDialog);
-			anovaPanel = new ANOVAPanel(app, dataListSelected, statDialog);
+			twoVarInferencePanel =new TwoVarInferencePanel(app, statDialog);
+			multiVarStatPanel = new MultiVarStatPanel(app, statDialog, -1);
+			anovaTable = new ANOVATable(app, statDialog);
 		}
 
 
@@ -307,7 +306,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		else if(mode == statDialog.MODE_MULTIVAR){
 			statDisplayPanel.add("twoVarInferencePanel", twoVarInferencePanel);
 			statDisplayPanel.add("multiVarStatPanel", multiVarStatPanel);
-			statDisplayPanel.add("anovaPanel", anovaPanel);	
+			statDisplayPanel.add("anovaPanel", anovaTable);	
 		}
 
 
@@ -650,6 +649,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	public void updatePlot(boolean doCreate){
 
+		GeoList dataListSelected = statDialog.getStatDialogController().getDataSelected();
+		
 		GeoElement geo;
 		String underConstruction = "\\text{" + app.getPlain("NotAvailable") + "}";
 		if(hasControlPanel)
@@ -741,7 +742,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 		case PLOT_ONEVAR_INFERENCE:
-			oneVarInferencePanel.updatePanel(dataListSelected);
+			oneVarInferencePanel.updatePanel();
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "oneVarInferencePanel");
 			optionsButton.setVisible(false);
 			//	if(hasControlPanel)
@@ -797,7 +798,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			break;
 
 		case PLOT_MULTIVARSTATS:
-			multiVarStatPanel.updateMultiVarStatPanel();
+			multiVarStatPanel.updatePanel();
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "multiVarStatPanel");
 			optionsButton.setVisible(false);
 			break;
@@ -806,7 +807,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			//imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
 			//((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
 
-			anovaPanel.updateANOVAPanel();
+			anovaTable.updatePanel();
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "anovaPanel");
 
 			optionsButton.setVisible(false);
@@ -921,13 +922,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 	public void removeGeos(){
-		//statPanel.removeGeos();
-
-		if(dataListSelected != null){
-			dataListSelected.remove();
-			dataListSelected = null;
-		}
-
+		
 		clearPlotGeoList();
 	}
 
@@ -937,16 +932,9 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	}
 
-	public void updateData(GeoList dataList){
-		dataListSelected = dataList;
-	}
-
 	public void updateFonts(){
-		
-		
-		
+			
 	}
-	
 	
 	public void attachView() {
 		plotPanel.attachView();
@@ -995,13 +983,13 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		
 	}
 
-
-
-	public void updatePanel(GeoList selectedData) {
+	public void updatePanel() {
 		// TODO Auto-generated method stub
 		
 	}
 
+
+	
 
 	public class OptionsDialog extends JDialog implements ActionListener {
 		public OptionsDialog(JFrame parent, String title) {
@@ -1019,6 +1007,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 
+	
 
 
 } 

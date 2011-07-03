@@ -42,7 +42,6 @@ import javax.swing.text.JTextComponent;
 public class TwoVarInferencePanel extends JPanel implements ActionListener, StatPanelInterface{
 
 	private Application app;
-	private GeoList dataList;
 	private StatDialog statDialog;
 
 	private static final int MODE_TTEST_2MEANS = 0;
@@ -69,10 +68,9 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Stat
 	private JCheckBox ckEqualVariances;
 
 
-	public TwoVarInferencePanel(Application app, GeoList dataList, StatDialog statDialog){
+	public TwoVarInferencePanel(Application app, StatDialog statDialog){
 
 		this.app = app;
-		this.dataList = dataList;
 		this.statDialog = statDialog;
 
 
@@ -445,7 +443,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Stat
 
 
 
-	public void updatePanel(GeoList selectedData) {
+	public void updatePanel() {
 		// TODO Auto-generated method stub
 		
 	}

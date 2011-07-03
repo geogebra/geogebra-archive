@@ -114,7 +114,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	protected JLabel statisticsHeader;
 	protected JPanel statPanel;
 	protected DataPanel dataPanel;
-	protected StatTable statTable;
+	protected BasicStatTable statTable;
 	protected RegressionPanel regressionPanel;
 
 	// plot display objects 
@@ -221,6 +221,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 		
 		createGUI();
+		sdc.updateAllStatPanels(false);
 		
 	} 
 
@@ -229,14 +230,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 
 	private void createGUI(){
-		
-		//TODO: GUI elements should be created without supplying data. 
-		// Data should be passed later when update methods are called
-		
-		GeoList dataAll = sdc.getDataAll();
-		GeoList dataSelected = sdc.getDataSelected();
-		GeoElement geoRegression = sdc.getRegressionModel();
-		
+			
 		
 		// Create two StatCombo panels with default plots.
 		// StatCombo panels display various plots and tables
@@ -245,20 +239,20 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		switch(mode){
 
 		case MODE_ONEVAR:
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_HISTOGRAM, dataSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_BOXPLOT, dataSelected, mode, true);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_HISTOGRAM, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_BOXPLOT, mode, true);
 			break;
 
 		case MODE_REGRESSION:
 			//showComboPanel2 = true;
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_RESIDUAL, dataSelected, mode, true);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_RESIDUAL, mode, true);
 			break;
 
 		case MODE_MULTIVAR:
 			showComboPanel2 = true;
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_MULTIBOXPLOT, dataSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_MULTIVARSTATS, dataSelected, mode, true);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_MULTIBOXPLOT, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_MULTIVARSTATS, mode, true);
 			break;		
 
 		}
@@ -268,13 +262,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		// Create a StatPanel to display basic statistics for the current data set
 		//================================================
 		if(mode == MODE_ONEVAR){
-			statTable = new StatTable(app, this, mode);
-			statTable.evaluateStatTable(dataSelected,null);
+			statTable = new BasicStatTable(app, this, mode);
+			//statTable.evaluateStatTable(dataSelected,null);
 		}
 		
 		else if(mode == MODE_REGRESSION){
-			statTable = new StatTable(app, this, mode);
-			statTable.evaluateStatTable(dataSelected,geoRegression);
+			statTable = new BasicStatTable(app, this, mode);
+			//statTable.evaluateStatTable(dataSelected,geoRegression);
 		}
 
 
@@ -284,7 +278,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		// Edited data is used by the statTable and statCombo panels. 
 		//================================================
 		if(mode != MODE_MULTIVAR){
-			dataPanel = new DataPanel(app, this, dataAll, mode);
+			dataPanel = new DataPanel(app, this, sdc.getDataAll(), mode);
 			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		}
 
@@ -472,7 +466,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	    Component[] components = c.getComponents();
 	    for(Component com : components) {
 	    	if(com instanceof StatPanelInterface){
-	    		System.out.println(c.getClass().getSimpleName());
+	    		//System.out.println(c.getClass().getSimpleName());
 	    		((StatPanelInterface)com).setLabels();
 	    	}
 	    	else if(com instanceof Container) 
@@ -647,8 +641,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		if(source == btnClose){
 			setVisible(false);
 		}
-
-
 		else if(source == btnPrint){
 			new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
 		}
@@ -678,13 +670,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 	}
 
-
-	
-	
-	
 	
 	private void updateGUI(){
-
 		if(isIniting) return;
 		if(mode == StatDialog.MODE_ONEVAR){
 			fldOneVarTitle.setText(sdc.getDataTitles()[0]);
@@ -692,82 +679,62 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	}
 
-
-
-
+	
 	public void updateFonts() {
-
 		Font font = app.getPlainFont();
 		setFont(font);
 		setFontRecursive(this.getContentPane(),font);
 
 	}
-
 	
 	public void setFontRecursive(Container c, Font font) {
 	    Component[] components = c.getComponents();
 	    for(Component com : components) {
 	    	com.setFont(font);
+	    	if(com instanceof StatPanelInterface){
+	    		((StatPanelInterface)com).updateFonts(font);
+	    	}
 	        if(com instanceof Container) 
 	            setFontRecursive((Container) com, font);
 	    }
 	    this.pack();
 	}
 	
-	
-	
-	
-
 
 	//=================================================
 	//      View Implementation
 	//=================================================
 
-	public void add(GeoElement geo) {
-		//System.out.println("add: " + geo.toString());
-		//	if (!isIniting && isInDataColumn(geo)) {	
-		//loadDataLists();
-		//comboStatPanel.updatePlot();
-		//comboStatPanel2.updatePlot();
-		//	}
-	}
-
-	public void clearView() {
-	}
-
+		
 	public void remove(GeoElement geo) {
-
-		//System.out.println("removed: " + geo.toString());
+		//Application.debug("removed geo: " + geo.toString());
 		sdc.handleRemovedDataGeo(geo);
 
 	}
 
-	public void rename(GeoElement geo) {}
-	public void repaintView() {}
-	public void updateAuxiliaryObject(GeoElement geo) {}
-	
-	public void reset() {
-		//removeGeos();
-	}
-
-	public void setMode(int mode) {}
-
 	public void update(GeoElement geo) {
-		//Application.debug("------> update:" + geo.toString());
+		//Application.debug("updated geo:" + geo.toString());
 		if (!isIniting && sdc.isInDataSource(geo)) {
-			//Application.debug("geo is in data source: " + geo.toString());
-			//removeStatGeos();
-			//dataSource = null;
+			//Application.debug("this geo is in data source: " + geo.toString());
 			sdc.updateDialog(false);
-
 		}
 	}
 
+	public void add(GeoElement geo) {}
+	public void clearView() {}
+	public void rename(GeoElement geo) {}
+	public void repaintView() {}
+	public void updateAuxiliaryObject(GeoElement geo) {}
+	public void reset() {}
+	public void setMode(int mode) {}
+	
 	
 	public void attachView() {
 		//clearView();
 		//kernel.notifyAddAll(this);
 		kernel.attach(this);
+		
+		// attachView to plot panels
 		comboStatPanel.attachView();
 		comboStatPanel2.attachView();
 	}

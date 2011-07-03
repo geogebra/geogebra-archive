@@ -34,8 +34,6 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 	private Application app;
 	private Kernel kernel;
 	
-	private GeoList dataList;
-
 	private static final int MODE_ZTEST = 0;
 	private static final int MODE_TTEST = 1;
 	//private static final int MODE_SIGNTEST = 2;
@@ -58,11 +56,10 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 	
 
 
-	public OneVarInferencePanel(Application app, GeoList dataList, StatDialog statDialog){
+	public OneVarInferencePanel(Application app, StatDialog statDialog){
 
 		this.app = app;
 		this.kernel = app.getKernel();
-		this.dataList = dataList;
 		this.statDialog = statDialog;
 
 		this.setLayout(new BorderLayout());
@@ -73,7 +70,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Sta
 	}
 
 
-	public void updatePanel(GeoList selectedData){
+	public void updatePanel(){
 
 		String P = app.getMenu("PValue");
 		String t = app.getMenu("TStatistic");

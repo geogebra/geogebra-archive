@@ -759,7 +759,7 @@ public class DataPanel extends JPanel implements ActionListener, StatPanelInterf
 	}
 
 
-	public void updatePanel(GeoList selectedData) {
+	public void updatePanel() {
 		// TODO Auto-generated method stub
 
 	}

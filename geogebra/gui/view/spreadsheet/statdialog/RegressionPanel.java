@@ -360,7 +360,7 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 	}
 
 
-	public void updatePanel(GeoList selectedData) {
+	public void updatePanel() {
 		// TODO Auto-generated method stub
 		
 	}

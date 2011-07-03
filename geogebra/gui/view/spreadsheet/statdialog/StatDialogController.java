@@ -256,7 +256,7 @@ public class StatDialogController {
 		}
 
 		dataSelected.updateCascade();
-		updateAllComboPanels(false);
+		updateAllStatPanels(false);
 		if(sd.regressionPanel != null)
 			sd.regressionPanel.updateRegressionPanel();
 		//Application.debug("updateSelectedList: " + index + doAdd);
@@ -341,7 +341,7 @@ public class StatDialogController {
 		if(hasValidDataSource){
 			loadDataLists();
 
-			updateAllComboPanels(true);
+			updateAllStatPanels(true);
 			
 			if(mode == StatDialog.MODE_REGRESSION){
 				setRegressionGeo();
@@ -354,19 +354,18 @@ public class StatDialogController {
 
 	}
 
-	public void updateAllComboPanels(boolean doCreateGeo){
-		//loadDataLists();	
-		sd.comboStatPanel.updateData(dataSelected);
-		sd.comboStatPanel2.updateData(dataSelected);
+	public void updateAllStatPanels(boolean doCreateGeo){
+		
 		sd.comboStatPanel.updatePlot(doCreateGeo);
 		sd.comboStatPanel2.updatePlot(doCreateGeo);
 
 		if(mode == sd.MODE_ONEVAR){
-			sd.statTable.evaluateStatTable(dataSelected, null);
+			sd.statTable.updatePanel();
 		}
 		else if(mode == sd.MODE_REGRESSION){
-			sd.statTable.evaluateStatTable(dataSelected, geoRegression);
+			sd.statTable.updatePanel();
 		}
+		
 	}
 
 	
@@ -396,7 +395,7 @@ public class StatDialogController {
 		geoRegression.setAuxiliaryObject(true);
 		app.getEuclidianView().remove(geoRegression);
 		geoRegression.setLabel("regressionModel");
-		updateAllComboPanels(true);
+		updateAllStatPanels(true);
 	}
 
 

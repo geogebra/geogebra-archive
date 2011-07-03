@@ -108,7 +108,7 @@ public class StatDialogOptionsPanel extends JPanel implements  ActionListener, S
 		
 	}
 
-	public void updatePanel(GeoList selectedData) {
+	public void updatePanel() {
 		// TODO Auto-generated method stub
 		
 	}
