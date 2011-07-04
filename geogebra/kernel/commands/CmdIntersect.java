@@ -88,25 +88,10 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoPolygon) arg[0]);
                 return ret;
             }
-            // Line - Polygon(as region) //removed; TODO: need a new command or a boolean option
-            // all return types in CmdIntersect should be points
-          /*  else if ((ok[0] = (arg[0] .isGeoLine()))
-            		&& (ok[1] = (arg[1] .isGeoPolygon()))) {
-                GeoElement[] ret =
-                         kernel.IntersectLinePolygonalRegion(
-                            c.getLabels(),
-                            (GeoLine) arg[0],
-                            (GeoPolygon) arg[1]);
-                return ret;
-            } else if ((ok[0] = (arg[0] .isGeoPolygon()))
-            		&& (ok[1] = (arg[1] .isGeoLine()))) {
-                GeoElement[] ret =
-                         kernel.IntersectLinePolygonalRegion(
-                            c.getLabels(),
-                            (GeoLine) arg[1],
-                            (GeoPolygon) arg[0]);
-                return ret;
-            }*/ 
+            
+            // Line - Polygon(as region)
+            // ---- see CmdIntersectionPaths
+
             // Line - Conic
             else if (
                 (ok[0] = (arg[0] .isGeoLine()))
