@@ -37,6 +37,8 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 	private MyToggleButton btnViewDefault, btnViewXY, btnViewXZ, btnViewYZ;
 	
 	private PopupMenuButton btnViewPerspective;
+	
+	private PopupMenuButton btnViewAnaglyph;
 
 
 	/**
@@ -59,6 +61,7 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		add(btnViewYZ);
 		
 		add(btnViewPerspective);
+		add(btnViewAnaglyph);
 	}
 
 	protected boolean isVisibleInThisView(GeoElement geo){
@@ -115,6 +118,22 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 					//Application.debug("to perspective");
 					((EuclidianView3D) ev).setProjectionPerspective(true);
 					btnViewPerspective.setSelected(true);
+				}
+			}
+		}else if (source.equals(btnViewAnaglyph)) {
+			if (btnViewAnaglyph.getMySlider().isShowing()){//if slider is showing, start perspective
+				((EuclidianView3D) ev).setEyeSepFactor((double) btnViewAnaglyph.getSliderValue()/1000);
+				((EuclidianView3D) ev).setAnaglyph(true);
+				//Application.debug(btnViewAnaglyph.getSliderValue());
+			}else{//if button has been clicked, toggle perspective/orthographic
+				if (((EuclidianView3D) ev).hasAnaglyph()){
+					//Application.debug("to orthographic");
+					((EuclidianView3D) ev).setAnaglyph(false);
+					btnViewAnaglyph.setSelected(false);
+				}else{
+					//Application.debug("to perspective");
+					((EuclidianView3D) ev).setAnaglyph(true);
+					btnViewAnaglyph.setSelected(true);
 				}
 			}
 		}else
@@ -216,6 +235,26 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		((EuclidianView3D) ev).setProjectionPerspectiveValue(45);
 		btnViewPerspective.addActionListener(this);
 		
+		//========================================
+		// anaglyph view button
+		btnViewAnaglyph = new PopupMenuButton(app, null, -1, -1, null, -1,  false,  true){
+			public void update(Object[] geos) {
+				this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);	  
+			}
+		};		
+		btnViewAnaglyph.setIcon(app.getImageIcon("stylebar_viewanaglyph.gif"));
+		btnViewAnaglyph.getMySlider().setMinimum(0);
+		btnViewAnaglyph.getMySlider().setMaximum(30);
+		btnViewAnaglyph.getMySlider().setMajorTickSpacing(10);
+		btnViewAnaglyph.getMySlider().setMinorTickSpacing(5);
+		btnViewAnaglyph.getMySlider().setPaintTicks(true);
+		btnViewAnaglyph.getMySlider().setPaintLabels(false);
+		btnViewAnaglyph.getMySlider().setPaintTrack(true);
+		btnViewPerspective.getMySlider().setSnapToTicks(false);
+		btnViewAnaglyph.setSliderValue(30);
+		((EuclidianView3D) ev).setEyeSepFactor(0.03);
+		btnViewAnaglyph.addActionListener(this);
+		
 	}	
 	
 	public void setLabels(){
@@ -226,6 +265,7 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		btnViewXZ.setToolTipText(app.getPlainTooltip("stylebar.ViewXZ"));
 		btnViewYZ.setToolTipText(app.getPlainTooltip("stylebar.ViewYZ"));
 		btnViewPerspective.setToolTipText(app.getPlainTooltip("stylebar.ViewPerspective"));
+		btnViewAnaglyph.setToolTipText(app.getPlainTooltip("stylebar.ViewAnaglyph"));
 	}
 	
 	protected void updateGUI(){
@@ -256,6 +296,10 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 		btnViewPerspective.setSelected(false);
 		btnViewPerspective.addActionListener(this);
 
+		btnViewAnaglyph.removeActionListener(this);
+		btnViewAnaglyph.setSelected(false);
+		btnViewAnaglyph.addActionListener(this);
+
 
 		
 	}
@@ -263,11 +307,12 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 	
 	protected PopupMenuButton[] newPopupBtnList(){
 		PopupMenuButton[] superList = super.newPopupBtnList();
-		PopupMenuButton[] ret = new PopupMenuButton[superList.length+2];
+		PopupMenuButton[] ret = new PopupMenuButton[superList.length+3];
 		for (int i=0; i<superList.length; i++)
 			ret[i]=superList[i];
 		ret[superList.length]=btnRotateView;
 		ret[superList.length+1]=btnViewPerspective;
+		ret[superList.length+2]=btnViewAnaglyph;
 		return ret;
 	}
 	

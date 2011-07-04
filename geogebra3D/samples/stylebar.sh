@@ -4,7 +4,7 @@ unzip -o -d ~/tmp ./$1.ggb
 
 mv ~/tmp/geogebra_thumbnail.png ./$1.png
 
-convert -format gif -trim -resize 16x16 -background white -gravity center -extent 16x16 $1.png $1.gif
+convert -format gif -resize 16x16 -background white -gravity center -extent 16x16 $1.png $1.gif
 
 rm $1.png
 

@@ -356,11 +356,27 @@ public class Renderer implements GLEventListener {
         }
         */
         
-        eye=EYE_ONE;
-        setColorMask();
-        gl.glClear(GLlocal.GL_COLOR_BUFFER_BIT | GLlocal.GL_DEPTH_BUFFER_BIT);
-        setView();
-        draw(); 
+        if (view3D.hasAnaglyph()){
+        	//clear all
+        	gl.glColorMask(true,true,true,true);
+        	gl.glClear(GLlocal.GL_COLOR_BUFFER_BIT | GLlocal.GL_DEPTH_BUFFER_BIT);
+        	//left eye
+        	eye=EYE_LEFT;
+        	setColorMask();
+        	setView();
+        	draw(); 
+        	//right eye
+        	eye=EYE_RIGHT;
+        	setColorMask();
+        	gl.glClear(GLlocal.GL_DEPTH_BUFFER_BIT); //clear depth buffer
+        	setView();
+        	draw();      	
+        }else{  
+        	setColorMask();
+        	gl.glClear(GLlocal.GL_COLOR_BUFFER_BIT | GLlocal.GL_DEPTH_BUFFER_BIT);
+        	setView();
+        	draw(); 
+        }
         
         gLDrawable.swapBuffers(); //TODO ?
         
@@ -1647,8 +1663,12 @@ public class Renderer implements GLEventListener {
 		if (view3D.hasProjectionPerspective()){
 			if (near==0)
 				viewOrtho();
-			else
-				viewPersp();
+			else{
+				if (view3D.hasAnaglyph())
+					viewEye();
+				else
+					viewPersp();
+			}
 		}else
 			viewOrtho();
 		
@@ -1675,6 +1695,7 @@ public class Renderer implements GLEventListener {
     	
     }
     
+    
     private void viewPersp(){
     	
     	//distance near plane-origin
@@ -1691,10 +1712,8 @@ public class Renderer implements GLEventListener {
     	double top = getTop()*distratio;
     	//distance camera-far plane
     	double far = near+getBack(true)-getFront(true);
-       //glu.gluPerspective(45.0f, h, 1, 1000.0);
     	gl.glFrustum(left,right,bottom,top,near,far);
-    	gl.glTranslated(0, 0, getFront(false)-near);
-        
+    	gl.glTranslated(0, 0, getFront(false)-near);       
     	
     }
      
@@ -1706,49 +1725,41 @@ public class Renderer implements GLEventListener {
     
     private void viewEye(){
     	
-
-    	double aspectratio = (double) getWidth() / (double) getHeight();         // Divide by 2 for side-by-side stereo
     	
+    	
+
+    	
+
+    	//distance near plane-origin
+    	double d1 = -getFront(false);
+       	//distance camera-near plane
+    	double near = -d1-getLeft()*this.near;
+    	//Application.debug(near+"\nleft="+getLeft()+"\nd1="+d1);
+    	//ratio so that distance on origin plane are not changed
+    	double distratio = near/(near+d1);
+    	//frustum    	
+    	double left = getLeft()*distratio;
+    	double right = getRight()*distratio;
+    	double bottom = getBottom()*distratio;
+    	double top = getTop()*distratio;
+    	//distance camera-far plane
+    	double far = near+getBack(true)-getFront(true);
+ 
+    	//focus
+    	double fo = -d1-near;
+    	//eye separation
     	double eyesep;
-
-    	switch(eye){
-    	case EYE_ONE:
-    	default:
-    		eyesep= 0;
-    		break;
-    	case EYE_LEFT:
-    		eyesep= -EYE_SEP;
-    		break;
-    	case EYE_RIGHT:
-    		eyesep= EYE_SEP;
-    		break;
-    	}
-
+    	if(eye==EYE_LEFT)
+    		eyesep= -fo*view3D.getEyeSepFactor();
+    	else
+    		eyesep= fo*view3D.getEyeSepFactor();
+    	//eye separation for frustum
+    	double e1 = eyesep*distratio;//(1-distratio);    	
     	
-
+    	gl.glFrustum(left+e1,right+e1,bottom,top,near,far);
+    	gl.glTranslated(eyesep, 0, -d1-near);   
     	
-    	double widthdiv2   = near * Math.tan(aperture / 2); // aperture in radians
     	
-    	double top    =   widthdiv2;
-    	double bottom = - widthdiv2;
-    	double left   = - aspectratio * widthdiv2 - 0.5 * eyesep * near / fo;
-    	double right  =   aspectratio * widthdiv2 - 0.5 * eyesep * near / fo;
-    	gl.glFrustum(left,right,bottom,top,1,2000);
-    	
-    	    	
-    	//glu.gluPerspective(45.0f, aspectratio, 1, 1000.0);
-    	
-    	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
-    	gl.glLoadIdentity();
-    	glu.gluLookAt(0+eyesep,0,cameraZ,
-    			0+eyesep,0,0,
-    			0,1,0);
-
-
-    	/*
-    	eye = EYE_RIGHT;
-    	setColorMask();
-    	*/
     }
     
     
@@ -1758,18 +1769,14 @@ public class Renderer implements GLEventListener {
     private int eye = EYE_ONE;
     
     private void setColorMask(){
-    	switch(eye){
-    	case EYE_ONE:
-    		default:
+    	if (view3D.hasAnaglyph()){
+    		if (eye==EYE_LEFT)
+    			gl.glColorMask(true,false,false,true);
+    		else
+    			gl.glColorMask(false,true,true,true);
+    	}else
     		gl.glColorMask(true,true,true,true);
-    		break;
-       	case EYE_LEFT:
-    		gl.glColorMask(true,false,false,true);
-    		break;
-    	case EYE_RIGHT:
-    		gl.glColorMask(false,true,true,true);
-    		break;   		
-    	}
+    	
     }
 	
     /**

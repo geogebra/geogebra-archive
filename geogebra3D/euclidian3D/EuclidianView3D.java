@@ -3536,4 +3536,31 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	/**
+	 * 
+	 * @return if anaglyph glasses are used
+	 */
+	public boolean hasAnaglyph(){
+		return anaglyph;
+	}
+	
+	private boolean anaglyph = false;
+	
+	public void setAnaglyph(boolean flag){
+		anaglyph = flag;
+		if (anaglyph)
+			setProjectionPerspective(true);
+	}
+	
+	private double eyeSepFactor;
+	
+	public void setEyeSepFactor(double val){
+		eyeSepFactor = val;
+	}
+	
+	public double getEyeSepFactor(){
+		return eyeSepFactor;
+	}
+	
+	
 }
