@@ -59,6 +59,7 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -77,6 +78,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -118,6 +120,7 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 														// protocol window
 	private ConstructionProtocolView view=this;
 	public JScrollPane scrollPane;
+	private ConstructionTableCellEditor cellEditor;
 	
 	public ConstructionProtocolView(final Application app) {
 		super(new BorderLayout());
@@ -156,6 +159,9 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 			tableColumns[k].setHeaderRenderer(headerRend);
 			if (data.columns[k].getInitShow())
 				table.addColumn(tableColumns[k]);
+			if (data.columns[k].getTitle()=="Caption"){
+				tableColumns[k].setCellEditor(new ConstructionTableCellEditor());
+			}
 		}
 		// first column "No." should have fixed width
 		tableColumns[0].setMaxWidth(tableColumns[0].getMinWidth());
@@ -611,6 +617,26 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 		}
 	}
 
+	class ConstructionTableCellEditor extends AbstractCellEditor implements TableCellEditor {
+
+		InputPanel inputPanel;
+		
+		public Object getCellEditorValue() {
+			return inputPanel.getText();
+		}
+
+		public Component getTableCellEditorComponent(JTable table, Object value,
+				boolean isSelected, int rowIndex, int columnIndex) {
+
+			inputPanel = new InputPanel("", app, 20,false);				
+			inputPanel.setText((String)value);
+			inputPanel.setEnabled(true);
+			inputPanel.setVisible(true);
+			return inputPanel;
+		}
+	
+	}
+	
 	class ConstructionTableCellRenderer extends DefaultTableCellRenderer {
 
 		/**
@@ -620,8 +646,6 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 
 		private JCheckBox cbTemp = new JCheckBox();
 		private JLabel iTemp = new JLabel();
-		private MyTextField tfTemp = new MyTextField(app.getGuiManager());
-		InputPanel inputPanel;
 		
 		public ConstructionTableCellRenderer() {
 			setOpaque(true);
@@ -692,12 +716,7 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 				iTemp.setIcon((ImageIcon) value);
 				return iTemp;
 			}
-			
-			if(table.getColumnName(column).equals("Caption")){
-				inputPanel = new InputPanel(value.toString(), app, 20,false);
-				return inputPanel;
-			}
-			
+
 			setText((value == null) ? "" : value.toString());
 			return this;
 
@@ -811,7 +830,8 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 			includesIndex = (name.indexOf("<sub>") >= 0)
 					|| (algebra.indexOf("<sub>") >= 0)
 					|| (definition.indexOf("<sub>") >= 0)
-					|| (command.indexOf("<sub>") >= 0);
+					|| (command.indexOf("<sub>") >= 0)
+					|| (caption.indexOf("<sub>") >= 0);
 		}
 
 		
@@ -1181,7 +1201,13 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 			case 7:
 				return ((RowData) rowList.get(nRow)).consProtocolVisible
 						.toString();
+			/*TODO			
+			case 6:
+				return ((RowData) rowList.get(nRow)).geo
+						.getCaptionDesctiprionHTML();			
+			*/
 			}
+			
 			return "";
 		}
 
@@ -1393,7 +1419,7 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 		}
 		
         public void setValueAt(Object value, int row, int col) {
-       	
+
         	if((this.columns[col].getTitle()).equals("Caption")){
         		data.getRow(row).geo.setCaption(value.toString());
         		data.getRow(row).geo.update();
