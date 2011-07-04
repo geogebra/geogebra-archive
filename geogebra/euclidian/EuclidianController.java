@@ -389,10 +389,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					} else if (geo.isGeoButton()) {
 						startPoint.setLocation(view.toRealWorldCoordX(((GeoButton) geo).getAbsoluteScreenLocX() - 5), view.toRealWorldCoordY(((GeoButton) geo).getAbsoluteScreenLocY() + 30));
 						firstMoveable = false;
-					} //else if (geo instanceof GeoTextField) {//not available
-					//	startPoint.setLocation(view.toRealWorldCoordX(((GeoTextField) geo).getAbsoluteScreenLocX() - 5), view.toRealWorldCoordY(((GeoTextField) geo).getAbsoluteScreenLocY() + 20));
-					//	firstMoveable = false;
-					//}
+					}
 				}
 			}
 		}
@@ -402,6 +399,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (pastePreviewSelected != null && !pastePreviewSelected.isEmpty()) {
 			previousPointCapturing = view.getPointCapturingMode();
 			view.setPointCapturing(EuclidianView.POINT_CAPTURING_STICKY_POINTS);
+
+			// remove moved points from sticky points temporarily
+			for (int i = 0; i < pastePreviewSelected.size(); i++) {
+				geo = pastePreviewSelected.get(i);
+				if (geo instanceof GeoPointND) {
+					if (view.getStickyPointList().contains(geo))
+						view.getStickyPointList().remove(geo);
+				}
+			}
+
 			if (mouseLoc != null) {
 				transformCoords();
 				updatePastePreviewPosition();
@@ -2078,6 +2085,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		boolean changedKernel0 = false;
 		if (pastePreviewSelected != null) {
+
+			// add moved points to sticky points again
+			for (int i = 0; i < pastePreviewSelected.size(); i++) {
+				GeoElement geo = pastePreviewSelected.get(i);
+				if (geo instanceof GeoPointND) {
+					if (!view.getStickyPointList().contains(geo))
+						view.getStickyPointList().add((GeoPointND)geo);
+				}
+			}
+
 			pastePreviewSelected.clear();
 			view.setPointCapturing(previousPointCapturing);
 			changedKernel0 = true;
@@ -3542,6 +3559,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.POINT_CAPTURING_STICKY_POINTS:
 			pointCapturingPercentage = 0.125;
 			ArrayList<GeoPointND> spl = view.getStickyPointList();
+			boolean captured = false;
 			if (spl != null) {
 				for (int i = 0; i < spl.size(); i++) {
 					GeoPoint gp = (GeoPoint)spl.get(i);
@@ -3549,11 +3567,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						Math.abs(gp.getInhomY() - yRW) < view.getGridDistances(1) * pointCapturingPercentage) {
 						xRW = gp.getInhomX();
 						yRW = gp.getInhomY();
+						captured = true;
 						break;
 					}
 				}
 			}
-			break;
+			if (captured)
+				break;
 
 		case EuclidianView.POINT_CAPTURING_AUTOMATIC:				
 			if (!view.isGridOrAxesShown())break;
