@@ -430,7 +430,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		startPoint.setLocation(xRW, yRW);
 		GeoElement.moveObjects(pastePreviewSelected, translationVec, new Coords(xRW, yRW, 0), null);
 	}
-	
+
+	public void deletePastePreviewSelected() {
+		if (pastePreviewSelected != null) {
+			while (!pastePreviewSelected.isEmpty()) {
+				GeoElement geo = pastePreviewSelected.get(0);
+				pastePreviewSelected.remove(geo);
+				geo.remove();
+			}
+		}
+	}
+
 	//==============================================
 	//  Pen 
 	
@@ -485,13 +495,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void endOfMode(int mode) {
 		switch (mode) {
 		case EuclidianView.MODE_MOVE:
-			if (pastePreviewSelected != null) {
-				while (!pastePreviewSelected.isEmpty()) {
-					GeoElement geo = pastePreviewSelected.get(0);
-					pastePreviewSelected.remove(geo);
-					geo.remove();
-				}
-			}
+			deletePastePreviewSelected();
 			break;
 
 		case EuclidianView.MODE_SHOW_HIDE_OBJECT:				

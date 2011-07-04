@@ -156,6 +156,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_ESCAPE:		
 				// ESC: set move mode				
 				app.setMoveMode();
+				app.getActiveEuclidianView().getEuclidianController().deletePastePreviewSelected();
 				consumed = true;			
 				break;	
 											
