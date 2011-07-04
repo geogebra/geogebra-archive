@@ -4,7 +4,6 @@ import geogebra.Matrix.Coords;
 import geogebra.Matrix.Coords3D;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra3D.euclidian3D.plots.CurveMesh;
 import geogebra3D.euclidian3D.plots.CurveTree;
 import geogebra3D.euclidian3D.plots.MarchingCubes;
 import geogebra3D.kernel3D.GeoCurveCartesian3DInterface;
@@ -679,27 +678,27 @@ public class PlotterBrush {
 		tree.drawEndPointIfVisible(this);
 	}
 	
-	public void draw(CurveMesh mesh, double radius){
- 		FloatBuffer b1 = mesh.getVertices();
-		FloatBuffer b2 = mesh.getNormals();
-		int cnt = mesh.getVisibleChunks();
-		int vps = mesh.getVerticesPerChunk();
-		
-		manager.texture(0, 0);
-		
-		float[] f = new float[3]; float[] n = new float[3];
-		b1.rewind(); b2.rewind();
-		for(int i = 0; i < cnt; i++) {
-			manager.startGeometry(Manager.TRIANGLE_STRIP);
-			
-			for(int j = 0; j < vps; j++){
-				b1.get(f);b2.get(n);
-				manager.normal(n[0],n[1],n[2]);
-				manager.vertex(f[0],f[1],f[2]);
-			}
-			manager.endGeometry();
-		}
-	}
+//	public void draw(CurveMesh mesh, double radius){
+// 		FloatBuffer b1 = mesh.getVertices();
+//		FloatBuffer b2 = mesh.getNormals();
+//		int cnt = mesh.getVisibleChunks();
+//		int vps = mesh.getVerticesPerChunk();
+//		
+//		manager.texture(0, 0);
+//		
+//		float[] f = new float[3]; float[] n = new float[3];
+//		b1.rewind(); b2.rewind();
+//		for(int i = 0; i < cnt; i++) {
+//			manager.startGeometry(Manager.TRIANGLE_STRIP);
+//			
+//			for(int j = 0; j < vps; j++){
+//				b1.get(f);b2.get(n);
+//				manager.normal(n[0],n[1],n[2]);
+//				manager.vertex(f[0],f[1],f[2]);
+//			}
+//			manager.endGeometry();
+//		}
+//	}
 	
 	public void draw(MarchingCubes mc) {
  		FloatBuffer b1 = mc.getVertices();

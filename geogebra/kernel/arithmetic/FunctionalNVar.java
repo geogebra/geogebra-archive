@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import java.util.List;
-
 /**
  * Interface for GeoFunction and GeoFunctionNVar
  * 

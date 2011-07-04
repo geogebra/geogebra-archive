@@ -2,11 +2,9 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
-import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.plots.MarchingCubes;
-import geogebra3D.euclidian3D.plots.SurfaceMesh;
 
 /**
  * Class for drawing an implicit 3-var function
@@ -84,6 +82,8 @@ public class DrawImplicitFunction3Var extends Drawable3DSurfaces {
 		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
 		surface.start(geo);
 		
+		boolean ret = mc.update();
+		
 		float uMin, uMax, vMin, vMax;
 		uMin = -1; uMax = 1; vMin = -1; vMax = 1;
 		surface.setU(uMin,uMax);
@@ -91,12 +91,12 @@ public class DrawImplicitFunction3Var extends Drawable3DSurfaces {
 		surface.setNbV((int) (vMax-vMin)*10);
 		surface.setNbU((int) (uMax-uMin)*10);
 
-		surface.draw(mc);
+		surface.draw(mc, renderer);
 		setGeometryIndex(surface.end());
 		
 		super.updateForItSelf();
 
-		return false;
+		return ret;
 	}
 	
 	protected void updateForView(){

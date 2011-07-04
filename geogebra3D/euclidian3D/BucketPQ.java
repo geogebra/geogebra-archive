@@ -20,7 +20,7 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 	/** array of back of buckets */
 	protected Link<E>[] backs;
 
-	/** used for figuring out whioch buckets to insert elements into */
+	/** used for figuring out which buckets to insert elements into */
 	protected BucketAssigner<E> bucketAssigner;
 
 	/** hash map that lets us retrieve object's links quickly */

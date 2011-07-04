@@ -1,10 +1,10 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.Coords;
-import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.plots.SurfaceMesh;
+import geogebra3D.euclidian3D.plots.ParametricSurfaceMesh;
+import geogebra3D.euclidian3D.plots.SurfaceMesh2;
 import geogebra3D.kernel3D.GeoSurfaceCartesian3D;
 
 /**
@@ -14,16 +14,7 @@ import geogebra3D.kernel3D.GeoSurfaceCartesian3D;
  */
 public class DrawSurface3D extends Drawable3DSurfaces {
 	
-	private SurfaceMesh mesh;
-	
-	private GeoSurfaceCartesian3D surface;
-	
-	
-	
-	private double lastBaseRadius;
-	
-	private static final double unlimitedScaleFactor = 1.3;
-	
+	private SurfaceMesh2 mesh;	
 	private double savedRadius;
 
 
@@ -34,7 +25,6 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 	 */
 	public DrawSurface3D(EuclidianView3D a_view3d, GeoSurfaceCartesian3D surface) {
 		super(a_view3d, surface);
-		this.surface=surface;
 		
 		/*
 		Application.debug("function on ["
@@ -44,11 +34,10 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 				+"]"
 		);
 		*/
-
 		
-		//updateRadius();
+		updateRadius();
 		
-		//mesh = new SurfaceMesh(function, savedRadius, false);
+		mesh = new SurfaceMesh2(surface, savedRadius, false);
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -105,22 +94,21 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 		super.updateForItSelf();
 		boolean ret = true;
 		
-		
 		if(elementHasChanged){
 			elementHasChanged = false;
-			//mesh.updateParameters();
+			mesh.updateParameters();
 		}
 		
 		Renderer renderer = getView3D().getRenderer();
-		//mesh.setRadius(savedRadius);
-		//ret = mesh.optimize();
+		mesh.setRadius(100.0);
+		ret = mesh.optimize();
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		GeoSurfaceCartesian3D geo = (GeoSurfaceCartesian3D) getGeoElement();
 		surface.start(geo);
 		
 		float uMin, uMax, vMin, vMax;
-
+		
 		uMin = (float) geo.getMinParameter(0);
 		uMax = (float) geo.getMaxParameter(0);
 		vMin = (float) geo.getMinParameter(1);
@@ -134,8 +122,7 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 		
 		//TODO use fading texture
 		
-		surface.draw();
-		//surface.draw(mesh);
+		surface.draw(mesh);
 		setGeometryIndex(surface.end());
 
 		return ret;

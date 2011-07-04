@@ -17,13 +17,12 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
-import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.SurfaceEvaluable;
 import geogebra.util.Util;
 
 
@@ -37,7 +36,7 @@ import geogebra.util.Util;
  */
 public class GeoFunctionNVar extends GeoElement
 implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translateable, MatrixTransformable,
- Dilateable, Rotateable, PointRotateable, Mirrorable{
+ Dilateable, Rotateable, PointRotateable, Mirrorable, SurfaceEvaluable{
 
 	private static final double STRICT_INEQ_OFFSET = 4*Kernel.MIN_PRECISION;
 	private static final int SEEK_DENSITY = 30;
@@ -169,6 +168,22 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 			return Double.NaN;
 		else 
 			return fun.evaluate(vals);
+	}
+	
+	public Coords evaluatePoint(double[] vals) {
+		//Application.printStacktrace("");
+		if (fun == null)
+			return null;
+		else 
+			return new Coords(vals[0],vals[1],fun.evaluate(vals));
+	}
+	
+	public double evaluate(double x, double y, double z) {
+		//Application.printStacktrace("");
+		if (fun == null)
+			return Double.NaN;
+		else 
+			return fun.evaluate(new double[]{x,y,z});
 	}	
 	
 	/**

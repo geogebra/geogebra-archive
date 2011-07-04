@@ -1,17 +1,14 @@
 package geogebra3D.euclidian3D;
 
-import geogebra3D.euclidian3D.BucketPQ.Link;
-
 import java.nio.FloatBuffer;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * A list of triangles representing a triangle mesh.
  * 
  * @author Andr� Eriksson
  */
-public class TriList {
+public class TriList implements Iterable<TriListElem>{
 	/** the total amount of chunks available for allocation */
 	private int capacity;
 
@@ -137,10 +134,12 @@ public class TriList {
 		normalBuf.position(index);
 		normalBuf.put(normals);
 	}
-	
+
 	/**
 	 * gets the vertices of an element
-	 * @param el the element 
+	 * 
+	 * @param el
+	 *            the element
 	 * @return the vertices of the element
 	 */
 	protected float[] getVertices(TriListElem el) {
@@ -149,18 +148,24 @@ public class TriList {
 
 	/**
 	 * sets the vertices of the specified element
-	 * @param el 	the element to set
-	 * @param vertices 	the new vertices
+	 * 
+	 * @param el
+	 *            the element to set
+	 * @param vertices
+	 *            the new vertices
 	 */
 	protected void setVertices(TriListElem el, float[] vertices) {
 		vertexBuf.position(el.getIndex());
 		vertexBuf.put(vertices);
 	}
-	
+
 	/**
 	 * sets the normals of the specified element
-	 * @param el 	the element to set
-	 * @param normals 	the new normals
+	 * 
+	 * @param el
+	 *            the element to set
+	 * @param normals
+	 *            the new normals
 	 */
 	protected void setNormals(TriListElem el, float[] normals) {
 		normalBuf.position(el.getIndex());
@@ -200,8 +205,8 @@ public class TriList {
 	 */
 	public TriListElem add(float[] vertices, float[] normals) {
 
-//		if (!inputValid(vertices, normals))
-//			return null;
+		// if (!inputValid(vertices, normals))
+		// return null;
 
 		TriListElem t = new TriListElem();
 		t.setPrev(back);
@@ -283,8 +288,8 @@ public class TriList {
 	 * 
 	 * @param t
 	 */
-	public void remove(TriListElem t) {
-		hide(t);
+	public boolean remove(TriListElem t) {
+		return hide(t);
 	}
 
 	/**
@@ -354,18 +359,24 @@ public class TriList {
 		count--;
 		return true;
 	}
-	
+
 	public Iterator<TriListElem> iterator() {
-		
+
 		return new Iterator<TriListElem>() {
-			private TriListElem el = back;
-			private int bucket;
-			
-			public boolean hasNext() { return back.getNext()!=null; }
+			private TriListElem el = front;
+			private int bucket = 0;
 
-			public TriListElem next() { return back.getNext(); }
+			public boolean hasNext() {
+				return el.getNext()!=null;
+			}
 
-			public void remove() {}
+			public TriListElem next() {
+				el = el.getNext();
+				return el;
+			}
+
+			public void remove() {
+			}
 		};
 	}
 

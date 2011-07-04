@@ -4,8 +4,10 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra3D.euclidian3D.plots.MarchingCubes;
-import geogebra3D.euclidian3D.plots.SurfaceMesh;
+import geogebra3D.euclidian3D.plots.ParametricSurfaceMesh;
+import geogebra3D.euclidian3D.plots.SurfaceMesh2;
 
+import java.awt.Color;
 import java.nio.FloatBuffer;
 
 /** Class for drawing surfaces.
@@ -260,7 +262,35 @@ public class PlotterSurface {
 	/** 
 	 * draw part of the surface
 	 */
-	public void draw(SurfaceMesh tree){
+	public void draw(SurfaceMesh2 tree){
+		
+		FloatBuffer b1 = tree.getVertices();
+		FloatBuffer b2 = tree.getNormals();
+		int cnt = tree.getTriangleCount();
+		manager.startGeometry(Manager.TRIANGLES);
+		
+		/*TODO use fading texture
+		float uT = getTextureCoord(1, uNb, uMinFadeNb, uMaxFadeNb);
+		float vT = getTextureCoord(1, vNb, vMinFadeNb, vMaxFadeNb);	
+		manager.texture(uT, vT);
+		*/
+		manager.texture(0, 0);
+		
+		float[] f = new float[9]; float[] n = new float[9];
+		b1.rewind(); b2.rewind();
+		for(int i = 0; i < cnt; i++) {
+			b1.get(f);b2.get(n);
+			manager.normal(n[0],n[1],n[2]);
+			manager.vertex(f[0],f[1],f[2]);
+			manager.normal(n[3],n[4],n[5]);
+			manager.vertex(f[3],f[4],f[5]);
+			manager.normal(n[6],n[7],n[8]);
+			manager.vertex(f[6],f[7],f[8]);
+		}
+		manager.endGeometry();
+	}
+	
+	public void draw(ParametricSurfaceMesh tree){
 		
 		FloatBuffer b1 = tree.getVertices();
 		FloatBuffer b2 = tree.getNormals();
@@ -290,7 +320,7 @@ public class PlotterSurface {
 	
 
 	
-	public void draw(MarchingCubes mc) {
+	public void draw(MarchingCubes mc, Renderer renderer) {
  		FloatBuffer b1 = mc.getVertices();
 		FloatBuffer b2 = mc.getNormals();
 		int cnt = mc.getVisibleChunks();
@@ -311,6 +341,19 @@ public class PlotterSurface {
 		}
 		manager.endGeometry();
 		
+//		Coords[][] segments = mc.getSegments();
+//		
+//		PlotterBrush brush = renderer.getGeometryManager().getBrush();
+//		
+//		System.out.println(segments.length/12);
+//		
+//		brush.start(10);
+//		brush.setThickness(.03f);
+//		brush.setColor(new Color(0.1f,0.1f,1.0f),0.2f);
+//		brush.setAffineTexture(1.0f,  0.25f);
+//		for(int i = 0; i < segments.length; i++)
+//			brush.segment(segments[i][0], segments[i][1]);
+//		brush.end();
 	}
 	
 	
