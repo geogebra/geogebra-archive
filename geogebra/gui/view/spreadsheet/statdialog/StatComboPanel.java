@@ -76,19 +76,25 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	
 
 	// two variable plot types
-	public static final int PLOT_SCATTERPLOT = 20;
-	public static final int PLOT_RESIDUAL = 21;
-	public static final int PLOT_REGRESSION_INFERENCE= 22;
+	public static final int PLOT_SCATTERPLOT = 30;
+	public static final int PLOT_RESIDUAL = 31;
+	public static final int PLOT_REGRESSION_INFERENCE= 32;
 
 	// multi variable plot types
-	public static final int PLOT_MULTIBOXPLOT = 30;
-	public static final int PLOT_MULTIVARSTATS = 31;
-	public static final int PLOT_ANOVA= 32;
-	public static final int PLOT_TWOVAR_INFERENCE = 33;
-
+	public static final int PLOT_MULTIBOXPLOT = 50;
+	public static final int PLOT_MULTIVARSTATS = 51;
+	public static final int PLOT_ANOVA= 52;
+	public static final int PLOT_TWOVAR_INFERENCE = 53;
+	
+	public static final int PLOT_TTEST_2MEANS = 54;
+	public static final int PLOT_TTEST_PAIRED = 55;
+	public static final int PLOT_TINT_2MEANS = 56;
+	public static final int PLOT_TINT_PAIRED = 57;
+	
 	// currently selected plot type
 	private int selectedPlot;
 
+	
 	// plot reference vars
 	protected static HashMap<Integer, String> plotMap;
 	private HashMap<String, Integer> plotMapReverse;
@@ -162,26 +168,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private JLabel lblTitleX, lblTitleY;
 	private MyTextField fldTitleX, fldTitleY;
 	
-
-
-	//unused
-	/*
-	private JPanel twoSampleSelectionPanel;
-	private StatTable statTable;
-	private JLabel lblRegCmd;
-	private DefaultComboBoxModel modelInference;
-	private JComboBox cbInferenceType;
-	private JComboBox cbTitle1;
-	private JComboBox cbTitle2;
-	private JLabel lblTitle1;
-	private JLabel lblTitle2;
-	private DefaultComboBoxModel modelTitle1;
-	private DefaultComboBoxModel modelTitle2;
-	private JLabel lblEqn;
-	private JLabel lblRegEquation;
-	private GeoElement plotTitleX, plotTitleY;
-	 */
-
+	
+	
 
 	/***************************************** 
 	 * Constructs a ComboStatPanel
@@ -413,12 +401,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			cbDisplayType.addItem(plotMap.get(PLOT_NORMALQUANTILE));
 			cbDisplayType.addItem(SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_ZTEST));
-			cbDisplayType.addItem(plotMap.get(PLOT_ZINT));
 			cbDisplayType.addItem(plotMap.get(PLOT_TTEST));
+			cbDisplayType.addItem(SEPARATOR);
+			cbDisplayType.addItem(plotMap.get(PLOT_ZINT));
 			cbDisplayType.addItem(plotMap.get(PLOT_TINT));
-			
-			//cbDisplayType.addItem(plotMap.get(PLOT_ONEVAR_INFERENCE));
-			
 			break;
 
 		case StatDialog.MODE_REGRESSION:
@@ -430,8 +416,13 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		case StatDialog.MODE_MULTIVAR:
 			cbDisplayType.addItem(plotMap.get(PLOT_MULTIBOXPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_MULTIVARSTATS));
+			cbDisplayType.addItem(SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_ANOVA));
-			cbDisplayType.addItem(plotMap.get(PLOT_TWOVAR_INFERENCE));
+			cbDisplayType.addItem(plotMap.get(PLOT_TTEST_2MEANS));
+			cbDisplayType.addItem(plotMap.get(PLOT_TTEST_PAIRED));
+			cbDisplayType.addItem(SEPARATOR);
+			cbDisplayType.addItem(plotMap.get(PLOT_TINT_2MEANS));
+			cbDisplayType.addItem(plotMap.get(PLOT_TINT_PAIRED));
 			break;
 		}
 
@@ -659,7 +650,13 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		plotMap.put(PLOT_MULTIVARSTATS, app.getMenu("Statistics"));
 		plotMap.put(PLOT_ANOVA, app.getMenu("ANOVA"));
 		plotMap.put(PLOT_TWOVAR_INFERENCE, app.getMenu("TwoVariableInference"));
-
+		
+		plotMap.put(PLOT_TTEST_2MEANS, app.getMenu("TTestDifferenceOfMeans"));
+		plotMap.put(PLOT_TTEST_PAIRED, app.getMenu("TTestPairedDifferences"));
+		plotMap.put(PLOT_TINT_2MEANS, app.getMenu("TEstimateDifferenceOfMeans"));
+		plotMap.put(PLOT_TINT_PAIRED, app.getMenu("TEstimatePairedDifferences"));
+		
+		// REVERSE PLOT MAP
 		plotMapReverse = new HashMap<String, Integer>();
 		for(Integer key: plotMap.keySet()){
 			plotMapReverse.put(plotMap.get(key), key);
@@ -843,8 +840,13 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			optionsButton.setVisible(false);
 			break;
 
-		case PLOT_TWOVAR_INFERENCE:
-			twoVarInferencePanel.updateTwoVarPanel();
+			
+		case PLOT_TTEST_2MEANS:
+		case PLOT_TTEST_PAIRED:
+		case PLOT_TINT_2MEANS:
+		case PLOT_TINT_PAIRED:	
+			twoVarInferencePanel.setSelectedPlot(selectedPlot);
+			twoVarInferencePanel.updatePanel();
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "twoVarInferencePanel");
 			optionsButton.setVisible(false);
 			//	if(hasControlPanel)
@@ -861,8 +863,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				// add the geo to our view and remove it from EV		
 				listGeo.addView(plotPanel);
 				plotPanel.add(listGeo);
-			//	listGeo.removeView(app.getEuclidianView());
-			//	app.getEuclidianView().remove(listGeo);
+				listGeo.removeView(app.getEuclidianView());
+				app.getEuclidianView().remove(listGeo);
 			}
 		}
 	}

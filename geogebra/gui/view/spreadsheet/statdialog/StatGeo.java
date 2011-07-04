@@ -159,15 +159,15 @@ public class StatGeo   {
 		dataBounds = new double[4];
 
 		if(isMatrix){
-			String s = dataList.get(0).getCommandDescription();
-			dataBounds[0] = this.evaluateExpression("Min[" + s + "]");
-			dataBounds[1] = this.evaluateExpression("Max[" + s + "]");
+			
+			dataBounds[0] = this.evaluateExpression("Min[ Element[" + label + ", 1] ]");
+			dataBounds[1] = this.evaluateExpression("Max[ Element[" + label + ", 1] ]");
+			
 			//System.out.println(s + ":  " + dataBounds[0] + "--------" + dataBounds[0] );
 			double min, max;
 			for(int i = 1; i < dataList.size(); i++){
-				s = dataList.get(i).getCommandDescription();
-				min = this.evaluateExpression("Min[" + s + "]");
-				max = this.evaluateExpression("Max[" + s + "]");
+				min = this.evaluateExpression("Min[ Element[" + label + "," + (i+1) + "]]");
+				max = this.evaluateExpression("Max[ Element[" + label + "," + (i+1) + "]]");
 				dataBounds[0] = Math.min(dataBounds[0], min);
 				dataBounds[1] = Math.max(dataBounds[1], max);
 			}

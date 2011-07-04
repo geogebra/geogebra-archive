@@ -49,12 +49,10 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	private JTextArea taResult;
 	private JPanel cardProcedure;
 	private JPanel resultPanel;
-	private int selectedPlot;
 	private MyTextField fldConfLevel;
 	private JLabel lblResultHeader;
-	private JRadioButton btnLeft;
-	private JRadioButton btnRight;
-	private JRadioButton btnTwo;
+	private JRadioButton btnLeft, btnRight, btnTwo;
+	
 
 	// test type (tail)
 	private static final String tail_left = "<";
@@ -70,13 +68,12 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	private TTestImpl tTestImpl;
 	private TDistributionImpl tDist;
 
-
+	
+	private int selectedPlot;
 	private boolean isIniting;
 
 	/**
 	 * Construct a OneVarInference panel
-	 * @param app
-	 * @param statDialog
 	 */
 	public OneVarInferencePanel(Application app, StatDialog statDialog){
 
@@ -88,8 +85,8 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		this.setLayout(new BorderLayout());
 		this.add(createMainPanel(), BorderLayout.NORTH);
 
-		this.setMinimumSize(new Dimension(10,10));
-		this.setBorder(BorderFactory.createEtchedBorder());
+		this.setMinimumSize(new Dimension(50,50));
+		//this.setBorder(BorderFactory.createEtchedBorder());
 		this.setLabels();
 		isIniting = false;
 
@@ -418,12 +415,6 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	}
 
 
-
-
-	//============================================================
-	//           GUI  Utilities
-	//============================================================
-
 	protected double evaluateExpression(String expr){
 
 		NumberValue nv;
@@ -437,6 +428,11 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		return nv.getDouble();
 	}
 
+	
+
+	//============================================================
+	//           GUI  Utilities
+	//============================================================
 
 
 	private JPanel flowPanel(JComponent... comp){

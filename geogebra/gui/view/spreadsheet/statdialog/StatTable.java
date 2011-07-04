@@ -182,6 +182,7 @@ public class StatTable extends JScrollPane {
 			int h = statTable.getCellRenderer(0,0).getTableCellRendererComponent(statTable, "X",
 					false, false, 0, 0).getPreferredSize().height; 
 			statTable.setRowHeight(h);
+			rowHeader.setFixedCellHeight(statTable.getRowHeight());
 			//preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
 			//columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
 		}

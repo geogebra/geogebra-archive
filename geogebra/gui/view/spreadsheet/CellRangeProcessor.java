@@ -29,11 +29,13 @@ public class CellRangeProcessor {
 
 	private MyTable table;
 	private Application app;		
-
+	private Construction cons;
+	
 	public CellRangeProcessor(MyTable table) {
 
 		this.table = table;
 		app = table.kernel.getApplication();
+		cons = table.kernel.getConstruction();
 
 	}
 
@@ -216,6 +218,28 @@ public class CellRangeProcessor {
 
 	}
 
+	
+	/**
+	 * Creates a GeoList of lists where each element is a list
+	 * of cells in each column spanned by the range list
+	 */
+	public GeoList createCollectionList(ArrayList<CellRange> rangeList, boolean copyByValue) {
+		
+		GeoList tempGeo = new GeoList(cons);
+		boolean oldSuppress = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+		for(CellRange cr : rangeList){
+			for(int col=cr.getMinColumn(); col<=cr.getMaxColumn(); col++){
+				tempGeo.add(createListFromColumn(col, copyByValue, false, false, GeoElement.GEO_CLASS_NUMERIC));
+			}
+		}
+		cons.setSuppressLabelCreation(oldSuppress);
+		return tempGeo;
+	}
+
+
+
+	
 	/**
 	 * Creates a GeoPolyLine out of points constructed from the spreadsheet
 	 * cells found in rangeList.
@@ -655,13 +679,13 @@ public class CellRangeProcessor {
 	 * Creates a string expression for a matrix where each sub-list is a list
 	 * of cells in the columns spanned by the range list
 	 */
-	public String createColumnMatrixExpression(ArrayList<CellRange> rangeList) {
+	public String createColumnMatrixExpression(ArrayList<CellRange> rangeList, boolean copyByValue) {
 		GeoElement tempGeo;
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		for(CellRange cr : rangeList){
 			for(int col=cr.getMinColumn(); col<=cr.getMaxColumn(); col++){
-				tempGeo = createListFromColumn(col, false, false, false, GeoElement.GEO_CLASS_NUMERIC);
+				tempGeo = createListFromColumn(col, copyByValue, false, false, GeoElement.GEO_CLASS_NUMERIC);
 				sb.append(tempGeo.getCommandDescription());
 				sb.append(",");
 				tempGeo.remove();

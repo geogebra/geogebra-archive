@@ -15,6 +15,8 @@ import geogebra.main.Application;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import org.apache.commons.math.stat.descriptive.SummaryStatistics;
+
 public class StatDialogController {
 
 	
@@ -194,14 +196,24 @@ public class StatDialogController {
 
 				//TODO: dataListAll needs to be created as copy by value ?
 			case StatDialog.MODE_MULTIVAR:
-				text = cr.createColumnMatrixExpression((ArrayList<CellRange>) dataSource); 							
+				dataAll = cr.createCollectionList((ArrayList<CellRange>)dataSource, true); 
+				
+				System.out.println("dataAll: ========> " + dataAll.toDefinedValueString());
+				
+				/*
+				text = cr.createColumnMatrixExpression((ArrayList<CellRange>)dataSource, copyByValue); 							
 				dataAll = new GeoList(cons);
 				try {
+					//GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
+					//dataAll = (GeoList) geos[0];
+					
 					dataAll = (GeoList) kernel.getAlgebraProcessor()
 					.changeGeoElementNoExceptionHandling((GeoElement)dataAll, text, true, false);
 				} catch (Exception e) {
 					e.printStackTrace();
-				}				
+				}	
+				*/
+							
 				break;
 
 			}
@@ -424,6 +436,19 @@ public class StatDialogController {
 		}
 	}
 	
+	
+	public SummaryStatistics getSummaryStatistics(GeoList dataList){
+		
+		SummaryStatistics stats = new SummaryStatistics();
+		for (int i=0; i < dataList.size(); i++) {
+			GeoElement geo = dataList.get(i);
+			if (geo.isNumberValue()) {
+				NumberValue num = (NumberValue) geo;
+				stats.addValue(num.getDouble());
+			}    		    		
+		}   				
+		return stats;
+	}
 	
 	
 	
