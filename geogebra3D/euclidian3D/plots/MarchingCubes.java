@@ -44,7 +44,8 @@ class MCElement {
 	public MCElement(int signs, double[][] c, double[] vals) {
 		this.signs = signs;
 
-		cornerVals = Arrays.copyOf(vals, 8);
+		if (true) throw new RuntimeException("GeoGebra uses Java 1.5, see: http://www.geogebra.org/trac/wiki/SetUp");
+		//cornerVals = Arrays.copyOf(vals, 8);
 
 		cz[0][0] = c[0][0];
 		cz[0][1] = c[1][0];
@@ -185,7 +186,8 @@ class MCTriangle extends DynamicMeshElement2 {
 	}
 
 	public void resort() {
-		MCTriangle[] tn = Arrays.copyOf(neighbors,3);
+		if (true) throw new RuntimeException("GeoGebra uses Java 1.5, see: http://www.geogebra.org/trac/wiki/SetUp");
+		MCTriangle[] tn = null; //Arrays.copyOf(neighbors,3);
 		neighbors[0]=neighbors[1]=neighbors[2]=null;
 		
 		for(int x=0;x<3;x++){
