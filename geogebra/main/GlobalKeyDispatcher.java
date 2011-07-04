@@ -306,12 +306,17 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					app.copyGraphicsViewToClipboard();	
 					consumed = true;
 				} else {
-					// Copy selected geos
-					app.setWaitCursor();
-					CopyPaste.copyToXML(app, app.getSelectedGeos());
-					app.updateMenubar();
-					app.setDefaultCursor();
-					consumed = true;
+					// check not spreadsheet
+					if (!(event.getSource() instanceof JTable) &&
+						!(app.getGuiManager().getSpreadsheetView().hasFocus())) {
+
+						// Copy selected geos
+						app.setWaitCursor();
+						CopyPaste.copyToXML(app, app.getSelectedGeos());
+						app.updateMenubar();
+						app.setDefaultCursor();
+						consumed = true;
+					}
 				}
 				break;
 			
@@ -395,14 +400,19 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					app.getGuiManager().undo();
 				consumed = true;
 				break;
-				
+
 			case KeyEvent.VK_V:
-				app.setWaitCursor();
-				CopyPaste.pasteFromXML(app);
-				app.setDefaultCursor();
-				consumed = true;
+				// check not spreadsheet
+				if (!(event.getSource() instanceof JTable) &&
+					!(app.getGuiManager().getSpreadsheetView().hasFocus())) {
+
+					app.setWaitCursor();
+					CopyPaste.pasteFromXML(app);
+					app.setDefaultCursor();
+					consumed = true;
+				}
 				break;
-						
+
 			// ctrl-R updates construction
 			// make sure it works in applets without a menubar
 			case KeyEvent.VK_R:
