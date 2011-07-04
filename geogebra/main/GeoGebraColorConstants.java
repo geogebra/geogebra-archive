@@ -31,11 +31,49 @@ public class GeoGebraColorConstants {
 	public static final Color TABLE_GRID_COLOR = Color.gray;
 	
 	
-	// popup color menu type constants
-	public static final int COLORSET_STANDARD = 0;
-	public static final int COLORSET_BGCOLOR = 1;
-
-	
+	// ggb color constants
+	 public static final Color RED = new  Color(255,0,0);
+	 public static final Color ORANGE = new  Color(255,127,0);
+	 public static final Color YELLOW = new  Color(255,255,0);
+	 public static final Color GREEN = new  Color(0,255,0);
+	 public static final Color CYAN = new  Color(0,255,255);
+	 public static final Color BLUE = new  Color(0,0,255);
+	 public static final Color VIOLET = new  Color(127,0,255);
+	 public static final Color MAGENTA = new  Color(255,0,255);
+	 
+	 public static final Color LIME = new  Color(191,255,0);
+	 public static final Color PINK = new  Color(255,192,203);
+	 public static final Color LIGHTORANGE = new  Color(255, 239, 213); // wikipedia papaya whip 
+	 public static final Color LIGHTYELLOW = new  Color(255, 250, 205); // wikipedia lemon chiffon 
+	 public static final Color AQUA = new  Color(188, 212, 230); // wikipedia pale aqua 
+	 public static final Color LIGHTPURPLE = new  Color(204, 204, 255); // wikipedia periwinkle 
+	 public static final Color LIGHTVIOLET = new  Color(224, 176, 255); // wikipedia mauve 
+	 public static final Color TURQUOISE = new  Color(175, 238, 238); // wikipedia pale turquoise 
+	 public static final Color LIGHTGREEN = new  Color(208, 240, 192); // wikipedia tea green 
+	 
+	 public static final Color MAROON = new  Color(128, 0, 0); 
+	 public static final Color BROWN = new  Color(150, 75, 0);
+	 public static final Color GOLD = new  Color(255, 215, 0); 
+	 public static final Color DARKGREEN = new  Color(0, 100, 0); 
+	 public static final Color DARKBLUE = new  Color(28, 57, 187); // wikipedia persian blue 
+	 public static final Color INDIGO = new  Color(75,0,130);
+	 public static final Color PURPLE = new  Color(128,0,128);
+	 public static final Color CRIMSON = new  Color(220,20,60);
+	 
+	 public static final Color WHITE = new  Color(255,255,255);
+	 public static final Color BLACK = new  Color(0,0,0);
+	 public static final Color GRAY7 = grayN(7);
+	 public static final Color GRAY6 = grayN(6); // silver
+	 public static final Color GRAY5 = grayN(5);
+	 public static final Color GRAY4 = grayN(4);
+	 public static final Color GRAY3 = grayN(3);
+	 public static final Color GRAY2 = grayN(2);
+	 public static final Color GRAY1 = grayN(1);
+	 public static final Color DARKGRAY = GRAY7;
+	 public static final Color LIGHTGRAY = GRAY3;
+	 public static final Color SILVER = GRAY6;
+	 
+	 
 	/**
 	 * HashMap recording RGB color values with named colors
 	 * key = color name from colors.properties
@@ -45,54 +83,64 @@ public class GeoGebraColorConstants {
 	static
 	{
 		// primary
-		geogebraColor.put("red", new Color(255,0,0));
-		geogebraColor.put("orange", new Color(255,127,0));
-		geogebraColor.put("yellow", new Color(255,255,0));		
-		geogebraColor.put("green", new Color(0,255,0));
-		geogebraColor.put("cyan", new Color(0,255,255));
-		geogebraColor.put("blue", new Color(0,0,255));
-		geogebraColor.put("violet", new Color(127,0,255));
-		geogebraColor.put("magenta", new Color(255,0,255));
-		geogebraColor.put("lime", new Color(191,255,0));
+		geogebraColor.put("red", RED);
+		geogebraColor.put("orange", ORANGE);
+		geogebraColor.put("yellow", YELLOW);		
+		geogebraColor.put("green", GREEN);
+		geogebraColor.put("cyan", CYAN);
+		geogebraColor.put("blue", BLUE);
+		geogebraColor.put("violet", VIOLET);
+		geogebraColor.put("magenta", MAGENTA);
+		geogebraColor.put("lime", LIME);
 		
 		// light primary
-		geogebraColor.put("pink", new Color(255,192,203));
-		geogebraColor.put("lightorange", new Color(255, 239, 213)); // wikipedia "papaya whip"
-		geogebraColor.put("lightyellow", new Color(255, 250, 205)); // wikipedia "lemon chiffon"
-		geogebraColor.put("aqua", new Color(188, 212, 230));  // wikipedia "pale aqua" 
-		geogebraColor.put("lightpurple", new Color(204, 204, 255));  // wikipedia "periwinkle"
-		geogebraColor.put("lightviolet", new Color(224, 176, 255));  // wikipedia "mauve"
-		geogebraColor.put("turquoise", new Color(175, 238, 238)); // wikipedia "pale turquoise"
-		geogebraColor.put("lightgreen", new Color(208, 240, 192)); // wikipedia "tea green"
+		geogebraColor.put("pink", PINK);
+		geogebraColor.put("lightorange", LIGHTORANGE); 
+		geogebraColor.put("lightyellow", LIGHTYELLOW); 
+		geogebraColor.put("aqua", AQUA); 
+		geogebraColor.put("lightpurple", LIGHTPURPLE);  
+		geogebraColor.put("lightviolet", LIGHTVIOLET);  
+		geogebraColor.put("turquoise", TURQUOISE); 
+		geogebraColor.put("lightgreen", LIGHTGREEN); 
 
 		// dark primary
-		geogebraColor.put("maroon", new Color(128, 0, 0)); 
-		geogebraColor.put("brown", new Color(150, 75, 0));
-		geogebraColor.put("gold",  new Color(255, 215, 0));   
-		geogebraColor.put("darkgreen",  new Color(0, 100, 0));   
-		geogebraColor.put("darkblue", new Color(28, 57, 187));  // wikipedia "persian blue"
-		geogebraColor.put("indigo", new Color(75,0,130));
-		geogebraColor.put("purple", new Color(128,0,128));
-		geogebraColor.put("crimson", new Color(220,20,60));
+		geogebraColor.put("maroon", MAROON); 
+		geogebraColor.put("brown", BROWN);
+		geogebraColor.put("gold",  GOLD);   
+		geogebraColor.put("darkgreen", DARKGREEN);   
+		geogebraColor.put("darkblue", DARKBLUE); 
+		geogebraColor.put("indigo", INDIGO);
+		geogebraColor.put("purple", PURPLE);
+		geogebraColor.put("crimson", CRIMSON);
 
 
 		// white/gray/black
-		geogebraColor.put("white", htmlColorMap().get("WHITE"));
-		geogebraColor.put("black", htmlColorMap().get("BLACK"));
-		geogebraColor.put("gray7", grayN(7));
-		geogebraColor.put("gray6", grayN(6)); // silver
-		geogebraColor.put("gray5", grayN(5));
-		geogebraColor.put("gray4", grayN(4));
-		geogebraColor.put("gray3", grayN(3));
-		geogebraColor.put("gray2", grayN(2));
-		geogebraColor.put("gray1", grayN(1));
-		geogebraColor.put("darkgray", htmlColorMap().get("DARKGRAY"));
-		geogebraColor.put("lightgray", htmlColorMap().get("LIGHTGRAY"));
-		geogebraColor.put("silver", htmlColorMap().get("SILVER"));
+		geogebraColor.put("white", WHITE);
+		geogebraColor.put("black", BLACK);
+		geogebraColor.put("gray7", GRAY7);
+		geogebraColor.put("gray6", GRAY6); 
+		geogebraColor.put("gray5", GRAY5);
+		geogebraColor.put("gray4", GRAY4);
+		geogebraColor.put("gray3", GRAY3);
+		geogebraColor.put("gray2", GRAY2);
+		geogebraColor.put("gray1", GRAY1);
+		geogebraColor.put("darkgray", DARKGRAY);
+		geogebraColor.put("lightgray", LIGHTGRAY);
+		geogebraColor.put("silver", SILVER);
 
 	}
 
+	
 
+	
+
+	
+	// popup color menu type constants
+	public static final int COLORSET_STANDARD = 0;
+	public static final int COLORSET_BGCOLOR = 1;
+
+	
+	
 	/**
 	 * Reverse lookup for GeoGebraColors
 	 * key = RBG color 
@@ -104,6 +152,7 @@ public class GeoGebraColorConstants {
 		geogebraColorReverse.put(entry.getValue(), entry.getKey());
 	}
 
+	
 	/**
 	 * Returns Color object corresponding with given GeoGebra color name string 
 	 * @param app
