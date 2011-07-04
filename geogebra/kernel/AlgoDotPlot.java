@@ -104,7 +104,7 @@ public class AlgoDotPlot extends AlgoElement {
 		// prepare output list. Pre-existing geos will be recycled, 
 		// but extra geos are removed when outputList is too long
 		outputList.setDefined(true);
-		for(int i = size; i< outputList.size(); i++){
+		for (int i = outputList.size() - 1; i >= size; i--) {
 			GeoElement extraGeo = outputList.get(i);
 			extraGeo.remove();
 			outputList.remove(extraGeo);
