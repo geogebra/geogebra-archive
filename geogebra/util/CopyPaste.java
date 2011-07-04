@@ -41,7 +41,11 @@ import java.util.TreeSet;
  */
 public class CopyPaste {
 
-	public static final String labelPrefix = "CLIPBOARDMAGICSTRING";
+	// labelPrefix has to contain something else than big letters,
+	// otherwise the parsed label could be regarded as a spreadsheet label
+	// see GeoElement.isSpreadsheetLabel
+	public static final String labelPrefix = "CLIPBOARDmagicSTRING";
+
 	protected static StringBuilder copiedXML;
 	protected static ArrayList<String> copiedXMLlabels;
 
