@@ -16,6 +16,7 @@ import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -142,8 +143,11 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 	// colors
-	private static final Color COLOR_PDF = new Color(0, 0, 255);  //blue
+	private static final Color COLOR_PDF = GeoGebraColorConstants.BLUE;  //blue
 	private static final Color COLOR_POINT = Color.BLACK;
+	private static final float opacityIntegral = 0.25f; // interval under curve
+	private static final float opacityDiscrete = 0.15f; // entire bar chart
+	private static final float opacityDiscrete2 = 0.5f; // bar chart interval
 
 
 
@@ -391,7 +395,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		}
 
 
-
 		//create low point
 		expr = "Point[" + app.getPlain("xAxis") + "]";
 		lowPoint = (GeoPoint) createGeoFromString(expr);
@@ -428,7 +431,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
 		discreteGraph = createGeoFromString(expr);
 		discreteGraph.setObjColor(COLOR_PDF);
-		discreteGraph.setAlphaValue(0.0f);
+		discreteGraph.setAlphaValue(opacityDiscrete);
 		discreteGraph.setLineThickness(2);
 		discreteGraph.setFixed(true);
 
@@ -442,7 +445,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		if(hasIntegral ){
 			integral  = createGeoFromString(expr);
 			integral.setObjColor(COLOR_PDF);
-			integral.setAlphaValue(0.25f);
+			integral.setAlphaValue(opacityIntegral);
 		}
 
 
@@ -460,8 +463,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		//System.out.println(text);
 		discreteIntervalGraph  = createGeoFromString(expr);
-		discreteIntervalGraph.setObjColor(Color.blue);
-		discreteIntervalGraph.setAlphaValue(0.5f);
+		discreteIntervalGraph.setObjColor(COLOR_PDF);
+		discreteIntervalGraph.setAlphaValue(opacityDiscrete2);
 		discreteIntervalGraph.updateCascade();
 
 		hideAllGeosFromViews();
