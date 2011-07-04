@@ -50,6 +50,10 @@ Prerequisities:
 * ant
 
   Install it by entering 'apt-get install ant'.
+  
+* Setup [build-local.properties]
+
+  Create a copy of [build-local.properties.template] and go from there...
 
 Compilation and packaging:
 
@@ -81,12 +85,22 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 -->
 <project default="geogebra">
 
+	<!-- GENERAL properties (equal for all os, platforms, users, ...) -->
+	<property name="local.property.missing"
+		location="A build-local property was not specified. Did you create 'build-local.properties'?"/>
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
 	<property name="build.dir" location="build"/>
 	<property name="propertiestemp.dir" location="${build.dir}/tempproperties"/>
 	<property name="temp.dir" location="${build.dir}/temp"/>
 	<property name="workspace.dir" location="../"/>
+	
+	<!-- USER-SPECIFIC properties -->
+	<!-- Include properties set in [build-local.properties] -->
+	<property file="build-local.properties"/>
+	<!-- These properties must be specified in [build-local.properties] -->
+	<fail unless="javacc.home" message="${local.property.missing}"/>
+	
 
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
@@ -131,7 +145,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 	<target name="compile-grammar">
 		<javacc
 		   target="./geogebra/kernel/parser/Parser.jj"
-		   javacchome="./javacc"
+		   javacchome="${javacc.home}"
 		   static="false"
 		/>
 	</target>

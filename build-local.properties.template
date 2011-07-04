@@ -1,0 +1,13 @@
+# !!! DO NOT CHANGE THIS FILE !!!
+#
+# This file acts as a template for [build-local.properties]
+# [build-local.properties] is needed for building GeoGebra with ant.
+#
+# 0) Do not change this file.
+# 1) Instead create a copy and rename it to 'build-local.properties'.
+# 2) Adjust the properties for your local system.
+# 3) Build with ant as normal.
+#
+
+# Home directory of JavaCC parser generator
+javacc.home=<path-to-eclipse-home>/plugins/sf.eclipse.javacc_1.5.24/
