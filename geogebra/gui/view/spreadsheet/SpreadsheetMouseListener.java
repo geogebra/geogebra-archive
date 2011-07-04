@@ -210,12 +210,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 			Point point1 = table.getMaxSelectionPixel();
 			if (point1 == null) return;
-			int x1 = e.getX();
-			int y1 = e.getY();
-			int x2 = (int)point1.getX();
-			int y2 = (int)point1.getY();
-			int range = MyTable.DOT_SIZE / 2;
-
+			
 			// Handle click in another cell while editing a cell:
 			// if the edit string begins with "=" then the clicked cell name
 			// is inserted into the edit text
@@ -228,25 +223,34 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 						int row = (int)point.getY();
 						GeoElement geo = RelativeCopy.getValue(table, column, row);
 						if (geo != null) {
+							
+							// get cell name
 							String name = GeoElement.getSpreadsheetCellName(column, row);
 							if (geo.isGeoFunction()) name += "(x)";
 							selectedCellName = name;
+							
+							// get prefix/post substrings for current text caret position
 							int caretPos = editor.getCaretPosition();
 							prefix0 = text.substring(0, caretPos);
 							postfix0 = text.substring(caretPos, text.length());
+							
+							
 							table.isDragging2 = true;
 							table.minColumn2 = column;
 							table.maxColumn2 = column;
 							table.minRow2 = row;
 							table.maxRow2 = row;
+							
+							// insert the geo label into the editor string
 							editor.addLabel(name);
+							
 							e.consume();
 							table.repaint();
 						}
 					}
 				}	
 			}
-			else if (x1 >= x2 - range && x1 <= x2 + range && y1 >= y2 - range && y1 <= y2 + range) {
+			else if (table.isOverDot) {
 				table.isDragingDot = true;
 				e.consume();
 			}
