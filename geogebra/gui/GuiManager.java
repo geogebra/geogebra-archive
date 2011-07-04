@@ -2994,11 +2994,11 @@ public class GuiManager {
 	    /**
 	        *  Exports construction protocol as html 
 	        */
-	    final public void exportConstructionProtocolHTML() {
+/*	    final public void exportConstructionProtocolHTML() {
 	    	constructionProtocolView.initProtocol();
 	    	constructionProtocolView.showHTMLExportDialog();
 	    }
-	    
+	*/    
 
 		public final String getCustomToolbarDefinition() {
 			return strCustomToolbarDefinition;

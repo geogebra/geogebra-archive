@@ -81,7 +81,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-public class ConstructionProtocolView extends JPanel implements Printable, View {
+public class ConstructionProtocolView extends JPanel implements Printable {
 
 	/**
 	 * 
@@ -98,7 +98,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 
 	private TableColumn[] tableColumns;
 
-	private AbstractAction printPreviewAction, exportHtmlAction;
+	//private AbstractAction printPreviewAction, exportHtmlAction;
 
 	private boolean useColors, addIcons;
 
@@ -328,65 +328,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		return useColors;
 	}
 	
-	private void initActions() {
 
-		printPreviewAction = new AbstractAction(app.getMenu("Print")
-				+ "...", app.getImageIcon("document-print-preview.png")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.setWaitCursor();
-
-				Thread runner = new Thread() {
-					public void run() {
-						
-						try {
-							Construction cons = app.getKernel().getConstruction();
-							table.print(JTable.PrintMode.FIT_WIDTH, 
-									new MessageFormat(tableHeader(cons)), 
-									new MessageFormat("{0}"), // page numbering 
-									/*showPrintDialog*/ true, 
-									/*attr*/ null, 
-									/*interactive*/ true /*,*/ 
-									/*service*/ /*null*/);
-							// service must be omitted for Java version 1.5.0
-						} catch (HeadlessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (PrinterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-						// This is obsolete (used in GeoGebra 3.2):
-						// new geogebra.export.PrintPreview(app,
-						//		ConstructionProtocol.this, PageFormat.PORTRAIT);
-					}
-
-					// This may be too long. FIXME
-					private String tableHeader(Construction cons) {
-					
-						TitlePanel tp = new TitlePanel(app);
-						String author = tp.loadAuthor();
-						String title = cons.getTitle();
-						String date = tp.configureDate(cons.getDate());
-						
-						if (title.equals(""))
-							title = app.getPlain("UntitledConstruction");
-						if (author.equals(""))
-							return title + " (" + date + ")";
-						else
-							return author + ": " + title + " (" + date + ")";
-
-					}
-				};
-				runner.start();
-
-				app.setDefaultCursor();
-			}
-		};
-
-	}
 
 	public boolean isColumnInModel(TableColumn col) {
 		boolean ret = false;
@@ -510,7 +452,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 						String colName = table.getColumnName(column);
 
 						//if (colName.equals("Breakpoint")) {
-						if (colName.equals("G")) {
+						if (colName.equals("H")) {
 							RowData rd = data.getRow(row);
 							GeoElement geo = rd.geo;
 							boolean newVal = !geo.isConsProtocolBreakpoint();
@@ -566,9 +508,13 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			}
 		}
 
-		public void mouseReleased(MouseEvent e) {
+		public void mouseReleased(MouseEvent e) {			
 			if (e.getSource() != table)
+				return;		
+			if (!dragging){
+				table.repaint();
 				return;
+			}		
 			// drop
 			int row = table.rowAtPoint(e.getPoint());
 			if (row >= 0) {
@@ -930,15 +876,16 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 
 		final public ColumnData columns[] = {
 				new ColumnData("No.", 35, 35, SwingConstants.CENTER, true),
+				new ColumnData("Name", 80, 50, SwingConstants.LEFT, true),
 				new ColumnData("ToolbarIcon", 35, 35, SwingConstants.CENTER,
 						false),
-				new ColumnData("Name", 80, 50, SwingConstants.LEFT, true),
 				new ColumnData("Definition", 150, 50, SwingConstants.LEFT, true),
 				new ColumnData("Command", 150, 50, SwingConstants.LEFT, false),
 				new ColumnData("Value", 150, 50, SwingConstants.LEFT, true),
+				new ColumnData("Caption", 150, 50, SwingConstants.LEFT, true),
 				new ColumnData("Breakpoint", 70, 35, SwingConstants.CENTER,
-						false),
-				new ColumnData("Caption", 150, 50, SwingConstants.LEFT, true) };
+						false)
+				 };
 
 		private ArrayList rowList;
 		// map for (GeoElement, RowData) pairs
@@ -988,9 +935,9 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		}
 
 		boolean moveInConstructionList(int fromIndex, int toIndex) {
-			kernel.detach(this);
+			//kernel.detach(this);
 			boolean changed = kernel.moveInConstructionList(fromIndex, toIndex);
-			kernel.attach(this);
+			//kernel.attach(this);
 
 			// reorder rows in this view
 			ConstructionElement ce = kernel.getConstructionElement(toIndex);
@@ -1101,18 +1048,18 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			case 0:
 				return ((RowData) rowList.get(nRow)).index + "";
 			case 1:
-				return ((RowData) rowList.get(nRow)).toolbarIcon;
-			case 2:
 				return ((RowData) rowList.get(nRow)).name;
+			case 2:
+				return ((RowData) rowList.get(nRow)).toolbarIcon;
 			case 3:
 				return ((RowData) rowList.get(nRow)).definition;
 			case 4:
 				return ((RowData) rowList.get(nRow)).command;
 			case 5:
 				return ((RowData) rowList.get(nRow)).algebra;
-			case 6:
-				return ((RowData) rowList.get(nRow)).consProtocolVisible;
 			case 7:
+				return ((RowData) rowList.get(nRow)).consProtocolVisible;
+			case 6:
 				return ((RowData) rowList.get(nRow)).caption;
 			}
 			return "";
@@ -1140,7 +1087,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			case 5:
 				return ((RowData) rowList.get(nRow)).geo
 						.getAlgebraDescription();
-			case 6:
+			case 7:
 				return ((RowData) rowList.get(nRow)).consProtocolVisible
 						.toString();
 			}
@@ -1169,7 +1116,11 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 				return ""
 						+ (((RowData) rowList.get(nRow)).geo
 								.getConstructionIndex() + 1);
-			case 1: { // Displaying toolbar icons in the list on demand.
+			case 1:
+				return ((RowData) rowList.get(nRow)).geo
+						.getNameDescriptionHTML(false, false);
+
+			case 2: { // Displaying toolbar icons in the list on demand.
 
 				int m;
 				// Markus' idea to find the correct icon:
@@ -1218,9 +1169,6 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 				}
 				return "<img src=\"" + gifFileName + "\">";
 			}
-			case 2:
-				return ((RowData) rowList.get(nRow)).geo
-						.getNameDescriptionHTML(false, false);
 			case 3:
 				return ((RowData) rowList.get(nRow)).geo
 						.getDefinitionDescriptionHTML(false);
@@ -1230,7 +1178,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 			case 5:
 				return ((RowData) rowList.get(nRow)).geo
 						.getAlgebraDescriptionHTML(false);
-			case 6:
+			case 7:
 				return ((RowData) rowList.get(nRow)).consProtocolVisible
 						.toString();
 			}
@@ -1731,11 +1679,12 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 
 		return sb.toString();
 	}
-
+/*
 	public void showHTMLExportDialog() {
+		Application.printStacktrace("showHTMLExportDialog");
 		exportHtmlAction.actionPerformed(null);
 	}
-
+*/
 	public String getConsProtocolXML() {
 		StringBuilder sb = new StringBuilder();
 
@@ -1765,7 +1714,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 
 		return sb.toString();
 	}
-
+/*
 	public void add(GeoElement geo) {
 		// TODO Auto-generated method stub
 	}
@@ -1808,5 +1757,5 @@ public class ConstructionProtocolView extends JPanel implements Printable, View 
 		kernel.notifyAddAll(this);
 		kernel.attach(this);
 	}
-
+*/
 }
