@@ -11,12 +11,6 @@
 	<classpathentry kind="lib" path="jlatexmath.jar"/>
 	<classpathentry kind="lib" path="jlm_greek.jar"/>
 	<classpathentry kind="lib" path="jlm_cyrillic.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL1">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/andre/Documents/workspace/geogebra/jogl1/macosx"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="jogl1/jar/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="jogl1/jar/jogl.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL1"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
