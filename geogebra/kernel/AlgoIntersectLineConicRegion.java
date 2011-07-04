@@ -120,19 +120,13 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 	protected void compute() {
         super.compute();
         
-        /*
-        for (int i = 0; i<numberOfPoints; i++) 
-        	NewQ[i].setCoords(Q[i].getCoords(),false);
-        */
         numberOfPoints=0;
         for (int i = 0; i<P.length; i++) {
         	if (P[i].isDefined())
         		numberOfPoints++;
         }
         
-      
         //build lines
-    	
         numberOfOutputLines = 0;
         initCurrentPartIsInRegion();
         
@@ -293,28 +287,25 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 			break;
         }
 
-        //set visibility according to number of points and type of intersection
- 
+        refreshOutput();
         
+        setLabelsForPointsAndLines();
 
-        //choose the right lines and update output
+        
+	}
+    private void setLabelsForPointsAndLines() {
+        GeoElement.setLabels(new String[] {null}, outputPoints);
         
         
+        if ( (labelPrefixForLines==null || labelPrefixForLines == "") &&
+        		numberOfPoints!=0 && numberOfOutputLines!=0)
+    				labelPrefixForLines = ((GeoElement)P[0]).getFreeLabel(P[0].getLabel().toLowerCase());
         
-        //numberOfOutputLines = 0;
-/*
-        for (int i = 0; i<lines.length; i++) {
-        	if (!lines[i].isDefined()) {
-        		continue;
-        	}
-        	if (!currentPartIsInRegion) {
-        		lines[i].setUndefined();
-        	} else {
-        		numberOfOutputLines++;
-        	}
-        	currentPartIsInRegion = !currentPartIsInRegion;
-        }
-        */
+       
+        GeoElement.setLabels(labelPrefixForLines,outputLines);
+	}
+
+	private void refreshOutput() {
         output = new GeoElement[numberOfPoints+numberOfOutputLines];
         outputPoints =  new GeoPoint[numberOfPoints];
         outputLines =  new GeoLine[numberOfOutputLines];
@@ -329,30 +320,14 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
         }
         for (int i = 0; i<lines.length; i++) {
         	if (lines[i].isDefined()) {
-        		//setOutputDependencies(lines[i]);
         		output[index] = lines[i];
         		outputLines[index-numberOfPoints]=lines[i];
         		index++;
         	}
         }
-        
-        GeoElement.setLabels(new String[] {null}, outputPoints);
-        
-        
-        
-        
-        
-        if ( (labelPrefixForLines==null || labelPrefixForLines == "") &&
-        		numberOfPoints!=0 && numberOfOutputLines!=0)
-    				labelPrefixForLines = ((GeoElement)P[0]).getFreeLabel(P[0].getLabel().toLowerCase());
-        
-       
-        
-        
-        GeoElement.setLabels(labelPrefixForLines,outputLines);
-        
 	}
-    // for AlgoElement
+
+	// for AlgoElement
     public void setInputOutput() {
         input = new GeoElement[2];
         input[0] = c;
@@ -363,91 +338,10 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
         setDependencies(); // done by AlgoElement
     }    
     
-/*
-	protected void setLabels(String[] labels) {
-		if (P == null || P.length==0)
-			GeoElement.setLabels(new String[] {null}, output);
-		else {
-			GeoElement.setLabels(labels, P);
-			if (numberOfOutputLines!=0) {
-				labelPrefixForLines = ((GeoElement)P[0]).getFreeLabel(P[0].getLabel().toLowerCase());
-			}
-
-			GeoElement.setLabels(labelPrefixForLines,lines);
-		}
-	}
-	*/
 	private boolean inOpenInterval(double t, double a, double b) {
 		return Kernel.isGreater(b, t) && Kernel.isGreater(t, a);
 	}
-	/*
-	private void bipartLineBy(GeoPoint node) {
-
-		double t = g.getPossibleParameter(node.getCoords());
-		
-		if (tMax.isInfinite())
-			((GeoRay)lines[3]).set(node, g);
-		else {
-			if (Kernel.isGreater(t, tMax))
-				lines[3].setUndefined();
-			else
-				((GeoSegment)lines[3]).set(node,g.endPoint, g);
-		}
-		
-		lines[2].setUndefined();
-		
-		if (tMin.isInfinite()) {
-			((GeoRay)lines[1]).set(node, g); lines[1].changeSign();
-		}
-		else {
-			if (Kernel.isGreater(tMin, t))
-				lines[1].setUndefined();
-			else
-				((GeoSegment)lines[1]).set(g.startPoint, node, g);
-		}
-	}
 	
-	*/
-/*
-	private void tripartLineBy(GeoPoint firstNode, GeoPoint secondNode) {
-
-
-		double t1 = g.getPossibleParameter(firstNode.getCoords());
-		double t2 = g.getPossibleParameter(secondNode.getCoords());
-		
-		
-		if (tMax.isInfinite())
-			((GeoRay)lines[3]).set(secondNode, g);
-		else {
-			if (Kernel.isGreater(t2, tMax)) {
-				lines[3].setUndefined();
-				secondNode.setCoords(g.endPoint.getCoords(), false);
-			}
-			else
-				((GeoSegment)lines[3]).set(secondNode,g.endPoint, g);
-		}
-
-		if (tMin.isInfinite()) {
-			((GeoRay)lines[1]).set(firstNode, g); lines[1].changeSign();
-		}
-		else {
-			if (Kernel.isGreater(tMin, t1)) {
-				lines[1].setUndefined();
-				firstNode.setCoords(g.startPoint.getCoords(), false);
-			}
-			else
-				((GeoSegment)lines[1]).set(g.startPoint, firstNode, g);
-		}
-		
-		if (Kernel.isGreater(t1,tMax)||Kernel.isGreater(tMin,t2))
-			lines[2].setUndefined();
-		else
-			((GeoSegment)lines[2]).set(firstNode,secondNode, g);
-		
-
-	}
-	
-	*/
 	  void initCurrentPartIsInRegion() {
       //decide whether the full line starts inside or outside the region
       currentPartIsInRegion = false;

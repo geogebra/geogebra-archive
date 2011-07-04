@@ -22,6 +22,7 @@ import geogebra.Matrix.CoordMatrix;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 
@@ -135,7 +136,11 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
         
         return sb.toString();
     }   
-  
+    
+	protected void setStyle(GeoSegmentND segment) {
+		//follow default
+	}
+
  
 
 }

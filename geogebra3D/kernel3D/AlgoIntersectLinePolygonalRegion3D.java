@@ -18,7 +18,7 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
 
 	protected int spaceDim = 3;
 	
-	private boolean lineInPlaneOfPolygon = false;
+	protected boolean lineInPlaneOfPolygon = false;
 	
 	/**
 	 * This assumes that the line is in the plane of polygon 
@@ -41,7 +41,7 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
 
 	}
 
-
+//TODO: merge 2D and 3D
 	protected OutputHandler<GeoElement> createOutputPoints(){
     	return new OutputHandler<GeoElement>(new elementFactory<GeoElement>() {
 			public GeoPoint3D newElement() {
@@ -274,15 +274,23 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
     }
 
     protected void compute() {
-    	lineInPlaneOfPolygon = (AlgoIntersectCS1D2D.getConfigLinePlane(g, p) == AlgoIntersectCS1D2D.RESULTCATEGORY_CONTAINED);
+    	//TODO: optimize for plane/poly
+    	calcLineInPlaneOfPolygon();
     	super.compute();
     }
     
+	protected void calcLineInPlaneOfPolygon() {
+		
+    	lineInPlaneOfPolygon = (AlgoIntersectCS1D2D.getConfigLinePlane(g, p) == AlgoIntersectCS1D2D.RESULTCATEGORY_CONTAINED);
+		
+	}
+
+
 	protected void setLabels(String[] labels) {
 
 		if (!lineInPlaneOfPolygon) {
 				outputPoints.setLabels(labels);			
-		} else {
+		} else {/*
         //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
 			if (labels!=null &&
 					labels.length==1 &&
@@ -309,7 +317,23 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
         		outputSegments.setLabels(labels);
         		outputSegments.setIndexLabels(outputSegments.getElement(0).getLabel());
         		outputPoints.setLabels(new String[] {null});
-        	}
+        	}*/
+			String labelPrefix = null;
+			if (outputPoints.size()>0){
+				outputPoints.setLabels(null);
+				labelPrefix = outputPoints.getElement(0).getLabel().toLowerCase();
+			}	
+			
+			if (labels!=null &&
+					labels.length==1 &&
+					outputSegments.size() > 1 &&
+					labels[0]!=null &&
+					!labels[0].equals("")) {
+				labelPrefix = labels[0];
+				outputSegments.setIndexLabels(labels[0]);
+			}
+	    	else
+	    		outputSegments.setIndexLabels(labelPrefix);
 		}
 	}
 

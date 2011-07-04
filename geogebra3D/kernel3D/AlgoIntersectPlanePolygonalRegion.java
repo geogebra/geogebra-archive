@@ -1,11 +1,15 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 
 public class AlgoIntersectPlanePolygonalRegion extends AlgoIntersectLinePolygonalRegion3D {
+	
+	private GeoPlane3D plane; //input
 	
 	public AlgoIntersectPlanePolygonalRegion(Construction c, String[] labels,
 			 GeoPolygon p, GeoPlane3D plane) {	
@@ -15,6 +19,17 @@ public class AlgoIntersectPlanePolygonalRegion extends AlgoIntersectLinePolygona
 	public AlgoIntersectPlanePolygonalRegion(Construction c, String[] labels,
 			GeoPlane3D plane, GeoPolygon p) {		
 		super(c, labels, AlgoIntersectCS2D2D.getIntersectPlanePlane(plane, p), p);
+		
+	    //try this
+		//TODO: better place to create input
+		this.plane = plane;
+			input = new GeoElement[2];
+	        
+	        input[0] = (GeoElement)plane;
+	        input[1] = (GeoElement)p;
+	        
+	        setDependencies(); // done by AlgoElement
+	    
 	}
 
 	@Override
@@ -22,5 +37,24 @@ public class AlgoIntersectPlanePolygonalRegion extends AlgoIntersectLinePolygona
 		return "AlgoIntersectPlanePolygonalRegion";
 	}
 	
+	//try this
+	protected void setInputOutput() {
+		//do nothing first
+	}
+	
+	public String toString() {
+        return app.getPlain("IntersectionPathsOfAB",((GeoElement) plane).getLabel(),p.getLabel());
+    }
+	
+
+	protected void setStyle(GeoSegmentND segment) {
+		//default style for lines
+	}
+	
+	protected void calcLineInPlaneOfPolygon() {
+		
+    	lineInPlaneOfPolygon = true;
+		
+	}
 }
 

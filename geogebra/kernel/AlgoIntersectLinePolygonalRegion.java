@@ -44,13 +44,14 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
 	protected GeoLineND g; // input
 	protected GeoPolygon p; //input	
 	protected OutputHandler<GeoElement> outputSegments; // output 
-	
+	protected OutputHandler<GeoElement> outputPoints;
     protected int spaceDim =2;
-    protected OutputHandler<GeoElement> outputPoints;
+    
     
     private TreeMap<Double, Coords> newCoords;
     private TreeMap<Double, Coords[]> newSegmentCoords;
 
+    
     
     /** 
      * common constructor
@@ -67,7 +68,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
         
 		outputPoints=createOutputPoints();
 		outputSegments = createOutputSegments();
-        
+
         this.g = g;
         this.p = p;
 
@@ -79,7 +80,8 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
         setInputOutput(); // for AlgoElement
         
         setLabels(labels);
-        update();    
+        //TODO: actually no need to update
+        //update();    
 
 	}
 
@@ -97,7 +99,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
 			}
 		});
     }
-    
+ 
     protected OutputHandler<GeoElement> createOutputSegments(){
     	return new OutputHandler<GeoElement>(new elementFactory<GeoElement>() {
 			public GeoSegment newElement() {
@@ -118,7 +120,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     }
 
     public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_INTERSECT;
+    	return EuclidianConstants.MODE_INTERSECTION_CURVE;
     }
     
     // for AlgoElement
@@ -165,60 +167,10 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     	if (newCoords==null )
     		return;
 
-    	/*
-      	//coords of some point outside of p, e.g. (x=1+Max X coord of P, 0) 
-    	double pMaxX = 0;
-    	for (int i = 0; i< p.getPointsLength(); i++) {
-    		pMaxX = Math.max(pMaxX, p.getPointX(i));
-    		//pMaxY = Math.max(pMaxY, p.getPointY(i));
-    	}
-    	double pOutsideX = pMaxX + 1;
-    	double pOutsideY = 0;
-    	*/
-    	
-/*    	//naive traversing algorithm which assumes no special case
-    	double s1 = g.getMinParameter();
-    	double s2 = g.getMaxParameter(); 
-       	double minKey = newCoords.firstKey();
-    	double maxKey = newCoords.lastKey();
-    	
-    	double tLast;
-   
-   	
-    	if (s1>=maxKey)
-    		tLast = s1;
-    	else
-    		tLast = s2;
-      	
-    	int nextChangeOfRegion = 1; //assume that the first acquaintance of a newCoords is "-1:entry".
-            	
-    	PathParameter tempParam = new PathParameter(tLast);
-      	Coords tempCoords = new Coords(0, 0, 1);
-    	((GeoLine)g).doPointChanged(tempCoords, tempParam);
-
-    	if (p.isInRegion(tempCoords.get(1),tempCoords.get(2)) && !Kernel.isEqual(tLast, maxKey)) {
-    		newSegmentCoords.put(tLast, new Coords[] {tempCoords, newCoords.get(maxKey)});
-    		nextChangeOfRegion = -1;
-    	} 
-    	
-    	tLast = maxKey;
-    	
-    	while (tLast > minKey) {
-    		double t = newCoords.subMap(minKey, tLast).lastKey();
-    		if (nextChangeOfRegion == 1) {
-    			newSegmentCoords.put(tLast,  new Coords[] {
-    					newCoords.get(tLast), 
-    					newCoords.get(t)
-    					});
-    			nextChangeOfRegion = -1;
-    		} else if (nextChangeOfRegion == -1) {
-    			nextChangeOfRegion = 1;
-    		}
-    		tLast = t;
-    	}
- */
     	if (newCoords.isEmpty()) {
-    		if (g instanceof GeoSegmentND &&
+    		//TODO: inverse fill
+    		if (!p.isInverseFill() &&
+    				g instanceof GeoSegmentND &&
     				p.isInRegion(((GeoSegmentND)g).getStartPoint(),false))
     			newSegmentCoords.put(0.0,  new Coords[] {
     					((GeoSegmentND)g).getStartPoint().getCoordsInD(spaceDim),
@@ -366,6 +318,8 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
    
 	}
 
+    private Color BLUE_VIOLET= new Color(153,0,255);
+    private int THICK_LINE_WITHIN_LINE = 4;
     
     protected void compute() {
     	
@@ -385,74 +339,65 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     		point.updateCoords();
     		index++;
     	}
-    	//other points are undefined
-    	for(;index<outputPoints.size();index++)
-    		outputPoints.getElement(index).setUndefined();
 
+    	//calculate segments
+    	newSegmentCoords.clear();
     	
-    		newSegmentCoords.clear();
+    	if(newCoords.isEmpty()) {
+    		outputSegments.adjustOutputSize(1);
+    		outputSegments.getElement(0).setUndefined();
+    	} else {
+    	
+    	intersectionsSegments(g, p, newCoords, newSegmentCoords);
     		
-    		//Calculate segments. Not for degenerating case 
-    		//(i.e. P has some 0 segments or some coinciding points)
     		
-    		intersectionsSegments(g, p, newCoords, newSegmentCoords);
+    	//update and/or create segments
+    	int indexSegment = 0;   	
+    	//affect new computed segments
+    	outputSegments.adjustOutputSize(newSegmentCoords.size());
     		
-    		
-    		//update and/or create segments
-    		int indexSegment = 0;   	
-    		//affect new computed segments
-    		outputSegments.adjustOutputSize(newSegmentCoords.size());
-    		for (Coords[] segmentCoords : newSegmentCoords.values()){
+ 
+    	for (Coords[] segmentCoords : newSegmentCoords.values()){
     		
     			GeoSegmentND segment = (GeoSegmentND) outputSegments.getElement(indexSegment);
     			segment.setTwoPointsCoords(segmentCoords[0], segmentCoords[1]);
-    			segment.setLineThickness(4/*thickness for limited line inside a full line*/); 
-    			segment.setObjColor(new Color(153,0,255/*color for limited line intersection*/));
+    			setStyle(segment);
     			indexSegment++;
     		}
-    		//other segments are undefined
-    		for(;indexSegment<outputSegments.size();indexSegment++)
-    		outputSegments.getElement(indexSegment).setUndefined();
-    	
+    	}
     }
 
 
-	final public String toString() {
-        return app.getPlain("IntersectionPointOfAB",((GeoElement) g).getLabel(),p.getLabel());
+	protected void setStyle(GeoSegmentND segment) {
+		//TODO:  set styles in somewhere else
+		segment.setLineThickness(THICK_LINE_WITHIN_LINE); 
+		segment.setObjColor(BLUE_VIOLET);
+	}
+
+	public String toString() {
+        return app.getPlain("IntersectionPathsOfAB",((GeoElement) g).getLabel(),p.getLabel());
     }
-    
+	
+	String labelPrefix = null;
 	protected void setLabels(String[] labels) {
-
 		
-
-        //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
-			if (labels!=null &&
-					labels.length==1 &&
-					outputSegments.size() > 1 &&
-					labels[0]!=null &&
-					!labels[0].equals("")) {
-        //	outputPoints.setIndexLabels(labels[0]);
-          	outputSegments.setIndexLabels(labels[0]);
-          	outputPoints.setLabels(new String[] {null});
-        //if there are k>=2 labels, now for simplicity only the first two will be used.
-          	//first for indexing points, second for indexing segments.
-          	//  } else if (labels!=null &&
-          	//		labels.length>=2 &&
-          	//outputPoints.size() > 1 && outputSegments.size() > 1 &&
-        	//	labels[0]!=null && labels[1]!=null &&
-        		//!labels[0].equals("") && !labels[1].equals("")) {
-        	//outputPoints.setIndexLabels(labels[0]);
-        	//outputSegments.setIndexLabels(labels[1]);
-        	} else {
-        	
-        	
-        //	outputPoints.setIndexLabels(outputPoints.getElement(0).getLabel());
-        	//if ( outputPoints.size()==0 || outputSegments.size()!=0) //when there is a point, an 'empty segment' is not needed.
-        		outputSegments.setLabels(labels);
-        		outputSegments.setIndexLabels(outputSegments.getElement(0).getLabel());
-        		outputPoints.setLabels(new String[] {null});
-        	}
+	
+		if (outputPoints.size()>0){
+			outputPoints.setLabels(new String[] {null});
+			labelPrefix = outputPoints.getElement(0).getLabel().toLowerCase();
+		}	
 		
+		if (labels!=null &&
+				labels.length==1 &&
+				outputSegments.size() > 1 &&
+				labels[0]!=null &&
+				!labels[0].equals("")) {
+			labelPrefix = labels[0];
+			outputSegments.setIndexLabels(labels[0]);
+		}
+    	else
+    		outputSegments.setIndexLabels(labelPrefix);
+    			
 	}
 
 
