@@ -197,7 +197,9 @@ public class CopyPaste {
 		    		if (geo2.isGeoNumeric()) {
 		    			// check the case of input of AlgoPolygonRegular
 		    			ArrayList<ConstructionElement> geoal = geo2.getAlgorithmList();
-		    			if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoPolygonRegular")) {
+		    			if (geoal.size() == 0) {
+		    				// nothing special, GeoNumeric remains
+		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoPolygonRegular")) {
 		    				it.remove();
 		    			// or AlgoCirclePointRadius
 		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoCirclePointRadius")) {
@@ -207,14 +209,6 @@ public class CopyPaste {
 		    				if (((AlgoElement)geoal.get(0)).getInput()[2].isGeoNumeric()) {
 		    					it.remove();
 		    				}
-		    			// or AlgoRotate
-		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoRotate")) {
-		    				if (((AlgoElement)geoal.get(0)).getInput()[1] == geo2)
-		    					it.remove();
-		    			// or AlgoRotatePoint
-		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoRotatePoint")) {
-		    				if (((AlgoElement)geoal.get(0)).getInput()[1] == geo2)
-		    					it.remove();
 		    			} else if (((GeoElement)geo).isGeoList()) {
 		    				// GeoNumerics: from, to, step
 		    				if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoSequence")) {
@@ -233,6 +227,29 @@ public class CopyPaste {
 			    						}
 		    						}
 		    					}
+		    				}
+		    			} else {
+		    				// angle of rotation and degree of enlarging may be used more times,
+		    				// but it should be removed for all times
+
+		    				boolean algorotatefound = true;
+		    				boolean algodilatefound = true;
+		    				for (int k = 0; k < geoal.size(); k++) {
+		    					if (!((AlgoElement)geoal.get(k)).getClassName().equals("AlgoRotate") &&
+	    							!((AlgoElement)geoal.get(k)).getClassName().equals("AlgoRotatePoint")) {
+		    						algorotatefound = false;
+		    					} else if (((AlgoElement)geoal.get(k)).getInput()[1] != geo2) {
+		    						algorotatefound = false;
+		    					}
+		    					if (!((AlgoElement)geoal.get(k)).getClassName().equals("AlgoDilate")) {
+		    						algodilatefound = false;
+		    					} else if (((AlgoElement)geoal.get(k)).getInput()[1] != geo2) {
+		    						algodilatefound = false;
+		    					}
+		    				}
+
+		    				if (algorotatefound || algodilatefound) {
+		    					it.remove();
 		    				}
 		    			} 
 		    		}
