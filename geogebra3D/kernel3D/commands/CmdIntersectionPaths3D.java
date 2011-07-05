@@ -29,7 +29,7 @@ public  GeoElement[] process(Command c) throws MyError {
         case 2 :
             arg = resArgs(c);
             
-            if (!arg[0].isGeoElement3D() && !arg[0].isGeoElement3D())
+            if (!arg[0].isGeoElement3D() && !arg[1].isGeoElement3D())
             	return super.process(c);
             else {
             	 // Line - Polygon(as region) in 2D/3D

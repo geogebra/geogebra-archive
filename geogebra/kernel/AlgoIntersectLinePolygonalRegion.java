@@ -75,6 +75,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
         newCoords = new TreeMap<Double, Coords>(Kernel.DoubleComparator(Kernel.STANDARD_PRECISION));
         newSegmentCoords = new TreeMap<Double, Coords[]>(Kernel.DoubleComparator(Kernel.STANDARD_PRECISION));
         
+        init();
         setInputOutput(); // for AlgoElement 
         
         
@@ -85,6 +86,11 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
         //TODO: actually no need to update
         //update();    
 
+	}
+
+	protected void init() {
+		// TODO Auto-generated method stub
+		spaceDim = 2;
 	}
 
 	/**
@@ -341,6 +347,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     		GeoPointND point = (GeoPointND) outputPoints.getElement(index);
     		point.setCoords(coords,false);
     		point.updateCoords();
+    		((GeoElement)point).update(); //TODO optimize it
     		index++;
     	}
 
@@ -366,6 +373,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     		
     			GeoSegmentND segment = (GeoSegmentND) outputSegments.getElement(indexSegment);
     			segment.setTwoPointsCoords(segmentCoords[0], segmentCoords[1]);
+    			((GeoElement)segment).update(); //TODO optimize it
     			setStyle(segment);
     			indexSegment++;
     		}

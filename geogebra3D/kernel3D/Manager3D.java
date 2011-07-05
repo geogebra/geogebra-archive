@@ -682,7 +682,7 @@ public class Manager3D implements Manager3DInterface {
 		AlgoIntersectLinePolygonalRegion3D algo;
 		if (p instanceof GeoPolygon) {
 		  algo = new AlgoIntersectLinePolygonalRegion3D(cons, labels, g, (GeoPolygon)p);
-		  Application.debug(algo);
+		  //Application.debug(algo);
 		  return algo.getOutput();
 		}
 		return null;

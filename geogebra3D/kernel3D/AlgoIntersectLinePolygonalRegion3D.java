@@ -160,7 +160,7 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
     		tFirst = g.getMaxParameter();
        		if (!tFirst.isInfinite()) {
     			pointFirst = g.getEndPoint();
-    			isEnteringRegion = ((GeoPolygon3D)p).isInRegion(pointFirst);
+    			isEnteringRegion = p.isInRegion(pointFirst);
        		}
     		tLast = g.getMinParameter();
     		//pointLast = ((GeoLine3D)g).startPoint;
@@ -298,5 +298,10 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
 	@Override
 	public String getClassName() {
 		return "AlgoIntersectLinePolygonalRegion3D";
+	}
+	
+	protected void init() {
+		// TODO Auto-generated method stub
+		spaceDim = 3;
 	}
 }
