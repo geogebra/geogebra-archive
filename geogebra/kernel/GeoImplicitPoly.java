@@ -42,6 +42,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -331,14 +332,15 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 						sb.append(" = ");
 					sb.append(kernel.format(-coeff[0][0]));
 				}else{
-					if (coeff[i][j]!=0){
+					if (Math.abs(coeff[i][j])>Kernel.EPSILON){
+						String number=kernel.format(coeff[i][j]);
 						if (!first)
-							sb.append((coeff[i][j]>0?"+":""));
-						if (coeff[i][j]!=1){
-							if (coeff[i][j]==-1){
+							sb.append(number.charAt(0)=='-'?"":"+");
+						if (Math.abs(coeff[i][j]-1)>Kernel.EPSILON){
+							if (Math.abs(coeff[i][j]+1)<Kernel.EPSILON){
 								sb.append("-");
 							}else{
-								sb.append(kernel.format(coeff[i][j]));
+								sb.append(number);
 							}
 							first=false;
 						}
@@ -517,6 +519,332 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 				sum=sum*x+zs;
 			}
 		return sum;
+	}
+	
+	/**
+	 * Plugs in two rational polynomials for x and y, x|->pX/qX and y|->pX/qX in the curve 
+	 * (replacing the current coefficients with the new ones)
+	 * [not yet tested for qX!=qY]
+	 * @param pX
+	 * @param pY
+	 * @param qX
+	 * @param qY
+	 */
+	public void plugInRatPoly(double[][] pX,double[][] pY,double[][] qX,double[][] qY){
+		int degXpX=pX.length-1;
+		int degYpX=0;
+		for (int i=0;i<pX.length;i++){
+			if (pX[i].length-1>degYpX)
+				degYpX=pX[i].length-1;
+		}
+		int degXqX=-1;
+		int degYqX=-1;
+		if (qX!=null){
+			degXqX=qX.length-1;
+			for (int i=0;i<qX.length;i++){
+				if (qX[i].length-1>degYqX)
+					degYqX=qX[i].length-1;
+			}
+		}
+		int degXpY=pY.length-1;
+		int degYpY=0;
+		for (int i=0;i<pY.length;i++){
+			if (pY[i].length-1>degYpY)
+				degYpY=pY[i].length-1;
+		}
+		int degXqY=-1;
+		int degYqY=-1;
+		if (qY!=null){
+			degXqY=qY.length-1;
+			for (int i=0;i<qY.length;i++){
+				if (qY[i].length-1>degYqY)
+					degYqY=qY[i].length-1;
+			}
+		}
+		boolean sameDenom=false;
+		if (qX!=null&&qY!=null){
+			sameDenom=true;
+			if (degXqX==degXqY&&degYqX==degYqY){
+				for (int i=0;i<qX.length;i++)
+					if (!Arrays.equals(qY[i], qX[i]))
+					{
+						sameDenom=false;
+						break;
+					}
+			}
+		}
+		int commDeg=0;
+		if (sameDenom){
+			//find the "common" degree, e.g. x^4+y^4->4, but x^4 y^4->8
+			for (int d=degX+degY;d>=0;d--){
+				for (int x=0;x<=degX;x++){
+					int y=d-x;
+					if (y>=0&&y<coeff[x].length){
+						if (Math.abs(coeff[x][y])>Kernel.EPSILON){
+							commDeg=d;
+							d=0;
+							break;
+						}
+					}
+				}
+			}
+		}
+//		Application.debug(String.format("sameDenom=%s,cd=%d",sameDenom+"",commDeg));
+//		Application.debug(String.format("XX=%d,YX=%d,XY=%d,YY=%d", degXPolyX,degYPolyX,degXPolyY,degYPolyY));
+	//	Application.debug(String.format("degXpX=%d,degXqX=%d,degXpY=%d,degXqY=%d",degXpX=%d,degXqX=%d,degXpY=%d,degXqY=%d));
+		int newDegX=Math.max(degXpX, degXqX)*degX+Math.max(degXpY, degXqY)*degY;
+		int newDegY=Math.max(degYpX, degYqX)*degX+Math.max(degYpY, degYqY)*degY;
+//		Application.debug(String.format("newdegX=%d,newDegY=%d",newDegX,newDegY));
+		double[][] newCoeff=new double[newDegX+1][newDegY+1];
+		double[][] tmpCoeff=new double[newDegX+1][newDegY+1];
+		double[][] ratXCoeff=new double[newDegX+1][newDegY+1];
+		double[][] ratYCoeff=new double[newDegX+1][newDegY+1];
+		int tmpCoeffDegX=0;
+		int tmpCoeffDegY=0;
+		int newCoeffDegX=0;
+		int newCoeffDegY=0;
+		int ratXCoeffDegX=0;
+		int ratXCoeffDegY=0;
+		int ratYCoeffDegX=0;
+		int ratYCoeffDegY=0;
+	//	double[][] xCoeff=new double[newDegX+1][newDegY+1];
+		for (int i=0;i<newDegX;i++){
+			for (int j=0;j<newDegY;j++){
+				newCoeff[i][j]=0;
+				tmpCoeff[i][j]=0;
+				ratXCoeff[i][j]=0;
+				ratYCoeff[i][j]=0;
+			}
+		}
+		ratXCoeff[0][0]=1;
+		for (int x=coeff.length-1;x>=0;x--){
+			if (qY!=null){
+				ratYCoeff[0][0]=1;
+				ratYCoeffDegX=0;
+				ratYCoeffDegY=0;
+			}
+			int startY=coeff[x].length-1;
+			if (sameDenom)
+				startY=commDeg-x;
+			for (int y=startY;y>=0;y--){
+				if (qY==null||y==startY){
+					if (coeff[x].length>y)
+						tmpCoeff[0][0]+=coeff[x][y];
+				}else{
+					polyMult(ratYCoeff,qY,ratYCoeffDegX,ratYCoeffDegY,degXqY,degYqY); //y^N-i
+					ratYCoeffDegX+=degXqY;
+					ratYCoeffDegY+=degYqY;
+					if (coeff[x].length>y)
+						for (int i=0;i<=ratYCoeffDegX;i++){
+							for (int j=0;j<=ratYCoeffDegY;j++){
+								tmpCoeff[i][j]+=coeff[x][y]*ratYCoeff[i][j];
+								if (y==0){
+									ratYCoeff[i][j]=0; //clear in last loop
+								}
+							}
+						}
+					tmpCoeffDegX=Math.max(tmpCoeffDegX, ratYCoeffDegX);
+					tmpCoeffDegY=Math.max(tmpCoeffDegY, ratYCoeffDegY);
+				}
+				if (y>0){
+//					Application.debug(String.format("x=%d,y=%d,tX=%d,tY=%d,dXY=%d,dYY=%d",x,y,tmpCoeffDegX,tmpCoeffDegY,degXPolyY,degYPolyY));
+					polyMult(tmpCoeff,pY,tmpCoeffDegX,tmpCoeffDegY,degXpY,degYpY);
+					tmpCoeffDegX+=degXpY;
+					tmpCoeffDegY+=degYpY;
+				}
+			}
+			if (qX!=null&&x!=coeff.length-1&&!sameDenom){
+				polyMult(ratXCoeff,qX,ratXCoeffDegX,ratXCoeffDegY,degXqX,degYqX);
+				ratXCoeffDegX+=degXqX;
+				ratXCoeffDegY+=degYqX;
+				polyMult(tmpCoeff,ratXCoeff,tmpCoeffDegX,tmpCoeffDegY,ratXCoeffDegX,ratXCoeffDegY);
+				tmpCoeffDegX+=ratXCoeffDegX;
+				tmpCoeffDegY+=ratXCoeffDegY;
+			}
+			for (int i=0;i<=tmpCoeffDegX;i++){
+				for (int j=0;j<=tmpCoeffDegY;j++){
+					newCoeff[i][j]+=tmpCoeff[i][j];
+					tmpCoeff[i][j]=0;
+				}
+			}
+			newCoeffDegX=Math.max(newCoeffDegX, tmpCoeffDegX);
+			newCoeffDegY=Math.max(newCoeffDegY, tmpCoeffDegY);
+			tmpCoeffDegX=0;
+			tmpCoeffDegY=0;
+			if (x>0){
+//				Application.debug(String.format("x=%d,nX=%d,nY=%d,dXY=%d,dYY=%d",x,newCoeffDegX,newCoeffDegY,degXPolyY,degYPolyY));
+				polyMult(newCoeff,pX,newCoeffDegX,newCoeffDegY,degXpX,degYpX);
+				newCoeffDegX+=degXpX;
+				newCoeffDegY+=degYpX;
+			}
+		}
+		
+		//maybe we made the degree larger than necessary, so we try to get it down.
+		double[][] newCoeffMinDeg=null;
+//	Application.debug("old degX="+newDegX+"; old degY="+newDegY);
+		degX=0;
+		degY=0;
+		for (int i=newDegX;i>=0;i--){
+			for (int j=newDegY;j>=0;j--){
+				if (Math.abs(newCoeff[i][j])>Kernel.EPSILON){
+					if (newCoeffMinDeg==null){
+						newCoeffMinDeg=new double[i+1][];
+						degX=i;
+					}
+					if (newCoeffMinDeg[i]==null){
+						newCoeffMinDeg[i]=new double[j+1];
+						if (j>degY)
+							degY=j;
+					}
+					newCoeffMinDeg[i][j]=newCoeff[i][j];
+				}
+			}
+			if (newCoeffMinDeg!=null&&newCoeffMinDeg[i]==null){
+				newCoeffMinDeg[i]=new double[1];
+				newCoeffMinDeg[i][0]=0;
+			}
+		}
+		if (newCoeffMinDeg==null){
+			newCoeffMinDeg=new double[1][1];
+			newCoeffMinDeg[0][0]=0;
+		}
+//		Application.debug("new degX="+degX+"; new degY="+degY);
+		coeff=newCoeffMinDeg;
+	}
+	
+	public void plugInPoly(double[][] polyX,double[][] polyY){
+		plugInRatPoly(polyX,polyY,null,null);
+/*		if (true)
+			return;
+		int degXPolyX=polyX.length-1;
+		int degYPolyX=0;
+		for (int i=0;i<polyX.length;i++){
+			if (polyX[i].length-1>degYPolyX)
+				degYPolyX=polyX[i].length-1;
+		}
+		int degXPolyY=polyY.length-1;
+		int degYPolyY=0;
+		for (int i=0;i<polyY.length;i++){
+			if (polyY[i].length-1>degYPolyY)
+				degYPolyY=polyY[i].length-1;
+		}
+//		Application.debug(String.format("XX=%d,YX=%d,XY=%d,YY=%d", degXPolyX,degYPolyX,degXPolyY,degYPolyY));
+		int newDegX=degXPolyX*degX+degXPolyY*degY;
+		int newDegY=degYPolyX*degX+degYPolyY*degY;
+		double[][] newCoeff=new double[newDegX+1][newDegY+1];
+		double[][] tmpCoeff=new double[newDegX+1][newDegY+1];
+		int tmpCoeffDegX=0;
+		int tmpCoeffDegY=0;
+		int newCoeffDegX=0;
+		int newCoeffDegY=0;
+	//	double[][] xCoeff=new double[newDegX+1][newDegY+1];
+		for (int i=0;i<newDegX;i++){
+			for (int j=0;j<newDegY;j++){
+				newCoeff[i][j]=0;
+				tmpCoeff[i][j]=0;
+	//			xCoeff[i][j]=0;
+			}
+		}
+		for (int x=coeff.length-1;x>=0;x--){
+			for (int y=coeff[x].length-1;y>=0;y--){
+				tmpCoeff[0][0]+=coeff[x][y];
+				if (y>0){
+//					Application.debug(String.format("x=%d,y=%d,tX=%d,tY=%d,dXY=%d,dYY=%d",x,y,tmpCoeffDegX,tmpCoeffDegY,degXPolyY,degYPolyY));
+					polyMult(tmpCoeff,polyY,tmpCoeffDegX,tmpCoeffDegY,degXPolyY,degYPolyY);
+					tmpCoeffDegX+=degXPolyY;
+					tmpCoeffDegY+=degYPolyY;
+				}
+			}
+			for (int i=0;i<=tmpCoeffDegX;i++){
+				for (int j=0;j<=tmpCoeffDegY;j++){
+					newCoeff[i][j]+=tmpCoeff[i][j];
+					tmpCoeff[i][j]=0;
+				}
+			}
+			newCoeffDegX=Math.max(newCoeffDegX, tmpCoeffDegX);
+			newCoeffDegY=Math.max(newCoeffDegY, tmpCoeffDegY);
+			tmpCoeffDegX=0;
+			tmpCoeffDegY=0;
+			if (x>0){
+//				Application.debug(String.format("x=%d,nX=%d,nY=%d,dXY=%d,dYY=%d",x,newCoeffDegX,newCoeffDegY,degXPolyY,degYPolyY));
+				polyMult(newCoeff,polyX,newCoeffDegX,newCoeffDegY,degXPolyX,degYPolyX);
+				newCoeffDegX+=degXPolyX;
+				newCoeffDegY+=degYPolyX;
+			}
+		}
+		
+		//maybe we made the degree larger than necessary, so we try to get it down.
+		double[][] newCoeffMinDeg=null;
+//	Application.debug("old degX="+newDegX+"; old degY="+newDegY);
+		degX=0;
+		degY=0;
+		for (int i=newDegX;i>=0;i--){
+			for (int j=newDegY;j>=0;j--){
+				if (Math.abs(newCoeff[i][j])>Kernel.EPSILON){
+					if (newCoeffMinDeg==null){
+						newCoeffMinDeg=new double[i+1][];
+						degX=i;
+					}
+					if (newCoeffMinDeg[i]==null){
+						newCoeffMinDeg[i]=new double[j+1];
+						if (j>degY)
+							degY=j;
+					}
+					newCoeffMinDeg[i][j]=newCoeff[i][j];
+				}
+			}
+			if (newCoeffMinDeg!=null&&newCoeffMinDeg[i]==null){
+				newCoeffMinDeg[i]=new double[1];
+				newCoeffMinDeg[i][0]=0;
+			}
+		}
+		if (newCoeffMinDeg==null){
+			newCoeffMinDeg=new double[1][1];
+			newCoeffMinDeg[0][0]=0;
+		}
+//		Application.debug("new degX="+degX+"; new degY="+degY);
+		coeff=newCoeffMinDeg;
+//		xCoeff[0][0]=1;
+//		for (int x=0;x<=degX;x++){
+//			for (int i=0;i<=newDegX;i++){ //maybe a smaller loop suffices
+//				for (int j=0;j<=newDegY;j++)
+//					tmpCoeff[i][j]=xCoeff[i][j];
+//			}
+//			for (int y=0;y<=degY;y++){
+//				for (int i=0;i<=x;i++){ //wrong bounds
+//					for (int j=0;j<=y;j++){
+//						newCoeff[i][j]+=coeff[x][y]*tmpCoeff[i][j];
+//					}
+//				}
+//			}
+//		}
+
+ */
+	}
+	
+	/**
+	 * 
+	 * @param polyDest
+	 * @param polySrc
+	 * polyDest=polyDest*polySrc;
+	 */
+	private static void polyMult(double[][] polyDest,double[][] polySrc, int degDestX,int degDestY,int degSrcX,int degSrcY){
+		double[][] result=new double[degDestX+degSrcX+1][degDestY+degSrcY+1];
+//		Application.debug(String.format("dX=%d,dY=%d,sX=%d,sY=%d", degDestX,degDestY,degSrcX,degSrcY));
+		for (int n=0;n<=degDestX+degSrcX;n++){
+			for (int m=0;m<=degDestY+degSrcY;m++){
+				double sum=0;
+				for (int k=Math.max(0, n-degSrcX);k<=Math.min(n, degDestX);k++)
+					for (int j=Math.max(0, m-degSrcY);j<=Math.min(m, degDestY);j++)
+						sum+=polyDest[k][j]*polySrc[n-k][m-j];
+				result[n][m]=sum;
+			}
+		}
+		for (int n=0;n<=degDestX+degSrcX;n++){
+			for (int m=0;m<=degDestY+degSrcY;m++){
+				polyDest[n][m]=result[n][m];
+			}
+		}
 	}
 	
 	public boolean isConstant() {
@@ -1150,16 +1478,29 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 
 	public void mirror(GeoConic c) 
 	{
-		GeoPoint S = new GeoPoint(cons, "", c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
-		S.remove();
+		
 		if(c.getCircleRadius() < 10e-2)
 		{
-			this.setUndefined();
+			setUndefined();
 			return;
 		}
-		double r = c.getCircleRadius();
+		
+		double cx=c.getMidpoint().getX();
+		double cy=c.getMidpoint().getY();
+		double cr=c.getCircleRadius();
+		
+		plugInRatPoly(new double[][]{{cx*cx*cx + cx*cy*cy - cx*cr*cr, -2 * cx * cy , cx}, {-2*cx*cx + cr*cr,0,0}, {cx,0,0}},
+				new double[][]{{cx*cx*cy + cy*cy*cy - cy*cr*cr, -2*cy*cy + cr*cr, cy}, {-2*cx*cy,0,0}, {cy,0,0}},
+				new double[][]{{cx*cx + cy*cy, -2*cy, 1}, {-2*cx,0,0}, {1,0,0}},
+				new double[][]{{cx*cx + cy*cy, -2*cy, 1}, {-2*cx,0,0}, {1,0,0}});
+		
+/*		double r = c.getCircleRadius();
+		GeoPoint S = new GeoPoint(cons, "", c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
+		S.remove();
 		if(S.inhomX != 0 || S.inhomY != 0)
 			translate(new Coords(-S.getX(), -S.getY()));
+		
+		translate(new Coords(-S.getX(), -S.getY()));
 		
 		String fun = new String("");
 		
@@ -1207,6 +1548,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		
 		if(S.inhomX != 0 || S.inhomY != 0)
 			translate(new Coords(S.getX(), S.getY()));
+			*/
 	}
 	
 	public void normalize()
@@ -1228,10 +1570,27 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 	}
 
 	public void mirror(GeoPoint Q) {
-		doTransformation(new String(2.0 * Q.inhomX + "- a"), new String(2.0 * Q.inhomY + "- b"));
+		plugInPoly(new double[][]{{2*Q.inhomX},{-1}},new double[][]{{2*Q.inhomY,-1}});
+		//doTransformation(new String(2.0 * Q.inhomX + "- a"), new String(2.0 * Q.inhomY + "- b"));
 	}
 
 	public void mirror(GeoLine g) {
+		if (!g.isDefined()){
+			setUndefined();
+			return;
+		}
+		double[] dir=new double[2];
+		g.getDirection(dir);
+		//g.setStandardStartPoint();
+		double dx=dir[0];
+		double dy=dir[1];
+		double x=g.getStartPoint().inhomX;
+		double y=g.getStartPoint().inhomY;
+		double n=1/(dx*dx+dy*dy);
+		plugInPoly(new double[][]{{2*n*dy*(x*dy-y*dx),2*n*dx*dy},{1-2*dy*dy*n,0}},new double[][]{{2*n*dx*(y*dx-x*dy),1-2*n*dx*dx},{2*n*dx*dy,0}});
+		
+		
+		/*
 		String newX, newY;
 		if(g.getX() == 0)
 		{
@@ -1240,7 +1599,6 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 			this.translate(new Coords(g.getZ()/g.getY(), 0));
 			return;
 		}
-		
 		Coords v = new Coords(g.getZ()/g.getX(), 0);
 		this.translate(v);
 		
@@ -1261,31 +1619,98 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		doTransformation(newX, newY);
 		
 		v.set(1, -v.getX());
-		this.translate(v);
+		this.translate(v);*/
 		
 	}
 
 	public void translate(Coords v) {
-		doTransformation(new String("a+" + (-v.getX())), new String("b+" + (-v.getY())));
+		translate(v.getX(),v.getY());
+	}
+	
+	public void translate(double vx,double vy){
+		//translate directly the coefficients
+		double a=-vx; //translate in X-dir
+		double b=-vy; //translate in Y-dir
+	//	doTransformation(new String("a+(" + a+")"), new String("b+(" + b+")"));
+		plugInPoly(new double[][]{{a},{1}},new double[][]{{b,1}});
+
+/*		//Application.debug(String.format("Translate x=%f,y=%f",a,b));
+		double[][] newCoeff=new double[coeff.length][];
+		double[] transX=new double[degX+1];
+		double[] transY=new double[degY+1];
+		transX[0]=1;
+		for (int k=1;k<degX+1;k++)
+			transX[k]=0;
+		for (int i=0;i<newCoeff.length;i++){
+			newCoeff[i]=new double[coeff[i].length];
+			for (int j=0;j<newCoeff[i].length;j++){
+				newCoeff[i][j]=0;
+				transY[j]=0;
+			}
+		//	String s="";
+			for (int k=i;k>=1;k--){
+				transX[k]+=transX[k-1]*a;
+		//		s+=","+transX[k];
+			}
+		//	Application.debug(s);
+			transY[0]=1;
+			for (int j=0;j<newCoeff[i].length;j++){
+				for (int k=j;k>=1;k--){
+					transY[k]+=transY[k-1]*b;
+				}
+				for (int x=0;x<=i;x++)
+					for (int y=0;y<=j;y++){
+						newCoeff[x][y]+=coeff[i][j]*transX[i-x]*transY[j-y];
+					}
+			}
+		}
+		coeff=newCoeff;
+//		// for curves given by equation
+//		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
+//			return;
+//		
+//		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
+//			
+//		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
+//		for(int i=0; i<parentCharacteristicPoints.length; i++)
+//		{
+//			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
+//			points[i].translate(v);
+//			points[i].remove();
+//		}
+//		this.throughPoints(points);
+	*/
 	}
 
-	public void rotate(NumberValue r) {
-		double cosR = Math.cos(r.getDouble()), sinR = Math.sin(r.getDouble());
-		String newX = cosR + "*a + " + sinR + "*b";
-		String newY = -sinR + "*c + " + cosR + "*d";
-		doTransformation(newX, newY);		
+	public void rotate(NumberValue phiValue) {
+		double phi=phiValue.getDouble();
+		double cos=Math.cos(phi);
+		double sin=Math.sin(phi);
+		plugInPoly(new double[][]{{0,-sin},{cos,0}},new double[][]{{0,cos},{sin,0}});
+//		double cosR = Math.cos(r.getDouble()), sinR = Math.sin(r.getDouble());
+//		String newX = cosR + "*a + " + sinR + "*b";
+//		String newY = -sinR + "*c + " + cosR + "*d";
+//		doTransformation(newX, newY);		
 	}
 
-	public void rotate(NumberValue r, GeoPoint S) {
-		this.translate(new Coords(-S.getX()/S.getZ(), -S.getY()/S.getZ()));
-		this.rotate(r);
-		this.translate(new Coords(S.getX()/S.getZ(), S.getY()/S.getZ()));
+	public void rotate(NumberValue phiValue, GeoPoint S) {
+		double phi=phiValue.getDouble();
+		double cos=Math.cos(phi);
+		double sin=Math.sin(phi);
+		double x=S.getInhomX();
+		double y=S.getInhomY();
+		plugInPoly(new double[][]{{x*(1-cos)+y*sin,-sin},{cos,0}},new double[][]{{-x*sin+y*(1-cos),cos},{sin,0}});
+//		this.translate(new Coords(-S.getX()/S.getZ(), -S.getY()/S.getZ()));
+//		this.rotate(r);
+//		this.translate(new Coords(S.getX()/S.getZ(), S.getY()/S.getZ()));
 	}
 
-	public void dilate(NumberValue r, GeoPoint S) {
-		double f = 1/r.getDouble();	
-		doTransformation(new String(f + "*a + " + (1-f)*S.inhomX), 
-				new String(f + "*b + " + (1-f)*S.inhomY));
+	public void dilate(NumberValue rval, GeoPoint S) {
+		double r=rval.getDouble();
+		plugInPoly(new double[][]{{(1-r)*S.getInhomX()},{r}},new double[][]{{(1-r)*S.getInhomY(),r}});
+//	double f = 1/r.getDouble();	
+//		doTransformation(new String(f + "*a + " + (1-f)*S.inhomX), 
+//				new String(f + "*b + " + (1-f)*S.inhomY));
 	}
 
 	public void doTransformation(String newX, String newY)
@@ -1307,6 +1732,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 			ve = parser.parseGeoGebraExpression(cmd);
 		} catch(ParseException e)
 		{
+			Application.debug(cmd);
 			throw new MyError(app, "Error");
 		}
 		
@@ -1320,6 +1746,12 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 		geo.remove();
 	}
 	
+	@Override
+	public boolean isTranslateable() {
+		return true;
+	}
+	
+	 
 	 @Override
 	 protected char getLabelDelimiter(){
 		 return ':';
