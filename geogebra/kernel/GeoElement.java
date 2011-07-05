@@ -4957,6 +4957,9 @@ public abstract class GeoElement
 		// vectors
 		else if (this.isGeoVector() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
 			ret = toLaTeXString(!substituteNumbers);
+		} // curves
+		else if (this.isGeoCurveCartesian() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
+			ret = toLaTeXString(!substituteNumbers);
 		}
 		else
 		{

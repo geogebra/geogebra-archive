@@ -23,6 +23,7 @@ import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 
@@ -385,9 +386,11 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 		sbToString.setLength(0);
 		if (isLabelSet()) {
 			sbToString.append(label);
-			sbToString.append('(');
-			sbToString.append(funX.getVarString());
-			sbToString.append(") = ");					
+			//sbToString.append('(');
+			//sbToString.append(funX.getVarString());
+			//sbToString.append(") = ");
+			// changed to ':' to make LaTeX output better
+			sbToString.append(':');
 		}		
 		sbToString.append(toValueString());
 		return sbToString.toString();
@@ -437,11 +440,21 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 				sbTemp = new StringBuilder(80);
 			}
 			sbTemp.setLength(0);
-			sbTemp.append("\\left(\\begin{array}{c}");
+			
+			String param = getVarString();
+			
+			sbTemp.append("\\left.\\begin{array}{ll} x = ");
 			sbTemp.append(funX.toLaTeXString(symbolic));
-			sbTemp.append("\\\\");
+			sbTemp.append("\\\\ y = ");
 			sbTemp.append(funY.toLaTeXString(symbolic));
-			sbTemp.append("\\end{array}\\right)");
+			sbTemp.append(" \\end{array}\\right} \\; ");
+			sbTemp.append(param);
+			sbTemp.append(" \\in [");
+			sbTemp.append(kernel.format(startParam));
+			sbTemp.append(',');
+			sbTemp.append(kernel.format(endParam));
+			sbTemp.append(']');
+			
 			return sbTemp.toString();
 		} else
 			return app.getPlain("undefined");		
