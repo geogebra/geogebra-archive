@@ -62,7 +62,7 @@ public class EquationSolver {
 		 */
 	
 		int degree = roots.length-1;
-		for(int i=degree; roots[i]==0; i--)
+		for(int i=degree; i >= 0 && roots[i]==0; i--)
 			degree--;
 		
 		switch (degree) { // degree of polynomial
