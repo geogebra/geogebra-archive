@@ -61,6 +61,7 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
 					GeoPoint3D aE = new GeoPoint3D(cons);
 					aE.setCoords(0, 0, 0, 1);
 					GeoSegment3D a=new GeoSegment3D(cons, aS, aE);
+					a.setIsIntersection(true);
 					a.setParentAlgorithm(AlgoIntersectLinePolygonalRegion3D.this);
 					return a;
 				}
@@ -288,50 +289,8 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
 
 		if (!lineInPlaneOfPolygon) {
 				outputPoints.setLabels(labels);			
-		} else {/*
-        //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
-			if (labels!=null &&
-					labels.length==1 &&
-					outputSegments.size() > 1 &&
-					labels[0]!=null &&
-					!labels[0].equals("")) {
-        //	outputPoints.setIndexLabels(labels[0]);
-          	outputSegments.setIndexLabels(labels[0]);
-          	outputPoints.setLabels(new String[] {null});
-        //if there are k>=2 labels, now for simplicity only the first two will be used.
-          	//first for indexing points, second for indexing segments.
-          	//  } else if (labels!=null &&
-          	//		labels.length>=2 &&
-          	//outputPoints.size() > 1 && outputSegments.size() > 1 &&
-        	//	labels[0]!=null && labels[1]!=null &&
-        		//!labels[0].equals("") && !labels[1].equals("")) {
-        	//outputPoints.setIndexLabels(labels[0]);
-        	//outputSegments.setIndexLabels(labels[1]);
-        	} else {
-        	
-        	
-        //	outputPoints.setIndexLabels(outputPoints.getElement(0).getLabel());
-        	//if ( outputPoints.size()==0 || outputSegments.size()!=0) //when there is a point, an 'empty segment' is not needed.
-        		outputSegments.setLabels(labels);
-        		outputSegments.setIndexLabels(outputSegments.getElement(0).getLabel());
-        		outputPoints.setLabels(new String[] {null});
-        	}*/
-			String labelPrefix = null;
-			if (outputPoints.size()>0){
-				outputPoints.setLabels(null);
-				labelPrefix = outputPoints.getElement(0).getLabel().toLowerCase();
-			}	
-			
-			if (labels!=null &&
-					labels.length==1 &&
-					outputSegments.size() > 1 &&
-					labels[0]!=null &&
-					!labels[0].equals("")) {
-				labelPrefix = labels[0];
-				outputSegments.setIndexLabels(labels[0]);
-			}
-	    	else
-	    		outputSegments.setIndexLabels(labelPrefix);
+		} else {
+			super.setLabels(labels);
 		}
 	}
 

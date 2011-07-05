@@ -37,7 +37,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		
 		
 		cmdTable.put("CurveCartesian", new CmdCurveCartesian3D(kernel));
-		cmdTable.put("IntersectionPaths", new CmdIntersectionPaths(kernel));
+		
 		
 		cmdTable.put("Plane", new CmdPlane(kernel));
 		cmdTable.put("OrthogonalPlane", new CmdOrthogonalPlane(kernel));
@@ -55,6 +55,8 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		
     	cmdTable.put("Intersect", new CmdIntersect3D(kernel));	
     	cmdTable.put("Intersection", new CmdIntersect3D(kernel)); 
+    	//cmdTable.put("IntersectionPaths", new CmdIntersectionPaths(kernel));
+    	cmdTable.put("IntersectionPaths", new CmdIntersectionPaths3D(kernel));
     	
     	cmdTable.put("Sphere", new CmdSphere3D(kernel));
     	

@@ -1,5 +1,7 @@
 package geogebra3D.kernel3D;
 
+import java.awt.Color;
+
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 
@@ -48,7 +50,8 @@ public class AlgoIntersectPlanePolygonalRegion extends AlgoIntersectLinePolygona
 	
 
 	protected void setStyle(GeoSegmentND segment) {
-		//default style for lines
+		//TODO use default intersection style for lines
+		segment.setObjColor(Color.red);
 	}
 	
 	protected void calcLineInPlaneOfPolygon() {

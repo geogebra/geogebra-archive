@@ -336,6 +336,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     	int index = 0;   	
     	//affect new computed points
     	outputPoints.adjustOutputSize(newCoords.size());
+    	outputPoints.updateLabels();
     	for (Coords coords : newCoords.values()){
     		GeoPointND point = (GeoPointND) outputPoints.getElement(index);
     		point.setCoords(coords,false);
@@ -359,9 +360,8 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     	int indexSegment = 0;   	
     	//affect new computed segments
     	outputSegments.adjustOutputSize(newSegmentCoords.size());
-    	
-    		
- 
+    	outputSegments.updateLabels();
+
     	for (Coords[] segmentCoords : newSegmentCoords.values()){
     		
     			GeoSegmentND segment = (GeoSegmentND) outputSegments.getElement(indexSegment);
