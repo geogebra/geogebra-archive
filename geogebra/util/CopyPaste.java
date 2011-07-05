@@ -207,6 +207,14 @@ public class CopyPaste {
 		    				if (((AlgoElement)geoal.get(0)).getInput()[2].isGeoNumeric()) {
 		    					it.remove();
 		    				}
+		    			// or AlgoRotate
+		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoRotate")) {
+		    				if (((AlgoElement)geoal.get(0)).getInput()[1] == geo2)
+		    					it.remove();
+		    			// or AlgoRotatePoint
+		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoRotatePoint")) {
+		    				if (((AlgoElement)geoal.get(0)).getInput()[1] == geo2)
+		    					it.remove();
 		    			} else if (((GeoElement)geo).isGeoList()) {
 		    				// GeoNumerics: from, to, step
 		    				if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoSequence")) {
