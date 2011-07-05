@@ -446,7 +446,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	
 	public String toValueString() {	
 
-		if (isDefined())
+		if (fun != null && isDefined())
 			return fun.toValueString();
 		else
 			return app.getPlain("undefined");
@@ -462,21 +462,21 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		if (isLocalVariable())
 			return label;
 
-		if (isDefined())
+		if (fun != null && isDefined())
 			return fun.toOutputValueString();
 		else
 			return app.getPlain("undefined");
 	}	
 	
 	public String toSymbolicString() {	
-		if (isDefined())
+		if (fun != null && isDefined())
 			return fun.toString();
 		else
 			return app.getPlain("undefined");
 	}
 	
 	public String toLaTeXString(boolean symbolic) {
-		if (isDefined())
+		if (fun != null && isDefined())
 			return fun.toLaTeXString(symbolic);
 		else
 			return app.getPlain("undefined");
