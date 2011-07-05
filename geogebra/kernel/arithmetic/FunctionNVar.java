@@ -526,7 +526,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 */
 	final public FunctionNVar evalCasCommand(String ggbCasCmd, boolean symbolic) {
 		// remember expression and its CAS string
-		boolean useCaching = false;
+		boolean useCaching = true;
 		if (casEvalExpression != expression) {
 			casEvalExpression = expression;
 			if (symbolic)
