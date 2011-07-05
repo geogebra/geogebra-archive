@@ -193,6 +193,26 @@ public class Hits3D extends Hits {
 		
 	}
 	
+	public Hits getTopHits(int depth, int geoN) {
+		Hits ret = new Hits();
+		int depthCount = 0;
+		int geoNCount = 0;
+		for (Iterator<TreeSetOfDrawable3D> iterSet = hitSetSet.iterator(); 
+		iterSet.hasNext() && depthCount < depth;) {
+			TreeSetOfDrawable3D set = iterSet.next();
+			if (set.size()>0)
+				depthCount++;
+			
+			for (Iterator<Drawable3D> iter = set.iterator();
+			iter.hasNext() && geoNCount < geoN;) {
+				Drawable3D d = (Drawable3D) iter.next();
+				GeoElement geo = d.getGeoElement();
+				ret.add(geo);
+				geoNCount++;
+			}
+		}
+		return ret;	
+	}
 	
 	/** return the first label hit, if one
 	 * @return the first label hit

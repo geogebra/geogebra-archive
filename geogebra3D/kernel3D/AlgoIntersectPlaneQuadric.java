@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import java.awt.Color;
+
 import geogebra.Matrix.CoordMatrix;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -65,9 +67,9 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
     	this.quadric = quadric;
     	
     	conic = new GeoConic3D(cons);
+    	conic.setIsIntersection(true); //should be called before setDependencies (in setInputOutput)
   
     	setInputOutput(new GeoElement[] {plane,quadric}, new GeoElement[] {conic});
-
     	conic.setLabel(label);
     	
  
@@ -132,13 +134,16 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
     final public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(app.getPlain("Intersection",plane.getLabel(),quadric.getLabel()));
+        sb.append(app.getPlain("IntersectionCurveOfAB",plane.getLabel(),quadric.getLabel()));
         
         return sb.toString();
     }   
     
+
 	protected void setStyle(GeoSegmentND segment) {
-		//follow default
+		//TODO:  set styles in somewhere else
+		
+		//segment.setObjColor(Color.orange);
 	}
 
  

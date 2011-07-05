@@ -41,7 +41,6 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
 
 	}
 
-//TODO: merge 2D and 3D
 	protected OutputHandler<GeoElement> createOutputPoints(){
     	return new OutputHandler<GeoElement>(new elementFactory<GeoElement>() {
 			public GeoPoint3D newElement() {
@@ -274,7 +273,6 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
     }
 
     protected void compute() {
-    	//TODO: optimize for plane/poly
     	calcLineInPlaneOfPolygon();
     	super.compute();
     }

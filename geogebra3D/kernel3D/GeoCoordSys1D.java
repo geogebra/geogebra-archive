@@ -25,6 +25,8 @@ GeoLineND, GeoCoordSys{
 
 	protected GeoPointND endPoint;
 
+	private boolean isIntersection = false;
+
 	public GeoCoordSys1D(Construction c){
 		super(c);
 		coordsys = new CoordSys(1);
@@ -413,5 +415,17 @@ GeoLineND, GeoCoordSys{
 	public GeoPointND getEndPoint(){
 		return endPoint;
 	}
+	
+	
+	
+	
+	public void setIsIntersection(boolean flag) {
+		isIntersection = flag;
+	}
+	
+	public boolean isIntersection() {
+		return isIntersection;
+	}
+	
 	
 }

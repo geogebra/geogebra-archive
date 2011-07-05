@@ -141,6 +141,7 @@ public class ConstructionDefaults {
 	
 	protected String strFree = " (free)";
 	protected String strDependent = " (dependent)";
+	protected String strIntersection = " (intersection)";
 	
 	/**
 	 * Fills the list of default geos

@@ -22,9 +22,6 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 
 import java.awt.Color;
-import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.SortedSet;
 
 /**
  *
@@ -63,13 +60,6 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
     
     protected void initElements() {
     	super.initElements();
-    
-
-    	/*NewQ = new GeoPoint [numberOfPoints];
-        for (int i = 0; i<numberOfPoints; i++) {
-        	NewQ[i] = new GeoPoint(cons);
-        	setOutputDependencies(NewQ[i]);
-        }*/
    	
         for (int i = 0; i<P.length; i++) {
         	setOutputDependencies(P[i]);
@@ -81,6 +71,10 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
         Color BLUE_VIOLET= new Color(153,0,255);
         int THICK_LINE_WITHIN_LINE = 4;
         
+        //TODO: this initialization of input assumes the type 
+        // of the line and the conic
+        // and will NOT update anymore.
+        // should change to a more dynamic version.
         lines = new GeoLine[4];
         lines[0] = (GeoLine) g.copyInternal(cons);
         if (Double.isInfinite(tMin))
@@ -134,7 +128,6 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
         case INTERSECTION_PRODUCING_LINE: //contained in degenerate conic
 		case INTERSECTION_ASYMPTOTIC_LINE: //intersect at no point
 		case INTERSECTION_PASSING_LINE: //intersect at no point
-			numberOfLineParts = 1;
     		lines[1].setUndefined();
     		lines[2].setUndefined();
 			lines[3].setUndefined();
@@ -148,7 +141,6 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 			}
     		break;
 		case INTERSECTION_MEETING_LINE:
-			numberOfLineParts = 2;
 			lines[0].setUndefined();
 			lines[2].setUndefined();
 			
@@ -192,7 +184,7 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
     		break;
     		
 		case INTERSECTION_TANGENT_LINE: //tangent at one point
-			numberOfLineParts = 3;
+			
 			lines[0].setUndefined();
 			
 			if (currentPartIsInRegion)
@@ -232,37 +224,50 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 			}
     		break;
 		case INTERSECTION_SECANT_LINE: //intersect at two points
-			numberOfLineParts = 3;
+			
+			//get parameters of two intersection points
+			double t1 = g.getPossibleParameter(Q[0].getCoords());
+			double t2 = g.getPossibleParameter(Q[1].getCoords());
+			int j0 = 0;
+			int j1 = 1;
+			
+			//let t1<=t2. if not, swap the index of the points
+			if (t1>t2) {
+				double temp = t1;
+				t1 = t2;
+				t2 = temp;
+				j1 = 0;
+				j0 = 1;
+			} 	
+			
 			lines[0].setUndefined();
 			if (currentPartIsInRegion)
 			{
 				lines[2].setUndefined();
 				
 				//set line[1] and line[3]
-				double t1 = g.getPossibleParameter(Q[0].getCoords());
-				double t2 = g.getPossibleParameter(Q[1].getCoords());
-				
+
 				if (tMin.isInfinite()) {
-					((GeoRay)lines[1]).set(Q[0], g);
+					((GeoRay)lines[1]).set(Q[j0], g);
 					lines[1].changeSign();
 					numberOfOutputLines ++;
 				} else {
 					if (Kernel.isGreater(tMin, t1))
 						lines[1].setUndefined();
 					else {
-						((GeoSegment)lines[1]).set(Q[0],g.endPoint, g);
+						((GeoSegment)lines[1]).set(Q[j0],g.endPoint, g);
 						numberOfOutputLines ++;
 					}
 				}
 				
 				if (tMax.isInfinite()) {
-					((GeoRay)lines[3]).set(Q[1], g);
+					((GeoRay)lines[3]).set(Q[j1], g);
 					numberOfOutputLines ++;
 				} else {
 					if (Kernel.isGreater(t2, tMax))
 						lines[3].setUndefined();
 					else {
-						((GeoSegment)lines[3]).set(Q[1],g.endPoint, g);
+						((GeoSegment)lines[3]).set(Q[j1],g.endPoint, g);
 						numberOfOutputLines ++;
 					}
 				}
@@ -271,15 +276,13 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 				lines[3].setUndefined();
 				
 				//set line[2]
-				double t1 = g.getPossibleParameter(Q[0].getCoords());
-				double t2 = g.getPossibleParameter(Q[1].getCoords());
-				
+			
 				if (Kernel.isGreater(t1,tMax)||Kernel.isGreater(tMin,t2))
 					lines[2].setUndefined();
 				else {
 					((GeoSegment)lines[2]).set(
-							Kernel.isGreater(tMin, t1)? g.startPoint : Q[0],
-							Kernel.isGreater(t2, tMax)? g.endPoint : Q[1],
+							Kernel.isGreater(tMin, t1)? g.startPoint : Q[j0],
+							Kernel.isGreater(t2, tMax)? g.endPoint : Q[j1],
 							g);
 					numberOfOutputLines ++;
 				}	
@@ -343,6 +346,25 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
 	}
 	
 	  void initCurrentPartIsInRegion() {
+		  
+		  switch (intersectionType) {
+		  case INTERSECTION_PRODUCING_LINE: //contained in degenerate conic
+		  case INTERSECTION_ASYMPTOTIC_LINE: //intersect at no point
+		  case INTERSECTION_PASSING_LINE: //intersect at no point
+			  numberOfLineParts = 1;
+			  break;
+		  case INTERSECTION_MEETING_LINE:
+			  numberOfLineParts = 2;
+			  break;
+		  case INTERSECTION_TANGENT_LINE: //tangent at one point
+		  case INTERSECTION_SECANT_LINE: //intersect at two points
+			  numberOfLineParts = 3;
+			  break;
+		  default:
+			  numberOfLineParts = -1;
+		  }
+	        
+		  
       //decide whether the full line starts inside or outside the region
       currentPartIsInRegion = false;
       Coords ex = null;
@@ -369,6 +391,9 @@ public class AlgoIntersectLineConicRegion extends AlgoIntersectLineConic {
       		c.pointChanged(Q[1]);
       		t0 = Q[0].getPathParameter().getT();
       		t1 = Q[1].getPathParameter().getT();
+      		//infinite part is in region if and only if 
+      		//two interesction points are on different branches
+      		//namely: truth value of [t0 in (-1,1)] and [t1 in (-1,1)] should be different
       		currentPartIsInRegion = Kernel.isGreater(1, t0) ^
       				Kernel.isGreater(1, t1); 
       	}

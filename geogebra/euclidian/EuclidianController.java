@@ -2686,12 +2686,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 
-
+		//for testing: save the full hits for later use
+		Hits tempFullHits = hits.clone();	
+		
 		// set tool tip text
 		// the tooltips are only shown if algebra view is visible
 		//if (app.isUsingLayout() && app.getGuiManager().showAlgebraView()) {
 			//hits = view.getTopHits(hits);
-			hits = hits.getTopHits();
+		
+		hits = hits.getTopHits();
 			
 			sliderValue = null;
 			if (hits.size() == 1) {
@@ -2737,12 +2740,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			repaintNeeded = true;
 		}		
 
+		Application.debug(tempFullHits.getTopHits(2,10));
 		//	manage highlighting & "snap to object"
 		//Application.debug("noHighlighting = "+noHighlighting);
 		//Application.debug("hits = "+hits.toString());		
-		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
-				|| repaintNeeded;
-
+		//repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
+			//	|| repaintNeeded;
+		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(tempFullHits.getTopHits(2,10)) 
+			|| repaintNeeded;
 		if (repaintNeeded) {
 			kernel.notifyRepaint();
 		}
@@ -2771,7 +2776,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			setHighlightedGeos(false);
 			repaintNeeded = true;
 		}
-
 		// find new objects to highlight
 		highlightedGeos.clear();	
 		selectionPreview = true; // only preview selection, see also

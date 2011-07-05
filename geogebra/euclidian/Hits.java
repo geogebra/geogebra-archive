@@ -490,7 +490,10 @@ public class Hits extends ArrayList {
 		return ret;
 	}
 
-
+	//for 3D only
+	public Hits getTopHits(int depth, int geoN) {
+		return getTopHits(geoN);
+	}
 	final public boolean containsGeoPoint() {
 
 		for (int i = 0; i < size(); i++) {

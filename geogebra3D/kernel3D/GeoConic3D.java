@@ -1,21 +1,17 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.CoordMatrix;
+
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
-import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -31,6 +27,8 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
+
+	private boolean isIntersection = false;
 	
 	
 	/**
@@ -434,5 +432,14 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 		public boolean isRegion() {
 			return false; //TODO
 		}
-
+		
+		
+		
+		public void setIsIntersection(boolean flag) {
+			isIntersection = flag;
+		}
+		
+		public boolean isIntersection() {
+			return isIntersection;
+		}
 }

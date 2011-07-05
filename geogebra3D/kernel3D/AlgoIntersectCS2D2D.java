@@ -56,7 +56,10 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
     
     protected GeoElement3D createIntersection(Construction cons){
     	
-    	return new GeoLine3D(cons);
+    	GeoLine3D ret = new GeoLine3D(cons);
+    	ret.setIsIntersection(true);
+    	
+    	return ret;
     	
     }
 

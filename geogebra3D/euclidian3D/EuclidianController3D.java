@@ -1723,8 +1723,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	//TODO: color should not be created here
 	public Color intersectionCurveColorPlanarPlanar = new Color(127, 0, 255);
-	public Color intersectionCurveColorPlanarQuadric = Color.YELLOW;
-	
+
 		/**
 		 * 
 		 * @param hits
@@ -1793,17 +1792,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 				if (!foundP) {
 					GeoElement[] ret = new GeoElement[1];
-					ret[0] = getKernel().getManager3D().Intersect("", 
+					ret[0] = getKernel().getManager3D().Intersect(null, 
 							(GeoElement) cs2Ds[0], (GeoElement) cs2Ds[1]);
-					ret[0].setObjColor(intersectionCurveColorPlanarPlanar);
 					return ret[0].isDefined();	
 				} else if (foundP && foundNp) {
 					GeoElement[] ret = getKernel().getManager3D().IntersectionSegment(new String[] {null}, 
 							(GeoPlane3D) cs2Ds[npIndex], (GeoSurfaceFinite) cs2Ds[pIndex]);
-					for (int i = 0; i<ret.length; i++){
-						//TODO
-						ret[i].setObjColor(intersectionCurveColorPlanarPlanar);
-					}
+
 					return (ret==null || ret[0]==null);
 				}
 			}
@@ -1815,8 +1810,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoElement plane = (GeoElement) getSelectedCS2D()[0];
 				GeoQuadric3D quad = getSelectedQuadric()[0];
 				GeoElement[] ret = {kernel.getManager3D().Intersect( null, (GeoPlaneND) plane, (GeoQuadricND) quad)};
-				//TODO
-				//ret[0].setObjColor(intersectionCurveColorPlanarQuadric);
 				return ret[0].isDefined();
 			}
 			

@@ -75,9 +75,11 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
         newCoords = new TreeMap<Double, Coords>(Kernel.DoubleComparator(Kernel.STANDARD_PRECISION));
         newSegmentCoords = new TreeMap<Double, Coords[]>(Kernel.DoubleComparator(Kernel.STANDARD_PRECISION));
         
+        setInputOutput(); // for AlgoElement 
+        
+        
         compute();
         
-        setInputOutput(); // for AlgoElement
         
         setLabels(labels);
         //TODO: actually no need to update
@@ -110,6 +112,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
 				aE.setCoords(0, 0, 1);
 				a.setPoints(aS, aE);
 				a.setParentAlgorithm(AlgoIntersectLinePolygonalRegion.this);
+				setStyle(a); //TODO move to ConstructionDefaults
 				return a;
 			}
 		});
@@ -345,6 +348,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     	
     	if(newCoords.isEmpty()) {
     		outputSegments.adjustOutputSize(1);
+    		setStyle((GeoSegmentND) outputSegments.getElement(0)); //TODO remove this
     		outputSegments.getElement(0).setUndefined();
     	} else {
     	
@@ -355,6 +359,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     	int indexSegment = 0;   	
     	//affect new computed segments
     	outputSegments.adjustOutputSize(newSegmentCoords.size());
+    	
     		
  
     	for (Coords[] segmentCoords : newSegmentCoords.values()){
@@ -383,7 +388,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
 		
 	
 		if (outputPoints.size()>0){
-			outputPoints.setLabels(new String[] {null});
+			outputPoints.setLabels(null);
 			labelPrefix = outputPoints.getElement(0).getLabel().toLowerCase();
 		}	
 		

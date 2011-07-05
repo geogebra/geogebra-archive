@@ -123,52 +123,6 @@ public  GeoElement[] process(Command c) throws MyError {
         			return ret;
 
         		}
-        		
-        		//PLANES
-        		
-        		//intersection plane/polygon
-   
-        		else if (arg[0] instanceof GeoPlane3D && arg[1] instanceof GeoSurfaceFinite ||
-        				arg[1] instanceof GeoPlane3D && arg[0] instanceof GeoSurfaceFinite ){
-
-        			GeoElement[] ret =
-        					kernel.getManager3D().IntersectionSegment(
-        							c.getLabels(),
-        							(GeoPlane3D) arg[0],
-        							(GeoSurfaceFinite) arg[1]);
-        			return ret;
-        		}
-        		
-        		
-        		//intersection plane/plane
-        		else if (arg[0] instanceof GeoPlaneND && arg[1] instanceof GeoPlaneND){
-
-        			GeoElement[] ret =
-        			{
-        					kernel.getManager3D().Intersect(
-        							c.getLabel(),
-        							(GeoElement) arg[0],
-        							(GeoElement) arg[1])};
-        			return ret;
-        			
-        		//intersection plane/quadric
-        		}else if ((arg[0] instanceof GeoPlaneND) && (arg[1] instanceof GeoQuadricND)){
-        			GeoElement[] ret =
-        			{
-        					kernel.getManager3D().Intersect(
-        							c.getLabel(),
-        							(GeoPlaneND) arg[0],
-        							(GeoQuadricND) arg[1])};
-        			return ret;
-        		}else if ((arg[0] instanceof GeoQuadricND) && (arg[1] instanceof GeoPlaneND)){
-        			GeoElement[] ret =
-        			{
-        					kernel.getManager3D().Intersect(
-        							c.getLabel(),
-        							(GeoPlaneND) arg[1],
-        							(GeoQuadricND) arg[0])};
-        			return ret;
-        		}
 
         	}
         	
