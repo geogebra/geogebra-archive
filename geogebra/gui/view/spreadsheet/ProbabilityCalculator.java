@@ -146,6 +146,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	private JLabel lblEndProbOf;
 
+	
+
 
 	// colors
 	private static final Color COLOR_PDF = GeoGebraColorConstants.DARKBLUE;
@@ -155,7 +157,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private static final float opacityIntegral = 0.6f; 
 	private static final float opacityDiscrete = 0.0f; // entire bar chart
 	private static final float opacityDiscreteInterval = 0.6f; // bar chart interval
-
+	private static final int thicknessCurve = 4;
+	private static final int thicknessBarChart = 3;
 
 
 	/*************************************************
@@ -429,7 +432,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		expr = buildDensityCurveExpression(selectedContinuousDist);
 		densityCurve = createGeoFromString(expr);
 		densityCurve.setObjColor(COLOR_PDF);
-		densityCurve.setLineThickness(3);
+		densityCurve.setLineThickness(thicknessCurve);
 		densityCurve.setFixed(true);
 
 
@@ -440,7 +443,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		discreteGraph = createGeoFromString(expr);
 		discreteGraph.setObjColor(COLOR_PDF);
 		discreteGraph.setAlphaValue(opacityDiscrete);
-		discreteGraph.setLineThickness(2);
+		discreteGraph.setLineThickness(thicknessBarChart);
 		discreteGraph.setFixed(true);
 
 
@@ -473,6 +476,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		discreteIntervalGraph  = createGeoFromString(expr);
 		discreteIntervalGraph.setObjColor(COLOR_PDF_FILL);
 		discreteIntervalGraph.setAlphaValue(opacityDiscreteInterval);
+		discreteGraph.setLineThickness(thicknessBarChart);
 		discreteIntervalGraph.updateCascade();
 
 		hideAllGeosFromViews();
