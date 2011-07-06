@@ -17,6 +17,7 @@ import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra3D.kernel3D.AlgoPolyLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoQuadric3D;
 import geogebra3D.kernel3D.Manager3D;
 
 /**
@@ -491,5 +492,10 @@ public interface Manager3DInterface {
 						String[] labels,
 						GeoConicND A,
 						GeoConicND B);
+			 
+			 public GeoPointND[] IntersectLineQuadric(
+					 String[] labels,
+                     GeoElement A,
+                     GeoElement B);
 
 }

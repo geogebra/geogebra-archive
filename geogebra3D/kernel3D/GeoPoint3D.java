@@ -764,11 +764,11 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		return isDefined;
 	}
 	
-	
+	/*
 	public void set(GeoPointND P){
 		set((GeoElement) P);
 	}
-	
+	*/
 	public void set(GeoElement geo) {
 
     	if (geo.isGeoPoint()) {
@@ -1158,6 +1158,11 @@ if (!geo.isGeoPoint()) return false;
 	
     public final boolean showInAlgebraView() {
         return (isDefined || showUndefinedInAlgebraView);
-    }  
+    }
+
+	public void set(GeoPointND p) {
+		// TODO ambiguous with set(GeoElement geo)
+		this.set((GeoElement)p);
+	}  
 
 }

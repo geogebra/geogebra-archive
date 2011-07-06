@@ -16,6 +16,7 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoPlane3D;
+import geogebra3D.kernel3D.GeoQuadric3D;
 
 
 /*
@@ -76,7 +77,21 @@ public  GeoElement[] process(Command c) throws MyError {
         					c.getLabels(),
         					(GeoLineND) arg[1],
         					(GeoConicND) arg[0]);
-
+                // Line - Quadric
+                else if (
+                    (ok[0] = (arg[0] .isGeoLine()))
+                        && (ok[1] = (arg[1] instanceof GeoQuadric3D)))
+    				return (GeoElement[])kernel.getManager3D().IntersectLineQuadric(
+                        c.getLabels(),
+                         arg[0],
+                         arg[1]);
+    			else if (
+                    (ok[0] = (arg[0] instanceof GeoQuadric3D))
+                        && (ok[1] = (arg[1] .isGeoLine())))
+    				return (GeoElement[])kernel.getManager3D().IntersectLineQuadric(
+                        c.getLabels(),
+                        arg[1],
+                        arg[0]);
         		//intersection conic/conic
         		else if (
         				(arg[0] instanceof GeoConicND)

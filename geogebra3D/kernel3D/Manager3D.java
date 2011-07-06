@@ -891,4 +891,14 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 
+	public GeoPointND[] IntersectLineQuadric(String[] labels, GeoElement A,
+			GeoElement B) {
+		AlgoIntersectLineQuadric3D algo = new AlgoIntersectLineQuadric3D(
+				cons,labels,(GeoLineND)A,(GeoQuadricND)B);
+		
+		
+		return algo.getIntersectionPoints();
+	}
+
+
 }
