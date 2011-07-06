@@ -80,6 +80,9 @@ public class AlgoCommonTangents extends AlgoElement {
             tangents[1].setUndefined();
             tangentPoints[1].setUndefined();
         }
+        if( tangents[2].isEqual(tangents[3]) ) {
+        	tangents[3].setUndefined();
+        }
     }
 
     public String getClassName() {
@@ -263,7 +266,7 @@ public class AlgoCommonTangents extends AlgoElement {
     public final String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        return app.getPlain("CommonTangentsOfTwoCircles", c1.getLabel(), c2.getLabel());
+        return app.getPlain("CommonTangentOfCirclesAandB", c1.getLabel(), c2.getLabel());
     }
 }
 

@@ -135,7 +135,7 @@ public class AlgoIncircle extends AlgoElement {
     public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        return app.getPlain("Incircle", A.getLabel(), B.getLabel(), C.getLabel());
+        return app.getPlain("IncircleOfTriangleABC", A.getLabel(), B.getLabel(), C.getLabel());
     }
 }
 
