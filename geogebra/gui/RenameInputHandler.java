@@ -1,7 +1,5 @@
 package geogebra.gui;
 
-import edu.jas.util.ArrayUtil;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
@@ -56,7 +54,6 @@ public class RenameInputHandler implements InputHandler {
 					inputValue);
 
 			// is there a geo with this name?
-			Construction cons = geo.getConstruction();
 			GeoElement existingGeo = kernel.lookupLabel(newLabel);						
 			
 			if (existingGeo != null) {
