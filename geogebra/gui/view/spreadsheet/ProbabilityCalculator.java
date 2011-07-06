@@ -20,6 +20,7 @@ import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -40,11 +41,15 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Dialog that displays the graphs of various probability density functions with
@@ -143,11 +148,13 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 	// colors
-	private static final Color COLOR_PDF = GeoGebraColorConstants.BLUE;  //blue
+	private static final Color COLOR_PDF = GeoGebraColorConstants.DARKBLUE;
+	private static final Color COLOR_PDF_FILL = GeoGebraColorConstants.BLUE;  
 	private static final Color COLOR_POINT = Color.BLACK;
-	private static final float opacityIntegral = 0.25f; // interval under curve
-	private static final float opacityDiscrete = 0.15f; // entire bar chart
-	private static final float opacityDiscrete2 = 0.5f; // bar chart interval
+	
+	private static final float opacityIntegral = 0.6f; 
+	private static final float opacityDiscrete = 0.0f; // entire bar chart
+	private static final float opacityDiscreteInterval = 0.6f; // bar chart interval
 
 
 
@@ -268,6 +275,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		setLabelArrays();
 		comboDistribution = new JComboBox(distLabels);
+		comboDistribution.setRenderer(new ListSeparatorRenderer());
 		comboDistribution.setMaximumRowCount(totalDistCount);
 		comboDistribution.setSelectedIndex(selectedDist);
 		comboDistribution.addActionListener(this);
@@ -444,7 +452,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		if(hasIntegral ){
 			integral  = createGeoFromString(expr);
-			integral.setObjColor(COLOR_PDF);
+			integral.setObjColor(COLOR_PDF_FILL);
 			integral.setAlphaValue(opacityIntegral);
 		}
 
@@ -463,8 +471,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		//System.out.println(text);
 		discreteIntervalGraph  = createGeoFromString(expr);
-		discreteIntervalGraph.setObjColor(COLOR_PDF);
-		discreteIntervalGraph.setAlphaValue(opacityDiscrete2);
+		discreteIntervalGraph.setObjColor(COLOR_PDF_FILL);
+		discreteIntervalGraph.setAlphaValue(opacityDiscreteInterval);
 		discreteIntervalGraph.updateCascade();
 
 		hideAllGeosFromViews();
@@ -1630,5 +1638,42 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 	}
 
+	
+	//============================================================
+	//           ComboBox Renderer with SEPARATOR
+	//============================================================
+	
+	class ListSeparatorRenderer extends JLabel implements ListCellRenderer {
+		
+		public static final String SEPARATOR = "SEPARATOR";
+	    JSeparator separator;
+
+	    public ListSeparatorRenderer() {
+	      setOpaque(true);
+	      setBorder(new EmptyBorder(1, 1, 1, 1));
+	      separator = new JSeparator(JSeparator.HORIZONTAL);
+	    }
+
+	    public Component getListCellRendererComponent(JList list, Object value,
+	        int index, boolean isSelected, boolean cellHasFocus) {
+	      String str = (value == null) ? "" : value.toString();
+	      if (SEPARATOR.equals(str)) {
+	        return separator;
+	      }
+	      if (isSelected) {
+	        setBackground(list.getSelectionBackground());
+	        setForeground(list.getSelectionForeground());
+	      } else {
+	        setBackground(list.getBackground());
+	        setForeground(list.getForeground());
+	      }
+	      setFont(list.getFont());
+	      setText(str);
+	      return this;
+	    }
+	  }
+
+	
+	
 
 }
