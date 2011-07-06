@@ -532,5 +532,8 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		return getCoordSys().getNormal();
 	}
 	
+	public double getMeasure() {
+		return Double.POSITIVE_INFINITY;
+	}
 	
 }

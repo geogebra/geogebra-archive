@@ -29,9 +29,8 @@ public class AlgoIntersectPlanePolygonalRegion extends AlgoIntersectLinePolygona
 	        
 	        input[0] = (GeoElement)plane;
 	        input[1] = (GeoElement)p;
-	        
-	        setDependencies(); // done by AlgoElement
-	    
+	        input[0].addAlgorithm(this);
+	        input[1].addAlgorithm(this);
 	}
 
 	@Override
@@ -41,7 +40,8 @@ public class AlgoIntersectPlanePolygonalRegion extends AlgoIntersectLinePolygona
 	
 	//try this
 	protected void setInputOutput() {
-		//do nothing first
+		input = new GeoElement[0]; //set in constructor of this algo
+		setDependencies();
 	}
 	
 	public String toString() {

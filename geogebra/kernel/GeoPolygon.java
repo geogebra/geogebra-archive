@@ -547,6 +547,10 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			return Double.NaN;			        	
 	}
 	
+	public double getMeasure() {
+		return getArea();
+	}
+	
 	public Path getBoundary() {
 		this.getConstruction().getKernel().setSilentMode(true);
 		

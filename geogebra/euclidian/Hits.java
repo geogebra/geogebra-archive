@@ -25,7 +25,7 @@ public class Hits extends ArrayList {
 	
 	
 	private int listCount;
-	private int polyCount;
+	protected int polyCount;
 	private int imageCount;
 	
 	
@@ -229,6 +229,17 @@ public class Hits extends ArrayList {
 	 * remove all polygons but one
 	 */
 	public void removeAllPolygonsButOne(){
+		int toRemove = polyCount-1;
+		for (int i = size() - 1 ; i >= 0 && toRemove>0; i-- ) {
+			GeoElement geo = (GeoElement) get(i);
+			if (geo.isGeoPolygon()){
+				remove(i);
+				toRemove--;
+			}
+		}
+	}
+	
+	public void removeAllPolygonsAndQuadricsButOne(){
 		int toRemove = polyCount-1;
 		for (int i = size() - 1 ; i >= 0 && toRemove>0; i-- ) {
 			GeoElement geo = (GeoElement) get(i);
@@ -490,6 +501,14 @@ public class Hits extends ArrayList {
 		return ret;
 	}
 
+	public Hits getHits(int nb){
+		Hits ret = new Hits();
+		for(int i=0;i<nb && i<size(); i++)
+			ret.add(get(i));
+		
+		return ret;
+	}
+	
 	//for 3D only
 	public Hits getTopHits(int depth, int geoN) {
 		return getTopHits(geoN);

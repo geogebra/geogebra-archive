@@ -5666,5 +5666,8 @@ public abstract class GeoElement
 	public boolean isGeoInterval() {
 		return false;
 	}
-
+	
+	public double getMeasure() {
+		return 0;
+	}
 }

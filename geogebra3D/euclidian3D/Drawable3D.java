@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableND;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Manager;
@@ -609,7 +610,7 @@ public abstract class Drawable3D extends DrawableND {
 					return 1;
 			}
 			
-			// check if one is on a path and the other not
+			// if both are points, check if one is on a path and the other not
 			if (this.getGeoElement().isGeoPoint() && d.getGeoElement().isGeoPoint()){
 				if ((((GeoPointND) this.getGeoElement()).hasPath())&&(!((GeoPointND) d.getGeoElement()).hasPath()))
 					return -1;
@@ -617,7 +618,15 @@ public abstract class Drawable3D extends DrawableND {
 					return 1;			 
 			}
 
-
+			//smaller object is more likely to be picked
+			//Note: all objects that are not yet have defined a measure have a default measure = 0
+			//so that they are not affected by this comparison.
+			if (Kernel.isGreater(d.getGeoElement().getMeasure(),this.getGeoElement().getMeasure()))
+				return -1;
+			if (Kernel.isGreater(this.getGeoElement().getMeasure(),d.getGeoElement().getMeasure()))
+				return 1;
+			
+			
 			//check if one is the child of the other
 			if (this.getGeoElement().isChildOf(d.getGeoElement()))
 				return -1;

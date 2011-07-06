@@ -116,7 +116,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	//SELECTED GEOS
 	/** 2D coord sys (plane, polygon, ...) */
-	protected ArrayList<GeoCoordSys2D> selectedCoordSys2D = new ArrayList<GeoCoordSys2D>();
+	protected ArrayList<GeoCoordSys2D> selectedCS2D = new ArrayList<GeoCoordSys2D>();
 	
 	private ArrayList<GeoPolygon3D> selectedPolygons3D = new ArrayList<GeoPolygon3D>();
 	
@@ -1014,14 +1014,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
 		if (!hitPoint) {
-			addSelectedCoordSys2D(hits, 1, false);
+			addselectedCS2D(hits, 1, false);
 		}
 
 		if (selPoints() == 1) {
 			if (selCoordSys2D() == 1) {
 				// fetch selected point and vector
 				GeoPointND[] points = getSelectedPointsND();
-				GeoCoordSys2D[] cs = getSelectedCoordSys2D();//TODO
+				GeoCoordSys2D[] cs = getselectedCS2D();//TODO
 				// create new plane
 				getKernel().getManager3D().Plane3D(null, points[0], (GeoCoordSys2D) cs[0]);
 				return true;
@@ -1226,7 +1226,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView.MODE_INTERSECTION_CURVE: // line through two points
 			
 			//only for two planes
-			previewDrawable = view3D.createPreviewLineFromPlanes(selectedCoordSys2D);
+			previewDrawable = view3D.createPreviewLineFromPlanes(selectedCS2D);
 			break;
 			
 		default:
@@ -1743,26 +1743,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (hits.isEmpty())
 				return false;	
 
-			//////////////////////////////////////////////////
-			/* TODO too many hits
-			if (!selectionPreview  && hits.size() > 2 - selGeos()) {
-				Hits goodHits = new Hits();
-				
-				hits.getHits(GeoCoordSys2D.class, tempArrayList);
-				goodHits.addAll(tempArrayList);
-				hits.getHits(GeoQuadric3D.class, tempArrayList);
-				goodHits.addAll(tempArrayList);
-			
-				hits = goodHits;
-				
-				
+			Application.debug(hits);
+			hits.addAll(0, selectedGeos);
+			hits.removeAllPolygonsAndQuadricsButOne();
+			hits = hits.getHits(2);
 	
-			}
-			*/
-
-			addSelectedCS2D(hits, 10, true);
-			addSelectedQuadric(hits, 10, true);
-
+			hits.getHits(GeoCoordSys2D.class, tempArrayList);
+			//addSelectedCS2D(tempArrayList, 10, true); //TODO remove it
+			hits.getHits(GeoQuadric3D.class, tempArrayList);
+			//addSelectedQuadric(tempArrayList, 10, true); //TODO remove it
+			
+			addSelectedCS2D(hits, 2, true);
+			addSelectedQuadric(hits, 2, true);
 			
 			if (selCS2D()>=2)  { // cs2D-cs2D
 				
@@ -1884,7 +1876,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	/** selected 2D coord sys */
 	@SuppressWarnings("unchecked")
-	protected ArrayList<GeoCoordSys2D> selectedCS2D = new ArrayList<GeoCoordSys2D>();	
 	
 	/** add hits to selectedCS2D
 	 * @param hits hits
@@ -2044,31 +2035,31 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * @param addMoreThanOneAllowed
 	 * @return if one has been added
 	 */
-	final protected int addSelectedCoordSys2D(Hits hits, int max,
+	final protected int addselectedCS2D(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCoordSys2D, GeoCoordSys2D.class);
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCS2D, GeoCoordSys2D.class);
 	}
 	
 	/**
 	 * @return number of selected 2D coord sys
 	 */
 	protected final int selCoordSys2D() {
-		return selectedCoordSys2D.size();
+		return selectedCS2D.size();
 	}
 	
 	/**
 	 * @return selected 2D coord sys
 	 */
 	@SuppressWarnings("unchecked")
-	final protected GeoCoordSys2D[] getSelectedCoordSys2D() {
-		GeoCoordSys2D[] cs = new GeoCoordSys2D[selectedCoordSys2D.size()];
+	final protected GeoCoordSys2D[] getselectedCS2D() {
+		GeoCoordSys2D[] cs = new GeoCoordSys2D[selectedCS2D.size()];
 		int i = 0;
-		Iterator it = selectedCoordSys2D.iterator();
+		Iterator it = selectedCS2D.iterator();
 		while (it.hasNext()) {
 			cs[i] = (GeoCoordSys2D) it.next();
 			i++;
 		}
-		clearSelection(selectedCoordSys2D);
+		clearSelection(selectedCS2D);
 		return cs;
 	}
 	

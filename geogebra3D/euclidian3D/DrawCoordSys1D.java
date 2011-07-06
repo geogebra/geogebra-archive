@@ -238,7 +238,8 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 			
 			if (selectedObjs.size()==0){
 				Hits hitPlanes = new Hits();
-				getView3D().getHits().getHits(GeoCoordSys2D.class, hitPlanes);
+				getView3D().getEuclidianController().getHighlightedgeos()
+					.getHits(GeoCoordSys2D.class, hitPlanes);
 				hitPlanes.removeAllPolygons();
 				if (hitPlanes.size()==2) {
 					GeoCoordSys2D firstPlane = (GeoCoordSys2D) hitPlanes.get(0);

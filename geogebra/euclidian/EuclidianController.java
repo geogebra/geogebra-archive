@@ -137,8 +137,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected static final int MOVE_BUTTON = 119; 
 
 	public static final int MOVE_ROTATE_VIEW = 120; // for 3D 
-	
-	protected static final int MOVE_IMPLICITPOLY = 121;
 
 	protected Application app;
 
@@ -169,8 +167,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected Point selectionStartPoint = new Point();
 
 	protected GeoConic tempConic;
-	
-	protected GeoImplicitPoly tempImplicitPoly;
 
 	protected GeoFunction tempFunction;
 
@@ -184,8 +180,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	//protected GeoSegment movedGeoSegment;
 
 	protected GeoConic movedGeoConic;
-	
-	protected GeoImplicitPoly movedGeoImplicitPoly;
 
 	protected GeoVector movedGeoVector;
 
@@ -1502,19 +1496,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			tempConic.set(movedGeoConic);
 		} 
-		else if (movedGeoElement.isGeoImplicitPoly()){
-			moveMode=MOVE_IMPLICITPOLY;
-			movedGeoImplicitPoly=(GeoImplicitPoly) movedGeoElement;
-			view.setShowMouseCoords(false);
-			view.setDragCursor();
-			
-			startPoint.setLocation(xRW, yRW);
-			if (tempImplicitPoly == null) {
-				tempImplicitPoly = new GeoImplicitPoly(movedGeoImplicitPoly);
-			}else
-				tempImplicitPoly.set(movedGeoImplicitPoly);
-			
-		}
 		else if (movedGeoElement.isGeoFunction()) {
 			moveMode = MOVE_FUNCTION;
 			movedGeoFunction = (GeoFunction) movedGeoElement;
@@ -1940,10 +1921,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case MOVE_CONIC:
 			moveConic(repaint);
-			break;
-			
-		case MOVE_IMPLICITPOLY:
-			moveImplicitPoly(repaint);
 			break;
 
 		case MOVE_FUNCTION:
@@ -2375,7 +2352,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	 * @param hits
 	 */
 	protected void switchModeForRemovePolygons(Hits hits){
-		hits.removePolygons();
+		switch(mode){
+		case EuclidianView.MODE_POINT:
+		case EuclidianView.MODE_POINT_ON_OBJECT:
+		case EuclidianView.MODE_INTERSECT:
+		case EuclidianView.MODE_INTERSECTION_CURVE:
+			break;
+		default:
+			hits.removePolygons();	
+		}
 	}
 	
 	
@@ -2682,12 +2667,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				hits = tempArrayList;						
 			}
 		}
-		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_ON_OBJECT ||
-				mode == EuclidianView.MODE_INTERSECT || mode == EuclidianView.MODE_INTERSECTION_CURVE) {
-			// include polygons in hits
-			view.setHits(mouseLoc);
-			hits = view.getHits();
-		}
+
 
 		if (hits.isEmpty()){
 			view.setHits(mouseLoc);
@@ -2763,7 +2743,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			repaintNeeded = true;
 		}		
 
-//		Application.debug(tempFullHits.getTopHits(2,10));
+		//Application.debug(tempFullHits.getTopHits(2,10));
 		//	manage highlighting & "snap to object"
 		//Application.debug("noHighlighting = "+noHighlighting);
 		//Application.debug("hits = "+hits.toString());		
@@ -3404,16 +3384,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			movedGeoConic.updateRepaint();
 		else
 			movedGeoConic.updateCascade();
-	}
-	
-	final protected void moveImplicitPoly(boolean repaint) {
-		movedGeoImplicitPoly.set(tempImplicitPoly);
-		movedGeoImplicitPoly.translate(xRW - startPoint.x, yRW - startPoint.y);		
-
-		if (repaint)
-			movedGeoImplicitPoly.updateRepaint();
-		else
-			movedGeoImplicitPoly.updateCascade();
 	}
 
 	final protected void moveFunction(boolean repaint) {
@@ -7064,7 +7034,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		
 		if (selectionPreview)
-			return addToHighlightedList(list, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
+			return addToHighlightedList(highlightedGeos, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
 		else
 			return addToSelectionList(list, hits.getHits(geoClass, handleAddSelectedArrayList), max, addMore);
 	}
@@ -7784,7 +7754,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return sliderValue;
 	}
 	
-	
-
+	public Hits getHighlightedgeos(){
+		return highlightedGeos.clone();
+	}
 
 }

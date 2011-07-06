@@ -1307,9 +1307,19 @@ public class Renderer implements GLEventListener {
           
         }
         
-        
         // sets the GeoElements in view3D
         hits3D.sort();
+        /* DEBUG
+        StringBuilder sbd = new StringBuilder();
+        sbd.append("hits~~~"+hits3D.toString());
+        for (int i = 0; i<drawHits.length; i++) {
+        	if (drawHits[i]!=null && drawHits[i].getGeoElement()!=null) {
+        		if (hits3D.contains(drawHits[i].getGeoElement())) {
+        	sbd.append("\n" + drawHits[i].getGeoElement().getLabel()+
+        			"~~~ zPickMin=" + drawHits[i].zPickMin +
+        			"  zPickMax=" + drawHits[i].zPickMax);}}
+        }
+		Application.debug(sbd.toString());*/
         view3D.setHits(hits3D);
        
         waitForPick = false;

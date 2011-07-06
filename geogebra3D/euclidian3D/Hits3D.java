@@ -5,7 +5,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra3D.euclidian3D.Drawable3D.drawableComparator;
 import geogebra3D.kernel3D.GeoSegment3D;
-
+import geogebra3D.kernel3D.GeoQuadric3D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -46,6 +46,8 @@ public class Hits3D extends Hits {
 
 	/** number of coord sys 2D */
 	private int cs2DCount;
+	/** number of quadrics 2D */
+	private int QuadCount;
 	
 	/**
 	 * common constructor
@@ -58,6 +60,7 @@ public class Hits3D extends Hits {
 		
 		// init counters
 		cs2DCount = 0;
+		QuadCount = 0;
 	}
 	
 	
@@ -67,6 +70,7 @@ public class Hits3D extends Hits {
 		Hits3D ret = (Hits3D) super.clone();
 		ret.topHits = this.topHits.clone();
 		ret.cs2DCount = cs2DCount;
+		ret.QuadCount = QuadCount;
 		
 		// TreeSets are not cloned because they are only used when the hits are constructed
 
@@ -80,6 +84,9 @@ public class Hits3D extends Hits {
 		if (geo instanceof GeoCoordSys2D) {
 			cs2DCount++;
 			//Application.debug("cs2DCount="+cs2DCount+"/"+(size()+1));
+		}
+		if (geo instanceof GeoQuadric3D) {
+			QuadCount++;
 		}
 		
 		super.add(geo);
@@ -264,5 +271,18 @@ public class Hits3D extends Hits {
 		super.removeAllPolygonsButOne();
 		topHits.clear(); //getTopHits() return this
 	}
+	
+	public void removeAllPolygonsAndQuadricsButOne(){
+		int toRemove = polyCount + QuadCount -1;
+		for (int i = size() - 1 ; i >= 0 && toRemove>0; i-- ) {
+			GeoElement geo = (GeoElement) get(i);
+			if (geo.isGeoPolygon() || geo instanceof GeoQuadric3D){
+				remove(i);
+				toRemove--;
+			}
+		}
+	}
+	
+	
 	
 }
