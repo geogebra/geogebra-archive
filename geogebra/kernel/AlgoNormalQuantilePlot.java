@@ -151,16 +151,18 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 		// create the z values
 		calculateZValues(size);
 
+		
 		// prepare output list. Pre-existing geos will be recycled, 
 		// but extra geos are removed when outputList is too long
 		outputList.setDefined(true);
-		for(int i = size; i< outputList.size(); i++){
+		for (int i = outputList.size() - 1; i >= size; i--) {
 			GeoElement extraGeo = outputList.get(i);
-			outputList.remove(extraGeo);
 			extraGeo.remove();
+			outputList.remove(extraGeo);
+			
 		}	
 		int oldListSize = outputList.size();
-
+		
 
 		// iterate through the sorted data and create the normal quantile points 
 
