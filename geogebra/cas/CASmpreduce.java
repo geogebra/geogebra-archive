@@ -218,7 +218,11 @@ public class CASmpreduce extends CASgeneric {
 
 	@Override
 	public void unbindVariable(String var) {
-		// TODO Auto-generated method stub
+		try {
+			mpreduce.evaluate("clear(" + var + ");");
+		} catch (Throwable e) {
+			System.err.println("Failed to clear variable from MPReduce: " + var);
+		}
 	}
 	
 	private synchronized void initMyMPReduceFunctions() {
