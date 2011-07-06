@@ -1,7 +1,11 @@
 package geogebra.cas;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +22,11 @@ public class CASmpreduce extends CASgeneric {
 	private ResourceBundle ggb2MPReduce;
 	private Interpreter2 mpreduce;
 	
+	// We escape any upper-letter words so Reduce doesn't switch them to lower-letter,
+	// however the following function-names should not be escaped
+	// (note: all functions here must be in lowercase!)
+	final private Set<String> predefinedFunctions = ExpressionNodeConstants.RESERVED_FUNCTION_NAMES;
+
 	public CASmpreduce(CASparser casParser) {
 		super(casParser);
 		getInterpreter();
@@ -34,7 +43,7 @@ public class CASmpreduce extends CASgeneric {
 	
 	/**
 	 * Evaluates a valid expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra notation.
-	 * @param casInput: in GeoGebraCAS syntax
+	 * @param casInput in GeoGebraCAS syntax
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
@@ -42,42 +51,46 @@ public class CASmpreduce extends CASgeneric {
 		// convert parsed input to MathPiper string
 		String exp = toMPReduceString(casInput);
 		
-		//MPReduce supports UNICODE and case sensitivity by adding a ! in front of a letter
-		StringBuilder strBuilder=new StringBuilder();
-		int strLength=exp.length();
-		for (int i=0; i< strLength; i++){
-			char character=exp.charAt(i);
-			
-			//lowercase letters don't need a !
-			if (Character.isLetter(character) && (((int) character)<97 || ((int) character)>122)){
-				//the character is not a lowercase ascii character
-				strBuilder.append("!");
-				strBuilder.append(character);
-			} else {
-				strBuilder.append(character);
+		// we need to escape any upper case letters and non-ascii codepoints with '!'
+		StringTokenizer tokenizer = new StringTokenizer(exp, "(),;[] ", true);
+		StringBuilder sb = new StringBuilder();
+		while (tokenizer.hasMoreElements())
+		{
+			String t = tokenizer.nextToken();
+			if (predefinedFunctions.contains(t.toLowerCase()))
+				sb.append(t);
+			else
+			{
+				for (int i = 0; i < t.length(); ++i)
+				{
+					char c = t.charAt(i);
+					if (Character.isLetter(c) && (((int) c) < 97 || ((int) c) > 122)) {
+						sb.append('!');
+						sb.append(c);
+					} else
+						sb.append(c);
+				}
 			}
 		}
-		exp=strBuilder.toString();
-		
+		exp = sb.toString();
+
 		String result = evaluateMPReduce(exp);
 		
 		//removing the !
-		strBuilder=new StringBuilder();
-		strLength=result.length();
-		for (int i=0; i< strLength; i++){
+		sb = new StringBuilder();
+		for (int i=0; i< result.length(); i++){
 			char character=result.charAt(i);
 			if (character=='!')
-				if (i+1<strLength){
+				if (i+1 < result.length()){
 					char nextChar=result.charAt(i+1);
 					if (Character.isLetter(nextChar) && (((int) nextChar)<97 || ((int) nextChar)>122)){
 						i++;
 						character=nextChar;
 					}
 				}
-			strBuilder.append(character);
+			sb.append(character);
 		}
-		
-		result=strBuilder.toString();
+		result = sb.toString();
 		
 		// convert result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
