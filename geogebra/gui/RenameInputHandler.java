@@ -15,8 +15,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.lang.ArrayUtils;
-
 public class RenameInputHandler implements InputHandler {
 	private GeoElement geo;
 
