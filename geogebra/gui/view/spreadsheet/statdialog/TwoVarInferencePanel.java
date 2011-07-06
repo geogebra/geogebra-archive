@@ -86,11 +86,12 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 	
 	// statistics
-	double t, P, df, lower, upper, mean, se, me, n1, n2;
+	double t, P, df, lower, upper, mean, se, me, n1, n2, diffMeans;
 	private TTestImpl tTestImpl;
 	private TDistributionImpl tDist;
 	private double mean1;
 	private boolean pooled = false;
+	private double mean2;
 	
 	
 	
@@ -386,8 +387,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 		String sample1 = app.getMenu("Sample") + " " + 1;
 		String sample2 = app.getMenu("Sample") + " " + 2;
-		String meanDiff = app.getMenu("MeanDifference");
-		String diffMean = app.getMenu("Difference of means");
+		String strMeanDiff = app.getMenu("MeanDifference");
+		String strDiffMean = app.getMenu("Difference of means");
 
 
 		StringBuilder sb = new StringBuilder();
@@ -397,10 +398,13 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		case StatComboPanel.PLOT_TTEST_2MEANS:
 		case StatComboPanel.PLOT_TTEST_PAIRED:
 
+			sb.append(app.getMenu("TTestDifferenceOfMeans"));
+			sb.append(app.getMenu("Results"));
+			sb.append("\n");
 			sb.append(strP + sep + nf.format(P));
 			sb.append("\n");
 			sb.append("\n");
-
+			sb.append(app.getMenu("Statistics"));
 			sb.append(strTestStat + sep + nf.format(t));
 			sb.append("\n");
 			sb.append(strDF + sep + nf.format(df));
@@ -462,6 +466,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 		
 		mean1 = StatUtils.mean(val1);
+		mean2 = StatUtils.mean(val2);
+		diffMeans = mean1 - mean2;
 		n1 = val1.length;
 		n2 = val2.length;
 		double v1 = stats1.getVariance();
@@ -484,8 +490,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 			double tCritical = tDist.inverseCumulativeProbability((confLevel + 1d)/2);
 			
 			me = tCritical*se;
-			upper = mean + me;
-			lower = mean - me;
+			upper = diffMeans + me;
+			lower = diffMeans - me;
 			
 			
 			if(pooled){

@@ -382,7 +382,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		if(cbDisplayType == null){
 			cbDisplayType = new JComboBox();
-			cbDisplayType.setRenderer(new ComboBoxRenderer());
+			cbDisplayType.setRenderer(new MyRenderer());
 			
 			
 		}else{
@@ -399,10 +399,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			cbDisplayType.addItem(plotMap.get(PLOT_STEMPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_FREQUENCYTABLE));
 			cbDisplayType.addItem(plotMap.get(PLOT_NORMALQUANTILE));
-			cbDisplayType.addItem(SEPARATOR);
+			cbDisplayType.addItem(MyRenderer.SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_ZTEST));
 			cbDisplayType.addItem(plotMap.get(PLOT_TTEST));
-			cbDisplayType.addItem(SEPARATOR);
+			cbDisplayType.addItem(MyRenderer.SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_ZINT));
 			cbDisplayType.addItem(plotMap.get(PLOT_TINT));
 			break;
@@ -416,11 +416,11 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		case StatDialog.MODE_MULTIVAR:
 			cbDisplayType.addItem(plotMap.get(PLOT_MULTIBOXPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_MULTIVARSTATS));
-			cbDisplayType.addItem(SEPARATOR);
+			cbDisplayType.addItem(MyRenderer.SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_ANOVA));
 			cbDisplayType.addItem(plotMap.get(PLOT_TTEST_2MEANS));
 			cbDisplayType.addItem(plotMap.get(PLOT_TTEST_PAIRED));
-			cbDisplayType.addItem(SEPARATOR);
+			cbDisplayType.addItem(MyRenderer.SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_TINT_2MEANS));
 			cbDisplayType.addItem(plotMap.get(PLOT_TINT_PAIRED));
 			break;
@@ -916,7 +916,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 
 		else if(source == cbDisplayType){
-			if(cbDisplayType.getSelectedItem().equals(SEPARATOR)){
+			if(cbDisplayType.getSelectedItem().equals(MyRenderer.SEPARATOR)){
 				cbDisplayType.setSelectedItem(plotMap.get(selectedPlot));
 			}
 			else{
@@ -1044,12 +1044,16 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 
+	//============================================================
+	//           ComboBox Renderer with SEPARATOR
+	//============================================================
 	
-	final String SEPARATOR = "SEPARATOR";
-	class ComboBoxRenderer extends JLabel implements ListCellRenderer {
+	class MyRenderer extends JLabel implements ListCellRenderer {
+		
+		public static final String SEPARATOR = "SEPARATOR";
 	    JSeparator separator;
 
-	    public ComboBoxRenderer() {
+	    public MyRenderer() {
 	      setOpaque(true);
 	      setBorder(new EmptyBorder(1, 1, 1, 1));
 	      separator = new JSeparator(JSeparator.HORIZONTAL);
@@ -1073,7 +1077,6 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	      return this;
 	    }
 	  }
-
 	
 	
 

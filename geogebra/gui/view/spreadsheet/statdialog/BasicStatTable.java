@@ -43,7 +43,7 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 	private void initStatTable(){
 		statMap = getStatMap();
 
-		statTable = new StatTable(app);
+		statTable = new StatTable();
 		statTable.setStatTable( getRowCount(), getRowNames(), getColumnCount(), getColumnNames());
 		this.removeAll();
 		this.add(statTable, BorderLayout.CENTER);
@@ -51,7 +51,7 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 
 
 	//=======================================================
-	// overide theses classes
+	// override theses classes
 
 	public String[] getRowNames(){
 		statMap = getStatMap();

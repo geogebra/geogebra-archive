@@ -23,12 +23,14 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.TDistributionImpl;
@@ -46,13 +48,12 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	private JLabel lblHypParameter, lblTailType, lblNull, lblConfLevel;
 	private JButton btnCalculate;
 	private MyTextField fldNullHyp;
-	private JTextArea taResult;
 	private JPanel cardProcedure;
 	private JPanel resultPanel;
 	private MyTextField fldConfLevel;
 	private JLabel lblResultHeader;
 	private JRadioButton btnLeft, btnRight, btnTwo;
-	
+	private JComboBox cbAlternativeHyp;
 
 	// test type (tail)
 	private static final String tail_left = "<";
@@ -68,9 +69,11 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	private TTestImpl tTestImpl;
 	private TDistributionImpl tDist;
 
-	
-	private int selectedPlot;
+
+	private int selectedPlot = StatComboPanel.PLOT_TINT;
 	private boolean isIniting;
+	private int altHyp;
+	private StatTable resultTable;
 
 	/**
 	 * Construct a OneVarInference panel
@@ -83,10 +86,9 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		this.statDialog = statDialog;
 
 		this.setLayout(new BorderLayout());
-		this.add(createMainPanel(), BorderLayout.NORTH);
+		this.add(createMainPanel(), BorderLayout.CENTER);
 
 		this.setMinimumSize(new Dimension(50,50));
-		//this.setBorder(BorderFactory.createEtchedBorder());
 		this.setLabels();
 		isIniting = false;
 
@@ -116,6 +118,10 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		btnTwo.addActionListener(this);
 		btnTwo.setSelected(true);
 
+		cbAlternativeHyp = new JComboBox();
+		cbAlternativeHyp.addActionListener(this);
+
+
 		lblNull = new JLabel();
 		lblHypParameter = new JLabel();
 		lblTailType = new JLabel();
@@ -135,58 +141,135 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		btnCalculate = new JButton();
 
 		
-		// Result panel
-		taResult = new JTextArea("");
-		taResult.setFont(app.getPlainFont());
-		taResult.setLineWrap(true);
-		taResult.setEditable(false);
-		taResult.setRows(6);
-		taResult.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createEtchedBorder(),
-				BorderFactory.createEmptyBorder(5,5,5,5)));
 
-		//taResult.setPreferredSize(new Dimension(-1,60));
-		//	JScrollPane resultScroller = new JScrollPane(taResult); 
-		//	resultScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		// Result panel
+		resultTable = new StatTable();
+		setResultTable();
+		resultTable.setBorder(BorderFactory.createEtchedBorder());
 		lblResultHeader = new JLabel();
-	//	resultPanel = blPanel(taResult,null, flowPanel(btnCalculate),null,null);	
-		resultPanel = blPanel(taResult);	
+		resultPanel = new JPanel(new BorderLayout());
+		resultPanel.add(resultTable, BorderLayout.NORTH);
 		resultPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-		
-		// Test panel		
+
+		// Test panel	
 		Box testPanel =  boxYPanel(
-				flowPanel(lblNull),
-				flowPanel(lblHypParameter, fldNullHyp ),
+				flowPanel(lblNull), 
+				flowPanel(Box.createRigidArea(new Dimension(10,0)), lblHypParameter, fldNullHyp),
 				flowPanel(lblTailType),
-				flowPanel(btnLeft, btnRight, btnTwo)
+				flowPanel(Box.createRigidArea(new Dimension(10,0)), cbAlternativeHyp)
 		);
 
 
 		// CI panel		
+		
 		Box intPanel = boxYPanel(
-				flowPanel(lblConfLevel),
-				flowPanel(fldConfLevel) 
+				flowPanel(lblConfLevel, fldConfLevel)
 		);
 
 		cardProcedure = new JPanel(new CardLayout());
 		cardProcedure.add("testPanel", testPanel);
-		cardProcedure.add("intervalPanel", intPanel);
+		cardProcedure.add("intervalPanel", flowPanel(lblConfLevel, fldConfLevel));
 
 		((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "testPanel");
 
-		JPanel procedurePanel = blPanel(null, cardProcedure,null, null, null);
+		JPanel procedurePanel = blPanel(null, cardProcedure, null, null, null);
+		procedurePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
 		
-		JPanel subMainPanel = new JPanel(new BorderLayout());
-		subMainPanel.add(procedurePanel, BorderLayout.WEST);
-		subMainPanel.add(resultPanel, BorderLayout.CENTER);
+	//	Box subMainPanel = boxYPanel(procedurePanel,resultPanel);
+		
+	//	subMainPanel.add(procedurePanel, BorderLayout.NORTH);
+	//	subMainPanel.add(resultPanel, BorderLayout.CENTER);
 
-		JPanel mainPanel = blPanel(null,subMainPanel,null,null,null);
+	//	JPanel mainPanel = new JPanel(new BorderLayout());
+	//	mainPanel.add(procedurePanel, BorderLayout.WEST);
+	//	mainPanel.add(resultPanel, BorderLayout.EAST);
 
+		JPanel mainPanel = flowPanel(procedurePanel, resultPanel);
 
-		return subMainPanel;
+		return mainPanel;
 
 	}
+
+
+	private void  setResultTable(){
+
+		switch (selectedPlot){
+		case StatComboPanel.PLOT_ZTEST:
+		case StatComboPanel.PLOT_TTEST:
+		{
+			String[] rowNames = 
+			{
+					app.getMenu("PValue"),
+					app.getMenu("TStatistic"),
+					"",
+					app.getMenu("StandardError.short")
+			};
+
+			resultTable.setStatTable(rowNames.length, rowNames, 1, null);
+		}
+			break;
+
+		case StatComboPanel.PLOT_ZINT:
+		case StatComboPanel.PLOT_TINT:
+		{
+			String[] rowNames2 = 
+			{
+					app.getMenu("LowerLimit"),
+					app.getMenu("LowerLimit"),
+					app.getMenu("Mean"),
+					app.getMenu("MarginOfError"),
+					"",
+					app.getMenu("StandardError.short")
+			};
+			resultTable.setStatTable(rowNames2.length, rowNames2, 1, null);
+			break;
+		}
+		};
+
+	}
+
+
+	private void updateResultTable(){
+		
+		NumberFormat nf = statDialog.getNumberFormat();
+		DefaultTableModel model = resultTable.getModel();
+
+		evaluate();
+		
+		switch (selectedPlot){
+		case StatComboPanel.PLOT_ZTEST:
+		case StatComboPanel.PLOT_TTEST:
+			
+			model.setValueAt(nf.format(P),0,0);
+			model.setValueAt(nf.format(t), 1, 0);
+			model.setValueAt("", 2, 0);
+			model.setValueAt(nf.format(se), 3, 0);
+			break;
+
+		case StatComboPanel.PLOT_ZINT:
+		case StatComboPanel.PLOT_TINT:
+
+			model.setValueAt(nf.format(lower),0,0);
+			model.setValueAt(nf.format(upper), 1, 0);
+			model.setValueAt(nf.format(mean), 2, 0);
+			model.setValueAt(nf.format(me), 3, 0);
+			model.setValueAt("", 4, 0);
+			model.setValueAt(nf.format(se), 5, 0);
+
+			break;
+		};
+
+
+	}
+
+
+
+
+
+
+
 
 
 
@@ -239,9 +322,23 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 		updateNumberField(fldNullHyp, hypMean);
 		updateNumberField(fldConfLevel, confLevel);
-		updateResultPanel();
-
+		updateCBAlternativeHyp();
+		setResultTable();
+		updateResultTable();		
 	}
+
+
+	private void updateCBAlternativeHyp(){
+
+		NumberFormat nf = statDialog.getNumberFormat();
+
+		cbAlternativeHyp.removeAllItems();
+		cbAlternativeHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_right + " " + nf.format(hypMean));
+		cbAlternativeHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_left + " " + nf.format(hypMean));
+		cbAlternativeHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_two + " " + nf.format(hypMean));
+		cbAlternativeHyp.setSelectedIndex(altHyp);
+	}
+
 
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;
@@ -250,8 +347,16 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
 		}
-		else if(source == btnLeft || source == btnRight || source == btnTwo){
-			tail = ((JRadioButton)source).getText();
+		
+		else if(source == cbAlternativeHyp){
+			
+			if(cbAlternativeHyp.getSelectedIndex() == 0)
+				tail = tail_right;
+			else if(cbAlternativeHyp.getSelectedIndex() == 1)
+				tail = tail_left;
+			else
+				tail = tail_two;
+
 			evaluate();
 			updateGUI();
 		}
@@ -269,12 +374,11 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 			updateGUI();
 		}
 
-		if(source == fldNullHyp){
+		else if(source == fldNullHyp){
 			hypMean = value;
 			evaluate();
 			updateGUI();
 		}
-
 	}
 
 
@@ -284,77 +388,20 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		doTextFieldActionPerformed((JTextField)(e.getSource()));
 	}
 
-	
+
 	public void setSelectedPlot(int selectedPlot){
 		this.selectedPlot = selectedPlot;
 		updateGUI();
 	}
 
 	public void updatePanel(){
-		evaluate();
+		//evaluate();
 		updateGUI();
+		updateResultTable();
 	}
 
 
-	public void updateResultPanel(){
-
-		NumberFormat nf = statDialog.getNumberFormat();
-		evaluate();
-
-		String strP = app.getMenu("PValue");
-		String strTestStat = app.getMenu("TStatistic");
-		String strUpper = app.getMenu("UpperLimit");
-		String strLower = app.getMenu("LowerLimit");
-		String strME = app.getMenu("MarginOfError");
-		String strSE = app.getMenu("StandardError.short");
-		String strConfLevel = app.getMenu("ConfidenceLevel");
-		String strDF = app.getMenu("DegreesOfFreedom.short");
-		String statLabel = app.getMenu("Statistics") ;
-		//String se = app.getMenu("StandardError");
-
-
-		StringBuilder sb = new StringBuilder();
-		String sep = " = ";
-
-		switch (selectedPlot){
-		case StatComboPanel.PLOT_ZTEST:
-		case StatComboPanel.PLOT_TTEST:
-
-			sb.append(strP + sep + nf.format(P));
-			sb.append("\n");
-			sb.append("\n");
-
-			sb.append(strTestStat + sep + nf.format(t));
-			sb.append("\n");
-			sb.append(strDF + sep + nf.format(df));
-			sb.append("\n");
-			sb.append(strSE + sep + nf.format(se));
-
-			break;
-
-		case StatComboPanel.PLOT_ZINT:
-		case StatComboPanel.PLOT_TINT:
-
-			sb.append(nf.format(mean) + " \u00B1 " + nf.format(me));
-			sb.append("\n");
-			sb.append(strLower + sep + nf.format(lower));
-			sb.append("\n");
-			sb.append(strUpper + sep + nf.format(upper));
-			sb.append("\n");
-
-			sb.append("\n");
-			sb.append(strDF + sep + nf.format(df));
-			sb.append("\n");
-			sb.append(strSE + sep + nf.format(se));
-
-			break;
-
-		}
-
-		taResult.setText(sb.toString());
-	}
-
-
+	
 
 
 	//============================================================
@@ -428,14 +475,14 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		return nv.getDouble();
 	}
 
-	
+
 
 	//============================================================
 	//           GUI  Utilities
 	//============================================================
 
 
-	private JPanel flowPanel(JComponent... comp){
+	private JPanel flowPanel(Component... comp){
 		JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		for(int i = 0; i<comp.length; i++){
 			p.add(comp[i]);
