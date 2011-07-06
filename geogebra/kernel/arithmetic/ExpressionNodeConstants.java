@@ -1,5 +1,9 @@
 package geogebra.kernel.arithmetic;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public interface ExpressionNodeConstants {
 
 	
@@ -126,4 +130,13 @@ public interface ExpressionNodeConstants {
 	
     // logarithm for arbitrary base log(b, x)
     public static final int LOGB = 580;
+    
+    public static final Set<String> RESERVED_FUNCTION_NAMES = new HashSet<String>(Arrays.asList("abs",
+		"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan",
+		"acos", "arcos", "arccos", "asin", "arcsin", "atan", "arctan", 
+		"cosh", "sinh", "tanh", "acosh", "arcosh", "arccosh", "asinh",
+		"arcsinh", "atanh", "arctanh", "atan2", "erf",
+		"floor", "ceil", "round", "random", "conjugate", "arg",
+		"gamma", "gammaRegularized", "beta", "betaRegularized", 
+		"sec", "csc", "cosec", "cot", "sech", "csch", "coth"));
 }

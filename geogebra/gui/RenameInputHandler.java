@@ -1,14 +1,21 @@
 package geogebra.gui;
 
+import edu.jas.util.ArrayUtil;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.CopyPaste;
 import geogebra.util.Unicode;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
+
+import org.apache.commons.lang.ArrayUtils;
 
 public class RenameInputHandler implements InputHandler {
 	private GeoElement geo;
@@ -17,14 +24,12 @@ public class RenameInputHandler implements InputHandler {
 
 	private Application app;
 
-	private static String[] invalidFunctionNames = { "x", "y", "abs",
-			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan",
-			"acos", "arcos", "arccos", "asin", "arcsin", "atan", "arctan", 
-			"cosh", "sinh", "tanh", "acosh", "arcosh", "arccosh", "asinh",
-			"arcsinh", "atanh", "arctanh", "atan2", "erf",
-			"floor", "ceil", "round", "random", "conjugate", "arg",
-			"gamma", "gammaRegularized", "beta", "betaRegularized", 
-			"sec", "csc", "cosec", "cot", "sech", "csch", "coth", Unicode.IMAGINARY };
+	private static Set<String> invalidFunctionNames = new HashSet<String>(ExpressionNodeConstants.RESERVED_FUNCTION_NAMES);
+	static
+	{
+		invalidFunctionNames.addAll(Arrays.asList("x", "y", Unicode.IMAGINARY));
+	}
+
 
 	public RenameInputHandler(Application app, GeoElement geo, boolean storeUndo) {
 		this.app = app;
@@ -84,10 +89,8 @@ public class RenameInputHandler implements InputHandler {
 
 		name = name.toLowerCase(Locale.US);
 		if (geo.isGeoFunction()) {
-			for (int i = 0; i < invalidFunctionNames.length; i++) {
-				if (invalidFunctionNames[i].equals(name))
+			if (invalidFunctionNames.contains(name))
 					return false;
-			}
 		}
 
 		return true;
