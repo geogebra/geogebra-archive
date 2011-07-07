@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
@@ -29,6 +30,7 @@ import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.AlgoIntersectCS2D2D;
+import geogebra3D.kernel3D.AlgoIntersectPlaneQuadric;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -1227,7 +1229,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView.MODE_INTERSECTION_CURVE: // line through two points
 			
 			//only for two planes
-			previewDrawable = view3D.createPreviewLineFromPlanes(selectedCS2D);
+			
+			//previewDrawable = view3D.createPreviewLineFromPlanes(selectedCS2D);
+			view3D.createPreviewConic();
+			previewDrawable = view3D.createPreviewLine();
 			break;
 			
 		default:
@@ -1756,6 +1761,44 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
 					hits.remove(1);
 			hits = hits.getHits(2);
+			
+			if(hits.size()==2){
+				if (hits.get(0) instanceof GeoPlane3D && hits.get(1) instanceof GeoPlane3D) {
+					GeoCoordSys2D firstPlane = (GeoCoordSys2D) hits.get(0);
+					GeoCoordSys2D secondPlane = (GeoCoordSys2D) hits.get(1);
+					Coords[] intersection = CoordMatrixUtil.intersectPlanes(
+							firstPlane.getCoordSys().getMatrixOrthonormal(),
+							secondPlane.getCoordSys().getMatrixOrthonormal());
+					view3D.previewLine.setCoord(intersection[0], intersection[1]);
+					view3D.previewLine.setEuclidianVisible(true);
+					view3D.previewConic.setEuclidianVisible(false);
+					
+					view3D.setPreview(view3D.previewDrawLine3D);
+				} else if (hits.get(0) instanceof GeoPlane3D && hits.get(1) instanceof GeoQuadric3D){
+					AlgoIntersectPlaneQuadric.intersectPlaneQuadric(
+							(GeoPlane3D) hits.get(0),
+							(GeoQuadric3D) hits.get(1),
+							view3D.previewConic);
+					view3D.previewConic.setEuclidianVisible(true);
+					view3D.previewLine.setEuclidianVisible(false);
+					
+					view3D.setPreview(view3D.previewDrawConic3D);
+				} else if (hits.get(1) instanceof GeoPlane3D && hits.get(0) instanceof GeoQuadric3D){
+					AlgoIntersectPlaneQuadric.intersectPlaneQuadric(
+							(GeoPlane3D) hits.get(1),
+							(GeoQuadric3D) hits.get(0),
+							view3D.previewConic);
+					view3D.previewConic.setEuclidianVisible(true);
+					view3D.previewLine.setEuclidianVisible(false);
+					view3D.setPreview(view3D.previewDrawConic3D);
+				} else {
+					view3D.previewLine.setEuclidianVisible(false);
+					view3D.previewConic.setEuclidianVisible(false);
+				}
+			} else {
+				view3D.previewLine.setEuclidianVisible(false);
+				view3D.previewConic.setEuclidianVisible(false);
+			}
 	
 			addSelectedCS2D(hits, 2, true);
 			addSelectedQuadric(hits, 2, true);

@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoConicND;
@@ -17,7 +18,7 @@ import geogebra3D.kernel3D.GeoConic3D;
  * Drawable for GeoConic3D
  *
  */
-public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
+public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Previewable {
 	
 	
 	
@@ -445,6 +446,26 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 		case 1: //v
 			return Math.PI/2;
 		}
+		
+	}
+
+
+
+
+
+
+	public void updatePreview() {
+		
+		setWaitForUpdate();
+	}
+
+
+
+
+
+
+	public void updateMousePos(double x, double y) {
+		// TODO Auto-generated method stub
 		
 	}
 	

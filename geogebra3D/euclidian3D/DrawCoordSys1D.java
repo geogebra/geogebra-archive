@@ -38,6 +38,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoElement cs1D){
 		
 		super(a_view3D, cs1D);
+		previewFromType = 0;
 	}	
 	
 	
@@ -216,8 +217,11 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 
 
 	public void updatePreview() {
-		
-		switch(previewFromType) {
+		//getGeoElement().setEuclidianVisible(true);
+		setWaitForUpdate();
+		/*switch(previewFromType) {
+		case 0:
+			setWaitForUpdate();
 		case 1: //2 points or 1 point
 			if (selectedObjs.size()==2){
 				GeoPointND firstPoint = (GeoPointND) selectedObjs.get(0);
@@ -281,7 +285,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		
 		//Application.debug("selectedPoints : "+selectedPoints+" -- isEuclidianVisible : "+getGeoElement().isEuclidianVisible());
 	
-			
+			*/
 	}
 	
 	

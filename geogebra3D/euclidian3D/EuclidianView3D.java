@@ -34,8 +34,10 @@ import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterCursor;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
+import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPlane3DConstant;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -163,6 +165,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//preview
 	private Previewable previewDrawable;
 	private GeoPoint3D cursor3D;
+	public DrawLine3D previewDrawLine3D;
+	public DrawConic3D previewDrawConic3D;
+	public GeoLine3D previewLine;
+	public GeoConic3D previewConic;
 	private GeoElement[] cursor3DIntersectionOf = new GeoElement[2]; 
 	
 	//cursor
@@ -2143,13 +2149,31 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	@SuppressWarnings("rawtypes")
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 
-		return new DrawLine3D(this, selectedPoints);
+		previewDrawLine3D = new DrawLine3D(this, selectedPoints);
+		return previewDrawLine3D;
 		
 	}
 
+	public Previewable createPreviewLine(){
+		previewLine = new GeoLine3D(getKernel().getConstruction());
+		previewLine.setObjColor(Color.YELLOW);
+		previewDrawLine3D = new DrawLine3D(this, previewLine);
+		return previewDrawLine3D;
+		
+	}
+	
 	public Previewable createPreviewLineFromPlanes(ArrayList selectedPlanes){
 
-		return new DrawLine3D(this, selectedPlanes, 2);
+		previewDrawLine3D = new DrawLine3D(this, selectedPlanes, 2);
+		return previewDrawLine3D;
+		
+	}
+	
+	public Previewable createPreviewConic(){
+		previewConic = new GeoConic3D(getKernel().getConstruction());
+		previewConic.setObjColor(Color.YELLOW);
+		previewDrawConic3D = new DrawConic3D(this, previewConic);
+		return previewDrawConic3D;
 		
 	}
 	
