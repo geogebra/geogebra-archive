@@ -429,7 +429,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	
 	public GeoElement copyInternal(Construction cons) {						
 		GeoPolygon ret = new GeoPolygon(cons, null); 
-		ret.points = GeoElement.copyPoints(cons, (GeoPoint[]) points);		
+		ret.points = GeoElement.copyPointsND(cons, (GeoPointND[]) points);		
 		ret.set(this);
 				
 		return ret;		
