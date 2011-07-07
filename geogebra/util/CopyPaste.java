@@ -19,6 +19,7 @@ import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.AlgoPolygonRegular;
 import geogebra.kernel.AlgoPolyLine;
 import geogebra.kernel.GeoPolyLine;
+import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
@@ -57,8 +58,8 @@ public class CopyPaste {
 	}
 
 	/**
-	 * copyToXML - Step 0.33
-	 * Remove fixed geos
+	 * copyToXML - Step 1
+	 * Remove fixed sliders
 	 * @param geos input and output
 	 */
 	public static void removeFixedSliders(ArrayList<ConstructionElement> geos) {
@@ -72,10 +73,34 @@ public class CopyPaste {
 				}
 		}
 	}
+	
+	/**
+	 * copyToXML - Step 1.5 (temporary)
+	 * currently we remove all geos which depend on the axes
+	 * TODO: make geos dependent on GeoAxis objects copiable again
+	 * (this is not easy as there is a bug when copy & paste something
+	 * which depends on xAxis or yAxis, then copy & paste something
+	 * else, points may be repositioned)
+	 * 
+	 */
+	public static void removeDependentFromAxes(ArrayList<ConstructionElement> geos, Application app) {
+
+		ConstructionElement geo;
+		for (int i = geos.size() - 1; i >= 0; i--)
+		{
+			geo = (ConstructionElement) geos.get(i);
+			if (geo.getAllIndependentPredecessors().contains(app.getKernel().getXAxis())) {
+				geos.remove(i);
+			} else if (geo.getAllIndependentPredecessors().contains(app.getKernel().getYAxis())) {
+				geos.remove(i);
+			}
+		}
+	}
 
 	/**
-	 * copyToXML - Step 0.5
-	 * Add subgeos of geos like points of a segment or line or polygon 
+	 * copyToXML - Step 2
+	 * Add subgeos of geos like points of a segment or line or polygon
+	 * These are copied anyway but this way they won't be hidden 
 	 *  
 	 * @param geos input and output 
 	 */
@@ -173,12 +198,13 @@ public class CopyPaste {
 	}
 
 	/**
-	 * copyToXML - Step 1
+	 * copyToXML - Step 2.5
 	 * Drop the GeoElements in ArrayList which are depending from outside
+	 * Deprecated
 	 *  
 	 * @param geos input and output
 	 */
-	public static void dropGeosDependentFromOutside(ArrayList<ConstructionElement> geos) {
+	/*public static void dropGeosDependentFromOutside(ArrayList<ConstructionElement> geos) {
 		
 		ConstructionElement geo;
 		GeoElement geo2;
@@ -262,16 +288,18 @@ public class CopyPaste {
 				}
 			}
 		}
-	}
+	}*/
 
 	/**
-	 * copyToXML - Step 2
+	 * copyToXML - Step 3
 	 * Add geos which might be intermediates between our existent geos
+	 * And also add all predecessors of our geos except GeoAxis objects
+	 * (GeoAxis objects should be dealt with later - we suppose they are always on)
 	 *  
 	 * @param geos input and output
-	 * @return just the intermediate geos for future handling
+	 * @return just the predecessor and intermediate geos for future handling
 	 */
-	public static ArrayList<ConstructionElement> addIntermediateGeos(ArrayList<ConstructionElement> geos) {
+	public static ArrayList<ConstructionElement> addPredecessorGeos(ArrayList<ConstructionElement> geos) {
 
 		ArrayList<ConstructionElement> ret = new ArrayList<ConstructionElement>();
 
@@ -285,8 +313,7 @@ public class CopyPaste {
 	    	it = ts.iterator();
 	    	while (it.hasNext()) {
 	    		geo2 = it.next();
-	    		if (!ret.contains(geo2) && !geos.contains(geo2)) {
-	    			// note: may contain independent GeoNumeric input of AlgoPolygonRegular or AlgoCirclePointRadius, too
+	    		if (!ret.contains(geo2) && !geos.contains(geo2) && !(geo2 instanceof GeoAxis)) {
 	    			ret.add(geo2);
 	    		}
 	    	}  
@@ -296,9 +323,10 @@ public class CopyPaste {
 	}
 
 	/**
-	 * copyToXML - Step 3
+	 * copyToXML - Step 4
 	 * Add the algos which belong to our selected geos
 	 * Also add the geos which might be side-effects of these algos
+	 * Also add algos which come from GeoAxis objects but output some of our geos
 	 *  
 	 * @param conels input and output
 	 * @return the possible side-effect geos
@@ -421,8 +449,7 @@ public class CopyPaste {
 	}
 
 	/**
-	 * This method saves independent geos - and those which
-	 * depend only on these - as XML
+	 * This method saves geos and all predecessors of them in XML 
 	 */
 	public static void copyToXML(Application app, ArrayList<GeoElement> geos) {
 
@@ -437,13 +464,21 @@ public class CopyPaste {
 		geoslocal.addAll(geos);
 		removeFixedSliders(geoslocal);
 		
+		if (geoslocal.isEmpty())
+			return;
+		
+		removeDependentFromAxes(geoslocal, app);
+		
+		if (geoslocal.isEmpty())
+			return;
+		
 		addSubGeos(geoslocal);
-		dropGeosDependentFromOutside(geoslocal);
+		//dropGeosDependentFromOutside(geoslocal);
 		
 		if (geoslocal.isEmpty())
 			return;
 
-		ArrayList<ConstructionElement> geostohide = addIntermediateGeos(geoslocal);
+		ArrayList<ConstructionElement> geostohide = addPredecessorGeos(geoslocal);
 		geostohide.addAll(addAlgosDependentFromInside(geoslocal));
 
 		// store undo info
@@ -523,6 +558,8 @@ public class CopyPaste {
 		if (!app.getActiveEuclidianView().getEuclidianController().mayPaste())
 			return;
 
+		Application.debug(copiedXML.toString());
+		
 		app.getActiveEuclidianView().getEuclidianController().clearSelections();
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
 		app.getGgbApi().evalXML(copiedXML.toString());
