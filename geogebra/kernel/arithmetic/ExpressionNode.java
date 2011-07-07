@@ -3054,15 +3054,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
         		case STRING_TYPE_MPREDUCE:
         			// we need to protect x(A) as a constant in the CAS
         			// see http://www.geogebra.org/trac/ticket/662
-        			// see GeoGebraCAS.insertSpecialChars()
-        			sb.append("x");		        		
-        			sb.append(UNICODE_PREFIX);
-        			sb.append("40"); // decimal unicode for (
-        			sb.append(UNICODE_DELIMITER);
-        			sb.append(leftStr);
-        			sb.append(UNICODE_PREFIX);
-        			sb.append("41"); // decimal unicode for )
-        			sb.append(UNICODE_DELIMITER);
+        			// see http://www.geogebra.org/trac/ticket/922
+        			sb.append("xcoord(");
+					sb.append(leftStr);
+					sb.append(')');
         			break;
         			
 				default:
@@ -3094,15 +3089,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
         		case STRING_TYPE_MPREDUCE:
         			// we need to protect x(A) as a constant in the CAS
         			// see http://www.geogebra.org/trac/ticket/662
-        			// see GeoGebraCAS.insertSpecialChars()
-        			sb.append("y");		        		
-        			sb.append(UNICODE_PREFIX);
-        			sb.append("40"); // decimal unicode for (
-        			sb.append(UNICODE_DELIMITER);
-        			sb.append(leftStr);
-        			sb.append(UNICODE_PREFIX);
-        			sb.append("41"); // decimal unicode for )
-        			sb.append(UNICODE_DELIMITER);
+        			// see http://www.geogebra.org/trac/ticket/922
+        			sb.append("ycoord(");
+					sb.append(leftStr);
+					sb.append(')');
         			break;
 
 				default:
@@ -3130,15 +3120,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
         		case STRING_TYPE_MPREDUCE:
         			// we need to protect x(A) as a constant in the CAS
         			// see http://www.geogebra.org/trac/ticket/662
-        			// see GeoGebraCAS.insertSpecialChars()
-        			sb.append("z");		        		
-        			sb.append(UNICODE_PREFIX);
-        			sb.append("40"); // decimal unicode for (
-        			sb.append(UNICODE_DELIMITER);
-        			sb.append(leftStr);
-        			sb.append(UNICODE_PREFIX);
-        			sb.append("41"); // decimal unicode for )
-        			sb.append(UNICODE_DELIMITER);
+        			// see http://www.geogebra.org/trac/ticket/922
+        			sb.append("zcoord(");
+					sb.append(leftStr);
+					sb.append(')');
         			break;
 
 				default:
