@@ -37,7 +37,7 @@ implements ExpressionValue {
     
      
     // list of arguments
-    private ArrayList args = new ArrayList();
+    private ArrayList<ExpressionNode> args = new ArrayList<ExpressionNode>();
     private String name; // internal command name (in English)
     
     private Kernel kernel;
@@ -102,18 +102,12 @@ implements ExpressionValue {
     }
     
     public ExpressionNode [] getArguments() {
-    	int size = args.size();
-    	ExpressionNode [] ret = new ExpressionNode[size];
-        
-        for (int i=0; i < args.size(); i++) {        
-        	ret[i] = (ExpressionNode) args.get(i);
-        }
-        return ret;                
+    	return args.toArray(new ExpressionNode[0]);
     }
     
   
     public ExpressionNode getArgument(int i) {
-    	return (ExpressionNode) args.get(i);        
+    	return args.get(i);        
     }
     
     public void setArgument(int i, ExpressionNode en) {
@@ -267,7 +261,7 @@ implements ExpressionValue {
         // copy arguments     
         int size = args.size();
         for (int i=0; i < size; i++) {
-            c.addArgument(((ExpressionNode) args.get(i)).getCopy(kernel));
+            c.addArgument(args.get(i).getCopy(kernel));
         }
         return c;
     }
@@ -279,7 +273,7 @@ implements ExpressionValue {
     public void replaceChildrenByValues(GeoElement geo) {                                                
         int size = args.size();
         for (int i = 0 ; i < size; i++) {
-        	((ExpressionNode)args.get(i)).replaceChildrenByValues(geo);                	                	
+        	args.get(i).replaceChildrenByValues(geo);                	                	
         }         
     }
 
