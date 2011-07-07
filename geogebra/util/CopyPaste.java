@@ -326,7 +326,6 @@ public class CopyPaste {
 	 * copyToXML - Step 4
 	 * Add the algos which belong to our selected geos
 	 * Also add the geos which might be side-effects of these algos
-	 * Also add algos which come from GeoAxis objects but output some of our geos
 	 *  
 	 * @param conels input and output
 	 * @return the possible side-effect geos
@@ -558,8 +557,6 @@ public class CopyPaste {
 		if (!app.getActiveEuclidianView().getEuclidianController().mayPaste())
 			return;
 
-		Application.debug(copiedXML.toString());
-		
 		app.getActiveEuclidianView().getEuclidianController().clearSelections();
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
 		app.getGgbApi().evalXML(copiedXML.toString());
