@@ -44,7 +44,10 @@ public class AlgoZipf extends AlgoDistribution {
     		    double val = c.getDouble();
         		try {
         			ZipfDistribution dist = getZipfDistribution(param, param2);
-        			num.setValue(dist.cumulativeProbability(val));     // P(T <= val)
+    				if(isCumulative.getBoolean())
+    					num.setValue(dist.cumulativeProbability(val));  // P(X <= val)
+    				else
+    					num.setValue(dist.probability(val));   // P(X = val)
         			
         		}
         		catch (Exception e) {
