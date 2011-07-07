@@ -1747,21 +1747,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//Application.debug(hits);
 			hits.addAll(0, selectedGeos);
 			hits.removeAllPolygonsAndQuadricsButOne();
-			if (hits.size()>=2
-					&& hits.get(0) instanceof GeoPolygon
-					&& hits.get(1) instanceof GeoCoordSys2D)
+			if (hits.size()>=2 && 
+					((hits.get(0) instanceof GeoPolygon && hits.get(1) instanceof GeoCoordSys2D) 
+							||(hits.get(1) instanceof GeoPolygon && hits.get(0) instanceof GeoCoordSys2D)) )
 				if (AlgoIntersectCS2D2D.getConfigPlanePlane(
-						((GeoPolygon)hits.get(0)),
+						((GeoCoordSys2D)hits.get(0)),
 						((GeoCoordSys2D)hits.get(1))
 								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
 					hits.remove(1);
 			hits = hits.getHits(2);
 	
-			hits.getHits(GeoCoordSys2D.class, tempArrayList);
-			//addSelectedCS2D(tempArrayList, 10, true); //TODO remove it
-			hits.getHits(GeoQuadric3D.class, tempArrayList);
-			//addSelectedQuadric(tempArrayList, 10, true); //TODO remove it
-			
 			addSelectedCS2D(hits, 2, true);
 			addSelectedQuadric(hits, 2, true);
 			
@@ -1814,7 +1809,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				return ret[0].isDefined();
 			}
 			
-	
 			
 			
 			////////////////////////////////////////

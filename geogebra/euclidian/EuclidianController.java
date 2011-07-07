@@ -7067,9 +7067,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		
 		if (selectionPreview)
-			return addToHighlightedList(highlightedGeos, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
+			return addToHighlightedList(list, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
 		else
-			return addToSelectionList(list, hits.getHits(geoClass, handleAddSelectedArrayList), max, addMore);
+			return addToSelectionList(list, hits.getHits(geoClass, handleAddSelectedArrayList), max, addMore,
+					hits.size()==1);
 	}
 	protected Hits handleAddSelectedArrayList = new Hits();
 
@@ -7237,23 +7238,31 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return selectedCurves.size();
 	}
 
-	// selectionList may only contain max objects
-	// a choose dialog will be shown if not all objects can be added
-	// @param addMoreThanOneAllowed: it's possible to add several objects
-	// without choosing
+
+	/**
+	 * 	selectionList may only contain max objects
+	 * a choose dialog will be shown if not all objects can be added
+	 * @param geos: a clone of the to-be-added list
+	 * @param addMoreThanOneAllowed: it's possible to add several objects
+	 * without choosing
+	 */
 	final protected int addToSelectionList(ArrayList selectionList,
-			ArrayList geos, int max, boolean addMoreThanOneAllowed) {
+			ArrayList geos, int max, boolean addMoreThanOneAllowed, boolean tryDeselect) {
 				
 		if (geos == null)
 			return 0;
 		//GeoElement geo;
 
-		// ONLY ONE ELEMENT
-		if (geos.size() == 1)
+		// ONLY ONE ELEMENT IN THE EFFECTIVE HITS
+		if (tryDeselect && geos.size()==1)
+			//select or deselect it
 			return addToSelectionList(selectionList, (GeoElement) geos.get(0), max);
 
 		//	SEVERAL ELEMENTS
-		// here nothing should be removed
+		// here none of the selected geos should be removed
+		
+		//we don't want to add repeated elements
+		geos.removeAll(selectionList);
 		//  too many objects -> choose one
 		if (!addMoreThanOneAllowed || geos.size() + selectionList.size() > max){
 			//Application.printStacktrace(geos.toString());

@@ -256,7 +256,8 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 				}
 			} else if (selectedObjs.size()==1 && selectedObjs.get(0) instanceof GeoCoordSys2D ) {
 				Hits hitPlanes = new Hits();
-				getView3D().getHits().getHits(GeoCoordSys2D.class, hitPlanes);
+				getView3D().getEuclidianController().getHighlightedgeos()
+					.getHits(GeoCoordSys2D.class, hitPlanes);
 				hitPlanes.remove(selectedObjs.get(0));
 				
 				if (hitPlanes.size()==1) {
