@@ -122,13 +122,27 @@ public class CASmpreduce extends CASgeneric {
         try {
         	exp=casParser.replaceIndices(exp);
 			String ret = mpreduce.evaluate(exp);
-			ret = ret.trim();
-			ret=ret.replaceAll("\\*\\*", "^");
-	        while (ret.endsWith("$")) {
-	        	ret = ret.substring(0, ret.length() - 1);
-	        }
-			// undo special character handling
-			ret = casParser.insertSpecialChars(ret);
+			
+			StringBuilder sb = new StringBuilder();
+			for (String s : ret.split("\n")) {
+				s = s.trim();
+				if (s.length() == 0)
+					continue;
+				else if (s.startsWith("***")) { // MPReduce comment
+					Application.debug("MPReduce comment: " + s);
+					continue;
+				}
+				else {
+					// remove trailing $
+					int i = s.length() - 1;
+					while (i > 0 && s.charAt(i) == '$')
+						--i;
+					sb.append(s.substring(0, i+1));
+				}
+			}
+			ret = sb.toString();
+			ret = ret.replaceAll("\\*\\*", "^");
+			ret = casParser.insertSpecialChars(ret); // undo special character handling
 			return ret;
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -235,12 +249,15 @@ public class CASmpreduce extends CASgeneric {
 			// make sure x*(x+1) isn't returned factored
 			mpreduce.evaluate("off pri;");
 			
+			mpreduce.evaluate("off rounded;");
+			
 			// make sure integral(1/x) gives ln(abs(x)) [TODO: NOT WORKING]
 			//mpreduce.evaluate("operator log!-temp");
 			//mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
 			
 			mpreduce.evaluate("load_package(\"rsolve\");");
 			mpreduce.evaluate("load_package(\"numeric\");");
+			mpreduce.evaluate("load_package defint;");
 			
 			//the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
