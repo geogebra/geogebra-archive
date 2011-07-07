@@ -43,7 +43,8 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	private Application app;
 	private Kernel kernel;
 	private StatDialog statDialog;
-
+	private StatTable resultTable;
+	
 	// GUI
 	private JLabel lblHypParameter, lblTailType, lblNull, lblConfLevel;
 	private JButton btnCalculate;
@@ -53,7 +54,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	private MyTextField fldConfLevel;
 	private JLabel lblResultHeader;
 	private JRadioButton btnLeft, btnRight, btnTwo;
-	private JComboBox cbAlternativeHyp;
+	private JComboBox cbAltHyp;
 
 	// test type (tail)
 	private static final String tail_left = "<";
@@ -72,8 +73,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 	private int selectedPlot = StatComboPanel.PLOT_TINT;
 	private boolean isIniting;
-	private int altHyp;
-	private StatTable resultTable;
+	
 
 	/**
 	 * Construct a OneVarInference panel
@@ -118,8 +118,8 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		btnTwo.addActionListener(this);
 		btnTwo.setSelected(true);
 
-		cbAlternativeHyp = new JComboBox();
-		cbAlternativeHyp.addActionListener(this);
+		cbAltHyp = new JComboBox();
+		cbAltHyp.addActionListener(this);
 
 
 		lblNull = new JLabel();
@@ -157,7 +157,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 				flowPanel(lblNull), 
 				flowPanel(Box.createRigidArea(new Dimension(10,0)), lblHypParameter, fldNullHyp),
 				flowPanel(lblTailType),
-				flowPanel(Box.createRigidArea(new Dimension(10,0)), cbAlternativeHyp)
+				flowPanel(Box.createRigidArea(new Dimension(10,0)), cbAltHyp)
 		);
 
 
@@ -330,13 +330,15 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 	private void updateCBAlternativeHyp(){
 
+		int selectedIndex = cbAltHyp.getSelectedIndex();
 		NumberFormat nf = statDialog.getNumberFormat();
-
-		cbAlternativeHyp.removeAllItems();
-		cbAlternativeHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_right + " " + nf.format(hypMean));
-		cbAlternativeHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_left + " " + nf.format(hypMean));
-		cbAlternativeHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_two + " " + nf.format(hypMean));
-		cbAlternativeHyp.setSelectedIndex(altHyp);
+		cbAltHyp.removeActionListener(this);
+		cbAltHyp.removeAllItems();
+		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_right + " " + nf.format(hypMean));
+		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_left + " " + nf.format(hypMean));
+		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_two + " " + nf.format(hypMean));
+		cbAltHyp.setSelectedIndex(selectedIndex);
+		cbAltHyp.addActionListener(this);
 	}
 
 
@@ -348,17 +350,17 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 			doTextFieldActionPerformed((JTextField)source);
 		}
 		
-		else if(source == cbAlternativeHyp){
+		else if(source == cbAltHyp){
 			
-			if(cbAlternativeHyp.getSelectedIndex() == 0)
+			if(cbAltHyp.getSelectedIndex() == 0)
 				tail = tail_right;
-			else if(cbAlternativeHyp.getSelectedIndex() == 1)
+			else if(cbAltHyp.getSelectedIndex() == 1)
 				tail = tail_left;
 			else
 				tail = tail_two;
 
 			evaluate();
-			updateGUI();
+			updateResultTable();
 		}
 
 	}
@@ -397,7 +399,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	public void updatePanel(){
 		//evaluate();
 		updateGUI();
-		updateResultTable();
+		//updateResultTable();
 	}
 
 
