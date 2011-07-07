@@ -2749,7 +2749,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//Application.debug("hits = "+hits.toString());		
 		//repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
 			//	|| repaintNeeded;
-		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(tempFullHits.getTopHits(2,10)) 
+		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(tempFullHits) 
 			|| repaintNeeded;
 		if (repaintNeeded) {
 			kernel.notifyRepaint();

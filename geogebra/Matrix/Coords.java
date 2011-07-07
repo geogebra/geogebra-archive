@@ -686,6 +686,19 @@ public class Coords
 	}
 	
 	/**
+	 * check if all entries are zero
+	 * @param precision
+	 * @return
+	 */
+	public boolean isZero(){
+		int len = getLength();
+		for(int i=0;i<len;i++)
+			if (!Kernel.isEqual(val[i], 0, Kernel.EPSILON))
+				return false;
+		return true;
+	}
+	
+	/**
 	 * Return true if all coordinates are not different from val more than precision.
 	 * @param val value compared with
 	 * @param precision 

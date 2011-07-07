@@ -201,7 +201,7 @@ public class Hits3D extends Hits {
 	}
 	
 	public Hits getTopHits(int depth, int geoN) {
-		Hits ret = new Hits();
+		Hits3D ret = new Hits3D();
 		int depthCount = 0;
 		int geoNCount = 0;
 		for (Iterator<TreeSetOfDrawable3D> iterSet = hitSetSet.iterator(); 

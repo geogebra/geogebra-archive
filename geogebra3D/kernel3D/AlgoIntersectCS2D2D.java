@@ -23,8 +23,10 @@ import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 
 
@@ -102,15 +104,30 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
     }
     
     
+    public static int RESULTCATEGORY_GENERAL = 1;
+    public static int RESULTCATEGORY_PARALLEL = 2;
+    public static int RESULTCATEGORY_CONTAINED = 3;
     
+    //TODO optimize it, using the coefficients of planes directly
+    public static int getConfigPlanePlane(GeoCoordSys2D plane1, GeoCoordSys2D plane2) {
+    	//normal vectors of plane1,2 are parallel
+    	if (plane1.getDirectionInD3().crossProduct(plane2.getDirectionInD3()).isZero()) { 
+    		//one normal vector is perpendicular to the difference of the two two origins 
+    		if (Kernel.isZero(
+    				plane2.getCoordSys().getOrigin().sub(plane1.getCoordSys().getOrigin())
+    				.dotproduct(plane1.getDirectionInD3())
+    				)) {
+    			return RESULTCATEGORY_CONTAINED;
+    		} else {
+    			return RESULTCATEGORY_PARALLEL;
+    		}	
+    	} else {
+    		return RESULTCATEGORY_GENERAL;
+    	}
+    }
  
     
     
-    
-    
-	
-	
-
 	protected String getIntersectionTypeString(){
 		return "IntersectionLineOfAB";
 	}

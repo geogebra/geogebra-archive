@@ -28,6 +28,7 @@ import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
+import geogebra3D.kernel3D.AlgoIntersectCS2D2D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -1743,9 +1744,17 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (hits.isEmpty())
 				return false;	
 
-			Application.debug(hits);
+			//Application.debug(hits);
 			hits.addAll(0, selectedGeos);
 			hits.removeAllPolygonsAndQuadricsButOne();
+			if (hits.size()>=2
+					&& hits.get(0) instanceof GeoPolygon
+					&& hits.get(1) instanceof GeoCoordSys2D)
+				if (AlgoIntersectCS2D2D.getConfigPlanePlane(
+						((GeoPolygon)hits.get(0)),
+						((GeoCoordSys2D)hits.get(1))
+								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+					hits.remove(1);
 			hits = hits.getHits(2);
 	
 			hits.getHits(GeoCoordSys2D.class, tempArrayList);
