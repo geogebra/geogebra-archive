@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -84,6 +85,7 @@ public class StatTable extends JScrollPane {
 		statTable.setShowGrid(true); 	 
 		statTable.setGridColor(TABLE_GRID_COLOR); 	 	
 		statTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		//((JLabel) statTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 		
 		statTable.setBackground(Color.white);
 		
