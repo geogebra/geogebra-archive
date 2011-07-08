@@ -529,9 +529,26 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		boolean useCaching = true;
 		if (casEvalExpression != expression) {
 			casEvalExpression = expression;
-			if (symbolic)
-				casEvalStringSymbolic = expression.getCASstring(kernel
-						.getCurrentCAS(), true);
+			if (symbolic) {
+				casEvalStringSymbolic = expression.getCASstring(kernel.getCurrentCAS(), true);
+
+				// make sure to declare symbolic variables as local, e.g. a in Derivative[a*x^2,x]
+				// see http://www.geogebra.org/trac/ticket/929
+				GeoElement [] localVars = expression.getGeoElementVariables();
+				if (localVars != null && localVars.length >= 1) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("Prog[");
+					for (int i=0; i < localVars.length; i++) {
+						if (localVars[i].isLabelSet()) {
+							sb.append(localVars[i].getLabel());	
+							sb.append(',');
+						}
+					}
+					sb.append(ggbCasCmd);
+					sb.append(']');
+					ggbCasCmd = sb.toString();
+				}
+			}
 
 			// caching should only be done if the expression doesn't contain
 			// other functions
