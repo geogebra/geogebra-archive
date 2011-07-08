@@ -276,7 +276,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	boolean altDown=false;
 	
-	boolean polygonRigid = false;
+	//boolean polygonRigid = false;
+	
+	private static int POLYGON_NORMAL = 0;
+	private static int POLYGON_RIGID = 1;
+	private static int POLYGON_VECTOR = 2;
+	int polygonMode = POLYGON_NORMAL;
 
 	// used for gridlock when dragging polygons, segments etc
 	double[] transformCoordsOffset = new double[2];
@@ -667,6 +672,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case EuclidianView.MODE_POLYGON:
 		case EuclidianView.MODE_RIGID_POLYGON:
+		case EuclidianView.MODE_VECTOR_POLYGON:
 			previewDrawable = view.createPreviewPolygon(selectedPoints);
 			break;
 
@@ -1123,6 +1129,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			createNewPointForModeOther(hits);
 			break;
 
+		case EuclidianView.MODE_VECTOR_POLYGON:
 		case EuclidianView.MODE_RIGID_POLYGON:
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -2952,13 +2959,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			
 			// new polygon through points
 		case EuclidianView.MODE_POLYGON:
-			polygonRigid = false;
+			polygonMode = POLYGON_NORMAL;
 			ret = polygon(hits);
 			break;
 
-			// new polygon through points
 		case EuclidianView.MODE_RIGID_POLYGON:
-			polygonRigid = true;
+			polygonMode = POLYGON_RIGID;
+			ret = polygon(hits);
+			break;
+
+		case EuclidianView.MODE_VECTOR_POLYGON:
+			polygonMode = POLYGON_VECTOR;
 			ret = polygon(hits);
 			break;
 
@@ -4504,7 +4515,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		// points needed
-		if (polygonRigid && selPoints() > 0) { // only want free points withput children for rigid polys (apart from first)
+		if ( (polygonMode == POLYGON_RIGID || polygonMode == POLYGON_VECTOR)
+				&& selPoints() > 0) { // only want free points withput children for rigid polys (apart from first)
 			GeoElement geo = chooseGeo(hits, false);
 			if (geo == null || !geo.isGeoPoint() || !geo.isIndependent() || geo.hasChildren()) {
 				//addToSelectionList(selectedPoints, geo, GeoPolygon.POLYGON_MAX_POINTS);
@@ -4539,13 +4551,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// build polygon	
 	protected GeoElement[] polygon(){
-		if (polygonRigid) {
+		if (polygonMode == POLYGON_RIGID) {
 			GeoElement[] ret = { null };
 			GeoElement [] ret0 = kernel.RigidPolygon(null, getSelectedPoints());
 			if (ret0 != null)
 				ret[0] = ret0[0];
 			return ret;
-		} else{
+		} else if (polygonMode == POLYGON_VECTOR) {
+			GeoElement[] ret = { null };
+			GeoElement [] ret0 = kernel.VectorPolygon(null, getSelectedPoints());
+			if (ret0 != null)
+				ret[0] = ret0[0];
+			return ret;
+		} else {
 			//check if there is a 3D point
 			GeoPointND[] pointsND = getSelectedPointsND();
 			GeoPoint[] points = new GeoPoint[pointsND.length];

@@ -435,6 +435,8 @@ public class Toolbar extends JToolBar {
 		sb.append(" ");
 		sb.append(EuclidianView.MODE_RIGID_POLYGON);
 		sb.append(" ");
+		sb.append(EuclidianView.MODE_VECTOR_POLYGON);
+		sb.append(" ");
 		sb.append(EuclidianView.MODE_POLYLINE);
 
 		// circles, arcs

@@ -1156,6 +1156,9 @@ public class Kernel {
 		case EuclidianConstants.MODE_RIGID_POLYGON:
 			return "RigidPolygon";
 
+		case EuclidianConstants.MODE_VECTOR_POLYGON:
+			return "VectorPolygon";
+
 		case EuclidianConstants.MODE_PARALLEL:
 			return "Parallel";
 
