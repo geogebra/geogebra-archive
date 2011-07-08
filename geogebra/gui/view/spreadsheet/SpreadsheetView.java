@@ -37,6 +37,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	private static final long serialVersionUID = 1L;
 
+	// ggb fields
 	protected Application app;
 	private Kernel kernel;
 
@@ -57,6 +58,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public int highestUsedColumn = -1; // for trace
 
 
+	//TODO move this out
 	private SpreadsheetTraceManager traceManager;
 	private TraceDialog traceDialog;
 
@@ -88,9 +90,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private StatDialog twoVarStatDialog;
 	private StatDialog multiVarStatDialog;
 
+	// TODO move this out
 	private ProbabilityCalculator probCalculator;
 
-	// file browser default constants
+	// file browser defaults
 	public static final String DEFAULT_URL = "http://www.geogebra.org/static/data/data.xml";
 	private String defaultFile; 
 	public static final int DEFAULT_MODE = FileBrowserPanel.MODE_FILE;
@@ -100,14 +103,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private String initialFilePath; 
 	private int initialBrowserMode = DEFAULT_MODE;
 
-	private int prevMode = -1;
-
+	
 	// current toolbar mode
 	private int mode = -1;
-
-
-	
-
 
 
 	/**
@@ -119,81 +117,83 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		this.app = app;
 		kernel = app.getKernel();
 		view = this;
-
-		// table
-		tableModel = new DefaultTableModel(rows, columns);
-		table = new MyTable(this, tableModel);
-
-		table.headerRenderer.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
-				, (int)(MyTable.TABLE_CELL_HEIGHT)));
-
-		// Create row header
-		rowHeader = new SpreadsheetRowHeader(app,table);
-
-		// Put the table and the row header into a scroll plane
-		// The scrollPane is now named as spreadsheet
-		spreadsheet = new JScrollPane();
-		spreadsheet.setBorder(BorderFactory.createEmptyBorder());
-		spreadsheet.setRowHeaderView(rowHeader);
-		spreadsheet.setViewportView(table);
-
+		
+		// Build the spreadsheet table and enclosing scrollpane
+		buildSpreadsheet(rows, columns);
+				
+		// Set the spreadsheet as the right component of this JScrollPane
+		setRightComponent(spreadsheet);	
+		
+		// Set the browser as the left component or to null if showBrowserPanel == false
+		setShowFileBrowser(showBrowserPanel);  
 
 		
 		setBorder(BorderFactory.createEmptyBorder());
-
-		// create and set corners, Markus December 08
-		Corner upperLeftCorner = new Corner(); //use FlowLayout
-		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
-		upperLeftCorner.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				//table.setSelectionType(table.CELL_SELECT);
-				table.selectAll();
-				//table.selectionChanged(); //G.Sturr 2010-1-29
-			}
-		});
-
-
-		//Set the corners.
-		spreadsheet.setCorner(JScrollPane.UPPER_LEFT_CORNER, upperLeftCorner);
-		spreadsheet.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
-		spreadsheet.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
-
-
-		// Add spreadsheet and browser panes to SpreadsheetView
-		setRightComponent(spreadsheet);	
-		setShowFileBrowser(showBrowserPanel);  //adds browser Panel or null panel to left component
-
-
+		addFocusListener(this);
 		updateFonts();
 		attachView();
-
-		// Add listener for row/column size change.
-		// Needed for auto-enlarging spreadsheet.
-		table.addComponentListener(this);
-
-		// create tool bar manager to handle tool bar mode changes
+		
+		
+		// Create tool bar manager to handle tool bar mode changes
 		toolbarManager = new SpreadsheetToolbarManager(app, this);
 		
+		
+		// Create spreadsheet trace manager
+		// TODO move this out of the spreadsheet
 		traceManager = new SpreadsheetTraceManager(this);
 
+		
 		// init the default file location for the file browser
 		if(app.hasFullPermissions()){
 			defaultFile = System.getProperty("user.dir");
 			initialFilePath = defaultFile;
 		}
 
-		this.addFocusListener(this);
-
-		//==============================================
-		//  DEBUG
-
-		//this.showProbabilityCalculator();
-
-		//InspectorView id = new InspectorView(app); id.setVisible(true);
-
+	
 	}
 
 
+	private void buildSpreadsheet(int rows, int columns){
+		
+		// Create the spreadsheet table model and the table
+		tableModel = new DefaultTableModel(rows, columns);
+		table = new MyTable(this, tableModel);
+		
+		// Create row header
+		rowHeader = new SpreadsheetRowHeader(app,table);
+		
+		// Set column width
+		table.headerRenderer.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
+				, (int)(MyTable.TABLE_CELL_HEIGHT)));
+
+		
+		// Put the table and the row header into a scroll plane
+		// The scrollPane is named as spreadsheet
+		spreadsheet = new JScrollPane();
+		spreadsheet.setBorder(BorderFactory.createEmptyBorder());
+		spreadsheet.setRowHeaderView(rowHeader);
+		spreadsheet.setViewportView(table);
+
+		
+		// Create and set the scrollpane corners
+		Corner upperLeftCorner = new Corner(); //use FlowLayout
+		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
+		upperLeftCorner.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				table.selectAll();
+			}
+		});
+		spreadsheet.setCorner(JScrollPane.UPPER_LEFT_CORNER, upperLeftCorner);
+		spreadsheet.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
+		spreadsheet.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
+
+		
+		// Add a resize listener to the table so it can auto-enlarge if needed
+		table.addComponentListener(this); 
+		
+	}
+	
+	
 
 	//===============================================================
 	//             Defaults
