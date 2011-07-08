@@ -48,9 +48,10 @@ public class AlgoIntersectLineConic3D extends AlgoIntersect3D {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoLineND g;  // input
-    private GeoConicND c;  // input
-    private GeoPoint3D [] P, D;     // output  
+	protected GeoLineND g;  // input
+	protected GeoConicND c;  // input
+    protected GeoPoint3D [] P;     // output  
+    private GeoPoint3D [] D; 
     
     /** 2d description of g when included in conic coord sys */
     private GeoLine g2d;
@@ -123,7 +124,7 @@ public class AlgoIntersectLineConic3D extends AlgoIntersect3D {
     }   
     
     // for AlgoElement
-    public void setInputOutput() {
+    protected void setInputOutput() {
         input = new GeoElement[2];
         input[0] = (GeoElement) g;
         input[1] = c;

@@ -2312,10 +2312,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// now handle current mode
 		view.setHits(mouseLoc);
 		hits = view.getHits();
-		 //TODO: find more appropriate place to check mode
-		if (mode!=EuclidianView.MODE_INTERSECT &&
-				mode!=EuclidianView.MODE_INTERSECTION_CURVE)
-			switchModeForRemovePolygons(hits);
+		switchModeForRemovePolygons(hits);
 		//Application.debug(mode + "\n" + hits.toString());
 
 

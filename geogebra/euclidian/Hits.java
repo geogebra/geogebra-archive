@@ -239,15 +239,9 @@ public class Hits extends ArrayList {
 		}
 	}
 	
+	//for 3D only
 	public void removeAllPolygonsAndQuadricsButOne(){
-		int toRemove = polyCount-1;
-		for (int i = size() - 1 ; i >= 0 && toRemove>0; i-- ) {
-			GeoElement geo = (GeoElement) get(i);
-			if (geo.isGeoPolygon()){
-				remove(i);
-				toRemove--;
-			}
-		}
+
 	}
 	
 	final public void removeAllButImages(){
@@ -406,6 +400,32 @@ public class Hits extends ArrayList {
 				result.add(get(i));
 		}
 		//return result.size() == 0 ? null : result;
+		
+		return result;
+	}
+	
+	
+
+	/**
+	 * Stores all GeoElements of any of type geoclasses to result list.
+	 * 
+	 * @param other ==
+	 *            true: returns array of GeoElements NOT of any of type geoclasses out of
+	 *            hits.
+	 */
+	final public Hits getHits(Class[] geoclasses,
+			boolean other, Hits result) {
+
+		result.clear();
+		for (int i = 0; i < size(); ++i) {
+			for (int j = 0; j<geoclasses.length; ++j) {
+				boolean success = geoclasses[j].isInstance(get(i));
+				if (other)
+					success = !success;
+				if (success)
+					result.add(get(i));
+			}
+		}
 		
 		return result;
 	}

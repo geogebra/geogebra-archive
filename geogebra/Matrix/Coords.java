@@ -714,6 +714,11 @@ public class Coords
 		
 	}
 	
+	/**
+	 * Assume that "this" is a non-zero vector in 3-space.
+	 * This method returns an array v of two vectors {v[0], v[1]} (rows=4)
+	 * so that (this, v[0], v[1]) is a right-handed orthonormal system.
+	 */
 	public Coords[] completeOrthonormal() {
 		Coords vn1 = new Coords(4);
 		Coords vn2 = new Coords(4);

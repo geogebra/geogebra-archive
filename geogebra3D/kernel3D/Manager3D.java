@@ -890,14 +890,48 @@ public class Manager3D implements Manager3DInterface {
 		return points;
 	}
 
+	/**
+	 * intersect line/quadric
+	 */
+	private AlgoIntersectLineQuadric3D getIntersectionAlgorithm(GeoLineND A, GeoQuadric3D B) {
+		AlgoElement existingAlgo = kernel.findExistingIntersectionAlgorithm((GeoElement)A, B);
+		if (existingAlgo != null) return (AlgoIntersectLineQuadric3D) existingAlgo;
+			
+	 	// we didn't find a matching algorithm, so create a new one
+		AlgoIntersectLineQuadric3D algo = new AlgoIntersectLineQuadric3D(cons, A, B);
+		algo.setPrintedInXML(false);
+		kernel.addIntersectionAlgorithm(algo); // remember this algorithm
+		return algo;
+	 }
+	public GeoPointND[] IntersectLineQuadric(String[] labels, GeoLineND A,
+			GeoQuadric3D B) {
+		AlgoIntersectLineQuadric3D algo = getIntersectionAlgorithm(A, B);
+		algo.setPrintedInXML(true);
+		GeoPoint3D[] points = algo.getIntersectionPoints();	
+		GeoElement.setLabels(labels, points);			
+		return points;
+	}
 
-	public GeoPointND[] IntersectLineQuadric(String[] labels, GeoElement A,
-			GeoElement B) {
-		AlgoIntersectLineQuadric3D algo = new AlgoIntersectLineQuadric3D(
-				cons,labels,(GeoLineND)A,(GeoQuadricND)B);
-		
-		
-		return algo.getIntersectionPoints();
+	/**
+	 * intersect plane/conic
+	 */
+	private AlgoIntersectPlaneConic getIntersectionAlgorithm(GeoCoordSys2D A, GeoConicND B) {
+		AlgoElement existingAlgo = kernel.findExistingIntersectionAlgorithm((GeoElement)A, B);
+		if (existingAlgo != null) return (AlgoIntersectPlaneConic) existingAlgo;
+			
+	 	// we didn't find a matching algorithm, so create a new one
+		AlgoIntersectPlaneConic algo = new AlgoIntersectPlaneConic(cons, A, B);
+		algo.setPrintedInXML(false);
+		kernel.addIntersectionAlgorithm(algo); // remember this algorithm
+		return algo;
+	 }
+	public GeoPointND[] IntersectPlaneConic(String[] labels, GeoCoordSys2D A,
+			GeoConicND B) {
+		AlgoIntersectPlaneConic algo = getIntersectionAlgorithm(A, B);
+		algo.setPrintedInXML(true);
+		GeoPoint3D[] points = algo.getIntersectionPoints();	
+		GeoElement.setLabels(labels, points);			
+		return points;
 	}
 
 

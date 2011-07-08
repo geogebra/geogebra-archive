@@ -77,21 +77,37 @@ public  GeoElement[] process(Command c) throws MyError {
         					c.getLabels(),
         					(GeoLineND) arg[1],
         					(GeoConicND) arg[0]);
+        		//intersection plane/conic
+        		else if (
+        				(arg[0] instanceof GeoPlane3D)
+        				&& (arg[1] instanceof GeoConicND))
+        			return (GeoElement[]) kernel.getManager3D().IntersectPlaneConic(
+        					c.getLabels(),
+        					(GeoCoordSys2D) arg[0],
+        					(GeoConicND) arg[1]);
+        		else if (
+        				(arg[0] instanceof GeoConicND)
+        				&& (arg[1] instanceof GeoPlane3D))
+        			return (GeoElement[]) kernel.getManager3D().IntersectPlaneConic(
+        					c.getLabels(),
+        					(GeoCoordSys2D) arg[1],
+        					(GeoConicND) arg[0]);
+        		
                 // Line - Quadric
                 else if (
                     (ok[0] = (arg[0] .isGeoLine()))
                         && (ok[1] = (arg[1] instanceof GeoQuadric3D)))
     				return (GeoElement[])kernel.getManager3D().IntersectLineQuadric(
                         c.getLabels(),
-                         arg[0],
-                         arg[1]);
+                         (GeoLineND) arg[0],
+                         (GeoQuadric3D) arg[1]);
     			else if (
                     (ok[0] = (arg[0] instanceof GeoQuadric3D))
                         && (ok[1] = (arg[1] .isGeoLine())))
     				return (GeoElement[])kernel.getManager3D().IntersectLineQuadric(
                         c.getLabels(),
-                        arg[1],
-                        arg[0]);
+                        (GeoLineND) arg[1],
+                        (GeoQuadric3D) arg[0]);
         		//intersection conic/conic
         		else if (
         				(arg[0] instanceof GeoConicND)

@@ -273,16 +273,30 @@ public class Hits3D extends Hits {
 	}
 	
 	public void removeAllPolygonsAndQuadricsButOne(){
-		int toRemove = polyCount + QuadCount -1;
-		for (int i = size() - 1 ; i >= 0 && toRemove>0; i-- ) {
+		boolean foundTarget = false;
+		for (int i = 0 ; i < size() - 1 ; ++i ) {
 			GeoElement geo = (GeoElement) get(i);
-			if (geo.isGeoPolygon() || geo instanceof GeoQuadric3D){
-				remove(i);
-				toRemove--;
+			if (geo.isGeoPolygon() || geo instanceof GeoQuadric3D || geo.isGeoConic()){
+				if (foundTarget)
+					//not removing when found first time
+					remove(i);
+				foundTarget = true;
 			}
 		}
 	}
 	
+	public void removeAllGeoCoordSys2DsButOne(){
+		boolean foundTarget = false;
+		for (int i = 0 ; i < size() - 1 ; ++i ) {
+			GeoElement geo = (GeoElement) get(i);
+			if (geo instanceof GeoCoordSys2D){
+				if (foundTarget)
+					//not removing when found first time
+					remove(i);
+				foundTarget = true;
+			}
+		}
+	}
 	
 	
 }

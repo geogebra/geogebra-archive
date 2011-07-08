@@ -1594,9 +1594,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	protected GeoElement[] intersect(Hits hits) {
 		
+		
 		if (hits.isEmpty())
 			return null;		
-		
+		if (hits.containsGeoPoint()) {
+			hits.clear();
+			return null;
+		}
+			
 		// when two objects are selected at once then only one single
 		// intersection point should be created	
 		
@@ -1604,6 +1609,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		boolean singlePointWanted = selGeos() == 0;
 		
 		// check how many interesting hits we have
+		/*
 		if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 			
 			Hits goodHits = new Hits();
@@ -1622,6 +1628,50 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		//not working
 		//boolean addedCurves = false;
+
+		*/
+		
+		//TODO reuse the code in intersectionCurve
+		hits.addAll(0, selectedGeos);
+		Hits3D goodHits = new Hits3D();
+		hits.getHits(new Class[] {
+				GeoLineND.class, GeoCoordSys2D.class,
+				GeoConicND.class}, false, goodHits);
+		hits.clear();
+		hits.addAll(goodHits);
+		((Hits3D)hits).removeAllPolygonsAndQuadricsButOne();
+		if (hits.size()>=2 && 
+				((hits.get(0) instanceof GeoPolygon && hits.get(1) instanceof GeoCoordSys2D) 
+						||(hits.get(1) instanceof GeoPolygon && hits.get(0) instanceof GeoCoordSys2D)) )
+			if (AlgoIntersectCS2D2D.getConfigPlanePlane(
+					((GeoCoordSys2D)hits.get(0)),
+					((GeoCoordSys2D)hits.get(1))
+							) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+				hits.remove(1);
+		
+		Application.debug("1~~~"+hits);
+		//TODO merge to one condition
+		
+		if (hits.size()>=2 && 
+				(hits.get(0) instanceof GeoConicND && hits.get(1) instanceof GeoCoordSys2D)) {
+			if (AlgoIntersectCS2D2D.getConfigPlanePlane(
+					(((GeoConicND)hits.get(0)).getCoordSys()),
+					(((GeoCoordSys2D)hits.get(1)).getCoordSys())
+							) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+				hits.remove(1); }
+		else if (hits.size()>=2 && 
+				(hits.get(1) instanceof GeoConicND && hits.get(0) instanceof GeoCoordSys2D)) {
+			if (AlgoIntersectCS2D2D.getConfigPlanePlane(
+					(((GeoConicND)hits.get(1)).getCoordSys()),
+					(((GeoCoordSys2D)hits.get(0)).getCoordSys())
+							) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+				hits.remove(1);
+		}
+		Application.debug(hits);
+		((Hits3D)hits).removeAllGeoCoordSys2DsButOne();
+		
+		hits = hits.getHits(2);
+		
 		
 		// get lines, segments, etc.
 		addSelectedLine(hits, 10, true);
@@ -1629,9 +1679,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		addSelectedConic(hits, 10, true);
 		// currently tested only for planes
 		addSelectedCS2D(hits, 10, true);
+		// polygons (are alreay added as CS2D)
+		//addSelectedPolygon(hits, 10, true);
 		
-		// polygons
-		addSelectedPolygon(hits, 10, true);
+		
 		
 		singlePointWanted = singlePointWanted && selGeos() == 2;
 		
@@ -1710,18 +1761,40 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			for(int i=0;i<4; i++)
 				ret[i] = (GeoElement) points[i];
 			return ret;
-		} else if (selCS2D()>=2 
-				&& selPolygons()>=1 
-				&& selPolygons() <selCS2D()) { // plane-polygon
-			int n = selCS2D();
-			GeoPolygon polygon = getSelectedPolygons()[0];
-			GeoCoordSys2D[] CS2Ds = getSelectedCS2D();
-			for (int i = 0; i<n; i++) {
-				if (CS2Ds[i] != polygon) {
-					return getKernel().getManager3D().IntersectionPoint(null, 
-							(GeoPlane3D) CS2Ds[i], polygon);
-				}
+		} else if (selConics()>=1 && selCS2D()>=1) { // conic-polygon not available
+			
+			GeoCoordSys2D plane = getSelectedCS2D()[0];
+			if (((GeoElement)plane).isGeoPolygon())
+				return null;
+			GeoConicND conic = getSelectedConicsND()[0];
+			GeoElement[] ret = new GeoElement[2];
+
+			if (singlePointWanted) { //TODO
+				Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+				GeoPointND[] points = getKernel().getManager3D().IntersectPlaneConic(null, plane, conic);
+				for(int i=0;i<2; i++)
+					ret[i] = (GeoElement) points[i];
+				
+				//ret[0] = getKernel().getManager3D().IntersectLineConicSingle(null, line, conic, 
+					//	picked.getX(),picked.getY(), view3D.getToSceneMatrix());
+			} else {
+				GeoPointND[] points = getKernel().getManager3D().IntersectPlaneConic(null, plane, conic);
+				for(int i=0;i<2; i++)
+					ret[i] = (GeoElement) points[i];
 			}
+
+			return ret;
+		}
+			else if (selCS2D()>=2 )  { // plane-plane or plane-polygon
+		
+			int n = selCS2D();
+			GeoCoordSys2D[] CS2Ds = getSelectedCS2D();
+			if(((GeoElement)CS2Ds[0]).isGeoPlane() && ((GeoElement)CS2Ds[1]).isGeoPolygon())
+				return getKernel().getManager3D().IntersectionPoint(null, 
+						(GeoPlane3D) CS2Ds[0], (GeoSurfaceFinite) CS2Ds[1]);
+			else if(((GeoElement)CS2Ds[1]).isGeoPlane() && ((GeoElement)CS2Ds[0]).isGeoPolygon())
+				return getKernel().getManager3D().IntersectionPoint(null, 
+						(GeoPlane3D) CS2Ds[1], (GeoSurfaceFinite) CS2Ds[0]);
 		}
 		
 		return null;
@@ -1748,10 +1821,21 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			 */
 			if (hits.isEmpty())
 				return false;	
+			if (hits.containsGeoPoint()) {
+				hits.clear();
+				return false;
+			}
 
-			//Application.debug(hits);
+			
+			
 			hits.addAll(0, selectedGeos);
-			hits.removeAllPolygonsAndQuadricsButOne();
+			
+			Hits3D goodHits = new Hits3D();
+			hits.getHits(new Class[] {
+					GeoCoordSys2D.class, GeoQuadric3D.class}, false, goodHits);
+			//Application.debug(goodHits);
+			hits.clear();
+			hits.addAll(goodHits);
 			if (hits.size()>=2 && 
 					((hits.get(0) instanceof GeoPolygon && hits.get(1) instanceof GeoCoordSys2D) 
 							||(hits.get(1) instanceof GeoPolygon && hits.get(0) instanceof GeoCoordSys2D)) )
@@ -1760,6 +1844,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 						((GeoCoordSys2D)hits.get(1))
 								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
 					hits.remove(1);
+			((Hits3D)hits).removeAllPolygonsAndQuadricsButOne();
 			hits = hits.getHits(2);
 			
 			if(hits.size()==2){

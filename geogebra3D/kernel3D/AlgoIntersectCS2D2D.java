@@ -103,7 +103,20 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
     	return l;
     }
     
+    public static GeoLine3D getIntersectPlanePlane (Construction cons, CoordSys cs1, CoordSys cs2) {
+
+    	Coords[] intersection = CoordMatrixUtil.intersectPlanes(
+    			cs1.getMatrixOrthonormal(),
+    			cs2.getMatrixOrthonormal());
+
+    	// update line
+    	cons.getKernel().setSilentMode(true);
+    	GeoLine3D l = new GeoLine3D(cons, intersection[0], intersection[1]);
+    	cons.getKernel().setSilentMode(false);
+    	return l;
+    }
     
+    public static int RESULTCATEGORY_NA = -1;
     public static int RESULTCATEGORY_GENERAL = 1;
     public static int RESULTCATEGORY_PARALLEL = 2;
     public static int RESULTCATEGORY_CONTAINED = 3;
@@ -126,7 +139,27 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
     	}
     }
  
-    
+    //TODO optimize it, using the coefficients of planes directly
+    public static int getConfigPlanePlane(CoordSys cs1, CoordSys cs2) {
+    	
+    	if (cs1.getDimension()!=2 || cs2.getDimension()!=2)
+    		return RESULTCATEGORY_NA;
+    	
+    	//normal vectors of plane1,2 are parallel
+    	if (cs1.getNormal().crossProduct(cs2.getNormal()).isZero()) { 
+    		//one normal vector is perpendicular to the difference of the two two origins 
+    		if (Kernel.isZero(
+    				cs2.getOrigin().sub(cs1.getOrigin())
+    				.dotproduct(cs1.getNormal())
+    				)) {
+    			return RESULTCATEGORY_CONTAINED;
+    		} else {
+    			return RESULTCATEGORY_PARALLEL;
+    		}	
+    	} else {
+    		return RESULTCATEGORY_GENERAL;
+    	}
+    }   
     
 	protected String getIntersectionTypeString(){
 		return "IntersectionLineOfAB";

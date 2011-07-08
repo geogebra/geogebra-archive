@@ -3340,7 +3340,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return euclidianController3D.getMode();
 	}
 
-	protected Hits tempArrayList = new Hits();
+	protected Hits3D tempArrayList = new Hits3D();
 	
 	public void clickedGeo(GeoElement geo, MouseEvent e) {
 		if (geo == null)

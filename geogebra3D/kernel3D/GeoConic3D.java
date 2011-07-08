@@ -22,7 +22,7 @@ public class GeoConic3D
 extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 	
-	/** 2D coord sys where the polygon exists */
+	/** 2D coord sys where the conic exists */
 	private CoordSys coordSys; 
 
 	/** link with drawable3D */
