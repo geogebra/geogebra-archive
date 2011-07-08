@@ -11,6 +11,7 @@ import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class provides an interface for GeoGebra to use the computer algebra
@@ -24,20 +25,14 @@ public class GeoGebraCAS {
 	 */
 	private static int timeout = 5;
 
-	private StringBuilder sbPolyCoeffs;
 	private Application app;
 	private CASparser casParser;
 	private CASgeneric cas;
 	public int currentCAS = -1;
-	
-	private CASmathpiper casPiper;
 
 	public GeoGebraCAS(Kernel kernel) {
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
-		casPiper = new CASmathpiper(casParser, new CasParserToolsImpl('e'));
-		//app.setDefaultCAS(Application.CAS_MAXIMA);
-		
 		setCurrentCAS(Kernel.DEFAULT_CAS);
 	}
 	
@@ -102,14 +97,17 @@ public class GeoGebraCAS {
 	}
 	
 	private CASmathpiper getMathPiper() {
-		if (casPiper != null)
-			return casPiper;
-		else 
-			return casPiper = new CASmathpiper(casParser, new CasParserToolsImpl('e'));
+		if (currentCAS == Application.CAS_MATHPIPER)
+			return (CASmathpiper) cas;
+		else
+			return new CASmathpiper(casParser, new CasParserToolsImpl('e'));
 	}
 	
 	private CASmaxima getMaxima() {
-		return new CASmaxima(casParser, new CasParserToolsImpl('b'));
+		if (currentCAS == Application.CAS_MAXIMA)
+			return (CASmaxima) cas;
+		else
+			return new CASmaxima(casParser, new CasParserToolsImpl('b'));
 	}
 	
 	private CASmpreduce getMPReduce() {
@@ -204,8 +202,10 @@ public class GeoGebraCAS {
 	}
 	
 
-	private HashMap getPolynomialCoeffsCache = new HashMap(50);
+	// these variables are cached to gain some speed in getPolynomialCoeffs
+	private Map<String, String[]> getPolynomialCoeffsCache = new HashMap<String, String[]>(64);
 	private StringBuilder getPolynomialCoeffsSB = new StringBuilder();
+	private StringBuilder sbPolyCoeffs = new StringBuilder();
 	
 	/**
 	 * Expands the given MathPiper expression and tries to get its polynomial
@@ -214,84 +214,34 @@ public class GeoGebraCAS {
 	 * 
 	 * example: getPolynomialCoeffs("3*a*x^2 + b"); returns ["b", "0", "3*a"]
 	 */
-	final public String[] getPolynomialCoeffs(String MathPiperExp, String variable) {
-		//return ggbJasymca.getPolynomialCoeffs(MathPiperExp, variable);
-		final boolean useMathPiper = true; // This can be swapped to use MP instead of MPReduce!
+	final public String[] getPolynomialCoeffs(String polyExpr, String variable) {
 		getPolynomialCoeffsSB.setLength(0);
-		getPolynomialCoeffsSB.append(MathPiperExp);
-		getPolynomialCoeffsSB.append(':');
+		getPolynomialCoeffsSB.append(polyExpr);
+		getPolynomialCoeffsSB.append(',');
 		getPolynomialCoeffsSB.append(variable);
 		
-		String result = (String)(getPolynomialCoeffsCache.get(getPolynomialCoeffsSB.toString()));
-		if (result != null) {
-			
-			// MathPiper returns odd result
-			// eg getPolynomialCoeffs((e)^(-x),x)
-			if (!result.startsWith("{") || ! result.endsWith("}")) return null;
-			
-			//Application.debug("using cached result: "+result);
-			// remove { } to get "b, 0, 3*a"
-			result = result.substring(1, result.length()-1);
-			
-			// split to get coefficients array ["b", "0", "3*a"]
-			String [] coeffs = result.split(",");				    
-	        return coeffs;	
-		}
+		String[] result = getPolynomialCoeffsCache.get(getPolynomialCoeffsSB.toString());
+		if (result != null)
+			return result;
 		
-		
-		if (sbPolyCoeffs == null)
-			sbPolyCoeffs = new StringBuilder();
-		else
-			sbPolyCoeffs.setLength(0);
-		
-		
-		/* replaced Michael Borcherds 2009-02-08
-		 * doesn't seem to work properly polyCoeffsbug.ggb
-		 */
-		if (useMathPiper)
-			sbPolyCoeffs.append("getPolynomialCoeffs(");
-		else
-			sbPolyCoeffs.append("coeff(");
-		sbPolyCoeffs.append(MathPiperExp);
-		sbPolyCoeffs.append(',');
-		sbPolyCoeffs.append(variable);
+		sbPolyCoeffs.setLength(0);
+		sbPolyCoeffs.append("coeff(");
+		sbPolyCoeffs.append(getPolynomialCoeffsSB.toString());
 		sbPolyCoeffs.append(')');
-		
-
-		// Expand expression and get polynomial coefficients using MathPiper:
-		// Prog( Local(exp), 
-		//   	 exp := ExpandBrackets( 3*a*x^2 + b ), 
-		//		 Coef(exp, x, 0 .. Degree(exp, x)) 
-		// )		
-		//sbPolyCoeffs.append("Prog( Local(exp), exp := ExpandBrackets(");
-		//sbPolyCoeffs.append(MathPiperExp);
-		//sbPolyCoeffs.append("), Coef(exp, x, 0 .. Degree(exp, x)))");
 			
 		try {
 			// expand expression and get coefficients of
 			// "3*a*x^2 + b" in form "{ b, 0, 3*a }" 
-			if (useMathPiper)
-				result = evaluateMathPiper(sbPolyCoeffs.toString());
-			else
-				result = evaluateMPReduce(sbPolyCoeffs.toString());
-			
-			// empty list of coefficients -> return null
-			if ("{}".equals(result) || "".equals(result) || result == null) 
-				return null;
-			
-			// cache result
-			// Application.debug("caching result of " + getPolynomialCoeffsSB.toString() + ": "+result);		
-			getPolynomialCoeffsCache.put(getPolynomialCoeffsSB.toString(), result);
+			String tmp = evaluateMPReduce(sbPolyCoeffs.toString());
 
-			//Application.debug(sbPolyCoeffs+"");
-			//Application.debug(result+"");
+			if ("{}".equals(tmp) || "".equals(tmp) || tmp == null)  // no result
+				return null;
+
+			tmp = tmp.substring(1, tmp.length()-1); // strip '{' and '}'
+			result = tmp.split(",");
 			
-			// remove { } to get "b, 0, 3*a"
-			result = result.substring(1, result.length()-1);
-			
-			// split to get coefficients array ["b", "0", "3*a"]
-			String [] coeffs = result.split(",");				    
-            return coeffs;						
+			getPolynomialCoeffsCache.put(getPolynomialCoeffsSB.toString(), result);
+            return result;						
 		} 
 		catch(Throwable e) {
 			Application.debug("GeoGebraCAS.getPolynomialCoeffs(): " + e.getMessage());
