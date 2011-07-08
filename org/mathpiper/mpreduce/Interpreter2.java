@@ -138,7 +138,7 @@ public class Interpreter2 extends Applet {
 
         try {
             while (sendString != null) {
-                Thread.sleep(100);
+                Thread.sleep(10);
             }
         } catch (InterruptedException ioe) {
         }
@@ -205,7 +205,7 @@ public class Interpreter2 extends Applet {
 
                 try {
                     while (sendString == null) {
-                        Thread.sleep(100);
+                        Thread.sleep(10);
                     }
                 } catch (InterruptedException ioe) {
                 }
