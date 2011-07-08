@@ -459,8 +459,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (geo.isGeoPoint() && geo.isIndependent()) {
 				for (int j = 0; j < persistentStickyPointList.size(); j++) {
 					GeoPoint geo2 = (GeoPoint)persistentStickyPointList.get(j);
-					if ((Math.abs(geo2.getInhomX() - ((GeoPoint)geo).getInhomX()) < kernel.MAX_DOUBLE_PRECISION) &&
-						(Math.abs(geo2.getInhomY() - ((GeoPoint)geo).getInhomY()) < kernel.MAX_DOUBLE_PRECISION))
+					if (Kernel.isEqual(geo2.getInhomX(), ((GeoPoint)geo).getInhomX()) &&
+						Kernel.isEqual(geo2.getInhomY(), ((GeoPoint)geo).getInhomY()))
 					{
 						geo.setEuclidianVisible(false);
 						String geolabel = geo.getLabelSimple();
