@@ -327,9 +327,9 @@ public class CASmathpiper extends CASgeneric {
 		//ggbMathPiper.evaluate("KeepInput(x_IsAtom)  <-- Simplify(x) == Simplify(y);");
 		
 		// access functions for elements of a vector  (for the "if" part, see #556)
-		ggbMathPiper.evaluate("xcoord(a) := If(IsList(a), Nth(a, 1), x*a);");
-		ggbMathPiper.evaluate("ycoord(a) := If(IsList(a), Nth(a, 2), y*a);");
-		ggbMathPiper.evaluate("zcoord(a) := If(IsList(a), Nth(a, 3), z*a);");
+		ggbMathPiper.evaluate("x(a) := If(IsList(a), Nth(a, 1), x*a);");
+		ggbMathPiper.evaluate("y(a) := If(IsList(a), Nth(a, 2), y*a);");
+		ggbMathPiper.evaluate("z(a) := If(IsList(a), Nth(a, 3), z*a);");
 		
 		return true;
 	}

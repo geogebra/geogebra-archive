@@ -1655,22 +1655,56 @@ ExpressionNode numberFunction():
 }
 {           
     <X_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.XCOORD, null); }  
+      {
+        if (GeoGebraCASParsing)         {
+          	// GeoGebra CAS view: x(...) is interpreted as a function
+          	Command cmd = new Command(kernel, "x", true );
+			cmd.addArgument( en );			
+			return new ExpressionNode(kernel, cmd);
+      	}
+      	else      	{
+      	  // standard GeoGebra input bar: x(...) is interpreted as "x-coordinate of"
+      	  return new ExpressionNode(kernel, en, ExpressionNode.XCOORD, null);      	}
+       }  
 |
      <Y_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.YCOORD, null); }  
+      {
+        if (GeoGebraCASParsing) 
+        {
+          	// GeoGebra CAS view: y(...) is interpreted as a function
+          	Command cmd = new Command(kernel, "y", true );
+			cmd.addArgument( en );			
+			return new ExpressionNode(kernel, cmd);
+      	}
+      	else
+      	{
+      	  // standard GeoGebra input bar: y(...) is interpreted as "y-coordinate of"
+      	  return new ExpressionNode(kernel, en, ExpressionNode.YCOORD, null);
+      	}
+       } 
 |
      <Z_FUNC> en = expressionOrEquation() ")"
-      {
-         GeoElement userFun = kernel.lookupLabel("z");
-		 if (userFun instanceof Evaluatable) {
-		    // user defined function z
-			return new ExpressionNode(kernel, userFun, ExpressionNode.FUNCTION, en);
-       	 } else {
-			 // internal function z
-			return new ExpressionNode(kernel, en, ExpressionNode.ZCOORD, null);
-         }
-       }  
+     {
+        if (GeoGebraCASParsing) 
+        {
+          	// GeoGebra CAS view: z(...) is interpreted as a function
+          	Command cmd = new Command(kernel, "z", true );
+			cmd.addArgument( en );			
+			return new ExpressionNode(kernel, cmd);
+      	}
+      	else
+      	{
+      	 	 // standard GeoGebra input bar: z(...) is interpreted as user function z or "z-coordinate of"
+      	   	 GeoElement userFun = kernel.lookupLabel("z");
+			 if (userFun instanceof Evaluatable) {
+			    // user defined function z
+				return new ExpressionNode(kernel, userFun, ExpressionNode.FUNCTION, en);
+	       	 } else {
+				 // internal function z
+				return new ExpressionNode(kernel, en, ExpressionNode.ZCOORD, null);
+	         }
+      	}
+      }   
 |
      <COS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COS, null); }   
