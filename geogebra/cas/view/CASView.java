@@ -152,9 +152,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		casInputHandler = new CASInputHandler(this);
 
 		addFocusListener(this);
-
-		// TODO: remove
-		attachView();
 	}
 	
 	
@@ -259,6 +256,13 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	// }
 
 	public void getSessionXML(StringBuilder sb) {
+		// get the number of pairs in the view
+		int numOfRows = consoleTable.getRowCount();
+		
+		// don't save session if there is only one empty row
+		if (numOfRows == 0 || consoleTable.getCASTableCellValue(0).isEmpty()) 
+			return;				
+
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
 		int oldPrintForm = kernel.getCASPrintForm();
@@ -267,10 +271,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
         kernel.setTranslateCommandName(false); 
 
-		sb.append("<casSession>\n");
-
-		// get the number of pairs in the view
-		int numOfRows = consoleTable.getRowCount();
+		sb.append("<casSession>\n");		
 
 		// get the content of each pair in the table with a loop
 		// append the content to the string sb
@@ -366,7 +367,10 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * Removes function definitions from the CAS
 	 */
 	public void remove(GeoElement geo) {
-		getCAS().unbindVariable(geo.getLabel());
+		if (geo.isLabelSet()) {
+			// remove variable name from CAS
+			getCAS().unbindVariable(geo.getLabel());
+		}
 	}
 
 	/**
@@ -452,11 +456,13 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * Renames function definitions in the CAS
 	 */
 	public void rename(GeoElement geo) {
-		// remove old function name from MathPiper
-		getCAS().unbindVariable(geo.getOldLabel());
-
-		// add new function name to MathPiper
-		add(geo);
+		if (geo.isLabelSet()) {
+			// remove old function name from MathPiper
+			getCAS().unbindVariable(geo.getOldLabel());
+	
+			// add new function name to MathPiper
+			add(geo);
+		}
 	}
 
 	public void clearView() {
