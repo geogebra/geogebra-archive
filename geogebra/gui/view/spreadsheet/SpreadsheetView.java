@@ -1,7 +1,6 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.view.spreadsheet.statdialog.StatDialog;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
@@ -62,14 +61,16 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private TraceDialog traceDialog;
 
 
-	//needed for split panel, fileBrowser and toolbar
+	//fields for split panel, fileBrowser and stylebar
 	private JScrollPane spreadsheet;
 	private FileBrowserPanel fileBrowser;
 	private int defaultDividerLocation = 150;
 	private SpreadsheetStyleBar styleBar;
-	private JPanel spreadsheetPanel;
 	private JPanel restorePanel;
 
+	
+	// toolbar manager
+	SpreadsheetToolbarManager toolbarManager;
 
 	//Properties
 	private boolean showGrid = true;
@@ -101,6 +102,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	private int prevMode = -1;
 
+	// current toolbar mode
+	private int mode = -1;
+
+
+	
+
+
 
 	/**
 	 * Construct spreadsheet view as a split panel. 
@@ -130,7 +138,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		spreadsheet.setViewportView(table);
 
 
-		// Florian Sonner 2008-10-20
+		
 		setBorder(BorderFactory.createEmptyBorder());
 
 		// create and set corners, Markus December 08
@@ -163,6 +171,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		// Needed for auto-enlarging spreadsheet.
 		table.addComponentListener(this);
 
+		// create tool bar manager to handle tool bar mode changes
+		toolbarManager = new SpreadsheetToolbarManager(app, this);
+		
 		traceManager = new SpreadsheetTraceManager(this);
 
 		// init the default file location for the file browser
@@ -230,7 +241,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 
-
+	public int getMode() {
+		return mode;
+	}
+	
 	private class Corner extends JComponent {
 		private static final long serialVersionUID = -4426785169061557674L;
 
@@ -359,78 +373,16 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	/** Respond to changes in Euclidean mode sent by GUI manager */
 	public void setMode(int mode){
 
-
+		this.mode = mode;
+		
 		if(isTraceDialogVisible()){
 			traceDialog.toolbarModeChanged(mode);
 		}
 
-		CreateObjectDialog id;
-
-		String command = kernel.getModeText(mode); // e.g. "Derivative"
-
-		switch (mode) {	
-
-		case EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS:
-			if(table.getCellRangeProcessor().isOneVarStatsPossible(table.selectedCellRanges))
-				showStatDialog(StatDialog.MODE_ONEVAR);
-			break;
-
-		case EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS:
-			if(table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges))
-				showStatDialog(StatDialog.MODE_REGRESSION);
-			break;
-
-		case EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS:
-			if(table.getCellRangeProcessor().isMultiVarStatsPossible(table.selectedCellRanges))
-				showStatDialog(StatDialog.MODE_MULTIVAR);
-			break;
-
-		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
-
-			if(!app.getSelectedGeos().isEmpty() && prevMode == mode){
-				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LIST);
-				id.setVisible(true);
-
-			}
-			break;
-
-
-		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LISTOFPOINTS:
-			if(prevMode == mode && table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
-				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LISTOFPOINTS);
-				id.setVisible(true);}
-
-			break;
-
-
-		case EuclidianConstants.MODE_SPREADSHEET_CREATE_MATRIX:
-			if (prevMode == mode && table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
-				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_MATRIX);
-				id.setVisible(true);
-			}
-			break;
-
-
-		case EuclidianConstants.MODE_SPREADSHEET_CREATE_TABLETEXT:
-			if(prevMode == mode && table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
-				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_TABLETEXT);
-				id.setVisible(true);
-			}
-			break;
-
-		case EuclidianConstants.MODE_SPREADSHEET_CREATE_POLYLINE:
-			if(prevMode == mode && table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
-				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_POLYLINE);
-				id.setVisible(true);
-			}
-			break;
-
-		default:
-			// ignore other modes
-		}				
-
-		prevMode  = mode;
-
+		// String command = kernel.getModeText(mode); // e.g. "Derivative"
+		
+		toolbarManager.handleModeChange(mode);
+		
 	}
 
 
