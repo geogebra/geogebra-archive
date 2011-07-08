@@ -262,6 +262,11 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 	public void mouseReleased(MouseEvent e)	 {
 		boolean rightClick = Application.isRightClick(e); 	        
 
+		if(table.getTableMode() == table.TABLE_MODE_AUTOFUNCTION){
+			table.handleAutoFunction();
+			return;
+		}
+			
 		if (!rightClick) {
 			if (editor.isEditing()) {
 				String text = editor.getEditingValue();

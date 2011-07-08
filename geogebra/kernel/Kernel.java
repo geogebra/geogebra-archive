@@ -1389,7 +1389,21 @@ public class Kernel {
 			
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_POLYLINE:
 			return "CreatePolyLine";
-				
+			
+		case EuclidianConstants.MODE_SPREADSHEET_SUM:
+			return "SumCells";
+			
+		case EuclidianConstants.MODE_SPREADSHEET_AVERAGE:
+			return "MeanCells";
+			
+		case EuclidianConstants.MODE_SPREADSHEET_COUNT:
+			return "CountCells";
+			
+		case EuclidianConstants.MODE_SPREADSHEET_MIN:
+			return "MinCells";
+			
+		case EuclidianConstants.MODE_SPREADSHEET_MAX:
+			return "MaxCells";
 			
 		default:
 			return "";

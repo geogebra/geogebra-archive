@@ -10,11 +10,9 @@ import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -23,7 +21,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -31,15 +28,10 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.regex.Matcher;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -49,12 +41,42 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.text.JTextComponent;
 
 public class MyTable extends JTable implements FocusListener 
 {
+	
+	public static final int TABLE_MODE_STANDARD = 0;
+	public static final int TABLE_MODE_AUTOFUNCTION = 1;
+	
+	private int tableMode = TABLE_MODE_STANDARD;
+	public int getTableMode() { return tableMode; }
+	public void setTableMode(int tableMode) { 
+		this.tableMode = tableMode; 
+		if(tableMode == TABLE_MODE_AUTOFUNCTION){
+			targetCellLoc = new Point(minSelectionColumn,minSelectionRow);
+			targetcellFrame = this.getCellBlockRect(minSelectionColumn, minSelectionRow, 
+					minSelectionColumn, minSelectionRow, true);
+			setSelectionRectangleColor(Color.GRAY);
+			minSelectionColumn = -1;
+			maxSelectionColumn = -1;
+			minSelectionRow = -1;
+			maxSelectionRow = -1;
+			app.clearSelectedGeos();
+			
+		}else{
+			targetCellLoc = null;
+			targetcellFrame = null;
+			this.setSelectionRectangleColor(Color.BLUE);
+		}
+			
+	}
+	
+	private Point targetCellLoc;
+	
+	
+	
+	
 	
 	public static final int MAX_CELL_EDIT_STRING_LENGTH = 10;
 
@@ -89,6 +111,9 @@ public class MyTable extends JTable implements FocusListener
 	private MyTableColumnModelListener columnModelListener;
 	
 	private CellFormat formatHandler;
+	
+	
+	
 	
 	
 	/**
@@ -953,7 +978,10 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	
-	private Rectangle cellFrame;
+	private Rectangle targetcellFrame;
+	final static float dash1[] = { 2.0f };
+	final static BasicStroke dashed = new BasicStroke(3.0f,
+		      BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	
 	@Override
 	public void paint(Graphics graphics) {
@@ -964,10 +992,11 @@ public class MyTable extends JTable implements FocusListener
 		
 		Graphics2D g2 = (Graphics2D)graphics;
 
-		if(cellFrame != null){
-			g2.setColor(Color.GRAY);
-			g2.setStroke(new BasicStroke(3));
-			g2.draw(cellFrame);
+		if(targetcellFrame != null){
+			g2.setColor(GeoGebraColorConstants.DARKBLUE);
+			g2.setStroke(dashed);
+			
+			g2.draw(targetcellFrame);
 		}
 		
 		/*
@@ -1565,6 +1594,39 @@ public class MyTable extends JTable implements FocusListener
 			((JViewport) p).setBackground(getBackground());
 		}
 	}
+	
+	
+	
+	protected void handleAutoFunction(){
+
+		if (targetCellLoc == null || selectedCellRanges.get(0).isEmpty()){
+			app.setMoveMode();
+			return;
+		}
+		
+		String targetCellName = GeoElement.getSpreadsheetCellName(targetCellLoc.x, targetCellLoc.y);
+		String cellRangeString = getCellRangeProcessor().getCellRangeString(selectedCellRanges.get(0));
+	
+		String cmd = null;
+		if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_SUM) cmd = "Sum";
+		else if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_COUNT) cmd = "Length";
+		else if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_AVERAGE) cmd = "Mean";
+		else if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_MAX) cmd = "Max";
+		else if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_MIN) cmd = "Min";
+			
+		String expr = targetCellName + " = " + cmd + "[" + cellRangeString + "]";
+		
+		table.kernel.getAlgebraProcessor()
+		.processAlgebraCommandNoExceptions(expr,false);
+		
+		changeSelection(targetCellLoc.y, targetCellLoc.x, false, false);
+		app.setMoveMode();
+		
+	
+	}
+	
+	
+	
 	
 	
 	//===========================================

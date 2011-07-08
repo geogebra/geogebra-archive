@@ -66,7 +66,18 @@ public class SpreadsheetDockPanel extends DockPanel {
 		sb.append(EuclidianView.MODE_SPREADSHEET_CREATE_TABLETEXT);
 		sb.append(" , ");
 		sb.append(EuclidianView.MODE_SPREADSHEET_CREATE_POLYLINE);
-
+		
+		sb.append(" || ");
+		sb.append(EuclidianView.MODE_SPREADSHEET_SUM);
+		sb.append(" , ");
+		sb.append(EuclidianView.MODE_SPREADSHEET_AVERAGE);
+		sb.append(" , ");
+		sb.append(EuclidianView.MODE_SPREADSHEET_COUNT);
+		sb.append(" , ");
+		sb.append(EuclidianView.MODE_SPREADSHEET_MAX);
+		sb.append(" , ");
+		sb.append(EuclidianView.MODE_SPREADSHEET_MIN);
+		
 
 		return sb.toString();
 	}

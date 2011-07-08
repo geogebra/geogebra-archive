@@ -212,6 +212,8 @@ public interface EuclidianConstants {
 	public static final int MODE_SPREADSHEET_SUM = 2040;
 	public static final int MODE_SPREADSHEET_AVERAGE = 2041;
 	public static final int MODE_SPREADSHEET_COUNT = 2042;
+	public static final int MODE_SPREADSHEET_MIN = 2043;
+	public static final int MODE_SPREADSHEET_MAX = 2044;
 	
 	
 	// macro tools ID offset
