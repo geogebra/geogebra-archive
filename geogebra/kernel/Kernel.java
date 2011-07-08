@@ -5310,6 +5310,60 @@ public class Kernel {
 		return algo.getOutput();
 	}
 	
+	final public GeoElement [] VectorPolygon(String [] labels, GeoPoint [] points) {
+    	boolean oldMacroMode = cons.isSuppressLabelsActive();
+    	
+    	cons.setSuppressLabelCreation(true);	
+    	GeoConic circle = Circle(null, points[0], new MyDouble(this, points[0].distance(points[1])));
+		cons.setSuppressLabelCreation(oldMacroMode);
+		
+	
+	StringBuilder sb = new StringBuilder();
+	
+	double xA = points[0].inhomX;
+	double yA = points[0].inhomY;
+	
+	for (int i = 1; i < points.length ; i++) {
+
+		double xC = points[i].inhomX;
+		double yC = points[i].inhomY;
+		
+		GeoNumeric nx = new GeoNumeric(cons, null, xC - xA);
+		GeoNumeric ny = new GeoNumeric(cons, null, yC - yA);
+		
+		// make string like this
+		// (a+x(A),b+y(A))
+		sb.setLength(0);
+		sb.append('(');
+		sb.append(nx.getLabel());
+		sb.append("+x(");
+		sb.append(points[0].getLabel());
+		sb.append("),");
+		sb.append(ny.getLabel());
+		sb.append("+y(");
+		sb.append(points[0].getLabel());
+		sb.append("))");
+			
+		//Application.debug(sb.toString());
+
+		GeoPoint pp = (GeoPoint)getAlgebraProcessor().evaluateToPoint(sb.toString());
+		
+		try {
+			cons.replace(points[i], pp);
+			points[i] = pp;
+			//points[i].setEuclidianVisible(false);
+			points[i].update();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
+	points[0].update();
+	
+	return Polygon(labels, points);
+	
+	}
+	
 	final public GeoElement [] RigidPolygon(String [] labels, GeoPoint [] points) {
     	boolean oldMacroMode = cons.isSuppressLabelsActive();
     	
