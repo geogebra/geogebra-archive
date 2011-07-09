@@ -263,7 +263,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 		boolean rightClick = Application.isRightClick(e); 	        
 
 		if(table.getTableMode() == table.TABLE_MODE_AUTOFUNCTION){
-			table.handleAutoFunction();
+			table.stopAutoFunction();
 			return;
 		}
 			
@@ -400,6 +400,10 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 	public void mouseDragged(MouseEvent e) {
 
+		if(table.getTableMode() == table.TABLE_MODE_AUTOFUNCTION){
+			return;
+		}
+		
 		// handle editing mode drag 
 		if (editor.isEditing()) {
 			Point point = table.getIndexFromPixel(e.getX(), e.getY());

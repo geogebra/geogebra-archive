@@ -1089,13 +1089,10 @@ public class CellRangeProcessor {
 		}else if(range.isRow()){
 			s = app.getCommand("Row") + " " + (range.getMinRow() + 1);
 
-		}else if(!range.isSingleCell()){
+		}else{
 			s = GeoElement.getSpreadsheetCellName(range.getMinColumn(), range.getMinRow());
 			s += ":";
 			s += GeoElement.getSpreadsheetCellName(range.getMaxColumn(),range.getMaxRow());
-
-		}else{
-			s = GeoElement.getSpreadsheetCellName(range.getMinColumn(), range.getMinRow());
 		}
 
 		return s;
