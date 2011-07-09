@@ -446,6 +446,9 @@ public class CommandDispatcher {
     	cmdTable.put("RootList", new CmdRootList(kernel));   
     	cmdTable.put("PointList", new CmdPointList(kernel)); 
     	
+    	cmdTable.put("OrdinalRank", new CmdOrdinalRank(kernel));
+    	cmdTable.put("TiedRank", new CmdTiedRank(kernel));
+    	
     	cmdSubTable[TABLE_LIST].putAll(cmdTable);
     	cmdTable.clear();
     	
