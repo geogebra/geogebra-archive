@@ -397,7 +397,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			cbDisplayType.addItem(plotMap.get(PLOT_BOXPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_DOTPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_STEMPLOT));
-			cbDisplayType.addItem(plotMap.get(PLOT_FREQUENCYTABLE));
+		//	cbDisplayType.addItem(plotMap.get(PLOT_FREQUENCYTABLE));
 			cbDisplayType.addItem(plotMap.get(PLOT_NORMALQUANTILE));
 			cbDisplayType.addItem(MyRenderer.SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_ZTEST));
