@@ -1301,7 +1301,8 @@ public abstract class GeoElement
 
 		// copy color function
 		setColorFunction(geo.getColorFunction());
-
+		setColorSpace(geo.getColorSpace());
+		
 		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
 		try { setShowObjectCondition(geo.getShowObjectCondition());}
 		catch (Exception e) {}
