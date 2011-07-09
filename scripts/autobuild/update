@@ -36,6 +36,7 @@ if [ "$0" = "./update" -a "$1" != "--no-update" ]; then
  echo "$0: new commit was found in repository"
 else
  rm -fR org # not sure why SVN cannot handle this properly (org/mathpiper), http://stackoverflow.com/questions/1608836/folders-skipped-when-updating-svn
+ ant delete-sources
  $SVN_COMMAND $REVISION_PARAM update --accept theirs-full --force
  fi
 $SVN_COMMAND info | grep Revision | awk '{print $2}' > scripts/autobuild/.revision
@@ -44,12 +45,14 @@ echo "$WARNINGS warnings during chmod'ing source files"
 
 # 3. Setting global variables
 export JAVA_HOME
+export JDK_HOME=$JAVA_HOME
+export JAVACMD=$JAVA_HOME/bin/java
 export ANT_OPTS="-Xmx1024m"
 
 # 4. Building
 
 # 4/1. Deleting *.class files and compiling grammar with javacc
-ant delete-classes compile-grammar || exit 3
+ant delete-classes compile-grammar-cl || exit 3
 
 # 4/2. Setting classpath for ecj (required for Java 5)
 CP=""
@@ -63,7 +66,7 @@ BCP=../java150-rt.jar
 
 # 4/4. Creating *.class files
 echo "Creating class files"
-java -jar ecj-3.6.2.jar -1.5 -source 1.5 -target 1.5 -classpath $CP -bootclasspath $BCP\
+$JAVACMD $ANT_OPTS -jar ecj-3.6.2.jar -1.5 -source 1.5 -target 1.5 -classpath $CP -bootclasspath $BCP\
  -time -proceedOnError -g .  > .ecjlog 2>&1
 tail -1 .ecjlog
 echo ", see .ecjlog for more details" # .ecjlog has no \n before EOF

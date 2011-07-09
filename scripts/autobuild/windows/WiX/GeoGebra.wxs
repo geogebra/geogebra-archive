@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
   <Product Name='GeoGebra 4.0' Id='d44fff47-306c-4198-9899-832c1daa4566' UpgradeCode='05cf25f8-b534-47e2-a66a-b7e1f1ede637'
-    Language='1033' Codepage='1252' Version='4.0.0' Manufacturer='GeoGebra Inc.'>
+    Language='1033' Codepage='$(var.codepage)' Version='4.0.0' Manufacturer='GeoGebra Inc.'>
 
     <Package Id='*' Keywords='Installer'
       Description="GeoGebra 4.0 Installer"
       Comments='GeoGebra is a registered trademark of GeoGebra Inc.' Manufacturer='GeoGebra Inc.'
-      InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+      InstallerVersion='400' Languages='1033' Compressed='yes' SummaryCodepage='$(var.codepage)' />
 
     <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" />
     <Property Id='DiskPrompt' Value="GeoGebra 4.0 Installation [1]" />

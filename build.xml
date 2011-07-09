@@ -179,6 +179,15 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 		</delete>
 	</target>
 
+	<target name="delete-sources">
+		<delete>
+			<fileset dir="." includes="**/*.java" />
+		</delete>
+		<delete>
+			<fileset dir="." includes="**/*.properties" />
+		</delete>
+	</target>
+
 	<target name="delete-classes">
 		<delete>
 			<fileset dir="." includes="**/*.class" />
