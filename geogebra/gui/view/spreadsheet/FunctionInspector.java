@@ -365,7 +365,7 @@ KeyListener, ActionListener{
 		modelInterval.setColumnIdentifiers(intervalColumnNames);
 
 		lblStep.setText(app.getMenu("Step") + ":");		
-		lblInterval.setText(app.getMenu(" < " + app.getPlain("x")  + " < " ) );	
+		lblInterval.setText(app.getMenu(" < x < " ) );	
 
 		btnRemoveColumn.setText("\u2718");
 		//btnAddColumn.setText("\u271A");
@@ -482,7 +482,7 @@ KeyListener, ActionListener{
 			lowPoint.getCoords(coords);
 			fldLow.setText(nf.format(coords[0]));
 			highPoint.getCoords(coords);
-			fldHigh.setText(nf.format(coords[1]));
+			fldHigh.setText(nf.format(coords[0]));
 			
 			updateIntervalTable();
 		}
@@ -547,8 +547,7 @@ KeyListener, ActionListener{
 		value.add(null );
 
 		property.add(app.getCommand("Root"));
-		value.add(evaluateToText("\"\"" + "Root[" + lbl + "," + xMin + "," + xMax + "]"));
-
+		value.add(evaluateToText("\"\" + Root[" + lbl + "," + xMin + "," + xMax + "]",app.getPlain("fncInspector.MultipleRoots")));
 
 		property.add(null);
 		value.add(null );
@@ -1147,10 +1146,12 @@ KeyListener, ActionListener{
 	}
 
 
-	private String evaluateToText(String expr){
+	private String evaluateToText(String expr, String ifUndefined){
 		GeoText text = kernel.getAlgebraProcessor().evaluateToText(expr, false);
 		String result = text.getTextString();
 		text.remove();
+		if (result.equals(app.getPlain("undefined")))
+			return ifUndefined;
 		return result;
 	}
 
