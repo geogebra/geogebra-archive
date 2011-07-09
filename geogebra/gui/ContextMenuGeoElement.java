@@ -753,9 +753,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					public void actionPerformed(ActionEvent e) {
 						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
 							GeoElement geo = geos.get(i);
-							if (geo.isFixable()) {
-								geo.setFixed(!geo.isFixed());
+							if (geo.isGeoNumeric()) {
+								((GeoNumeric)geo).setSliderFixed(!geo.isFixed());
 								geo.updateRepaint();
+							} else {
+								if (geo.isFixable()) {
+									geo.setFixed(!geo.isFixed());
+									geo.updateRepaint();
+								}
 							}
 							
 						}
@@ -763,7 +768,33 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					}       	
 				});
 				addItem(cbItem);            	
-			}  
+			} else
+			
+			if (geo.isGeoNumeric()) {
+				final GeoNumeric num = (GeoNumeric)geo;
+				if (num.isSlider()) {   
+
+					cbItem = new JCheckBoxMenuItem( app.getPlain("FixObject"));
+					app.setEmptyIcon(cbItem);
+					cbItem.setSelected(num.isSliderFixed());
+					cbItem.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+								GeoElement geo = geos.get(i);
+								if (geo.isGeoNumeric()) {
+									((GeoNumeric)geo).setSliderFixed(!num.isSliderFixed());
+									geo.updateRepaint();
+								} else {
+									geo.setFixed(!num.isSliderFixed());
+								}
+								
+							}
+							app.storeUndoInfo();
+						}       	
+					});
+					addItem(cbItem);            	
+				}  
+			}
 
 			// text position
 			if (geo.isGeoText()) {
