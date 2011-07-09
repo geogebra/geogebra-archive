@@ -184,7 +184,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 			<fileset dir="." includes="**/*.java" />
 		</delete>
 		<delete>
-			<fileset dir="." includes="**/*.properties" />
+			<fileset dir="." includes="geogebra/properties/*.properties" />
 		</delete>
 	</target>
 
