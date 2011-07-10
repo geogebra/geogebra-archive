@@ -234,7 +234,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		// debugging XML		
 		StringBuilder sb = new StringBuilder();
 		table.getCellFormatHandler().getXML(sb);
-		Application.debug(sb);
+		//Application.debug(sb);
 
 		table.repaint();
 
