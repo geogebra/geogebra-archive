@@ -13,11 +13,11 @@ import java.lang.Iterable;
  * default sorting.
  * All lookups are case insensitive!
  */
-public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictionary {
+public class LowerCaseDictionary extends Hashtable<String, String> implements AutoCompleteDictionary {
 	
   private static final long serialVersionUID = 1L;
 
-  private TreeSet treeSet = new TreeSet();
+  private TreeSet<String> treeSet = new TreeSet<String>();
   
   /**
    * Adds an entry to the dictionary.
@@ -45,7 +45,7 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
     return treeSet.remove(lowerCase);
   }
   
-  public Iterator getIterator() {
+  public Iterator<String> getIterator() {
 	  return treeSet.iterator();
   }
 
@@ -64,13 +64,13 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
     
     String currLowerCase = curr.toLowerCase();
     try {
-      SortedSet tailSet = treeSet.tailSet(currLowerCase);
+      SortedSet<String> tailSet = treeSet.tailSet(currLowerCase);
       if(tailSet != null) {
-        Object firstObj = tailSet.first();
+        String firstObj = tailSet.first();
         if(firstObj != null) {
-          String first = (String)firstObj;
+          String first = firstObj;
           if(first.startsWith(currLowerCase)) {          	
-          	String ret = (String) get(first);          	
+          	String ret = get(first);          	
             return ret;
           }
         }
@@ -83,10 +83,12 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
   }
  
   /**
-   * Find all possible completions for the string curr.
+   * Find all possible completions for the string curr; return null if
+   * none exists
    *
    * @param curr The string to use as the base for the lookup
-   * @return an Iterable of strings containing all completions
+   * @return an Iterable of strings containing all completions or null
+   * 		 if none exists
    */
   public Iterable<String> getCompletions(String curr) {  	
     if(curr == null || "".equals(curr))
@@ -94,16 +96,16 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
     
     String currLowerCase = curr.toLowerCase();
     try {
-      SortedSet tailSet = treeSet.tailSet(currLowerCase);
+      SortedSet<String> tailSet = treeSet.tailSet(currLowerCase);
       if(tailSet != null) {
     	ArrayList<String> completions = new ArrayList<String>();
-    	Iterator compIter = tailSet.iterator();
+    	Iterator<String> compIter = tailSet.iterator();
     	while (compIter.hasNext()) {
-    		String comp = (String) compIter.next();
+    		String comp = compIter.next();
     		if (!comp.startsWith(currLowerCase)) {
     			break;
     		}
-    		completions.add((String) get(comp));
+    		completions.add(get(comp));
     	}
     	if (completions.isEmpty()) {
     		return null;
