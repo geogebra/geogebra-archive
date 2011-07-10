@@ -1005,13 +1005,13 @@ public class MyTable extends JTable implements FocusListener
 
 
 	private void drawFormatBorders(Graphics2D g2){
-		
+
 		HashMap<Point,Object> map = getCellFormatHandler().getFormatMap(CellFormat.FORMAT_BORDER);
 		Set<Point> formatCell = map.keySet();
-		
+
 		int c = 0,r = 0;
 		for(Point cell:formatCell){
-			
+
 			Byte b = (Byte) getCellFormatHandler().getCellFormat(cell, CellFormat.FORMAT_BORDER);
 			if(b != null){
 				c = cell.x;
@@ -1020,14 +1020,14 @@ public class MyTable extends JTable implements FocusListener
 				drawBoxPartial(g2,c,r,c+1,r+1,b);
 			}
 		}
-		
+
 		/*
-		
+
 		if(visRect == null) return;
-		
+
 		Point cell1 = getIndexFromPixel(visRect.x, visRect.y);
 		Point cell2 = getIndexFromPixel(visRect.x + visRect.width, visRect.y + visRect.height);
-		
+
 		Point cell = new Point();
 		for(int r = cell1.y; r <= cell2.y; r++)
 			for(int c = cell1.x; c <= cell2.x; c++){
@@ -1040,10 +1040,10 @@ public class MyTable extends JTable implements FocusListener
 					drawBoxPartial(g2,c,r,c+1,r+1,b);
 				}
 			}
-			*/
-		
+		 */
+
 	}
-	
+
 
 	private Rectangle targetcellFrame;
 	final static float dash1[] = { 2.0f };
@@ -1681,30 +1681,20 @@ public class MyTable extends JTable implements FocusListener
 		return tableMode; 
 	}
 
+	/**
+	 * Sets the table mode (currently the only modes are Standard and AutoFunction)
+	 * @param tableMode
+	 */
 	public void setTableMode(int tableMode) { 
 
 		if(tableMode == TABLE_MODE_AUTOFUNCTION){
 
-			if(RelativeCopy.getValue(this, minSelectionColumn, minSelectionRow) != null){
-				boolean isOK = copyPasteCut.delete(
-						minSelectionColumn, minSelectionRow, minSelectionColumn, minSelectionRow);
-				if(!isOK) return;
-			}
-
-			targetCell = new GeoNumeric(kernel.getConstruction(),0);
-			targetCell.setLabel(GeoElement.getSpreadsheetCellName(minSelectionColumn, minSelectionRow));
-			targetCell.setUndefined();
-			targetcellFrame = this.getCellBlockRect(minSelectionColumn, minSelectionRow, 
-					minSelectionColumn, minSelectionRow, true);
-
-			setSelectionRectangleColor(Color.GRAY);
-			minSelectionColumn = -1;
-			maxSelectionColumn = -1;
-			minSelectionRow = -1;
-			maxSelectionRow = -1;
-			app.clearSelectedGeos();
+			if(!initAutoFunction()) 
+				return;
 
 		}else{
+
+			// Clear the targetcellFrame and ensure the selection rectangle color is standard 
 			targetcellFrame = null;
 			this.setSelectionRectangleColor(Color.BLUE);
 		}
@@ -1719,17 +1709,90 @@ public class MyTable extends JTable implements FocusListener
 	// Autofunction handlers
 	//==================================================
 
+	/**
+	 * Initializes the autoFunction feature. The targetCell is prepared and the
+	 * GUI is adjusted to handle selection drag with an autoFunction
+	 */
+	protected boolean initAutoFunction(){
 
-	protected void stopAutoFunction(){
+		// Selection is a partial column. 
+		// The targetCell with autoFunction will be created beneath the column 
+		if(selectedCellRanges.size() == 1 && selectedCellRanges.get(0).isPartialColumn()){
+			
+			// Try to clear the target cell, exit if this is not possible
+			if(RelativeCopy.getValue(this, maxSelectionColumn, maxSelectionRow + 1) != null){
+				boolean isOK = copyPasteCut.delete(
+						maxSelectionColumn, maxSelectionRow + 1, maxSelectionColumn, maxSelectionRow + 1);
+				if(!isOK) 
+					return false;
+			}
+			
+			// Create new targetCell 
+			targetCell = new GeoNumeric(kernel.getConstruction(),0);
+			targetCell.setLabel(GeoElement.getSpreadsheetCellName(maxSelectionColumn, maxSelectionRow + 1));
 
-		if (targetCell == null || selectedCellRanges.get(0).isEmpty()){
-			app.setMoveMode();
-			return;
+			// Call stopAutoFunction to create the autofunction cell and clean up
+			stopAutoFunction();
+			
+			// Don't stay in this mode, we're done
+			return false;
 		}
 
+		// Selection is a single cell.
+		// The selected cell is the target cell. Allow the user to drag a new selection for the
+		// autoFunction. The autoFunction values are previewed in the targetCell while dragging.
+		else if(selectedCellRanges.size() == 1 && selectedCellRanges.get(0).isSingleCell()){
+
+			// Clear the target cell, exit if this is not possible
+			if(RelativeCopy.getValue(this, minSelectionColumn, minSelectionRow) != null){
+				boolean isOK = copyPasteCut.delete(
+						minSelectionColumn, minSelectionRow, minSelectionColumn, minSelectionRow);
+				if(!isOK) 
+					return false;
+			}
+
+			// Set targetCell as a GeoNumeric that can be used to preview the autofunction result
+			// (later it will be set as a GeoList)
+			targetCell = new GeoNumeric(kernel.getConstruction(),0);
+			targetCell.setLabel(GeoElement.getSpreadsheetCellName(minSelectionColumn, minSelectionRow));
+			targetCell.setUndefined();
+
+			// Set the targetcellFrame so the Paint method can use it to draw a dashed frame 
+			targetcellFrame = this.getCellBlockRect(minSelectionColumn, minSelectionRow, 
+					minSelectionColumn, minSelectionRow, true);
+
+			// Change the selection frame color to gray
+			// and clear the current selection
+			setSelectionRectangleColor(Color.GRAY);
+			minSelectionColumn = -1;
+			maxSelectionColumn = -1;
+			minSelectionRow = -1;
+			maxSelectionRow = -1;
+			app.clearSelectedGeos();
+
+		}
+
+		// Exit if any other type of selection exists
+		else 
+			return false;
+
+		return true;
+	}
+
+
+
+
+	/**
+	 * Stops the autofunction from updating and creates a new geo for the target
+	 * cell based on the current autofunction command.
+	 */
+	protected void stopAutoFunction(){
+
+		// Get the targetCell label and the selected cell range
 		String targetCellLabel = targetCell.getLabel();
 		String cellRangeString = getCellRangeProcessor().getCellRangeString(selectedCellRanges.get(0));
 
+		// Create a String expression for the new autofunction command geo
 		String cmd = null;
 		if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_SUM) cmd = "Sum";
 		else if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_COUNT) cmd = "Length";
@@ -1739,30 +1802,39 @@ public class MyTable extends JTable implements FocusListener
 
 		String expr = targetCellLabel + " = " + cmd + "[" + cellRangeString + "]";
 
+		// Reset mode and then create our new geo
+		setTableMode(TABLE_MODE_STANDARD);
+		
+		// Create the new geo
 		if(!selectedCellRanges.get(0).contains(targetCell))
 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(expr,false);
 		else
 			targetCell.setUndefined();
 
-		targetcellFrame = null;
-		this.setSelectionRectangleColor(Color.BLUE);
+		// select the new geo
 		app.setMoveMode();
 		Point coords = targetCell.getSpreadsheetCoords();
-		this.changeSelection(coords.y, coords.x, false, false);
+		changeSelection(coords.y, coords.x, false, false);
 		repaint();
+
 	}
 
-
+	/**
+	 * Updates the autofunction by recalculating the autofunction value as the
+	 * user drags the mouse to create a selection. The current autofunction
+	 * value is displayed in the targetCell.
+	 */
 	public void updateAutoFunction(){
 
-		if (targetCell == null || selectedCellRanges.get(0).isEmpty()){
+		if (targetCell == null || selectedCellRanges.get(0).isEmpty() || tableMode != TABLE_MODE_AUTOFUNCTION){
 			app.setMoveMode();
 			return;
 		}
 
-
+		// Get a string representation of the seleced range (e.g. A1:B3)
 		String cellRangeString = getCellRangeProcessor().getCellRangeString(selectedCellRanges.get(0));
 
+		// Build a String expression for the autofunction
 		String cmd = null;
 		if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_SUM) cmd = "Sum";
 		else if(view.getMode() == EuclidianConstants.MODE_SPREADSHEET_COUNT) cmd = "Length";
@@ -1772,6 +1844,7 @@ public class MyTable extends JTable implements FocusListener
 
 		String expr = cmd + "[" + cellRangeString + "]";
 
+		// Evaluate the autofunction and put the result in targetCell
 		if(!selectedCellRanges.get(0).contains(targetCell))
 			((GeoNumeric)targetCell).setValue(table.kernel.getAlgebraProcessor().evaluateToDouble(expr));
 		else

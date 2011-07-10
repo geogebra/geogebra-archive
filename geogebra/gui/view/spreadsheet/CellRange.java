@@ -118,11 +118,30 @@ public class CellRange {
 		return (anchorColumn == -1);
 	}
 	
-	// TODO -- refator this name, should mean has either exactly 2 rows or 2 columns
+	// TODO -- refactor this name, should mean has either exactly 2 rows or exactly 2 columns
+	/**
+	 * Returns true if cell range is 2xn or nx2
+	 */
 	public boolean is2D() {
 		return (maxColumn - minColumn == 1) || (maxRow - minRow == 1);
 	}
 
+	/**
+	 * Returns true if cell range is 1xn or nx1
+	 */
+	public boolean is1D() {
+		return !isSingleCell() && !isRow() && !isColumn() && 
+		((maxColumn - minColumn == 0) || (maxRow - minRow == 0));
+	}
+	
+	public boolean isPartialRow() {
+		return !isSingleCell() && !isRow() && (maxRow - minRow == 0);
+	}
+	
+	public boolean isPartialColumn() {
+		return !isSingleCell() && !isColumn() && (maxColumn - minColumn == 0);
+	}
+	
 	/** isEmpty = cell range contains no geos   */
 	public boolean isEmpty() {
 		return toGeoList().size() == 0;
@@ -335,7 +354,9 @@ public class CellRange {
 		return false;
 	}
 
-	
+	/**
+	 * Prints debugging information about the cell range
+	 */
 	public void debug(){
 		System.out.println("anchor cell:  (" + anchorColumn + "," + anchorRow + ")" );
 		System.out.println("corner cells: (" + minColumn + "," + minRow + ")  (" + maxColumn + "," + maxRow + ")"  );
