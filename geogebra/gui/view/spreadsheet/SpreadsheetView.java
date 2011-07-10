@@ -1197,6 +1197,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return styleBar;
 	}
 
+	public boolean isVisibleStyleBar(){
+		return styleBar == null || styleBar.isVisible();
+	}
+	
 
 	public void setColumnSelect(boolean isColumnSelect){
 		this.isColumnSelect = isColumnSelect;

@@ -63,6 +63,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private JComboBox comboBox;
 	private DefaultComboBoxModel cbModel;
 	private Color bgColor;
+	private Integer fontStyle;
 	
 	
 	
@@ -109,6 +110,13 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		if(bgColor == null) 
 			bgColor = table.getBackground();
 		setBackground(bgColor);
+		
+		fontStyle = (Integer) formatHandler.getCellFormat(cellPoint, 
+				CellFormat.FORMAT_FONTSTYLE);
+		if(fontStyle == null)
+			fontStyle = Font.PLAIN;
+		
+			
 		
 		
 		//TODO: Other formats should be set here ... before exit with null geo
@@ -192,9 +200,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 		// Set font
 		setText(text);
-		//setFont(app.getFontCanDisplay(text, Font.BOLD));
-		setFont(app.getFontCanDisplay(text, Font.PLAIN));
-		
+		setFont(app.getFontCanDisplay(text, fontStyle));
 		
 		// Set foreground and background color
 		
@@ -231,19 +237,19 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		if (traceBorder != null){
 			
 			switch (traceBorder){
-			case CellFormat.BORDER_ALL:
+			case CellFormat.BORDER_STYLE_ALL:
 				setBorder(BorderFactory.createCompoundBorder(bAll, cellPadding));
 			break;
-			case CellFormat.BORDER_TOP:
+			case CellFormat.BORDER_STYLE_TOP:
 				setBorder(BorderFactory.createCompoundBorder(bTop, cellPadding));
 			break;
-			case CellFormat.BORDER_LEFT:
+			case CellFormat.BORDER_STYLE_LEFT:
 				setBorder(BorderFactory.createCompoundBorder(bLeft, cellPadding));
 			break;
-			case CellFormat.BORDER_BOTTOM:
+			case CellFormat.BORDER_STYLE_BOTTOM:
 				setBorder(BorderFactory.createCompoundBorder(bBottom, cellPadding));
 			break;
-			case CellFormat.BORDER_RIGHT:
+			case CellFormat.BORDER_STYLE_RIGHT:
 				setBorder(BorderFactory.createCompoundBorder(bRight, cellPadding));
 			break;
 			

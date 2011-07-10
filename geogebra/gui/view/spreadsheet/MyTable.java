@@ -29,6 +29,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -47,7 +48,7 @@ import javax.swing.table.TableColumn;
 public class MyTable extends JTable implements FocusListener 
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final int TABLE_MODE_STANDARD = 0;
 	public static final int TABLE_MODE_AUTOFUNCTION = 1;	
 	private int tableMode = TABLE_MODE_STANDARD;
@@ -218,7 +219,6 @@ public class MyTable extends JTable implements FocusListener
 			getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
 			getColumnModel().getColumn(i).setPreferredWidth(preferredColumnWidth);
 		}
-
 
 		// set visual appearance 	 
 		setShowGrid(true); 	 
@@ -572,9 +572,14 @@ public class MyTable extends JTable implements FocusListener
 		// if the selection has changed, update selected geos 
 		boolean changed = !list.equals(app.getSelectedGeos());
 		if(changed){
-			if(table.getTableMode() == table.TABLE_MODE_AUTOFUNCTION){
+
+			if(getTableMode() == TABLE_MODE_AUTOFUNCTION){
 				table.updateAutoFunction();
 			}
+
+			if(view.isVisibleStyleBar())
+				view.getSpreadsheetStyleBar().updateStyleBar();
+
 			app.setSelectedGeos(list);
 			view.notifySpreadsheetSelectionChange();
 		}
@@ -909,7 +914,7 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 	/**
-	 * Returns Point(columnIndex, rowIndex), the cell indices at the given pixel location as 
+	 * Returns Point(columnIndex, rowIndex), cell indices for the given pixel location  
 	 */
 	public Point getIndexFromPixel(int x, int y) {
 		if (x < 0 || y < 0) return null;
@@ -951,6 +956,94 @@ public class MyTable extends JTable implements FocusListener
 
 
 
+	private void drawGridLine(Graphics2D g2, int row1, int col1, int row2, int col2){
+
+		Rectangle rect1 = this.getCellRect(row1, col1, true);
+		int r1 = rect1.x-1;
+		int c1 = rect1.y-1;
+		Rectangle rect2 = this.getCellRect(row2, col2, true);
+		int r2 = rect2.x-1;
+		int c2 = rect2.y-1;
+
+		g2.setColor(GeoGebraColorConstants.RED);
+		g2.setStroke(new BasicStroke(1));
+		g2.drawLine(r1, c1, r2, c2);
+
+	}
+
+	private void drawBoxPartial(Graphics2D g2, int col1, int row1, int col2, int row2, byte v){
+
+		Rectangle rect1 = this.getCellRect(row1, col1, true);
+		int r1 = rect1.x-1;
+		int c1 = rect1.y-1;
+		Rectangle rect2 = this.getCellRect(row2, col2, true);
+		int r2 = rect2.x-1;
+		int c2 = rect2.y-1;
+
+		g2.setColor(GeoGebraColorConstants.BLACK);
+		g2.setStroke(new BasicStroke(1));
+
+
+		// left bar
+		if(!isZeroBit(v,0))
+			g2.drawLine(r1, c1, r1, c2);
+		// top bar
+		if(!isZeroBit(v,1))
+			g2.drawLine(r1, c1, r2, c1);
+		// right bar
+		if(!isZeroBit(v,2))
+			g2.drawLine(r2, c1, r2, c2);
+		// bottom bar
+		if(!isZeroBit(v,3))
+			g2.drawLine(r1, c2, r2, c2);
+
+	}
+
+	static public boolean isZeroBit(int value, int position){
+		return (value &= (1 << position)) == 0;
+	} 
+
+
+	private void drawFormatBorders(Graphics2D g2){
+		
+		HashMap<Point,Object> map = getCellFormatHandler().getFormatMap(CellFormat.FORMAT_BORDER);
+		Set<Point> formatCell = map.keySet();
+		
+		int c = 0,r = 0;
+		for(Point cell:formatCell){
+			
+			Byte b = (Byte) getCellFormatHandler().getCellFormat(cell, CellFormat.FORMAT_BORDER);
+			if(b != null){
+				c = cell.x;
+				r  = cell.y;
+				//System.out.println("byte =============>: " + cell.toString());
+				drawBoxPartial(g2,c,r,c+1,r+1,b);
+			}
+		}
+		
+		/*
+		
+		if(visRect == null) return;
+		
+		Point cell1 = getIndexFromPixel(visRect.x, visRect.y);
+		Point cell2 = getIndexFromPixel(visRect.x + visRect.width, visRect.y + visRect.height);
+		
+		Point cell = new Point();
+		for(int r = cell1.y; r <= cell2.y; r++)
+			for(int c = cell1.x; c <= cell2.x; c++){
+				cell.x = c;
+				cell.y = r;
+			//	drawBoxPartial(g2,c,r,c+1,r+1,(byte) 15);
+				Byte b = (Byte) getCellFormatHandler().getCellFormat(cell, CellFormat.FORMAT_BORDER);
+				if(b != null){
+					System.out.println("byte =============>: " + cell.toString());
+					drawBoxPartial(g2,c,r,c+1,r+1,b);
+				}
+			}
+			*/
+		
+	}
+	
 
 	private Rectangle targetcellFrame;
 	final static float dash1[] = { 2.0f };
@@ -961,10 +1054,15 @@ public class MyTable extends JTable implements FocusListener
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
 
+		Graphics2D g2 = (Graphics2D)graphics;
+
+		//	drawGridLine(g2,1,2,5,2);
+
+		drawFormatBorders(g2);
+
 		if(!view.hasViewFocus())
 			return;
 
-		Graphics2D g2 = (Graphics2D)graphics;
 
 		if(targetcellFrame != null){
 			g2.setColor(GeoGebraColorConstants.DARKBLUE);
@@ -1296,7 +1394,7 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 	private boolean allowEditing = false;
-	
+
 
 	public boolean isAllowEditing() {
 		return allowEditing;
@@ -1570,14 +1668,14 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 
-	
+
 
 
 	//==================================================
 	// Table mode change
 	//==================================================
-	
-	
+
+
 
 	public int getTableMode() { 
 		return tableMode; 
@@ -1616,11 +1714,11 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 
-	
+
 	//==================================================
 	// Autofunction handlers
 	//==================================================
-	
+
 
 	protected void stopAutoFunction(){
 
