@@ -1,6 +1,7 @@
 package geogebra.util;
 
 import java.util.Iterator;
+import java.lang.Iterable;
 
 /**
  * This interface defines the API that dictionaries for autocomplete components
@@ -15,7 +16,7 @@ public interface AutoCompleteDictionary {
    */
   public void addEntry(String s);
   
-  public Iterator getIterator();
+  public Iterator<String> getIterator();
 
   /**
    * Removes an entry from the dictionary.
@@ -34,6 +35,20 @@ public interface AutoCompleteDictionary {
    *          is implemented determines the behaviour of the component.
    *          Typically, the closest matching string that completely contains
    *          the given string is returned.
+   * @return null if no matching string, the closest matching string otherwise
+   * 
    */
   public String lookup(String s);
+  
+  /**
+   * Find all possible completions of the argument and return them.
+   *
+   * @param s The string to use as the base for the lookup. How this routine
+   *          is implemented determines the behaviour of the component.
+   *          Typically, the closest matching string that completely contains
+   *          the given string is returned.
+   * @return an iterable of strings if there is at least one completion,
+   *         otherwise null.
+   */
+  public Iterable<String> getCompletions(String s);
 }
