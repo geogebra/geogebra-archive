@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.ArrayList;
+import java.lang.Iterable;
 
 /**
  * A default implementation of the autocomplete dictionary. This implementation
@@ -79,5 +81,40 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
     }
     return null;
   }
+ 
+  /**
+   * Find all possible completions for the string curr.
+   *
+   * @param curr The string to use as the base for the lookup
+   * @return an Iterable of strings containing all completions
+   */
+  public Iterable<String> getCompletions(String curr) {  	
+    if(curr == null || "".equals(curr))
+		return null;
     
+    String currLowerCase = curr.toLowerCase();
+    try {
+      SortedSet tailSet = treeSet.tailSet(currLowerCase);
+      if(tailSet != null) {
+    	ArrayList<String> completions = new ArrayList<String>();
+    	Iterator compIter = tailSet.iterator();
+    	while (compIter.hasNext()) {
+    		String comp = (String) compIter.next();
+    		if (!comp.startsWith(currLowerCase)) {
+    			break;
+    		}
+    		completions.add((String) get(comp));
+    	}
+    	if (completions.isEmpty()) {
+    		return null;
+    	}
+    	return completions;
+      }
+    }
+    catch (Exception e) {
+      return null;
+    }
+    return null;
+  }
+ 
 } 
