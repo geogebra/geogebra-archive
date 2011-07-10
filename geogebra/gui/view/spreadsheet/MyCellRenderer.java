@@ -51,6 +51,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private Integer alignment = -1;
 	private Integer traceBorder = -1;
 	private Integer fontStyle;
+	boolean isCustomBGColor;
 
 	// Borders (not implemented yet)
 	private Border cellPadding = BorderFactory.createEmptyBorder(2, 5, 2, 5);
@@ -71,8 +72,8 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	// Cell geo
 	private GeoElement geo;
 
-	
-	
+
+
 	/*********************************************************
 	 * Constructor
 	 * @param app
@@ -121,10 +122,15 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// Set visible formats ... do this before exit with null geo
 		// ==================================================
 		// set default background color (adjust later if geo exists)
+
 		bgColor = (Color) formatHandler.getCellFormat(cellPoint, 
 				CellFormat.FORMAT_BGCOLOR);	
-		if(bgColor == null) 
+		if(bgColor == null){
+			isCustomBGColor = false;
 			bgColor = table.getBackground();
+		} else {
+			isCustomBGColor = true;
+		}
 		setBackground(bgColor);
 
 
@@ -225,8 +231,11 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		}
 
 		if (geo.doHighlighting()) {
-
-			bgColor = MyTable.SELECTED_BACKGROUND_COLOR;
+			if(isCustomBGColor){
+				bgColor = bgColor.darker();
+			}else{
+				bgColor = MyTable.SELECTED_BACKGROUND_COLOR;
+			}
 		}
 		setBackground(bgColor);
 		setForeground(geo.getAlgebraColor());
