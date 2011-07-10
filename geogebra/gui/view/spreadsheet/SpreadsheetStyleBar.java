@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
@@ -31,11 +32,14 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 	private CellFormat formatHandler;
 	private ArrayList<CellRange> selectedCells;
 
-	private JToggleButton btnLeftAlign, btnCenterAlign, btnRightAlign;
+	private MyToggleButton btnLeftAlign, btnCenterAlign, btnRightAlign, btnGrid, btnRowHeader, btnColumnHeader;
 	private ColorPopupMenuButton btnBgColor;
-	private JToggleButton btnBold, btnItalic;
+	private MyToggleButton btnBold, btnItalic;
 	private boolean allowActionPerformed = true;
 	private PopupMenuButton btnBorderStyle;
+
+	protected int iconHeight = 18;
+	private Dimension iconDimension = new Dimension(16, iconHeight);
 
 
 
@@ -47,45 +51,68 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		this.formatHandler = table.getCellFormatHandler();
 		this.selectedCells = table.selectedCellRanges;
 
-		int iconHeight = 18;
-		Dimension iconDimension = new Dimension(16,16);
+		// toolbar settings 
+		setFloatable(false);
+		Dimension d = getPreferredSize();
+		d.height = iconHeight+8;
+		setPreferredSize(d);
 		setFloatable(false);
 
-		ImageIcon boldIcon = GeoGebraIcon.createStringIcon(app.getPlain("Bold").substring(0,1),
-				app.getPlainFont(), true, false, true, iconDimension, Color.black, null);
-		btnBold = new JToggleButton(boldIcon);
-		btnBold.addActionListener(this);
-		add(btnBold);
+		// create and add the buttons
+		createButtons();
 
-		ImageIcon italicIcon = GeoGebraIcon.createStringIcon(app.getPlain("Italic").substring(0,1),
-				app.getPlainFont(), false, true, true, iconDimension, Color.black, null);
-		btnItalic = new JToggleButton(italicIcon);
-		btnItalic.addActionListener(this);
+		add(btnBold);
 		add(btnItalic);
 
 		this.addSeparator();
-		btnLeftAlign = new JToggleButton(app.getImageIcon("format-justify-left.png"));
-		btnLeftAlign.addActionListener(this);
+		add(btnBgColor);
+
+		this.addSeparator();
 		add(btnLeftAlign);
-
-		btnCenterAlign = new JToggleButton(app.getImageIcon("format-justify-center.png"));
-		btnCenterAlign.addActionListener(this);
 		add(btnCenterAlign);
-
-		btnRightAlign = new JToggleButton(app.getImageIcon("format-justify-right.png"));
-		btnRightAlign.addActionListener(this);
 		add(btnRightAlign);
 
 		this.addSeparator();
+		add(btnBorderStyle);
+
+		this.addSeparator();
+		add(btnGrid);
+		add(btnRowHeader);
+		add(btnColumnHeader);
+
+		setLabels();
+		updateStyleBar();
+	}
+
+
+	private void createButtons(){
+
+		ImageIcon boldIcon = GeoGebraIcon.createStringIcon(app.getPlain("Bold").substring(0,1),
+				app.getPlainFont(), true, false, true, iconDimension, Color.black, null);
+		btnBold = new MyToggleButton(boldIcon);
+		btnBold.addActionListener(this);
+		btnBold.setPreferredSize(iconDimension);
+
+		ImageIcon italicIcon = GeoGebraIcon.createStringIcon(app.getPlain("Italic").substring(0,1),
+				app.getPlainFont(), false, true, true, iconDimension, Color.black, null);
+		btnItalic = new MyToggleButton(italicIcon);
+		btnItalic.addActionListener(this);
+
+		btnLeftAlign = new MyToggleButton(app.getImageIcon("format-justify-left.png"));
+		btnLeftAlign.addActionListener(this);
+
+		btnCenterAlign = new MyToggleButton(app.getImageIcon("format-justify-center.png"));
+		btnCenterAlign.addActionListener(this);
+
+		btnRightAlign = new MyToggleButton(app.getImageIcon("format-justify-right.png"));
+		btnRightAlign.addActionListener(this);
+
 		Dimension bgColorIconSize = new Dimension(20,iconHeight);
 		btnBgColor = new ColorPopupMenuButton(app, bgColorIconSize, ColorPopupMenuButton.COLORSET_BGCOLOR, false);
 		btnBgColor.setKeepVisible(false);
 		btnBgColor.setSelectedIndex(0);
 		btnBgColor.addActionListener(this);
-		add(btnBgColor);
 
-		
-		this.addSeparator();
 		ImageIcon[] borderStyleIcon = {
 				app.getImageIcon("border_none.png"),
 				app.getImageIcon("border_frame.png"),
@@ -96,18 +123,22 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 				app.getImageIcon("border_left.png"),
 				app.getImageIcon("border_right.png")
 		};
-					
+
 		btnBorderStyle = new PopupMenuButton(app, borderStyleIcon, 2,-1, iconDimension, SelectionTable.MODE_ICON);
 		btnBorderStyle.setKeepVisible(false);
 		btnBorderStyle.setSelectedIndex(1);
 		btnBorderStyle.addActionListener(this);
-		add(btnBorderStyle);
-		
-		setLabels();
+
+		btnGrid = new MyToggleButton(app.getImageIcon("spreadsheet_grid.png"));
+		btnGrid.addActionListener(this);
+
+		btnRowHeader = new MyToggleButton(app.getImageIcon("header_row.png"));
+		btnRowHeader.addActionListener(this);
+
+		btnColumnHeader = new MyToggleButton(app.getImageIcon("header_column.png"));
+		btnColumnHeader.addActionListener(this);
 
 	}
-
-
 
 
 
@@ -126,26 +157,31 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		if(!allowActionPerformed ) return;
 
 		Object source = e.getSource();
-		
+
 		if (source == btnLeftAlign || source == btnCenterAlign || source == btnRightAlign) {
 
-			Integer alignment = null;
-			if(((JToggleButton)source).isSelected()){
+			Integer align = null;
+			if(((MyToggleButton)source).isSelected()){
 				if(source == btnLeftAlign) 
-					alignment = CellFormat.ALIGN_LEFT;
+					align = CellFormat.ALIGN_LEFT;
 				else if(source == btnRightAlign) 
-					alignment = CellFormat.ALIGN_RIGHT;
+					align = CellFormat.ALIGN_RIGHT;
 				else
-					alignment = CellFormat.ALIGN_CENTER;
+					align = CellFormat.ALIGN_CENTER;
 			}
 
-			formatHandler.setFormat(selectedCells,CellFormat.FORMAT_ALIGN, alignment);
-			btnLeftAlign.setSelected(alignment == CellFormat.ALIGN_LEFT);
-			btnRightAlign.setSelected(alignment == CellFormat.ALIGN_RIGHT);
-			btnCenterAlign.setSelected(alignment == CellFormat.ALIGN_CENTER);
+			formatHandler.setFormat(selectedCells,CellFormat.FORMAT_ALIGN, align);
+			if(align == null){
+				btnLeftAlign.setSelected(false);
+				btnRightAlign.setSelected(false);
+				btnCenterAlign.setSelected(false);
+			}else{
+				btnLeftAlign.setSelected(align == CellFormat.ALIGN_LEFT);
+				btnRightAlign.setSelected(align == CellFormat.ALIGN_RIGHT);
+				btnCenterAlign.setSelected(align == CellFormat.ALIGN_CENTER);
+			}
 		}
 
-		
 
 		else if (source == btnBold || source == btnItalic ) {
 			Integer fontStyle = CellFormat.STYLE_PLAIN;
@@ -174,12 +210,32 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		}
 
 		else if (source == btnBorderStyle) {
-			
+
+			formatHandler.setBorderStyle(selectedCells.get(0), btnBorderStyle.getSelectedIndex());
+		}
+
+
+		else if (source == btnBorderStyle) {
 			formatHandler.setBorderStyle(selectedCells.get(0), btnBorderStyle.getSelectedIndex());
 		}
 		
-		
-		
+		else if (source == btnGrid) {
+			view.setShowGrid(btnGrid.isSelected());
+		}
+		else if (source == btnRowHeader) {
+			view.setShowRowHeader(btnRowHeader.isSelected());
+		}
+		else if (source == btnColumnHeader) {
+			view.setShowColumnHeader(btnColumnHeader.isSelected());
+		}
+
+
+		// ====================		
+		// debugging XML		
+		StringBuilder sb = new StringBuilder();
+		table.getCellFormatHandler().getXML(sb);
+		Application.debug(sb);
+
 		table.repaint();
 
 	}
@@ -215,12 +271,28 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 			btnCenterAlign.setSelected(align == CellFormat.ALIGN_CENTER);
 		}
 
+		btnGrid.setSelected(view.getShowGrid());
+		btnRowHeader.setSelected(view.getShowRowHeader());
+		btnColumnHeader.setSelected(view.getShowColumnHeader());
+		
 		allowActionPerformed = true;
 
 	}
 
 
+	public class MyToggleButton extends JToggleButton {
+		public MyToggleButton(ImageIcon icon){
+			super(icon);
+			Dimension d = new Dimension(icon.getIconWidth(), iconHeight);
+			setIcon(GeoGebraIcon.ensureIconSize(icon, d));
+			this.setRolloverEnabled(true);
+		}
 
+		public void toggle(){
+			this.setSelected(!this.isSelected());
+		}
+
+	}
 
 
 

@@ -1,11 +1,17 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.main.Application;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JLabel;
+import javax.swing.table.TableColumn;
 
 /**
  * Helper class that handles cell formats for the spreadsheet table cell
@@ -33,8 +39,7 @@ public class CellFormat {
 	public static final int FORMAT_ALIGN = 0;
 	public static final int FORMAT_BORDER = 1;
 	public static final int FORMAT_BGCOLOR = 2;
-	public static final int FORMAT_TRACING = 3;
-	public static final int FORMAT_FONTSTYLE = 4;
+	public static final int FORMAT_FONTSTYLE = 3;
 
 	private int formatCount = 5;
 
@@ -258,7 +263,7 @@ public class CellFormat {
 				for(int c = c1; c <=c2; c++)
 					setFormat(cr,FORMAT_BORDER, null);
 			break;
-			
+
 		case BORDER_STYLE_ALL:
 
 			for(int r = r1; r<=r2; r++)
@@ -268,16 +273,16 @@ public class CellFormat {
 					setFormat(cell,FORMAT_BORDER, BORDER_ALL);
 				}
 			break;
-			
+
 		case BORDER_STYLE_FRAME:
-			
+
 			// single cell
 			if(r1 == r2 && c1 == c2) {
 				cell.x = c1; cell.y = r1;
 				setFormat(cell,FORMAT_BORDER, BORDER_ALL);
 				return;
 			}
-			
+
 			// top & bottom
 			cell.y = r1; cell2.y = r2;
 			for(int c = c1+1; c <=c2-1; c++){
@@ -305,15 +310,15 @@ public class CellFormat {
 				}
 			}
 
-			
+
 			// CORNERS
-			
+
 			// case 1: column corners
 			if(c1 == c2){
 				cell.x = c1; cell.y = r1;
 				byte b = (int)BORDER_LEFT + (int)BORDER_RIGHT + (int)BORDER_TOP;
 				setFormat(cell,FORMAT_BORDER, b);
-				
+
 				cell.x = c1; cell.y = r2;
 				b = (int)BORDER_LEFT + (int)BORDER_RIGHT + (int)BORDER_BOTTOM;
 				setFormat(cell,FORMAT_BORDER, b);
@@ -323,13 +328,13 @@ public class CellFormat {
 				cell.x = c1; cell.y = r1;
 				byte b = (int)BORDER_LEFT + (int)BORDER_TOP + (int)BORDER_BOTTOM;
 				setFormat(cell,FORMAT_BORDER, b);
-				
+
 				cell.x = c2; cell.y = r1;
 				b = (int)BORDER_RIGHT + (int)BORDER_TOP + (int)BORDER_BOTTOM;
 				setFormat(cell,FORMAT_BORDER, b);
-				
+
 			}
-			
+
 			// case 3: block corners
 			else {
 				cell.y = r1; cell.x = c1;
@@ -351,7 +356,7 @@ public class CellFormat {
 
 
 			break;
-			
+
 		case BORDER_STYLE_INSIDE:
 			// TODO --- inside style
 			for(int r = r1; r<=r2; r++)
@@ -362,7 +367,7 @@ public class CellFormat {
 					setFormat(cell,FORMAT_BORDER, BORDER_ALL);
 				}
 			break;
-			
+
 		case BORDER_STYLE_TOP:
 			cell.y = r1;
 			for(int c = c1; c <=c2; c++){
@@ -370,7 +375,7 @@ public class CellFormat {
 				setFormat(cell,FORMAT_BORDER, BORDER_TOP);
 			}
 			break;
-			
+
 		case BORDER_STYLE_BOTTOM:
 			cell.y = r2;
 			for(int c = c1; c <=c2; c++){
@@ -378,7 +383,7 @@ public class CellFormat {
 				setFormat(cell,FORMAT_BORDER, BORDER_BOTTOM);
 			}
 			break;
-			
+
 		case BORDER_STYLE_LEFT:
 			cell.x = c1;
 			for(int r = r1; r <=r2; r++){
@@ -386,7 +391,7 @@ public class CellFormat {
 				setFormat(cell,FORMAT_BORDER, BORDER_LEFT);
 			}
 			break;
-			
+
 		case BORDER_STYLE_RIGHT:
 			cell.x = c2;
 			for(int r = r1; r <=r2; r++){
@@ -397,6 +402,47 @@ public class CellFormat {
 
 		}
 
+
+	}
+
+
+
+	/**
+	 * returns settings in XML format
+	 */
+	public void getXML(StringBuilder sb) {
+		sb.append("<spreadsheetCellFormat>\n");
+
+		// create a set containing all cells with formats
+		HashSet<Point> masterKeySet = new HashSet<Point>();
+		for(int i = 0; i < formatTableArray.length; i ++)
+			masterKeySet.addAll(formatTableArray[i].keySet());
+
+		// iterate through the set creating XML tags for each cell and its formats
+		for(Point cell : masterKeySet){
+			sb.append("\t<cellFormat x=\"" + cell.x + "\" y=\"" + cell.y);
+			Integer align = (Integer) formatTableArray[FORMAT_ALIGN].get(cell);
+			if(align != null)
+				sb.append("\" align=\"" + align);
+			
+			Byte border = (Byte) formatTableArray[FORMAT_BORDER].get(cell);
+			if(border != null)
+				sb.append("\" border=\"" + border);
+			
+			Color color = (Color) formatTableArray[FORMAT_BGCOLOR].get(cell);
+			if(color != null)
+				sb.append("\" color=\"" + color.getRGB());
+			
+			Integer fStyle = (Integer) formatTableArray[FORMAT_FONTSTYLE].get(cell);
+			if(fStyle != null)
+				sb.append("\" fontStyle=\"" + fStyle);
+			
+			sb.append("\"/>\n");
+		}
+
+		sb.append("</spreadsheetCellFormat>\n");
+
+		//Application.debug(sb);
 
 	}
 
