@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.lang.Iterable;
 
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
@@ -33,6 +34,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private ArrayList<String> history;  
 	private boolean handleEscapeKey = false;
 	
+	private Iterable<String> completions;
+	private Iterator<String> completionIter;
+	private String cmdPrefix;
 	
 	/**
 	 * Flag to determine if text must start with "=" to activate autoComplete;
@@ -62,7 +66,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		historyIndex = 0;
 		history = new ArrayList<String>(50);
-
+		
+		completions = null;
+		completionIter = null;
 		//addKeyListener(this); now in MathTextField
 		setDictionary(dict);
 		
@@ -228,6 +234,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			break;
 
 			// clear textfield
+		case KeyEvent.VK_TAB:
+			// Cycle through completions
+			if (getAutoComplete() && completions != null) {
+				clearSelection();
+				updateAutoCompletion(true);
+				e.consume();
+			}
+			break;
 		case KeyEvent.VK_ESCAPE:   
 			if (!handleEscapeKey) {
 				break;
@@ -603,8 +617,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	/**
 	 * returns whether the input field's text was changed due to autocompletion
+	 * @param cycling is true if finding next possible completion
+	 *                   otherwise a new completions object must be obtained
 	 */ 
-	public void updateAutoCompletion() { 
+	public void updateAutoCompletion(boolean cycling) { 
 		String text = getText();
 		
 		if(isEqualsRequired && !text.startsWith("="))
@@ -632,15 +648,30 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// with an upper case letter
 		//curWord.setCharAt(0, Character.toUpperCase(curWord.charAt(0)));
 
-		// lookup command that starts with current word
-		String cmd = lookup(curWord.toString());  
-		if (cmd == null)
-			return;     
+		// Build completions if not cycling
+		if (!cycling) {
+			cmdPrefix = curWord.toString();
+			completions = dict.getCompletions(curWord.toString());
+		}
+		// Find next completion
+		if (completions == null) {
+			return;
+		}
+		if (!cycling || !completionIter.hasNext()) {
+			completionIter = completions.iterator();
+		}
+		String cmd = completionIter.next();
 
 		// build new autocompletion text
+		// make sure when we type eg CA we get CAuchy not Cauchy, in case we want CA=33
 		StringBuilder sb = new StringBuilder();
-		sb.append(cmd);
-		sb.append("[]"); // add brackets
+		if (!cmd.startsWith(cmdPrefix)) {
+			sb.append(cmdPrefix);
+			sb.append(cmd.substring(cmdPrefix.length()));
+		} else {
+			sb.append(cmd);
+		}
+		sb.append("[]");
 		cmd = sb.toString();            
 
 		// insert the command into current text   
@@ -677,13 +708,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			setCaretPosition(sb.toString().indexOf("[]", curWordStart) );
 		}
 
-
-		// change current word
-		curWord.setLength(0);
-		curWord.append(cmd);
-		curWordStart = caretPos - curWordStart;
+		updateCurrentWord();
 	}
 
+	public void updateAutoCompletion() {
+		updateAutoCompletion(false);
+	}
+	
 	private boolean processAutoCompletionKey() {  	  	  	
 		String selText = getSelectedText();
 
@@ -695,7 +726,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			String selWord = getWordAtPos(text, pos-2);
 			if (selWord == null) return false;
 
-			String cmdWord = lookup(selWord);
+			String cmdWord = dict.lookup(selWord);
 			if (cmdWord == null ||
 					cmdWord.length() != selWord.length()) return false;
 
@@ -710,7 +741,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			setText(sb.toString());
 
 			// move caret left to get inside the bracket
-			setCaretPosition(pos - 1);          
+			setCaretPosition(pos - 1);
+			updateCurrentWord();
 			return true;                                
 		}
 		return false;
