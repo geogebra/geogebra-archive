@@ -18,7 +18,7 @@ if [ "$VERSION_STRING" = "" ]; then
  fi
 
 if [ "$PYTHON3" = "" ]; then
- PYTHON3=`python3 2>/dev/null`
+ PYTHON3=`which python3 2>/dev/null`
  if [ "$PYTHON3" = "" ]; then
   echo "Python3 is required to run this script."
   exit 1
