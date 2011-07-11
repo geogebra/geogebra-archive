@@ -223,9 +223,6 @@ public  GeoElement[] process(Command c) throws MyError {
         case 3 : // only one of the intersection points: the third argument
 					 // states which one
             arg = resArgs(c);
-        	Application.debug(arg[0] .isGeoConic());
-        	Application.debug(arg[1] .isGeoConic());
-        	Application.debug(arg[2] .isNumberValue());
             // Line - Conic
             if ((ok[0] = (arg[0] .isGeoLine()))
                 && (ok[1] = (arg[1] .isGeoConic()))
@@ -238,9 +235,7 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoConic) arg[1],
                             (NumberValue) arg[2])};
                 return ret;
-            }
-            // Conic - Line
-            else if (
+            } else if (
                 (ok[0] = (arg[0] .isGeoConic()))
                     && (ok[1] = (arg[1] .isGeoLine()))
                     && (ok[2] = (arg[2] .isNumberValue()))) {
@@ -252,6 +247,41 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoConic) arg[0],
                             (NumberValue) arg[2])};
                 return ret;
+            }
+            // Line - Conic with startPoint
+            else if ((ok[0] = (arg[0] .isGeoLine()))
+                    && (ok[1] = (arg[1] .isGeoConic()))
+                    && (ok[2] = (arg[2] .isGeoPoint()))) {
+            	GeoElement[] ret = {
+            			kernel.IntersectLineConicSingle(
+                                c.getLabel(),
+                                (GeoLine) arg[0],
+                                (GeoConic) arg[1],
+                                (GeoPoint) arg[2])};
+            	return ret;
+            } else if (
+                    (ok[0] = (arg[0] .isGeoConic()))
+                        && (ok[1] = (arg[1] .isGeoLine()))
+                        && (ok[2] = (arg[2] .isGeoPoint()))) {
+            	GeoElement[] ret = {
+            			kernel.IntersectLineConicSingle(
+                                c.getLabel(),
+                                (GeoLine) arg[1],
+                                (GeoConic) arg[0],
+                                (GeoPoint) arg[2])};
+            	return ret;
+            }
+         // Conic - Conic with startPoint
+            else if ((ok[0] = (arg[0] .isGeoConic()))
+                    && (ok[1] = (arg[1] .isGeoConic()))
+                    && (ok[2] = (arg[2] .isGeoPoint()))) {
+            	GeoElement[] ret = {
+            			kernel.IntersectConicsSingle(
+                                c.getLabel(),
+                                (GeoConic) arg[0],
+                                (GeoConic) arg[1],
+                                (GeoPoint) arg[2])};
+            	return ret;
             }
             // Conic - Conic
             else if (
