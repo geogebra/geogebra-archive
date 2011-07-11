@@ -26,6 +26,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	private double savedRadius;
 
+	private double[] params = new double[4];
 
 	/**
 	 * common constructor
@@ -44,6 +45,8 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 				+"]"
 		);
 		*/
+		
+		setParams();
 
 		if (Double.isNaN(function.getMinParameter(0))){
 			unlimitedRange=true;
@@ -76,6 +79,13 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	public void drawGeometryPicked(Renderer renderer) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private void setParams(){
+		params[0]=function.getMinParameter(0);
+		params[1]=function.getMaxParameter(0);
+		params[2]=function.getMinParameter(1);
+		params[3]=function.getMaxParameter(1);
 	}
 	
 	/** 
@@ -115,8 +125,21 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		boolean ret = true;
 		
 		if(elementHasChanged){
-			elementHasChanged = false;
-			mesh.updateParameters();
+			if( function.getMinParameter(0)!=params[0] || 
+					function.getMaxParameter(0)!=params[1] || 
+					function.getMinParameter(1)!=params[2] || 
+					function.getMaxParameter(1)!=params[3] ){
+				if(unlimitedRange){
+					lastBaseRadius=savedRadius*unlimitedScaleFactor;
+					mesh = new SurfaceMesh2(function, lastBaseRadius, true);
+				} else
+					mesh = new SurfaceMesh2(function, savedRadius, false);
+				setParams();
+			} else {
+				//otherwise, update the surface
+				elementHasChanged = false;
+				mesh.updateParameters();
+			}
 		}
 		
 		Renderer renderer = getView3D().getRenderer();

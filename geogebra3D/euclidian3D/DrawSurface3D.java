@@ -16,7 +16,9 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 	
 	private SurfaceMesh2 mesh;	
 	private double savedRadius;
-
+	
+	GeoSurfaceCartesian3D surface;
+	private double[] params = new double[4];
 
 	/**
 	 * common constructor
@@ -25,6 +27,7 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 	 */
 	public DrawSurface3D(EuclidianView3D a_view3d, GeoSurfaceCartesian3D surface) {
 		super(a_view3d, surface);
+		this.surface=surface;
 		
 		/*
 		Application.debug("function on ["
@@ -35,9 +38,18 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 		);
 		*/
 		
+		setParams();
+		
 		updateRadius();
 		
 		mesh = new SurfaceMesh2(surface, savedRadius, false);
+	}
+	
+	private void setParams(){
+		params[0]=surface.getMinParameter(0);
+		params[1]=surface.getMaxParameter(0);
+		params[2]=surface.getMinParameter(1);
+		params[3]=surface.getMaxParameter(1);
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -95,12 +107,21 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 		boolean ret = true;
 		
 		if(elementHasChanged){
-			elementHasChanged = false;
-			mesh.updateParameters();
+			if( surface.getMinParameter(0)!=params[0] || 
+					surface.getMaxParameter(0)!=params[1] || 
+					surface.getMinParameter(1)!=params[2] || 
+					surface.getMaxParameter(1)!=params[3] ){
+				mesh = new SurfaceMesh2(surface, savedRadius, false);
+				setParams();
+			} else {
+				//otherwise, update the surface
+				elementHasChanged = false;
+				mesh.updateParameters();
+			}
 		}
 		
 		Renderer renderer = getView3D().getRenderer();
-		mesh.setRadius(100.0);
+		mesh.setRadius(savedRadius);
 		ret = mesh.optimize();
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
