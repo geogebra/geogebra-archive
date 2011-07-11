@@ -65,7 +65,7 @@ cd $SVNDIR/geogebra/scripts/autobuild/windows
 cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
 ./create_geogebra_linux
 
-# 8. Copying the Mac OS X version to Google Code:
+# 8. Copying the Mac OS X and the Windows installer version to Google Code:
 if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
  cd $SVNDIR/geogebra/build/installer
  MACOSX_ZIP=GeoGebra_`echo $MYVER | tr . -`.zip
@@ -74,6 +74,10 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
  mv $MACOSX_ZIP $MACOSX_ZIP_FINAL
  $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $MYVER for Mac OSX" \
   -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $MACOSX_ZIP_FINAL
+
+ WINDOWS_INSTALLER_EXE=GeoGebra-Windows-Installer-`echo $MYVER | tr . -`.exe
+ $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $MYVER installer for Windows" \
+  -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $WINDOWS_INSTALLER_EXE
  fi
 
 # 9. Sending an email to geogebra-dev:
