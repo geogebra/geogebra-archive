@@ -96,10 +96,11 @@ public class CASmpreduce extends CASgeneric {
 		String ggbString = toGeoGebraString(result);
 		
 		// TODO: remove
+/*
 		System.out.println("eval with MPReduce: " + exp);
 		System.out.println("   result: " + result);
 		System.out.println("   ggbString: " + ggbString);
-		
+*/		
 		return ggbString;
 	}
 	
