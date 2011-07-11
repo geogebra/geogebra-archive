@@ -1,25 +1,54 @@
 # Please edit below to fit your needs.
 
 # This directory will contain the working copy of GeoGebra:
-SVNDIR=/Users/zoltan/svn/
-#SVNDIR=/home/kovzol/svn
+#SVNDIR=/Users/zoltan/svn/ # Luxembourg server test
+#SVNDIR=/backup/build/svn/ # Luxembourg server production
+SVNDIR=/home/kovzol/svn # Office workstation
+#SVNDIR=/home/zoltan/svn # Linz server
 
 # This directory should point to the official webpage:
-WWWDIR=/home/kovzol/ggb/www/autobuild
-#WWWDIR=/Users/zoltan/www-autobuild
+#WWWDIR=/home/kovzol/ggb/www/autobuild # Szeged server
+#WWWDIR=/Users/zoltan/www-autobuild # Luxembourg server production
+#WWWDIR=/home/zoltan/www-autobuild # Linz server
+WWWDIR=/tmp # Office workstation (it will be removed on reboot)
+# If WWW_REMOVEDIR is set (see below), this directory will be copied
+# to a remote host/directory by using rsync.
 
 # Signature file directory:
-P12DIR=/home/kovzol/igi-keystore
-#P12DIR=/Users/zoltan/igi-keystore
+#P12DIR=/home/kovzol/igi-keystore # Office workstation
+#P12DIR=/Users/zoltan/igi-keystore # Luxembourg server test
+P12DIR=/home/zoltan/igi-keystore # Linz server
+# If this file does not exist, signing will not run (it shouldn't)
 
 # Repository:
-REPO=http://www.geogebra.org/svn/trunk/geogebra
-#REPO=file:///opt/repos/geogebra/trunk/geogebra
+#REPO=file:///opt/repos/geogebra/trunk/geogebra # for Luxembourg server installation
+REPO=http://www.geogebra.org/svn/trunk/geogebra # for other installations
 
-# Java home setting:
-JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun # Not needed to set if only Java 1.5 is installed.
+# Java home:
+# Linz server settings:
+#JAVA5_HOME=/home/zoltan/java/jdk1.5.0_22
+#JAVA6_HOME=/home/zoltan/java/jdk1.6.0_26
+#JAVA_HOME=$JAVA5_HOME
+#JAVA_HOME=/usr # Luxembourg server (not perfect, but works)
+JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun # On Debian Linux
 
 # "svn" command path (it should be quite recent, 1.4.4 is too old)
-SVN_COMMAND=/opt/subversion/bin/svn
+SVN_COMMAND=/opt/subversion/bin/svn # Luxembourg server
 #SVN_COMMAND=`which svn`
 
+# Google Code credentials
+GC_USER=kovzol
+GC_PASS=xxxxxxxx # This must be changed to the proper password
+
+# Please change this if the original .zip file is changing:
+#GGB40MAXIMA_ZIP=/home/zoltan/ggb40maxima/ggb40maxima-3.9.245.0_5.24.0.zip # Linz server
+GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
+# This file should be present to update ggb40maxima properly.
+# You can download it (or a similar version) from Google Code Downloads as well.
+
+# If this is set, rsync-www will run:
+WWW_REMOTEDIR=www.geogebra.org:/Library/WebServer/GeoGebra/webstart/
+
+# Python3 is needed for some scripts.
+#PYTHON3=/Users/zoltan/src/Python-3.2/python.exe # Luxembourg server
+# If not set, the default python3 executable will be used (if exists)

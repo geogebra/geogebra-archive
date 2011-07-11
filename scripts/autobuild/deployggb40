@@ -7,7 +7,7 @@ date
 echo "$0: start"
 
 test -r autobuild.conf || {
- echo "Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
+ echo "$0: Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
  exit 1
  }
 . ./autobuild.conf
@@ -21,7 +21,7 @@ umask 0002 # trying to ensure g+w rights for all created files automatically
 
 # 3. (Re)creating $WWWDIR/$MYDIR directory
 if [ "$WWWDIR" = "" ]; then
- echo "Fatal error, WWWDIR=$WWWDIR, exiting for safety reasons"
+ echo "$0: Fatal error, WWWDIR=$WWWDIR, exiting for safety reasons"
  exit 2
  fi
 cd build
@@ -80,7 +80,14 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
   -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $WINDOWS_INSTALLER_EXE
  fi
 
-# 9. Sending an email to geogebra-dev:
+# 8. rsync-www on demand
+if [ "$WWW_REMOTEDIR" != "" ]; then
+ echo "$0: Copying all files to $WWW_REMOTEDIR"
+ cd $SVNDIR/geogebra/scripts/autobuild
+ ./rsync-www >.rsync-www
+ fi
+
+# 10. Sending an email to geogebra-dev:
 REVISION=`cat $SVNDIR/geogebra/scripts/autobuild/.revision`
 echo "New version of GeoGebra 4.0 has just been uploaded: $MYVER
 http://www.geogebra.org/trac/log/trunk?rev=$REVISION
