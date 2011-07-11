@@ -552,8 +552,8 @@ public abstract class DynamicMesh2 {
 		drawList.recalculate(currentVersion);
 
 		// update elements in queues
-//		splitQueue.recalculate(currentVersion);
-//		mergeQueue.recalculate(currentVersion);
+		splitQueue.recalculate(currentVersion, drawList);
+		mergeQueue.recalculate(currentVersion, drawList);
 
 		updateCullingInfo();
 	}

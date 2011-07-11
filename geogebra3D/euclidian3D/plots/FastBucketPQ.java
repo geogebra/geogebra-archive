@@ -1,6 +1,10 @@
 package geogebra3D.euclidian3D.plots;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import geogebra3D.euclidian3D.BucketAssigner;
+import geogebra3D.euclidian3D.TriListElem;
 
 
 /**
@@ -165,6 +169,26 @@ public class FastBucketPQ{
 
 		return true;
 	}
+	
+	public void debugErrorTest(){
+		//find the bucket of maximum error and compare it to the front element
+		double maxError = -100;
+		int buck = -1;
+		double frontError = peek().getError();
+		
+		for(int i=0;i<=maxBucket;i++) {
+			DynamicMeshElement2 e = buckets[i];
+			while(e!=null){
+				double err = e.getError();
+				if(err>maxError){
+					maxError=err;
+					buck=i;
+				}
+				e=e.next;
+			}
+		}
+		System.out.println("Maximum error: "+maxError+"\tBucket: "+buck+"\tFront error: "+frontError);
+	}
 
 	/**
 	 * @return the first element in the top bucket
@@ -185,6 +209,23 @@ public class FastBucketPQ{
 		DynamicMeshElement2 elem = buckets[maxBucket];
 		remove(elem);
 		return elem;
+	}
+	
+	public void recalculate(int currentVersion, DynamicMeshTriList2 triList) {
+		LinkedList<DynamicMeshElement2> list = new LinkedList<DynamicMeshElement2>();
+		for(int i=0;i<=maxBucket;i++) {
+			DynamicMeshElement2 e = buckets[i];
+			while(e!=null){
+				if(e.lastVersion!=currentVersion)
+					list.add(e);
+				e=e.next;
+			}
+		}
+		Iterator<DynamicMeshElement2> it = list.iterator();
+		while(it.hasNext()){
+			DynamicMeshElement2 a = it.next();
+			triList.reinsert(a,currentVersion);
+		}
 	}
 
 	public int size() {
