@@ -96,9 +96,9 @@ public class CASmpreduce extends CASgeneric {
 		String ggbString = toGeoGebraString(result);
 		
 		// TODO: remove
-//		System.out.println("eval with MPReduce: " + exp);
-//		System.out.println("   result: " + result);
-//		System.out.println("   ggbString: " + ggbString);
+		System.out.println("eval with MPReduce: " + exp);
+		System.out.println("   result: " + result);
+		System.out.println("   ggbString: " + ggbString);
 		
 		return ggbString;
 	}
@@ -258,6 +258,11 @@ public class CASmpreduce extends CASgeneric {
 			mpreduce.evaluate("load_package(\"rsolve\");");
 			mpreduce.evaluate("load_package(\"numeric\");");
 			mpreduce.evaluate("load_package defint;");
+			
+			// access functions for elements of a vector 
+			mpreduce.evaluate("procedure x(a); if not numberp(a) and part(a, 0) = list then first(a) else x*a;");
+			mpreduce.evaluate("procedure y(a); if not numberp(a) and part(a, 0) = list then second(a) else x*a;");
+			mpreduce.evaluate("procedure z(a); if not numberp(a) and part(a, 0) = list then third(a) else x*a;");
 			
 			//the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
