@@ -234,7 +234,7 @@ public final class MyMath {
 	final public static double erf(double mean, double standardDeviation,
 			double x) {
 		try {
-			return Erf.erf((x - mean) / (standardDeviation * Math.sqrt(2.0)));
+			return Erf.erf((x - mean) / (standardDeviation));
 		} catch (Exception ex) {
 			if (x < (mean - 20 * standardDeviation)) { // JDK 1.5 blows at 38
 				return 0.0d;
