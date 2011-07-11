@@ -28,13 +28,11 @@ import java.math.BigDecimal;
 public class MySpecialDouble extends MyDouble {
 	
 	private String strToString;
-	private Kernel kernel;
 	private int precision; // number of significant digits
 	private boolean isLetterConstant; // for Pi or Euler constant
 	
 	public MySpecialDouble(Kernel kernel, double val, String strToString) {
 		super(kernel, val);
-		this.kernel = kernel;	
 		
 		// check if this is a letter constant, e.g. Pi or Euler number
 		isLetterConstant = Character.isLetter(strToString.charAt(0));

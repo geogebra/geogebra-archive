@@ -39,7 +39,7 @@ implements NumberValue {
     private double val;
     private boolean isAngle = false;    
     
-    private Kernel kernel;
+    protected Kernel kernel;
     
     public static double LARGEST_INTEGER = 9007199254740992.0; // 0x020000000000000
     
