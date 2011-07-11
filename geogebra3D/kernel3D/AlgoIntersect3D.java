@@ -15,8 +15,11 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.AlgoIntersectND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 
 
@@ -56,11 +59,14 @@ public abstract class AlgoIntersect3D extends AlgoIntersectND {
     int getClosestPointIndex(double xRW, double yRW, CoordMatrix4x4 mat) {
         GeoPoint3D[] P = getIntersectionPoints();
         double x, y, lengthSqr, mindist = Double.POSITIVE_INFINITY;
+        //Application.debug(""+xRW+" "+yRW+"\n"+mat);
         int minIndex = 0;
         for (int i = 0; i < P.length; i++) {
-        	Coords toSceneInhomCoords = mat.mul(P[i].getCoords().getCoordsLast1()).getInhomCoords();
-        	x = (toSceneInhomCoords.getX() - xRW);
-            y = (toSceneInhomCoords.getY() - yRW);
+        	Coords toScreenCoords = mat.mul(P[i].getCoords().getCoordsLast1()).getInhomCoords();
+        	//Application.debug("Screen coords of point "+i+" is:"+toScreenCoords);
+        	x = (toScreenCoords.getX() - xRW);
+            y = (toScreenCoords.getY() - yRW);
+            // comment: the z dimension is the "height", which will not be used here. 
             lengthSqr = x * x + y * y;
             if (lengthSqr < mindist) {
                 mindist = lengthSqr;
@@ -73,6 +79,29 @@ public abstract class AlgoIntersect3D extends AlgoIntersectND {
 
     protected abstract GeoPoint3D[] getIntersectionPoints();
     protected abstract GeoPoint3D[] getLastDefinedIntersectionPoints();
+    
+    int getClosestPointIndex(GeoPointND refPoint) {
+    	Coords refInhom = refPoint.getInhomCoordsInD(3);
+    	GeoPoint3D[] P = getIntersectionPoints();
+        double x, y, z, lengthSqr, mindist = Double.POSITIVE_INFINITY;
+        int minIndex = 0;
+        for (int i = 0; i < P.length; i++) {
+        	Coords PInhom = P[i].getInhomCoordsInD(3);
+        	
+            x = (PInhom.getX() - refInhom.getX());
+            y = (PInhom.getY() - refInhom.getY());
+            z = (PInhom.getZ() - refInhom.getZ());
+            lengthSqr = x * x + y * y + z * z;
+            //if two distances are equal, smaller index gets priority
+            if (Kernel.isGreater(mindist, lengthSqr)) {
+                mindist = lengthSqr;
+                minIndex = i;
+            }
+        }
+
+        return minIndex;
+    }
+
     
    
 

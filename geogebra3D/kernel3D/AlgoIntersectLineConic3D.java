@@ -238,6 +238,6 @@ public class AlgoIntersectLineConic3D extends AlgoIntersect3D {
     }*/
 	
     protected final void initForNearToRelationship() {   
-
+    	//TODO
     }
 }

@@ -45,7 +45,7 @@ import geogebra.main.Application;
  * @author  Markus
  * @version 
  */
-public class AlgoIntersectConics3D extends AlgoIntersectND {
+public class AlgoIntersectConics3D extends AlgoIntersect3D {
 
     /**
 	 * 
@@ -270,4 +270,9 @@ public class AlgoIntersectConics3D extends AlgoIntersectND {
             P[i].setUndefined();                  
         
 	}
+	
+
+    protected final void initForNearToRelationship() {   
+    	//TODO
+    }
 }

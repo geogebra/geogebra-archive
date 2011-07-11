@@ -1,7 +1,7 @@
 package geogebra.kernel;
 
 import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.Coords;
+
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -14,9 +14,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
-import geogebra3D.kernel3D.AlgoIntersectLineQuadric3D;
-import geogebra3D.kernel3D.AlgoIntersectPlaneConic;
-import geogebra3D.kernel3D.AlgoPolyLine3D;
+
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoQuadric3D;
@@ -34,10 +32,10 @@ public interface Manager3DInterface {
 	/** Point3D label with cartesian coordinates (x,y,z)   */
 	public GeoElement Point3D(String label, double x, double y, double z);
 		
-		/** Point dependent on arithmetic expression with variables,
-		 * represented by a tree. e.g. P = (4t, 2s)
-		 */
-		 public GeoElement DependentPoint3D(
+	/** Point dependent on arithmetic expression with variables,
+	* represented by a tree. e.g. P = (4t, 2s)
+	*/
+	public GeoElement DependentPoint3D(
 				String label,
 				ExpressionNode root) ;
 		 
@@ -483,6 +481,13 @@ public interface Manager3DInterface {
 			public GeoPoint3D IntersectLineConicSingle(
 					String label, GeoLineND g, GeoConicND c, NumberValue index);
 			
+			/** 
+			 * get only one intersection point of two conics, near to refPoint
+			 */
+			public GeoPoint3D IntersectLineConicSingle(
+					String label, GeoLineND g, GeoConicND c, GeoPointND refPoint);
+			
+			
 			 /**
 			  * intersection between two 3D conics
 			  * @param labels
@@ -494,13 +499,39 @@ public interface Manager3DInterface {
 						String[] labels,
 						GeoConicND A,
 						GeoConicND B);
-			 
-				/**
-				 * intersect line/quadric
-				 */
+			 public GeoPoint3D IntersectConicsSingle(
+						String label,
+						GeoConicND A,
+						GeoConicND B, double xRW, double yRW, CoordMatrix4x4 mat);
+			 public GeoPoint3D IntersectConicsSingle(
+						String label, GeoConicND A, GeoConicND B, NumberValue index);
+			 public GeoPoint3D IntersectConicsSingle(
+						String label, GeoConicND A, GeoConicND B, GeoPointND refPoint);
 				
-				public GeoPointND[] IntersectLineQuadric(String[] labels, GeoLineND A,
-						GeoQuadric3D B);
+			 
+			/**
+			 * intersect line/quadric
+			*/
+				
+			public GeoPointND[] IntersectLineQuadric(String[] labels, GeoLineND A,
+					GeoQuadric3D B);
+			/** 
+			 * get only one intersection point of two conics that is near to the given
+			 * location (xRW, yRW) 
+			 */
+			public GeoPoint3D IntersectLineQuadricSingle(
+				String label, GeoLineND g, GeoQuadric3D q, 
+				double xRW, double yRW, CoordMatrix4x4 mat);
+			/** 
+			 * get only one intersection point of line and quadric
+			 * choice depends on command input
+			 */
+			public GeoPoint3D IntersectLineQuadricSingle(
+					String label, GeoLineND g, GeoQuadric3D q, NumberValue index);
+			public GeoPoint3D IntersectLineQuadricSingle(
+						String label, GeoLineND g, GeoQuadric3D q, GeoPointND refPoint);
+				
+
 				/**
 				 * intersect plane/conic
 				 */

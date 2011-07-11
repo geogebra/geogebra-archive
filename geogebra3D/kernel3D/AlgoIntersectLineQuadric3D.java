@@ -220,9 +220,14 @@ public class AlgoIntersectLineQuadric3D extends AlgoIntersect3D {
                 }
             }
             else { // b != 0, t = -w/ (2b)
-                double t1 = -w / (2.0 * b);
-                Q[0].setCoords(g.getPointInD(3, t1));
-                Q[1].setUndefined();
+                double t0 = -w / (2.0 * b);
+                if (b < 0) {
+                	Q[0].setCoords(g.getPointInD(3, t0));
+                	Q[1].setUndefined();
+                } else { // b > 0
+                	Q[0].setUndefined();
+                	Q[1].setCoords(g.getPointInD(3, t0));
+                }
                 intersectionType =  INTERSECTION_MEETING_LINE;
             }            
         }
