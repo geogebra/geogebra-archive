@@ -293,7 +293,7 @@ public class Kernel {
 	private RegressionMath regMath;
 	private ExtremumFinder extrFinder;
 	protected Parser parser;
-	private Object ggbCAS;
+	private GeoGebraCAS ggbCAS;
 	
 	// Continuity on or off, default: false since V3.0
 	private boolean continuous = false;
@@ -514,7 +514,7 @@ public class Kernel {
 			getGeoGebraCAS();		
 		}
 		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateGeoGebraCAS(exp);
+		return ggbCAS.evaluateGeoGebraCAS(exp);
 	}	
 	
 	/** 
@@ -527,7 +527,7 @@ public class Kernel {
 			getGeoGebraCAS();		
 		}
 		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMathPiper(exp);
+		return ggbCAS.evaluateMathPiper(exp);
 	}	
 	
 	/** 
@@ -540,7 +540,7 @@ public class Kernel {
 			getGeoGebraCAS();		
 		}
 		
-		return ((geogebra.cas.GeoGebraCAS) ggbCAS).evaluateMaxima(exp);
+		return ggbCAS.evaluateMaxima(exp);
 	}	
 
 	/** 
@@ -550,7 +550,7 @@ public class Kernel {
 		if (ggbCAS == null) {
 			return false;		
 		} else {
-			return ((geogebra.cas.GeoGebraCAS) ggbCAS).isVariableBound(var);
+			return ggbCAS.isVariableBound(var);
 		}
 	}	
 			
@@ -565,13 +565,13 @@ public class Kernel {
 	 */
 	final public void setDefaultCAS(int cas) {
 		DEFAULT_CAS = cas;
-		if (ggbCAS != null) ((geogebra.cas.GeoGebraCAS) ggbCAS).setCurrentCAS(DEFAULT_CAS);
+		if (ggbCAS != null) ggbCAS.setCurrentCAS(DEFAULT_CAS);
 	}
 	
 	/**
 	 * Returns this kernel's GeoGebraCAS object.
 	 */
-	public synchronized Object getGeoGebraCAS() {
+	public synchronized GeoGebraCAS getGeoGebraCAS() {
 		if (ggbCAS == null) {
 			ggbCAS = new geogebra.cas.GeoGebraCAS(this);
 		}			
@@ -592,7 +592,7 @@ public class Kernel {
     		getGeoGebraCAS();					
 		}
     	
-    	return ((geogebra.cas.GeoGebraCAS) ggbCAS).getPolynomialCoeffs(exp, variable);
+    	return ggbCAS.getPolynomialCoeffs(exp, variable);
     }
 
 	final public void setEpsilon(double epsilon) {
