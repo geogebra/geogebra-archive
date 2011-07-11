@@ -521,9 +521,14 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             }
             // Treffgerade
             else { // d != 0
-                double t1 = -w / (2.0 * d);
-                sol[0].setCoords(px + t1 * g.y, py - t1 * g.x, 1.0d);
-                sol[1].setUndefined();
+                double t0 = -w / (2.0 * d);
+                if (d < 0) {
+                	sol[0].setCoords(px + t0 * g.y, py - t0 * g.x, 1.0d);
+                	sol[1].setUndefined();
+                } else { // d > 0
+                	sol[0].setUndefined();
+                	sol[1].setCoords(px + t0 * g.y, py - t0 * g.x, 1.0d);
+                }
                 return INTERSECTION_MEETING_LINE;
             }            
         }
