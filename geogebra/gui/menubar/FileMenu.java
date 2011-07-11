@@ -70,58 +70,73 @@ class FileMenu extends BaseMenu {
 		}
 
 		// "New": reset
-		mi = add(deleteAll);
+		add(deleteAll);
 
-		mi = add(loadAction);
-		setMenuShortCutAccelerator(mi, 'O'); // open
-		mi = add(loadURLAction);
+		if (Application.hasFullPermissions()) {
+			mi = add(loadAction);
+			setMenuShortCutAccelerator(mi, 'O'); // open
+			add(loadURLAction);
 		
-		// recent SubMenu
-		JMenu submenuRecent = new JMenu(app.getMenu("Recent"));
-		submenuRecent.setIcon(app.getEmptyIcon());
-		add(submenuRecent);
+			// recent SubMenu
+			JMenu submenuRecent = new JMenu(app.getMenu("Recent"));
+			submenuRecent.setIcon(app.getEmptyIcon());
+			add(submenuRecent);
+			
+			// Recent files list
+			int size = Application.getFileListSize();
+			if (size > 0) {
+				for (int i = 0; i < Application.MAX_RECENT_FILES ; i++) {
+					File file = Application.getFromFileList(i);
+					if (file != null) {
+						mi = new JMenuItem(file.getName());
+						mi.setIcon(app.getImageIcon("geogebra.png"));
+						ActionListener al = new LoadFileListener(app, file);
+						mi.addActionListener(al);
+						submenuRecent.add(mi);
+					}
+				}
+			}
 
-		addSeparator();
-		mi = add(saveAction);
-		setMenuShortCutAccelerator(mi, 'S');
-		mi = add(saveAsAction);
-		addSeparator();
-		
-		mi = add(printEuclidianViewAction);
-		mi.setText(app.getMenu("PrintPreview"));
-		mi.setIcon(app.getImageIcon("document-print-preview.png"));
-		setMenuShortCutAccelerator(mi, 'P');
+			addSeparator();
+			mi = add(saveAction);
+			setMenuShortCutAccelerator(mi, 'S');
+			mi = add(saveAsAction);
+			addSeparator();
+			
+			mi = add(printEuclidianViewAction);
+			mi.setText(app.getMenu("PrintPreview"));
+			mi.setIcon(app.getImageIcon("document-print-preview.png"));
+			setMenuShortCutAccelerator(mi, 'P');
+	
+			addSeparator();
+			
+			mi = add(exportLMSAction);
+			
+			addSeparator();
+			
+			// export
+			JMenu submenu = new JMenu(app.getMenu("Export"));
+			submenu.setIcon(app.getEmptyIcon());
+			add(submenu);
+			
+			mi = submenu.add(exportWorksheet);
+			setMenuShortCutShiftAccelerator(mi, 'W');
+	
+			mi = submenu.add(exportGraphicAction);
+			setMenuShortCutShiftAccelerator(mi, 'P');
+			
+			mi = submenu.add(exportAnimationAction);
+	
+			mi = submenu.add(drawingPadToClipboardAction);
+			setMenuShortCutShiftAccelerator(mi, 'C');
+	
+			submenu.addSeparator();
+			mi = submenu.add(exportPSTricksAction);
+			setMenuShortCutShiftAccelerator(mi, 'T');
+	
+			mi = submenu.add(exportPgfAction);
+			mi = submenu.add(exportAsymptoteAction);
 
-		addSeparator();
-		
-		mi = add(exportLMSAction);
-		
-		addSeparator();
-		
-		// export
-		JMenu submenu = new JMenu(app.getMenu("Export"));
-		submenu.setIcon(app.getEmptyIcon());
-		add(submenu);
-		
-		mi = submenu.add(exportWorksheet);
-		setMenuShortCutShiftAccelerator(mi, 'W');
-
-		mi = submenu.add(exportGraphicAction);
-		setMenuShortCutShiftAccelerator(mi, 'P');
-		
-		mi = submenu.add(exportAnimationAction);
-
-		mi = submenu.add(drawingPadToClipboardAction);
-		setMenuShortCutShiftAccelerator(mi, 'C');
-
-		submenu.addSeparator();
-		mi = submenu.add(exportPSTricksAction);
-		setMenuShortCutShiftAccelerator(mi, 'T');
-
-		mi = submenu.add(exportPgfAction);
-		mi = submenu.add(exportAsymptoteAction);
-
-		if(Application.hasFullPermissions()) {
 			submenu.addSeparator();
 			mi = submenu.add(exportGeoGebraTubeAction);
 		}
@@ -132,21 +147,6 @@ class FileMenu extends BaseMenu {
 		if (app.isApplet())
 			return;
 		
-		// Recent files list
-		int size = Application.getFileListSize();
-		if (size > 0) {
-			for (int i = 0; i < Application.MAX_RECENT_FILES ; i++) {
-				File file = Application.getFromFileList(i);
-				if (file != null) {
-					mi = new JMenuItem(file.getName());
-					mi.setIcon(app.getImageIcon("geogebra.png"));
-					ActionListener al = new LoadFileListener(app, file);
-					mi.addActionListener(al);
-					submenuRecent.add(mi);
-				}
-			}
-		}
-
 		// close
 		addSeparator();
 		mi = add(exitAction);
