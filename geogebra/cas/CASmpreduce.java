@@ -265,6 +265,8 @@ public class CASmpreduce extends CASgeneric {
 			mpreduce.evaluate("procedure y(a); if not numberp(a) and part(a, 0) = list then second(a) else x*a;");
 			mpreduce.evaluate("procedure z(a); if not numberp(a) and part(a, 0) = list then third(a) else x*a;");
 			
+			mpreduce.evaluate(" Degree := pi/180;");
+			
 			//the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
 		} catch (Throwable e) {
