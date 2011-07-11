@@ -52,7 +52,7 @@ public class GeoGebraPreferences {
 	public static final String EXPORT_WS_SHOW_TOOLBAR_HELP = "export_ws_show_toolbar_help";
 	public static final String EXPORT_WS_SHOW_INPUT_FIELD = "export_ws_show_input_field";
 	public static final String EXPORT_WS_OFFLINE_ARCHIVE = "export_ws_offline_archive";	
-	public static final String EXPORT_WS_GGB_FILE = "export_ws_ggb_file";
+	//public static final String EXPORT_WS_GGB_FILE = "export_ws_ggb_file";
 	public static final String EXPORT_WS_SAVE_PRINT = "export_ws_save_print";
 	public static final String EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT = "export_ws_browser_for_js";
 	public static final String EXPORT_WS_INCLUDE_HTML5 = "export_ws_include_html5";
