@@ -128,7 +128,7 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 		JLabel title = new JLabel(app.getPlain("ConstructionProtocol"));
 		
 		JMenu colMenu = new JMenu(app.getPlain("Columns"));
-		JMenu optionsMenu = new JMenu(app.getPlain("Options"));
+		JMenu optionsMenu = new JMenu(app.getMenu("Options"));
 		
         title.setFont(app.getBoldFont());                      
         title.setBackground(Color.white);
