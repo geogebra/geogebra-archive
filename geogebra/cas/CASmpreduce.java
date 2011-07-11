@@ -50,57 +50,12 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		String exp = toMPReduceString(casInput);
-		
-		// we need to escape any upper case letters and non-ascii codepoints with '!'
-		StringTokenizer tokenizer = new StringTokenizer(exp, "(),;[] ", true);
-		StringBuilder sb = new StringBuilder();
-		while (tokenizer.hasMoreElements())
-		{
-			String t = tokenizer.nextToken();
-			if (predefinedFunctions.contains(t.toLowerCase()))
-				sb.append(t);
-			else
-			{
-				for (int i = 0; i < t.length(); ++i)
-				{
-					char c = t.charAt(i);
-					if (Character.isLetter(c) && (((int) c) < 97 || ((int) c) > 122)) {
-						sb.append('!');
-						sb.append(c);
-					} else
-						sb.append(c);
-				}
-			}
-		}
-		exp = sb.toString();
 
 		String result = evaluateMPReduce(exp);
 		
-		//removing the !
-		sb = new StringBuilder();
-		for (int i=0; i< result.length(); i++){
-			char character=result.charAt(i);
-			if (character=='!')
-				if (i+1 < result.length()){
-					char nextChar=result.charAt(i+1);
-					if (Character.isLetter(nextChar) && (((int) nextChar)<97 || ((int) nextChar)>122)){
-						i++;
-						character=nextChar;
-					}
-				}
-			sb.append(character);
-		}
-		result = sb.toString();
-		
 		// convert result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
-		
-		// TODO: remove
-/*
-		System.out.println("eval with MPReduce: " + exp);
-		System.out.println("   result: " + result);
-		System.out.println("   ggbString: " + ggbString);
-*/		
+//		System.out.println("   ggbString: " + ggbString);	
 		return ggbString;
 	}
 	
@@ -122,27 +77,7 @@ public class CASmpreduce extends CASgeneric {
 	public final String evaluateMPReduce(String exp) {
         try {
         	exp=casParser.replaceIndices(exp);
-			String ret = mpreduce.evaluate(exp);
-			
-			StringBuilder sb = new StringBuilder();
-			for (String s : ret.split("\n")) {
-				s = s.trim();
-				if (s.length() == 0)
-					continue;
-				else if (s.startsWith("***")) { // MPReduce comment
-					Application.debug("MPReduce comment: " + s);
-					continue;
-				}
-				else {
-					// remove trailing $
-					int i = s.length() - 1;
-					while (i > 0 && s.charAt(i) == '$')
-						--i;
-					sb.append(s.substring(0, i+1));
-				}
-			}
-			ret = sb.toString();
-			ret = ret.replaceAll("\\*\\*", "^");
+			String ret = evaluateRaw(exp);
 			ret = casParser.insertSpecialChars(ret); // undo special character handling
 			return ret;
 		} catch (Throwable e) {
@@ -150,6 +85,7 @@ public class CASmpreduce extends CASgeneric {
 			return "?";
 		}
 	}
+
 
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in MPReduce syntax.
@@ -189,8 +125,71 @@ public class CASmpreduce extends CASgeneric {
 
 	@Override
 	public String evaluateRaw(String exp) throws Throwable {
-		return evaluateGeoGebraCAS(exp);
+		// we need to escape any upper case letters and non-ascii codepoints with '!'
+		StringTokenizer tokenizer = new StringTokenizer(exp, "(),;[] ", true);
+		StringBuilder sb = new StringBuilder();
+		while (tokenizer.hasMoreElements())
+		{
+			String t = tokenizer.nextToken();
+			if (predefinedFunctions.contains(t.toLowerCase()))
+				sb.append(t);
+			else
+			{
+				for (int i = 0; i < t.length(); ++i)
+				{
+					char c = t.charAt(i);
+					if (Character.isLetter(c) && (((int) c) < 97 || ((int) c) > 122)) {
+						sb.append('!');
+						sb.append(c);
+					} else
+						sb.append(c);
+				}
+			}
+		}
+		exp = sb.toString();
+
+		String result = mpreduce.evaluate(exp);
+		
+		sb.setLength(0);
+		for (String s : result.split("\n")) {
+			s = s.trim();
+			if (s.length() == 0)
+				continue;
+			else if (s.startsWith("***")) { // MPReduce comment
+				Application.debug("MPReduce comment: " + s);
+				continue;
+			}
+			else {
+				// look for any trailing $
+				int len = s.length();
+				while (len > 0 && s.charAt(len - 1) == '$')
+					--len;
+				
+				// remove the !
+				for (int i = 0; i < len; ++i) {
+					char character = s.charAt(i);
+					if (character=='!') {
+						if (i+1 < len) {
+							char nextChar=s.charAt(i+1);
+							if (Character.isLetter(nextChar) && (((int) nextChar)<97 || ((int) nextChar)>122)){
+								i++;
+								character=nextChar;
+							}
+						}
+					}
+					sb.append(character);
+				}	
+			}
+		}
+
+		result = sb.toString();
+		result = result.replaceAll("\\*\\*", "^");
+		
+		System.out.println("eval with MPReduce: " + exp);
+		System.out.println("   result: " + result);
+		return result;
 	}
+
 
 	@Override
 	public String getEvaluateGeoGebraCASerror() {
