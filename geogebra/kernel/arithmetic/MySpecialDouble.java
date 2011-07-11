@@ -86,9 +86,9 @@ public class MySpecialDouble extends MyDouble {
 			case ExpressionNode.STRING_TYPE_MPREDUCE:
 				ch = strToString.charAt(0);
 				switch (ch) {
-					case Unicode.piChar:	return "PI";
-					case Unicode.degreeChar:	return "PI/180";
-					case Unicode.eulerChar: return "E";
+					case Unicode.piChar:	return "pi";
+					case Unicode.degreeChar:	return "pi/180";
+					case Unicode.eulerChar: return "e";
 				} 	
 			break;				
 				

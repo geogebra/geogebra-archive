@@ -24,6 +24,8 @@ import geogebra.gui.DynamicTextInputPane;
 import geogebra.gui.TextInputDialog;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
@@ -1704,7 +1706,6 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_LATEX:
-			case STRING_TYPE_MPREDUCE:
 
 				boolean nounary = true;
 
@@ -1744,7 +1745,6 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						case STRING_TYPE_JASYMCA:
 						case STRING_TYPE_MATH_PIPER:
 						case STRING_TYPE_MAXIMA:
-						case STRING_TYPE_MPREDUCE:
 							showMultiplicationSign = true;
 							break;
 							
@@ -1823,7 +1823,6 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						case STRING_TYPE_JASYMCA:
 						case STRING_TYPE_MATH_PIPER:
 						case STRING_TYPE_MAXIMA:
-						case STRING_TYPE_MPREDUCE:
 							sb.append(multiplicationSign(STRING_TYPE));
 							break;
 
@@ -1836,8 +1835,57 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					sb.append(rightStr);
 					sb.append(rightBracket(STRING_TYPE));
 				}
-			}
+				break;
 			
+			case STRING_TYPE_MPREDUCE:
+				
+				if ((left instanceof GeoList) && (right instanceof GeoList)){
+					//Multiplication Matrix times Vector as List 
+					if (((GeoList)left).isMatrix() && !((GeoList)right).isMatrix()){
+						sb.append("(");
+						sb.append(leftStr);
+						sb.append(")*");
+						sb.append("<<listtocolumnvector(");
+						sb.append(rightStr);
+						sb.append(")>>");
+						break;
+					}
+					else if (!((GeoList)left).isMatrix() && ((GeoList)right).isMatrix()){
+						sb.append("<<listtorowvector(");
+						sb.append(leftStr);
+						sb.append(")>>*(");
+						sb.append(rightStr);
+						sb.append(")");
+						break;
+					}
+				} else if ((left instanceof GeoList) && (right instanceof GeoVector)){
+					if (((GeoList)left).isMatrix()){
+						sb.append("(");
+						sb.append(leftStr);
+						sb.append(")*");
+						sb.append("<<listtocolumnvector(");
+						sb.append(rightStr);
+						sb.append(")>>");
+						break;
+					}
+				} else if ((left instanceof GeoVector) && (right instanceof GeoList)){
+					if (((GeoList)right).isMatrix()){
+						sb.append("<<listtorowvector(");
+						sb.append(leftStr);
+						sb.append(")>>*(");
+						sb.append(rightStr);
+						sb.append(")");
+						break;
+					}	
+				}
+				
+				sb.append("(");
+				sb.append(leftStr);
+				sb.append(")*(");
+				sb.append(rightStr);
+				sb.append(")");
+				break;
+			}		
 			break;
 
 		case DIVIDE:

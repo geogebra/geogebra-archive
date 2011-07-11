@@ -7578,7 +7578,8 @@ class CmdHyperGeometric extends CommandProcessor {
 			arg = resArgs(c);
 			if ((ok[0] = arg[0].isNumberValue())
 					&& (ok[1] = arg[1].isNumberValue())
-					&& (ok[2] = arg[2].isGeoBoolean())) {
+					&& (ok[2] = arg[2].isNumberValue())
+					&& (ok[3] = arg[3].isGeoBoolean())) {
 				GeoElement[] ret = { kernel.HyperGeometric(c.getLabel(),
 						(NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2], (GeoBoolean)arg[3]) };
 				return ret;

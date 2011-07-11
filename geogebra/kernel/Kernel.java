@@ -8187,6 +8187,7 @@ public class Kernel {
 					return " 1/0 ";	
 				else if (Double.isInfinite(x)) {
 					if (casPrintForm == ExpressionNode.STRING_TYPE_MAXIMA) return (x<0) ? "-inf" : "inf";
+					if (casPrintForm == ExpressionNode.STRING_TYPE_MPREDUCE) return (x<0) ? "-infinity" : "infinity";
 					return Double.toString(x); // "Infinity" or "-Infinity"
  				}
 				else {			

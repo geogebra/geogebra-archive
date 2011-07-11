@@ -69,7 +69,11 @@ Transformable, GeoVectorND {
 
 	public int getGeoClassType() {
 		return GEO_CLASS_VECTOR;
-	}    
+	}   
+	
+	final public boolean isCasEvaluableObject() {
+		return true;
+	}
     
     /** Creates new GeoVector */
     public GeoVector(Construction c, String label, double x, double y, double z) {

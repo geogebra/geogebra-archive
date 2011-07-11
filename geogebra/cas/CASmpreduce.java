@@ -31,8 +31,8 @@ public class CASmpreduce extends CASgeneric {
 		super(casParser);
 		getInterpreter();
 	}
-	
-	private synchronized Interpreter2 getInterpreter() {				
+
+	private synchronized Interpreter2 getInterpreter() {
 		if (mpreduce == null) {
 			mpreduce = new Interpreter2();
 			initMyMPReduceFunctions();
@@ -40,7 +40,7 @@ public class CASmpreduce extends CASgeneric {
 		}
 		return mpreduce;
 	}
-	
+
 	/**
 	 * Evaluates a valid expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra notation.
 	 * @param casInput in GeoGebraCAS syntax
@@ -50,7 +50,9 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		String exp = toMPReduceString(casInput);
-
+		
+		exp="<<off rounded, complex$ "+exp+">>";
+		
 		String result = evaluateMPReduce(exp);
 		
 		// convert result back into GeoGebra syntax
@@ -58,7 +60,7 @@ public class CASmpreduce extends CASgeneric {
 //		System.out.println("   ggbString: " + ggbString);	
 		return ggbString;
 	}
-	
+
 	/**
 	 * Tries to parse a given MPReduce string and returns a String in GeoGebra syntax.
 	 */
@@ -75,7 +77,7 @@ public class CASmpreduce extends CASgeneric {
 	 * @return result string (null possible)
 	 */
 	public final String evaluateMPReduce(String exp) {
-        try {
+		try {
         	exp=casParser.replaceIndices(exp);
 			String ret = evaluateRaw(exp);
 			ret = casParser.insertSpecialChars(ret); // undo special character handling
@@ -86,39 +88,38 @@ public class CASmpreduce extends CASgeneric {
 		}
 	}
 
-
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in MPReduce syntax.
 	 */
 	public synchronized String toMPReduceString(ValidExpression ve) {
 
 		String str = doToMPReduceString(ve);
-		
+
 		// handle assignments
 		String veLabel = ve.getLabel();
 		if (veLabel != null) {
 			StringBuilder sb = new StringBuilder();
-			
+
 			if (ve instanceof FunctionNVar) {
 				// function, e.g. f(x) := 2*x
 				FunctionNVar fun = (FunctionNVar) ve;
 				sb.append(veLabel);
-				sb.append("(" );
+				sb.append("(");
 				sb.append(fun.getVarString());
 				sb.append(") := ");
 				sb.append(str);
 				str = sb.toString();
-			} else {	
+			} else {
 				// assignment, e.g. a : 5
 				str = veLabel + " := " + str;
 			}
 		}
 		return str;
-	}	
-	
+	}
+
 	private String doToMPReduceString(ExpressionValue ev) {
 		if (!ev.isExpressionNode()) {
-			ev = new ExpressionNode(casParser.getKernel(), ev);			
+			ev = new ExpressionNode(casParser.getKernel(), ev);
 		}
 		return ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MPREDUCE, true);			
 	}
@@ -190,7 +191,6 @@ public class CASmpreduce extends CASgeneric {
 		return result;
 	}
 
-
 	@Override
 	public String getEvaluateGeoGebraCASerror() {
 		// TODO Auto-generated method stub
@@ -202,19 +202,19 @@ public class CASmpreduce extends CASgeneric {
 	 */ 
 	public synchronized String getTranslatedCASCommand(String key) {
 		if (ggb2MPReduce == null) {
-			ggb2MPReduce = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_MPReduce);
+			ggb2MPReduce = MyResourceBundle
+					.loadSingleBundleFile(RB_GGB_TO_MPReduce);
 		}
-		
+
 		String ret;
 		try {
-			ret =  ggb2MPReduce.getString(key);
+			ret = ggb2MPReduce.getString(key);
 		} catch (MissingResourceException e) {
 			ret = null;
 		}
 
 		return ret;
 	}
-
 
 	@Override
 	public boolean isVariableBound(String var) {
@@ -238,27 +238,30 @@ public class CASmpreduce extends CASgeneric {
 			System.err.println("Failed to clear variable from MPReduce: " + var);
 		}
 	}
-	
+
 	private synchronized void initMyMPReduceFunctions() {
 		try {
 			mpreduce.evaluate("off nat;");
 			
 			// ARBVARS introduces arbitrary new variables when solving singular systems of equations
 			mpreduce.evaluate("off arbvars;");
-			
+
 			// make sure x*(x+1) isn't returned factored
 			mpreduce.evaluate("off pri;");
-			
+
 			mpreduce.evaluate("off rounded;");
-			
+
 			// make sure integral(1/x) gives ln(abs(x)) [TODO: NOT WORKING]
-			//mpreduce.evaluate("operator log!-temp");
-			//mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
-			
-			mpreduce.evaluate("load_package(\"rsolve\");");
-			mpreduce.evaluate("load_package(\"numeric\");");
+			// mpreduce.evaluate("operator log!-temp");
+			// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
+
+			mpreduce.evaluate("load_package rsolve;");
+			mpreduce.evaluate("load_package numeric;");
+			mpreduce.evaluate("load_package specfn;");
+			mpreduce.evaluate("load_package odesolve;");
 			mpreduce.evaluate("load_package defint;");
-			
+
+
 			// access functions for elements of a vector 
 			mpreduce.evaluate("procedure x(a); if not numberp(a) and part(a, 0) = list then first(a) else x*a;");
 			mpreduce.evaluate("procedure y(a); if not numberp(a) and part(a, 0) = list then second(a) else x*a;");
@@ -285,22 +288,42 @@ public class CASmpreduce extends CASgeneric {
 				"     y := 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Exp(-x*x); "+
 				"     return sign*y; "+
 				"end;");
-			
-			//the first command sent to mpreduce produces an error
+
+			mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
+			mpreduce.evaluate("procedure uigamma(n,m); gamma(n)-igamma(n,m);");
+			mpreduce.evaluate("procedure arg(z); atan2(repart(z),impart(z));");
+			mpreduce.evaluate("procedure listtocolumnvector(list); "
+					+ "begin scalar lengthoflist; "
+					+ "lengthoflist:=length(list); "
+					+ "matrix m!°(lengthoflist,1); "
+					+ "for i:=1:lengthoflist do " 
+					+ "m!°(i,1):=part(list,i); "
+					+ "return m!° " 
+					+ "end;");
+
+			mpreduce.evaluate("procedure listtorowvector(list); "
+					+ "begin scalar lengthoflist; "
+					+ "lengthoflist:=length(list); "
+					+ "matrix m!°(1,l); "
+					+ "for i:=1:lengthoflist do "
+					+ "m!°(1,i):=part(list,i); "
+					+ "return m!° " 
+					+ "end;");
+
+			// the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String getVersionString() {
-	
+
 		Pattern p = Pattern.compile("version (\\S+)");
 		Matcher m = p.matcher(mpreduce.getStartMessage());
 		if (!m.find())
 			return "MPReduce";
-		else
-		{
+		else {
 			StringBuilder sb = new StringBuilder();
 			sb.append("MPReduce ");
 			sb.append(m.group(1));
@@ -308,5 +331,3 @@ public class CASmpreduce extends CASgeneric {
 		}
 	}
 }
-
-
