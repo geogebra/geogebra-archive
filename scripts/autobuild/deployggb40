@@ -68,8 +68,8 @@ cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
 # 8. Copying the Mac OS X version to Google Code:
 if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
  cd $SVNDIR/geogebra/build/installer
- MACOSX_ZIP=GeoGebra_`echo $MYVER | tr . _`.zip
- # GeoGebra_3_9_209_0.zip -> GeoGebra-MacOS-Installer-3-9-209-0.zip (GeoGebra for Mac OSX)
+ MACOSX_ZIP=GeoGebra_`echo $MYVER | tr . -`.zip
+ # GeoGebra_3-9-209-0.zip -> GeoGebra-MacOS-Installer-3-9-209-0.zip (GeoGebra for Mac OSX)
  MACOSX_ZIP_FINAL=GeoGebra-MacOS-Installer-`echo $MYVER | tr . -`.zip
  mv $MACOSX_ZIP $MACOSX_ZIP_FINAL
  $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $MYVER for Mac OSX" \
