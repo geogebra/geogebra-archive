@@ -3182,7 +3182,7 @@ public class Application implements KeyEventDispatcher {
 			return;
 		
 		// put in to check possible bottleneck
-		Application.debug("Update Selection");
+		//Application.debug("Update Selection");
 
 		getGuiManager().updateMenubarSelection();
 		

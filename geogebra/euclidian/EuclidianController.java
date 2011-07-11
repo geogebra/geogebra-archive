@@ -4591,7 +4591,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// get two objects (lines or conics) and create intersection point
 	protected GeoElement[] intersect(Hits hits) {
-		Application.debug(selectedLines);
+		//Application.debug(selectedLines);
 		
 		
 		if (hits.isEmpty())
