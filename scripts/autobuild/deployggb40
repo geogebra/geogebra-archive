@@ -84,7 +84,7 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
 if [ "$WWW_REMOTEDIR" != "" ]; then
  echo "$0: Copying all files to $WWW_REMOTEDIR"
  cd $SVNDIR/geogebra/scripts/autobuild
- ./rsync-www >.rsync-www
+ ./rsync-www 2>&1 >.rsync-www
  fi
 
 # 10. Sending an email to geogebra-dev:
