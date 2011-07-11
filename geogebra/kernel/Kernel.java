@@ -661,14 +661,14 @@ public class Kernel {
 		}
 
 		graphicsView2showing = app.isShowingEuclidianView2();
-		notifyEuclidianViewAlgos();
+		notifyEuclidianViewCE();
 	}	
 	
-	private void notifyEuclidianViewAlgos() {
+	private void notifyEuclidianViewCE() {
 		if (macroManager != null) 
-			macroManager.notifyEuclidianViewAlgos();
+			macroManager.notifyEuclidianViewCE();
 		
-		cons.notifyEuclidianViewAlgos();
+		cons.notifyEuclidianViewCE();
 	}
 	
 	double getXmax() {
@@ -1883,7 +1883,7 @@ public class Kernel {
 				
 				//app.setMoveMode();
 				
-				notifyEuclidianViewAlgos();
+				notifyEuclidianViewCE();
 				notifyReset();					
 				viewReiniting = false;
 			} 

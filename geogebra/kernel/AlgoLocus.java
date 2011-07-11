@@ -25,7 +25,7 @@ import java.util.TreeSet;
 /** 
  * locus line for Q dependent on P
  */
-public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
+public class AlgoLocus extends AlgoElement implements EuclidianViewCE {
 	
 	// TODO: update locus algorithm
 	// * locus of Q=(x(B), a) with a= integral[f(x), 0, x(B)] and B is point on x-axis  freezes GeoGebra
@@ -87,7 +87,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         updateScreenBorders();
         locus = new GeoLocus(cons);                      
         setInputOutput(); // for AlgoElement       
-        cons.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewCE(this);
         compute();
         
      	// we may have created a starting point for the path now

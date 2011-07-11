@@ -1,6 +1,6 @@
 package geogebra.kernel;
 
-public interface EuclidianViewAlgo {
+public interface EuclidianViewCE {
 	
 	public void euclidianViewUpdate();
 

@@ -29,7 +29,7 @@ import java.util.HashMap;
  * @version 
  */
 public class AlgoMacro extends AlgoElement 
-implements EuclidianViewAlgo {
+implements EuclidianViewCE {
 
 	private static final long serialVersionUID = 1L;	
 	
@@ -75,8 +75,8 @@ implements EuclidianViewAlgo {
     	compute(); 
     	
     	// check if macro construction has euclidianAlgos
-    	if (macro.getMacroConstruction().hasEuclidianViewAlgos()) {
-    		cons.registerEuclidianViewAlgo(this);
+    	if (macro.getMacroConstruction().hasEuclidianViewCE()) {
+    		cons.registerEuclidianViewCE(this);
     	}
         
         GeoElement.setLabels(labels, getOutput());     

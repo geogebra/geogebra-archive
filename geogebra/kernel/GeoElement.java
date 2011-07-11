@@ -2786,8 +2786,8 @@ public abstract class GeoElement
 
 		// remove Listeners
 		AlgoElement algo = getParentAlgorithm();
-		if (algo instanceof EuclidianViewAlgo) {
-			cons.unregisterEuclidianViewAlgo(algo);
+		if (algo instanceof EuclidianViewCE) {
+			cons.unregisterEuclidianViewCE(algo);
 		}
 
 		if (condShowObject != null) {

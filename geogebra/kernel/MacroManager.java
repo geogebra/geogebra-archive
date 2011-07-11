@@ -96,11 +96,11 @@ public class MacroManager {
 	/**
 	 * Updates all macros that need to be 
 	 */
-	final void notifyEuclidianViewAlgos() {		
+	final void notifyEuclidianViewCE() {		
 		// save selected macros
 		for (int i=0; i < macroList.size(); i++) {			
 			Macro macro = (Macro) macroList.get(i);			
-			macro.getMacroConstruction().notifyEuclidianViewAlgos();			
+			macro.getMacroConstruction().notifyEuclidianViewCE();			
 		}		
 	}
 	

@@ -15,7 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 
 public class AlgoImageCorner extends AlgoElement 
-implements EuclidianViewAlgo {
+implements EuclidianViewCE {
     
     /**
 	 * 

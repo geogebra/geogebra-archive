@@ -35,7 +35,7 @@ import java.util.TreeSet;
  * @author  Markus
  * @version 
  */
-public abstract class AlgoElement extends ConstructionElement implements EuclidianViewAlgo {
+public abstract class AlgoElement extends ConstructionElement implements EuclidianViewCE {
 	 
     private static ResourceBundle rbalgo2command;
 	// Added for Intergeo File Format (Yves Kreis) -->
@@ -568,7 +568,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	// every algorithm with an image as output
     	// should be notified about view changes
     	if (output.isGeoImage())
-    		cons.registerEuclidianViewAlgo(this);
+    		cons.registerEuclidianViewCE(this);
 
     	//  make sure that every output has same construction as this algorithm
     	// this is important for macro constructions that have input geos from

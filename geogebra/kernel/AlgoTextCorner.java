@@ -17,7 +17,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 
 public class AlgoTextCorner extends AlgoElement 
-implements EuclidianViewAlgo {
+implements EuclidianViewCE {
 
 	private static final long serialVersionUID = 1L;
 	private GeoText txt;  // input
@@ -42,7 +42,7 @@ implements EuclidianViewAlgo {
         corner.setLabel(label);     
 
       
-        cons.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewCE(this);
     }   
     
     public String getClassName() {

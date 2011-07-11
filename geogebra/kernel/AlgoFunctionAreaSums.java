@@ -36,7 +36,7 @@ import geogebra.main.Application;
  * n intervals
  */
 public abstract class AlgoFunctionAreaSums extends AlgoElement
-implements EuclidianViewAlgo, AlgoDrawInformation{
+implements EuclidianViewCE, AlgoDrawInformation{
 	
 	// largest possible number of rectangles
 	private static final int MAX_RECTANGLES = 10000;

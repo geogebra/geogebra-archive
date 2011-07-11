@@ -107,7 +107,7 @@ public class AlgoMirror extends AlgoTransformation {
         	out = (Mirrorable)outGeo;
         setInputOutput();
               
-        cons.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewCE(this);
         transformedPoint = new GeoPoint(cons);
         compute();                                     
     }           

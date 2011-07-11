@@ -36,7 +36,7 @@ public class AlgoAxisStepX extends AlgoElement {
         num.setLabel(label);
         
         // ensure we get updates
-        cons.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewCE(this);
    }   
     
 	public String getClassName() {

@@ -86,7 +86,7 @@ public class Construction {
 	private ArrayList<Macro> usedMacros;
 	
 	// list of algorithms that need to be updated when EuclidianView changes
-	private ArrayList<EuclidianViewAlgo> euclidianViewAlgos;
+	private ArrayList<EuclidianViewCE> euclidianViewCE;
 
 	/** UndoManager */
 	protected UndoManager undoManager;
@@ -151,7 +151,7 @@ public class Construction {
 		geoSet = new TreeSet<GeoElement>();
 		geoSetLabelOrder = new TreeSet<GeoElement>(new LabelComparator());
 		geoSetsTypeMap = new HashMap<Integer,TreeSet<GeoElement>>();
-		euclidianViewAlgos = new ArrayList<EuclidianViewAlgo>();
+		euclidianViewCE = new ArrayList<EuclidianViewCE>();
 
 		if (parentConstruction != null)
 			consDefaults = parentConstruction.getConstructionDefaults();
@@ -554,7 +554,7 @@ public class Construction {
 		geoSetLabelOrder.clear();
 		geoSetsTypeMap.clear();
 		localVariableTable.clear();
-		euclidianViewAlgos.clear();	
+		euclidianViewCE.clear();	
 		initGeoTable();
 
 		// reinit construction step
@@ -644,41 +644,41 @@ public class Construction {
 	
 	/**
 	 * Registers an algorithm that wants to be notified when setEuclidianViewBounds() is called.	 
-	 * @param algo Algo to be registred
+	 * @param elem construction element to be registered
 	 */
-	final void registerEuclidianViewAlgo(EuclidianViewAlgo algo) {
-		if (!euclidianViewAlgos.contains(algo))
-			euclidianViewAlgos.add(algo);
+	final void registerEuclidianViewCE(EuclidianViewCE elem) {
+		if (!euclidianViewCE.contains(elem))
+			euclidianViewCE.add(elem);
 	}
 	
 	/**
 	 * Unregisters an algorithm that wants to be notified when setEuclidianViewBounds() is called.	 
-	 * @param algo Algo to be unregistred
+	 * @param elem construction element to be unregistered
 	 */
-	void unregisterEuclidianViewAlgo(EuclidianViewAlgo algo) {		
-		euclidianViewAlgos.remove(algo);
+	void unregisterEuclidianViewCE(EuclidianViewCE elem) {		
+		euclidianViewCE.remove(elem);
 	}
 	
 	/**
-	 * Calls update on all euclidian view algos
-	 * @return true iff there were any algos to update
+	 * Calls update on all euclidian view construction elements
+	 * @return true iff there were any elements to update
 	 */
-	public boolean notifyEuclidianViewAlgos() {
+	public boolean notifyEuclidianViewCE() {
 		boolean didUpdate = false;		
-		int size = euclidianViewAlgos.size();	
+		int size = euclidianViewCE.size();	
 		for (int i=0; i < size; i++) {
 			didUpdate = true;
-			((EuclidianViewAlgo) euclidianViewAlgos.get(i)).euclidianViewUpdate();			
+			((EuclidianViewCE) euclidianViewCE.get(i)).euclidianViewUpdate();			
 		}		
 		return didUpdate;
 	}	
 	
 	/**
-	 * Returns true iff there are any euclidian view algos in this construction
-	 * @return true iff there are any euclidian view algos in this construction
+	 * Returns true iff there are any euclidian view construction elements in this construction
+	 * @return true iff there are any euclidian view construction elements in this construction
 	 */
-	public boolean hasEuclidianViewAlgos() {
-		return euclidianViewAlgos.size() > 0;
+	public boolean hasEuclidianViewCE() {
+		return euclidianViewCE.size() > 0;
 	}
 	
 

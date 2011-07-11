@@ -22,7 +22,7 @@ import geogebra.main.Application;
 import javax.swing.JPanel;
 
 public class AlgoDrawingPadCorner extends AlgoElement 
-implements EuclidianViewAlgo {
+implements EuclidianViewCE {
     
     /**
 	 * 
@@ -43,7 +43,7 @@ implements EuclidianViewAlgo {
         corner.setEuclidianVisible(false);   	// hidden by default
         corner.setLabel(label);                  
         
-        cons.registerEuclidianViewAlgo(this);
+        cons.registerEuclidianViewCE(this);
     
     
     }   
