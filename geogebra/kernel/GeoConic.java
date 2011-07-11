@@ -80,6 +80,31 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		set(conic);
 	}
 	
+	public GeoConic(Construction c, String label, GeoList coeffList) {
+		this(c);
+		
+		int numberCount = 0;
+		for (int i = 0; i<coeffList.size(); ++i) {
+			if (coeffList.get(i).isGeoNumeric())
+				++numberCount;
+		}
+		
+		if (numberCount == 6) {
+			this.setCoeffs(((GeoNumeric)coeffList.get(0)).getDouble(),
+					((GeoNumeric)coeffList.get(3)).getDouble(),
+					((GeoNumeric)coeffList.get(1)).getDouble(),
+					((GeoNumeric)coeffList.get(4)).getDouble(),
+					((GeoNumeric)coeffList.get(5)).getDouble(),
+					((GeoNumeric)coeffList.get(2)).getDouble());
+		} else {
+			this.setUndefined();
+		}
+		
+		setLabel(label);
+	}
+
+
+
 	public String getClassName() {
 		return "GeoConic";
 	}

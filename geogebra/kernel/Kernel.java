@@ -6103,6 +6103,20 @@ public class Kernel {
 		GeoConic conic = algo.getConic();
 		return conic;
 	}
+	
+	/**
+	 * conic from coefficients
+	 * @param labels
+	 * @param coeffList
+	 * @return
+	 */
+	final public GeoElement [] Conic(String label, GeoList coeffList) {
+		AlgoConicFromCoeffList algo = new AlgoConicFromCoeffList(
+				cons, label, coeffList);
+		
+		return new GeoElement[] {algo.getConic()};
+		
+	}
 
 	/** 
 	 * IntersectLineConic yields intersection points named label1, label2

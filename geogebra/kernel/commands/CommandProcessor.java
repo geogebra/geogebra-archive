@@ -1846,6 +1846,7 @@ class CmdHyperbola extends CommandProcessor {
 }
 
 /**
+ * Conic[ <List> ]
  * Conic[ five GeoPoints ]
  */
 class CmdConic extends CommandProcessor {
@@ -1864,10 +1865,12 @@ class CmdConic extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
-
+		arg = resArgs(c);
 		switch (n) {
+		case 1:
+			if (arg[0].isGeoList())
+				return kernel.Conic(c.getLabel(), (GeoList) arg[0]);
 		case 5:
-			arg = resArgs(c);
 			if ((ok[0] = (arg[0].isGeoPoint()))
 					&& (ok[1] = (arg[1].isGeoPoint()))
 					&& (ok[2] = (arg[2].isGeoPoint()))
