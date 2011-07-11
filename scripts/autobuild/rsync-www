@@ -16,7 +16,7 @@ test -r autobuild.conf || {
 cd $SVNDIR/geogebra
 
 # 2. rsync'ing
-rsync -av --rsh=ssh $WWWDIR $WWW_REMOTEDIR
+rsync -av --rsh=ssh $WWWDIR/* $WWW_REMOTEDIR
 
 date
 echo "$0: end"
