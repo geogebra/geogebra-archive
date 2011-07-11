@@ -19,7 +19,7 @@ mkdir -p $TEMPDIR
 cp $GGB40MAXIMA_ZIP $TEMPDIR
 ZIPFILE=`basename $GGB40MAXIMA_ZIP`
 TARGET_DIR=$WWWDIR/installer
-mkdir -p $TARGER_DIR
+mkdir -p $TARGET_DIR
 
 ## GGB40MAXIMA_ZIP_URL=http://www.geogebra.org/webstart/4.0/ggb40maxima-3.9.155.0_5.23.2.zip
 GGB40_ZIPVERSION=`echo $GGB40MAXIMA_ZIP | sed 's/[0-9a-zA-Z\.\/]*-//g' | sed 's/_[0-9a-zA-Z\.]*//g'`
