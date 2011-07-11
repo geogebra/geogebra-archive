@@ -267,6 +267,26 @@ public class CASmpreduce extends CASgeneric {
 			
 			mpreduce.evaluate(" Degree := pi/180;");
 			
+			// erf in Reduce is currently broken: http://sourceforge.net/projects/reduce-algebra/forums/forum/899364/topic/4546339
+			// this is a numeric approximation according to Abramowitz & Stegun 7.1.26.
+			mpreduce.evaluate(
+				"procedure erf(x); " + 
+				"begin " +
+				"     on rounded;" +
+				"     a1 :=  0.254829592; "+
+				"     a2 := -0.284496736; "+
+				"     a3 :=  1.421413741; "+
+				"     a4 := -1.453152027; "+
+				"     a5 :=  1.061405429; "+
+				"     p  :=  0.3275911; "+
+				"     sign := 1; "+
+				"     if x < 0 then sign := -1; "+
+				"     x := Abs(x); "+
+				"     t := 1.0/(1.0 + p*x); "+
+				"     y := 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Exp(-x*x); "+
+				"     return sign*y; "+
+				"end;");
+			
 			//the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
 		} catch (Throwable e) {
@@ -289,3 +309,5 @@ public class CASmpreduce extends CASgeneric {
 		}
 	}
 }
+
+
