@@ -32,7 +32,7 @@ public class CellFormat {
 	MyTable table;
 
 	// Array of format tables
-	private HashMap<Point, Object>[]  formatTableArray;
+	private MyHashMap[]  formatMapArray;
 
 	// Format types. 
 	// These are also array indices, so they must be sequential: 0..n
@@ -85,16 +85,35 @@ public class CellFormat {
 
 		this.table = table;
 		// Create instances of the format hash maps 
-		formatTableArray = new HashMap[formatCount];
+		formatMapArray = new MyHashMap[formatCount];
 		for(int i = 0; i < formatCount; i++){
-			formatTableArray[i] = new HashMap<Point, Object>();
+			formatMapArray[i] = new MyHashMap();
 		}
 	}
 
+	/**
+	 * Extends HashMap so that null values cannot be mapped and a call to
+	 * put(key, null) will remove a key if it exists already.
+	 * 
+	 */
+	private class MyHashMap extends HashMap{
+		public Object put(Object key, Object value){
+			if(value == null){
+				super.remove(key);
+				return null;
+			}else{
+				return super.put(key, value);
+			}
+		}
+	}
 
-
+	/**
+	 * Returns the format map for a given cell format
+	 * @param formatType
+	 * @return
+	 */
 	public HashMap<Point,Object> getFormatMap(int formatType){
-		return formatTableArray[formatType];
+		return formatMapArray[formatType];
 	}
 
 
@@ -125,7 +144,7 @@ public class CellFormat {
 	public void setFormat(ArrayList<CellRange> crList, int formatType, 
 			Object value){
 
-		HashMap<Point,Object> formatTable = formatTableArray[formatType];
+		HashMap<Point,Object> formatTable = formatMapArray[formatType];
 
 		//Integer value = new Integer(formatValue);
 
@@ -186,53 +205,60 @@ public class CellFormat {
 		table.repaint();		
 
 		//System.out.println(formatTable.toString());
-
-
 	}
 
 
 
 	/**
-	 * Returns the format object for a given cell and a given format. 
+	 * Returns the format object for a given cell and a given format type. 
 	 * If format does not exist, returns null.
 	 */
 	public Object getCellFormat(Point cellKey, int formatType){
 
 		Object formatObject = null;
 
+		// Create special keys for the row and column of the cell 
 		Point rowKey = new Point(-1,cellKey.y);
 		Point columnKey = new Point(cellKey.x,-1);
 
-		// get the format table
-		HashMap formatTable = formatTableArray[formatType];
+		// Get the format table
+		HashMap formatMap = formatMapArray[formatType];
 
 
-		if(formatTable.containsKey(cellKey)){
+		// Check there is a format for this cell
+		if(formatMap.containsKey(cellKey)){
 			//System.out.println("found" + cellKey.toString());
-			formatObject = formatTable.get(cellKey);
+			formatObject = formatMap.get(cellKey);
 		}
 
-		else if (formatTable.containsKey(rowKey)) {
-			formatObject = formatTable.get(rowKey);
+		// Check if there is a row format for this cell
+		else if (formatMap.containsKey(rowKey)) {
+			formatObject = formatMap.get(rowKey);
 		}
 
-		else if (formatTable.containsKey(columnKey)) {
-			formatObject = formatTable.get(columnKey);
+		// Check if there is a column format for this cell
+		else if (formatMap.containsKey(columnKey)) {
+			formatObject = formatMap.get(columnKey);
 		}
 
 		return formatObject;
 
 	}
 
+	/**
+	 * Returns the format object shared by all cells in the given cell range for
+	 * the given format type. If a format object does not exist, or not all cells share
+	 * the same format object, null is returned.
+	 */
 	public Object getCellFormat(CellRange cr, int formatType){
 
-		// get the format in the upper left cell
+		// Get the format in the upper left cell
 		Point cell = new Point(cr.getMinColumn(), cr.getMinRow());
 		Object format = (Integer) getCellFormat(cell, formatType);
 
 		if(format == null) return null;
 
-		// iterate through the range and test if they cells have the same format
+		// Iterate through the range and test if they cells have the same format
 		for (int r = 0; r > cr.getMaxRow(); r++){
 			for(int c = 0; c > cr.getMaxColumn(); c++){
 				cell.x = c;
@@ -247,6 +273,27 @@ public class CellFormat {
 	}
 
 
+	/**
+	 * Iterates through the cell ranges of the given list of cell ranges and
+	 * sets the border format needed for each cell in order to produce the
+	 * specified border style
+	 * 
+	 * @param cr
+	 * @param borderStyle
+	 */
+	public void setBorderStyle(ArrayList<CellRange> list, int borderStyle){
+		for(CellRange cr: list)
+			setBorderStyle(cr, borderStyle);
+	}
+
+
+	/**
+	 * Iterates through the cells of the given cell range and sets the border
+	 * format needed for each cell in order to produce the specified border
+	 * style
+	 * @param cr
+	 * @param borderStyle
+	 */
 	public void setBorderStyle(CellRange cr, int borderStyle){
 
 		int r1 = cr.getMinRow();
@@ -256,6 +303,91 @@ public class CellFormat {
 
 		Point cell = new Point();
 		Point cell2 = new Point();
+
+
+		if(cr.isRow()){
+
+			switch(borderStyle){
+
+			case BORDER_STYLE_NONE:
+				setFormat(cr,FORMAT_BORDER, null);
+				break;
+				
+			case BORDER_STYLE_LEFT:
+			case BORDER_STYLE_RIGHT:
+				// nothing to draw
+				break;
+
+			case BORDER_STYLE_TOP:
+				setFormat(cr,FORMAT_BORDER, BORDER_TOP);
+				break;
+
+			case BORDER_STYLE_BOTTOM:
+				setFormat(cr,FORMAT_BORDER, BORDER_BOTTOM);
+				break;
+
+			case BORDER_STYLE_ALL:
+				setFormat(cr,FORMAT_BORDER, BORDER_ALL);
+				break;
+
+				//TODO fix this one
+			case BORDER_STYLE_INSIDE:
+				setFormat(cr,FORMAT_BORDER, BORDER_ALL);
+				break;
+
+			case BORDER_STYLE_FRAME:
+				byte b = (int)BORDER_TOP + (int)BORDER_BOTTOM;
+				setFormat(cr,FORMAT_BORDER, b);
+				break;	
+
+			}
+
+			return;
+		}
+
+
+		if(cr.isColumn()){
+
+			switch(borderStyle){
+			
+			case BORDER_STYLE_NONE:
+				setFormat(cr,FORMAT_BORDER, null);
+				break;
+
+			case BORDER_STYLE_TOP:
+			case BORDER_STYLE_BOTTOM:
+				// nothing to draw
+
+				break;
+
+			case BORDER_STYLE_LEFT:
+				setFormat(cr,FORMAT_BORDER, BORDER_LEFT);
+				break;
+
+			case BORDER_STYLE_RIGHT:
+				setFormat(cr,FORMAT_BORDER, BORDER_RIGHT);
+				break;
+
+			case BORDER_STYLE_ALL:
+				setFormat(cr,FORMAT_BORDER, BORDER_ALL);
+				break;
+
+				//TODO fix this one
+			case BORDER_STYLE_INSIDE:
+				setFormat(cr,FORMAT_BORDER, BORDER_ALL);
+				break;
+
+			case BORDER_STYLE_FRAME:
+				byte b = (int)BORDER_LEFT + (int)BORDER_RIGHT;
+				setFormat(cr,FORMAT_BORDER, b);
+				break;	
+
+			}
+
+			return;
+		}
+
+		// handle all other selection types
 
 		switch(borderStyle){
 		case BORDER_STYLE_NONE:
@@ -401,8 +533,6 @@ public class CellFormat {
 			break;
 
 		}
-
-
 	}
 
 
@@ -415,28 +545,28 @@ public class CellFormat {
 
 		// create a set containing all cells with formats
 		HashSet<Point> masterKeySet = new HashSet<Point>();
-		for(int i = 0; i < formatTableArray.length; i ++)
-			masterKeySet.addAll(formatTableArray[i].keySet());
+		for(int i = 0; i < formatMapArray.length; i ++)
+			masterKeySet.addAll(formatMapArray[i].keySet());
 
 		// iterate through the set creating XML tags for each cell and its formats
 		for(Point cell : masterKeySet){
 			sb.append("\t<cellFormat x=\"" + cell.x + "\" y=\"" + cell.y);
-			Integer align = (Integer) formatTableArray[FORMAT_ALIGN].get(cell);
+			Integer align = (Integer) formatMapArray[FORMAT_ALIGN].get(cell);
 			if(align != null)
 				sb.append("\" align=\"" + align);
-			
-			Byte border = (Byte) formatTableArray[FORMAT_BORDER].get(cell);
+
+			Byte border = (Byte) formatMapArray[FORMAT_BORDER].get(cell);
 			if(border != null)
 				sb.append("\" border=\"" + border);
-			
-			Color color = (Color) formatTableArray[FORMAT_BGCOLOR].get(cell);
+
+			Color color = (Color) formatMapArray[FORMAT_BGCOLOR].get(cell);
 			if(color != null)
 				sb.append("\" color=\"" + color.getRGB());
-			
-			Integer fStyle = (Integer) formatTableArray[FORMAT_FONTSTYLE].get(cell);
+
+			Integer fStyle = (Integer) formatMapArray[FORMAT_FONTSTYLE].get(cell);
 			if(fStyle != null)
 				sb.append("\" fontStyle=\"" + fStyle);
-			
+
 			sb.append("\"/>\n");
 		}
 

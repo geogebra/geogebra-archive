@@ -211,7 +211,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		else if (source == btnBorderStyle) {
 
-			formatHandler.setBorderStyle(selectedCells.get(0), btnBorderStyle.getSelectedIndex());
+			formatHandler.setBorderStyle(selectedCells, btnBorderStyle.getSelectedIndex());
 		}
 
 

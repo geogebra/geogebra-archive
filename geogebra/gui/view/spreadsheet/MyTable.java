@@ -955,8 +955,36 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 
+	// draws a grid line beneath the give row
+	private void drawGridRow(Graphics2D g2, int row){
 
-	private void drawGridLine(Graphics2D g2, int row1, int col1, int row2, int col2){
+		Rectangle rect1 = getCellRect(row, 0, true);
+		int r1 = rect1.x-1;
+		int c1 = rect1.y-1;
+		Rectangle rect2 = getCellRect(row, getColumnCount(), true);
+		int r2 = rect2.x-1;
+		int c2 = rect2.y-1;
+
+		g2.drawLine(r1, c1, r2, c2);
+
+	}
+
+	// draws a grid line to the right the give column
+	private void drawGridColumn(Graphics2D g2, int column){
+
+		Rectangle rect1 = getCellRect(0, column, true);
+		int r1 = rect1.x-1;
+		int c1 = rect1.y-1;
+		Rectangle rect2 = getCellRect(getRowCount(), column, true);
+		int r2 = rect2.x-1;
+		int c2 = rect2.y-1;
+
+		g2.drawLine(r1, c1, r2, c2);
+
+	}
+
+
+	private void drawGridLine(Graphics2D g2, int col1, int row1, int col2, int row2){
 
 		Rectangle rect1 = this.getCellRect(row1, col1, true);
 		int r1 = rect1.x-1;
@@ -965,8 +993,6 @@ public class MyTable extends JTable implements FocusListener
 		int r2 = rect2.x-1;
 		int c2 = rect2.y-1;
 
-		g2.setColor(GeoGebraColorConstants.RED);
-		g2.setStroke(new BasicStroke(1));
 		g2.drawLine(r1, c1, r2, c2);
 
 	}
@@ -979,10 +1005,6 @@ public class MyTable extends JTable implements FocusListener
 		Rectangle rect2 = this.getCellRect(row2, col2, true);
 		int r2 = rect2.x-1;
 		int c2 = rect2.y-1;
-
-		g2.setColor(GeoGebraColorConstants.BLACK);
-		g2.setStroke(new BasicStroke(1));
-
 
 		// left bar
 		if(!isZeroBit(v,0))
@@ -1004,7 +1026,34 @@ public class MyTable extends JTable implements FocusListener
 	} 
 
 
+	private void handleRowColumnGridFormat(Graphics2D g2, int col, int row, byte v){
+		
+		// row
+		if(col == -1){
+			// top bar
+			if(!isZeroBit(v,1))
+				drawGridRow(g2, row);
+			// bottom bar
+			if(!isZeroBit(v,3))
+				drawGridRow(g2, row+1);
+		}
+		
+		// column
+		if(row == -1){
+			// left bar
+			if(!isZeroBit(v,0))
+				drawGridColumn(g2, col);
+			// right bar
+			if(!isZeroBit(v,2))
+				drawGridColumn(g2, col+1);
+		}
+	}
+
+	
 	private void drawFormatBorders(Graphics2D g2){
+
+		g2.setColor(GeoGebraColorConstants.BLACK);
+		g2.setStroke(new BasicStroke(1));
 
 		HashMap<Point,Object> map = getCellFormatHandler().getFormatMap(CellFormat.FORMAT_BORDER);
 		Set<Point> formatCell = map.keySet();
@@ -1016,8 +1065,11 @@ public class MyTable extends JTable implements FocusListener
 			if(b != null){
 				c = cell.x;
 				r  = cell.y;
-				//System.out.println("byte =============>: " + cell.toString());
-				drawBoxPartial(g2,c,r,c+1,r+1,b);
+				//System.out.println(cell.toString());
+				if(c == -1 || r == -1)
+					handleRowColumnGridFormat(g2, c, r, b);
+				else
+					drawBoxPartial(g2,c,r,c+1,r+1,b);
 			}
 		}
 
@@ -1059,6 +1111,7 @@ public class MyTable extends JTable implements FocusListener
 		//	drawGridLine(g2,1,2,5,2);
 
 		drawFormatBorders(g2);
+
 
 		if(!view.hasViewFocus())
 			return;
@@ -1718,7 +1771,7 @@ public class MyTable extends JTable implements FocusListener
 		// Selection is a partial column. 
 		// The targetCell with autoFunction will be created beneath the column 
 		if(selectedCellRanges.size() == 1 && selectedCellRanges.get(0).isPartialColumn()){
-			
+
 			// Try to clear the target cell, exit if this is not possible
 			if(RelativeCopy.getValue(this, maxSelectionColumn, maxSelectionRow + 1) != null){
 				boolean isOK = copyPasteCut.delete(
@@ -1726,14 +1779,14 @@ public class MyTable extends JTable implements FocusListener
 				if(!isOK) 
 					return false;
 			}
-			
+
 			// Create new targetCell 
 			targetCell = new GeoNumeric(kernel.getConstruction(),0);
 			targetCell.setLabel(GeoElement.getSpreadsheetCellName(maxSelectionColumn, maxSelectionRow + 1));
 
 			// Call stopAutoFunction to create the autofunction cell and clean up
 			stopAutoFunction();
-			
+
 			// Don't stay in this mode, we're done
 			return false;
 		}
@@ -1804,7 +1857,7 @@ public class MyTable extends JTable implements FocusListener
 
 		// Reset mode and then create our new geo
 		setTableMode(TABLE_MODE_STANDARD);
-		
+
 		// Create the new geo
 		if(!selectedCellRanges.get(0).contains(targetCell))
 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(expr,false);
