@@ -234,8 +234,8 @@ public class AlgoCommonTangents extends AlgoElement {
                 tangents[1+2].setUndefined();
                 tangentPoints2[1].setUndefined();
             } else {
-                tangents[1+2].setCoords(polar);
-                tangentPoints2[1].setCoords(P);
+            	tangents[1+2].setCoords(polar2);
+            	tangentPoints2[1].setCoords(P2);
             }
         }
         // if P is not on the conic, the tangents pass through
