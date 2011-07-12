@@ -527,27 +527,18 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	final public FunctionNVar evalCasCommand(String ggbCasCmd, boolean symbolic) {
 		// remember expression and its CAS string
 		boolean useCaching = true;
+		HashSet<GeoElement> geoVars = null;
+		
+		// did expression change since last time?
 		if (casEvalExpression != expression) {
 			casEvalExpression = expression;
 			if (symbolic) {
-				casEvalStringSymbolic = expression.getCASstring(kernel.getCurrentCAS(), true);
-
-				// make sure to declare symbolic variables as local, e.g. a in Derivative[a*x^2,x]
+				// make sure to use free symbolic variables, 
+				// e.g. a in Derivative[a*x^2,x] needs to be renamed temporarily when a exists in GeoGebra
 				// see http://www.geogebra.org/trac/ticket/929
-				GeoElement [] localVars = expression.getGeoElementVariables();
-				if (localVars != null && localVars.length >= 1) {
-					StringBuilder sb = new StringBuilder();
-					sb.append("Prog[");
-					for (int i=0; i < localVars.length; i++) {
-						if (localVars[i].isLabelSet()) {
-							sb.append(localVars[i].getLabel());	
-							sb.append(',');
-						}
-					}
-					sb.append(ggbCasCmd);
-					sb.append(']');
-					ggbCasCmd = sb.toString();
-				}
+				geoVars = expression.getVariables();
+				expression.introduceLocalVariableNames(geoVars);
+				casEvalStringSymbolic = expression.getCASstring(kernel.getCurrentCAS(), true);
 			}
 
 			// caching should only be done if the expression doesn't contain
@@ -562,8 +553,9 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		}
 
 		// build command string for CAS
-		String expString = symbolic ? casEvalStringSymbolic : expression
-				.getCASstring(kernel.getCurrentCAS(), false);
+		String expString = symbolic ? 
+				casEvalStringSymbolic : 
+				expression.getCASstring(kernel.getCurrentCAS(), false);
 
 		// substitute % by expString in ggbCasCmd
 		String casString = ggbCasCmd.replaceAll("%", expString);
@@ -571,41 +563,40 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		FunctionNVar resultFun = null;
 		if (useCaching) {
 			// check if result is in cache
-			resultFun = getCasEvalMap().get(casString);
-			if (resultFun != null) {
-				// System.out.println("caching worked: " + casString + " -> " +
-				// resultFun);
-				return resultFun;
-			}
+			resultFun = getCasEvalMap().get(casString);		
+			//System.out.println("caching worked: " + casString + " -> " + resultFun);
 		}
 
 		// eval with CAS
 		try {
-			// evaluate expression by CAS
-			String result = kernel.evaluateGeoGebraCAS(casString);
-
-			if (ggbCasCmd.startsWith("Derivative")) {
-				// MathPiper may return Deriv(x) f(x,y) if it doesn't know
-				// f(x,y)
-				// this should be converted into Derivative[f(x,y), x]
-				result = handleDeriv(result);
+			if (resultFun == null) {
+				// evaluate expression by CAS
+				String result = kernel.evaluateGeoGebraCAS(casString);
+				//System.out.println("caching worked: " + casString + " -> " + resultFun);
+	
+				if (ggbCasCmd.startsWith("Derivative")) {
+					// MathPiper may return Deriv(x) f(x,y) if it doesn't know
+					// f(x,y)
+					// this should be converted into Derivative[f(x,y), x]
+					result = handleDeriv(result);
+				}
+	
+				// parse CAS result back into GeoGebra
+				sb.setLength(0);
+				sb.append("f("); // this name is never used, just needed for parsing
+				sb.append(getVarString());
+				sb.append(") = ");
+				sb.append(result);
+	
+				// parse result
+				if (getVarNumber() == 1) {
+					resultFun = kernel.getParser().parseFunction(sb.toString());
+				} else {
+					resultFun = kernel.getParser().parseFunctionNVar(sb.toString());
+				}
+	
+				resultFun.initFunction();
 			}
-
-			// parse CAS result back into GeoGebra
-			sb.setLength(0);
-			sb.append("f("); // this name is never used, just needed for parsing
-			sb.append(getVarString());
-			sb.append(") = ");
-			sb.append(result);
-
-			// parse result
-			if (getVarNumber() == 1) {
-				resultFun = kernel.getParser().parseFunction(sb.toString());
-			} else {
-				resultFun = kernel.getParser().parseFunctionNVar(sb.toString());
-			}
-
-			resultFun.initFunction();
 		} catch (Error err) {
 			err.printStackTrace();
 			resultFun = null;
@@ -614,6 +605,12 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 			resultFun = null;
 		} catch (Throwable e) {
 			resultFun = null;
+		}
+		finally {
+			// make sure to set back original variable names if we introduced temp local variables above
+			if (geoVars != null) {
+				expression.undoLocalVariableNames(geoVars);
+			}
 		}
 
 		// cache result

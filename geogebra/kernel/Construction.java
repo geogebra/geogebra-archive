@@ -878,9 +878,9 @@ public class Construction {
 	}
 
 	/**
-	 * Adds a geo to list of local variables
-	 * @param varname Variable name
-	 * @param geo Variable geo
+	 * Adds a geo to the list of local variables using the specified local variable name .
+	 * @param varname local variable name
+	 * @param geo local variable object
 	 */
 	final public void addLocalVariable(String varname, GeoElement geo) {
 		localVariableTable.put(varname, geo);
@@ -888,11 +888,12 @@ public class Construction {
 	}
 
 	/**
-	 * Removes local variable of given name
+	 * Removes local variable of given name. Note that the underlying GeoElement object gets back its previous label as a side effect.
 	 * @param varname name of variable to be removed
 	 */
 	final public void removeLocalVariable(String varname) {
-		localVariableTable.remove(varname);
+		GeoElement geo = localVariableTable.remove(varname);
+		geo.undoLocalVariableLabel();		
 	}
 
 	/**

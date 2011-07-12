@@ -2218,10 +2218,21 @@ public abstract class GeoElement
 	/**
 	 * Sets label of a local variable object. This method should
 	 * only be used by Construction.
+	 * @param label local variable name
 	 */
 	public void setLocalVariableLabel(String label) {
+		this.oldLabel = this.label;
 		this.label = label;
 		localVarLabelSet = true;
+	}
+	
+	/**
+	 * Sets label of a local variable object back to its previous label. This method should
+	 * only be used by Construction.
+	 */
+	public void undoLocalVariableLabel() {
+		this.label = this.oldLabel;
+		localVarLabelSet = false;
 	}
 
 	public boolean isLocalVariable() {

@@ -22,6 +22,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.gui.DynamicTextInputPane;
 import geogebra.gui.TextInputDialog;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
@@ -870,12 +871,12 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	/**
 	 * Returns all GeoElement objects in the subtree
 	 */
-	final public HashSet getVariables() {
+	final public HashSet<GeoElement> getVariables() {
 		if (leaf)
 			return left.getVariables();
 
-		HashSet leftVars = left.getVariables();
-		HashSet rightVars = right.getVariables();
+		HashSet<GeoElement> leftVars = left.getVariables();
+		HashSet<GeoElement> rightVars = right.getVariables();
 		if (leftVars == null) {
 			return rightVars;
 		} else if (rightVars == null) {
@@ -911,6 +912,41 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			ret[j++] = (GeoElement) i.next();
 		}
 		return ret;
+	}
+	
+	
+	/**
+	 * Renames all GeoElements in geoVars to use local variable names.
+	 * @param geoVars set of GeoElement variables
+	 */
+	public void introduceLocalVariableNames(HashSet<GeoElement> geoVars) {
+		if (geoVars == null) return;
+		
+		// get all GeoElement variables in this expression tree 
+		Construction cons = kernel.getConstruction();
+
+		// set labels of all geos to use temp variable names
+		for (GeoElement geo : geoVars) {
+			if (geo.isLabelSet())
+				cons.addLocalVariable(TMP_VARIABLE_PREFIX + geo.getLabel(), geo);
+		}
+	}
+	
+	/**
+	 * Renames all GeoElements in this expression tree back to their previous variable names.
+	 * This undoes introduceLocalVariableNames().
+	 * @param geoVars set of GeoElement variables
+	 */
+	public void undoLocalVariableNames(HashSet<GeoElement> geoVars) {			
+		if (geoVars == null) return;
+
+		Construction cons = kernel.getConstruction();
+
+		// set labels of all geos back to their old labels
+		for (GeoElement geo : geoVars) {
+			if (geo.isLabelSet())
+				cons.removeLocalVariable(geo.getLabel());
+		}
 	}
 
 	final public boolean isLeaf() {
