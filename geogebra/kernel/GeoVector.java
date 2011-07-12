@@ -21,6 +21,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -374,6 +375,34 @@ Transformable, GeoVectorND {
 	
 	private StringBuilder buildValueString() {
 		sbBuildValueString.setLength(0);
+		
+		switch (kernel.getCASPrintForm()) {
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+				sbBuildValueString.append("{");
+				sbBuildValueString.append(getInhomVec().x);
+				sbBuildValueString.append(", ");
+				sbBuildValueString.append(getInhomVec().y);
+				sbBuildValueString.append("}");
+				return sbBuildValueString;
+		
+			case ExpressionNode.STRING_TYPE_MAXIMA:
+				sbBuildValueString.append("[");
+				sbBuildValueString.append(getInhomVec().x);
+				sbBuildValueString.append(", ");
+				sbBuildValueString.append(getInhomVec().y);
+				sbBuildValueString.append("]");
+				return sbBuildValueString;
+				
+			case ExpressionNode.STRING_TYPE_MPREDUCE:
+				sbBuildValueString.append("list(");
+				sbBuildValueString.append(getInhomVec().x);
+				sbBuildValueString.append(",");
+				sbBuildValueString.append(getInhomVec().y);
+				sbBuildValueString.append(")");
+				return sbBuildValueString;
+				
+			default: // continue below
+		}
 		switch (toStringMode) {
 		case Kernel.COORD_POLAR:                	
 			sbBuildValueString.append("(");		

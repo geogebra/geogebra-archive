@@ -947,6 +947,14 @@ GeoPointND, Animatable, Transformable  {
 				sbBuildValueString.append("]");
 				return sbBuildValueString;
 				
+			case ExpressionNode.STRING_TYPE_MPREDUCE:
+				sbBuildValueString.append("list(");
+				sbBuildValueString.append(getInhomX());
+				sbBuildValueString.append(",");
+				sbBuildValueString.append(getInhomY());
+				sbBuildValueString.append(")");
+				return sbBuildValueString;
+				
 			default: // continue below
 		}
 		

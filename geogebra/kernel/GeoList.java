@@ -1448,24 +1448,41 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		// isMatrix() is rather expensive, and we only need it 
 		// if we're using Maxima, so test for that first
 		int casPrinttype = kernel.getCASPrintForm();
-		if (casPrinttype != ExpressionNode.STRING_TYPE_MAXIMA || !isMatrix())
+		if ((casPrinttype != ExpressionNode.STRING_TYPE_MAXIMA && casPrinttype != ExpressionNode.STRING_TYPE_MPREDUCE) || !isMatrix())
 			return super.getCASString(symbolic);
 			
 		StringBuilder sb = new StringBuilder();
-		sb.append("matrix(");
-		for (int i = 0; i < size(); i++) {
-			GeoList geo = (GeoList) get(i);
-			sb.append('[');
-			for (int j = 0; j < geo.size(); j++) {
-				sb.append(geo.get(j).getCASString(symbolic));
-				if (j != geo.size() - 1)
+		if (casPrinttype == ExpressionNode.STRING_TYPE_MAXIMA){
+			sb.append("matrix(");
+			for (int i = 0; i < size(); i++) {
+				GeoList geo = (GeoList) get(i);
+				sb.append('[');
+				for (int j = 0; j < geo.size(); j++) {
+					sb.append(geo.get(j).getCASString(symbolic));
+					if (j != geo.size() - 1)
+						sb.append(',');
+				}
+				sb.append(']');
+				if (i != size() - 1)
 					sb.append(',');
 			}
-			sb.append(']');
-			if (i != size() - 1)
-				sb.append(',');
+			sb.append(')');
+		} else {
+			sb.append("mat(");
+			for (int i = 0; i < size(); i++) {
+				GeoList geo = (GeoList) get(i);
+				sb.append("(");
+				for (int j = 0; j < geo.size(); j++) {
+					sb.append(geo.get(j).getCASString(symbolic));
+					if (j != geo.size() - 1)
+						sb.append(',');
+				}
+				sb.append(')');
+				if (i != size() - 1)
+					sb.append(',');
+			}
+			sb.append(')');
 		}
-		sb.append(')');
 		return sb.toString();
 	}
 	

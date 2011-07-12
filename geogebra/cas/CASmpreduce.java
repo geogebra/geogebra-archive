@@ -255,11 +255,6 @@ public class CASmpreduce extends CASgeneric {
 			// mpreduce.evaluate("operator log!-temp");
 			// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
 
-			mpreduce.evaluate("load_package rsolve;");
-			mpreduce.evaluate("load_package numeric;");
-			mpreduce.evaluate("load_package specfn;");
-			mpreduce.evaluate("load_package odesolve;");
-			mpreduce.evaluate("load_package defint;");
 
 
 			// access functions for elements of a vector 
@@ -271,22 +266,58 @@ public class CASmpreduce extends CASgeneric {
 			
 			// erf in Reduce is currently broken: http://sourceforge.net/projects/reduce-algebra/forums/forum/899364/topic/4546339
 			// this is a numeric approximation according to Abramowitz & Stegun 7.1.26.
+			mpreduce.evaluate("procedure dot(vec1,vec2); " +
+					"	begin scalar tmplength; " +
+					"  if not numberp(vec1) and part(vec1,0)=mat and column_dim(vec1)=1 then " +
+					"    vec1:=tp(vec1);" +
+					"  if not numberp(vec2) and part(vec2,0)=mat and column_dim(vec2)=1 then " +
+					"    vec2:=tp(vec2); " +
+					"  return  " +
+					"  if not numberp(vec1) and part(vec1,0)=list then << " +
+					"    if not numberp(vec2) and part(vec2,0)=list then  " +
+					"      <<tmplength:=length(vec1);  " +
+					"      for i:=1:tmplength  " +
+					"	sum part(vec1,i)*part(vec2,i) >> " +
+					"    else if not numberp(vec2) and part(vec2,0)=mat and row_dim(vec2)=1 then" +
+					"      <<tmplength:=length(vec1);  " +
+					"      for i:=1:tmplength  " +
+					"	sum part(vec1,i)*vec2(1,i)>> " +
+					"      else " +
+					"	? " +
+					"  >> " +
+					"  else <<if not numberp(vec1) and part(vec1,0)=mat and row_dim(vec1)=1 then << " +
+					"    if not numberp(vec2) and part(vec2,0)=list then  " +
+					"      <<tmplength:=length(vec2); " +
+					"      for i:=1:tmplength  " +
+					"	sum vec1(1,i)*part(vec2,i)>> " +
+					"    else if not numberp(vec2) and part(vec2,0)=mat and row_dim(vec2)=1 then" +
+					"      <<tmplength:=column_dim(vec1);  " +
+					"      for i:=1:tmplength  " +
+					"	sum vec1(1,i)*vec2(1,i) " +
+					"      >> " +
+					"      else " +
+					"		? " +
+					"    >> " +
+					"  else " +
+					"    ? " +
+					"  >> " +
+					"end;");
 			mpreduce.evaluate(
 				"procedure erf(x); " + 
 				"begin " +
 				"     on rounded;" +
-				"     a1 :=  0.254829592; "+
-				"     a2 := -0.284496736; "+
-				"     a3 :=  1.421413741; "+
-				"     a4 := -1.453152027; "+
-				"     a5 :=  1.061405429; "+
-				"     p  :=  0.3275911; "+
-				"     sign := 1; "+
-				"     if x < 0 then sign := -1; "+
-				"     x := Abs(x); "+
-				"     t := 1.0/(1.0 + p*x); "+
-				"     y := 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Exp(-x*x); "+
-				"     return sign*y; "+
+				"     a1!° :=  0.254829592; "+
+				"     a2!° := -0.284496736; "+
+				"     a3!° :=  1.421413741; "+
+				"     a4!° := -1.453152027; "+
+				"     a5!° :=  1.061405429; "+
+				"     p!°  :=  0.3275911; "+
+				"     sign!° := 1; "+
+				"     if x < 0 then sign!° := -1; "+
+				"     x!° := Abs(x); "+
+				"     t!° := 1.0/(1.0 + p!°*x!°); "+
+				"     y!° := 1.0 - (((((a5!°*t!° + a4!°)*t!°) + a3!°)*t!° + a2!°)*t!° + a1!°)*t!°*Exp(-x!°*x!°); "+
+				"     return sign!°*y!° "+
 				"end;");
 
 			mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
@@ -304,12 +335,19 @@ public class CASmpreduce extends CASgeneric {
 			mpreduce.evaluate("procedure listtorowvector(list); "
 					+ "begin scalar lengthoflist; "
 					+ "lengthoflist:=length(list); "
-					+ "matrix m!°(1,l); "
+					+ "matrix m!°(1,lengthoflist); "
 					+ "for i:=1:lengthoflist do "
 					+ "m!°(1,i):=part(list,i); "
 					+ "return m!° " 
 					+ "end;");
-
+			
+			mpreduce.evaluate("load_package rsolve;");
+			mpreduce.evaluate("load_package numeric;");
+			mpreduce.evaluate("load_package specfn;");
+			mpreduce.evaluate("load_package odesolve;");
+			mpreduce.evaluate("load_package defint;");
+			mpreduce.evaluate("load_package linalg;");
+			
 			// the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
 		} catch (Throwable e) {

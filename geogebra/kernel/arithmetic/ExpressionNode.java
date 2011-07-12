@@ -26,6 +26,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
@@ -1880,8 +1881,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					if (((GeoList)left).isMatrix() && !((GeoList)right).isMatrix()){
 						sb.append("(");
 						sb.append(leftStr);
-						sb.append(")*");
-						sb.append("<<listtocolumnvector(");
+						sb.append(")*<<listtocolumnvector(");
 						sb.append(rightStr);
 						sb.append(")>>");
 						break;
@@ -1894,17 +1894,31 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						sb.append(")");
 						break;
 					}
-				} else if ((left instanceof GeoList) && (right instanceof GeoVector)){
+					else if (!((GeoList)left).isMatrix() && !((GeoList)right).isMatrix()){
+						sb.append("dot(");
+						sb.append(leftStr);
+						sb.append(",");
+						sb.append(rightStr);
+						sb.append(")");
+						break;
+					}
+				} else if ((left instanceof GeoList) && ((right instanceof GeoVector) || (right instanceof GeoPoint))){
 					if (((GeoList)left).isMatrix()){
 						sb.append("(");
 						sb.append(leftStr);
-						sb.append(")*");
-						sb.append("<<listtocolumnvector(");
+						sb.append(")*<<listtocolumnvector(");
 						sb.append(rightStr);
 						sb.append(")>>");
 						break;
+					} else {
+						sb.append("dot(");
+						sb.append(leftStr);
+						sb.append(",");
+						sb.append(rightStr);
+						sb.append(")");
+						break;
 					}
-				} else if ((left instanceof GeoVector) && (right instanceof GeoList)){
+				} else if (((left instanceof GeoVector) || (left instanceof GeoPoint)) && (right instanceof GeoList) ){
 					if (((GeoList)right).isMatrix()){
 						sb.append("<<listtorowvector(");
 						sb.append(leftStr);
@@ -1912,7 +1926,21 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						sb.append(rightStr);
 						sb.append(")");
 						break;
-					}	
+					} else {
+						sb.append("dot(");
+						sb.append(leftStr);
+						sb.append(",");
+						sb.append(rightStr);
+						sb.append(")");
+						break;
+					}
+				} else if (((left instanceof GeoVector) || (left instanceof GeoPoint)) && ((right instanceof GeoVector) || (right instanceof GeoPoint)) ){
+					sb.append("dot(");
+					sb.append(leftStr);
+					sb.append(",");
+					sb.append(rightStr);
+					sb.append(")");
+					break;
 				}
 				
 				sb.append("(");
