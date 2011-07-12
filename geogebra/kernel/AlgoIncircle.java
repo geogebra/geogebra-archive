@@ -106,22 +106,24 @@ public class AlgoIncircle extends AlgoElement {
         double dAB = getA().distance(getB());
         double dAC = getA().distance(getC());
         double dBC = getB().distance(getC());
-        A1.setCoords(1.0/dAB * (getA().x-getB().x)+getB().x, 
-                     1.0/dAB * (getA().y-getB().y)+getB().y, 
-                     1.0/dAB * (getA().z-getB().z)+getB().z);  
-        C1.setCoords(1.0/dBC * (getC().x-getB().x)+getB().x,
-                     1.0/dBC * (getC().y-getB().y)+getB().y,
-                     1.0/dBC * (getC().z-getB().z)+getB().z);  
-        B1.setCoords((A1.x+C1.x)/2.0, (A1.y+C1.y)/2.0, (A1.z+C1.z)/2.0);
+        double dmax = dAB > dBC ? dAB : dBC;
+        A1.setCoords(dmax/dAB * (getA().inhomX-getB().inhomX)+getB().inhomX, 
+                     dmax/dAB * (getA().inhomY-getB().inhomY)+getB().inhomY, 
+                     1.0d);  
+        C1.setCoords(dmax/dBC * (getC().inhomX-getB().inhomX)+getB().inhomX,
+                     dmax/dBC * (getC().inhomY-getB().inhomY)+getB().inhomY,
+                     1.0d);
+        B1.setCoords((A1.inhomX+C1.inhomX)/2.0d, (A1.inhomY+C1.inhomY)/2.0d, 1.0d);
         GeoVec3D.lineThroughPoints(getB(), B1, bisectorB);
         // bisector of angle BCA
-        A1.setCoords(1.0/dAC * (getA().x-getC().x)+getC().x, 
-                     1.0/dAC * (getA().y-getC().y)+getC().y, 
-                     1.0/dAC * (getA().z-getC().z)+getC().z);  
-        B1.setCoords(1.0/dBC * (getB().x-getC().x)+getC().x,
-                     1.0/dBC * (getB().y-getC().y)+getC().y,
-                     1.0/dBC * (getB().z-getC().z)+getC().z);  
-        C1.setCoords((A1.x+B1.x)/2.0, (A1.y+B1.y)/2.0, (A1.z+B1.z)/2.0);
+        dmax = dAC > dBC ? dAC : dBC;
+        A1.setCoords(dmax/dAC * (getA().inhomX-getC().inhomX)+getC().inhomX, 
+                     dmax/dAC * (getA().inhomY-getC().inhomY)+getC().inhomY, 
+                     1.0d);  
+        B1.setCoords(dmax/dBC * (getB().inhomX-getC().inhomX)+getC().inhomX,
+                     dmax/dBC * (getB().inhomY-getC().inhomY)+getC().inhomY,
+                     1.0d);  
+        C1.setCoords((A1.inhomX+B1.inhomX)/2.0d, (A1.inhomY+B1.inhomY)/2.0d, 1.0d);
         GeoVec3D.lineThroughPoints(getC(), C1, bisectorC);
         // intersect angle bisectors to get incenter
         GeoVec3D.lineThroughPoints(getB(), getC(), sideBC);
