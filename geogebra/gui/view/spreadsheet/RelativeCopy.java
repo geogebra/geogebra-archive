@@ -201,20 +201,7 @@ public class RelativeCopy {
 
 		}
 
-		//old code - just works left to right
-
-		/*
-
-		for (int y = dy1; y <= dy2; ++ y) {
-			int iy = y - dy1;
-			for (int x = x1; x <= x2; ++ x) {
-				int ix = x - x1;
-
-				// does work
-				doCopyNoStoringUndoInfo0(kernel, table, getValue(table,x1 + ix, sy),
-														getValue(table,x1 + ix, dy1 + iy), 0, y - sy);
-			}
-		}*/
+	
 	}
 
 	public void doCopyHorizontalNoStoringUndoInfo1(int y1, int y2, int sx, int dx1, int dx2) throws Exception {

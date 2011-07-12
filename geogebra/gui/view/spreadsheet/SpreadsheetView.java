@@ -8,11 +8,13 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.SystemColor;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
@@ -32,7 +34,7 @@ import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class SpreadsheetView extends JSplitPane implements View, ComponentListener, FocusListener
+public class SpreadsheetView extends JPanel implements View, ComponentListener, FocusListener
 {
 
 	private static final long serialVersionUID = 1L;
@@ -70,7 +72,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private SpreadsheetStyleBar styleBar;
 	private JPanel restorePanel;
 
-	
+
 	// toolbar manager
 	SpreadsheetToolbarManager toolbarManager;
 
@@ -103,9 +105,19 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private String initialFilePath; 
 	private int initialBrowserMode = DEFAULT_MODE;
 
-	
+
 	// current toolbar mode
 	private int mode = -1;
+
+	private JSplitPane splitPane;
+
+
+	private FormulaBar formulaBar;
+
+
+	public FormulaBar getFormulaBar() {
+		return formulaBar;
+	}
 
 
 	/**
@@ -117,56 +129,71 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		this.app = app;
 		kernel = app.getKernel();
 		view = this;
-		
+
 		// Build the spreadsheet table and enclosing scrollpane
 		buildSpreadsheet(rows, columns);
-				
-		// Set the spreadsheet as the right component of this JScrollPane
-		setRightComponent(spreadsheet);	
-		
+
+		// Build the formula bar
+		formulaBar = new FormulaBar(app, this); 
+		formulaBar.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(0,0,1,0,SystemColor.controlShadow), 
+				BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+
+		// Build the spreadsheet panel: formualBar above, spreadsheet in Center  
+		JPanel spreadsheetPanel = new JPanel(new BorderLayout());
+		//spreadsheetPanel.add(formulaBar,BorderLayout.NORTH);
+		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
+
+		// Set the spreadsheet panel as the right component of this JSplitPane
+		splitPane = new JSplitPane();
+		splitPane.setRightComponent(spreadsheetPanel);	
+
 		// Set the browser as the left component or to null if showBrowserPanel == false
 		setShowFileBrowser(showBrowserPanel);  
 
-		
+
+		setLayout(new BorderLayout());
+		add(splitPane,BorderLayout.CENTER);
+
 		setBorder(BorderFactory.createEmptyBorder());
 		addFocusListener(this);
 		updateFonts();
 		attachView();
-		
-		
+
+
 		// Create tool bar manager to handle tool bar mode changes
 		toolbarManager = new SpreadsheetToolbarManager(app, this);
-		
-		
+
+
 		// Create spreadsheet trace manager
 		// TODO move this out of the spreadsheet
 		traceManager = new SpreadsheetTraceManager(this);
 
-		
+
 		// init the default file location for the file browser
 		if(app.hasFullPermissions()){
 			defaultFile = System.getProperty("user.dir");
 			initialFilePath = defaultFile;
 		}
 
-	
+
 	}
 
 
 	private void buildSpreadsheet(int rows, int columns){
-		
+
 		// Create the spreadsheet table model and the table
 		tableModel = new DefaultTableModel(rows, columns);
 		table = new MyTable(this, tableModel);
-		
+
 		// Create row header
 		rowHeader = new SpreadsheetRowHeader(app,table);
-		
+
 		// Set column width
 		table.headerRenderer.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
 				, (int)(MyTable.TABLE_CELL_HEIGHT)));
 
-		
+
 		// Put the table and the row header into a scroll plane
 		// The scrollPane is named as spreadsheet
 		spreadsheet = new JScrollPane();
@@ -174,7 +201,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		spreadsheet.setRowHeaderView(rowHeader);
 		spreadsheet.setViewportView(table);
 
-		
+
 		// Create and set the scrollpane corners
 		Corner upperLeftCorner = new Corner(); //use FlowLayout
 		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
@@ -187,13 +214,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		spreadsheet.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
 		spreadsheet.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
 
-		
+
 		// Add a resize listener to the table so it can auto-enlarge if needed
 		table.addComponentListener(this); 
-		
+
 	}
-	
-	
+
+
+
 
 	//===============================================================
 	//             Defaults
@@ -244,7 +272,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public int getMode() {
 		return mode;
 	}
-	
+
 	private class Corner extends JComponent {
 		private static final long serialVersionUID = -4426785169061557674L;
 
@@ -374,15 +402,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void setMode(int mode){
 
 		this.mode = mode;
-		
+
 		if(isTraceDialogVisible()){
 			traceDialog.toolbarModeChanged(mode);
 		}
 
 		// String command = kernel.getModeText(mode); // e.g. "Derivative"
-		
+
 		toolbarManager.handleModeChange(mode);
-		
+
 	}
 
 
@@ -410,6 +438,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			twoVarStatDialog.setVisible(false);
 		if(multiVarStatDialog != null)
 			multiVarStatDialog.setVisible(false);
+		
+		table.getCellFormatHandler().clearAll();
 
 	}	
 
@@ -761,9 +791,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 		//---- end browser
 
+		table.getCellFormatHandler().getXML(sb);
+
 		sb.append("</spreadsheetView>\n");
 
-		//Application.debug(sb);
+		//	Application.debug(sb);
 
 	}
 
@@ -974,6 +1006,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		if (fileBrowser == null && app.hasFullPermissions()) {
 			fileBrowser = new FileBrowserPanel(this);
 			fileBrowser.setMinimumSize(new Dimension(50, 0));
+			initFileBrowser();
 			fileBrowser.setRoot(initialFilePath, initialBrowserMode);
 		}	
 		return fileBrowser;
@@ -983,14 +1016,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void setShowFileBrowser(boolean showFileBrowser) {
 
 		if (showFileBrowser) {
-			setLeftComponent(getFileBrowser());
-			setDividerLocation(defaultDividerLocation);
-			setDividerSize(4);
+			splitPane.setLeftComponent(getFileBrowser());
+			splitPane.setDividerLocation(defaultDividerLocation);
+			splitPane.setDividerSize(4);
 		} else {
-			setLeftComponent(null);
-			setLastDividerLocation(getDividerLocation());
-			setDividerLocation(0);
-			setDividerSize(0);
+			splitPane.setLeftComponent(null);
+			splitPane.setLastDividerLocation(splitPane.getDividerLocation());
+			splitPane.setDividerLocation(0);
+			splitPane.setDividerSize(0);
 		}
 		showBrowserPanel = showFileBrowser;
 	}
@@ -1001,16 +1034,16 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 	public void minimizeBrowserPanel(){
-		setDividerLocation(10);
-		setDividerSize(0);
-		setLeftComponent(getRestorePanel());
+		splitPane.setDividerLocation(10);
+		splitPane.setDividerSize(0);
+		splitPane.setLeftComponent(getRestorePanel());
 	}
 
 
 	public void restoreBrowserPanel(){
-		setDividerLocation(getLastDividerLocation());
-		setDividerSize(4);
-		setLeftComponent(getFileBrowser());
+		splitPane.setDividerLocation(splitPane.getLastDividerLocation());
+		splitPane.setDividerSize(4);
+		splitPane.setLeftComponent(getFileBrowser());
 
 	}
 
@@ -1087,7 +1120,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	public void initFileBrowser(){
 		// don't init file browser without full permissions (e.g. unsigned applets)
-		if(!app.hasFullPermissions()) return;
+		if(!app.hasFullPermissions() || !getShowBrowserPanel()) return;
 
 		if(initialBrowserMode == FileBrowserPanel.MODE_FILE)
 			setFileBrowserDirectory(initialFilePath, initialBrowserMode);
@@ -1170,6 +1203,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void setShowGrid(boolean showGrid) {
 		table.setShowGrid(showGrid);
 		this.showGrid = showGrid;
+		if(showGrid)
+			table.setIntercellSpacing(new Dimension(1,1));
+		else
+			table.setIntercellSpacing(new Dimension(0,0));
 	}
 
 	public boolean getShowGrid() {
@@ -1200,7 +1237,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public boolean isVisibleStyleBar(){
 		return styleBar == null || styleBar.isVisible();
 	}
-	
+
 
 	public void setColumnSelect(boolean isColumnSelect){
 		this.isColumnSelect = isColumnSelect;
@@ -1244,9 +1281,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	protected boolean hasViewFocus(){
 		boolean hasFocus = false;
-		 try {
-			 if(app.getGuiManager().getLayout().getDockManager().getFocusedPanel() != null)
-				 hasFocus = app.getGuiManager().getLayout().getDockManager().getFocusedPanel().isAncestorOf(view);
+		try {
+			if(app.getGuiManager().getLayout().getDockManager().getFocusedPanel() != null)
+				hasFocus = app.getGuiManager().getLayout().getDockManager().getFocusedPanel().isAncestorOf(view);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

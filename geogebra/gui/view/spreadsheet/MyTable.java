@@ -579,6 +579,9 @@ public class MyTable extends JTable implements FocusListener
 
 			if(view.isVisibleStyleBar())
 				view.getSpreadsheetStyleBar().updateStyleBar();
+			
+			
+			view.getFormulaBar().update();
 
 			app.setSelectedGeos(list);
 			view.notifySpreadsheetSelectionChange();

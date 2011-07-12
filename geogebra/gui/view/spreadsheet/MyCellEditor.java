@@ -38,10 +38,10 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	
 	
 		
-	public MyCellEditor(Kernel kernel0) {
-		//super(new JTextField());
-		super(new AutoCompleteTextField(0, kernel0.getApplication(), false));
-		kernel = kernel0;
+	public MyCellEditor(Kernel kernel) {
+		
+		super(new AutoCompleteTextField(0, kernel.getApplication(), false));
+		this.kernel = kernel;
 		app = kernel.getApplication();
 		textField = (AutoCompleteTextField) editorComponent;
 		
