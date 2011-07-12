@@ -155,8 +155,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 		<path id="build.class.path">
 			<fileset dir="${src.dir}">
 				<include name="*.jar" />
-				<include name="3D/jogl.jar" />
-				<include name="3D/gluegenrt.jar" />
+				<include name="jogl1/jar/jogl.jar" />
+				<include name="jogl1/jar/gluegenrt.jar" />
 			</fileset>
 		</path>
 		<javac srcdir="${src.dir}" destdir="${build.dir}/classes">
@@ -198,8 +198,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 		<path id="build.class.path">
 			<fileset dir="${src.dir}">
 				<include name="*.jar"/>
-				<include name="3D/jogl.jar"/>
-				<include name="3D/gluegenrt.jar"/>
+				<include name="jogl1/jar/jogl.jar"/>
+				<include name="jogl1/jar/gluegenrt.jar"/>
 			</fileset>
 		</path>
 		<javac srcdir="${src.dir}">
@@ -342,10 +342,10 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 	</target>
 	<!-- copies the jogl jars  -->
 	<target name="ggb-copy-jogl" depends="clean" description="copy jogl jars">
-		<copy file="${src.dir}/3D/jogl.jar"
+		<copy file="${src.dir}/jogl1/jar/jogl.jar"
 		      tofile="${build.dir}/jogl.jar">
 		</copy>
-		<copy file="${src.dir}/3D/gluegen-rt.jar"
+		<copy file="${src.dir}/jogl1/jar/gluegen-rt.jar"
 		      tofile="${build.dir}/gluegen-rt.jar">
 		</copy>
 	</target>
@@ -496,7 +496,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 	<target name="ggb-properties-jar" depends="clean, stripComments" description="create unsigned geogebra_properties.jar">
 		<jar jarfile="${build.dir}/geogebra_properties.jar"
 			basedir="${propertiestemp.dir}"
-			includes="**/*"			 
+			includes="**/*"		
+			excludes="**/wiki*.*"
 		/>
 	</target>
 
