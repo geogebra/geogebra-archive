@@ -558,7 +558,7 @@ public class Kernel {
 		return ggbCAS != null;
 	}
 	
-	public static int DEFAULT_CAS = Application.CAS_MATHPIPER; // default
+	public static int DEFAULT_CAS = Application.CAS_MPREDUCE; // default
 
 	/*
 	 * needed eg change MathPiper -> Maxima
