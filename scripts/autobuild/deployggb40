@@ -92,10 +92,10 @@ REVISION=`cat $SVNDIR/geogebra/scripts/autobuild/.revision`
 MAIL="New version of GeoGebra 4.0 has just been uploaded: $MYVER\n
 http://www.geogebra.org/trac/log/trunk?rev=$REVISION\n
 Automatic message, do not reply"
-echo -e $MAIL | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || {
+echo -e $MAIL | mail -s "deployggb40 report" geogebra-dev@googlegroups.com 2>&1 | grep denied && {
  # If not successful, we send it through ssh:
  echo -e $MAIL | ssh www.geogebra.org mail -s "deployggb40 report" geogebra-dev@googlegroups.com
-}
+ }
 
 date
 echo "$0: end"
