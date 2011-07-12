@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.Kernel;
@@ -19,6 +20,7 @@ import geogebra.kernel.roots.RealRootDerivFunction;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -535,7 +537,8 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @param symbolic true for symbolic coefficients (SymbolicPolyFunction), false for numeric coefficients (PolyFunction)
      */
     private PolyFunction expandToPolyFunction(ExpressionValue ev, boolean symbolic) {
-        ExpressionNode node;
+    	PolyFunction ret = null;
+    	ExpressionNode node;
         if (ev.isExpressionNode()) {
             node = (ExpressionNode) ev;
         } else {
@@ -543,39 +546,58 @@ implements ExpressionValue, RealRootFunction, Functional {
             node = new ExpressionNode(kernel, ev);
         }
                 
-        // get coefficients as strings
-        String function = node.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, symbolic);        
-        String [] strCoeffs = kernel.getPolynomialCoeffs(function, fVars[0].toString());
-        if (strCoeffs == null)
-			// this is not a valid polynomial           
-            return null;
+        // handle local variables
+        HashSet<GeoElement> geoVars = null;
+        if (symbolic) {
+        	// make sure to use free symbolic variables, 
+			// e.g. a in getPolynomialCoeffs(a*x^2,x) needs to be renamed temporarily when a exists in GeoGebra
+			// see http://www.geogebra.org/trac/ticket/929
+        	geoVars = node.getVariables();
+			node.introduceLocalVariableNames(geoVars);
+        }
         
-        // convert sring coefficients to coefficients of a SymbolicPolyFunction resp. PolyFunction
-        int degree = strCoeffs.length - 1;
-        if (symbolic) { 
-        	// build SymbolicPolyFunction
-	        SymbolicPolyFunction symbPolyFun = new SymbolicPolyFunction(degree);        
-	        ExpressionNode [] symbCoeffs = symbPolyFun.getSymbolicCoeffs();                 
-	        for (int i=0; i < strCoeffs.length; i++) {
-	            symbCoeffs[i] = evaluateToExpressionNode(strCoeffs[i]);         
-	            if (symbCoeffs[i] == null)
-					return null; 
-	            symbCoeffs[i].simplifyConstantIntegers();
-	        }                       
-	        return symbPolyFun;   
-        } else { 
-        	// build PolyFunction
-        	try {
-	        	PolyFunction polyFun = new PolyFunction(degree);                        
-	  	        for (int i=0; i < strCoeffs.length; i++) {
-	  	            polyFun.coeffs[i] = ((NumberValue) evaluateToExpressionNode(strCoeffs[i]).evaluate()).getDouble();         
-	  	        }                       
-	  	        return polyFun; 
-        	} catch (Exception e) {
-        		Application.debug("error in buildPolyFunction:");
-        		e.printStackTrace();
-        		return null;
-        	}
+        // get coefficients as strings
+        String function = node.getCASstring(ExpressionNode.STRING_TYPE_MPREDUCE, symbolic); 
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function, fVars[0].toString());
+        
+        try {
+	        if (strCoeffs == null)
+				// this is not a valid polynomial           
+	            return null;
+	        
+	        // convert sring coefficients to coefficients of a SymbolicPolyFunction resp. PolyFunction
+	        int degree = strCoeffs.length - 1;
+	        if (symbolic) { 
+	        	// build SymbolicPolyFunction
+		        SymbolicPolyFunction symbPolyFun = new SymbolicPolyFunction(degree);        
+		        ExpressionNode [] symbCoeffs = symbPolyFun.getSymbolicCoeffs();                 
+		        for (int i=0; i < strCoeffs.length; i++) {
+		            symbCoeffs[i] = evaluateToExpressionNode(strCoeffs[i]);         
+		            if (symbCoeffs[i] == null)
+						return null; 
+		            symbCoeffs[i].simplifyConstantIntegers();
+		        }                       
+		        return symbPolyFun;   
+	        } else { 
+	        	// build PolyFunction
+	        	try {
+		        	PolyFunction polyFun = new PolyFunction(degree);                        
+		  	        for (int i=0; i < strCoeffs.length; i++) {
+		  	            polyFun.coeffs[i] = ((NumberValue) evaluateToExpressionNode(strCoeffs[i]).evaluate()).getDouble();         
+		  	        }                       
+		  	        return polyFun; 
+	        	} catch (Exception e) {
+	        		Application.debug("error in buildPolyFunction:");
+	        		e.printStackTrace();
+	        		return null;
+	        	}
+	        }
+        }
+        finally {
+        	// make sure to set back original variable names if we introduced temp local variables above
+			if (geoVars != null) {
+				node.undoLocalVariableNames(geoVars);
+			}
         }
     }
     

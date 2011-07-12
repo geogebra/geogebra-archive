@@ -208,7 +208,7 @@ public class GeoGebraCAS {
 	private StringBuilder sbPolyCoeffs = new StringBuilder();
 	
 	/**
-	 * Expands the given MathPiper expression and tries to get its polynomial
+	 * Expands the given MPreduce expression and tries to get its polynomial
 	 * coefficients. The coefficients are returned in ascending order. If exp is
 	 * not a polynomial, null is returned.
 	 * 

@@ -559,44 +559,42 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 
 		// substitute % by expString in ggbCasCmd
 		String casString = ggbCasCmd.replaceAll("%", expString);
-
-		FunctionNVar resultFun = null;
-		if (useCaching) {
-			// check if result is in cache
-			resultFun = getCasEvalMap().get(casString);		
-			//System.out.println("caching worked: " + casString + " -> " + resultFun);
-		}
+		FunctionNVar resultFun = null;		
 
 		// eval with CAS
 		try {
-			if (resultFun == null) {
-				// evaluate expression by CAS
-				String result = kernel.evaluateGeoGebraCAS(casString);
+			if (useCaching) {
+				// check if result is in cache
+				return getCasEvalMap().get(casString);		
 				//System.out.println("caching worked: " + casString + " -> " + resultFun);
-	
-				if (ggbCasCmd.startsWith("Derivative")) {
-					// MathPiper may return Deriv(x) f(x,y) if it doesn't know
-					// f(x,y)
-					// this should be converted into Derivative[f(x,y), x]
-					result = handleDeriv(result);
-				}
-	
-				// parse CAS result back into GeoGebra
-				sb.setLength(0);
-				sb.append("f("); // this name is never used, just needed for parsing
-				sb.append(getVarString());
-				sb.append(") = ");
-				sb.append(result);
-	
-				// parse result
-				if (getVarNumber() == 1) {
-					resultFun = kernel.getParser().parseFunction(sb.toString());
-				} else {
-					resultFun = kernel.getParser().parseFunctionNVar(sb.toString());
-				}
-	
-				resultFun.initFunction();
 			}
+			
+			// evaluate expression by CAS
+			String result = kernel.evaluateGeoGebraCAS(casString);
+			//System.out.println("caching worked: " + casString + " -> " + resultFun);
+
+			if (ggbCasCmd.startsWith("Derivative")) {
+				// MathPiper may return Deriv(x) f(x,y) if it doesn't know
+				// f(x,y)
+				// this should be converted into Derivative[f(x,y), x]
+				result = handleDeriv(result);
+			}
+
+			// parse CAS result back into GeoGebra
+			sb.setLength(0);
+			sb.append("f("); // this name is never used, just needed for parsing
+			sb.append(getVarString());
+			sb.append(") = ");
+			sb.append(result);
+
+			// parse result
+			if (getVarNumber() == 1) {
+				resultFun = kernel.getParser().parseFunction(sb.toString());
+			} else {
+				resultFun = kernel.getParser().parseFunctionNVar(sb.toString());
+			}
+
+			resultFun.initFunction();			
 		} catch (Error err) {
 			err.printStackTrace();
 			resultFun = null;
