@@ -68,8 +68,8 @@ TRANSLATIONS
   * Polish: Ania Borkowska, Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega, 
       Kasia Winkowska-Nowak (Poland)
   * Portuguese (Brazil): Humberto Bortolossi, Celina A. A. P. Abar,
-      Gerson Pastre de Oliveira, Lisbete Madsen Barbosa, Herminio Borges Neto,
-      Alana Paula, Luciana de Lima, Araujo Freitas, Alana Souza de Olivieira (Brazil)
+    Gerson Pastre de Oliveira, Lisbete Madsen Barbosa, Herminio Borges Neto,
+    Alana Paula Araujo Freitas, Luciana de Lima, Alana Souza de Oliveira (Brazil)
   * Portuguese (Portugal): Jorge Geraldes, Antonio Ribeiro (Portugal)
   * Russian: Anatoly Scherbakov, Beatrice Versichel (Russia)
   * Serbian: Djordje Herceg, Dragoslav Herceg (Serbia)
