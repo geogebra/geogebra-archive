@@ -2234,8 +2234,10 @@ public abstract class GeoElement
 	 * only be used by Construction.
 	 */
 	public void undoLocalVariableLabel() {
-		this.label = this.oldLabel;
-		localVarLabelSet = false;
+		if (this.oldLabel != null) {
+			this.label = this.oldLabel;
+			localVarLabelSet = false;
+		}
 	}
 
 	public boolean isLocalVariable() {
