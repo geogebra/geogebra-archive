@@ -445,6 +445,13 @@ public class ConstructionDefaults {
 	}
 	
 	
+	protected void setMaxLayerUsed(GeoElement geo, Application app){
+		if (app != null) {
+			EuclidianView ev = app.getEuclidianView();
+			if (ev != null)
+				geo.setLayer(ev.getMaxLayerUsed());
+		}
+	}
 	
 	/**
 	 * Sets default color for given geo. 
@@ -471,11 +478,7 @@ public class ConstructionDefaults {
 			
 			if(!isReset) {
 				// set to highest used layer
-				if (app != null) {
-					EuclidianView ev = app.getEuclidianView();
-					if (ev != null)
-						geo.setLayer(ev.getMaxLayerUsed());
-				}
+				setMaxLayerUsed(geo, app);
 			}
 		}
 

@@ -56,30 +56,12 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 	public void drawGeometry(Renderer renderer) {
 
-		
-		
-		
-		renderer.setLayer(getGeoElement().getLayer());
-
-		/*
-		renderer.startPolygonAndInitMatrix();
-		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
-
-
-
-		for(int i=0;i<polygon.getNumPoints();i++){
-			renderer.addToPolygon(polygon.getPointX(i), polygon.getPointY(i));
-		}
-
-		renderer.endPolygonAndResetMatrix();
-		*/
-		
-		renderer.drawPolygon(getGeometryIndex());
-		
+		renderer.setLayer(getGeoElement().getLayer());		
+		renderer.drawPolygon(getGeometryIndex());		
 		renderer.setLayer(0);
-			
 
 	}
+	
 	public void drawGeometryPicked(Renderer renderer){
 		drawGeometry(renderer);
 	}

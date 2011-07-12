@@ -83,7 +83,9 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 		case GeoConic.CONIC_ELLIPSE:
 			setLight(renderer);
 			setSurfaceHighlightingColor(alpha);
+			renderer.setLayer(getGeoElement().getLayer());
 			renderer.getGeometryManager().draw(getSurfaceIndex());
+			renderer.setLayer(0);
 			break;
 		default:
 			break;
@@ -344,7 +346,9 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
     	switch(((GeoConicND) getGeoElement()).getType()){
     	case GeoConic.CONIC_CIRCLE:
 		case GeoConic.CONIC_ELLIPSE:
+			renderer.setLayer(getGeoElement().getLayer());
     		renderer.getGeometryManager().draw(getSurfaceIndex());
+    		renderer.setLayer(0);
     		break;
     	}
 

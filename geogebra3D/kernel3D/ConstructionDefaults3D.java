@@ -1,10 +1,12 @@
 package geogebra3D.kernel3D;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
+import geogebra.main.Application;
 
 import java.awt.Color;
 
@@ -45,6 +47,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_VECTOR3D = 3104;
 	/** default conic 3D type */	
 	public static final int DEFAULT_CONIC3D = 3105;
+	public static final int DEFAULT_CONIC3D_LAYER = 1;
+
 	public static final int DEFAULT_CONIC3D_INTERSECTION = 3155;
 	/** default curve 3D type */	
 	public static final int DEFAULT_CURVECARTESIAN3D = 3106;
@@ -93,6 +97,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final Color colPolygon3D = colPolygon;
 	/** default alpha for 3D polygons*/
 	public static final float DEFAULT_POLYGON3D_ALPHA = DEFAULT_POLYGON_ALPHA;
+	public static final int DEFAULT_POLYGON3D_LAYER = DEFAULT_CONIC3D_LAYER;
 
 	// plane 
 	/** default color for 3D planes */
@@ -249,6 +254,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		conic.setLocalVariableLabel("Conic3D");
 		//conic.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		conic.setObjColor(colConic3D);
+		conic.setLayer(DEFAULT_CONIC3D_LAYER);
 		defaultGeoElements.put(DEFAULT_CONIC3D, conic);
 		
 		
@@ -256,6 +262,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		GeoConic3D conicIntersection = new GeoConic3D(cons);	
 		conicIntersection.setLocalVariableLabel("Conic3D" + strIntersection);
 		conicIntersection.setObjColor(colIntersectionCurve);
+		conic.setLayer(DEFAULT_CONIC3D_LAYER);
 		defaultGeoElements.put(DEFAULT_CONIC3D_INTERSECTION, conicIntersection);
 		
 		
@@ -284,7 +291,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		polygon.setObjColor(colPolygon3D);
 		polygon.setAlphaValue(DEFAULT_POLYGON3D_ALPHA);
 		//polygon.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
-		polygon.setLayer(2);
+		polygon.setLayer(DEFAULT_POLYGON3D_LAYER);
 		defaultGeoElements.put(DEFAULT_POLYGON3D, polygon);
 
 		
@@ -404,10 +411,15 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	}
 	
 	
-	
-	
-	
-	
+
+
+
+	protected void setMaxLayerUsed(GeoElement geo, Application app){
+		//update only if  not a 3D object
+		//if (!geo.isGeoElement3D())
+			super.setMaxLayerUsed(geo, app);
+
+	}
 	
 	
 	

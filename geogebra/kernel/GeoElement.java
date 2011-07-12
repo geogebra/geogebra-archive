@@ -1045,6 +1045,9 @@ public abstract class GeoElement
 	 * @param layer layer from 0 to 9
 	 */
 	public void setLayer(int layer){
+		
+		//Application.printStacktrace("layer="+layer);
+		
 		if (layer == this.layer
 				// layer valid only for Drawable objects
 				// DON'T check this: eg angles on file load are not yet isDrawable()
