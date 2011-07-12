@@ -106,7 +106,7 @@ public class AlgoCommonTangents extends AlgoElement {
             tangents[1].setUndefined();
             tangentPoints[1].setUndefined();
         }
-        equalLines2 = tangents[0+1].isEqual(tangents[1+2]);
+        equalLines2 = tangents[0+2].isEqual(tangents[1+2]);
         if (equalLines2) {        
             tangents[1+2].setUndefined();
             tangentPoints2[1].setUndefined();
