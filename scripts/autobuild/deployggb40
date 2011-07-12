@@ -80,7 +80,7 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
   -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $WINDOWS_INSTALLER_EXE
  fi
 
-# 8. rsync-www on demand
+# 9. rsync-www on demand
 if [ "$WWW_REMOTEDIR" != "" ]; then
  echo "$0: Copying all files to $WWW_REMOTEDIR"
  cd $SVNDIR/geogebra/scripts/autobuild
@@ -89,9 +89,13 @@ if [ "$WWW_REMOTEDIR" != "" ]; then
 
 # 10. Sending an email to geogebra-dev:
 REVISION=`cat $SVNDIR/geogebra/scripts/autobuild/.revision`
-echo "New version of GeoGebra 4.0 has just been uploaded: $MYVER
-http://www.geogebra.org/trac/log/trunk?rev=$REVISION
-Automatic message, do not reply" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
+MAIL="New version of GeoGebra 4.0 has just been uploaded: $MYVER\n
+http://www.geogebra.org/trac/log/trunk?rev=$REVISION\n
+Automatic message, do not reply"
+echo -e $MAIL | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || {
+ # If not successful, we send it through ssh:
+ echo -e $MAIL | ssh www.geogebra.org mail -s "deployggb40 report" geogebra-dev@googlegroups.com
+}
 
 date
 echo "$0: end"
