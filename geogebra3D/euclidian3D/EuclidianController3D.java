@@ -29,6 +29,7 @@ import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
+import geogebra3D.kernel3D.AlgoIntersectCS1D2D;
 import geogebra3D.kernel3D.AlgoIntersectCS2D2D;
 import geogebra3D.kernel3D.AlgoIntersectPlaneQuadric;
 import geogebra3D.kernel3D.GeoCoordSys1D;
@@ -712,11 +713,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected GeoPointND getSingleIntersectionPoint(Hits hits) {
 		//Application.debug(hits);
 		
-		if (hits.isEmpty() || hits.size() != 2)
+		if (highlightedGeos.isEmpty() || highlightedGeos.size() != 2)
 			return null;
 
-		GeoElement a = (GeoElement) hits.get(0);
-		GeoElement b = (GeoElement) hits.get(1);
+		GeoElement a = (GeoElement) highlightedGeos.get(0);
+		GeoElement b = (GeoElement) highlightedGeos.get(1);
 		GeoPoint3D point = null;
 
 		
@@ -725,20 +726,48 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		kernel.setSilentMode(true);
 		
-		
+		//line/line or line/plane  (only one intersection point)
     	if ( (a instanceof GeoCoordSys1D || a instanceof GeoCoordSys2D) && (b instanceof GeoCoordSys1D)
     			||(a instanceof GeoCoordSys1D && b instanceof GeoCoordSys2D) ){
     			point = (GeoPoint3D) getKernel().getManager3D().Intersect(null,  a,  b);
+    	} else if ( a.isGeoLine() ) {
+    		if (b.isGeoConic()) {
+    			Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+    			point = (GeoPoint3D) getKernel().getManager3D().IntersectLineConicSingle(null, 
+    					(GeoLineND)a, (GeoConicND)b, picked.getX() , picked.getY(), view3D.getToScreenMatrix());
+    		} else if  (b instanceof GeoQuadric3D) {
+    			Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+    			point = (GeoPoint3D) getKernel().getManager3D().IntersectLineQuadricSingle(null, 
+    					(GeoLineND)a, (GeoQuadric3D)b, picked.getX() , picked.getY(), view3D.getToScreenMatrix());
     		}
-    	//TODO: enable other intersectionPoints  to be previewable
-    	//TODO: enable intersectionPaths to be previewable
+    	} else if ( b.isGeoLine() ) {
+    		if (a.isGeoConic()) {
+    			Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+    			point = (GeoPoint3D) getKernel().getManager3D().IntersectLineConicSingle(null, 
+    					(GeoLineND)b, (GeoConicND)a, picked.getX() , picked.getY(), view3D.getToScreenMatrix());
+    		} else if  (a instanceof GeoQuadric3D) {
+    			Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+    			point = (GeoPoint3D) getKernel().getManager3D().IntersectLineQuadricSingle(null, 
+    					(GeoLineND)b, (GeoQuadric3D)a, picked.getX() , picked.getY(), view3D.getToScreenMatrix());
+    		}
+    	} else if ( a.isGeoConic() && b.isGeoConic() ) {
+    		
+    		Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+			point = (GeoPoint3D) getKernel().getManager3D().IntersectConicsSingle(null, 
+					(GeoConicND)a, (GeoConicND)b, picked.getX() , picked.getY(), view3D.getToScreenMatrix());
+    		
+    	}
+    	//TODO: enable more intersectionPoints to be previewable (line/polygon)
     	
     	kernel.setSilentMode(false);
 		
     	//Application.debug("point is defined : "+point.isDefined());
     	
+    	
     	if (point==null)
     		return null;
+    	
+
     	
     	if (point.isDefined()){
     		view3D.setCursor3DIntersectionOf(a, b);
@@ -1639,43 +1668,52 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoQuadricND.class}, false, goodHits);
 		hits.clear();
 		hits.addAll(goodHits);
-		// polygons, conics, quadrics... unless in the case conic/conic,
-		// we can only have at most one.
+
+		// we can only have at most one polygon
+		((Hits3D)hits).removeAllPolygonsButOne();
 		if (!(hits.size()>=2) ||
 				!((GeoElement)hits.get(0)).isGeoConic() ||
 				!((GeoElement)hits.get(1)).isGeoConic())
 			((Hits3D)hits).removeAllPolygonsAndQuadricsButOne();
-		//remove container plane of the top polygon
-		if (hits.size()>=2 && 
-				((hits.get(0) instanceof GeoPolygon && hits.get(1) instanceof GeoCoordSys2D) 
-						||(hits.get(1) instanceof GeoPolygon && hits.get(0) instanceof GeoCoordSys2D)) )
-			if (AlgoIntersectCS2D2D.getConfigPlanePlane(
-					((GeoCoordSys2D)hits.get(0)),
-					((GeoCoordSys2D)hits.get(1))
-							) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
-				hits.remove(1);
+		//remove container plane of the top line
 		
-		//remove container plane of the top conic
-		if (hits.size()>=2 && 
-				(hits.get(0) instanceof GeoConicND && hits.get(1) instanceof GeoCoordSys2D)) {
-			if (AlgoIntersectCS2D2D.getConfigPlanePlane(
-					(((GeoConicND)hits.get(0)).getCoordSys()),
-					(((GeoCoordSys2D)hits.get(1)).getCoordSys())
-							) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
-				hits.remove(1); }
-		else if (hits.size()>=2 && 
-				(hits.get(1) instanceof GeoConicND && hits.get(0) instanceof GeoCoordSys2D)) {
-			if (AlgoIntersectCS2D2D.getConfigPlanePlane(
-					(((GeoConicND)hits.get(1)).getCoordSys()),
-					(((GeoCoordSys2D)hits.get(0)).getCoordSys())
-							) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
-				hits.remove(1);
+		if (hits.size()>=2) {
+			if ( ((GeoElement)hits.get(0)).isGeoLine() && ((GeoElement)hits.get(1)).isGeoPlane()) {
+				if (AlgoIntersectCS1D2D.getConfigLinePlane(
+						((GeoLineND)hits.get(0)),
+						((GeoCoordSys2D)hits.get(1))
+								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+					hits.remove(1);
+			}
+			//not necessary because container of a line is always "behind" the line
+			/*else if  ( ((GeoElement)hits.get(1)).isGeoLine() && ((GeoElement)hits.get(0)).isGeoPlane() ) {
+				if (AlgoIntersectCS1D2D.getConfigLinePlane(
+						((GeoLineND)hits.get(1)),
+						((GeoCoordSys2D)hits.get(0))
+								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+					hits.remove(1);
+			}*/
+			//similarly, container of a polygon is always "behind" the polygon
+			else if ( ((GeoElement)hits.get(0)).isGeoPolygon() && ((GeoElement)hits.get(1)).isGeoPlane() ) {
+				if (AlgoIntersectCS2D2D.getConfigPlanePlane(
+						((GeoCoordSys2D)hits.get(0)),
+						((GeoCoordSys2D)hits.get(1))
+								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+					hits.remove(1);
+			
+			} else if ( ((GeoElement)hits.get(0)).isGeoConic() && ((GeoElement)hits.get(1)).isGeoPlane() ) {
+				if (AlgoIntersectCS2D2D.getConfigPlanePlane(
+						(((GeoConicND)hits.get(0)).getCoordSys()),
+						(((GeoCoordSys2D)hits.get(1)).getCoordSys())
+								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
+					hits.remove(1);
+			}
 		}
-		//plane/plane is not allowed in Intersect tool.
+		
+		// at most have one Geocoordsys2D or one quadric3D
 		((Hits3D)hits).removeAllGeoCoordSys2DsButOne();
 		//finally, at most 2 top elements are selected. 
-		hits = hits.getHits(2); // TODO hits is now not Hits3D. modify it.
-		
+		hits = hits.getHits(2); 
 		
 		// get lines, segments, etc.
 		addSelectedLine(hits, 10, true);
@@ -1683,7 +1721,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		addSelectedConic(hits, 10, true);
 		// currently tested only for planes
 		addSelectedCS2D(hits, 10, true);
-		// polygons (are alreay added as CS2D)
+		// polygons (are already added as CS2D)
 		//addSelectedPolygon(hits, 10, true);
 		addSelectedQuadric(hits, 10, true);
 		

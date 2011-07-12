@@ -289,7 +289,7 @@ public class Hits3D extends Hits {
 		boolean foundTarget = false;
 		for (int i = 0 ; i < size() - 1 ; ++i ) {
 			GeoElement geo = (GeoElement) get(i);
-			if (geo instanceof GeoCoordSys2D){
+			if (geo instanceof GeoCoordSys2D || geo instanceof GeoQuadric3D){
 				if (foundTarget)
 					//not removing when found first time
 					remove(i);
@@ -298,5 +298,7 @@ public class Hits3D extends Hits {
 		}
 	}
 	
-	
+	protected Hits createNewHits() {
+		return new Hits3D();
+	}	
 }

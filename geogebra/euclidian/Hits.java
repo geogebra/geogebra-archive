@@ -522,13 +522,19 @@ public class Hits extends ArrayList {
 	}
 
 	public Hits getHits(int nb){
-		Hits ret = new Hits();
+		Hits ret = createNewHits();
 		for(int i=0;i<nb && i<size(); i++)
 			ret.add(get(i));
 		
 		return ret;
 	}
 	
+	protected Hits createNewHits() {
+		return new Hits();
+	}
+
+
+
 	//for 3D only
 	public Hits getTopHits(int depth, int geoN) {
 		return getTopHits(geoN);
