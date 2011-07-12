@@ -547,7 +547,26 @@ KeyListener, ActionListener{
 		value.add(null );
 
 		property.add(app.getCommand("Root"));
-		value.add(evaluateToText("\"\" + Root[" + lbl + "," + xMin + "," + xMax + "]",app.getPlain("fncInspector.MultipleRoots")));
+		GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionsOrErrors(" + Roots[" + lbl + "," + xMin + "," + xMax + "]", false);
+		
+		for (int i = 0 ; i < geos.length ; i++) {
+			geos[i].remove();
+		}
+		
+		switch (geos.length) {
+		case 0: value.add(app.getPlain("fncInspector.NoRoots"));
+		break;
+		case 1: 
+			if (geos[0].isDefined())
+				value.add(geos[0].toValueString());
+			else
+				value.add(app.getPlain("fncInspector.NoRoots"));
+		break;
+		default: value.add(app.getPlain("fncInspector.MultipleRoots"));
+		}
+		
+		//Application.debug(geos.length);
+		//value.add(evaluateToText("\"\" + Root[" + lbl + "," + xMin + "," + xMax + "]",app.getPlain("fncInspector.MultipleRoots")));
 
 		property.add(null);
 		value.add(null );
