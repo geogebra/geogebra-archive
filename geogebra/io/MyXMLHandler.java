@@ -738,6 +738,11 @@ public class MyXMLHandler implements DocHandler {
 						.getSpreadsheetView(), attrs);
 				break;
 			}
+			if (eName.equals("spreadsheetCellFormat")) {
+				ok = handleSpreadsheetFormat(app.getGuiManager()
+						.getSpreadsheetView(), attrs);
+				break;
+			}
 			
 		default:
 			System.err.println("unknown tag in <spreadsheetView>: " + eName);
@@ -968,6 +973,23 @@ public class MyXMLHandler implements DocHandler {
 			return false;
 		}
 	}
+	
+	
+	private boolean handleSpreadsheetFormat(Object spreadsheetView,
+			LinkedHashMap<String, String> attrs) {
+
+		try {
+			String cellFormats = (String) attrs.get("formatMap");
+			((SpreadsheetView)spreadsheetView).getTable().getCellFormatHandler().processXMLString(cellFormats);	
+			return true;
+			
+		} catch (Exception e) {
+			Application.printStacktrace(e.getMessage());
+			return false;
+		}
+	}
+	
+	
 	
 	private boolean handleSpreadsheetRow(Object spreadsheetView,
 			LinkedHashMap<String, String> attrs) {

@@ -1,17 +1,13 @@
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.main.Application;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.JLabel;
-import javax.swing.table.TableColumn;
 
 /**
  * Helper class that handles cell formats for the spreadsheet table cell
@@ -76,8 +72,26 @@ public class CellFormat {
 	public static final byte BORDER_BOTTOM = 8;
 	public static final byte BORDER_ALL = 15; // sum 
 
+	// XML tokens and delimiters
+	private static final String formatDelimiter = ",";
+	private static final String cellDelimiter = ":";
+	private static final String alignToken = "a";
+	private static final String borderToken = "b";
+	private static final String fontStyleToken = "f";
+	private static final String bgColorToken = "c";
 
-	/***************************************************
+	// map to convert token to format type
+	private static HashMap<String, Integer> formatTokenMap = new HashMap<String, Integer>();
+	static{
+		formatTokenMap.put(alignToken, FORMAT_ALIGN);
+		formatTokenMap.put(borderToken, FORMAT_BORDER);
+		formatTokenMap.put(fontStyleToken, FORMAT_FONTSTYLE);
+		formatTokenMap.put(bgColorToken, FORMAT_BGCOLOR);
+	}
+
+
+
+	/**
 	 * Constructor
 	 * @param table
 	 */
@@ -91,8 +105,19 @@ public class CellFormat {
 		}
 	}
 
+
+
 	/**
-	 * Extends HashMap so that null values cannot be mapped and a call to
+	 * Clears all format objects from the maps
+	 */
+	public void clearAll(){
+		for(int i=0; i< formatMapArray.length; i++)
+			formatMapArray[i].clear();
+	}
+
+
+	/**
+	 * Class that extends HashMap so that null values cannot be mapped and a call to
 	 * put(key, null) will remove a key if it exists already.
 	 * 
 	 */
@@ -107,6 +132,15 @@ public class CellFormat {
 		}
 	}
 
+
+
+
+	//========================================================
+	//       Getters
+	//========================================================
+
+
+
 	/**
 	 * Returns the format map for a given cell format
 	 * @param formatType
@@ -116,6 +150,78 @@ public class CellFormat {
 		return formatMapArray[formatType];
 	}
 
+
+	/**
+	 * Returns the format object for a given cell and a given format type. 
+	 * If format does not exist, returns null.
+	 */
+	public Object getCellFormat(Point cellKey, int formatType){
+
+		Object formatObject = null;
+
+		// Create special keys for the row and column of the cell 
+		Point rowKey = new Point(-1,cellKey.y);
+		Point columnKey = new Point(cellKey.x,-1);
+
+		// Get the format table
+		HashMap formatMap = formatMapArray[formatType];
+
+
+		// Check there is a format for this cell
+		if(formatMap.containsKey(cellKey)){
+			//System.out.println("found" + cellKey.toString());
+			formatObject = formatMap.get(cellKey);
+		}
+
+		// Check if there is a row format for this cell
+		else if (formatMap.containsKey(rowKey)) {
+			formatObject = formatMap.get(rowKey);
+		}
+
+		// Check if there is a column format for this cell
+		else if (formatMap.containsKey(columnKey)) {
+			formatObject = formatMap.get(columnKey);
+		}
+
+		return formatObject;
+
+	}
+
+	/**
+	 * Returns the format object shared by all cells in the given cell range for
+	 * the given format type. If a format object does not exist, or not all cells share
+	 * the same format object, null is returned.
+	 */
+	public Object getCellFormat(CellRange cr, int formatType){
+
+		// Get the format in the upper left cell
+		Point cell = new Point(cr.getMinColumn(), cr.getMinRow());
+		Object format = (Integer) getCellFormat(cell, formatType);
+
+		if(format == null) return null;
+
+		// Iterate through the range and test if they cells have the same format
+		for (int r = 0; r > cr.getMaxRow(); r++){
+			for(int c = 0; c > cr.getMaxColumn(); c++){
+				cell.x = c;
+				cell.y = r;
+				if(!format.equals(getCellFormat(cell, formatType))){
+					format = null;
+					break;
+				}
+			}
+		}
+		return format;
+	}
+
+
+	
+	
+	
+
+	//========================================================
+	//       Setters
+	//========================================================
 
 
 	/**
@@ -204,73 +310,8 @@ public class CellFormat {
 		}
 		table.repaint();		
 
-		//System.out.println(formatTable.toString());
 	}
 
-
-
-	/**
-	 * Returns the format object for a given cell and a given format type. 
-	 * If format does not exist, returns null.
-	 */
-	public Object getCellFormat(Point cellKey, int formatType){
-
-		Object formatObject = null;
-
-		// Create special keys for the row and column of the cell 
-		Point rowKey = new Point(-1,cellKey.y);
-		Point columnKey = new Point(cellKey.x,-1);
-
-		// Get the format table
-		HashMap formatMap = formatMapArray[formatType];
-
-
-		// Check there is a format for this cell
-		if(formatMap.containsKey(cellKey)){
-			//System.out.println("found" + cellKey.toString());
-			formatObject = formatMap.get(cellKey);
-		}
-
-		// Check if there is a row format for this cell
-		else if (formatMap.containsKey(rowKey)) {
-			formatObject = formatMap.get(rowKey);
-		}
-
-		// Check if there is a column format for this cell
-		else if (formatMap.containsKey(columnKey)) {
-			formatObject = formatMap.get(columnKey);
-		}
-
-		return formatObject;
-
-	}
-
-	/**
-	 * Returns the format object shared by all cells in the given cell range for
-	 * the given format type. If a format object does not exist, or not all cells share
-	 * the same format object, null is returned.
-	 */
-	public Object getCellFormat(CellRange cr, int formatType){
-
-		// Get the format in the upper left cell
-		Point cell = new Point(cr.getMinColumn(), cr.getMinRow());
-		Object format = (Integer) getCellFormat(cell, formatType);
-
-		if(format == null) return null;
-
-		// Iterate through the range and test if they cells have the same format
-		for (int r = 0; r > cr.getMaxRow(); r++){
-			for(int c = 0; c > cr.getMaxColumn(); c++){
-				cell.x = c;
-				cell.y = r;
-				if(!format.equals(getCellFormat(cell, formatType))){
-					format = null;
-					break;
-				}
-			}
-		}
-		return format;
-	}
 
 
 	/**
@@ -312,7 +353,7 @@ public class CellFormat {
 			case BORDER_STYLE_NONE:
 				setFormat(cr,FORMAT_BORDER, null);
 				break;
-				
+
 			case BORDER_STYLE_LEFT:
 			case BORDER_STYLE_RIGHT:
 				// nothing to draw
@@ -349,7 +390,7 @@ public class CellFormat {
 		if(cr.isColumn()){
 
 			switch(borderStyle){
-			
+
 			case BORDER_STYLE_NONE:
 				setFormat(cr,FORMAT_BORDER, null);
 				break;
@@ -537,46 +578,136 @@ public class CellFormat {
 
 
 
+	//========================================================
+	//       XML handling
+	//========================================================
+
+
 	/**
-	 * returns settings in XML format
+	 * Returns XML representation of the format maps 
 	 */
 	public void getXML(StringBuilder sb) {
-		sb.append("<spreadsheetCellFormat>\n");
+
+		StringBuilder cellFormat = encodeFormats();
+		if (cellFormat == null) 
+			return;
+
+		sb.append("\t<spreadsheetCellFormat ");
+		sb.append(" formatMap=\"");
+		sb.append(cellFormat);
+		sb.append("\"");
+		sb.append("/>\n");
+
+	}
+
+
+	/**
+	 * Returns StringBuilder containing all current formats encoded as strings 
+	 * @return
+	 */
+	public StringBuilder encodeFormats() {
+
+		StringBuilder sb = new StringBuilder();
 
 		// create a set containing all cells with formats
 		HashSet<Point> masterKeySet = new HashSet<Point>();
 		for(int i = 0; i < formatMapArray.length; i ++)
 			masterKeySet.addAll(formatMapArray[i].keySet());
+		if(masterKeySet.size() == 0) 
+			return null;
+
 
 		// iterate through the set creating XML tags for each cell and its formats
 		for(Point cell : masterKeySet){
-			sb.append("\t<cellFormat x=\"" + cell.x + "\" y=\"" + cell.y);
+
+			sb.append(cellDelimiter);
+
+			sb.append(cell.x); 
+			sb.append(formatDelimiter);
+			sb.append(cell.y); 
+
 			Integer align = (Integer) formatMapArray[FORMAT_ALIGN].get(cell);
-			if(align != null)
-				sb.append("\" align=\"" + align);
+			if(align != null){
+				sb.append(formatDelimiter);
+				sb.append(alignToken); 
+				sb.append(formatDelimiter);
+				sb.append(align); 
+			}
 
 			Byte border = (Byte) formatMapArray[FORMAT_BORDER].get(cell);
-			if(border != null)
-				sb.append("\" border=\"" + border);
+			if(border != null){
+				sb.append(formatDelimiter);
+				sb.append(borderToken); 
+				sb.append(formatDelimiter);
+				sb.append(border); 
+			}
 
-			Color color = (Color) formatMapArray[FORMAT_BGCOLOR].get(cell);
-			if(color != null)
-				sb.append("\" color=\"" + color.getRGB());
+			Color bgColor = (Color) formatMapArray[FORMAT_BGCOLOR].get(cell);
+			if(bgColor != null){
+				sb.append(formatDelimiter);
+				sb.append(bgColorToken);
+				sb.append(formatDelimiter);
+				sb.append(bgColor.getRGB()); // convert to RGB integer
+			}
 
 			Integer fStyle = (Integer) formatMapArray[FORMAT_FONTSTYLE].get(cell);
-			if(fStyle != null)
-				sb.append("\" fontStyle=\"" + fStyle);
+			if(fStyle != null){
+				sb.append(formatDelimiter);
+				sb.append(fontStyleToken); 
+				sb.append(formatDelimiter);
+				sb.append(fStyle); 
+			}
 
-			sb.append("\"/>\n");
 		}
 
-		sb.append("</spreadsheetCellFormat>\n");
+		// remove the first delimiter
+		sb.deleteCharAt(0);
 
-		//Application.debug(sb);
+		return sb;
 
 	}
 
+	/**
+	 * Decodes XML string and puts format values into the format maps.
+	 * 
+	 * @param xml
+	 */
+	public void processXMLString(String xml){
+		clearAll();
+		//System.out.println("XML:  " + xml);
+		String[] cellGroup = xml.split(cellDelimiter);
+		//System.out.println("cellGroup:  " + java.util.Arrays.toString(cellGroup));
+		for(int i=0; i< cellGroup.length; i++){
+			if(cellGroup.length > 0)
+				processCellFormatString(cellGroup[i]);
+		}
 
+	}
 
+	/**
+	 * Decodes a string representing a the format objects for a single cell and
+	 * then puts these formats into the format maps.
+	 * 
+	 * @param formatStr
+	 */
+	private void processCellFormatString( String formatStr){
+		//System.out.println("cellFormat:  " + formatStr);
+		String[] f = formatStr.split(formatDelimiter);
+		Point cell = new Point(Integer.parseInt(f[0]), Integer.parseInt(f[1]));
+		int formatType;
+		Object formatValue;
+		for(int i = 2; i < f.length; i = i + 2){
+			formatType = formatTokenMap.get(f[i]);
+			formatValue = Integer.parseInt(f[i+1]);
+			if(formatType == FORMAT_BGCOLOR)
+				formatValue = new Color((Integer)formatValue);
+			else if(formatType == FORMAT_BORDER){
+				int b = (Integer) formatValue;
+				formatValue = (byte)b;
+			}
+			this.setFormat(cell, formatType, formatValue);
+		}
+
+	}
 
 }
