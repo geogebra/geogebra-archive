@@ -9,6 +9,7 @@
 . ../../autobuild.conf
 
 TARGET_DIR=$WWWDIR/installer
+mkdir -p $TARGET_DIR
 
 # 1. Testing prerequisities:
 VERSION_STRING=`cat ../../../../build/unpacked/version.txt`
@@ -38,7 +39,7 @@ $PYTHON3 ./create_geogebra_linux.py \
  $VERSION_STRING \
  ../../../../build/unpacked \
  ../../../../build/unsigned/unpacked \
- geogebra \
+ ../geogebra \
  ../../../../_LICENSE.txt \
  geogebra.xml \
  geogebra.desktop \

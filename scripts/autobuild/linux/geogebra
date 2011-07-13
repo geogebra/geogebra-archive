@@ -1,10 +1,31 @@
-#!/bin/sh
-# simple script to start GeoGebra
+#!/bin/bash
+#---------------------------------------------
+# Script to start GeoGebra
+#---------------------------------------------
+
+#---------------------------------------------
+# Used environment variables:
+#
+# GG_SCRIPTNAME=<name of originally called script to start GeoGebra> # If unset, name of this script will be used
+#
+# GG_PATH=<path of directory containing geogebra.jar> # If unset, path of this script will be used
+#
+# JAVACMD=<Java command> # If unset, java will be used
+
+#---------------------------------------------
+# If GG_SCRIPTNAME not set, use name of this script
+
+if [ -z "$GG_SCRIPTNAME" ]; then
+	GG_SCRIPTNAME=$(basename $0)
+fi
+
+#---------------------------------------------
+# Define usage function
 
 func_usage()
 {
 cat << _USAGE
-Usage: geogebra [Java-options] [GeoGebra-options] [FILE]
+Usage: $GG_SCRIPTNAME [Java-options] [GeoGebra-options] [FILE]
 
 GeoGebra - Dynamic mathematics software
 
@@ -26,12 +47,16 @@ GeoGebra options:
 _USAGE
 }
 
-# if Java command not set, use java
+#---------------------------------------------
+# If JAVACMD not set, use java
+
 if [ -z "$JAVACMD" ]; then
 	JAVACMD='java'
 fi
 
-# check for option --help and pass memory options to Java, others to GeoGebra
+#---------------------------------------------
+# Check for option --help and pass memory options to Java, others to GeoGebra
+
 for i in "$@"; do
 	case "$i" in
 	--help | --hel | --he | --h )
@@ -56,15 +81,19 @@ for i in "$@"; do
 	fi
 done
 
-# if memory not set, change to GeoGebra defaults
-if [ $(expr match "$JAVA_OPTS" ".*-Xmx") -eq 0 ]; then
+#---------------------------------------------
+# If memory not set, change to GeoGebra defaults
+
+if [ $(expr match "$JAVA_OPTS" '.*-Xmx') -eq 0 ]; then
 	JAVA_OPTS="$JAVA_OPTS -Xmx512m"
 fi
-if [ $(expr match "$JAVA_OPTS" ".*-Xms") -eq 0 ]; then
+if [ $(expr match "$JAVA_OPTS" '.*-Xms') -eq 0 ]; then
 	JAVA_OPTS="$JAVA_OPTS -Xms32m"
 fi
 
-# if path of geogebra.jar not set, use path of this script
+#---------------------------------------------
+# If GG_PATH not set, use path of this script
+
 if [ -z "$GG_PATH" ]; then
 	GG_PATH="${BASH_SOURCE[0]}"
 	if [ -h "${GG_PATH}" ]; then
@@ -78,5 +107,7 @@ if [ -z "$GG_PATH" ]; then
 	popd > /dev/null
 fi
 
-# run
-exec $JAVACMD $JAVA_OPTS -jar $GG_PATH/geogebra.jar $GG_OPTS "$@"
+#---------------------------------------------
+# Run
+
+exec "$JAVACMD" $JAVA_OPTS -jar "$GG_PATH/geogebra.jar" $GG_OPTS "$@"

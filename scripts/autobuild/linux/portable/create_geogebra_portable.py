@@ -10,11 +10,12 @@
 # argument 4: path of directory containing unsigned geogebra files
 # argument 5: path of geogebra icon (eg. geogebra.png)
 # argument 6: path of start script geogebra
-# argument 7: path of destination directory
+# argument 7: path of Maxima installation file (eg. maxima-5.24.0.tar.gz)
+# argument 8: path of destination directory
 
 import os, shutil, sys, tarfile, tempfile
-if len(sys.argv) != 8:
-	print("Error: Seven arguments are expected.")
+if len(sys.argv) != 9:
+	print("Error: Eight arguments are expected.")
 	sys.exit(1)
 if not os.path.exists(sys.argv[2]):
 	print("Error: "+sys.argv[2]+" does not exist.")
@@ -34,13 +35,17 @@ if not os.path.exists(sys.argv[6]):
 if not os.path.exists(sys.argv[7]):
 	print("Error: "+sys.argv[7]+" does not exist.")
 	sys.exit(1)
-geogebra_version = sys.argv[1].replace(".", "-")
+if not os.path.exists(sys.argv[8]):
+	print("Error: "+sys.argv[8]+" does not exist.")
+	sys.exit(1)
+geogebra_version = sys.argv[1]
 java_path = os.path.abspath(sys.argv[2])
 unpacked_path = os.path.abspath(sys.argv[3])
 unsigned_path = os.path.abspath(sys.argv[4])
 icon_path = os.path.abspath(sys.argv[5])
 start_script_path = os.path.abspath(sys.argv[6])
-destination_path = os.path.abspath(sys.argv[7])
+maxima_tar_gz_file_path =  os.path.abspath(sys.argv[7])
+destination_path = os.path.abspath(sys.argv[8])
 if not os.path.isfile(java_path):
 	print("Error: "+java_path+" is not a file.")
 	sys.exit(1)
@@ -65,21 +70,25 @@ if not os.access(icon_path,os.R_OK):
 if not os.path.isfile(start_script_path):
 	print("Error: "+start_script_path+" is not a file.")
 	sys.exit(1)
+if not os.path.isfile(maxima_tar_gz_file_path):
+	print("Error: "+maxima_tar_gz_file_path+" is not a file.")
+	sys.exit(1)
 if not os.path.isdir(destination_path):
 	print("Error: "+destination_path+" is not a directory.")
 	sys.exit(1)
 java_filename = os.path.basename(java_path)
 icon_filename = os.path.basename(icon_path)
-arch = ""
+maxima_tar_gz_filename = os.path.basename(maxima_tar_gz_file_path)
+arch = "i586"
 if "linux-x64" in java_filename:
-	arch = "64bit-"
+	arch = "x86_64"
 elif not "linux-i586" in java_filename:
 	print("Error: Architecture can not be determined.")
 	sys.exit(1)
 temp_dir = tempfile.mkdtemp()
 try:
-	shutil.copytree(unpacked_path, temp_dir+"/geogebra")
-	os.chdir(temp_dir+"/geogebra")
+	shutil.copytree(unpacked_path, temp_dir+"/geogebra-portable-"+geogebra_version)
+	os.chdir(temp_dir+"/geogebra-portable-"+geogebra_version)
 	shutil.copytree(unsigned_path, "unsigned")
 	shutil.copy(icon_path, ".")
 	if not icon_filename == "geogebra.png":
@@ -88,6 +97,11 @@ try:
 	shutil.copy(start_script_path, ".")
 	os.chmod("geogebra",0o755)
 	os.system("sh "+java_path)
+	maxima_tar_gz_file = tarfile.open(maxima_tar_gz_file_path, "r:gz")
+	try:
+		maxima_tar_gz_file.extractall()
+	finally:
+		maxima_tar_gz_file.close()
 	content = os.listdir(os.getcwd())
 	jre_dir = ""
 	for name in content:
@@ -97,11 +111,29 @@ try:
 	if jre_dir == "":
 		print("Error: "+java_filename+" does not create expected folder.")
 		sys.exit(1)
-	os.rename(jre_dir, "jre")
+	maxima_dir = ""
+	for name in content:
+		if "maxima" in name:
+			maxima_dir = name
+			break
+	if maxima_dir == "":
+		print("Error: "+maxima_tar_gz_filename+" does not create expected folder.")
+		sys.exit(1)
+	with open("geogebra-portable-mathpiper", "w") as start_script_geogebra_portable_file:
+		start_script_geogebra_portable_file_lines = ["#!/bin/bash\n", "#---------------------------------------------\n", "# Script to start GeoGebra-Portable with MathPiper as CAS engine\n", "#---------------------------------------------\n", "\n", "#---------------------------------------------\n", "# Export name of this script\n", "\n", "export GG_SCRIPTNAME=$(basename $0)\n", "\n", "#---------------------------------------------\n", "# Find out path of this script\n", "\n", "GG_PATH=\"${BASH_SOURCE[0]}\"\n", "if [ -h \"${GG_PATH}\" ]; then\n", "\twhile [ -h \"${GG_PATH}\" ]; do\n", "\tGG_PATH=`readlink \"${GG_PATH}\"`\n", "\tdone\n", "fi\n", "pushd . > /dev/null\n", "cd `dirname ${GG_PATH}` > /dev/null\n", "GG_PATH=`pwd`\n", "popd > /dev/null\n", "\n", "#---------------------------------------------\n", "# Export Java Command\n", "\n", "export JAVACMD=\"$GG_PATH/"+jre_dir+"/bin/java\"\n", "\n", "#---------------------------------------------\n", "# Run\n", "\n", "exec \"$GG_PATH/geogebra\" --settingsfile=\"$GG_PATH/geogebra.properties\" --CAS=MathPiper \"$@\"\n"]
+		start_script_geogebra_portable_file.writelines(start_script_geogebra_portable_file_lines)
+	os.chmod("geogebra-portable-mathpiper",0o755)
+	with open("geogebra-portable-maxima", "w") as start_script_geogebra_portable_file:
+		start_script_geogebra_portable_file_lines = ["#!/bin/bash\n", "#---------------------------------------------\n", "# Script to start GeoGebra-Portable with Maxima as CAS engine\n", "#---------------------------------------------\n", "\n", "#---------------------------------------------\n", "# Export name of this script\n", "\n", "export GG_SCRIPTNAME=$(basename $0)\n", "\n", "#---------------------------------------------\n", "# Find out path of this script\n", "\n", "GG_PATH=\"${BASH_SOURCE[0]}\"\n", "if [ -h \"${GG_PATH}\" ]; then\n", "\twhile [ -h \"${GG_PATH}\" ]; do\n", "\tGG_PATH=`readlink \"${GG_PATH}\"`\n", "\tdone\n", "fi\n", "pushd . > /dev/null\n", "cd `dirname ${GG_PATH}` > /dev/null\n", "GG_PATH=`pwd`\n", "popd > /dev/null\n", "\n", "#---------------------------------------------\n", "# Export Java Command\n", "\n", "export JAVACMD=\"$GG_PATH/"+jre_dir+"/bin/java\"\n", "\n", "#---------------------------------------------\n", "# Run\n", "\n", "exec \"$GG_PATH/geogebra\" --settingsfile=\"$GG_PATH/geogebra.properties\" --CAS=Maxima --maximaPath=\"$GG_PATH/"+maxima_dir+"\" \"$@\"\n"]
+		start_script_geogebra_portable_file.writelines(start_script_geogebra_portable_file_lines)
+	os.chmod("geogebra-portable-maxima",0o755)
+	with open("readme.txt", "w") as readme_file:
+		readme_file_lines = ["To start GeoGebra-Portable with MathPiper as CAS engine, run geogebra-portable-mathpiper.\n", "To start GeoGebra-Portable with Maxima as CAS engine, run geogebra-portable-maxima.\n"]
+		readme_file.writelines(readme_file_lines)
 	os.chdir("../")
-	tar_gz_file = tarfile.open(destination_path+"/GeoGebra-Linux-"+arch+"Portable-"+geogebra_version+".tar.gz", "w:gz")
+	tar_gz_file = tarfile.open(destination_path+"/geogebra-portable-"+geogebra_version+"-"+arch+".tar.gz", "w:gz")
 	try:
-		tar_gz_file.add("geogebra")
+		tar_gz_file.add("geogebra-portable-"+geogebra_version)
 	finally:
 		tar_gz_file.close()
 finally:
