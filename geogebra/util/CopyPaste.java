@@ -50,6 +50,10 @@ public class CopyPaste {
 	protected static StringBuilder copiedXML;
 	protected static ArrayList<String> copiedXMLlabels;
 
+	protected static StringBuilder copiedXMLforSameWindow;
+	protected static ArrayList<String> copiedXMLlabelsforSameWindow;
+	protected static EuclidianView copySource;
+
 	public static boolean isEmpty() {
 		if (copiedXML == null)
 			return true;
@@ -364,7 +368,28 @@ public class CopyPaste {
 	}
 
 	/**
-	 * copyToXML - Step 4
+	 * copyToXML - Step 4.5
+	 * If copied to the same window, don't copy free non-selected GeoNumerics
+	 */
+	public static ArrayList<ConstructionElement> removeFreeNonselectedGeoNumerics(ArrayList<ConstructionElement> conels, ArrayList<GeoElement> selected) {
+		
+		ArrayList<ConstructionElement> ret = new ArrayList<ConstructionElement>();
+		ret.addAll(conels);
+		GeoElement geo;
+		for (int i = ret.size() - 1; i >= 0; i--)
+		{
+			if (ret.get(i).isGeoElement()) {
+				geo = (GeoElement) ret.get(i);
+				if (geo.isGeoNumeric() && geo.isIndependent() && !selected.contains(geo)) {
+					ret.remove(i);
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * copyToXML - Step 5
 	 * Before saving the conels to xml, we have to rename its labels
 	 * with labelPrefix and memorize those renamed labels
 	 * and also hide the GeoElements in geostohide, and keep in
@@ -373,9 +398,12 @@ public class CopyPaste {
 	 * @param conels
 	 * @param geostohide
 	 */
-	public static void beforeSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostohide) {
+	public static void beforeSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostohide, boolean samewindow) {
 
-		copiedXMLlabels = new ArrayList<String>();
+		if (samewindow)
+			copiedXMLlabelsforSameWindow = new ArrayList<String>();
+		else
+			copiedXMLlabels = new ArrayList<String>();
 
 		ConstructionElement geo;
 		String label;
@@ -388,7 +416,11 @@ public class CopyPaste {
 				label = ((GeoElement)geo).getLabelSimple();
 				if (label != null) {
 					((GeoElement)geo).setLabel(labelPrefix + label);
-					copiedXMLlabels.add(((GeoElement)geo).getLabelSimple());
+					
+					if (samewindow)
+						copiedXMLlabelsforSameWindow.add(((GeoElement)geo).getLabelSimple());
+					else
+						copiedXMLlabels.add(((GeoElement)geo).getLabelSimple());
 
 					// TODO: check possible realLabel issues
 					//reallabel = ((GeoElement)geo).getRealLabel();
@@ -410,7 +442,7 @@ public class CopyPaste {
 		}
 	}
 
-	/* 
+	/**
 	 * copyToXML - Step 6
 	 * After saving the conels to xml, we have to rename its labels
 	 * and also show the GeoElements in geostoshow
@@ -454,6 +486,9 @@ public class CopyPaste {
 
 		copiedXML = new StringBuilder();
 		copiedXMLlabels = new ArrayList<String>();
+		copiedXMLforSameWindow = new StringBuilder();
+		copiedXMLlabelsforSameWindow = new ArrayList<String>();
+		copySource = (EuclidianView)app.getActiveEuclidianView();
 
 		if (geos.isEmpty())
 			return;
@@ -480,6 +515,9 @@ public class CopyPaste {
 		ArrayList<ConstructionElement> geostohide = addPredecessorGeos(geoslocal);
 		geostohide.addAll(addAlgosDependentFromInside(geoslocal));
 
+		ArrayList<ConstructionElement> geoslocalsw = removeFreeNonselectedGeoNumerics(geoslocal, geos);
+		ArrayList<ConstructionElement> geostohidesw = removeFreeNonselectedGeoNumerics(geostohide, geos);
+
 		// store undo info
 		Kernel kernel = app.getKernel();
 		//kernel.setUndoActive(true);
@@ -493,7 +531,7 @@ public class CopyPaste {
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
         kernel.setTranslateCommandName(false);
 
-		beforeSavingToXML(geoslocal, geostohide);
+		beforeSavingToXML(geoslocal, geostohide, false);
 		try {
 			// step 5
 			copiedXML = new StringBuilder();
@@ -512,6 +550,27 @@ public class CopyPaste {
 		}
 		//kernel.restoreCurrentUndoInfo();
 		afterSavingToXML(geoslocal, geostohide);
+
+		beforeSavingToXML(geoslocalsw, geostohidesw, true);
+		try {
+			// step 5
+			copiedXMLforSameWindow = new StringBuilder();
+			ConstructionElement ce;
+
+			// loop through Construction to keep the good order of ConstructionElements
+			Construction cons = app.getKernel().getConstruction();
+			for (int i = 0; i < cons.steps(); ++i) {
+				ce = cons.getConstructionElement(i);
+				if (geoslocalsw.contains(ce))
+					ce.getXML(copiedXMLforSameWindow);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			copiedXMLforSameWindow = new StringBuilder();
+		}
+		//kernel.restoreCurrentUndoInfo();
+		afterSavingToXML(geoslocalsw, geostohidesw);
+
 
 		// restore kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
@@ -537,6 +596,35 @@ public class CopyPaste {
 	public static void clearClipboard() {
 		copiedXML = null;
 		copiedXMLlabels = new ArrayList<String>();
+		copiedXMLforSameWindow = null;
+		copiedXMLlabelsforSameWindow = new ArrayList<String>();
+		copySource = null;
+	}
+
+	public static void handleLabels(Application app, ArrayList<String> labels) {
+
+		Kernel kernel = app.getKernel();
+		GeoElement geo;
+		for (int i = 0; i < labels.size(); i++) {
+			String ll = labels.get(i);
+			geo = kernel.lookupLabel(ll);
+			if (geo != null) {
+				if (app.getActiveEuclidianView() == app.getEuclidianView()) {
+					app.addToEuclidianView(geo);
+					if (app.getGuiManager().hasEuclidianView2()) {
+						geo.removeView(app.getEuclidianView2());
+						app.getEuclidianView2().remove(geo);
+					}
+				} else {
+					app.removeFromEuclidianView(geo);
+					geo.addView(app.getEuclidianView2());
+					app.getEuclidianView2().add(geo);
+				}
+
+				geo.setLabel(geo.getDefaultLabel(false));
+				app.addSelectedGeo(geo);
+			}
+		}
 	}
 
 	/**
@@ -557,33 +645,25 @@ public class CopyPaste {
 		if (!app.getActiveEuclidianView().getEuclidianController().mayPaste())
 			return;
 
+		if (app.getActiveEuclidianView() == copySource) {
+			if (copiedXMLforSameWindow == null)
+				return;
+
+			if (copiedXMLforSameWindow.length() == 0)
+				return;
+		}
+
 		app.getActiveEuclidianView().getEuclidianController().clearSelections();
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
-		app.getGgbApi().evalXML(copiedXML.toString());
 
-		Kernel kernel = app.getKernel();
-
-		GeoElement geo;
-		for (int i = 0; i < copiedXMLlabels.size(); i++) {
-			String ll = copiedXMLlabels.get(i);
-			geo = kernel.lookupLabel(ll);
-			if (geo != null) {
-				if (app.getActiveEuclidianView() == app.getEuclidianView()) {
-					app.addToEuclidianView(geo);
-					if (app.getGuiManager().hasEuclidianView2()) {
-						geo.removeView(app.getEuclidianView2());
-						app.getEuclidianView2().remove(geo);
-					}
-				} else {
-					app.removeFromEuclidianView(geo);
-					geo.addView(app.getEuclidianView2());
-					app.getEuclidianView2().add(geo);
-				}
-
-				geo.setLabel(geo.getDefaultLabel(false));
-				app.addSelectedGeo(geo);
-			}
+		if (app.getActiveEuclidianView() == copySource) {
+			app.getGgbApi().evalXML(copiedXMLforSameWindow.toString());
+			handleLabels(app, copiedXMLlabelsforSameWindow);
+		} else {
+			app.getGgbApi().evalXML(copiedXML.toString());
+			handleLabels(app, copiedXMLlabels);
 		}
+
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
 		app.setMode(EuclidianView.MODE_MOVE);
 	}
