@@ -156,7 +156,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 			<fileset dir="${src.dir}">
 				<include name="*.jar" />
 				<include name="jogl1/jar/jogl.jar" />
-				<include name="jogl1/jar/gluegenrt.jar" />
+				<include name="jogl1/jar/gluegen-rt.jar" />
 			</fileset>
 		</path>
 		<javac srcdir="${src.dir}" destdir="${build.dir}/classes">
@@ -199,7 +199,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 			<fileset dir="${src.dir}">
 				<include name="*.jar"/>
 				<include name="jogl1/jar/jogl.jar"/>
-				<include name="jogl1/jar/gluegenrt.jar"/>
+				<include name="jogl1/jar/gluegen-rt.jar"/>
 			</fileset>
 		</path>
 		<javac srcdir="${src.dir}">
