@@ -24,6 +24,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.util.ArrayList;
 
@@ -448,12 +449,11 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 			sbTemp.append("\\\\ y = ");
 			sbTemp.append(funY.toLaTeXString(symbolic));
 			sbTemp.append(" \\end{array}\\right} \\; ");
-			sbTemp.append(param);
-			sbTemp.append(" \\in [");
 			sbTemp.append(kernel.format(startParam));
-			sbTemp.append(',');
+			sbTemp.append(" \\le ");
+			sbTemp.append(param);
+			sbTemp.append(" \\le ");
 			sbTemp.append(kernel.format(endParam));
-			sbTemp.append(']');
 			
 			return sbTemp.toString();
 		} else
