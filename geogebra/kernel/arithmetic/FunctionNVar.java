@@ -565,13 +565,18 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		try {
 			if (useCaching) {
 				// check if result is in cache
-				return getCasEvalMap().get(casString);		
-				//System.out.println("caching worked: " + casString + " -> " + resultFun);
+				resultFun = getCasEvalMap().get(casString);
+				if (resultFun != null) {
+					// TODO: remove
+					System.out.println("caching worked: " + casString + " -> " + resultFun);
+					return resultFun;
+				}					
 			}
 			
 			// evaluate expression by CAS
 			String result = kernel.evaluateGeoGebraCAS(casString);
-			//System.out.println("caching worked: " + casString + " -> " + resultFun);
+			// TODO: remove
+			System.out.println("evaluateGeoGebraCAS: " + casString + " -> " + result);
 
 			if (ggbCasCmd.startsWith("Derivative")) {
 				// MathPiper may return Deriv(x) f(x,y) if it doesn't know
