@@ -347,6 +347,7 @@ public class CASmpreduce extends CASgeneric {
 			mpreduce.evaluate("load_package odesolve;");
 			mpreduce.evaluate("load_package defint;");
 			mpreduce.evaluate("load_package linalg;");
+			mpreduce.evaluate("load_package boolean;");
 			
 			// the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
