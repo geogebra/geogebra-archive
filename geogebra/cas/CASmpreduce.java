@@ -18,8 +18,7 @@ import org.mathpiper.mpreduce.*;
 
 public class CASmpreduce extends CASgeneric {
 
-	final public String RB_GGB_TO_MPReduce = "/geogebra/cas/ggb2mpreduce";
-	private ResourceBundle ggb2MPReduce;
+	private final static String RB_GGB_TO_MPReduce = "/geogebra/cas/ggb2mpreduce";
 	private Interpreter2 mpreduce;
 	
 	// We escape any upper-letter words so Reduce doesn't switch them to lower-letter,
@@ -28,7 +27,7 @@ public class CASmpreduce extends CASgeneric {
 	final private Set<String> predefinedFunctions = ExpressionNodeConstants.RESERVED_FUNCTION_NAMES;
 
 	public CASmpreduce(CASparser casParser) {
-		super(casParser);
+		super(casParser, RB_GGB_TO_MPReduce);
 		getInterpreter();
 	}
 
@@ -197,25 +196,6 @@ public class CASmpreduce extends CASgeneric {
 	public String getEvaluateGeoGebraCASerror() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/**
-	 * Returns the MPReduce command for the given key (from ggb2mpreduce.properties)
-	 */ 
-	public synchronized String getTranslatedCASCommand(String key) {
-		if (ggb2MPReduce == null) {
-			ggb2MPReduce = MyResourceBundle
-					.loadSingleBundleFile(RB_GGB_TO_MPReduce);
-		}
-
-		String ret;
-		try {
-			ret = ggb2MPReduce.getString(key);
-		} catch (MissingResourceException e) {
-			ret = null;
-		}
-
-		return ret;
 	}
 
 	@Override

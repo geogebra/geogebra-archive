@@ -19,16 +19,14 @@ import org.mathpiper.Version;
 
 public class CASmathpiper extends CASgeneric {
 	
-	final public String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
-
+	private final static String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
 	private final CasParserTools parserTools;
 	
 	private Interpreter ggbMathPiper;
 	private EvaluationResponse response;
-	private ResourceBundle ggb2MathPiper;
 	
 	public CASmathpiper(CASparser casParser, CasParserTools parserTools) {
-		super(casParser);
+		super(casParser, RB_GGB_TO_MathPiper);
 		this.parserTools = parserTools;
 		
 		getMathPiper();
@@ -194,23 +192,6 @@ public class CASmathpiper extends CASgeneric {
 			return null;
 	}
 	
-	/**
-	 * Returns the MathPiper command for the given key (from ggb2MathPiper.properties)
-	 */ 
-	public synchronized String getTranslatedCASCommand(String key) {
-		if (ggb2MathPiper == null) {
-			ggb2MathPiper = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_MathPiper);
-		}
-		
-		String ret;
-		try {
-			ret =  ggb2MathPiper.getString(key);
-		} catch (MissingResourceException e) {
-			ret = null;
-		}
-
-		return ret;
-	}
 	
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.

@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 
 
 public class CASmaxima extends CASgeneric {
-	
-	final public String RB_GGB_TO_Maxima = "/geogebra/cas/ggb2maxima";
+
+	private final static String RB_GGB_TO_Maxima = "/geogebra/cas/ggb2maxima";
 	
 	// 5.22.0 needed by #295
 	// 5.23.0 needed by #314
@@ -34,10 +34,10 @@ public class CASmaxima extends CASgeneric {
 	private final CasParserTools parserTools;
 	
 	private MaximaInteractiveProcess ggbMaxima;
-	private ResourceBundle ggb2Maxima;
+
 	
 	public CASmaxima(CASparser casParser, CasParserTools parserTools) {
-		super(casParser);
+		super(casParser, RB_GGB_TO_Maxima);
 		this.parserTools = parserTools;
 		
 		Application.setCASVersionString("Maxima"); // called later on with eg "Maxima 5.22.1"
@@ -285,24 +285,6 @@ public class CASmaxima extends CASgeneric {
 			ggbMaxima = null;
 			return "?";
 		}
-	}
-	
-	/**
-	 * Returns the Maxima command for the given key (from ggb2Maxima.properties)
-	 */ 
-	public synchronized String getTranslatedCASCommand(String key) {
-		if (ggb2Maxima == null) {
-			ggb2Maxima = MyResourceBundle.loadSingleBundleFile(RB_GGB_TO_Maxima);
-		}
-		
-		String ret;
-		try {
-			ret =  ggb2Maxima.getString(key);
-		} catch (MissingResourceException e) {
-			ret = null;
-		}
-
-		return ret;
 	}
 	
 	/**

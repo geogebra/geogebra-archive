@@ -1,16 +1,21 @@
 package geogebra.cas;
 
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.main.MyResourceBundle;
 
 public abstract class CASgeneric {
 	
 	protected CASparser casParser;
+	private ResourceBundle casTranslations;
+	private String translationResourcePath;
 	
-	public CASgeneric(CASparser casParser) {
+	public CASgeneric(CASparser casParser, String translationResourcePath) {
 		this.casParser = casParser;
+		this.translationResourcePath = translationResourcePath;
 	}
 	
 	/** 
@@ -64,10 +69,26 @@ public abstract class CASgeneric {
 	public abstract void reset();
 	
 	/**
-	 * Returns the CAS command for the currently set CAS using the given key and command arguments. 
-	 * For example, getCASCommand("Expand.0", {"3*(a+b)"}) returns "ExpandBrackets( 3*(a+b) )" when
+	 * Returns the CAS command for the currently set CAS using the given key. 
+	 * For example, getCASCommand"Expand.0" returns "ExpandBrackets( %0 )" when
 	 * MathPiper is the currently used CAS.
+	 * @param command The command to be translated (should end in ".n", where n is the number of arguments to this command).
+	 * @return The command in CAS format, where parameter n is written as %n.
+	 *
 	 */
-	public abstract String getTranslatedCASCommand(String command);
-	
+	public String getTranslatedCASCommand(String command)
+	{
+		if (casTranslations == null) {
+			casTranslations = MyResourceBundle.loadSingleBundleFile(translationResourcePath);
+		}
+
+		String ret;
+		try {
+			ret = casTranslations.getString(command);
+		} catch (MissingResourceException e) {
+			ret = null;
+		}
+
+		return ret;
+	}
 }
