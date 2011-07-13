@@ -90,7 +90,7 @@ public class CASmathpiper extends CASgeneric {
 	 */
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
-		String MathPiperString = toMathPiperString(casInput);
+		String MathPiperString = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MATH_PIPER);
 			
 		// EVALUATE input in MathPiper 
 		String result = evaluateMathPiper(MathPiperString);
@@ -192,53 +192,12 @@ public class CASmathpiper extends CASgeneric {
 			return null;
 	}
 	
-	
-	/**
-	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
-	 */
-	public synchronized String toMathPiperString(ValidExpression ve) {
-		// convert to MathPiper String
-		String MathPiperStr = doToMathPiperString(ve);
-
-		// handle assignments
-		String veLabel = ve.getLabel();
-		boolean assignment = veLabel != null;
-		if (assignment) {
-			StringBuilder sb = new StringBuilder();
-			
-			if (ve instanceof FunctionNVar) {
-				// function, e.g. f(x) := 2*x
-				FunctionNVar fun = (FunctionNVar) ve;
-				sb.append(veLabel);
-				sb.append("(" );
-				sb.append(fun.getVarString());
-				sb.append(") := ");
-				sb.append(MathPiperStr);
-				MathPiperStr = sb.toString();
-			} else {	
-				// assignment, e.g. a := 5
-				MathPiperStr = veLabel + " := " + MathPiperStr;
-			}
-		}
-		
-		//System.out.println("GeoGebraCAS.toMathPiperString: " + MathPiperStr);
-		return MathPiperStr;
-	}
-	
-	
-	/**
-	 * Returns the given expression as a string in MathPiper syntax.
-	 */
-	private String doToMathPiperString(ExpressionValue ev) {
-		String MathPiperString;
-		if (!ev.isExpressionNode()) {
-			ev = new ExpressionNode(casParser.getKernel(), ev);			
-		}
-		
-		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true);			
-		return MathPiperString;
+	public String translateFunctionDeclaration(String label, String parameters, String body)
+	{
+		return label + '(' + parameters + ") := " + body;
 	}
 
+	
 	/**
 	 * Initialize special commands needed in our ggbMathPiper instance,e.g.
 	 * getPolynomialCoeffs(exp,x).

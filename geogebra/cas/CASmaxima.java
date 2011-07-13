@@ -80,7 +80,7 @@ public class CASmaxima extends CASgeneric {
 	 */
 	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to Maxima string
-		String MaximaString = toMaximaString(casInput);
+		String MaximaString = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MAXIMA);
 		
 		// Maxima simplification is turned off by default using simp:false;
 		// We turn it on here using ev(command, simp) when KeepInput is not used
@@ -131,59 +131,10 @@ public class CASmaxima extends CASgeneric {
 		return casParser.toGeoGebraString(ve);
 	}
 	
-	/**
-	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
-	 */
-	public synchronized String toMaximaString(ValidExpression ve) {
-		
-		// convert to Maxima String
-		String MaximaStr = doToMaximaString(ve);
-
-		// handle assignments
-		String veLabel = ve.getLabel();
-		if (veLabel != null) {
-			StringBuilder sb = new StringBuilder();
-			
-			if (ve instanceof FunctionNVar) {
-				// function, e.g. f(x) := 2*x
-				FunctionNVar fun = (FunctionNVar) ve;
-				sb.append(veLabel);
-				sb.append("(" );
-				sb.append(fun.getVarString());
-				sb.append(") := ");
-				
-				// evaluate right hand side:
-				// import for e.g. g(x) := Eval(D(x) x^2)
-				//sb.append("Eval(");
-				sb.append(MaximaStr);
-				//sb.append(")");
-				MaximaStr = sb.toString();
-			} else {	
-				// assignment, e.g. a : 5
-				MaximaStr = veLabel + " : " + MaximaStr;
-			}
-		}
-		
-		// TODO: remove
-//		System.out.println("CASmaxima.toMaxima: " + MaximaStr);
-		return MaximaStr;
-	}	
-	
-	/**
-	 * Returns the given expression as a string in Maxima syntax.
-	 */
-	private String doToMaximaString(ExpressionValue ev) {
-		String MathPiperString;
-		
-		if (!ev.isExpressionNode()) {
-			ev = new ExpressionNode(casParser.getKernel(), ev);			
-		}
-		
-		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MAXIMA, true);		
-				
-		return MathPiperString;
+	public String translateFunctionDeclaration(String label, String parameters, String body)
+	{
+		return label + '(' + parameters + ") := " + body;
 	}
-
 	
     /**
 	 * Evaluates a Maxima expression and returns the result as a string in Maxima syntax, 

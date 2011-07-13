@@ -3,7 +3,8 @@ package geogebra.cas;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.MyResourceBundle;
 
@@ -93,4 +94,58 @@ public abstract class CASgeneric {
 
 		return ret;
 	}
+	
+	
+	/**
+	 * Translates a given expression in the format expected by the cas.
+	 * @param ve the Expression to be translated
+	 * @param casStringType one of ExpressionNode.STRING_TYPE_{MAXIMA, MPREDUCE, MATH_PIPER}
+	 * @return the translated String.
+	 */
+	protected String translateToCAS(ValidExpression ve, int casStringType)
+	{
+		ValidExpression tmp = ve;
+		if (!ve.isExpressionNode())
+			tmp = new ExpressionNode(casParser.getKernel(), ve);			
+		
+		String body = ((ExpressionNode) tmp).getCASstring(casStringType, true);			
+		
+		// handle assignments
+		String label = ve.getLabel();
+		if (label != null) { // is an assignment or a function declaration
+			if (ve instanceof FunctionNVar) {
+				FunctionNVar fun = (FunctionNVar) ve;
+				return translateFunctionDeclaration(label, fun.getVarString(), body);
+			}
+			else	
+				return translateAssignment(label, body);
+		} else
+			return body;
+	}
+
+	
+	/**
+	 * Translates a variable/constant assignment  like "x := 3" into the format expected by the CAS.
+	 * Function-Assignments have to be translated using @see translateFunctionDeclaration().
+	 * @param label the label of the assignment, e.g. x
+	 * @param body the value that will be assigned to the label, e.g. "3"
+	 * @return String in CAS format.
+	 */
+	public String translateAssignment(String label, String body)
+	{
+		// default implementation works for MPReduce and MathPiper
+		return label + " := " + body;
+	}
+
+
+	/**
+	 * Translates a function definition/function assignment like "f(x, y) = 3*x^2 + y" into the format expected by the CAS.
+	 * Function-Assignments have to be translated using @see translateAssignment().
+	 * @param label the name of the function, e.g. f
+	 * @param parameters the parameters of the function, separated by commas, e.g. "x, y"
+	 * @param body the body of the function.
+	 * @return String in CAS format.
+	 */
+	public abstract String translateFunctionDeclaration(String label, String parameters, String body);
+	
 }

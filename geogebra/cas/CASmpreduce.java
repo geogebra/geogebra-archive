@@ -48,7 +48,7 @@ public class CASmpreduce extends CASgeneric {
 	 */
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
-		String exp = toMPReduceString(casInput);
+		String exp = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE);
 		
 		exp="<<off rounded, complex$ "+exp+">>";
 		
@@ -68,7 +68,8 @@ public class CASmpreduce extends CASgeneric {
 		ValidExpression ve = casParser.parseMathPiper(mpreduceString);
 		return casParser.toGeoGebraString(ve);
 	}
-	
+
+
     /**
 	 * Evaluates a MathPiper expression and returns the result as a string in MathPiper syntax, 
 	 * e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
@@ -86,43 +87,20 @@ public class CASmpreduce extends CASgeneric {
 			return "?";
 		}
 	}
-
-	/**
-	 * Evaluates the given ExpressionValue and returns the result in MPReduce syntax.
-	 */
-	public synchronized String toMPReduceString(ValidExpression ve) {
-
-		String str = doToMPReduceString(ve);
-
-		// handle assignments
-		String veLabel = ve.getLabel();
-		if (veLabel != null) {
-			StringBuilder sb = new StringBuilder();
-
-			if (ve instanceof FunctionNVar) {
-				// function, e.g. f(x) := 2*x
-				FunctionNVar fun = (FunctionNVar) ve;
-				sb.append(" procedure ");
-				sb.append(veLabel);
-				sb.append("(");
-				sb.append(fun.getVarString());
-				sb.append("); begin return ");
-				sb.append(str);
-				sb.append(" end; ");
-				str = sb.toString();
-			} else {
-				// assignment, e.g. a : 5
-				str = veLabel + " := " + str;
-			}
-		}
-		return str;
-	}
-
-	private String doToMPReduceString(ExpressionValue ev) {
-		if (!ev.isExpressionNode()) {
-			ev = new ExpressionNode(casParser.getKernel(), ev);
-		}
-		return ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MPREDUCE, true);			
+	
+	
+	public String translateFunctionDeclaration(String label, String parameters, String body)
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(" procedure ");
+		sb.append(label);
+		sb.append("(");
+		sb.append(parameters);
+		sb.append("); begin return ");
+		sb.append(body);
+		sb.append(" end; ");
+		
+		return sb.toString();
 	}
 
 	@Override
