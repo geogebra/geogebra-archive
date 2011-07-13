@@ -342,9 +342,9 @@ TOKEN: {
 |	< ATANH_FUNC: ( "atanh(" | "arctanh(" | "ArcTanh(" ) > 
 |	< EXP_FUNC: ( "exp(" | "Exp(" ) > 
 |	< LOG_FUNC: ( "log(" | "ln(" | "Ln(" ) > 
-|	< BETA_FUNC:  "beta(" > 
+|	< BETA_FUNC:  ( "beta(" | "ibeta(" | "Beta(" ) > 
 |	< BETA_REGULARIZED_FUNC:  "betaRegularized(" > 
-|	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
+|	< GAMMA_FUNC: ( "gamma(" | "igamma(" | "Gamma(" ) > 
 |	< GAMMA_REGULARIZED_FUNC:  "gammaRegularized(" > 
 |	< LD_FUNC:    "ld("  > 
 |	< LG_FUNC:    "lg("  > 
@@ -359,6 +359,8 @@ TOKEN: {
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
 |	< RANDOM_FUNC:  "random()"  >
 |	< DERIV_MP:  "Deriv()"  >  // may be returned by MathPiper
+|	< ARBCONST:  "arbconst("  >  // arbitrary constant by MPreduce
+|	< ARBINT:  "arbint("  >  // may be returned by MPreduce
 | 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 
@@ -1507,7 +1509,7 @@ ExpressionValue numVecVariable():
     c = <VARX>  
     {
         if (GeoGebraCASParsing)
- 			return new ExpressionNode(kernel, new Variable(kernel, c.image));
+ 			return new Variable(kernel, c.image);
 		else
         	return new Polynomial(kernel, c.image);
     }
@@ -1515,7 +1517,7 @@ ExpressionValue numVecVariable():
     c = <VARY>  
     {
         if (GeoGebraCASParsing)
- 			return new ExpressionNode(kernel, new Variable(kernel, c.image));
+ 			return new Variable(kernel, c.image);
 		else
         	return new Polynomial(kernel, c.image);
     }
@@ -1524,7 +1526,7 @@ ExpressionValue numVecVariable():
     {
         // check for CAS parsing or if z is defined in kernel
         if (GeoGebraCASParsing || kernel.lookupLabel("z") != null) {
- 			return new ExpressionNode(kernel, new Variable(kernel, c.image));
+ 			return new Variable(kernel, c.image);
 		} else {	 		// z is not defined: treat as equation variable for 3D view
     		return new Polynomial(kernel, c.image);
        }
@@ -1538,9 +1540,18 @@ ExpressionValue numVecVariable():
 	}
 |
     ( c = <SPREADSHEET_LABEL> | c = <LABEL> )
-    {   
-    	// standard case for variable
-        return new ExpressionNode(kernel, new Variable(kernel, c.image));
+    {
+        // return defined variables immediately
+		if (kernel.lookupLabel(c.image) != null)
+      		return new Variable(kernel, c.image);
+
+        // VARIABLE NAME IS UNDEFINED
+		// check some special variable names
+		if (c.image.equalsIgnoreCase("e"))	
+			return new MySpecialDouble(kernel, Math.E, Unicode.EULER_STRING);
+
+       // standard case for undefined variable
+       return new Variable(kernel, c.image);
     }
 }
 
@@ -1812,6 +1823,9 @@ ExpressionNode numberFunction():
 	LOOKAHEAD (2147483647)
     <GAMMA_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA_INCOMPLETE, en2); }
+| 
+    <GAMMA_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA, null); }
 |
     <GAMMA_REGULARIZED_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA_INCOMPLETE_REGULARIZED, en2); }
@@ -1842,7 +1856,7 @@ ExpressionNode numberFunction():
       { return new ExpressionNode(kernel, en, ExpressionNode.CBRT, null); }  
 |
     <ABS_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.ABS, null); }   
+      { return new ExpressionNode(kernel, en, ExpressionNode.ABS, null); }     
 |
     <SGN_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.SGN, null); }
@@ -1861,9 +1875,18 @@ ExpressionNode numberFunction():
 | 
     <ROUND_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ROUND, null); }               
-| 
-    <GAMMA_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA, null); }               
+|
+    <ARBCONST> c = <INTEGER> ")" 
+    {
+      	// e.g. arbconst(3) from MPreduce becomes c_{3}
+        return new ExpressionNode(kernel, new Variable(kernel, "c_{" + c.image + "}") );
+    }
+|
+    <ARBINT> c = <INTEGER> ")"
+    {
+      // e.g. arbint(2) from MPreduce becomes k_{2}
+        return new ExpressionNode(kernel, new Variable(kernel, "k_{" + c.image + "}") );
+    }          
 | 
   <RANDOM_FUNC>
       {  
