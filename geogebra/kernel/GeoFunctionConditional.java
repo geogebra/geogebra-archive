@@ -14,6 +14,8 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 
+import geogebra.cas.CASgeneric;
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
@@ -304,76 +306,63 @@ public class GeoFunctionConditional extends GeoFunction {
 	
 	final public String toSymbolicString() {					
 		return toString(true);
-	}	
+	}
 	
-	private String toString(boolean symbolic) {			
+	public String getCASString(boolean symbolic) {
+		return toString(symbolic);
+	}
+	
+	private String toString(boolean symbolic) {
+		if (!isDefined())
+			return app.getPlain("Undefined");
 		
-		switch (kernel.getCASPrintForm()) {
-		case ExpressionNode.STRING_TYPE_MATH_PIPER:
-			
-			if (isDefined()) {
-				StringBuilder sb = new StringBuilder(80);
-				sb.append("if(");
-				
-				if (symbolic) 
-					sb.append(condFun.toSymbolicString());
-				else
-					sb.append(condFun.toValueString());
-				
-				sb.append(")(");
-				
-				if (symbolic)
-					sb.append(ifFun.toSymbolicString());
-				else
-					sb.append(ifFun.toValueString());
-				
-				if (elseFun != null) {
-					sb.append(") else (");
-					if (symbolic)
-						sb.append(elseFun.toSymbolicString());
-					else
-						sb.append(elseFun.toValueString());
-				}
-				sb.append(')');
-				return sb.toString();
-			} 
-			else
-				return app.getPlain("Undefined");
-			
-			default:
-		
-				
-		if (isDefined()) {
-			StringBuilder sb = new StringBuilder(80);
-			sb.append(app.getCommand("If"));
-			sb.append('[');
-			
-			if (symbolic) 
-				sb.append(condFun.toSymbolicString());
-			else
-				sb.append(condFun.toValueString());
-			
-			sb.append(", ");
-			
-			if (symbolic)
-				sb.append(ifFun.toSymbolicString());
-			else
-				sb.append(ifFun.toValueString());
-			
-			if (elseFun != null) {
-				sb.append(", ");
-				if (symbolic)
-					sb.append(elseFun.toSymbolicString());
-				else
-					sb.append(elseFun.toValueString());
+		// for CAS, translate to CAS format :)
+		if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MPREDUCE
+				|| kernel.getCASPrintForm() ==  ExpressionNode.STRING_TYPE_MATH_PIPER
+				|| kernel.getCASPrintForm() ==  ExpressionNode.STRING_TYPE_MAXIMA) {
+			CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
+			String cmd = cas.getTranslatedCASCommand(elseFun == null ? "If.2" : "If.3");
+			if (symbolic) {
+				cmd = cmd.replace("%0", condFun.toSymbolicString());
+				cmd = cmd.replace("%1", ifFun.toSymbolicString());
+				if (elseFun != null)
+					cmd = cmd.replace("%2", elseFun.toSymbolicString());
+			} else {
+				cmd = cmd.replace("%0", condFun.toValueString());
+				cmd = cmd.replace("%1", ifFun.toValueString());
+				if (elseFun != null)
+					cmd = cmd.replace("%2", elseFun.toValueString());
 			}
-			sb.append(']');
-			return sb.toString();
-		} 
-		else
-			return app.getPlain("undefined");
+				
+			return cmd;
 		}
+		
+		StringBuilder sb = new StringBuilder(80);
+		sb.append(app.getCommand("If"));
+		sb.append('[');
+		
+		if (symbolic) {
+			sb.append(condFun.toSymbolicString());
+			sb.append(", ");	
+			sb.append(ifFun.toSymbolicString());
+		} else {
+			sb.append(condFun.toValueString());
+			sb.append(", ");
+			sb.append(ifFun.toValueString());
+		}
+			
+		if (elseFun != null) {
+			sb.append(", ");
+			if (symbolic)
+				sb.append(elseFun.toSymbolicString());
+			else
+				sb.append(elseFun.toValueString());
+		}
+		sb.append(']');
+		
+		return sb.toString();
 	}	
+
 	
 	final public String toLaTeXString(boolean symbolic) {	
 		return toString(symbolic);
