@@ -3530,13 +3530,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected void moveNumeric(boolean repaint) {
 		
-		double val = getSliderValue(movedGeoNumeric);
+		double newVal = getSliderValue(movedGeoNumeric);
+		double oldVal = movedGeoNumeric.getValue();
+		
+		// don't set the value unless needed
+		// (causes update)
+		double min = movedGeoNumeric.getIntervalMin();
+		if (min == oldVal && newVal < min) return;
+		double max = movedGeoNumeric.getIntervalMax();
+		if (max == oldVal && newVal > max) return;
 
 		// do not set value unless it really changed!
-		if (movedGeoNumeric.getValue() == val)
+		if (oldVal == newVal)
 			return;
 
-		movedGeoNumeric.setValue(val);		
+		movedGeoNumeric.setValue(newVal);		
 		movedGeoNumericDragged = true;
 
 		//movedGeoNumeric.setAnimating(false); // stop animation if slider dragged
