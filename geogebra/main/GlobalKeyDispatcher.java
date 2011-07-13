@@ -7,6 +7,7 @@ import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -32,6 +33,7 @@ import java.util.TreeSet;
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -310,7 +312,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				} else {
 					// check not spreadsheet
 					if (!(event.getSource() instanceof JTable) &&
-						!(app.getGuiManager().getSpreadsheetView().hasFocus())) {
+						!(app.getGuiManager().getSpreadsheetView().hasFocus()) &&
+						!(((AlgebraInput)app.getGuiManager().getAlgebraInput()).getTextField().hasFocus())) {
 
 						// Copy selected geos
 						app.setWaitCursor();
@@ -404,9 +407,10 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				break;
 
 			case KeyEvent.VK_V:
-				// check not spreadsheet
+				// check not spreadsheet, not inputbar
 				if (!(event.getSource() instanceof JTable) &&
-					!(app.getGuiManager().getSpreadsheetView().hasFocus())) {
+					!(app.getGuiManager().getSpreadsheetView().hasFocus()) &&
+					!(((AlgebraInput)app.getGuiManager().getAlgebraInput()).getTextField().hasFocus())) {
 
 					app.setWaitCursor();
 					CopyPaste.pasteFromXML(app);
