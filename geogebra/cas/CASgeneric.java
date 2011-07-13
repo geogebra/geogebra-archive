@@ -20,7 +20,7 @@ public abstract class CASgeneric {
 	
 	/** 
 	 * Evaluates an expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra syntax.
-	 * 
+	 * @param exp The expression in GeogebraCAS syntax.
      * @return result string (null possible)
 	 * @throws Throwable 
      */
@@ -31,7 +31,7 @@ public abstract class CASgeneric {
 	
 	/**
 	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
-	 * @param casInput: in GeoGebraCAS syntax
+	 * @param casInput in GeoGebraCAS syntax
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
@@ -40,6 +40,7 @@ public abstract class CASgeneric {
 	/** 
 	 * Evaluates an expression in the syntax of the currently active CAS
 	 * (MathPiper or Maxima).
+	 * @param exp The expression to be evaluated.
      * @return result string (null possible)
 	 * @throws Throwable 
      */
@@ -53,13 +54,14 @@ public abstract class CASgeneric {
 	
 	/**
 	 * Returns whether var is a defined variable.
+	 * @param var the Variable
+	 * @return true if the variable is defined, false otherwise.
 	 */
 	public abstract boolean isVariableBound(String var);
 	
 	/**
 	 * Unbinds (deletes) variable.
-	 * @param var
-	 * @param isFunction
+	 * @param var the name of the variable.
 	 */
 	public abstract void unbindVariable(String var);
 	
