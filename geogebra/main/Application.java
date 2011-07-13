@@ -1064,6 +1064,9 @@ public class Application implements KeyEventDispatcher {
 		else if (cas.toLowerCase(Locale.US).equals("mpreduce")) {
 			setDefaultCAS(CAS_MPREDUCE);
 		}
+		else if (cas.toLowerCase(Locale.US).equals("mathpiper")) {
+			setDefaultCAS(CAS_MATHPIPER);
+		}
 		
 		String fontSize = args.getStringValue("fontSize");
 		if(fontSize.length() > 0) {
@@ -4905,7 +4908,13 @@ public class Application implements KeyEventDispatcher {
 		}
 		else if (CAS == CAS_MPREDUCE) {
 			Application.debug("Attempting to set CAS=MPReduce");
-			success = setMPReduceCAS();
+			kernel.setDefaultCAS(CAS_MPREDUCE);
+			success = true;
+		}
+		else if (CAS == CAS_MATHPIPER) {
+			Application.debug("Attempting to set CAS=MathPiper");
+			kernel.setDefaultCAS(CAS_MATHPIPER);
+			success = true;
 		}
 		
 		// fallback / default option
@@ -4939,11 +4948,6 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		return false;
-	}
-	
-	private boolean setMPReduceCAS() {
-		kernel.setDefaultCAS(CAS_MPREDUCE);
-		return true;
 	}
 	
 	/*
