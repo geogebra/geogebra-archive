@@ -4432,7 +4432,8 @@ class CmdIf extends CommandProcessor {
 			else if (ok[0] = (arg[0] instanceof GeoFunction)) {
 				GeoFunction booleanFun = (GeoFunction) arg[0];
 				if ((ok[0] = booleanFun.isBooleanFunction())
-						&& (ok[1] = arg[1].isGeoFunctionable())
+						// now that lines are functionable, need to disallow eg if[x<=40, y=20]
+						&& (ok[1] = (arg[1].isGeoFunctionable() && !arg[1].isGeoLine()))
 						&& (geoElse == null || geoElse.isGeoFunctionable())) {
 					GeoFunction elseFun = geoElse == null ? null
 							: ((GeoFunctionable) geoElse).getGeoFunction();
