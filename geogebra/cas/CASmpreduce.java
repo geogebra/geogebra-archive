@@ -103,11 +103,13 @@ public class CASmpreduce extends CASgeneric {
 			if (ve instanceof FunctionNVar) {
 				// function, e.g. f(x) := 2*x
 				FunctionNVar fun = (FunctionNVar) ve;
+				sb.append(" procedure ");
 				sb.append(veLabel);
 				sb.append("(");
 				sb.append(fun.getVarString());
-				sb.append(") := ");
+				sb.append("); begin return ");
 				sb.append(str);
+				sb.append(" end; ");
 				str = sb.toString();
 			} else {
 				// assignment, e.g. a : 5
