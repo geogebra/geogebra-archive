@@ -396,13 +396,47 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 
 		// simplify constant parts in expression
 		expression.simplifyConstantIntegers();
+		
+		// evaluate expression to find out about the type of function
+		ExpressionValue ev;
+		try {
+			ev = expression.evaluate();
+		} 
+		catch (MyError err) {
+			// Evaluation failed: DESPERATE MODE
+			try {
+				// try to fix structure of expression and then try evaluation again
+				fixStructure();
+				ev = expression.evaluate();
+			} catch (Throwable th) {
+				// throw original error when desperate mode failed
+				throw err;
+			}
+		}
 
-		initType();
+		// initialize type as boolean or numeric function
+		initType(ev);
+	}
+	
+	/**
+	 * Tries to fix a structural problem leading to an evaluation error, e.g.
+	 * x(x+1) is interpreted as xcoord(x+1). This can be fixed by changing the structure
+	 * to x*(x+1) for example.
+	 */
+	private void fixStructure() {
+		// get function variables for x, y, z
+		FunctionVariable xVar = null, yVar = null, zVar = null;
+		for (FunctionVariable fVar : fVars) {
+			if ("x".equals(fVar.toString())) xVar = fVar;
+			else if ("y".equals(fVar.toString())) yVar = fVar;
+			else if ("z".equals(fVar.toString())) zVar = fVar;
+		}
+		
+		// try to replace x(x+1) by x*(x+1)
+		expression.replaceXYZnodes(xVar, yVar, zVar);		
 	}
 
-	private void initType() {
-		// check type of function
-		ExpressionValue ev = expression.evaluate();
+	private void initType(ExpressionValue ev) {
 		if (ev.isBooleanValue()) {
 			isBooleanFunction = true;
 		} else if (ev.isNumberValue()) {

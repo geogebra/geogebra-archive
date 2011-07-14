@@ -685,6 +685,58 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 		return replacements;
 	}
+	
+	/**
+	 * Replaces all XCOORD, YCOORD, ZCOORD nodes by mutliplication nodes,
+	 * e.g. x(x+1) becomes x*(x+1). The given function variables for "x", "y", "z" are
+	 * used in this process.
+	 * 
+	 * @return number of replacements done
+	 */
+	int replaceXYZnodes(FunctionVariable xVar, FunctionVariable yVar, FunctionVariable zVar) {				
+		if (xVar == null && yVar == null & zVar == null) return 0;
+		
+		// left tree
+		int replacements = 0;
+		if (left.isExpressionNode()) {
+			replacements += ((ExpressionNode) left).replaceXYZnodes(xVar, yVar, zVar);
+		} 
+		// right tree
+		if (right != null && right.isExpressionNode()) {
+			replacements += ((ExpressionNode) right).replaceXYZnodes(xVar, yVar, zVar);
+		}
+		
+		switch (operation) {
+			case XCOORD:
+				if (xVar != null) {
+					replacements++;
+					operation = MULTIPLY;
+					right = left;
+					left = xVar;
+				}
+				break;
+				
+			case YCOORD:
+				if (yVar != null) {
+					replacements++;
+					operation = MULTIPLY;
+					right = left;
+					left = yVar;
+				}
+				break;
+				
+			case ZCOORD:
+				if (zVar != null) {
+					replacements++;
+					operation = MULTIPLY;
+					right = left;
+					left = zVar;
+				}
+				break;
+		}
+
+		return replacements;
+	}
 
 	/**
 	 * Replaces every oldOb by newOb in this tree
