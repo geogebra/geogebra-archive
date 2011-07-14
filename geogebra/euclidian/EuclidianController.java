@@ -266,6 +266,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected boolean highlightJustCreatedGeos = true;
 
 	protected ArrayList<GeoElement> pastePreviewSelected;
+	protected ArrayList<GeoElement> pastePreviewSelectedAndDependent;
 
 	//protected MyPopupMenu popupMenu;
 
@@ -348,6 +349,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		} else {
 			pastePreviewSelected = new ArrayList<GeoElement>();
 		}
+		pastePreviewSelectedAndDependent = new ArrayList<GeoElement>();
+		pastePreviewSelectedAndDependent.addAll(app.getSelectedGeos());
 
 		GeoElement geo;
 		boolean firstMoveable = true;
@@ -418,8 +421,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setPointCapturing(EuclidianView.POINT_CAPTURING_STICKY_POINTS);
 
 			// remove moved points from sticky points temporarily
-			for (int i = 0; i < pastePreviewSelected.size(); i++) {
-				geo = pastePreviewSelected.get(i);
+			for (int i = 0; i < pastePreviewSelectedAndDependent.size(); i++) {
+				geo = pastePreviewSelectedAndDependent.get(i);
 				if (geo instanceof GeoPointND) {
 					if (view.getStickyPointList().contains(geo))
 						view.getStickyPointList().remove(geo);
@@ -457,6 +460,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				pastePreviewSelected.remove(geo);
 				geo.remove();
 			}
+		}
+		if (pastePreviewSelectedAndDependent != null) {
+			pastePreviewSelectedAndDependent = new ArrayList<GeoElement>();
 		}
 	}
 
@@ -2189,8 +2195,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			mergeStickyPointsAfterPaste();
 
 			// add moved points to sticky points again
-			for (int i = 0; i < pastePreviewSelected.size(); i++) {
-				GeoElement geo = pastePreviewSelected.get(i);
+			for (int i = 0; i < pastePreviewSelectedAndDependent.size(); i++) {
+				GeoElement geo = pastePreviewSelectedAndDependent.get(i);
 				if (geo.isGeoPoint()) {
 					if (!view.getStickyPointList().contains(geo))
 						view.getStickyPointList().add((GeoPointND)geo);
@@ -2199,6 +2205,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			persistentStickyPointList = new ArrayList<GeoPointND>();
 
 			pastePreviewSelected.clear();
+			pastePreviewSelectedAndDependent.clear();
 			view.setPointCapturing(previousPointCapturing);
 			changedKernel0 = true;
 		}
