@@ -85,7 +85,7 @@ if "linux-x64" in java_filename:
 elif not "linux-i586" in java_filename:
 	print("Error: Architecture can not be determined.")
 	sys.exit(1)
-temp_dir = tempfile.mkdtemp()
+temp_dir = tempfile.mkdtemp(dir=".") # Files in /tmp may not be executable on certain systems
 try:
 	shutil.copytree(unpacked_path, temp_dir+"/GeoGebra-Linux-"+arch+"-Portable-"+geogebra_version)
 	os.chdir(temp_dir+"/GeoGebra-Linux-"+arch+"-Portable-"+geogebra_version)
@@ -137,5 +137,6 @@ try:
 	finally:
 		tar_gz_file.close()
 finally:
+	os.chdir("../")
 	shutil.rmtree(temp_dir)
 sys.exit(0)
