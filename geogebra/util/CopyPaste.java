@@ -66,7 +66,7 @@ public class CopyPaste {
 	 * Remove fixed sliders
 	 * @param geos input and output
 	 */
-	public static void removeFixedSliders(ArrayList<ConstructionElement> geos) {
+	protected static void removeFixedSliders(ArrayList<ConstructionElement> geos) {
 		GeoElement geo;
 		for (int i = geos.size() - 1; i >= 0; i--)
 		{
@@ -87,7 +87,7 @@ public class CopyPaste {
 	 * else, points may be repositioned)
 	 * 
 	 */
-	public static void removeDependentFromAxes(ArrayList<ConstructionElement> geos, Application app) {
+	protected static void removeDependentFromAxes(ArrayList<ConstructionElement> geos, Application app) {
 
 		ConstructionElement geo;
 		for (int i = geos.size() - 1; i >= 0; i--)
@@ -108,7 +108,7 @@ public class CopyPaste {
 	 *  
 	 * @param geos input and output 
 	 */
-	public static void addSubGeos(ArrayList<ConstructionElement> geos) {
+	protected static void addSubGeos(ArrayList<ConstructionElement> geos) {
 		GeoElement geo;
 		for (int i = geos.size() - 1; i >= 0; i--)
 		{
@@ -303,7 +303,7 @@ public class CopyPaste {
 	 * @param geos input and output
 	 * @return just the predecessor and intermediate geos for future handling
 	 */
-	public static ArrayList<ConstructionElement> addPredecessorGeos(ArrayList<ConstructionElement> geos) {
+	protected static ArrayList<ConstructionElement> addPredecessorGeos(ArrayList<ConstructionElement> geos) {
 
 		ArrayList<ConstructionElement> ret = new ArrayList<ConstructionElement>();
 
@@ -334,7 +334,7 @@ public class CopyPaste {
 	 * @param conels input and output
 	 * @return the possible side-effect geos
 	 */
-	public static ArrayList<ConstructionElement> addAlgosDependentFromInside(ArrayList<ConstructionElement> conels) {
+	protected static ArrayList<ConstructionElement> addAlgosDependentFromInside(ArrayList<ConstructionElement> conels) {
 
 		ArrayList<ConstructionElement> ret = new ArrayList<ConstructionElement>();
 		
@@ -371,7 +371,7 @@ public class CopyPaste {
 	 * copyToXML - Step 4.5
 	 * If copied to the same window, don't copy free non-selected GeoNumerics
 	 */
-	public static ArrayList<ConstructionElement> removeFreeNonselectedGeoNumerics(ArrayList<ConstructionElement> conels, ArrayList<GeoElement> selected) {
+	protected static ArrayList<ConstructionElement> removeFreeNonselectedGeoNumerics(ArrayList<ConstructionElement> conels, ArrayList<GeoElement> selected) {
 		
 		ArrayList<ConstructionElement> ret = new ArrayList<ConstructionElement>();
 		ret.addAll(conels);
@@ -398,7 +398,7 @@ public class CopyPaste {
 	 * @param conels
 	 * @param geostohide
 	 */
-	public static void beforeSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostohide, boolean samewindow) {
+	protected static void beforeSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostohide, boolean samewindow) {
 
 		if (samewindow)
 			copiedXMLlabelsforSameWindow = new ArrayList<String>();
@@ -450,7 +450,7 @@ public class CopyPaste {
 	 * @param conels
 	 * @param geostoshow
 	 */
-	public static void afterSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostoshow) {
+	protected static void afterSavingToXML(ArrayList<ConstructionElement> conels, ArrayList<ConstructionElement> geostoshow) {
 
 		ConstructionElement geo;
 		String label;
@@ -601,7 +601,13 @@ public class CopyPaste {
 		copySource = null;
 	}
 
-	public static void handleLabels(Application app, ArrayList<String> labels) {
+	/**
+	 * Convenience method to set new labels instead of labels
+	 * 
+	 * @param app
+	 * @param labels
+	 */
+	protected static void handleLabels(Application app, ArrayList<String> labels) {
 
 		Kernel kernel = app.getKernel();
 		GeoElement geo;
