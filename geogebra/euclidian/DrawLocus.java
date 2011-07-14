@@ -15,6 +15,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.Traceable;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -24,7 +25,7 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 
 
-public final class DrawLocus extends Drawable {
+public class DrawLocus extends Drawable {
 	
  
 	private GeoLocus locus;    	
@@ -64,7 +65,7 @@ public final class DrawLocus extends Drawable {
 		}
 		
 		// draw trace
-		if (locus.trace) {
+		if (geo.isTraceable() && (geo instanceof Traceable) && ((Traceable)geo).getTrace()) {
 			isTracing = true;
 			Graphics2D g2 = view.getBackgroundGraphics();
 			if (g2 != null) drawTrace(g2);

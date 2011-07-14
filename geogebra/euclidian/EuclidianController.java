@@ -171,6 +171,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected GeoConic tempConic;
 	
 	protected GeoImplicitPoly tempImplicitPoly;
+	protected ArrayList<Double> tempDependentPointX;
+	protected ArrayList<Double> tempDependentPointY;
+	protected ArrayList<GeoPoint> moveDependentPoints;
 
 	protected GeoFunction tempFunction;
 
@@ -1547,6 +1550,42 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				tempImplicitPoly = new GeoImplicitPoly(movedGeoImplicitPoly);
 			}else
 				tempImplicitPoly.set(movedGeoImplicitPoly);
+			
+			if (tempDependentPointX==null){
+				tempDependentPointX=new ArrayList<Double>();
+			}else{
+				tempDependentPointX.clear();
+			}
+			
+			if (tempDependentPointY==null){
+				tempDependentPointY=new ArrayList<Double>();
+			}else{
+				tempDependentPointY.clear();
+			}
+			
+			if (moveDependentPoints==null){
+				moveDependentPoints=new ArrayList<GeoPoint>();
+			}else{
+				moveDependentPoints.clear();
+			}
+			
+			for (GeoElement f: movedGeoImplicitPoly.getAllChildren()){
+				if (f instanceof GeoPoint && f.getParentAlgorithm().getInput().length==1 && f.getParentAlgorithm().getInput()[0] instanceof Path){
+					GeoPoint g=(GeoPoint) f;
+					if(!Kernel.isZero(g.getZ())){
+						moveDependentPoints.add(g);
+						tempDependentPointX.add(g.getX()/g.getZ());
+						tempDependentPointY.add(g.getY()/g.getZ());
+					}
+				}
+			}
+//			for (GeoElement elem:movedGeoImplicitPoly.getAllChildren()){
+//				if (elem instanceof GeoPoint){
+//					if (movedGeoImplicitPoly.isParentOf(elem)){
+//						tempDependentPointOnPath.add(((GeoPoint)elem).getPathParameter().getT());
+//					}
+//				}
+//			}
 			
 		}
 		else if (movedGeoElement.isGeoFunction()) {
@@ -3450,11 +3489,39 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	final protected void moveImplicitPoly(boolean repaint) {
 		movedGeoImplicitPoly.set(tempImplicitPoly);
 		movedGeoImplicitPoly.translate(xRW - startPoint.x, yRW - startPoint.y);		
-
-		if (repaint)
-			movedGeoImplicitPoly.updateRepaint();
-		else
+		
+//		if (repaint)
+//			movedGeoImplicitPoly.updateRepaint();
+//		else
+		//update first
 			movedGeoImplicitPoly.updateCascade();
+
+		//set points
+		for (int i=0;i<moveDependentPoints.size();i++){
+			GeoPoint g=moveDependentPoints.get(i);
+			g.setCoords2D(tempDependentPointX.get(i),tempDependentPointY.get(i),1);
+			g.translate(new Coords(xRW - startPoint.x, yRW - startPoint.y,1));
+			g.updateCascade();
+		}
+		
+		//paint
+		if (repaint)
+			kernel.notifyRepaint();
+		
+//		int i=0;
+//		for (GeoElement elem:movedGeoImplicitPoly.getAllChildren()){
+//			if (elem instanceof GeoPoint){
+//				if (movedGeoImplicitPoly.isParentOf(elem)){
+//					GeoPoint g=((GeoPoint)elem);
+//					g.getPathParameter().setT(tempDependentPointOnPath.get(i++));
+//					tempImplicitPoly.pathChanged(g);
+//					g.translate(new Coords(xRW - startPoint.x, yRW - startPoint.y));
+//				}
+//			}else if (elem instanceof GeoImplicitPoly){
+//				
+//			}
+//		}
+
 	}
 
 	final protected void moveFunction(boolean repaint) {
