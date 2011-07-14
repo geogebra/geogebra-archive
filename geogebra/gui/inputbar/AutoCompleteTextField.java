@@ -57,7 +57,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey, AutoCompleteDictionary dict) {
 		super(app);
-		setColumns(columns);
+		// allow dynamic width with columns = -1
+		if(columns > 0)
+			setColumns(columns);
 
 		this.app = app;
 		setAutoComplete(true);

@@ -440,11 +440,14 @@ public class MyTable extends JTable implements FocusListener
 	public void selectAll(){		
 		setSelectionType(CELL_SELECT);
 		this.setAutoscrolls(false);
+		// select the upper left corner cell
 		changeSelection(0,0,false,false);
+		// extend the selection to the current lower right corner cell 
 		changeSelection(getRowCount()-1,getColumnCount()-1, false, true);
 		setSelectAll(true);
-		//	this.scrollRectToVisible(getCellRect(0,0,true));
 		this.setAutoscrolls(true);
+
+		//	this.scrollRectToVisible(getCellRect(0,0,true));
 		//setRowSelectionInterval(0, getRowCount()-1);
 		//getColumnModel().getSelectionModel().setSelectionInterval(0, getColumnCount()-1);
 		//selectionChanged();
@@ -553,6 +556,12 @@ public class MyTable extends JTable implements FocusListener
 				selectedRowSet.add(i);
 
 
+		// check for change in anchor cell (for now this is minrow and mincol ...)
+		boolean changedAnchor =  minSelectionColumn - newSelection.getMinColumn() != 0 ||
+		minSelectionRow - newSelection.getMinRow() != 0 ;
+
+
+
 		// update internal selection variables
 		newSelection.setActualRange();  
 		minSelectionColumn = newSelection.getMinColumn();
@@ -563,13 +572,20 @@ public class MyTable extends JTable implements FocusListener
 		//newSelection.debug();
 		//printSelectionParameters();
 
+		if(isSelectNone && (minSelectionColumn != -1 || minSelectionRow != -1)) 
+			setSelectNone(false);
+		
+		if(changedAnchor && !isEditing())
+			view.updateFormulaBar();
+
+
 		// update the geo selection list
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < selectedCellRanges.size(); i++) {
 			list.addAll(0,(selectedCellRanges.get(i)).toGeoList());
 		}
 
-		// if the selection has changed, update selected geos 
+		// if the geo selection has changed, update selected geos 
 		boolean changed = !list.equals(app.getSelectedGeos());
 		if(changed){
 
@@ -579,9 +595,7 @@ public class MyTable extends JTable implements FocusListener
 
 			if(view.isVisibleStyleBar())
 				view.getSpreadsheetStyleBar().updateStyleBar();
-			
-			
-			view.getFormulaBar().update();
+
 
 			app.setSelectedGeos(list);
 			view.notifySpreadsheetSelectionChange();
@@ -683,41 +697,79 @@ public class MyTable extends JTable implements FocusListener
 	 */
 
 
-	public void setSelection(int c1, int r1, int c2, int r2){
+	public  boolean setSelection(String cellName){
+
+		if(cellName == null) 
+			return setSelection(-1,-1,-1,-1);
+
+		Point newCell = GeoElement.spreadsheetIndices(cellName);
+		if(newCell.x != -1 && newCell.y != -1)
+			return setSelection(newCell.x, newCell.y);
+		else 
+			return false;
+	}
+
+
+
+	public  boolean setSelection(int c, int r){
+		CellRange cr = new CellRange(this,c,r,c,r);
+		return setSelection(cr);
+	}
+
+	public boolean setSelection(int c1, int r1, int c2, int r2){
 
 		CellRange cr = new CellRange(this,c1,r1,c2,r2);
-		ArrayList<CellRange> list = new ArrayList<CellRange>();
-		list.add(cr);
-		setSelection(cr);
-		//setSelection(list, color, doShowDragHandle);
+		if(!cr.isValid()) return false;
+
+		//ArrayList<CellRange> list = new ArrayList<CellRange>();
+		//list.add(cr);
+
+		return setSelection(cr);
+
 	}
 
-	public void setSelection(CellRange cr) {
+	public boolean setSelection(CellRange cr) {
 
-		if (cr == null || cr.isEmptyRange()) {
-			getSelectionModel().clearSelection();
+		if(!cr.isValid()) return false;
 
-		} else {
-
-			this.setAutoscrolls(false);
-
-			if (cr.isRow()) {
-				setRowSelectionInterval(cr.getMinRow(), cr.getMaxRow());
-
-			} else if (cr.isColumn()) {
-				setColumnSelectionInterval(cr.getMinColumn(), cr.getMaxColumn());
+		try {
+			if (cr == null || cr.isEmptyRange()) {
+				getSelectionModel().clearSelection();
 
 			} else {
-				changeSelection(cr.getMinRow(), cr.getMinColumn(), false, false);
-				changeSelection(cr.getMaxRow(), cr.getMaxColumn(), false, true);
-			}
 
-			// scroll to upper left corner of rectangle
-			this.setAutoscrolls(true);
-			scrollRectToVisible(getCellRect(cr.getMinRow(), cr.getMinColumn(),true));
+				this.setAutoscrolls(false);
+
+				// row selection
+				if (cr.isRow()) {
+					setRowSelectionInterval(cr.getMinRow(), cr.getMaxRow());
+
+					// column selection	
+				} else if (cr.isColumn()) {
+					setColumnSelectionInterval(cr.getMinColumn(), cr.getMaxColumn());
+
+					// cell block selection	
+				} else {
+					changeSelection(cr.getMinRow(), cr.getMinColumn(), false, false);
+					changeSelection(cr.getMaxRow(), cr.getMaxColumn(), false, true);
+				}
+
+				table.selectionChanged();
+
+				// scroll to upper left corner of rectangle
+				this.setAutoscrolls(true);
+				scrollRectToVisible(getCellRect(cr.getMinRow(), cr.getMinColumn(),true));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 
+		return true;
 	}
+
+
+	//TODO Handle selection for a list of cell ranges
 
 
 
@@ -835,15 +887,27 @@ public class MyTable extends JTable implements FocusListener
 
 
 	private boolean isSelectAll = false;
-	public boolean getSelectAll() {	
-		return isSelectAll;
-		/*
-		if (minSelectionColumn == 0 && maxSelectionColumn == getColumnCount()-1 && minSelectionRow == 0 
-				&& maxSelectionRow == getRowCount()-1)
-			return true;
+	private boolean isSelectNone = false;
 
-		return false;
-		 */
+
+	public boolean isSelectNone() {
+		return isSelectNone;
+	}
+
+	public void setSelectNone(boolean isSelectNone) {
+
+		this.isSelectNone = isSelectNone;
+
+		if(isSelectNone == true){
+			setSelection(-1,-1,-1,-1);
+			view.updateFormulaBar();
+		}
+
+	}
+
+
+	public boolean isSelectAll() {	
+		return isSelectAll;
 	}
 	public void setSelectAll(boolean isSelectAll) {	
 		this.isSelectAll = isSelectAll;
@@ -1030,7 +1094,7 @@ public class MyTable extends JTable implements FocusListener
 
 
 	private void handleRowColumnGridFormat(Graphics2D g2, int col, int row, byte v){
-		
+
 		// row
 		if(col == -1){
 			// top bar
@@ -1040,7 +1104,7 @@ public class MyTable extends JTable implements FocusListener
 			if(!isZeroBit(v,3))
 				drawGridRow(g2, row+1);
 		}
-		
+
 		// column
 		if(row == -1){
 			// left bar
@@ -1052,7 +1116,7 @@ public class MyTable extends JTable implements FocusListener
 		}
 	}
 
-	
+
 	private void drawFormatBorders(Graphics2D g2){
 
 		g2.setColor(GeoGebraColorConstants.BLACK);
@@ -1076,27 +1140,6 @@ public class MyTable extends JTable implements FocusListener
 			}
 		}
 
-		/*
-
-		if(visRect == null) return;
-
-		Point cell1 = getIndexFromPixel(visRect.x, visRect.y);
-		Point cell2 = getIndexFromPixel(visRect.x + visRect.width, visRect.y + visRect.height);
-
-		Point cell = new Point();
-		for(int r = cell1.y; r <= cell2.y; r++)
-			for(int c = cell1.x; c <= cell2.x; c++){
-				cell.x = c;
-				cell.y = r;
-			//	drawBoxPartial(g2,c,r,c+1,r+1,(byte) 15);
-				Byte b = (Byte) getCellFormatHandler().getCellFormat(cell, CellFormat.FORMAT_BORDER);
-				if(b != null){
-					System.out.println("byte =============>: " + cell.toString());
-					drawBoxPartial(g2,c,r,c+1,r+1,b);
-				}
-			}
-		 */
-
 	}
 
 
@@ -1116,8 +1159,11 @@ public class MyTable extends JTable implements FocusListener
 		drawFormatBorders(g2);
 
 
-		if(!view.hasViewFocus())
+		if(!view.hasViewFocus()){
+			if(!isSelectNone)
+				setSelectNone(true);
 			return;
+		}
 
 
 		if(targetcellFrame != null){
@@ -1291,21 +1337,20 @@ public class MyTable extends JTable implements FocusListener
 		if (ob instanceof GeoElement) {
 			GeoElement geo = (GeoElement) ob;
 
-			if (!geo.isFixed()) {
-				if (!geo.isGeoText() && 
-						editor.getEditorInitString(geo).length() > MAX_CELL_EDIT_STRING_LENGTH) {
-					app.getGuiManager().showRedefineDialog(geo, false);
-					return true;
-				}
+			if(!view.getShowFormulaBar()){
+				if (!geo.isFixed()) {
+					if (!geo.isGeoText() && 
+							editor.getEditorInitString(geo).length() > MAX_CELL_EDIT_STRING_LENGTH) {
+						app.getGuiManager().showRedefineDialog(geo, false);
+						return true;
+					}
 
-				if (geo.isGeoText() && ((GeoText)geo).isLaTeX() ) {
-					app.getGuiManager().showRedefineDialog(geo, true);
-					return true;
+					if (geo.isGeoText() && ((GeoText)geo).isLaTeX() ) {
+						app.getGuiManager().showRedefineDialog(geo, true);
+						return true;
+					}
 				}
 			}
-
-
-
 		}
 
 
@@ -1479,6 +1524,14 @@ public class MyTable extends JTable implements FocusListener
 
 		return true;
 	}
+
+
+	public void updateEditor(String text){
+		if(this.isEditing()){
+			editor.setText(text);
+		}
+	}
+
 
 
 	public void focusGained(FocusEvent e) {
@@ -1691,7 +1744,7 @@ public class MyTable extends JTable implements FocusListener
 	public class MyTableColumnModelListener implements TableColumnModelListener { 
 
 		public void columnMarginChanged(ChangeEvent e) {
-			if(getSelectAll() && minSelectionColumn >= 0){
+			if(isSelectAll() && minSelectionColumn >= 0){
 				preferredColumnWidth = table.getColumnModel().getColumn(minSelectionColumn).getPreferredWidth();
 			}
 		}
@@ -1907,6 +1960,8 @@ public class MyTable extends JTable implements FocusListener
 			((GeoNumeric)targetCell).setUndefined();
 
 	}
+
+
 
 
 

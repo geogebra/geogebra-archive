@@ -329,7 +329,7 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 		if (doRowResize) {
 			if (minSelectionRow != -1 && maxSelectionRow != -1
 					&& (maxSelectionRow - minSelectionRow > 1)) {
-				if (table.getSelectAll())
+				if (table.isSelectAll())
 					table.setRowHeight(table.getRowHeight(resizingRow));
 				else
 					for (int row = minSelectionRow; row <= maxSelectionRow; row++) {

@@ -247,8 +247,16 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 							e.consume();
 							table.repaint();
 						}
+						e.consume();
 					}
-				}	
+				}else{
+					
+					// if text does not start with "=" then stop the editor 
+					// and allow it to create/redefine a geo here
+					editor.setAllowProcessGeo(true);
+					editor.stopCellEditing();
+					editor.setAllowProcessGeo(false);
+				}
 			}
 			else if (table.isOverDot) {
 				table.isDragingDot = true;

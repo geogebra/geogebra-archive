@@ -77,6 +77,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	SpreadsheetToolbarManager toolbarManager;
 
 	//Properties
+	private boolean showFormulaBar = false;
 	private boolean showGrid = true;
 	private boolean showRowHeader = true;
 	private boolean showColumnHeader = true;	
@@ -109,15 +110,13 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	// current toolbar mode
 	private int mode = -1;
 
+
+
 	private JSplitPane splitPane;
-
-
 	private FormulaBar formulaBar;
+	private JPanel spreadsheetPanel;
 
 
-	public FormulaBar getFormulaBar() {
-		return formulaBar;
-	}
 
 
 	/**
@@ -140,8 +139,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 				BorderFactory.createEmptyBorder(4, 4, 4, 4)));
 
 		// Build the spreadsheet panel: formualBar above, spreadsheet in Center  
-		JPanel spreadsheetPanel = new JPanel(new BorderLayout());
-		//spreadsheetPanel.add(formulaBar,BorderLayout.NORTH);
+		spreadsheetPanel = new JPanel(new BorderLayout());
 		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
 
 		// Set the spreadsheet panel as the right component of this JSplitPane
@@ -438,7 +436,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			twoVarStatDialog.setVisible(false);
 		if(multiVarStatDialog != null)
 			multiVarStatDialog.setVisible(false);
-		
+
 		table.getCellFormatHandler().clearAll();
 
 	}	
@@ -512,6 +510,8 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 
 	private boolean scrollToShow = false;
+
+
 
 
 
@@ -860,6 +860,8 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			twoVarStatDialog.updateFonts();
 		if(this.multiVarStatDialog != null)
 			multiVarStatDialog.updateFonts();
+		
+		formulaBar.updateFonts(font);
 	}
 
 
@@ -1213,6 +1215,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		return showGrid;
 	}
 
+
 	public boolean getAllowToolTips() {
 		return allowToolTips;
 	}
@@ -1220,6 +1223,34 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	public void setAllowToolTips(boolean allowToolTips) {
 		this.allowToolTips = allowToolTips;
 	}
+
+
+	public void setShowFormulaBar(boolean showFormulaBar) {
+		this.showFormulaBar = showFormulaBar;
+		if(showFormulaBar)
+			spreadsheetPanel.add(formulaBar,BorderLayout.NORTH);
+		else
+			spreadsheetPanel.remove(formulaBar);
+		formulaBar.update();
+		this.revalidate();
+		this.repaint();
+		
+
+	}
+
+	public boolean getShowFormulaBar(){
+		return showFormulaBar;
+	}
+
+	public FormulaBar getFormulaBar() {
+		return formulaBar;
+	}
+
+	public void updateFormulaBar(){
+		if(showFormulaBar)
+			formulaBar.update();
+	}
+
 
 
 

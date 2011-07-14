@@ -2452,7 +2452,7 @@ public abstract class GeoElement
 
 	}
 
-			// Cong Liu
+	
 	public static int getSpreadsheetColumn(Matcher matcher) {
 		if (! matcher.matches()) return -1;
 
@@ -2473,6 +2473,29 @@ public abstract class GeoElement
 		String s = matcher.group(2);
 		return Integer.parseInt(s) - 1;
 	}
+	
+	/**
+	 * Determines spreadsheet row and column indices for a given cell name (e.g.
+	 * "B3" sets column = 1 and row = 2. If the cell name does not match a
+	 * possible spreadsheet cell then both row and column are returned as -1.
+	 * 
+	 * @param cellName
+	 *            given cell name
+	 * @param column
+	 *            column index to be found
+	 * @param row
+	 *            row index to be found
+	 */
+	public static Point spreadsheetIndices(String cellName){
+		
+		Matcher matcher = spreadsheetPattern.matcher(cellName);			
+		int column = GeoElement.getSpreadsheetColumn(matcher);
+		int row = GeoElement.getSpreadsheetRow(matcher);
+		
+		return new Point(column, row);
+	}
+	
+	
 
 	 private void doRenameLabel(String newLabel) {
 		if (newLabel == null || newLabel.equals(label))

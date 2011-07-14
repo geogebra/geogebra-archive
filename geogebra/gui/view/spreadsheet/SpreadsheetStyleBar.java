@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
@@ -40,6 +39,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 	protected int iconHeight = 18;
 	private Dimension iconDimension = new Dimension(16, iconHeight);
+	private MyToggleButton btnFormulaBar;
 
 
 
@@ -60,6 +60,8 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		// create and add the buttons
 		createButtons();
+		add(btnFormulaBar);
+		this.addSeparator();
 
 		add(btnBold);
 		add(btnItalic);
@@ -86,6 +88,10 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 
 	private void createButtons(){
+	
+		btnFormulaBar = new MyToggleButton(app.getImageIcon("formula_bar.png"));
+		//btnFormulaBar.setSelectedIcon(app.getImageIcon("formula_bar_hide.png"));
+		btnFormulaBar.addActionListener(this);
 
 		ImageIcon boldIcon = GeoGebraIcon.createStringIcon(app.getPlain("Bold").substring(0,1),
 				app.getPlainFont(), true, false, true, iconDimension, Color.black, null);
@@ -158,6 +164,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		Object source = e.getSource();
 
+
 		if (source == btnLeftAlign || source == btnCenterAlign || source == btnRightAlign) {
 
 			Integer align = null;
@@ -210,15 +217,13 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		}
 
 		else if (source == btnBorderStyle) {
-
 			formatHandler.setBorderStyle(selectedCells, btnBorderStyle.getSelectedIndex());
 		}
-
 
 		else if (source == btnBorderStyle) {
 			formatHandler.setBorderStyle(selectedCells.get(0), btnBorderStyle.getSelectedIndex());
 		}
-		
+
 		else if (source == btnGrid) {
 			view.setShowGrid(btnGrid.isSelected());
 		}
@@ -228,8 +233,12 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		else if (source == btnColumnHeader) {
 			view.setShowColumnHeader(btnColumnHeader.isSelected());
 		}
+		else if (source == btnFormulaBar){
+			view.setShowFormulaBar(btnFormulaBar.isSelected());
+			view.updateFormulaBar();
+		}
 
-
+		this.requestFocus();
 		app.storeUndoInfo();
 
 		table.repaint();
@@ -270,7 +279,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		btnGrid.setSelected(view.getShowGrid());
 		btnRowHeader.setSelected(view.getShowRowHeader());
 		btnColumnHeader.setSelected(view.getShowColumnHeader());
-		
+		btnFormulaBar.setSelected(view.getShowFormulaBar());
 		allowActionPerformed = true;
 
 	}

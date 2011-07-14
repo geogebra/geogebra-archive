@@ -4,16 +4,25 @@ import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
-import java.awt.SystemColor;
+import java.awt.AWTException;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class FormulaBar extends JToolBar implements ActionListener, FocusListener{
 
@@ -27,27 +36,50 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 	private AutoCompleteTextField fldCellName;
 	private boolean isIniting;
 
+	private MyCellEditor editor;
+
+	private int row, column;
+
+
+
+
 	public FormulaBar(Application app, SpreadsheetView view){
 
 		this.app = app;
 		this.view = view;
 		this.table = view.getTable();
 
+		this.editor = table.editor;
+
 		// create GUI objects
-		btnCancelFormula = new JButton(app.getImageIcon("exit.png"));
+		//btnCancelFormula = new JButton(app.getImageIcon("no.png"));
+
+		btnCancelFormula = new JButton(app.getImageIcon("delete_small.gif"));
+		btnCancelFormula.setFocusable(false);
 		btnCancelFormula.addActionListener(this);
 		btnCancelFormula.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
+		btnCancelFormula.addMouseListener(new BarButtonListener());
 
 
-		btnAcceptFormula = new JButton(app.getImageIcon("go-next.png"));
-		btnAcceptFormula.addActionListener(this);
+		btnAcceptFormula = new JButton(app.getImageIcon("apply.png"));
+		//btnAcceptFormula = new JButton("\u2713");
+		btnAcceptFormula.addMouseListener(new BarButtonListener());
+		btnAcceptFormula.setFocusable(false);
+		//btnAcceptFormula.addActionListener(this);
 		btnAcceptFormula.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));	
 
-		fldFormula = new AutoCompleteTextField(50, app);
+		fldFormula = new AutoCompleteTextField(-1, app, false);  
 		fldFormula.addActionListener(this);
 		fldFormula.addFocusListener(this);
 		fldFormula.setShowSymbolTableIcon(true);
-		fldCellName = new AutoCompleteTextField(6, app);
+		fldCellName = new AutoCompleteTextField(5, app, false);
+		fldCellName.setAutoComplete(false);
+		//fldCellName.setEditable(false);
+		Dimension d = fldCellName.getMaximumSize();
+		d.width = fldCellName.getPreferredSize().width;
+		fldCellName.setMaximumSize(d);
+		fldCellName.addActionListener(this);
+
 
 		add(fldCellName);
 		add(btnCancelFormula);
@@ -56,31 +88,80 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		setFloatable(false);
 
 
+		fldFormula.getDocument().addDocumentListener(documentListener);
+
+		KeyListener[] defaultKeyListeners = fldFormula.getKeyListeners();
+		fldFormula.addKeyListener(editor.new SpreadsheetCellEditorKeyListener(true));
+		for (int i = 0; i < defaultKeyListeners.length; ++ i) { 
+			//fldFormula.removeKeyListener(defaultKeyListeners[i]); 
+			//fldFormula.addKeyListener(defaultKeyListeners[i]); 
+		} 
+
+
 	}
 
 
 
+	private DocumentListener documentListener = new DocumentListener() {
+		public void changedUpdate(DocumentEvent documentEvent) {
+			// do nothing
+		}
+		public void insertUpdate(DocumentEvent documentEvent) {
+			updateCellEditor(documentEvent);
+		}
+		public void removeUpdate(DocumentEvent documentEvent) {
+			updateCellEditor(documentEvent);
+		}
+		private void updateCellEditor(DocumentEvent documentEvent) {
+
+			view.getTable().updateEditor(fldFormula.getText());
+
+		}
+	};
 
 
+
+	public void setEditorText(String text){
+		if(!fldFormula.hasFocus() || table.isDragging2)
+			fldFormula.setText(text);
+	}
+
+
+	
 	public void update(){
-		int row = table.minSelectionRow;
-		int column = table.minSelectionColumn;
+
+		if(table.isSelectNone()){
+			fldCellName.setText("");
+			fldFormula.setText("");
+			return;
+		}
+
+		row = table.minSelectionRow;
+		column = table.minSelectionColumn;
+
 		String cellName = GeoElement.getSpreadsheetCellName(column, row);
+		fldCellName.setText(cellName);
+
 		String cellContents = "";
 		GeoElement cellGeo = table.relativeCopy.getValue(table, column, row);
-		if(cellGeo != null)
+		if(cellGeo != null){
 			cellContents = cellGeo.getRedefineString(true, false);
-		fldCellName.setText(cellName);
+			int index = cellContents.indexOf("=");
+			if ((!cellGeo.isGeoText())) {
+				if (index == -1) {
+					cellContents = "=" + cellContents;
+				}
+			}
+		}
 		fldFormula.setText(cellContents);
 	}
 
 
 
 	public void focusGained(FocusEvent e) {
-		
-
+		table.setAllowEditing(true);
+		boolean succ = view.getTable().editCellAt(table.getSelectedRow(), table.getSelectedColumn());
 	}
-
 
 
 	public void focusLost(FocusEvent arg0) {
@@ -88,29 +169,58 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 
 	}
 
-
-
+	
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;
 
 		Object source = e.getSource();	
-	
+
 		if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
 		}	
-		
-		else if(source == btnAcceptFormula){
-			setVisible(false);
-		}
-
 	}
-	
+
 	private void doTextFieldActionPerformed(JTextField source) {
 		if(isIniting) return;
 
 		String inputText = source.getText().trim();
-		
+		if (source == fldCellName) {
+			if(table.setSelection(inputText))
+				update();
+		}
+
 	}
+
+
+	private class BarButtonListener extends MouseAdapter{
+		public void mouseClicked(MouseEvent event){
+			Object source = event.getSource();	
+
+			if(source == btnCancelFormula){
+				Robot robot;
+				try {
+					robot = new Robot();
+					robot.keyPress(KeyEvent.VK_ESCAPE);
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			}
+			else if(source == btnAcceptFormula){
+				editor.stopCellEditing(column, row);
+			}
+
+		}
+
+	}
+
+
+	public void updateFonts(Font font){
+		fldFormula.setFont(font);
+		fldCellName.setFont(font);
+		repaint();
+
+	}
+
 
 
 }

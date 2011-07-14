@@ -313,7 +313,14 @@ public class CellRange {
 		return hasEmptyCells;
 	}
 	
-	
+	/** Returns true if the cell range has valid coordinates for this table
+	 */
+	public boolean isValid(){
+		return (minRow >= -1 && minRow < table.getView().MAX_ROWS)
+		&& (maxRow >= -1 && maxRow < table.getView().MAX_ROWS)
+		&& (minColumn >= -1 && minColumn < table.getView().MAX_COLUMNS)
+		&& (maxColumn >= -1 && maxColumn < table.getView().MAX_COLUMNS);
+	}
 	
 	
 	
