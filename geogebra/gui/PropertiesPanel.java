@@ -56,6 +56,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.LevelOfDetail;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -148,6 +149,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		private FillingPanel fillingPanel;
 		private FadingPanel fadingPanel;
+		private LodPanel lodPanel;
 		private CheckBoxInterpolateImage checkBoxInterpolateImage;
 		private TracePanel tracePanel;
 		private AnimatingPanel animatingPanel;
@@ -249,6 +251,7 @@ public	class PropertiesPanel extends JPanel {
 			//END
 			fillingPanel = new FillingPanel();
 			fadingPanel = new FadingPanel();
+			lodPanel = new LodPanel();
 			checkBoxInterpolateImage = new CheckBoxInterpolateImage();
 			tracePanel = new TracePanel();
 			animatingPanel = new AnimatingPanel();
@@ -361,6 +364,7 @@ public	class PropertiesPanel extends JPanel {
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
 			styleTabList.add(fadingPanel);
+			styleTabList.add(lodPanel);
 			styleTabList.add(checkBoxInterpolateImage);
 			styleTabList.add(textFieldSizePanel);
 			styleTab = new TabPanel(styleTabList);
@@ -479,6 +483,7 @@ public	class PropertiesPanel extends JPanel {
 			rightAnglePanel.setLabels();
 			fillingPanel.setLabels();
 			fadingPanel.setLabels();
+			lodPanel.setLabels();
 			checkBoxInterpolateImage.setLabels();
 			tracePanel.setLabels();
 			fixPanel.setLabels();
@@ -4829,6 +4834,93 @@ public	class PropertiesPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * panel to select the level of detail of surfaces
+	 * @author mathieu
+	 */
+	private class LodPanel extends JPanel implements ChangeListener, UpdateablePanel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private Object[] geos;
+		private JSlider slider;
+
+		public LodPanel() {		
+			super(new FlowLayout(FlowLayout.LEFT));
+				
+		
+			slider = new JSlider(0, 10);
+			slider.setMajorTickSpacing(5);
+			slider.setMinorTickSpacing(1);
+			slider.setPaintTicks(true);
+			slider.setPaintLabels(true);
+			slider.setSnapToTicks(true);
+
+			// set label font
+			Dictionary labelTable = slider.getLabelTable();
+			Enumeration en = labelTable.elements();
+			JLabel label;
+			while (en.hasMoreElements()) {
+				label = (JLabel) en.nextElement();
+				label.setFont(app.getSmallFont());
+			}
+
+			slider.setFont(app.getSmallFont());	
+			slider.addChangeListener(this);			
+			
+			add(slider);			
+		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("LevelOfDetail")));
+		}
+
+		public JPanel update(Object[] geos) {
+			// check geos
+			if (!checkGeos(geos))
+				return null;
+
+			this.geos = geos;
+			slider.removeChangeListener(this);
+
+			//	set value to first point's size 
+			LevelOfDetail geo0 = (LevelOfDetail) geos[0];
+			slider.setValue(geo0.getLevelOfDetail());
+
+			slider.addChangeListener(this);
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				if (!(geos[i] instanceof LevelOfDetail)) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+
+		/**
+		* change listener implementation for slider
+		*/
+		public void stateChanged(ChangeEvent e) {
+			if (!slider.getValueIsAdjusting()) {
+				int lod = slider.getValue();
+				LevelOfDetail geo;
+				for (int i = 0; i < geos.length; i++) {
+					geo = (LevelOfDetail) geos[i];
+					geo.setLevelOfDetail(lod);
+					((GeoElement) geo).updateRepaint();
+				}
+			}
+		}
+	}
+
+	
 	
 	/**
 	 * Panel for segment decoration

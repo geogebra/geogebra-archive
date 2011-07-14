@@ -6,6 +6,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.LevelOfDetail;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -126,7 +127,12 @@ public class MyXMLHandler3D extends MyXMLHandler {
 				ok = handleFading(attrs);
 				break;
 			}
-		
+		case 'l':
+			if (eName.equals("levelOfDetail")) {
+				ok = handleLevelOfDetail(attrs);
+				break;
+			}
+			
 		default:
 			super.startGeoElement(eName, attrs);
 		}
@@ -173,7 +179,17 @@ public class MyXMLHandler3D extends MyXMLHandler {
 		}
 	}
 
-	
+
+	private boolean handleLevelOfDetail(LinkedHashMap<String, String> attrs) {
+		try {
+			int lod = Integer.parseInt((String) attrs.get("val"));			
+			((LevelOfDetail) geo).setLevelOfDetail(lod);			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	
 	/** handles plane attributes for EuclidianView3D
 	 * @param ev

@@ -8,6 +8,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.Functional2Var;
+import geogebra.kernel.kernelND.LevelOfDetail;
 import geogebra.kernel.kernelND.SurfaceEvaluable;
 import geogebra.kernel.kernelND.GeoSurfaceCartesianND;
 import geogebra3D.euclidian3D.Drawable3D;
@@ -19,7 +20,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoSurfaceCartesian3D extends GeoSurfaceCartesianND
-implements GeoElement3DInterface, Functional2Var, SurfaceEvaluable{
+implements GeoElement3DInterface, Functional2Var, SurfaceEvaluable, LevelOfDetail{
 
 	
 	
@@ -259,5 +260,34 @@ implements GeoElement3DInterface, Functional2Var, SurfaceEvaluable{
 	public Coords evaluateNormal(double u, double v) {
 		return new Coords(0, 0, 1, 0); //TODO
 	}
+	
+	
+  	///////////////////////////
+  	// 	SPECIFIC XML
+	
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
+        
+		// level of detail
+		sb.append("\t<levelOfDetail val=\"");
+		sb.append(getLevelOfDetail());
+		sb.append("\"/>\n");
+
+    }
+	
+  	///////////////////////////
+  	// 	LEVEL OF DETAIL
+	
+	private int levelOfDetail = 5;
+
+	public void setLevelOfDetail(int val) {
+		levelOfDetail=val;
+	}
+
+	public int getLevelOfDetail() {
+		return levelOfDetail;
+	}
+	
+	
 
 }
