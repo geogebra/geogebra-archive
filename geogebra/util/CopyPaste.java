@@ -627,7 +627,8 @@ public class CopyPaste {
 					app.getEuclidianView2().add(geo);
 				}
 
-				geo.setLabel(geo.getDefaultLabel(false));
+				geo.setLabel(geo.getIndexLabel(geo.getLabelSimple().substring(labelPrefix.length())));
+				//geo.setLabel(geo.getDefaultLabel(false));
 				app.addSelectedGeo(geo);
 			}
 		}
