@@ -41,7 +41,13 @@ public class AlgoCasExpand extends AlgoCasBase {
     	
         if (!f.toGeoElement().isIndependent()) { // show the symbolic representation too
             sb.append(": ");
-            sb.append(g.toGeoElement().getLabelForAssignment());
+            sb.append(g.toGeoElement().getLabel());
+            if (g.toGeoElement() instanceof GeoFunction)
+            {
+            	sb.append('(');
+            	sb.append(((GeoFunction) g.toGeoElement()).getVarString());
+            	sb.append(')');
+            }
             sb.append(" = ");
             sb.append(g.toSymbolicString());
         }

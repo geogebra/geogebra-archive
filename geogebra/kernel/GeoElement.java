@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
+import geogebra.cas.CASgeneric;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.GuiManager;
@@ -1946,46 +1947,28 @@ public abstract class GeoElement
 	 * or "f(x) := a*x^2", "a:20", "g: 3x + 4y == 7" in Maxima
 	 *
 	 * @param type ExpressionNode.STRING_TYPE_MAXIMA, STRING_TYPE_MATHPIPER
+     * @return String in the format of the current CAS.
 	 */
 	public String toCasAssignment(int type) {
 		if (!labelSet) return null;
 
-		// change cas print form
+		String label = getLabel();
+
 		int oldType = kernel.getCASPrintForm();
 		kernel.setCASPrintForm(type);
-		StringBuilder sb = new StringBuilder();
-
-		// label of variable, functions overwrite this method
-		String labelStr = getLabelForAssignment();
-		sb.append(labelStr);
-
-		// assignment String depends on CAS type and object type
-		switch (type) {
-		 	case ExpressionNode.STRING_TYPE_MAXIMA:
-		 		// function label ends with ) like e.g. f(x)
-		 		if (labelStr.charAt(labelStr.length()-1) == ')')
-		 			sb.append(" := ");
-		 		else
-		 			sb.append(" : ");
-		 		break;
-
-		 	default:
-		 	//case ExpressionNode.STRING_TYPE_MATH_PIPER:
-		 	//case ExpressionNode.STRING_TYPE_GEOGEBRA:
-		 		sb.append(" := ");
-		}
-
-		// value string of object, e.g. "2*x^2"
-		sb.append(getCASString(false));
-
-		// reset cas print form
+		String body = getCASString(false);
 		kernel.setCASPrintForm(oldType);
-		return sb.toString();
+
+		CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
+		String retval;
+		if (isGeoFunction()) {
+			String params = ((GeoFunction) this).getFunction().getVarString();
+			retval = cas.translateFunctionDeclaration(label, params, body);
+		} else
+			retval = cas.translateAssignment(label, body);
+		return retval;
 	}
 
-	 public String getLabelForAssignment() {
-		 return getLabel();
-	 }
 
 	/**
 	 * Returns a representation of geo in currently used CAS syntax.

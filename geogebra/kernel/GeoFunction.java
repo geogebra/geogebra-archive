@@ -1371,14 +1371,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return fun.getExpression().getCASstring(symbolic);
 	}
     
-	 public String getLabelForAssignment() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getLabel());
-		sb.append("(" );
-		sb.append(fun == null ? "x" : fun.getFunctionVariable());
-		sb.append(")");
-		return sb.toString();
-	 }
 	 
 	 /**
 	  * Converts this function to cartesian curve and stores result to given curve
