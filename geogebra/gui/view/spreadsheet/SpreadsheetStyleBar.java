@@ -160,6 +160,15 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		btnLeftAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignLeft"));
 		btnCenterAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignCenter"));
 		btnRightAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignRight"));
+		
+		
+		ImageIcon boldIcon = GeoGebraIcon.createStringIcon(app.getPlain("Bold").substring(0,1),
+				app.getPlainFont(), true, false, true, iconDimension, Color.black, null);
+		btnBold.setIcon(boldIcon);
+		
+		ImageIcon italicIcon = GeoGebraIcon.createStringIcon(app.getPlain("Italic").substring(0,1),
+				app.getPlainFont(), false, true, true, iconDimension, Color.black, null);
+		btnItalic.setIcon(italicIcon);
 
 
 	}
