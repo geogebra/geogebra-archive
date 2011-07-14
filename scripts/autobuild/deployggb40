@@ -61,9 +61,11 @@ echo "$WARNINGS warnings during chmod'ing web files"
 cd $SVNDIR/geogebra/scripts/autobuild/windows
 ./ggb40maxima
 
-# 7. Deploying Linux/generic as well:
+# 7. Deploying Linux/generic and Linux/portable as well:
 cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
 ./create_geogebra_linux
+cd $SVNDIR/geogebra/scripts/autobuild/linux/portable
+./create_geogebra_portable
 
 # 8. Copying the Mac OS X and the Windows installer version to Google Code:
 if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
