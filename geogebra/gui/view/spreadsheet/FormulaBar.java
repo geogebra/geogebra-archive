@@ -133,6 +133,7 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		if(table.isSelectNone()){
 			fldCellName.setText("");
 			fldFormula.setText("");
+			//Application.debug("nothing selected");
 			return;
 		}
 
@@ -145,6 +146,7 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		String cellContents = "";
 		GeoElement cellGeo = table.relativeCopy.getValue(table, column, row);
 		if(cellGeo != null){
+			//Application.debug("cell with geo selected at: " + row + " ," + column);
 			cellContents = cellGeo.getRedefineString(true, false);
 			int index = cellContents.indexOf("=");
 			if ((!cellGeo.isGeoText())) {
@@ -152,6 +154,8 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 					cellContents = "=" + cellContents;
 				}
 			}
+		}else{
+			//Application.debug("empty cell selected at: " + row + " ," + column);
 		}
 		fldFormula.setText(cellContents);
 	}
@@ -222,5 +226,10 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 	}
 
 
+	public void setLabels(){
+		btnAcceptFormula.setToolTipText(app.getPlain("Apply"));
+		btnCancelFormula.setToolTipText(app.getPlain("Cancel"));
+		
+	}
 
 }

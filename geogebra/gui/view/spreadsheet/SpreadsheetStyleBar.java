@@ -61,26 +61,27 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		// create and add the buttons
 		createButtons();
 		add(btnFormulaBar);
+		
 		this.addSeparator();
-
 		add(btnBold);
 		add(btnItalic);
 
-		this.addSeparator();
-		add(btnBgColor);
-
+	
 		this.addSeparator();
 		add(btnLeftAlign);
 		add(btnCenterAlign);
 		add(btnRightAlign);
 
 		this.addSeparator();
+		add(btnBgColor);
+		
+		this.addSeparator();
 		add(btnBorderStyle);
 
 		this.addSeparator();
 		add(btnGrid);
-		add(btnRowHeader);
-		add(btnColumnHeader);
+		//add(btnRowHeader);
+		//add(btnColumnHeader);
 
 		setLabels();
 		updateStyleBar();
@@ -149,7 +150,12 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 
 	public void setLabels(){
-
+		
+		btnFormulaBar.setToolTipText(app.getMenu("ShowInputField"));
+		btnGrid.setToolTipText(app.getPlainTooltip("stylebar.Grid"));
+		btnBold.setToolTipText(app.getPlainTooltip("stylebar.Bold"));
+		btnItalic.setToolTipText(app.getPlainTooltip("stylebar.Italic"));
+		btnBorderStyle.setToolTipText(app.getPlainTooltip("stylebar.Border"));
 		btnBgColor.setToolTipText(app.getPlainTooltip("stylebar.BgColor"));
 		btnLeftAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignLeft"));
 		btnCenterAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignCenter"));

@@ -822,6 +822,9 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			probCalculator.setLabels();
 		if (table !=null)
 			table.setLabels();
+		if(formulaBar != null){
+			formulaBar.setLabels();
+		}
 	}
 
 

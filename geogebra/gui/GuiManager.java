@@ -874,8 +874,10 @@ public class GuiManager {
 			getEuclidianView2().getStyleBar().setLabels();
 		
 		
-		if (spreadsheetView != null)
+		if (spreadsheetView != null){
 			spreadsheetView.setLabels();
+			spreadsheetView.getSpreadsheetStyleBar().setLabels();
+		}
 		
 		if (casView != null)
 			casView.setLabels();
