@@ -2,10 +2,13 @@
 
 # Creates all needed portable versions of GeoGebra.
 # Requires python3 with zlib support and ImageMagick convert.
-# Please put all Java Runtime Environments to ../../../.. (jre*.bin).
+# Please put all Java Runtime Environments to ../../../../.. (jre*.bin),
+# they can be downloaded from http://www.oracle.com/technetwork/java/javase/downloads/jre-6u26-download-400751.html.
 # The result .tar.gz will be put into ../../../../build/.
 
 # @author Zoltan Kovacs <zoltan@geogebra.org>
+
+. ../../autobuild.conf
 
 VERSION_STRING=`cat ../../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
@@ -13,10 +16,13 @@ if [ "$VERSION_STRING" = "" ]; then
  exit 1
  fi
 
-which python3 2>&1 >/dev/null || {
-    echo Python3 is required to run this script.
-    exit 1
-    }
+if [ "$PYTHON3" = "" ]; then
+ PYTHON3=`which python3 2>/dev/null`
+ if [ "$PYTHON3" = "" ]; then
+  echo "Python3 is required to run this script."
+  exit 1
+  fi
+ fi
 
 umask 0002 # trying to ensure g+w rights for all created files automatically
 
@@ -25,6 +31,15 @@ convert $IMAGE_DIR/geogebra32.png png:$IMAGE_DIR/geogebra.png || {
     echo ImageMagick convert is required to run this script.
     exit 1
     }
+
+# argument 1: version of GeoGebra (eg. 3.2.44.0)
+# argument 2: path of executable jre installation file (eg. jre-6u21-linux-x64.bin)
+# argument 3: path of directory containing unpacked geogebra files
+# argument 4: path of directory containing unsigned geogebra files
+# argument 5: path of geogebra icon (eg. geogebra.png)
+# argument 6: path of start script geogebra
+# argument 7: path of Maxima installation file (eg. maxima-5.24.0.tar.gz)
+# argument 8: path of destination directory
 
 for i in ../../../../../jre*.bin; do
     chmod a+x $i
@@ -35,5 +50,7 @@ for i in ../../../../../jre*.bin; do
       ../../../../build/unsigned/unpacked \
       $IMAGE_DIR/geogebra.png \
       ../geogebra \
+      $LINUX_MAXIMA_TGZ \
       ../../../../build
+
      done

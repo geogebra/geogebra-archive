@@ -46,6 +46,13 @@ GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
 # This file should be present to update ggb40maxima properly.
 # You can download it (or a similar version) from Google Code Downloads as well.
 
+# To create this package, one should download the source version of Maxima
+# and compile it on a 32 bit machine (for compatibility reasons). Currently
+# we are using cmucl for the underlying Lisp engine due to its minimal dependency
+# for auxiliary libraries (only libc is required) and its speed.
+# Put this file to the workspace directory.
+LINUX_MAXIMA_TGZ=/home/kovzol/workspace/maxima-5.24.0-cmucl-linux-i686.tar.gz
+
 # If this is set, rsync-www will run:
 WWW_REMOTEDIR=www.geogebra.org:/Library/WebServer/GeoGebra/webstart/
 
