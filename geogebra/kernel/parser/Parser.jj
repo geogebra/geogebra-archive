@@ -382,7 +382,7 @@ TOKEN: {
  */
 ValidExpression buildValidExpression() : 
 {
-    ValidExpression ve;
+    ValidExpression ve = null;
     ExpressionNode lhs, rhs;
     Token l = new Token();
     Token c = null;
@@ -422,25 +422,34 @@ ValidExpression buildValidExpression() :
      LOOKAHEAD(2147483647)
         lhs = expressionnode() <EQUAL> rhs = expressionnode()
         {             
-            // maybe expression
-            if (lhs.isSingleVariable() && !rhs.includesPolynomial()) {                                  
-                // it's an expression
-                ve = rhs;
-                ve.setLabel(((Variable)lhs.evaluate()).getName());                         
-            } else {
+            // maybe it's an assignment, i.e. there is no x, y, or z on the right side
+			if (!rhs.includesPolynomial())			{
+			    // assignment, e.g. z = 23	  			if (lhs.isSingleVariable()) {                                  	               
+	                ve = rhs;
+	                ve.setLabel(((Variable)lhs.evaluate()).getName());                         
+	            }
+	            
+				// special case: e = 2 should be an assignment
+				// but an undefined "e" has been read as the Euler constant already
+				else if (Unicode.EULER_STRING.equals(lhs.toString()))
+				{
+				  ve = rhs;
+                  ve.setLabel("e");  
+				}
+              
 				// special case: z = 2 should be an assignment when 3D view is not present
- 				// TODO: improve check if 3D view is showing
-				if (kernel.getManager3D() == null &&
-					"z".equals(lhs.toString()) &&
-					!rhs.includesPolynomial())				{
+				if (kernel.getManager3D() == null && "z".equals(lhs.toString()))
+				{
 				  ve = rhs;
                   ve.setLabel("z");  
 				}
-				else				{
-	                // it's an equation in x, y, and possibly z
-	                ve = new Equation(kernel, lhs, rhs);
-	            }
-            }
+			}
+            		
+			// standard equation
+			if (ve == null) {
+                // it's an equation in x, y, and possibly z
+                ve = new Equation(kernel, lhs, rhs);
+            }            
         }
      |
         LOOKAHEAD(2147483647)
