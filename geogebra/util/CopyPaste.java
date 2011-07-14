@@ -28,6 +28,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -351,7 +352,7 @@ public class CopyPaste {
 			for (int j = 0; j < geoal.size(); j++) {
 				ale = (AlgoElement) geoal.get(j);
 				ac = new ArrayList<ConstructionElement>();
-				ac.addAll(ale.getAllIndependentPredecessors());
+				ac.addAll(Arrays.asList(ale.getInput()));
 				if (conels.containsAll(ac) && !conels.contains((ConstructionElement) ale)) {
 					conels.add((ConstructionElement) ale);
 					geos = ale.getOutput();
@@ -571,6 +572,7 @@ public class CopyPaste {
 		//kernel.restoreCurrentUndoInfo();
 		afterSavingToXML(geoslocalsw, geostohidesw);
 
+		Application.debug(copiedXML.toString());
 
 		// restore kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
