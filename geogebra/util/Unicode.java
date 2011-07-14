@@ -49,7 +49,7 @@ public class Unicode {
 	
 	/* helper Unicode strings for fixing Hungarian translations */
 	// These endings will get -re, -nek, -hez:
-	final public static String translationFixHu_endE1 = "bcde\u00E9fgi\u00EDjlmnprstvwxz1479";
+	final public static String translationFixHu_endE1 = "bcde\u00E9fgi\u00EDjlmnprstvwxz1479'";
 	// These endings will get -ra, -nak, -ban, -ba, -hoz:
 	final public static String translationFixHu_endO1 = "ahko\u00F3qu\u00FAy368";
 	// These endings will get -re, -nek, -ben, -be, -höz:
