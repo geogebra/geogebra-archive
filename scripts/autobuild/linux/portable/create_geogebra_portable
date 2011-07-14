@@ -10,6 +10,9 @@
 
 . ../../autobuild.conf
 
+TARGET_DIR=$WWWDIR/installer
+mkdir -p $TARGET_DIR
+
 # 1. Testing prerequisities
 VERSION_STRING=`cat ../../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
