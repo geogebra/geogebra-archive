@@ -55,6 +55,10 @@ public class CopyPaste {
 	protected static ArrayList<String> copiedXMLlabelsforSameWindow;
 	protected static EuclidianView copySource;
 
+	/**
+	 * Returns whether the clipboard is empty
+	 * @return whether the clipboard is empty
+	 */
 	public static boolean isEmpty() {
 		if (copiedXML == null)
 			return true;
@@ -371,6 +375,8 @@ public class CopyPaste {
 	/**
 	 * copyToXML - Step 4.5
 	 * If copied to the same window, don't copy free non-selected GeoNumerics
+	 * @param conels
+	 * @param selected
 	 */
 	protected static ArrayList<ConstructionElement> removeFreeNonselectedGeoNumerics(ArrayList<ConstructionElement> conels, ArrayList<GeoElement> selected) {
 		
@@ -482,6 +488,8 @@ public class CopyPaste {
 
 	/**
 	 * This method saves geos and all predecessors of them in XML 
+	 * @param app
+	 * @param geos
 	 */
 	public static void copyToXML(Application app, ArrayList<GeoElement> geos) {
 
@@ -571,8 +579,6 @@ public class CopyPaste {
 		}
 		//kernel.restoreCurrentUndoInfo();
 		afterSavingToXML(geoslocalsw, geostohidesw);
-
-		Application.debug(copiedXML.toString());
 
 		// restore kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
