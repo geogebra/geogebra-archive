@@ -10,6 +10,7 @@
 
 . ../../autobuild.conf
 
+# 1. Testing prerequisities
 VERSION_STRING=`cat ../../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
  echo "Please build GeoGebra first."
@@ -32,15 +33,7 @@ convert $IMAGE_DIR/geogebra32.png png:$IMAGE_DIR/geogebra.png || {
     exit 1
     }
 
-# argument 1: version of GeoGebra (eg. 3.2.44.0)
-# argument 2: path of executable jre installation file (eg. jre-6u21-linux-x64.bin)
-# argument 3: path of directory containing unpacked geogebra files
-# argument 4: path of directory containing unsigned geogebra files
-# argument 5: path of geogebra icon (eg. geogebra.png)
-# argument 6: path of start script geogebra
-# argument 7: path of Maxima installation file (eg. maxima-5.24.0.tar.gz)
-# argument 8: path of destination directory
-
+# 2. Packaging
 for i in ../../../../../jre*.bin; do
     chmod a+x $i
     python3 ./create_geogebra_portable.py \
@@ -52,5 +45,20 @@ for i in ../../../../../jre*.bin; do
       ../geogebra \
       $LINUX_MAXIMA_TGZ \
       ../../../../build
-
      done
+
+# 3. Copying to installer/ directory (deploying):
+cd ../../../../build
+for i in GeoGebra-Linux-*-Portable*.tar.gz; do
+ chmod g+w $i
+ cp $i $TARGET_DIR
+ 
+ # Copying to Google Code:
+ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
+  EXTRA=""
+  echo $i | grep x86_64 && EXTRA=" (64 bit)"
+  $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra Portable $VERSION_STRING for Linux$EXTRA" \
+   -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $i
+  fi
+ done
+
