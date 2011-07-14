@@ -510,6 +510,18 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		assignmentCellMap.put(varLabel, cellValue);
 	}
 	
+	/**
+	 * Returns whether a variable is set (used) in the CAS. This is determined
+	 * efficiently by checking if the given label has been used in an assignment in the CAS
+	 * (e.g. x := 5) or is a defined variable name in GeoGebra itself.
+	 * @param varLabel name of the variable
+	 * @return whether a variable is bound (set) in the CAS
+	 */
+	final public boolean isVariableSet(String varLabel) {
+		return assignmentCellMap.get(varLabel) != null || 
+				kernel.lookupLabel(varLabel) != null;
+	}
+	
 	public CASInputHandler getInputHandler()
 	{
 		return casInputHandler;

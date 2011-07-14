@@ -117,12 +117,12 @@ public class GeoGebraCAS {
 			return new CASmpreduce(casParser);
 	}
 	
-	/**
-	 * Returns whether var is a defined variable.
-	 */
-	public boolean isVariableBound(String var) {
-		return cas.isVariableBound(var);
-	}
+//	/**
+//	 * Returns whether var is a defined variable.
+//	 */
+//	public boolean isVariableBound(String var) {
+//		return cas.isVariableBound(var);
+//	}
 	
 	/**
 	 * Unbinds (deletes) variable.

@@ -75,8 +75,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
      */
     GeoElement resolve(boolean allowAutoCreateGeoElement) {
     	// keep bound CAS variables when resolving a CAS expression
-    	if (kernel.isResolveUnkownVarsAsDummyGeos() &&
-    		kernel.isCASVariableBound(name)) 
+    	if (kernel.isResolveUnkownVarsAsDummyGeos()) 
     	{
     		// resolve unknown variable as dummy geo to keep its name and 
 			// avoid an "unknown variable" error message

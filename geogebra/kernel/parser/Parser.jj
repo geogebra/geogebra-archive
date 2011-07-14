@@ -494,11 +494,9 @@ ValidExpression buildCASExpression() :
        	l = label() ( ":" | <ASSIGNMENT>) ve = equation()  
     |
         // assignment         
-        // b := 27 + c
-        // don't allow x, y as labels to avoid e.g. the following:
-        // assume x := 1, then a: y = x + 2 creates line but output is y = 3
-        LOOKAHEAD(2147483647)
-		l = label() <ASSIGNMENT> ve = expressionnode()  
+        // b := 27 + c, also allow x := 5, see http://www.geogebra.org/trac/ticket/946
+        LOOKAHEAD(2147483647)		
+		l = casVar() <ASSIGNMENT> ve = expressionnode()
  	|	   
        	// equation, e.g. 3x + y = 7
        	LOOKAHEAD(2147483647)   

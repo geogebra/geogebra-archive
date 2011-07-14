@@ -43,17 +43,17 @@ public class CASmaxima extends CASgeneric {
 		Application.setCASVersionString("Maxima"); // called later on with eg "Maxima 5.22.1"
 	}
 	
-	/**
-	 * Returns whether var is a defined variable in Maxima.
-	 */
-	public boolean isVariableBound(String var) {
-		// check if var is assigned a value or defined as function in Maxima
-		StringBuilder sb = new StringBuilder();
-		sb.append("issymbolbound('");
-		sb.append(var);
-		sb.append(");");
-		return "true".equals(evaluateMaxima(sb.toString()).replaceAll(" ", ""));
-	}
+//	/**
+//	 * Returns whether var is a defined variable in Maxima.
+//	 */
+//	public boolean isVariableBound(String var) {
+//		// check if var is assigned a value or defined as function in Maxima
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("issymbolbound('");
+//		sb.append(var);
+//		sb.append(");");
+//		return "true".equals(evaluateMaxima(sb.toString()).replaceAll(" ", ""));
+//	}
 	
 	/**
 	 * Unbinds (deletes) var in Maxima.

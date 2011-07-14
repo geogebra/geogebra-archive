@@ -4,16 +4,11 @@ import geogebra.cas.CASparser;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.kernel.arithmetic.Variable;
 
-import java.awt.Color;
-import java.awt.List;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.HashSet;
 
 public class CASInputHandler {
 
@@ -383,10 +378,9 @@ public class CASInputHandler {
 				references[i]=v.getAssignmentVariable();
 			}
 			equations[i]=v.getInputVE().toString();
-			Boolean isVariable=kernel.isCASVariableBound(equations[i]);
-			if (isVariable) {
-				Variable var=new Variable(kernel, equations[i]);
-				equationsVariablesResolved.append(", "+var.resolveAsExpressionValue().toValueString());
+			GeoElement geoVar = kernel.lookupLabel(equations[i]);
+			if (geoVar != null) {
+				equationsVariablesResolved.append(", " + geoVar.toValueString());
 			} else {
 				equationsVariablesResolved.append(", "+equations[i]);
 			}
@@ -603,8 +597,6 @@ public class CASInputHandler {
 			// check for dependent geo with label var
 			GeoElement geo = kernel.lookupLabel(var);
 			if (geo != null && !geo.isIndependent()) {
-				// TODO: remove
-				System.out.println("NO assignment to dependent: " + var);
 				return false;
 			}
 		}
@@ -912,21 +904,41 @@ public class CASInputHandler {
 			// we have just set this variable in the CAS, so ignore the update fired back by the
 			// GeoGebra kernel when we call evalInGeoGebra
 			casView.addToIgnoreUpdates(assignmentVar);
-
-			// EVALUATE inputExp in GeoGebra
-			try {
-				// process inputExp in GeoGebra
-				if (!assignToFreeGeoOnly)
-					ggbResult = evalInGeoGebra(eval);
-			} catch (Throwable th2) {
-				if (throwable == null) throwable = th2;
-				System.err.println("GeoGebra evaluation failed: " + eval + "\n error: " + th2.toString());
+						
+			// EVALUATE INPUT in GeoGebra
+			if (!assignToFreeGeoOnly) {					
+				// only send inputExp to GeoGebra if all CAS variables are known there
+				// e.g. x:=5, b:=3*x is possible in CAS but b:=3*x should not be sent to GeoGebra
+				boolean casVarsDefinedInGeoGebra = true;	
+				HashSet<GeoElement> geoVars = evalVE.getVariables();
+				if (geoVars != null) {
+					for (GeoElement geoVar : geoVars) {
+						String varLabel = geoVar.getLabel();				
+						if (casView.isVariableSet(varLabel) && kernel.lookupLabel(varLabel) == null) {
+							// var defined in CAS but not in GeoGebra,				
+							casVarsDefinedInGeoGebra = false;
+							break;
+						}
+					}
+				}
+				
+				if (casVarsDefinedInGeoGebra) {
+					// EVALUATE inputExp in GeoGebra
+					try {
+						// process inputExp in GeoGebra					
+						ggbResult = evalInGeoGebra(eval);
+					} catch (Throwable th2) {
+						if (throwable == null) throwable = th2;
+						System.err.println("GeoGebra evaluation failed: " + eval + "\n error: " + th2.toString());
+					}
+				}
 			}
-
-			// inputExp failed with GeoGebra
+						
+			// EVALUATE CAS RESULT in GeoGebra
+			// inputExp could not be used with GeoGebra
 			// try to evaluate result of CAS
 			if (ggbResult == null && !isDeleteCommand && CASSuccessful) {	
-				// EVALUATE result of MathPiper
+				// EVALUATE result of CAS
 				String ggbEval = CASResult;
 				if (assignment) {
 					assignmentResult = getAssignmentResult(evalVE);
@@ -934,7 +946,7 @@ public class CASInputHandler {
 				} 
 
 				try {	
-					// process mathPiperResult in GeoGebra
+					// process CAS result in GeoGebra
 					ggbResult = evalInGeoGebra(ggbEval);
 				} catch (Throwable th2) {
 					if (throwable == null) throwable = th2;

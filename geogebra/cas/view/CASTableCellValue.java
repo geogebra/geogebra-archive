@@ -3,8 +3,8 @@ package geogebra.cas.view;
 import geogebra.cas.MaximaVersionUnsupportedExecption;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.util.Util;
@@ -316,7 +316,7 @@ public class CASTableCellValue {
 		
 		try {
 			// check for function
-			boolean isFunction = ve instanceof Function;
+			boolean isFunction = ve instanceof FunctionNVar;
 				
 			// outvar of assignment b := a + 5 is "b"
 			setAssignmentVar(ve.getLabel());

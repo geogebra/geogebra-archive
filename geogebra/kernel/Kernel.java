@@ -542,17 +542,6 @@ public class Kernel {
 		
 		return ggbCAS.evaluateMaxima(exp);
 	}	
-
-	/** 
-     *  Returns whether var is a defined variable in GeoGebraCAS.
-     */
-	final public boolean isCASVariableBound(String var) {
-		if (ggbCAS == null) {
-			return false;		
-		} else {
-			return ggbCAS.isVariableBound(var);
-		}
-	}	
 			
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;

@@ -53,12 +53,12 @@ public abstract class CASgeneric {
 	 */
 	public abstract String getEvaluateGeoGebraCASerror();
 	
-	/**
-	 * Returns whether var is a defined variable.
-	 * @param var the Variable
-	 * @return true if the variable is defined, false otherwise.
-	 */
-	public abstract boolean isVariableBound(String var);
+//	/**
+//	 * Returns whether var is a defined variable.
+//	 * @param var the Variable
+//	 * @return true if the variable is defined, false otherwise.
+//	 */
+//	public abstract boolean isVariableBound(String var);
 	
 	/**
 	 * Unbinds (deletes) variable.

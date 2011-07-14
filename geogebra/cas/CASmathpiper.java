@@ -51,15 +51,15 @@ public class CASmathpiper extends CASgeneric {
 		getMathPiper();
 	}
 	
-	/**
-	 * Returns whether var is a defined variable in MathPiper.
-	 */
-	public boolean isVariableBound(String var) {
-		StringBuilder exp = new StringBuilder("IsBound(");
-		exp.append(var);
-		exp.append(')');
-		return "True".equals(evaluateMathPiper(exp.toString()));
-	}
+//	/**
+//	 * Returns whether var is a defined variable in MathPiper.
+//	 */
+//	public boolean isVariableBound(String var) {
+//		StringBuilder exp = new StringBuilder("IsBound(");
+//		exp.append(var);
+//		exp.append(')');
+//		return "True".equals(evaluateMathPiper(exp.toString()));
+//	}
 	
 	/**
 	 * Unbinds (deletes) var in MathPiper.

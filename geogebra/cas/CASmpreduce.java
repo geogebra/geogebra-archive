@@ -165,6 +165,7 @@ public class CASmpreduce extends CASgeneric {
 		result = sb.toString();
 		result = result.replaceAll("\\*\\*", "^");
 		
+		// TODO: remove
 		System.out.println("eval with MPReduce: " + exp);
 		System.out.println("   result: " + result);
 		return result;
@@ -174,12 +175,6 @@ public class CASmpreduce extends CASgeneric {
 	public String getEvaluateGeoGebraCASerror() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean isVariableBound(String var) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
