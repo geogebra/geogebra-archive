@@ -132,12 +132,6 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		// Build the spreadsheet table and enclosing scrollpane
 		buildSpreadsheet(rows, columns);
 
-		// Build the formula bar
-		formulaBar = new FormulaBar(app, this); 
-		formulaBar.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createMatteBorder(0,0,1,0,SystemColor.controlShadow), 
-				BorderFactory.createEmptyBorder(4, 4, 4, 4)));
-
 		// Build the spreadsheet panel: formualBar above, spreadsheet in Center  
 		spreadsheetPanel = new JPanel(new BorderLayout());
 		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
@@ -310,10 +304,6 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		// autoscroll to new cell's location
 		if (scrollToShow && location != null )
 			table.scrollRectToVisible(table.getCellRect(location.y, location.x, true));
-
-		//G.Sturr 2010-4-2: mark this geo to adjust row width for tall LaTeX images 
-		//MyCellEditor.cellResizeHeightSet.add(new Point(location.x,location.y));
-
 
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 
@@ -714,6 +704,10 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 		// layout
 		sb.append("\t<layout ");
+		
+		sb.append(" showFormulaBar=\"");
+		sb.append(showFormulaBar  ? "true" : "false" );
+		sb.append("\"");
 
 		sb.append(" showGrid=\"");
 		sb.append(showGrid  ? "true" : "false" );
@@ -863,8 +857,8 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			twoVarStatDialog.updateFonts();
 		if(this.multiVarStatDialog != null)
 			multiVarStatDialog.updateFonts();
-		
-		formulaBar.updateFonts(font);
+		if(formulaBar != null)
+			formulaBar.updateFonts(font);
 	}
 
 
@@ -974,10 +968,6 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	//             Data Import & File Browser 
 	//===============================================================
 
-
-
-	//G.STURR 2010-2-12: Added methods to support file browser
-	//
 
 
 	public boolean loadSpreadsheetFromURL(File f) {
@@ -1232,10 +1222,13 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	public void setShowFormulaBar(boolean showFormulaBar) {
 		this.showFormulaBar = showFormulaBar;
 		if(showFormulaBar)
-			spreadsheetPanel.add(formulaBar,BorderLayout.NORTH);
+			spreadsheetPanel.add(getFormulaBar(),BorderLayout.NORTH);
 		else
-			spreadsheetPanel.remove(formulaBar);
-		formulaBar.update();
+			if(formulaBar != null)
+				spreadsheetPanel.remove(formulaBar);
+
+		if(formulaBar != null)
+			formulaBar.update();
 		this.revalidate();
 		this.repaint();
 		getSpreadsheetStyleBar().updateStyleBar();
@@ -1246,11 +1239,18 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	}
 
 	public FormulaBar getFormulaBar() {
+		if(formulaBar == null){
+			// Build the formula bar
+			formulaBar = new FormulaBar(app, this); 
+			formulaBar.setBorder(BorderFactory.createCompoundBorder(
+					BorderFactory.createMatteBorder(0,0,1,0,SystemColor.controlShadow), 
+					BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+		}
 		return formulaBar;
 	}
 
 	public void updateFormulaBar(){
-		if(showFormulaBar)
+		if(formulaBar != null && showFormulaBar)
 			formulaBar.update();
 	}
 
