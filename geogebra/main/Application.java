@@ -1613,7 +1613,7 @@ public class Application implements KeyEventDispatcher {
 	/**
 	 * Use localized digits.
 	 */
-	private boolean useLocalizedDigits = true;
+	private boolean useLocalizedDigits = false;
 	
 	/**
 	 * @return If localized digits are used for certain languages (Arabic, Hebrew, etc).
