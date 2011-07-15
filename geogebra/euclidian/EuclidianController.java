@@ -1665,6 +1665,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			oldLoc.x = movedGeoBoolean.getAbsoluteScreenLocX();
 			oldLoc.y = movedGeoBoolean.getAbsoluteScreenLocY();
 
+			// part of snap to grid code (the constant 5 comes from DrawBoolean)
+			startPoint.setLocation(xRW - view.toRealWorldCoordX(oldLoc.x), yRW - view.toRealWorldCoordY(oldLoc.y));
+			transformCoordsOffset[0]=view.toRealWorldCoordX(oldLoc.x+5)-xRW;
+			transformCoordsOffset[1]=view.toRealWorldCoordY(oldLoc.y+5)-yRW;
+
 			view.setShowMouseCoords(false);
 			view.setDragCursor();			
 
@@ -1678,6 +1683,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			startLoc = mouseLoc;
 			oldLoc.x = movedGeoButton.getAbsoluteScreenLocX();
 			oldLoc.y = movedGeoButton.getAbsoluteScreenLocY();
+
+			// part of snap to grid code
+			startPoint.setLocation(xRW - view.toRealWorldCoordX(oldLoc.x), yRW - view.toRealWorldCoordY(oldLoc.y));
+			transformCoordsOffset[0]=view.toRealWorldCoordX(oldLoc.x)-xRW;
+			transformCoordsOffset[1]=view.toRealWorldCoordY(oldLoc.y)-yRW;
 
 			view.setShowMouseCoords(false);
 			view.setDragCursor();			
@@ -3542,8 +3552,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	final protected void moveBoolean(boolean repaint) {
-		movedGeoBoolean.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
-				oldLoc.y + mouseLoc.y-startLoc.y);
+		//movedGeoBoolean.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
+		//		oldLoc.y + mouseLoc.y-startLoc.y);
+
+		// part of snap to grid code
+		movedGeoBoolean.setAbsoluteScreenLoc(view.toScreenCoordX(xRW - startPoint.x), view.toScreenCoordY(yRW - startPoint.y));
 
 		if (repaint)
 			movedGeoBoolean.updateRepaint();
@@ -3552,8 +3565,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	final protected void moveButton(boolean repaint) {
-		movedGeoButton.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
-				oldLoc.y + mouseLoc.y-startLoc.y);
+		//movedGeoButton.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
+		//		oldLoc.y + mouseLoc.y-startLoc.y);
+
+		// part of snap to grid code
+		movedGeoButton.setAbsoluteScreenLoc(view.toScreenCoordX(xRW - startPoint.x), view.toScreenCoordY(yRW - startPoint.y));
 
 		if (repaint)
 			movedGeoButton.updateRepaint();
