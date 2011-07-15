@@ -536,7 +536,9 @@ public class WorksheetExportDialog extends JDialog {
 		JPanel filePanelWest = new JPanel();
 		filePanelWest.setLayout(new BoxLayout(filePanelWest, BoxLayout.Y_AXIS));
 		JPanel filePanelEast = new JPanel();
-		filePanelEast.setLayout(new BoxLayout(filePanelEast, BoxLayout.Y_AXIS));
+		
+		filePanelEast.setLayout(new BorderLayout(5,5));
+		filePanelEast.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		JPanel fileTwoColumns = new JPanel();
 		fileTwoColumns.setLayout(new BorderLayout());
 		fileTwoColumns.add(filePanelEast, BorderLayout.EAST);
@@ -569,7 +571,7 @@ public class WorksheetExportDialog extends JDialog {
 		String fileTypeStrings[] = {app.getPlain("File.HTML"), app.getPlain("Clipboard.HTML"), app.getPlain("Clipboard.MediaWiki"), app.getPlain("Clipboard.Google"), app.getPlain("Clipboard.Moodle") };
 		cbFileType = new JComboBox(fileTypeStrings);
 		cbFileType.setEnabled(true);
-		filePanelEast.add(cbFileType);
+		filePanelEast.add(cbFileType, BorderLayout.NORTH);
 		cbFileType.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
 		    	
@@ -597,7 +599,7 @@ public class WorksheetExportDialog extends JDialog {
 		if (GeoGebraFrame.getInstanceCount() > 1) {
 			String worksheetStrings[] = { app.getMenu("SingleFile"), app.getMenu("SingleFileTabs"), app.getMenu("LinkedFiles") };
 			cbAllWorksheets = new JComboBox(worksheetStrings);
-			filePanelEast.add(cbAllWorksheets);	
+			filePanelEast.add(cbAllWorksheets, BorderLayout.SOUTH);	
 		}
 
 		/*
