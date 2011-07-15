@@ -1251,26 +1251,20 @@ public class AlgebraProcessor {
 		GeoVec3D[] ret = new GeoVec3D[1];
 		boolean isIndependent = n.isConstant();
 
+		// make point if complex parts are present, e.g. 3 + i
+		if (complex) {
+			n.setForcePoint();
+		}
 		// make vector, if label begins with lowercase character
-		if (label != null) {
+		else if (label != null) {
 			if (!(n.isForcedPoint() || n.isForcedVector())) { // may be set by MyXMLHandler
-				if (!complex && Character.isLowerCase(label.charAt(0)))
+				if (Character.isLowerCase(label.charAt(0)))
 					n.setForceVector();
 				else
 					n.setForcePoint();
 			}
 		}
 		boolean isVector = n.isVectorValue();
-		
-		// check for free "complex" points like 2 + i that only depend on i
-		if (complex && !isIndependent) {
-			GeoElement [] vars = n.getGeoElementVariables();
-			if (vars.length == 1 && (Unicode.IMAGINARY.equals(vars[0].getLabel()))) {
-				isIndependent = true;			
-				complex = true;
-			}
-	
-		}
 
 		if (isIndependent) {
 			// get coords
