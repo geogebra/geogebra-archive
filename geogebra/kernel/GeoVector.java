@@ -28,6 +28,7 @@ import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -416,7 +417,7 @@ Transformable, GeoVectorND {
 			sbBuildValueString.append(kernel.format(x));
 			sbBuildValueString.append(" ");
 			sbBuildValueString.append(kernel.formatSigned(y));
-			sbBuildValueString.append("i");
+			sbBuildValueString.append(Unicode.IMAGINARY);
             break;                                
                 
 			default: // CARTESIAN
