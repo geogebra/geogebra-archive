@@ -191,6 +191,15 @@ public class Kernel3D
 	protected Manager3DInterface newManager3D(Kernel kernel){
 		return new Manager3D(kernel);
 	}
+	
+	/**
+	 * Returns whether the variable name "z" may be used. Note that the 3D kernel does not
+	 * allow this as it uses "z" in plane equations like 3x + 2y + z = 5.
+	 * @return whether z may be used as a variable name
+	 */
+	public boolean isZvarAllowed(){
+		return false;
+	}
 
     
 	/* *******************************************

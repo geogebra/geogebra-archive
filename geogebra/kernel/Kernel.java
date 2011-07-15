@@ -342,6 +342,15 @@ public class Kernel {
 	}
 	
 	/**
+	 * Returns whether the variable name "z" may be used. Note that the 3D kernel does not
+	 * allow this as it uses "z" in plane equations like 3x + 2y + z = 5.
+	 * @return whether z may be used as a variable name
+	 */
+	public boolean isZvarAllowed(){
+		return true;
+	}
+	
+	/**
 	 * creates the construction cons
 	 */
 	protected void newConstruction(){

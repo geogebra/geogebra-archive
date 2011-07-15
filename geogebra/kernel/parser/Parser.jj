@@ -438,7 +438,7 @@ ValidExpression buildValidExpression() :
 				}
               
 				// special case: z = 2 should be an assignment when 3D view is not present
-				if (kernel.getManager3D() == null && "z".equals(lhs.toString()))
+				if (kernel.isZvarAllowed() && "z".equals(lhs.toString()))
 				{
 				  ve = rhs;
                   ve.setLabel("z");  
