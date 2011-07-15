@@ -216,7 +216,8 @@ TOKEN :  {
   | < #INDEXDIGIT:                                     // unicode digits
        [ "\u2070","\u2074"-"\u2079","\u00b9","\u00b2","\u00b3"] >
   | < PI:       ( "pi" | "Pi" | "\u03c0" | "%pi") >
-  | < E:        ("\u212f" | "%e") >  
+  | < E:        ("\u212f" | "%e") > // Euler constant
+  | < IMAGINARY: ("\u03af" | "%i") > // imaginary constant
   | < DEGREE:   ( "\u00b0" ) >
   | < INFINITY: ("\u221e" | "Infinity" | "inf" | "infinity") >
   | < MINUS_INFINITY: ("minf") >
@@ -342,8 +343,8 @@ TOKEN: {
 |	< ATANH_FUNC: ( "atanh(" | "arctanh(" | "ArcTanh(" ) > 
 |	< EXP_FUNC: ( "exp(" | "Exp(" ) > 
 |	< LOG_FUNC: ( "log(" | "ln(" | "Ln(" ) > 
-|	< BETA_FUNC:  ( "beta(" | "ibeta(" | "Beta(" ) > 
-|	< BETA_REGULARIZED_FUNC:  "betaRegularized(" > 
+|	< BETA_FUNC:  ( "beta(" | "Beta(" ) > 
+|	< BETA_REGULARIZED_FUNC:  ( "betaRegularized(" | "ibeta(" ) > 
 |	< GAMMA_FUNC: ( "gamma(" | "igamma(" | "Gamma(" ) > 
 |	< GAMMA_REGULARIZED_FUNC:  "gammaRegularized(" > 
 |	< LD_FUNC:    "ld("  > 
@@ -1554,8 +1555,15 @@ ExpressionValue numVecVariable():
 
         // VARIABLE NAME IS UNDEFINED
 		// check some special variable names
-		if (c.image.equalsIgnoreCase("e"))	
+		// e for Euler constant
+		if (c.image.equalsIgnoreCase("e"))		{		 
 			return new MySpecialDouble(kernel, Math.E, Unicode.EULER_STRING);
+		}
+		// i for imaginary unit
+		else if (c.image.equalsIgnoreCase("i"))		{
+			GeoVec2D z = new GeoVec2D(kernel, 0, 1);
+			z.setMode(Kernel.COORD_COMPLEX);
+		  	return z;		}
 
        // standard case for undefined variable
        return new Variable(kernel, c.image);
@@ -1643,6 +1651,13 @@ ExpressionValue myDouble():
     {
     	return new MySpecialDouble(kernel, Math.E, Unicode.EULER_STRING);
     }
+|
+ 	<IMAGINARY>
+    {
+    	GeoVec2D z = new GeoVec2D(kernel, 0, 1);
+    	z.setMode(Kernel.COORD_COMPLEX);
+    	return z;
+    }    	   
  |
     <INFINITY>
     {

@@ -196,19 +196,6 @@ public class CASmaxima extends CASgeneric {
 				Application.debug("WARNING: replacing %c by const",1);
 			}
 			
-			if (result.indexOf("%e") > -1) {
-				result = result.replaceAll("%e",Unicode.EULER_STRING);
-				Application.debug("WARNING: replacing %e by Euler e",1);
-			}
-			
-			if (result.indexOf("%pi") > -1) {
-				result = result.replaceAll("%pi",Unicode.PI_STRING);
-			}
-			
-			if (result.indexOf("%i") > -1) {
-				result = result.replaceAll("%i",Unicode.IMAGINARY);
-			}
-			
 			if (result.indexOf(" =") > -1) { // y = not :=
 				result = result.replaceAll(" =","==");
 				//Application.debug("WARNING: replacing = by ==",1);

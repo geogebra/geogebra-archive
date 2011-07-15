@@ -1017,38 +1017,38 @@ public class Construction {
 		boolean fix = true;
 		boolean auxilliary = true;
 		
-		// if referring to variable "i" (complex) that is undefined, create it
-		if (label.equals("i") || label.equals(Unicode.IMAGINARY)) {
-			
-			GeoElement geo = kernel.lookupLabel(Unicode.IMAGINARY);
-			
-			if (geo != null && geo.isGeoPoint() && ((GeoPoint)geo).isI()) {
-				createdGeo = (GeoPoint)geo;
-			} else {			
-			
-				GeoPoint point = new GeoPoint(this);
-				point.setCoords(0.0d, 1.0d, 1.0d);
-				point.setEuclidianVisible(false);
-				point.setComplex();
-				point.setIsI();
-				createdGeo = point;
-				
-				if (geo == null) label = Unicode.IMAGINARY; // else just leave as "i" if label not free
-				
-			}
-		}
-
-		// if referring to variable "e" (Euler no) that is undefined, create it
-		// this is then changed into exp(x) in ExpressionNode.resolveVariables()
-		else if (label.equals("e")) {
-			GeoNumeric number = new GeoNumeric(this);
-			number.setValue(Math.E);
-			number.setNeedsReplacingInExpressionNode();
-			createdGeo = number;			
-		}
+//		// if referring to variable "i" (complex) that is undefined, create it
+//		if (label.equals("i") || label.equals(Unicode.IMAGINARY)) {
+//			
+//			GeoElement geo = kernel.lookupLabel(Unicode.IMAGINARY);
+//			
+//			if (geo != null && geo.isGeoPoint() && ((GeoPoint)geo).isI()) {
+//				createdGeo = (GeoPoint)geo;
+//			} else {			
+//			
+//				GeoPoint point = new GeoPoint(this);
+//				point.setCoords(0.0d, 1.0d, 1.0d);
+//				point.setEuclidianVisible(false);
+//				point.setComplex();
+//				point.setIsI();
+//				createdGeo = point;
+//				
+//				if (geo == null) label = Unicode.IMAGINARY; // else just leave as "i" if label not free
+//				
+//			}
+//		}
+//
+//		// if referring to variable "e" (Euler no) that is undefined, create it
+//		// this is then changed into exp(x) in ExpressionNode.resolveVariables()
+//		else if (label.equals("e")) {
+//			GeoNumeric number = new GeoNumeric(this);
+//			number.setValue(Math.E);
+//			number.setNeedsReplacingInExpressionNode();
+//			createdGeo = number;			
+//		}
 		
 		// expression like AB, autocreate AB=Distance[A,B] or AB = A * B according to whether A,B are points or numbers
-		else if (label.length() == 2) {
+		if (label.length() == 2) {
 			GeoElement geo1 = kernel.lookupLabel(label.charAt(0)+"");
 			if (geo1 != null && geo1.isGeoPoint()) {
 				GeoElement geo2 = kernel.lookupLabel(label.charAt(1)+"");
