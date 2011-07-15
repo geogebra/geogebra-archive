@@ -1309,7 +1309,8 @@ public class AppletImplementation implements AppletImplementationInterface {
 			}
 			else Application.debug("Warning: could not initialize JSObject.getWindow() for GeoGebraApplet when calling "+jsFunction);
 		} catch (Exception e) {						
-			System.err.println("Warning: JavaScript function '"+jsFunction+"' not found");
+			System.err.println("Warning: Error calling JavaScript function '"+jsFunction+"'");
+			e.printStackTrace();
 		}    
 	} 	
 	
