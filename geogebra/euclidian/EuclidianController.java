@@ -1500,6 +1500,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				oldLoc.setLocation(movedGeoText.getAbsoluteScreenLocX(),
 						movedGeoText.getAbsoluteScreenLocY());
 				startLoc = mouseLoc;
+
+				// part of snap to grid code - buggy, so commented out
+				//startPoint.setLocation(xRW - view.toRealWorldCoordX(oldLoc.x), yRW - view.toRealWorldCoordY(oldLoc.y));
+				//movedGeoText.setNeedsUpdatedBoundingBox(true);
+		        //movedGeoText.update(); 
+				//transformCoordsOffset[0]=movedGeoText.getBoundingBox().getX()-xRW;
+				//transformCoordsOffset[1]=movedGeoText.getBoundingBox().getY()-yRW;
 			}
 			else if (movedGeoText.hasAbsoluteLocation()) {
 				//	absolute location: change location
@@ -1628,9 +1635,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						oldLoc.setLocation(movedGeoNumeric.getAbsoluteScreenLocX(),
 								movedGeoNumeric.getAbsoluteScreenLocY());
 						startLoc = mouseLoc;
+
+						// part of snap to grid code
+						startPoint.setLocation(xRW - view.toRealWorldCoordX(oldLoc.x), yRW - view.toRealWorldCoordY(oldLoc.y));
+						transformCoordsOffset[0]=view.toRealWorldCoordX(oldLoc.x)-xRW;
+						transformCoordsOffset[1]=view.toRealWorldCoordY(oldLoc.y)-yRW;
 					} else {
 						startPoint.setLocation(xRW - movedGeoNumeric.getRealWorldLocX(),
 								yRW - movedGeoNumeric.getRealWorldLocY());
+						transformCoordsOffset[0] = movedGeoNumeric.getRealWorldLocX() - xRW;
+						transformCoordsOffset[1] = movedGeoNumeric.getRealWorldLocY() - yRW;
 					}
 				}	
 				else 
@@ -1704,6 +1718,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				oldLoc.setLocation(movedGeoImage.getAbsoluteScreenLocX(),
 						movedGeoImage.getAbsoluteScreenLocY());
 				startLoc = mouseLoc;
+
+				// part of snap to grid code
+				startPoint.setLocation(xRW - view.toRealWorldCoordX(oldLoc.x), yRW - view.toRealWorldCoordY(oldLoc.y));
+				transformCoordsOffset[0]=view.toRealWorldCoordX(oldLoc.x)-xRW;
+				transformCoordsOffset[1]=view.toRealWorldCoordY(oldLoc.y)-yRW;
 			} 
 			else if (movedGeoImage.hasAbsoluteLocation()) {
 				startPoint.setLocation(xRW, yRW);
@@ -3444,7 +3463,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	final protected void moveText(boolean repaint) {
 		if (movedGeoText.isAbsoluteScreenLocActive()) {
 			movedGeoText.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
-					oldLoc.y + mouseLoc.y-startLoc.y);			
+					oldLoc.y + mouseLoc.y-startLoc.y);
+
+			//part of snap to grid code - buggy, so commented out
+			//movedGeoText.setAbsoluteScreenLoc(view.toScreenCoordX(xRW - startPoint.x), view.toScreenCoordY(yRW - startPoint.y));
 		} else {
 			if (movedGeoText.hasAbsoluteLocation()) {
 				//	absolute location: change location
@@ -3465,8 +3487,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected void moveImage(boolean repaint) {	
 		if (movedGeoImage.isAbsoluteScreenLocActive()) {
-			movedGeoImage.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
-					oldLoc.y + mouseLoc.y-startLoc.y);			
+			//movedGeoImage.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
+			//		oldLoc.y + mouseLoc.y-startLoc.y);
+
+			movedGeoImage.setAbsoluteScreenLoc(view.toScreenCoordX(xRW - startPoint.x), view.toScreenCoordY(yRW - startPoint.y));
 
 			if (repaint)
 				movedGeoImage.updateRepaint();
@@ -3651,8 +3675,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// or right-hand mouse button
 		
 		if (movedGeoNumeric.isAbsoluteScreenLocActive()) {
-			movedGeoNumeric.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
-					oldLoc.y + mouseLoc.y-startLoc.y, TEMPORARY_MODE);
+			//movedGeoNumeric.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
+			//		oldLoc.y + mouseLoc.y-startLoc.y, TEMPORARY_MODE);
+
+			// part of snap to grid code
+			movedGeoNumeric.setAbsoluteScreenLoc(view.toScreenCoordX(xRW - startPoint.x), view.toScreenCoordY(yRW - startPoint.y), TEMPORARY_MODE);
 		} else {
 			movedGeoNumeric.setSliderLocation(xRW - startPoint.x, yRW - startPoint.y, TEMPORARY_MODE);
 		}		
