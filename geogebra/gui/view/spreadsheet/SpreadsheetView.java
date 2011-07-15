@@ -1212,6 +1212,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			table.setIntercellSpacing(new Dimension(1,1));
 		else
 			table.setIntercellSpacing(new Dimension(0,0));
+		getSpreadsheetStyleBar().updateStyleBar();
 	}
 
 	public boolean getShowGrid() {
@@ -1237,8 +1238,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		formulaBar.update();
 		this.revalidate();
 		this.repaint();
-		
-
+		getSpreadsheetStyleBar().updateStyleBar();
 	}
 
 	public boolean getShowFormulaBar(){

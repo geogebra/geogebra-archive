@@ -54,7 +54,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	private Kernel kernel;
 	private SpreadsheetView view;
 	
-	private JCheckBox cbShowGrid, cbShowRowHeader, 
+	private JCheckBox cbShowFormulaBar, cbShowGrid, cbShowRowHeader, 
 	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, 
 	cbShowBrowser, cbAllowSpecialEditor, cbAllowToolTips, cbPrependCommands;
 	
@@ -64,6 +64,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	private JPanel locationPanel;
 
 	private JTabbedPane tabbedPane;
+
 	
 	
 	/**
@@ -106,7 +107,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 
 		layoutOptions.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		
-
+		cbShowFormulaBar = new JCheckBox();  
+		cbShowFormulaBar.addActionListener(this);    
+		layoutOptions.add(cbShowFormulaBar); 
+		
         cbShowGrid = new JCheckBox();  
         cbShowGrid.addActionListener(this);        
         layoutOptions.add(cbShowGrid); 
@@ -257,6 +261,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	public void setLabels() {
 		
 		//TODO -- add labels as needed
+		cbShowFormulaBar.setText(app.getMenu("ShowInputField"));
 		cbShowGrid.setText(app.getMenu("ShowGridlines"));              
 		cbShowColumnHeader.setText(app.getMenu("ShowColumnHeader"));  	      
 		cbShowRowHeader.setText(app.getMenu("ShowRowHeader"));  	        	        
@@ -292,6 +297,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 					  
         //======================================
         // layout tab GUI
+		
+		cbShowFormulaBar.removeActionListener(this);
+		cbShowFormulaBar.setSelected(view.getShowFormulaBar());
+		cbShowFormulaBar.addActionListener(this);       
 		
 		cbShowGrid.removeActionListener(this);
 		cbShowGrid.setSelected(view.getShowGrid());
@@ -372,6 +381,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		
 		//========================================
 		// layout options
+		
+		if (source == cbShowFormulaBar) {
+			view.setShowFormulaBar(cbShowFormulaBar.isSelected());			
+		}
 		
 		if (source == cbShowGrid) {
 			view.setShowGrid(cbShowGrid.isSelected());			
