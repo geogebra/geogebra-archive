@@ -412,25 +412,6 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 
 
-
-		// ===============================================
-		//     Probability Calculator
-		// ===============================================
-
-		if( isShiftDown){
-			item = new JMenuItem(app.getMenu(app.getMenu("ProbabilityCalculator")),app.getEmptyIcon());
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					view.showProbabilityCalculator();
-				}
-			});	 
-			addItem(item);	
-		}
-
-
-
-
-
 		// ===============================================
 		//     Show Toolbars / Spreadsheet Options
 		// ===============================================

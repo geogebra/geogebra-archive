@@ -21,6 +21,7 @@ import geogebra.main.GeoGebraColorConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -58,7 +59,7 @@ import javax.swing.border.EmptyBorder;
  * @author G. Sturr
  * 
  */
-public class ProbabilityCalculator extends JDialog implements View, ActionListener, FocusListener   {
+public class ProbabilityCalculator extends JPanel implements View, ActionListener, FocusListener   {
 
 	// enable/disable integral ---- use for testing
 	private boolean hasIntegral = true; 
@@ -67,8 +68,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private Application app;
 	private Construction cons;
 	private Kernel kernel; 
-	//	private StatGeo statGeo;
-	private ProbabilityCalculator probDialog;
+
 
 	// continuous distribution identifiers
 	private static final int DIST_NORMAL = 0;
@@ -117,7 +117,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private JLabel lblBetween;
 	private JPanel mainPanel;
 	private JPanel notAvailablePanel;
-	
+
 
 	// GeoElements
 	private ArrayList<GeoElement> plotGeoList;
@@ -146,14 +146,14 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	private JLabel lblEndProbOf;
 
-	
+
 
 
 	// colors
 	private static final Color COLOR_PDF = GeoGebraColorConstants.DARKBLUE;
 	private static final Color COLOR_PDF_FILL = GeoGebraColorConstants.BLUE;  
 	private static final Color COLOR_POINT = Color.BLACK;
-	
+
 	private static final float opacityIntegral = 0.6f; 
 	private static final float opacityDiscrete = 0.0f; // entire bar chart
 	private static final float opacityDiscreteInterval = 0.6f; // bar chart interval
@@ -164,25 +164,23 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	/*************************************************
 	 * Construct the dialog
 	 */
-	public ProbabilityCalculator(SpreadsheetView spView, Application app) {
-		super(app.getFrame(),false);
+	public ProbabilityCalculator(Application app) {
+
 		isIniting = true;
 		this.app = app;	
 		kernel = app.getKernel();
 		cons = kernel.getConstruction();
-
-		probDialog = this;
 
 		// init variables
 		initDistributionConstants();
 		plotGeoList = new ArrayList<GeoElement>();
 
 		initGUI();
-
-		//	createGeoElements();
-		attachView();
 		isIniting = false;
-		//	updateAll(); 
+
+
+		updateAll();
+		attachView();
 
 	} 
 	/**************** end constructor ****************/
@@ -203,7 +201,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 			//TODO remove this temporary panel
 			notAvailablePanel = createNotAvailablePanel();
-			
+
 			// create the button panel for the bottom of the dialog
 			//=====================================================
 			btnClose = new JButton(app.getMenu("Close"));
@@ -237,7 +235,9 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));
 			controlPanel.add(distPanel);
 			controlPanel.add(probPanel);
-			controlPanel.add(buttonPanel);
+
+			// TODO: Rounding button, Print ??? , remove Close button
+			//controlPanel.add(buttonPanel);
 			controlPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
 
@@ -257,16 +257,20 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			// put the sub-panels together into the main panel
 			//=====================================================
 			mainPanel = new JPanel(new BorderLayout());		
-			mainPanel.add(plotPanel, BorderLayout.CENTER);		
+			mainPanel.add(plotPanel, BorderLayout.CENTER);	
+
 			mainPanel.add(controlPanel, BorderLayout.SOUTH);
 			mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2,2,2));
 
-			this.getContentPane().add(mainPanel);
+
+			this.setLayout(new BorderLayout());
+			this.add(mainPanel, BorderLayout.CENTER);
+			//this.getContentPane().add(mainPanel);
 			//this.getContentPane().setPreferredSize(new Dimension(450,450));
 
 			setLabels();
-			pack();
-			setLocationRelativeTo(app.getFrame());
+			//pack();
+			//setLocationRelativeTo(app.getFrame());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -332,13 +336,13 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		fldLow.addActionListener(this);
 		fldLow.addFocusListener(this);
 
-		
+
 
 		fldHigh = new MyTextField(app.getGuiManager());
 		fldHigh.setColumns(6);
 		fldHigh.addActionListener(this);
 		fldHigh.addFocusListener(this);
-		
+
 		fldResult = new MyTextField(app.getGuiManager());
 		fldResult.setColumns(6);
 		fldResult.addActionListener(this);
@@ -392,7 +396,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	//=================================================
 
 	private void createGeoElements(){
-		
+
 		this.removeGeos();
 
 		String expr;
@@ -423,7 +427,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		pointList = new ArrayList<GeoElement>();
 		pointList.add(lowPoint);
 		pointList.add(highPoint);
-		
+
 		// Set the axis points so they are not equal. This needs to be done 
 		// before the integral geo is created.
 		setXAxisPoints();
@@ -541,16 +545,16 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	public void setXAxisPoints(){
 
 		isSettingAxisPoints = true;
-		
+
 		lowPoint.setCoords(low, 0.0, 1.0);
 		highPoint.setCoords(high, 0.0, 1.0);
 		plotPanel.repaint();
 		GeoElement.updateCascade(pointList, getTempSet());
-		
+
 		isSettingAxisPoints = false;
 	}
 
-	
+
 	private TreeSet tempSet;	
 	private TreeSet getTempSet() {
 		if (tempSet == null) {
@@ -558,8 +562,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		}
 		return tempSet;
 	}
-	
-	
+
+
 	/**
 	 * Returns the parameter values from the parmList geo
 	 */
@@ -788,14 +792,20 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	public void updateFonts() {
 
 		Font font = app.getPlainFont();
-
-		//	int size = font.getSize();
-		//if (size < 12) size = 12; // minimum size
-		//double multiplier = (size)/12.0;
-
 		setFont(font);
+		setFontRecursive(this,font);
 
 	}
+
+	public void setFontRecursive(Container c, Font font) {
+		Component[] components = c.getComponents();
+		for(Component com : components) {
+			com.setFont(font);
+			if(com instanceof Container) 
+				setFontRecursive((Container) com, font);
+		}
+	}
+
 
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;
@@ -886,7 +896,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	//=================================================
 
 
-	private void updateAll(){
+	public void updateAll(){
 		updateFonts();
 		updateDistribution();
 		updatePlot();
@@ -1119,6 +1129,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	public void detachView() {
 		kernel.detach(this);
+		removeGeos();
 		//plotPanel.detachView();
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
@@ -1129,7 +1140,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	public void setLabels(){
 
-		setTitle(app.getMenu("ProbabilityCalculator"));	
+		//setTitle(app.getMenu("ProbabilityCalculator"));	
 		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
 		probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
 		setLabelArrays();
@@ -1138,16 +1149,16 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		comboProbType.addItem(app.getMenu("IntervalProb"));
 		comboProbType.addItem(app.getMenu("LeftProb"));
 		comboProbType.addItem(app.getMenu("RightProb"));
-		
+
 		lblBetween.setText(app.getMenu("XBetween"));   // <= X <=
 		lblEndProbOf.setText(app.getMenu("EndProbabilityOf") + " = ");
 		lblProbOf.setText(app.getMenu("ProbabilityOf"));
-		
+
 		comboDistribution.setModel(new DefaultComboBoxModel(distLabels));
 		comboDistribution.removeActionListener(this);
 		comboDistribution.setSelectedIndex(selectedDist);
 		comboDistribution.addActionListener(this);
-		
+
 	}
 
 
@@ -1642,42 +1653,42 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 	}
 
-	
+
 	//============================================================
 	//           ComboBox Renderer with SEPARATOR
 	//============================================================
-	
+
 	class ListSeparatorRenderer extends JLabel implements ListCellRenderer {
-		
+
 		public static final String SEPARATOR = "SEPARATOR";
-	    JSeparator separator;
+		JSeparator separator;
 
-	    public ListSeparatorRenderer() {
-	      setOpaque(true);
-	      setBorder(new EmptyBorder(1, 1, 1, 1));
-	      separator = new JSeparator(JSeparator.HORIZONTAL);
-	    }
+		public ListSeparatorRenderer() {
+			setOpaque(true);
+			setBorder(new EmptyBorder(1, 1, 1, 1));
+			separator = new JSeparator(JSeparator.HORIZONTAL);
+		}
 
-	    public Component getListCellRendererComponent(JList list, Object value,
-	        int index, boolean isSelected, boolean cellHasFocus) {
-	      String str = (value == null) ? "" : value.toString();
-	      if (SEPARATOR.equals(str)) {
-	        return separator;
-	      }
-	      if (isSelected) {
-	        setBackground(list.getSelectionBackground());
-	        setForeground(list.getSelectionForeground());
-	      } else {
-	        setBackground(list.getBackground());
-	        setForeground(list.getForeground());
-	      }
-	      setFont(list.getFont());
-	      setText(str);
-	      return this;
-	    }
-	  }
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			String str = (value == null) ? "" : value.toString();
+			if (SEPARATOR.equals(str)) {
+				return separator;
+			}
+			if (isSelected) {
+				setBackground(list.getSelectionBackground());
+				setForeground(list.getSelectionForeground());
+			} else {
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+			}
+			setFont(list.getFont());
+			setText(str);
+			return this;
+		}
+	}
 
-	
-	
+
+
 
 }

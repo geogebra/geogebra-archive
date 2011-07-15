@@ -17,6 +17,7 @@ import geogebra.gui.layout.panels.ConstructionProtocolDockPanel;
 import geogebra.gui.layout.panels.Euclidian2DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
+import geogebra.gui.layout.panels.ProbabilityCalculatorDockPanel;
 import geogebra.gui.layout.panels.SpreadsheetDockPanel;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.toolbar.Toolbar;
@@ -29,6 +30,7 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.consprotocol.ConstructionProtocolView;
 import geogebra.gui.view.spreadsheet.FunctionInspector;
+import geogebra.gui.view.spreadsheet.ProbabilityCalculator;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
@@ -144,6 +146,17 @@ public class GuiManager {
 	private FunctionInspector functionInspector;
 	private TextInputDialog textInputDialog;
 	
+	private ProbabilityCalculator probCalculator;
+
+	
+	public JComponent getProbabilityCalculator(){
+
+		if(probCalculator == null)
+			probCalculator = new ProbabilityCalculator(app);
+		return probCalculator;		
+	}
+
+	
 	
 	public static DataFlavor urlFlavor, uriListFlavor;
 	static {
@@ -251,6 +264,10 @@ public class GuiManager {
 		
 		// register ConstructionProtocol view 
 		layout.registerPanel(new ConstructionProtocolDockPanel(app));
+		
+		// register ProbabilityCalculator view 
+		layout.registerPanel(new ProbabilityCalculatorDockPanel(app));
+		
 	}
 	
 	/**
@@ -510,6 +527,9 @@ public class GuiManager {
 			case Application.VIEW_CONSTRUCTION_PROTOCOL:
 				attachConstructionProtocolView();
 				break;
+			case Application.VIEW_PROBABILITY_CALCULATOR:
+				attachProbabilityCalculatorView();
+				break;
 		}
 	}
 	
@@ -534,6 +554,9 @@ public class GuiManager {
 				break;
 			case Application.VIEW_CONSTRUCTION_PROTOCOL:
 				detachConstructionProtocolView();
+				break;
+			case Application.VIEW_PROBABILITY_CALCULATOR:
+				detachProbabilityCalculatorView();
 				break;
 		}
 	}
@@ -577,6 +600,19 @@ public class GuiManager {
 		if (constructionProtocolView != null)
 			constructionProtocolView.getData().detachView();		
 	}	
+	
+	public void attachProbabilityCalculatorView(){	
+		getProbabilityCalculator();
+		probCalculator.attachView();
+	}	
+	
+	public void detachProbabilityCalculatorView(){	
+		getProbabilityCalculator();
+		probCalculator.detachView();		
+	}	
+	
+	
+	
 	
 	public void setShowAuxiliaryObjects(boolean flag) {
 		if (!hasAlgebraView()) return;
@@ -843,6 +879,9 @@ public class GuiManager {
 		
 		if(functionInspector != null)
 			functionInspector.updateFonts();
+		
+		if(probCalculator != null)
+			probCalculator.updateFonts();
 			
 		SwingUtilities.updateComponentTreeUI(app.getMainComponent());			
 	}
@@ -909,7 +948,12 @@ public class GuiManager {
 		if(textInputDialog != null)
 			textInputDialog.setLabels();
 		
-		layout.getDockManager().setLabels();			
+		layout.getDockManager().setLabels();	
+		
+		if(probCalculator !=null)
+			probCalculator.setLabels();
+		
+		
 	}
 
 	public void initMenubar() {
@@ -2983,7 +3027,28 @@ public class GuiManager {
 	     	kernel.notifyModeChanged(mode);  
 	        
 	        // select toolbar button
-	        setToolbarMode(mode);	         
+	     	setToolbarMode(mode);	
+
+
+	     	if(mode == EuclidianConstants.MODE_PROBABILITY_CALCULATOR) {
+
+	     		// show or focus the probability calculator
+	     		if (app.getGuiManager() != null)
+	     			if(app.getGuiManager().showView(Application.VIEW_PROBABILITY_CALCULATOR))
+	     			{
+	     				app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_PROBABILITY_CALCULATOR);
+	     			}
+	     			else
+	     			{
+	     				app.getGuiManager().setShowView(true, Application.VIEW_PROBABILITY_CALCULATOR);
+	     				probCalculator.updateAll();
+	     			}
+
+	     		// nothing more to do, so reset to move mode
+	     		app.setMoveMode();
+	     		return;
+			}   
+	        
 	    }
 	    
 	    public void setToolbarMode(int mode) {

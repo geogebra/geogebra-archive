@@ -633,15 +633,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//	openMiniPropertiesPanel();
 			
 			break;
-
-
-
-		case EuclidianView.MODE_PROBABILITY_CALCULATOR:
-			
-			if(app.getGuiManager().getSpreadsheetView() != null)
-				((SpreadsheetView) app.getGuiManager().getSpreadsheetView()).showProbabilityCalculator();	
-			break;
-		
 			
 		case EuclidianView.MODE_PARALLEL:
 			previewDrawable = view.createPreviewParallelLine(selectedPoints, selectedLines);

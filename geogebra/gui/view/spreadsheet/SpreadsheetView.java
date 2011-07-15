@@ -93,9 +93,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	private StatDialog twoVarStatDialog;
 	private StatDialog multiVarStatDialog;
 
-	// TODO move this out
-	private ProbabilityCalculator probCalculator;
-
+	
 	// file browser defaults
 	public static final String DEFAULT_URL = "http://www.geogebra.org/static/data/data.xml";
 	private String defaultFile; 
@@ -570,15 +568,6 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 	}
 
-	public void showProbabilityCalculator(){
-
-		if(probCalculator == null)
-			probCalculator = new ProbabilityCalculator(view, app);
-		if(!probCalculator.isVisible()){
-			probCalculator.setVisible(true);
-		}
-		probCalculator.toFront();
-	}
 
 
 
@@ -812,8 +801,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			twoVarStatDialog.setLabels();
 		if(multiVarStatDialog !=null)
 			multiVarStatDialog.setLabels();
-		if(probCalculator !=null)
-			probCalculator.setLabels();
+		
 		if (table !=null)
 			table.setLabels();
 		if(formulaBar != null){
