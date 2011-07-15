@@ -507,7 +507,8 @@ GeoPointND, Animatable, Transformable  {
     
     public final boolean showInAlgebraView() {
         // intersection points
-        return (isDefined || showUndefinedInAlgebraView) && !isI;
+//        return (isDefined || showUndefinedInAlgebraView) && !isI;
+    	return (isDefined || showUndefinedInAlgebraView);
     }   
     
 	final public boolean isDefined() { 
@@ -973,11 +974,11 @@ GeoPointND, Animatable, Transformable  {
             break;                                
                         
         case Kernel.COORD_COMPLEX:                    
-        	if (!isI) { // return just "i" for special i
+        	//if (!isI) { // return just "i" for special i
 				sbBuildValueString.append(kernel.format(getInhomX()));
 				sbBuildValueString.append(" ");
-				sbBuildValueString.append(kernel.formatSigned(getInhomY()));
-        	}
+				sbBuildValueString.append(kernel.formatSignedCoefficient(getInhomY()));
+        	//}
 			sbBuildValueString.append(Unicode.IMAGINARY);
             break;                                
                         
@@ -1498,19 +1499,20 @@ GeoPointND, Animatable, Transformable  {
 			return true;
 		}
 		
-		// reserved for the constant sqrt(-1)
-		boolean isI = false;
-
-		public boolean isI() {
-			return isI;
-		}
-		
-		public void setIsI() {
-			isI = true;
-		}
+//		// reserved for the constant sqrt(-1)
+//		boolean isI = false;
+//
+//		public boolean isI() {
+//			return isI;
+//		}
+//		
+//		public void setIsI() {
+//			isI = true;
+//		}
 		
 		public boolean isFixed() {
-			return fixed && !isI;
+//			return fixed && !isI;
+			return fixed;
 		}
 
 		public void matrixTransform(double a00, double a01, double a02,
