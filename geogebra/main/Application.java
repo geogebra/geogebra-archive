@@ -3719,6 +3719,10 @@ public class Application implements KeyEventDispatcher {
 			System.out.println("GeoGebra is running with restricted permissions.");
 			hasFullPermissions = false;
 			
+			// make sure temporary files not used
+			// eg ggbApi.getPNGBase64()
+			ImageIO.setUseCache(false);
+			
 			if (appletImpl != null) {
 				// applet codebase
 				codebase = appletImpl.getJApplet().getCodeBase();
