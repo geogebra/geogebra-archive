@@ -819,7 +819,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	
 	protected final void compute() {	
 		GeoElement geo; // temporary variable	
-		Application.debug(type);
+		//Application.debug(type);
 		switch (type)
 		{
 		case TYPE_LOWERSUM:
