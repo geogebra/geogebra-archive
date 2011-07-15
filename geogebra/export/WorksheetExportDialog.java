@@ -550,7 +550,7 @@ public class WorksheetExportDialog extends JDialog {
 		filePanelWest.add(cbIncludeHTML5);
 		
 		// download jar files
-		cbOfflineJars = new JCheckBox("Jar " + app.getMenu("Files"));		
+		cbOfflineJars = new JCheckBox(app.getPlain("IncludeJARFiles"));		
 		filePanelWest.add(cbOfflineJars);
 		
 		// remove line breaks
