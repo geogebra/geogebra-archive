@@ -28,7 +28,8 @@ public final class CoordMatrixUtil {
 		Coords vn = v1.crossProduct(v2);
 		if (vn.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
 			//Application.debug("v1="+v1.toString()+"\nv2="+v2.toString());
-			return  new Coords[] {v1,v2, new Coords(new double[] {Double.NaN,Double.NaN})};
+			return  new Coords[] {v1.copyVector().normalize(),
+					v2.copyVector().normalize(), new Coords(new double[] {Double.NaN,Double.NaN})};
 		}
 		//return null;
 		

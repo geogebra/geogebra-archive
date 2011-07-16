@@ -6,13 +6,10 @@ import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
-import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSurfaceFinite;
 import geogebra.kernel.Kernel;
@@ -31,7 +28,6 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
-import geogebra.main.Application;
 
 /**
  * Class that for manage all 3D methods in Kernel.
@@ -632,8 +628,8 @@ public class Manager3D implements Manager3DInterface {
 			if (cs2 instanceof GeoLineND)
 				algo = new AlgoIntersectCS1D2D(cons,label, 
 						cs1, cs2);
-			else
-				algo = new AlgoIntersectCS2D2D(cons,label, (GeoCoordSys2D) cs1, (GeoCoordSys2D) cs2);
+			//else
+				//algo = new AlgoIntersectCS2D2D(cons,label, (GeoCoordSys2D) cs1, (GeoCoordSys2D) cs2);
 		}
 
 		return algo.getIntersection();
@@ -996,4 +992,12 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 
+	final public GeoElement IntersectPlanes(
+			String label,
+			GeoCoordSys2D cs1,
+			GeoCoordSys2D cs2) {
+		
+		AlgoIntersectCS2D2D algo = new AlgoIntersectCS2D2D(cons,label, cs1, cs2);
+		return algo.getIntersection();
+	}
 }

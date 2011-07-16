@@ -3,10 +3,9 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -459,8 +458,21 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 
 
 	public void updatePreview() {
-		
-		setWaitForUpdate();
+		if (getView3D().getEuclidianController().previewFromResultedGeo) { 
+			GeoElement geo = getView3D().getEuclidianController().resultedGeo;
+			((GeoConic3D) getGeoElement()).set(geo);
+			getGeoElement().setEuclidianVisible(true);
+			if(geo!=null && geo.isGeoConic() &&
+					!getView3D().getEuclidianController().hideIntersection) {
+				getGeoElement().setLineThickness(2);
+				setWaitForUpdate();
+			} else {
+				getGeoElement().setLineThickness(0);
+				setWaitForUpdate();
+			}
+		} else {
+			getGeoElement().setEuclidianVisible(false);
+		}
 	}
 
 

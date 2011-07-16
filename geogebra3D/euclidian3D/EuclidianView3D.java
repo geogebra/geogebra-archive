@@ -23,7 +23,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
@@ -821,7 +820,29 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (waitForUpdate){
 			//drawList3D.updateAll();
 
-
+			// I've placed remove() before add(), otherwise when the two lists
+			// contains the same element, the element will NOT be added. ---Tam, 2011/7/15
+			/*
+			if (!drawable3DListToBeRemoved.isEmpty()){
+				Application.debug("before remove:\n"+drawable3DLists.toString());
+				StringBuilder sb = new StringBuilder("remove:\n");
+				for (Drawable3D d: drawable3DListToBeRemoved){
+					sb.append(d);
+					sb.append(" -- ");
+					sb.append(d.getGeoElement().getLabel());
+					sb.append("\n");
+				}
+				Application.debug(sb.toString());
+			}
+			*/
+			drawable3DLists.remove(drawable3DListToBeRemoved);
+			/*
+			if (!drawable3DListToBeRemoved.isEmpty())
+				Application.debug("after remove:\n"+drawable3DLists.toString());
+			 */
+			drawable3DListToBeRemoved.clear();
+			
+			
 			/*
 			if (!drawable3DListToBeAdded.isEmpty()){
 				Application.debug("before add:\n"+drawable3DLists.toString());	
@@ -850,25 +871,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			geosToBeAdded.clear();
 
 			
-			/*
-			if (!drawable3DListToBeRemoved.isEmpty()){
-				Application.debug("before remove:\n"+drawable3DLists.toString());
-				StringBuilder sb = new StringBuilder("remove:\n");
-				for (Drawable3D d: drawable3DListToBeRemoved){
-					sb.append(d);
-					sb.append(" -- ");
-					sb.append(d.getGeoElement().getLabel());
-					sb.append("\n");
-				}
-				Application.debug(sb.toString());
-			}
-			*/
-			drawable3DLists.remove(drawable3DListToBeRemoved);
-			/*
-			if (!drawable3DListToBeRemoved.isEmpty())
-				Application.debug("after remove:\n"+drawable3DLists.toString());
-			 */
-			drawable3DListToBeRemoved.clear();
+		
 			
 			
 			
@@ -2155,24 +2158,25 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public Previewable createPreviewLine(){
-		previewLine = new GeoLine3D(getKernel().getConstruction());
-		previewLine.setObjColor(Color.YELLOW);
-		previewDrawLine3D = new DrawLine3D(this, previewLine);
+		if (previewDrawLine3D==null) {
+			previewLine = new GeoLine3D(getKernel().getConstruction());
+			previewLine.setObjColor(Color.YELLOW);
+			previewLine.setIsPickable(true);
+			previewDrawLine3D = new DrawLine3D(this, previewLine);
+		}
 		return previewDrawLine3D;
 		
 	}
 	
-	public Previewable createPreviewLineFromPlanes(ArrayList selectedPlanes){
 
-		previewDrawLine3D = new DrawLine3D(this, selectedPlanes, 2);
-		return previewDrawLine3D;
-		
-	}
 	
 	public Previewable createPreviewConic(){
-		previewConic = new GeoConic3D(getKernel().getConstruction());
-		previewConic.setObjColor(Color.YELLOW);
-		previewDrawConic3D = new DrawConic3D(this, previewConic);
+		if (previewDrawConic3D==null) {
+			previewConic = new GeoConic3D(getKernel().getConstruction());
+			previewConic.setObjColor(Color.YELLOW);
+			previewConic.setIsPickable(true);
+			previewDrawConic3D = new DrawConic3D(this, previewConic);
+		}
 		return previewDrawConic3D;
 		
 	}

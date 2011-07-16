@@ -1,11 +1,9 @@
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,6 +123,19 @@ public class Hits extends ArrayList {
 				remove(i);
 		}
 	}
+	
+	
+	final public void removeAllDimElements(){
+		for (int i = size() - 1 ; i >= 0 ; i-- ) {
+			GeoElement geo = (GeoElement) get(i);
+			//transparency criteria same as in EuclidianController3D::decideHideIntersection
+			if (geo==null || 
+					geo.isRegion() && (geo.getAlphaValue() < 0.1f || geo.getLineThickness() <0.5f) ||
+					geo.isPath() && geo.getLineThickness() < 0.5f)
+				remove(i);
+		}
+	}
+	
 	
 	/**
 	 * A polygon is only kept if none of its sides is also in

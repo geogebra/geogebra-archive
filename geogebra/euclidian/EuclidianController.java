@@ -14,7 +14,6 @@ package geogebra.euclidian;
 
 import geogebra.Matrix.Coords;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
@@ -41,7 +40,6 @@ import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
-import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -56,13 +54,11 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
-import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
-import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -252,6 +248,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected ArrayList<GeoElement> justCreatedGeos = new ArrayList<GeoElement>();
 
 	protected boolean selectionPreview = false;
+	public boolean hideIntersection = false;
+	public boolean previewFromResultedGeo = false;
+	public GeoElement resultedGeo;
 
 	protected boolean TEMPORARY_MODE = false; // changed from QUICK_TRANSLATEVIEW Michael Borcherds 2007-10-08
 
@@ -2814,6 +2813,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		//for testing: save the full hits for later use
 		Hits tempFullHits = hits.clone();	
+		//Application.debug("tempFullHits="+tempFullHits);
 		
 		// set tool tip text
 		// the tooltips are only shown if algebra view is visible
@@ -2872,6 +2872,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//Application.debug("hits = "+hits.toString());		
 		//repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(hits) 
 			//	|| repaintNeeded;
+		
 		repaintNeeded = noHighlighting ?  refreshHighlighting(null) : refreshHighlighting(tempFullHits) 
 			|| repaintNeeded;
 		if (repaintNeeded) {

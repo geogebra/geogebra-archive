@@ -5,7 +5,6 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
-import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
@@ -22,7 +21,6 @@ import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoQuadricND;
@@ -33,7 +31,6 @@ import geogebra3D.kernel3D.AlgoIntersectCS1D2D;
 import geogebra3D.kernel3D.AlgoIntersectCS2D2D;
 import geogebra3D.kernel3D.AlgoIntersectPlaneQuadric;
 import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPolygon3D;
@@ -117,6 +114,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** used to record x information */
 	private int xOld;
 	
+	private Hits3D goodHits;
 	
 	//SELECTED GEOS
 	/** 2D coord sys (plane, polygon, ...) */
@@ -1256,12 +1254,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;
 			
 		case EuclidianView.MODE_INTERSECTION_CURVE: // line through two points
-			
-			//only for two planes
-			
-			//previewDrawable = view3D.createPreviewLineFromPlanes(selectedCS2D);
+			previewFromResultedGeo = true;
+
 			view3D.createPreviewConic();
-			previewDrawable = view3D.createPreviewLine();
+			view3D.createPreviewLine();
+			previewDrawable = null;
 			break;
 			
 		default:
@@ -1875,28 +1872,29 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		 * @return true if a curve is created
 		 */
 		private boolean intersectionCurve(Hits hits) {
-			
-			/**
-			 * rationale: only look at surfaces; for simplicity at this point,
-			 * choose the first two surfaces in hits, then find out the intersection
-			 * algorithm: 
-			 *  - if hits is empty, do nothing.
-			 *  - if hits contains no surfaces, do nothing.
-			 *   Note: surfaces include planes, (planar) region, quadric, and general surfaces.
-			 *   now focus on planes and quadric.
-			 */
-			if (hits.isEmpty())
-				return false;	
-			if (hits.containsGeoPoint()) {
-				hits.clear();
+		
+			if (hits == null ) {
+				resultedGeo=null;
 				return false;
 			}
-
 			
+			if (hits.isEmpty()) {
+				resultedGeo=null;
+				return false;	
+			}
+			if (hits.containsGeoPoint()) {
+				hits.clear();
+				resultedGeo=null;
+				return false;
+			}
 			
-			hits.addAll(0, selectedGeos);
+			Boolean createIntersection; //return
 			
-			Hits3D goodHits = new Hits3D();
+			if (selectedGeos.size()==1 && !hits.contains(selectedGeos.get(0)))
+				hits.addAll(0, selectedGeos);
+			
+			hits.removeAllDimElements();
+			goodHits = new Hits3D();
 			hits.getHits(new Class[] {
 					GeoCoordSys2D.class, GeoQuadric3D.class}, false, goodHits);
 			//Application.debug(goodHits);
@@ -1911,48 +1909,52 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 								) == AlgoIntersectCS2D2D.RESULTCATEGORY_CONTAINED)
 					hits.remove(1);
 			((Hits3D)hits).removeAllPolygonsAndQuadricsButOne();
-			hits = hits.getHits(2);
+			goodHits = (Hits3D) hits.getHits(2);
 			
-			if(hits.size()==2){
-				if (hits.get(0) instanceof GeoPlane3D && hits.get(1) instanceof GeoPlane3D) {
-					GeoCoordSys2D firstPlane = (GeoCoordSys2D) hits.get(0);
-					GeoCoordSys2D secondPlane = (GeoCoordSys2D) hits.get(1);
+
+			if(goodHits.size()==2){
+				if (goodHits.get(0) instanceof GeoPlane3D && goodHits.get(1) instanceof GeoPlane3D) {
+					GeoCoordSys2D firstPlane = (GeoCoordSys2D) goodHits.get(0);
+					GeoCoordSys2D secondPlane = (GeoCoordSys2D) goodHits.get(1);
 					Coords[] intersection = CoordMatrixUtil.intersectPlanes(
 							firstPlane.getCoordSys().getMatrixOrthonormal(),
 							secondPlane.getCoordSys().getMatrixOrthonormal());
 					view3D.previewLine.setCoord(intersection[0], intersection[1]);
-					view3D.previewLine.setEuclidianVisible(true);
-					view3D.previewConic.setEuclidianVisible(false);
-					
 					view3D.setPreview(view3D.previewDrawLine3D);
-				} else if (hits.get(0) instanceof GeoPlane3D && hits.get(1) instanceof GeoQuadric3D){
-					AlgoIntersectPlaneQuadric.intersectPlaneQuadric(
-							(GeoPlane3D) hits.get(0),
-							(GeoQuadric3D) hits.get(1),
-							view3D.previewConic);
-					view3D.previewConic.setEuclidianVisible(true);
-					view3D.previewLine.setEuclidianVisible(false);
+					resultedGeo = view3D.previewLine;
 					
-					view3D.setPreview(view3D.previewDrawConic3D);
-				} else if (hits.get(1) instanceof GeoPlane3D && hits.get(0) instanceof GeoQuadric3D){
+					if (selGeos()==0)
+						createIntersection = decideHideIntersection();
+				} else if (goodHits.get(0) instanceof GeoPlane3D && goodHits.get(1) instanceof GeoQuadric3D){
 					AlgoIntersectPlaneQuadric.intersectPlaneQuadric(
-							(GeoPlane3D) hits.get(1),
-							(GeoQuadric3D) hits.get(0),
+							(GeoPlane3D) goodHits.get(0),
+							(GeoQuadric3D) goodHits.get(1),
 							view3D.previewConic);
-					view3D.previewConic.setEuclidianVisible(true);
-					view3D.previewLine.setEuclidianVisible(false);
 					view3D.setPreview(view3D.previewDrawConic3D);
-				} else {
-					view3D.previewLine.setEuclidianVisible(false);
-					view3D.previewConic.setEuclidianVisible(false);
+					resultedGeo = view3D.previewConic;
+					if (selGeos()==0)
+						createIntersection = decideHideIntersection();
+				} else if (goodHits.get(1) instanceof GeoPlane3D && goodHits.get(0) instanceof GeoQuadric3D){
+					AlgoIntersectPlaneQuadric.intersectPlaneQuadric(
+							(GeoPlane3D) goodHits.get(1),
+							(GeoQuadric3D) goodHits.get(0),
+							view3D.previewConic);
+					view3D.setPreview(view3D.previewDrawConic3D);
+					resultedGeo = view3D.previewConic;
+					if (selGeos()==0)
+						createIntersection = decideHideIntersection();
+				} else { //the pair of goodHits are not intersectable
+					resultedGeo=null;
 				}
-			} else {
-				view3D.previewLine.setEuclidianVisible(false);
-				view3D.previewConic.setEuclidianVisible(false);
+				
+			} else { //intersectable objects should only be in pairs
+				resultedGeo=null;
 			}
+			
+			addSelectedCS2D(goodHits, 2, true);
+			addSelectedQuadric(goodHits, 2, true);
+		
 	
-			addSelectedCS2D(hits, 2, true);
-			addSelectedQuadric(hits, 2, true);
 			
 			if (selCS2D()>=2)  { // cs2D-cs2D
 				
@@ -1982,8 +1984,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 				if (!foundP) {
 					GeoElement[] ret = new GeoElement[1];
-					ret[0] = getKernel().getManager3D().Intersect(null, 
-							(GeoElement) cs2Ds[0], (GeoElement) cs2Ds[1]);
+					ret[0] = getKernel().getManager3D().IntersectPlanes(null, 
+							cs2Ds[0], cs2Ds[1]);
 					return ret[0].isDefined();	
 				} else if (foundP && foundNp) {
 					GeoElement[] ret = getKernel().getManager3D().IntersectionSegment(new String[] {null}, 
@@ -2014,6 +2016,42 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
+	private boolean decideHideIntersection() {
+
+			//TODO for mouseExit
+			if (mouseLoc==null)
+				return false; 
+
+			view3D.setHits3D(mouseLoc);
+			Hits hits = view3D.getHits();
+
+			if (hits == null || hits.size()==0) //should not happen
+				return false;
+			
+			int i = 0;
+			while (hits.size() > i && hits.get(0)!= resultedGeo) {
+				GeoElement geo = (GeoElement) hits.get(0);
+				
+				if (geo.isPath() && geo.getLineThickness() < 0.5f ||
+						geo.isRegion() && geo.getLineThickness() < 0.5f && geo.getAlphaValue() < 0.1f)
+					hits.remove(0);
+				else
+					++i;
+			}
+			
+			if (hits.get(0) != resultedGeo) {
+				hideIntersection = true; //means "not displaying intersection"
+				goodHits = (Hits3D) goodHits.getHits(1);
+				return false;
+			} else {
+				hideIntersection = false;
+				return true;
+			}
+
+			
+		}
+
+
 	///////////////////////////////////////////
 	// POINT CAPTURING
 	

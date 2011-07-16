@@ -532,12 +532,15 @@ public interface Manager3DInterface {
 						String label, GeoLineND g, GeoQuadric3D q, GeoPointND refPoint);
 				
 
-				/**
-				 * intersect plane/conic
-				 */
-				public GeoPointND[] IntersectPlaneConic(String[] labels, GeoCoordSys2D A,
-						GeoConicND B);
+			/**
+			 * intersect plane/conic
+			 */
+			public GeoPointND[] IntersectPlaneConic(String[] labels, GeoCoordSys2D A,
+					GeoConicND B);
 
-
+			public GeoElement IntersectPlanes(
+					String label,
+					GeoCoordSys2D cs1,
+					GeoCoordSys2D cs2);
 
 }

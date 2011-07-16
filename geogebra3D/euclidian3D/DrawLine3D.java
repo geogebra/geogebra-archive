@@ -111,13 +111,6 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 		
 	}	
 
-	public DrawLine3D(EuclidianView3D a_view3D, ArrayList selectedPoints, int previewFromType){
-		
-		super(a_view3D,selectedPoints, previewFromType,
-				new GeoLine3D(a_view3D.getKernel().getConstruction())	);
-	}	
-
-
 
 	
 

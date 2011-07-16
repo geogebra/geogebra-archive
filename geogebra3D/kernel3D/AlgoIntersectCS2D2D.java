@@ -26,8 +26,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
-import geogebra.kernel.kernelND.GeoLineND;
-import geogebra.kernel.kernelND.GeoPlaneND;
 
 
 
@@ -164,6 +162,14 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
 	protected String getIntersectionTypeString(){
 		return "IntersectionLineOfAB";
 	}
+	
+
+
+	public String getClassName() {
+    	
+    	return "AlgoIntersectCS2D2D";
+	}
+
  
 
 }

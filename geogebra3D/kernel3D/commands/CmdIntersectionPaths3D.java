@@ -8,6 +8,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 
 import geogebra.kernel.commands.CmdIntersectionPaths;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoQuadricND;
@@ -66,14 +67,14 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoPlane3D) arg[1],
                             (GeoPolygon) arg[0]);
         		//intersection plane/plane
-            		else if (arg[0] instanceof GeoPlaneND && arg[1] instanceof GeoPlaneND){
+            		else if (((GeoElement)arg[0]).isGeoPlane() && ((GeoElement)arg[0]).isGeoPlane()){
 
             			GeoElement[] ret =
             			{
-            					kernel.getManager3D().Intersect(
+            					kernel.getManager3D().IntersectPlanes(
             							c.getLabel(),
-            							(GeoElement) arg[0],
-            							(GeoElement) arg[1])};
+            							(GeoCoordSys2D) arg[0],
+            							(GeoCoordSys2D) arg[1])};
             			return ret;
 
             		}
