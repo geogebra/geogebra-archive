@@ -71,22 +71,23 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	// continuous distribution identifiers
-	private static final int DIST_NORMAL = 0;
-	private static final int DIST_STUDENT = 1;
-	private static final int DIST_CHISQUARE = 2;
-	private static final int DIST_F = 3;
-	private static final int DIST_CAUCHY = 4;
-	private static final int DIST_EXPONENTIAL = 5;
-	private static final int DIST_GAMMA = 6;
-	private static final int DIST_WEIBULL = 7;
+	public static final int DIST_NORMAL = 0;
+	public static final int DIST_STUDENT = 1;
+	public static final int DIST_CHISQUARE = 2;
+	public static final int DIST_F = 3;
+	public static final int DIST_CAUCHY = 4;
+	public static final int DIST_EXPONENTIAL = 5;
+	public static final int DIST_GAMMA = 6;
+	public static final int DIST_WEIBULL = 7;
 	private static final int continuousDistCount = 8;
 
 	// discrete distribution identifiers
-	private static final int DIST_BINOMIAL = 8;
-	private static final int DIST_PASCAL = 9;
-	private static final int DIST_HYPERGEOMETRIC = 10;
-	private static final int DIST_POISSON = 11;
+	public static final int DIST_BINOMIAL = 8;
+	public static final int DIST_PASCAL = 9;
+	public static final int DIST_HYPERGEOMETRIC = 10;
+	public static final int DIST_POISSON = 11;
 	private static final int totalDistCount = 12;
+
 
 	// selected distribution modes
 	private int selectedDiscreteDist = DIST_BINOMIAL;  
@@ -112,6 +113,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private JLabel[] lblParmeterArray;
 	private JComponent distPanel;
 	private JPanel probPanel;
+	
 	private PlotPanelEuclidianView plotPanel;
 	private PlotSettings plotSettings;
 	private JLabel lblBetween;
@@ -514,7 +516,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		plotSettings.xMax = xMax;
 		plotSettings.yMin = yMin;
 		plotSettings.yMax = yMax;
-		plotSettings.showYAxis = true;
+		
+		// don't show the y-axis for continuous case (edge axis looks bad)
+		plotSettings.showYAxis = !isContinuous;
+		
 		plotSettings.isEdgeAxis[0] = false;
 		plotSettings.isEdgeAxis[1] = true;
 		plotSettings.forceXAxisBuffer = true;
@@ -1594,8 +1599,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			break;
 
 		}
-
-
 
 		double[] d = {xMin, xMax, yMin, yMax};
 		return d;
