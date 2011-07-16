@@ -213,6 +213,17 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 		switch (selectedPlot){
 		case StatComboPanel.PLOT_ZTEST:
+		{
+			String[] rowNames = 
+			{
+					app.getMenu("PValue"),
+					app.getMenu("ZStatistic"),   
+					
+			};
+
+			resultTable.setStatTable(rowNames.length, rowNames, 1, null);
+		}
+		break;
 		case StatComboPanel.PLOT_TTEST:
 		{
 			String[] rowNames = 
@@ -228,6 +239,19 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		break;
 
 		case StatComboPanel.PLOT_ZINT:
+		{
+			String[] rowNames2 = 
+			{
+					app.getMenu("LowerLimit"),
+					app.getMenu("LowerLimit"),
+					app.getMenu("Mean"),
+					app.getMenu("MarginOfError"),
+					
+			};
+			resultTable.setStatTable(rowNames2.length, rowNames2, 1, null);
+			break;
+		}
+		
 		case StatComboPanel.PLOT_TINT:
 		{
 			String[] rowNames2 = 
@@ -242,6 +266,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 			resultTable.setStatTable(rowNames2.length, rowNames2, 1, null);
 			break;
 		}
+		
 		};
 
 	}
@@ -257,6 +282,12 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 		switch (selectedPlot){
 		case StatComboPanel.PLOT_ZTEST:
+
+			model.setValueAt(nf.format(P),0,0);
+			model.setValueAt(nf.format(testStat), 1, 0);
+			
+			break;
+
 		case StatComboPanel.PLOT_TTEST:
 
 			model.setValueAt(nf.format(P),0,0);
@@ -264,8 +295,17 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 			model.setValueAt("", 2, 0);
 			model.setValueAt(nf.format(se), 3, 0);
 			break;
-
+			
+			
 		case StatComboPanel.PLOT_ZINT:
+
+			model.setValueAt(nf.format(lower),0,0);
+			model.setValueAt(nf.format(upper), 1, 0);
+			model.setValueAt(nf.format(mean), 2, 0);
+			model.setValueAt(nf.format(me), 3, 0);
+
+			break;
+			
 		case StatComboPanel.PLOT_TINT:
 
 			model.setValueAt(nf.format(lower),0,0);
