@@ -27,6 +27,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
@@ -1016,6 +1017,12 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 	public boolean isSingleVariable() {
 		return (isLeaf() && (left instanceof Variable));
+	}
+	
+	public boolean isImaginaryUnit() {
+		return (isLeaf() 
+				&& (left instanceof GeoVec2D) 
+				&& ((GeoVec2D) left).isImaginaryUnit());
 	}
 
 	/**

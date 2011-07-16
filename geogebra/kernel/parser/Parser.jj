@@ -434,12 +434,18 @@ ValidExpression buildValidExpression() :
 				// but an undefined "e" has been read as the Euler constant already
 				else if (Unicode.EULER_STRING.equals(lhs.toString()))
 				{
-				  ve = rhs;
-                  ve.setLabel("e");  
+				 	ve = rhs;
+                  	ve.setLabel("e");  
+				}
+
+				// special case: i = 2 should be an assignment
+				// but an undefined "i" has been read as the imaginary unit already
+				else if (lhs.isImaginaryUnit())				{				  	ve = rhs;
+                  	ve.setLabel("i"); 
 				}
               
 				// special case: z = 2 should be an assignment when 3D view is not present
-				if (kernel.isZvarAllowed() && "z".equals(lhs.toString()))
+				else if (kernel.isZvarAllowed() && "z".equals(lhs.toString()))
 				{
 				  ve = rhs;
                   ve.setLabel("z");  

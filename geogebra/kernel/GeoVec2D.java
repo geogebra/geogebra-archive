@@ -72,6 +72,10 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
         mode = v.mode;
     }
     
+    public boolean isImaginaryUnit() {
+    	return mode == Kernel.COORD_COMPLEX && x == 0 && y == 1;
+    }
+    
 	public ExpressionValue deepCopy(Kernel kernel) {
 		return new GeoVec2D(this);
 	}   
