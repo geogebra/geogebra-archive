@@ -278,7 +278,7 @@ implements GeoElement3DInterface, Functional2Var, SurfaceEvaluable, LevelOfDetai
   	///////////////////////////
   	// 	LEVEL OF DETAIL
 	
-	private int levelOfDetail = 5;
+	private int levelOfDetail = 0;
 
 	public void setLevelOfDetail(int val) {
 		levelOfDetail=val;

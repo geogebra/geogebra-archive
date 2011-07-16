@@ -4851,8 +4851,8 @@ public	class PropertiesPanel extends JPanel {
 			super(new FlowLayout(FlowLayout.LEFT));
 				
 		
-			slider = new JSlider(0, 10);
-			slider.setMajorTickSpacing(5);
+			slider = new JSlider(0, 4);
+			slider.setMajorTickSpacing(1);
 			slider.setMinorTickSpacing(1);
 			slider.setPaintTicks(true);
 			slider.setPaintLabels(true);
