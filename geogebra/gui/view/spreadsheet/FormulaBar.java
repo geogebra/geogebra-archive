@@ -127,8 +127,10 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 	}
 
 
-	
+
 	public void update(){
+
+		//Application.debug("formula bar update");
 
 		if(table.isSelectNone()){
 			fldCellName.setText("");
@@ -157,7 +159,10 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		}else{
 			//Application.debug("empty cell selected at: " + row + " ," + column);
 		}
+
+		fldFormula.removeActionListener(this);
 		fldFormula.setText(cellContents);
+		fldFormula.addActionListener(this);
 	}
 
 
@@ -173,7 +178,7 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 
 	}
 
-	
+
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;
 
@@ -229,7 +234,7 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 	public void setLabels(){
 		btnAcceptFormula.setToolTipText(app.getPlain("Apply"));
 		btnCancelFormula.setToolTipText(app.getPlain("Cancel"));
-		
+
 	}
 
 }

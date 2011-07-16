@@ -250,6 +250,8 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		}
 		else if (source == btnFormulaBar){
 			view.setShowFormulaBar(btnFormulaBar.isSelected());
+			if(view.getTable().isSelectNone())
+				view.getTable().setSelection(0,0);
 			view.updateFormulaBar();
 		}
 
