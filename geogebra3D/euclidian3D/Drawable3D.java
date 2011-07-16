@@ -517,7 +517,7 @@ public abstract class Drawable3D extends DrawableND {
 			return ret;
 			
 		
-		if(!getGeoElement().isEuclidianVisible() || !isVisible())
+		if(!isVisible())
 			return ret;	
 		
 		drawGeometry(renderer);
