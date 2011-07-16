@@ -1,4 +1,4 @@
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui.view.probcalculator;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.GeoGebraIcon;
