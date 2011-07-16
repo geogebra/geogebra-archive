@@ -63,7 +63,7 @@ public class MyTable extends JTable implements FocusListener
 	public static final Color SELECTED_BACKGROUND_COLOR = GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR; 
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR_HEADER;
 	public static final Color BACKGROUND_COLOR_HEADER = GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER;
-	public static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
+	public static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.GRAY2;
 	public static final Color SELECTED_RECTANGLE_COLOR = Color.BLUE;
 
 	protected Kernel kernel;

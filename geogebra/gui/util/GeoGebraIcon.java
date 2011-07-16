@@ -522,6 +522,39 @@ public class GeoGebraIcon {
 
 	}
 
+	/**
+	 * Creates a 16x16 icon to represent a cell grid background color
+	 * @param symbol
+	 * @param font
+	 * @param iconSize
+	 * @param fgColor
+	 * @param bgColor
+	 * @return
+	 */
+	public static ImageIcon createCellGridIcon( Color fgColor, Color bgColor){
+
+		int h = 16;
+		int w = 16;
+
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// fill rectangle with bgColor (the selected color) 
+		g2.setPaint(bgColor);
+		g2.fillRect(0, 3, 15, 9);
+
+		// draw border around the colored rectangle
+		g2.setColor (fgColor);
+		g2.drawRect(0, 3, 15, 9);
+
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		return ic;
+	}
+
+	
+	
 	public static ImageIcon createStringIcon(String str, Font font, Dimension iconSize){
 		return createStringIcon( str,  font, false, false, true, iconSize, Color.BLACK, null);
 	}

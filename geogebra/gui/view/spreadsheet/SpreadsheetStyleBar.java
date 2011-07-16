@@ -61,12 +61,12 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		// create and add the buttons
 		createButtons();
 		add(btnFormulaBar);
-		
+
 		this.addSeparator();
 		add(btnBold);
 		add(btnItalic);
 
-	
+
 		this.addSeparator();
 		add(btnLeftAlign);
 		add(btnCenterAlign);
@@ -74,7 +74,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		this.addSeparator();
 		add(btnBgColor);
-		
+
 		this.addSeparator();
 		add(btnBorderStyle);
 
@@ -89,7 +89,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 
 	private void createButtons(){
-	
+
 		btnFormulaBar = new MyToggleButton(app.getImageIcon("formula_bar.png"));
 		//btnFormulaBar.setSelectedIcon(app.getImageIcon("formula_bar_hide.png"));
 		btnFormulaBar.addActionListener(this);
@@ -114,10 +114,25 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		btnRightAlign = new MyToggleButton(app.getImageIcon("format-justify-right.png"));
 		btnRightAlign.addActionListener(this);
 
-		Dimension bgColorIconSize = new Dimension(20,iconHeight);
-		btnBgColor = new ColorPopupMenuButton(app, bgColorIconSize, ColorPopupMenuButton.COLORSET_BGCOLOR, false);
+		final Dimension bgColorIconSize = new Dimension(18,iconHeight);
+		btnBgColor = new ColorPopupMenuButton(app, bgColorIconSize, ColorPopupMenuButton.COLORSET_BGCOLOR, false){
+
+			public ImageIcon getButtonIcon(){		
+
+				Color c = getSelectedColor();
+				if(c == null) 
+					return GeoGebraIcon.createNullSymbolIcon(bgColorIconSize.width, bgColorIconSize.height);
+				else
+					return GeoGebraIcon.createCellGridIcon(Color.DARK_GRAY, c);
+			}
+
+		};
+
+
+
+
 		btnBgColor.setKeepVisible(false);
-		btnBgColor.setSelectedIndex(0);
+		btnBgColor.setSelectedIndex(1);
 		btnBgColor.addActionListener(this);
 
 		ImageIcon[] borderStyleIcon = {
@@ -150,7 +165,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 
 	public void setLabels(){
-		
+
 		btnFormulaBar.setToolTipText(app.getMenu("ShowInputField"));
 		btnGrid.setToolTipText(app.getPlainTooltip("stylebar.Grid"));
 		btnBold.setToolTipText(app.getPlainTooltip("stylebar.Bold"));
@@ -160,12 +175,12 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		btnLeftAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignLeft"));
 		btnCenterAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignCenter"));
 		btnRightAlign.setToolTipText(app.getPlainTooltip("stylebar.AlignRight"));
-		
-		
+
+
 		ImageIcon boldIcon = GeoGebraIcon.createStringIcon(app.getPlain("Bold").substring(0,1),
 				app.getPlainFont(), true, false, true, iconDimension, Color.black, null);
 		btnBold.setIcon(boldIcon);
-		
+
 		ImageIcon italicIcon = GeoGebraIcon.createStringIcon(app.getPlain("Italic").substring(0,1),
 				app.getPlainFont(), false, true, true, iconDimension, Color.black, null);
 		btnItalic.setIcon(italicIcon);
