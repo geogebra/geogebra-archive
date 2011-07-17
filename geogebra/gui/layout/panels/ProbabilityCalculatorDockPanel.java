@@ -23,7 +23,7 @@ public class ProbabilityCalculatorDockPanel extends DockPanel {
 			"ProbabilityCalculator", 			// view title phrase
 			null,								// toolbar string
 			false,								// style bar?
-			6, 									// menu order
+			-1, 									// menu order
 			'P'									// menu shortcut
 		);
 		
