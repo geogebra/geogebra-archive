@@ -31,7 +31,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 	private CellFormat formatHandler;
 	private ArrayList<CellRange> selectedCells;
 
-	private MyToggleButton btnLeftAlign, btnCenterAlign, btnRightAlign, btnGrid, btnRowHeader, btnColumnHeader;
+	private MyToggleButton btnLeftAlign, btnCenterAlign, btnRightAlign;
 	private ColorPopupMenuButton btnBgColor;
 	private MyToggleButton btnBold, btnItalic;
 	private boolean allowActionPerformed = true;
@@ -74,15 +74,11 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		this.addSeparator();
 		add(btnBgColor);
-
+		
 		this.addSeparator();
 		add(btnBorderStyle);
 
-		this.addSeparator();
-		add(btnGrid);
-		//add(btnRowHeader);
-		//add(btnColumnHeader);
-
+		
 		setLabels();
 		updateStyleBar();
 	}
@@ -116,25 +112,19 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		final Dimension bgColorIconSize = new Dimension(18,iconHeight);
 		btnBgColor = new ColorPopupMenuButton(app, bgColorIconSize, ColorPopupMenuButton.COLORSET_BGCOLOR, false){
-
 			public ImageIcon getButtonIcon(){		
-
 				Color c = getSelectedColor();
 				if(c == null) 
 					return GeoGebraIcon.createNullSymbolIcon(bgColorIconSize.width, bgColorIconSize.height);
 				else
 					return GeoGebraIcon.createCellGridIcon(Color.DARK_GRAY, c);
 			}
-
 		};
-
-
-
-
 		btnBgColor.setKeepVisible(false);
-		btnBgColor.setSelectedIndex(1);
+		btnBgColor.setSelectedIndex(7); //Light Purple
 		btnBgColor.addActionListener(this);
 
+		
 		ImageIcon[] borderStyleIcon = {
 				app.getImageIcon("border_none.png"),
 				app.getImageIcon("border_frame.png"),
@@ -150,16 +140,6 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		btnBorderStyle.setKeepVisible(false);
 		btnBorderStyle.setSelectedIndex(1);
 		btnBorderStyle.addActionListener(this);
-
-		btnGrid = new MyToggleButton(app.getImageIcon("spreadsheet_grid.png"));
-		btnGrid.addActionListener(this);
-
-		btnRowHeader = new MyToggleButton(app.getImageIcon("header_row.png"));
-		btnRowHeader.addActionListener(this);
-
-		btnColumnHeader = new MyToggleButton(app.getImageIcon("header_column.png"));
-		btnColumnHeader.addActionListener(this);
-
 	}
 
 
@@ -167,7 +147,6 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 	public void setLabels(){
 
 		btnFormulaBar.setToolTipText(app.getMenu("ShowInputField"));
-		btnGrid.setToolTipText(app.getPlainTooltip("stylebar.Grid"));
 		btnBold.setToolTipText(app.getPlainTooltip("stylebar.Bold"));
 		btnItalic.setToolTipText(app.getPlainTooltip("stylebar.Italic"));
 		btnBorderStyle.setToolTipText(app.getPlainTooltip("stylebar.Border"));
@@ -254,15 +233,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 			formatHandler.setBorderStyle(selectedCells.get(0), btnBorderStyle.getSelectedIndex());
 		}
 
-		else if (source == btnGrid) {
-			view.setShowGrid(btnGrid.isSelected());
-		}
-		else if (source == btnRowHeader) {
-			view.setShowRowHeader(btnRowHeader.isSelected());
-		}
-		else if (source == btnColumnHeader) {
-			view.setShowColumnHeader(btnColumnHeader.isSelected());
-		}
+		
 		else if (source == btnFormulaBar){
 			view.setShowFormulaBar(btnFormulaBar.isSelected());
 			if(view.getTable().isSelectNone())
@@ -308,9 +279,6 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 			btnCenterAlign.setSelected(align == CellFormat.ALIGN_CENTER);
 		}
 
-		btnGrid.setSelected(view.getShowGrid());
-		btnRowHeader.setSelected(view.getShowRowHeader());
-		btnColumnHeader.setSelected(view.getShowColumnHeader());
 		btnFormulaBar.setSelected(view.getShowFormulaBar());
 		allowActionPerformed = true;
 
