@@ -541,6 +541,8 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	final public String toLaTeXString(boolean symbolic) {
 		return expression.toLaTeXString(symbolic);
 	}
+	
+	
 
 	/* ***************
 	 * CAS Stuff **************
@@ -599,25 +601,23 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		try {
 			if (useCaching) {
 				// check if result is in cache
-				resultFun = getCasEvalMap().get(casString);
+				resultFun = lookupCasEvalMap(casString);
 				if (resultFun != null) {
-					// TODO: remove
-					System.out.println("caching worked: " + casString + " -> " + resultFun);
+					//System.out.println("caching worked: " + casString + " -> " + resultFun);
 					return resultFun;
 				}					
 			}
 			
 			// evaluate expression by CAS
 			String result = kernel.evaluateGeoGebraCAS(casString);
-			// TODO: remove
-			System.out.println("evaluateGeoGebraCAS: " + casString + " -> " + result);
+			//System.out.println("evaluateGeoGebraCAS: " + casString + " -> " + result);
 
-			if (ggbCasCmd.startsWith("Derivative")) {
-				// MathPiper may return Deriv(x) f(x,y) if it doesn't know
-				// f(x,y)
-				// this should be converted into Derivative[f(x,y), x]
-				result = handleDeriv(result);
-			}
+//			if (ggbCasCmd.startsWith("Derivative")) {
+//				// MathPiper may return Deriv(x) f(x,y) if it doesn't know
+//				// f(x,y)
+//				// this should be converted into Derivative[f(x,y), x]
+//				result = handleDeriv(result);
+//			}
 
 			// parse CAS result back into GeoGebra
 			sb.setLength(0);
@@ -662,31 +662,43 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	private ExpressionNode casEvalExpression;
 	private String casEvalStringSymbolic;
 
-	private static HashMap<String, FunctionNVar> getCasEvalMap() {
+	private HashMap<String, FunctionNVar> getCasEvalMap() {
 		if (casEvalMap == null) {
 			casEvalMap = new HashMap<String, FunctionNVar>();
 		}
 		return casEvalMap;
 	}
-
-	// clears those entries in the function cache which contain this label
-	// or clear everything if the label is null (called by clearConstruction)
-	public static void clearCasEvalMap(String label) {
-		if (label == null) {
-			getCasEvalMap().clear();
-		} else {
-			Set<String> keyset = getCasEvalMap().keySet();
-			Iterator<String> it = keyset.iterator();
-			String actual = null;
-			while (it.hasNext()) {
-				actual = it.next();
-				if (actual.indexOf(label) != -1)
-					getCasEvalMap().remove(actual);
-			}
-		}
+	
+	private FunctionNVar lookupCasEvalMap(String casString) {
+		if (casEvalMap == null) 
+			return null;
+		else
+			return casEvalMap.get(casString);
 	}
 
-	private static HashMap<String, FunctionNVar> casEvalMap;
+//	/**
+//	 * Clears those entries in the function cache which contain this label
+//	 * or clear everything if the label is null (called by clearConstruction)
+//	 * @param label
+//	 */
+//	public void clearCasEvalMap(String label) {
+//		if (casEvalMap == null) return;
+//		
+//		if (label == null) {
+//			casEvalMap.clear();
+//		} else {
+//			Set<String> keyset = getCasEvalMap().keySet();
+//			Iterator<String> it = keyset.iterator();
+//			String actual = null;
+//			while (it.hasNext()) {
+//				actual = it.next();
+//				if (actual.indexOf(label) != -1)
+//					casEvalMap.remove(actual);
+//			}
+//		}
+//	}
+
+	private HashMap<String, FunctionNVar> casEvalMap;
 
 	/**
 	 * MathPiper may return something like Deriv(x) f(x). This method converts

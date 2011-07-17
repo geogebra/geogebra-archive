@@ -3244,6 +3244,16 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
         			sb.append("xcoord(");
 					sb.append(leftStr);
 					sb.append(')');
+					
+//        			sb.append("x");		        		
+//        			sb.append(UNICODE_PREFIX);
+//        			sb.append("40"); // decimal unicode for (
+//        			sb.append(UNICODE_DELIMITER);
+//        			sb.append(leftStr);
+//        			sb.append(UNICODE_PREFIX);
+//        			sb.append("41"); // decimal unicode for )
+//        			sb.append(UNICODE_DELIMITER);
+        	
         			break;
         			
 				default:

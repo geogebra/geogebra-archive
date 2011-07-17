@@ -791,10 +791,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			((GeoNumeric)intervalMin).unregisterMinMaxListener(this);
 		if(intervalMax instanceof GeoNumeric)
 			((GeoNumeric)intervalMax).unregisterMinMaxListener(this);
-
-
-		// getLabel() gives wrong answer for some reason
-		FunctionNVar.clearCasEvalMap(label);
 	}
 
 	/**

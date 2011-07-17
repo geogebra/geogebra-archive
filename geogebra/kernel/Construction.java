@@ -568,8 +568,6 @@ public class Construction {
 		worksheetText[1] = null;
 
 		usedMacros = null;
-		
-		FunctionNVar.clearCasEvalMap(null);
 	}
 
 	/**
