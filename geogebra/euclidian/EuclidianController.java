@@ -506,10 +506,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	public void setMode(int newMode) {
 
+		
 		if(newMode == EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS
-				|| newMode == EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST)
+				)
 			return;
 
 

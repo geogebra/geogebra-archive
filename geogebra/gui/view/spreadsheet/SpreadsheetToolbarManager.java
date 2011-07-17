@@ -32,6 +32,7 @@ public class SpreadsheetToolbarManager {
 
 	public void  handleModeChange(int mode){
 
+		//Application.printStacktrace("");
 		table.setTableMode(table.TABLE_MODE_STANDARD);
 
 		switch (mode) {	
@@ -54,7 +55,8 @@ public class SpreadsheetToolbarManager {
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
 
-			if(!app.getSelectedGeos().isEmpty() && prevMode == mode){
+			//if(!app.getSelectedGeos().isEmpty() && prevMode == mode){
+			if(!table.selectedCellRanges.get(0).isEmpty()){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LIST);
 				id.setVisible(true);
 			}
@@ -62,7 +64,7 @@ public class SpreadsheetToolbarManager {
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LISTOFPOINTS:
-			if(prevMode == mode && table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
+			if(table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LISTOFPOINTS);
 				id.setVisible(true);}
 
@@ -70,7 +72,7 @@ public class SpreadsheetToolbarManager {
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_MATRIX:
-			if (prevMode == mode && table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
+			if (table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_MATRIX);
 				id.setVisible(true);
 			}
@@ -78,14 +80,14 @@ public class SpreadsheetToolbarManager {
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_TABLETEXT:
-			if(prevMode == mode && table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
+			if(table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_TABLETEXT);
 				id.setVisible(true);
 			}
 			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_POLYLINE:
-			if(prevMode == mode && table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
+			if(table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_POLYLINE);
 				id.setVisible(true);
 			}

@@ -47,14 +47,15 @@ public class SpreadsheetDockPanel extends DockPanel {
 	private static String getDefaultToolbar() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(EuclidianView.MODE_MOVE);
-		sb.append(" || ");
-		sb.append(EuclidianView.MODE_PROBABILITY_CALCULATOR);
+		
 		sb.append(" || ");
 		sb.append(EuclidianView.MODE_SPREADSHEET_ONEVARSTATS);
-		sb.append(" || ");
+		sb.append(" , ");
 		sb.append(EuclidianView.MODE_SPREADSHEET_TWOVARSTATS);
-		sb.append(" || ");
+		sb.append(" , ");
 		sb.append(EuclidianView.MODE_SPREADSHEET_MULTIVARSTATS);
+		sb.append(" , ");
+		sb.append(EuclidianView.MODE_PROBABILITY_CALCULATOR);
 		
 		sb.append(" || ");
 		sb.append(EuclidianView.MODE_SPREADSHEET_CREATE_LIST);

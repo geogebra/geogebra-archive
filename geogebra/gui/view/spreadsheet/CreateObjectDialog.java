@@ -1,30 +1,41 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.euclidian.Drawable;
+import geogebra.euclidian.FormulaDimension;
 import geogebra.gui.InputDialog;
-import geogebra.gui.TextPreviewPanel;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -53,10 +64,11 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 	private JList typeList;
 	private DefaultListModel model;
-	private JLabel lblType, lblName, lblTake, lblOrder, lblXYOrder;
+	private JLabel lblObject, lblType, lblName, lblTake, lblOrder, lblXYOrder;
 
-	private JCheckBox ckValue, ckObject, ckSort, ckTranspose;
-	private JRadioButton rbOrderNone, rbOrderRow,rbOrderCol, rbOrderSortAZ, rbOrderSortZA;
+	private JCheckBox  ckSort, ckTranspose;
+	private JRadioButton btnValue, btnObject;
+	private JRadioButton rbOrderNone, rbOrderRow, rbOrderCol, rbOrderSortAZ, rbOrderSortZA;
 	private JComboBox cbScanOrder, cbTake;
 
 	private boolean isIniting = true;
@@ -67,7 +79,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 	private GeoElement newGeo;
 
-	private TextPreviewPanel previewPanel;
+	private JScrollPane previewPanel;
 	private JTextField fldType;
 
 	private String title;
@@ -75,12 +87,15 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 	private boolean keepNewGeo = false;
 	private JComboBox cbLeftRightOrder;
 	private JPanel cards;
+	private JLabel lblPreview;
+	private JLabel lblPreviewHeader;
+	private JPanel namePanel;
 
 
 
 	public CreateObjectDialog(Application app, SpreadsheetView view, int objectType) {
 
-		super(app.getFrame(), true);
+		super(app.getFrame(), false);
 		this.app = app;	
 		this.view = view;
 		this.objectType = objectType;
@@ -88,6 +103,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		cp = table.getCellRangeProcessor();
 		selectionType = table.getSelectionType();  
 		selectedCellRanges = table.selectedCellRanges;	
+
 
 		boolean showApply = false;
 
@@ -101,14 +117,21 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 		isIniting = false;
 		setLabels(null);
-		setTitle((String) model.getElementAt(objectType));
+		//setTitle((String) model.getElementAt(objectType));
 
 		//optionPane.add(inputPanel, BorderLayout.CENTER);	
 		typeList.setSelectedIndex(objectType);
-		//setResizable(true);
-		centerOnScreen();	
+
+
+
+		setResizable(true);
+		centerOnScreen();
 		btCancel.requestFocus();
+		pack();
 	}
+
+
+
 
 
 	private void createAdditionalGUI(){
@@ -119,7 +142,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 		lblName = new JLabel();
 		fldName = new MyTextField(app.getGuiManager());
-		fldName.setColumns(14);
+
 		fldName.setShowSymbolTableIcon(true);
 		fldName.addKeyListener(new KeyAdapter(){
 			public void keyPressed(KeyEvent e) {
@@ -129,9 +152,6 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 				}
 			}
 		});
-
-
-
 
 		lblTake = new JLabel();
 		cbScanOrder = new JComboBox();
@@ -143,9 +163,13 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		cbLeftRightOrder.addActionListener(this);
 
 
-		ckObject = new JCheckBox();
-		ckValue = new JCheckBox();
-		ckObject.setSelected(true);
+		btnObject = new JRadioButton();
+		btnValue = new JRadioButton();
+		btnObject.setSelected(true);
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(btnObject);
+		bg.add(btnValue);
+
 
 		lblXYOrder = new JLabel();
 
@@ -157,37 +181,64 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		ckTranspose.addActionListener(this);
 
 		// show the object list only if an object type is not given
+
+		lblObject = new JLabel();
+
 		if(objectType <0){
 			objectType = TYPE_LIST;
 			typePanel = new JPanel(new BorderLayout());
+			typePanel.add(lblObject, BorderLayout.NORTH);	
 			typePanel.add(typeList, BorderLayout.WEST);	
-			typeList.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-			typePanel.setBorder(BorderFactory.createEtchedBorder());		
+			typeList.setBorder(BorderFactory.createEmptyBorder(6,2,2,2));
+			typePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));		
 			optionPane.add(typePanel, BorderLayout.WEST);
 		}
 
+
+
+		namePanel = new JPanel(new BorderLayout());
+		//namePanel.add(lblName, BorderLayout.WEST);		
+		namePanel.add(fldName, BorderLayout.CENTER);	
+
+
+		buildOptionsPanel();
+		JPanel p = new JPanel(new BorderLayout());
+		p.add(namePanel, BorderLayout.NORTH);
+		p.add(optionsPanel, BorderLayout.SOUTH);
+
+
+		lblPreview = new JLabel();
+		lblPreview.setBorder(BorderFactory.createEtchedBorder());
+		lblPreview.setHorizontalAlignment(SwingConstants.CENTER);
+		previewPanel = new JScrollPane(lblPreview);
+		previewPanel.setBackground(this.getBackground());
+
+
+
 		JPanel op = new JPanel(new BorderLayout());
-		op.add(buildOptionsPanel(), BorderLayout.NORTH);
+		op.add(p, BorderLayout.WEST);
+		op.add(previewPanel, BorderLayout.CENTER);
+
+		previewPanel.setPreferredSize(new Dimension(200, p.getPreferredSize().height));
+
 		optionPane.add(op, BorderLayout.CENTER);
+
+
 
 	}
 
 
-	private JPanel buildOptionsPanel() {
+	private void buildOptionsPanel() {
 
-		JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		namePanel.add(lblName);		
-		namePanel.add(fldName);	
-		//p.add(lblTake);
 
 		JPanel copyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		copyPanel.add(ckObject);
-		copyPanel.add(ckValue);
+		copyPanel.add(btnObject);
+		copyPanel.add(btnValue);
 		//copyPanel.add(cbTake);
 
 		JPanel northPanel = new JPanel(new BorderLayout());
-		northPanel.add(namePanel,BorderLayout.NORTH);
-		northPanel.add(Box.createRigidArea(new Dimension(50,10)), BorderLayout.WEST);
+		//northPanel.add(namePanel,BorderLayout.NORTH);
+		//	northPanel.add(Box.createRigidArea(new Dimension(50,10)), BorderLayout.WEST);
 		northPanel.add(copyPanel,BorderLayout.CENTER);
 
 		JPanel orderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -210,12 +261,17 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		cards.add("c3", pointListPanel);
 
 
-		JPanel optionsPanel = new JPanel(new BorderLayout());
+
+		optionsPanel = new JPanel(new BorderLayout());
 		optionsPanel.add(northPanel, BorderLayout.NORTH);
-		optionsPanel.add(Box.createRigidArea(new Dimension(50,10)), BorderLayout.WEST);
+		//	optionsPanel.add(Box.createRigidArea(new Dimension(50,10)), BorderLayout.WEST);
 		optionsPanel.add(cards, BorderLayout.CENTER);
 
-		return optionsPanel;
+
+
+		//lblPreviewHeader = new JLabel();
+		//optionsPanel.add(lblPreviewHeader, BorderLayout.SOUTH);
+
 	}
 
 
@@ -232,10 +288,10 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		btCancel.setText(app.getMenu("Create"));
 
 		// object/value checkboxes
-		ckObject.setText(app.getPlain("dependent"));
-		ckObject.addActionListener(this);
-		ckValue.setText(app.getPlain("free"));
-		ckValue.addActionListener(this);
+		btnObject.setText(app.getPlain("dependent"));
+		btnObject.addActionListener(this);
+		btnValue.setText(app.getPlain("free"));
+		btnValue.addActionListener(this);
 
 		// transpose checkbox
 		ckTranspose.setText(app.getMenu("Transpose"));
@@ -265,11 +321,44 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		model.addElement(app.getMenu("Table"));
 		model.addElement(app.getMenu("PolyLine"));
 
-		//	optionsPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Options")));
-		if(typePanel!=null)
-			typePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Object")));
 
-		setTitle((String) model.getElementAt(objectType));
+		lblObject.setText(app.getMenu("Object") + ":");
+
+		//lblPreviewHeader.setText(app.getMenu("Preview")+ ":");
+
+
+		namePanel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createTitledBorder(app.getMenu("Name")),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
+		previewPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
+
+		optionsPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Options")));
+		//	if(typePanel!=null)
+		//	typePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Object")));
+
+		String titleText = "";
+		switch(objectType){
+		case TYPE_LIST:
+			titleText = app.getMenu("CreateList");
+			break;
+		
+		case TYPE_LISTOFPOINTS:
+			titleText = app.getMenu("CreateListOfPoints");
+			break;
+		
+		case TYPE_TABLETEXT:
+			titleText = app.getMenu("CreateTable");
+			break;
+			
+		case TYPE_POLYLINE:
+			titleText = app.getMenu("CreatePolyLine");
+			break;
+		
+		case TYPE_MATRIX:
+			titleText = app.getMenu("CreateMatrix");
+			break;
+		}	
+		setTitle(titleText);
 
 
 	}
@@ -320,8 +409,8 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		Object source = e.getSource();
 
 		try {
-			ckValue.removeActionListener(this);
-			ckObject.removeActionListener(this);
+			btnValue.removeActionListener(this);
+			btnObject.removeActionListener(this);
 
 			// btCancel acts as create for now
 			if (source == btCancel ) {
@@ -338,12 +427,12 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 				setVisible(false);
 			} 
 
-			else if (source == ckObject) {
-				ckValue.setSelected(!ckObject.isSelected());
+			else if (source == btnObject) {
+				btnValue.setSelected(!btnObject.isSelected());
 				createNewGeo();
 			} 
-			else if (source == ckValue) {
-				ckObject.setSelected(!ckValue.isSelected());
+			else if (source == btnValue) {
+				btnObject.setSelected(!btnValue.isSelected());
 				createNewGeo();
 			}
 
@@ -351,8 +440,8 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 				createNewGeo();
 			} 
 
-			ckValue.addActionListener(this);
-			ckObject.addActionListener(this);
+			btnValue.addActionListener(this);
+			btnObject.addActionListener(this);
 
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
@@ -371,9 +460,16 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 			}
 		}
 
+		// clean up on exit: either remove our geo or keep it and make it visible
 		if(!isVisible){
-			if(!keepNewGeo)
+			if(keepNewGeo){
+				newGeo.setEuclidianVisible(true);
+				if(!newGeo.isGeoText())
+					newGeo.setAuxiliaryObject(false);
+				newGeo.update();
+			}else{
 				newGeo.remove();
+			}
 		}
 		super.setVisible(isVisible);
 	}
@@ -428,7 +524,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		int row1 = table.selectedCellRanges.get(0).getMinRow();
 		int row2 = table.selectedCellRanges.get(0).getMaxRow();	
 
-		boolean copyByValue = ckValue.isSelected();
+		boolean copyByValue = btnValue.isSelected();
 		boolean scanByColumn = cbScanOrder.getSelectedIndex() == 1;
 		boolean leftToRight = cbLeftRightOrder.getSelectedIndex() == 0;
 		boolean transpose = ckTranspose.isSelected();
@@ -458,8 +554,35 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 			}
 
-			if(!nullGeo)
+
+
+			ImageIcon latexIcon = new ImageIcon();
+			//String latexStr = newGeo.getLaTeXAlgebraDescription(true);
+
+			String latexStr = newGeo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
+
+
+			//System.out.println(latexStr);
+
+
+			Font latexFont = new Font(app.getPlainFont().getName(),app.getPlainFont().getStyle(),app.getPlainFont().getSize()-1);
+
+			if(latexStr != null && Application.isLaTeXneeded(latexStr)){
+				drawLatexImageIcon(latexIcon, latexStr, latexFont, false, Color.black, null );
+				lblPreview.setText(" ");
+			}else{
+				lblPreview.setText(newGeo.getAlgebraDescriptionTextOrHTML());
+			}
+			lblPreview.setIcon(latexIcon);
+
+
+			if(!nullGeo){
 				newGeo.setLabel(fldName.getText());
+				newGeo.setAuxiliaryObject(true);
+				newGeo.setEuclidianVisible(false);
+			}
+
+
 			updateGUI();
 
 		} catch (Exception e) {
@@ -480,6 +603,49 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 			typeList.addListSelectionListener(this);
 		}
 	}
+
+
+
+
+	/**
+	 * Draw a LaTeX image in the cell icon. Drawing is done twice. First draw gives 
+	 * the needed size of the image. Second draw renders the image with the correct
+	 * dimensions.
+	 */
+	private void drawLatexImageIcon(ImageIcon latexIcon, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
+
+		// Create image with dummy size, then draw into it to get the correct size
+		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+		FormulaDimension d = new FormulaDimension();
+		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
+				bgColor);
+
+		// Now use this size and draw again to get the final image
+		image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
+		g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
+				bgColor);
+
+		latexIcon.setImage(image);
+
+	}
+
+
+
 
 
 
