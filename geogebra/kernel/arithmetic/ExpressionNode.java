@@ -755,8 +755,13 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		// left tree
 		if (left == oldOb) {
 			left = newOb;
-		} else if (left!= null && left.isExpressionNode()) {
-			left = ((ExpressionNode) left).replace(oldOb, newOb);
+		} else if (left!= null) {
+			if (left.isExpressionNode()) {
+				left = ((ExpressionNode) left).replace(oldOb, newOb);
+			}
+			else if (left instanceof FunctionNVar) {
+				((FunctionNVar)left).getExpression().replace(oldOb, newOb);
+			}
 		}
 
 		// right tree
@@ -765,6 +770,9 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				right = newOb;
 			} else if (right.isExpressionNode()) {
 				right = ((ExpressionNode) right).replace(oldOb, newOb);
+			}
+			else if (right instanceof FunctionNVar) {
+				((FunctionNVar)right).getExpression().replace(oldOb, newOb);
 			}
 
 		}

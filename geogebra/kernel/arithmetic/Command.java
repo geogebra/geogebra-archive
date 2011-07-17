@@ -19,10 +19,12 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.Unicode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -96,6 +98,11 @@ implements ExpressionValue {
     		String str = ev.toString();
     		if (str.length() == 1 && Character.isLetter(str.charAt(0)))
     			return str;
+    	}
+    	else if (ev instanceof GeoVec2D) {
+    		if (((GeoVec2D) ev).isImaginaryUnit()) {
+    			return Unicode.IMAGINARY;
+    		}
     	}
     	
     	return null;

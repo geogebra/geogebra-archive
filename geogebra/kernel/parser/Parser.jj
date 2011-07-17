@@ -1567,9 +1567,7 @@ ExpressionValue numVecVariable():
 		}
 		// i for imaginary unit
 		else if (c.image.equalsIgnoreCase("i"))		{
-			GeoVec2D z = new GeoVec2D(kernel, 0, 1);
-			z.setMode(Kernel.COORD_COMPLEX);
-		  	return z;		}
+		  	return GeoVec2D.getImaginaryUnit(kernel);		}
 
        // standard case for undefined variable
        return new Variable(kernel, c.image);

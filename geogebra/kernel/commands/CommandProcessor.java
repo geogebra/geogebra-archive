@@ -42,6 +42,7 @@ import geogebra.kernel.GeoPolyLineInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -54,12 +55,14 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.Variable;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 import geogebra.main.MyError;
 import geogebra.sound.SoundManager;
 import geogebra.util.ImageManager;
+import geogebra.util.Unicode;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
@@ -174,6 +177,15 @@ public abstract class CommandProcessor {
 		String localVarName = c.getVariableName(varPos);
 		if (localVarName == null) {
 			throw argErr(app, c.getName(), c.getArgument(varPos));
+		}
+		// imaginary unit as local variable name
+		else if (localVarName.equals(Unicode.IMAGINARY)) {
+			// replace all imaginary unit objects in command arguments by a variable "i"object
+			Variable localVar = new Variable(kernel, "i");
+			localVarName = "i";
+			for (ExpressionNode arg : c.getArguments()) {
+				arg.replace(GeoVec2D.getImaginaryUnit(kernel), localVar);
+			}
 		}
 
 		// add local variable name to construction
