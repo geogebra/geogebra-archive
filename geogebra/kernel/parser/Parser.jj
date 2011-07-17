@@ -1691,11 +1691,12 @@ ExpressionNode numberFunction():
     Token c;
 }
 {           
-    <X_FUNC> en = expressionOrEquation() ")"
+    c = <X_FUNC> en = expressionOrEquation() ")"
       {
         if (GeoGebraCASParsing)         {
           	// GeoGebra CAS view: x(...) is interpreted as a function
-          	Command cmd = new Command(kernel, "x", true );
+          	String funName = c.image.substring(0,c.image.length()-1);
+          	Command cmd = new Command(kernel, funName, true );
 			cmd.addArgument( en );			
 			return new ExpressionNode(kernel, cmd);
       	}
@@ -1704,12 +1705,13 @@ ExpressionNode numberFunction():
       	  return new ExpressionNode(kernel, en, ExpressionNode.XCOORD, null);      	}
        }  
 |
-     <Y_FUNC> en = expressionOrEquation() ")"
+     c = <Y_FUNC> en = expressionOrEquation() ")"
       {
         if (GeoGebraCASParsing) 
         {
           	// GeoGebra CAS view: y(...) is interpreted as a function
-          	Command cmd = new Command(kernel, "y", true );
+          	String funName = c.image.substring(0,c.image.length()-1);
+          	Command cmd = new Command(kernel, funName, true );
 			cmd.addArgument( en );			
 			return new ExpressionNode(kernel, cmd);
       	}
@@ -1720,12 +1722,13 @@ ExpressionNode numberFunction():
       	}
        } 
 |
-     <Z_FUNC> en = expressionOrEquation() ")"
+     c = <Z_FUNC> en = expressionOrEquation() ")"
      {
         if (GeoGebraCASParsing) 
         {
           	// GeoGebra CAS view: z(...) is interpreted as a function
-          	Command cmd = new Command(kernel, "z", true );
+          	String funName = c.image.substring(0,c.image.length()-1);
+          	Command cmd = new Command(kernel, funName, true );
 			cmd.addArgument( en );			
 			return new ExpressionNode(kernel, cmd);
       	}

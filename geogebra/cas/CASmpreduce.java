@@ -210,12 +210,11 @@ public class CASmpreduce extends CASgeneric {
 			// mpreduce.evaluate("operator log!-temp");
 			// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
 
-
-
 			// access functions for elements of a vector 
 			mpreduce.evaluate("procedure x(a); if not numberp(a) and part(a, 0) = list then first(a) else x*a;");
 			mpreduce.evaluate("procedure y(a); if not numberp(a) and part(a, 0) = list then second(a) else x*a;");
 			mpreduce.evaluate("procedure z(a); if not numberp(a) and part(a, 0) = list then third(a) else x*a;");
+		
 			
 			mpreduce.evaluate(" Degree := pi/180;");
 			

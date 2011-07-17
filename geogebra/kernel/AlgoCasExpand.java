@@ -36,7 +36,7 @@ public class AlgoCasExpand extends AlgoCasBase {
 	}
 	
     final public String toString() {  
-    	sb.setLength(0);
+    	StringBuilder sb = new StringBuilder();
     	sb.append(getCommandDescription());
     	
         if (!f.toGeoElement().isIndependent()) { // show the symbolic representation too
