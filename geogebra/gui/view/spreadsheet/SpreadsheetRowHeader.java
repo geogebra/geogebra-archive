@@ -140,21 +140,14 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 			//			setOpaque(true);
 			//setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
 			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
-			//			setHorizontalAlignment(CENTER) ;
-			//			setForeground(header.getForeground()) ;
-			//			setBackground(header.getBackground());
-			if (getFont().getSize() == 0) {
-				Font font1 = app.getPlainFont();
-				if (font1 == null || font1.getSize() == 0) {
-					font1 = new Font("dialog", 0, 12);
-				}
-				setFont(font1);
-			}
+			
 
 		}
 
 		public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {
 
+			setFont(app.getPlainFont());
+			
 			// adjust row height to match spreadsheet table row height 
 			Dimension size = getPreferredSize();
 			size.height = table.getRowHeight(index);
@@ -217,6 +210,7 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 	} 
 
 
+	
 
 
 

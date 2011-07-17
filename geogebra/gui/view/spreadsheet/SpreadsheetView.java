@@ -137,7 +137,8 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		// Set the spreadsheet panel as the right component of this JSplitPane
 		splitPane = new JSplitPane();
 		splitPane.setRightComponent(spreadsheetPanel);	
-
+		splitPane.setBorder(BorderFactory.createEmptyBorder());
+		
 		// Set the browser as the left component or to null if showBrowserPanel == false
 		setShowFileBrowser(showBrowserPanel);  
 
@@ -831,7 +832,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		table.headerRenderer.setPreferredSize(new Dimension(w, h));
 
 		table.setFont(app.getPlainFont());
-		rowHeader.setFont(font);
+		
 		table.headerRenderer.setFont(font);
 
 		// Adjust row heights for tall LaTeX images
