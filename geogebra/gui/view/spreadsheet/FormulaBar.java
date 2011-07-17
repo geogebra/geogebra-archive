@@ -62,10 +62,8 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 
 
 		btnAcceptFormula = new JButton(app.getImageIcon("apply.png"));
-		//btnAcceptFormula = new JButton("\u2713");
 		btnAcceptFormula.addMouseListener(new BarButtonListener());
 		btnAcceptFormula.setFocusable(false);
-		//btnAcceptFormula.addActionListener(this);
 		btnAcceptFormula.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));	
 
 		fldFormula = new AutoCompleteTextField(-1, app, false);  
@@ -97,7 +95,7 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 			//fldFormula.addKeyListener(defaultKeyListeners[i]); 
 		} 
 
-
+		setLabels();
 	}
 
 
