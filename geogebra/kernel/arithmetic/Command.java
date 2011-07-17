@@ -104,6 +104,11 @@ implements ExpressionValue {
     			return Unicode.IMAGINARY;
     		}
     	}
+    	else if (ev instanceof MySpecialDouble) {
+    		if (((MySpecialDouble) ev).isEulerConstant()) {
+    			return Unicode.EULER_STRING;
+    		}
+    	}
     	
     	return null;
     }

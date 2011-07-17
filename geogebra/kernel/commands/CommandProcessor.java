@@ -54,6 +54,7 @@ import geogebra.kernel.arithmetic.BooleanValue;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionalNVar;
+import geogebra.kernel.arithmetic.MySpecialDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Variable;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -181,10 +182,19 @@ public abstract class CommandProcessor {
 		// imaginary unit as local variable name
 		else if (localVarName.equals(Unicode.IMAGINARY)) {
 			// replace all imaginary unit objects in command arguments by a variable "i"object
-			Variable localVar = new Variable(kernel, "i");
 			localVarName = "i";
+			Variable localVar = new Variable(kernel, localVarName);
 			for (ExpressionNode arg : c.getArguments()) {
 				arg.replace(GeoVec2D.getImaginaryUnit(kernel), localVar);
+			}
+		}
+		// Euler constant as local variable name
+		else if (localVarName.equals(Unicode.EULER_STRING)) {
+			// replace all imaginary unit objects in command arguments by a variable "i"object
+			localVarName = "e";
+			Variable localVar = new Variable(kernel, localVarName);
+			for (ExpressionNode arg : c.getArguments()) {
+				arg.replace(MySpecialDouble.getEulerConstant(kernel), localVar);
 			}
 		}
 

@@ -1563,7 +1563,7 @@ ExpressionValue numVecVariable():
 		// check some special variable names
 		// e for Euler constant
 		if (c.image.equalsIgnoreCase("e"))		{		 
-			return new MySpecialDouble(kernel, Math.E, Unicode.EULER_STRING);
+			return MySpecialDouble.getEulerConstant(kernel);
 		}
 		// i for imaginary unit
 		else if (c.image.equalsIgnoreCase("i"))		{

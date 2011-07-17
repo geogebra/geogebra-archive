@@ -762,6 +762,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			else if (left instanceof FunctionNVar) {
 				((FunctionNVar)left).getExpression().replace(oldOb, newOb);
 			}
+			else if (left instanceof Equation) {
+				((Equation)left).getLHS().replace(oldOb, newOb);
+				((Equation)left).getRHS().replace(oldOb, newOb);
+			}
 		}
 
 		// right tree
@@ -774,7 +778,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			else if (right instanceof FunctionNVar) {
 				((FunctionNVar)right).getExpression().replace(oldOb, newOb);
 			}
-
+			else if (right instanceof Equation) {
+				((Equation)right).getLHS().replace(oldOb, newOb);
+				((Equation)right).getRHS().replace(oldOb, newOb);
+			}
 		}
 		return this;
 	}

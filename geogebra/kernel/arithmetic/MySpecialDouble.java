@@ -31,6 +31,8 @@ public class MySpecialDouble extends MyDouble {
 	private int precision; // number of significant digits
 	private boolean isLetterConstant; // for Pi or Euler constant
 	
+	private static MySpecialDouble eulerConstant;
+	
 	public MySpecialDouble(Kernel kernel, double val, String strToString) {
 		super(kernel, val);
 		
@@ -61,6 +63,17 @@ public class MySpecialDouble extends MyDouble {
 		}
 		
 		this.strToString = strToString;
+	}
+	
+	public static MySpecialDouble getEulerConstant(Kernel kernel) {
+		if (eulerConstant == null) {
+			eulerConstant = new MySpecialDouble(kernel, Math.E, Unicode.EULER_STRING);
+		}
+		return eulerConstant;
+	}
+	
+	public boolean isEulerConstant() {
+		return getDouble() == Math.E;
 	}
 	
 	public String toString() {
