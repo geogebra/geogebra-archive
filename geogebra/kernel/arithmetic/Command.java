@@ -345,5 +345,14 @@ implements ExpressionValue {
 	public String toOutputValueString() {
 		return toValueString();
 	}
+	
+	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
+        for (int i=0; i < args.size(); i++) {
+        	ExpressionNode en = (ExpressionNode)args.get(i);
+            en = en.replace(oldOb, newOb);
+            args.set(i, en);
+        }     	
+        return this;
+    }
 
 }

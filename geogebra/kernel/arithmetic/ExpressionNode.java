@@ -753,37 +753,44 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		}
 
 		// left tree
-		if (left == oldOb) {
-			left = newOb;
-		} else if (left!= null) {
-			if (left.isExpressionNode()) {
-				left = ((ExpressionNode) left).replace(oldOb, newOb);
-			}
-			else if (left instanceof FunctionNVar) {
-				((FunctionNVar)left).getExpression().replace(oldOb, newOb);
-			}
-			else if (left instanceof Equation) {
-				((Equation)left).getLHS().replace(oldOb, newOb);
-				((Equation)left).getRHS().replace(oldOb, newOb);
-			}
+		if (left!= null) {
+			left = replaceInEV(left, oldOb, newOb);			
 		}
 
 		// right tree
 		if (right != null) {
-			if (right == oldOb) {
-				right = newOb;
-			} else if (right.isExpressionNode()) {
-				right = ((ExpressionNode) right).replace(oldOb, newOb);
-			}
-			else if (right instanceof FunctionNVar) {
-				((FunctionNVar)right).getExpression().replace(oldOb, newOb);
-			}
-			else if (right instanceof Equation) {
-				((Equation)right).getLHS().replace(oldOb, newOb);
-				((Equation)right).getRHS().replace(oldOb, newOb);
-			}
+			right = replaceInEV(right, oldOb, newOb);
 		}
 		return this;
+	}
+	
+	/**
+	 * Replaces every oldOb by newOb in exp.
+	 */
+	public static ExpressionValue replaceInEV(ExpressionValue exp, ExpressionValue oldOb, ExpressionValue newOb) {
+		if (exp == oldOb) {
+			return newOb;
+		}
+		else if (exp.isExpressionNode()) {
+			return ((ExpressionNode) exp).replace(oldOb, newOb);
+		}
+		else if (exp instanceof FunctionNVar) {
+			return ((FunctionNVar)exp).replace(oldOb, newOb);
+		}
+		else if (exp instanceof Equation) {
+			return ((Equation)exp).replace(oldOb, newOb);
+		}
+		else if (exp instanceof MyVecNode) {
+			return ((MyVecNode)exp).replace(oldOb, newOb);
+		}
+		else if (exp instanceof MyList) {
+			return ((MyList)exp).replace(oldOb, newOb);
+		}
+		else if (exp instanceof Command) {
+			return ((Command)exp).replace(oldOb, newOb);
+		}
+		
+		return exp;
 	}
 
 	/**

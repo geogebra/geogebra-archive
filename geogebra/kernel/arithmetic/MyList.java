@@ -853,6 +853,15 @@ public class MyList extends ValidExpression implements ListValue {
 	public String toOutputValueString() {
 		return toValueString();
 	}
+	
+	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
+        for (int i = 0; i < listElements.size(); i++) {
+        	ExpressionValue ev = listElements.get(i);
+            ev = ExpressionNode.replaceInEV(ev, oldOb, newOb);
+            listElements.set(i, ev);
+        }     
+        return this;
+    }
 
 
 }

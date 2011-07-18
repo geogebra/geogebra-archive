@@ -184,18 +184,14 @@ public abstract class CommandProcessor {
 			// replace all imaginary unit objects in command arguments by a variable "i"object
 			localVarName = "i";
 			Variable localVar = new Variable(kernel, localVarName);
-			for (ExpressionNode arg : c.getArguments()) {
-				arg.replace(GeoVec2D.getImaginaryUnit(kernel), localVar);
-			}
+			c.replace(GeoVec2D.getImaginaryUnit(kernel), localVar);			
 		}
 		// Euler constant as local variable name
 		else if (localVarName.equals(Unicode.EULER_STRING)) {
 			// replace all imaginary unit objects in command arguments by a variable "i"object
 			localVarName = "e";
 			Variable localVar = new Variable(kernel, localVarName);
-			for (ExpressionNode arg : c.getArguments()) {
-				arg.replace(MySpecialDouble.getEulerConstant(kernel), localVar);
-			}
+			c.replace(MySpecialDouble.getEulerConstant(kernel), localVar);
 		}
 
 		// add local variable name to construction

@@ -388,5 +388,12 @@ public class Equation extends ValidExpression {
 		return toValueString();
 	}
 
+	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
+		lhs = lhs.replace(oldOb, newOb);
+		rhs = rhs.replace(oldOb, newOb);
+        return this;
+    }
+	
+
  
 } // end of class Equation

@@ -67,6 +67,24 @@ public class MyVecNode extends ValidExpression implements VectorValue {
     	return y;
     }
     
+    public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
+    	if (x == oldOb) {
+    		x = newOb;
+    	}
+    	else if (x instanceof ExpressionNode) {
+    		x =((ExpressionNode) x).replace(oldOb, newOb);
+    	}
+    	
+    	if (y == oldOb) {
+    		y = newOb;
+    	}
+    	else if (y instanceof ExpressionNode) {
+    		y =((ExpressionNode) y).replace(oldOb, newOb);
+    	}
+    	
+    	return this;
+    }
+    
     public void setPolarCoords(ExpressionValue r, ExpressionValue phi) {
         setCoords(r, phi);        
         mode = Kernel.COORD_POLAR;        

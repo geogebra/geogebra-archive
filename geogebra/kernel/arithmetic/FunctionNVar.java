@@ -1010,5 +1010,10 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		expression.replace(dummy, newX.divide(newZ));
 		this.initIneqs(expression, this);
 	}
+	
+	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
+		expression = expression.replace(oldOb, newOb);
+        return this;
+    }
 
 }
