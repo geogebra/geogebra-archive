@@ -128,6 +128,7 @@ public class CASmpreduce extends CASgeneric {
 		}
 		exp = sb.toString();
 
+		System.out.println("eval with MPReduce: " + exp);
 		String result = mpreduce.evaluate(exp);
 		
 		sb.setLength(0);
@@ -166,7 +167,6 @@ public class CASmpreduce extends CASgeneric {
 		result = result.replaceAll("\\*\\*", "^");
 		
 		// TODO: remove
-		System.out.println("eval with MPReduce: " + exp);
 		System.out.println("   result: " + result);
 		return result;
 	}
