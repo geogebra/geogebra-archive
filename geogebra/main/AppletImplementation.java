@@ -1261,15 +1261,29 @@ public class AppletImplementation implements AppletImplementationInterface {
 	/**
 	 * returns a String (base-64 encoded PNG file of the Graphics View)
 	 */
-	public synchronized String getPNGBase64(double exportScale, boolean transparent, double DPI) {
-		return ggbApi.getPNGBase64(exportScale, transparent, DPI);
+	public synchronized String getPNGBase64(final double exportScale, final boolean transparent, final double DPI) {
+		// avoid security problems calling from JavaScript
+		return AccessController.doPrivileged(new PrivilegedAction() {
+			public String run() {
+				// perform the security-sensitive operation here
+				return ggbApi.getPNGBase64(exportScale, transparent, DPI);
+			}
+		});
 	}
 
 	/**
 	 * returns a String (base-64 encoded PNG file of the Graphics View)
 	 */
-	public synchronized boolean writePNGtoFile(String filename, double exportScale, boolean transparent, double DPI) {
-		return ggbApi.writePNGtoFile(filename, exportScale, transparent, DPI);
+	public synchronized boolean writePNGtoFile(final String filename, final double exportScale, final boolean transparent, final double DPI) {
+		// avoid security problems calling from JavaScript
+		MyBoolean b = AccessController.doPrivileged(new PrivilegedAction() {
+			public Boolean run() {
+				// perform the security-sensitive operation here
+				return ggbApi.writePNGtoFile(filename, exportScale, transparent, DPI);
+			}
+		});
+		
+		return b.getBoolean();
 	}
 
 	/**
