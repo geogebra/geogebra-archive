@@ -32,26 +32,26 @@ public class AlgoCasExpand extends AlgoCasBase {
 	@Override
 	protected void applyCasCommand() {
 		// symbolic expand of f
-		g.setUsingCasCommand("Expand(%)", f, true);		
+		g.setUsingCasCommand("Expand(%)", f, false);		
 	}
 	
-    final public String toString() {  
-    	StringBuilder sb = new StringBuilder();
-    	sb.append(getCommandDescription());
-    	
-        if (!f.toGeoElement().isIndependent()) { // show the symbolic representation too
-            sb.append(": ");
-            sb.append(g.toGeoElement().getLabel());
-            if (g.toGeoElement() instanceof GeoFunction)
-            {
-            	sb.append('(');
-            	sb.append(((GeoFunction) g.toGeoElement()).getVarString());
-            	sb.append(')');
-            }
-            sb.append(" = ");
-            sb.append(g.toSymbolicString());
-        }
-        return sb.toString();
-    }
+//    final public String toString() {  
+//    	StringBuilder sb = new StringBuilder();
+//    	sb.append(getCommandDescription());
+//    	
+//        if (!f.toGeoElement().isIndependent()) { // show the symbolic representation too
+//            sb.append(": ");
+//            sb.append(g.toGeoElement().getLabel());
+//            if (g.toGeoElement() instanceof GeoFunction)
+//            {
+//            	sb.append('(');
+//            	sb.append(((GeoFunction) g.toGeoElement()).getVarString());
+//            	sb.append(')');
+//            }
+//            sb.append(" = ");
+//            sb.append(g.toSymbolicString());
+//        }
+//        return sb.toString();
+//    }
 
 }
