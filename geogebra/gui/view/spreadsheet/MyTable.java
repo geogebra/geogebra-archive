@@ -200,6 +200,10 @@ public class MyTable extends JTable implements FocusListener
 		grabbingCursor = createCursor(app.getImageIcon("cursor_grabbing.gif").getImage(), true);
 		largeCrossCursor = createCursor(app.getImageIcon("cursor_large_cross.gif").getImage(), true);
 
+		// set row height 	
+		setRowHeight(TABLE_CELL_HEIGHT);
+		
+		
 		// prepare column headers
 		SpreadsheetColumnController columnController = new SpreadsheetColumnController(app,this);
 		headerRenderer = columnController.new ColumnHeaderRenderer();
@@ -210,10 +214,9 @@ public class MyTable extends JTable implements FocusListener
 		getTableHeader().setReorderingAllowed(false);
 		setAutoCreateColumnsFromModel(false);
 
-
-		// set cell size 
+		// set columns and column headers
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		setRowHeight(TABLE_CELL_HEIGHT);
+		
 		headerRenderer.setPreferredSize(new Dimension(preferredColumnWidth, TABLE_CELL_HEIGHT));	
 		for (int i = 0; i < getColumnCount(); ++ i) {
 			getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
@@ -754,11 +757,12 @@ public class MyTable extends JTable implements FocusListener
 					changeSelection(cr.getMaxRow(), cr.getMaxColumn(), false, true);
 				}
 
-				table.selectionChanged();
+				selectionChanged();
 
 				// scroll to upper left corner of rectangle
 				this.setAutoscrolls(true);
 				scrollRectToVisible(getCellRect(cr.getMinRow(), cr.getMinColumn(),true));
+				repaint();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

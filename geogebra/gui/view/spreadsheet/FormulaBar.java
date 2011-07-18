@@ -60,7 +60,6 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		btnCancelFormula.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
 		btnCancelFormula.addMouseListener(new BarButtonListener());
 
-
 		btnAcceptFormula = new JButton(app.getImageIcon("apply.png"));
 		btnAcceptFormula.addMouseListener(new BarButtonListener());
 		btnAcceptFormula.setFocusable(false);
@@ -85,16 +84,16 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		add(fldFormula);
 		setFloatable(false);
 
-
+		// add document listener to enable updating of the spreadsheet cell editot 
 		fldFormula.getDocument().addDocumentListener(documentListener);
 
-		KeyListener[] defaultKeyListeners = fldFormula.getKeyListeners();
+		// add an instance of the spreadsheet cell editor listener
+		// to enable auto-update while dragging cell ranges during editing
 		fldFormula.addKeyListener(editor.new SpreadsheetCellEditorKeyListener(true));
-		for (int i = 0; i < defaultKeyListeners.length; ++ i) { 
-			//fldFormula.removeKeyListener(defaultKeyListeners[i]); 
-			//fldFormula.addKeyListener(defaultKeyListeners[i]); 
-		} 
-
+		
+		// prevent the focus system from stealing TAB; this allows tabbing through auto-complete cycles
+		fldFormula.setFocusTraversalKeysEnabled(false);
+		
 		setLabels();
 	}
 
@@ -141,7 +140,10 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		column = table.minSelectionColumn;
 
 		String cellName = GeoElement.getSpreadsheetCellName(column, row);
+		fldCellName.removeActionListener(this);
 		fldCellName.setText(cellName);
+		fldCellName.addActionListener(this);
+
 
 		String cellContents = "";
 		GeoElement cellGeo = table.relativeCopy.getValue(table, column, row);
@@ -165,10 +167,25 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 
 
 
+
 	public void focusGained(FocusEvent e) {
+
+		// make sure the spreadsheet gets the view focus in case first click is here
+		if(!view.hasViewFocus())
+			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
+
+		// select the upper left corner cell if nothing is selected
+		if(table.isSelectNone()){
+			table.setSelection(0, 0);
+			update();
+		}
+		
+		// start cell editing in the currently selected cell
+		// TODO: should these be an anchor cell?
 		table.setAllowEditing(true);
 		boolean succ = view.getTable().editCellAt(table.getSelectedRow(), table.getSelectedColumn());
 	}
+
 
 
 	public void focusLost(FocusEvent arg0) {
@@ -213,7 +230,8 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 				}
 			}
 			else if(source == btnAcceptFormula){
-				editor.stopCellEditing(column, row);
+				if(fldFormula.hasFocus())
+					editor.stopCellEditing(0, 1);
 			}
 
 		}
@@ -233,6 +251,10 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		btnAcceptFormula.setToolTipText(app.getPlain("Apply"));
 		btnCancelFormula.setToolTipText(app.getPlain("Cancel"));
 
+	}
+
+	public boolean editorHasFocus(){
+		return fldFormula.hasFocus();
 	}
 
 }
