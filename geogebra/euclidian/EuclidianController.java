@@ -1307,17 +1307,22 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		view.getHits().removePolygons();
 
 		Hits moveableList;		
-
+		
 		// if we just click (no drag) on eg an intersection, we want it selected
 		// not a popup with just the lines in
-		if (drag)
+		
+		// now we want this behaviour always as
+		// * there is no popup
+		// * user might do eg click then arrow keys
+		// * want drag with left button to work (eg tessellation)
+		
+		//if (drag)
 			moveableList = view.getHits().getMoveableHits(view);
-		else
-			moveableList = view.getHits();
+		//else
+		//	moveableList = view.getHits();
 
 		Hits hits = moveableList.getTopHits();
 		
-
 		//Application.debug("end("+(System.currentTimeMillis()-t0)+")");
 
 		ArrayList selGeos = app.getSelectedGeos();
@@ -1331,7 +1336,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		} else {
 			// choose out of hits			
 			geo = chooseGeo(hits, false);
-
+			
 			if (!selGeos.contains(geo)) {
 				app.clearSelectedGeos();
 				app.addSelectedGeo(geo);
