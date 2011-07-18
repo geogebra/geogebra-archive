@@ -2274,15 +2274,25 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			break;
 
 		case FACTORIAL:
-			if (leftStr.charAt(0) != '-' && // no unary
-					left.isLeaf() || opID(left) > POWER) { // not +, -, *, /, ^
+			switch (STRING_TYPE) {
+			case STRING_TYPE_MPREDUCE:
+				sb.append("factorial(");
 				sb.append(leftStr);
-			} else {
-				sb.append(leftBracket(STRING_TYPE));
-				sb.append(leftStr);
-				sb.append(rightBracket(STRING_TYPE));
+				sb.append(")");				
+				break;
+				
+			default:
+				if (leftStr.charAt(0) != '-' && // no unary
+						left.isLeaf() || opID(left) > POWER) { // not +, -, *, /, ^
+					sb.append(leftStr);
+				} else {
+					sb.append(leftBracket(STRING_TYPE));
+					sb.append(leftStr);
+					sb.append(rightBracket(STRING_TYPE));
+				}
+				sb.append('!');
+				break;
 			}
-			sb.append('!');
 			break;
 
 		case COS:
