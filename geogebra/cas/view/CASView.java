@@ -347,6 +347,11 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * @return whether an assignment was evaluated
 	 */
 	private boolean updateInCAS(GeoElement geo) {
+		if (ignoreUpdateVars.contains(geo.getLabel())) {
+			// TODO: remove
+			System.out.println("IGNORE update: " + geo.getLabel());
+			return false;
+		}
 		try {
 			if (geo.isCasEvaluableObject()) {
 				String funStr = geo.toCasAssignment(cas.getCurrentCASstringType());
