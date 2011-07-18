@@ -4757,7 +4757,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		addSelectedPolygon(hits, 10, true);
 		addSelectedPolyLine(hits, 10, true);
 		
-		singlePointWanted = singlePointWanted && selGeos() == 2;
+		singlePointWanted = singlePointWanted && selGeos() >= 2;
 
 		//if (selGeos() > 2)
 		//	return false;
