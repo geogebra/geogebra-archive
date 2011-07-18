@@ -1562,11 +1562,11 @@ ExpressionValue numVecVariable():
         // VARIABLE NAME IS UNDEFINED
 		// check some special variable names
 		// e for Euler constant
-		if (c.image.equalsIgnoreCase("e"))		{		 
+		if (c.image.equals("e"))		{		 
 			return MySpecialDouble.getEulerConstant(kernel);
 		}
 		// i for imaginary unit
-		else if (c.image.equalsIgnoreCase("i"))		{
+		else if (c.image.equals("i"))		{
 		  	return GeoVec2D.getImaginaryUnit(kernel);		}
 
        // standard case for undefined variable
