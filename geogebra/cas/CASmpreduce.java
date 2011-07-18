@@ -1,20 +1,16 @@
 package geogebra.cas;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionNodeConstants;
+import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.main.Application;
+
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import geogebra.cas.jacomax.MaximaTimeoutException;
-import geogebra.kernel.arithmetic.*;
-import geogebra.main.Application;
-import geogebra.main.MyResourceBundle;
-
-import org.mathpiper.mpreduce.*;
+import org.mathpiper.mpreduce.Interpreter2;
 
 public class CASmpreduce extends CASgeneric {
 
@@ -70,6 +66,9 @@ public class CASmpreduce extends CASgeneric {
 
 	/**
 	 * Tries to parse a given MPReduce string and returns a String in GeoGebra syntax.
+	 * @param mpreduceString String in MPReduce syntax
+	 * @return String in Geogebra syntax.
+	 * @throws Throwable Throws if the underlying CAS produces an error
 	 */
 	public synchronized String toGeoGebraString(String mpreduceString) throws Throwable {
 		// since casParserparse<CAS>() is basically the same for all CAS anyway, we use the MathPiper one
@@ -79,9 +78,10 @@ public class CASmpreduce extends CASgeneric {
 
 
     /**
-	 * Evaluates a MathPiper expression and returns the result as a string in MathPiper syntax, 
+	 * Evaluates an expression and returns the result as a string in MPReduce syntax, 
 	 * e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
 	 * 
+     * @param exp expression (with command names already translated to MPReduce syntax).
 	 * @return result string (null possible)
 	 */
 	public final String evaluateMPReduce(String exp) {
@@ -216,7 +216,6 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("load_package odesolve;");
 		mpreduce.evaluate("load_package defint;");
 		mpreduce.evaluate("load_package linalg;");
-		mpreduce.evaluate("load_package boolean;");
 		mpreduce.evaluate("load_package reset;");
 	}
 
@@ -283,8 +282,7 @@ public class CASmpreduce extends CASgeneric {
 				"  >> " +
 				"end;");
 
-			mpreduce.evaluate(
-			"procedure erf(x); " + 
+			mpreduce.evaluate("procedure erf(x); " + 
 			"begin " +
 			"     on rounded;" +
 			"     a1!° :=  0.254829592; "+
@@ -313,14 +311,14 @@ public class CASmpreduce extends CASgeneric {
 				+ "return m!° " 
 				+ "end;");
 
-			mpreduce.evaluate("procedure listtorowvector(list); "
-				+ "begin scalar lengthoflist; "
-				+ "lengthoflist:=length(list); "
-				+ "matrix m!°(1,lengthoflist); "
-				+ "for i:=1:lengthoflist do "
-				+ "m!°(1,i):=part(list,i); "
-				+ "return m!° " 
-				+ "end;");
+		mpreduce.evaluate("procedure listtorowvector(list); "
+			+ "begin scalar lengthoflist; "
+			+ "lengthoflist:=length(list); "
+			+ "matrix m!°(1,lengthoflist); "
+			+ "for i:=1:lengthoflist do "
+			+ "m!°(1,i):=part(list,i); "
+			+ "return m!° " 
+			+ "end;");
 	}
 
 	private String getVersionString() {
