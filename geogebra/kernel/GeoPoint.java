@@ -1533,5 +1533,9 @@ GeoPointND, Animatable, Transformable  {
 			pathParameter = null;			
 		}
 
+		// needed for GeoPointND interface for 3D, do nothing
+		public void setCoords(double x, double y, double z, double w) {
+		}
+
 
 }

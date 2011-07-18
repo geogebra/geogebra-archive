@@ -12,7 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 
 /**
@@ -40,10 +43,10 @@ public class AlgoSumPoints extends AlgoElement {
 
         this.Truncate=Truncate;
         
-        if (geoList.get(0).isGeoVector())
-        	result = new GeoVector(cons);
-        else // Numeric or Point
-        	result = new GeoPoint(cons);
+        GeoElement geo0 = geoList.get(0);
+        
+        // make sure output is same type as input (GeoVector, GeoPoint, GeoPoint3D)
+        result = geo0.copyInternal(cons);
 
         setInputOutput();
         compute();
@@ -100,13 +103,20 @@ public class AlgoSumPoints extends AlgoElement {
     	}
     	
     	
-    	double x = 0, y = 0;
+    	double x = 0, y = 0, z = 0;
     	
     	for (int i = 0 ; i < size ; i++) {
     		GeoElement p = geoList.get(i);
-    		if (p.isGeoPoint()) {
+    		if (p instanceof GeoPoint) {
 	        	x += ((GeoPoint)p).getInhomX();
-	        	y += ((GeoPoint)p).getInhomY();
+	        	y += ((GeoPoint)p).getInhomY();    			
+    		}
+    		else if (p instanceof GeoPointND) { // 3D
+	        	double[] coords = new double[3];
+				((GeoPointND)p).getInhomCoords(coords);
+	        	x += coords[0];
+	        	y += coords[1];
+        		z += coords[2];
     		} else if (p.isGeoVector()) {
 	        	x += ((GeoVector)p).getX();
 	        	y += ((GeoVector)p).getY();   		
@@ -119,7 +129,13 @@ public class AlgoSumPoints extends AlgoElement {
     	}
    	
    	
-    	((GeoVec3D)result).setCoords(x, y, 1.0);
+    	if (result.isGeoVector() || result instanceof GeoPoint)
+    		((GeoVec3D)result).setCoords(x, y, 1.0);
+    	else
+    	{ // 3D
+    		
+    		((GeoPointND)result).setCoords(x, y, z, 1.0);
+    	}
    	
 
     }

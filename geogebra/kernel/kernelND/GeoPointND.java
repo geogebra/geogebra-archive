@@ -90,6 +90,8 @@ public interface GeoPointND {
 	 */
 	public void setCoords(double x, double y, double z);
 	
+	public void setCoords(double x, double y, double z, double w);
+	
 
     
 	/** Sets homogenous coordinates and updates
