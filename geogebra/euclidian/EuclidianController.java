@@ -1370,10 +1370,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		else if (!movedGeoElement.isMoveable(view)) {
 			
 			translateableGeos = null;
-			Application.debug("1");
 			// point with changeable coord parent numbers
 			if (movedGeoElement.hasChangeableCoordParentNumbers()) {
-				Application.debug("2");
 				movedGeoElement.recordChangeableCoordParentNumbers();
 				translateableGeos = new ArrayList();
 				translateableGeos.add(movedGeoElement);
