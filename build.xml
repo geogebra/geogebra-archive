@@ -110,7 +110,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 
 	<!-- build signed and unsigned GeoGebra 3D jar files -->
 	<target name="geogebra3D" 
-		depends="clean, ggb-jar-files3D, obfuscate3D, ggb-jar-index3D, 
+		depends="clean, ggb-jar-files3D, copyDebug, signDebug, obfuscate3D, ggb-jar-index3D, 
 					copyJars3D, sign, pack, preloadHtml, finish">
 	</target>
 
@@ -392,6 +392,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 			basedir="${src.dir}"		   
 			includes="**/*.class, 				
 					  geogebra/main/*.png,
+			  edu/xtec/adapter/**,
+			  edu/xtec/adapter/impl/**,
 					  **/algo2command.properties,	
 					  **/algo2intergeo.properties"			
 			excludes="geogebra/*,
@@ -410,7 +412,9 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 					org/concord/**,
 					ccsd/**,
 					geogebra/usb/**,
-					edu/**,
+					edu/mas/**,
+					edu/jas/**,
+					edu/uci/**,
 					org/apache/**,
 					org/apache/log4j/**, 
 				    tutor/**,
