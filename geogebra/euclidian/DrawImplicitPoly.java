@@ -17,6 +17,8 @@ the Free Software Foundation.
  */
 package geogebra.euclidian;
 
+import java.awt.geom.Area;
+
 import geogebra.kernel.GeoImplicitPoly;
 
 /**
@@ -35,7 +37,10 @@ public class DrawImplicitPoly extends DrawLocus {
 		this.geo=implicitPoly;
 		update();
 	}
-
+	
+	public Area getShape(){
+		return new Area();
+	}
 	/**
 	 * Returns the poly to be draw
 	 * (might not be equal to geo, if this is part of bigger geo)
