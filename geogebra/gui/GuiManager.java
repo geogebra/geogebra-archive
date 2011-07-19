@@ -2932,8 +2932,9 @@ public class GuiManager {
 	            app.showError(e);
 	        } catch (Exception e) {           
 	            Application.debug(
-	                "openHelp error: " + e.toString() + e.getMessage());
+	                "openHelp error: " + e.toString() + " " + e.getMessage() + " " + page + " " + type);
 	            app.showError(e.getMessage());
+	            e.printStackTrace();
 	        }
 	    }
 	    
