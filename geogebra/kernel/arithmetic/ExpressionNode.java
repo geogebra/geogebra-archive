@@ -1656,14 +1656,21 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
-			case STRING_TYPE_MPREDUCE:
 				sb.append('(');
 				sb.append(leftStr);
 				sb.append(") + (");
 				sb.append(rightStr);
 				sb.append(')');
 				break;
-
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("addition(");
+				sb.append(leftStr);
+				sb.append(',');
+				sb.append(rightStr);
+				sb.append(')');
+				break;
+				
 			default:
 				// check for 0
 				if (valueForm) {
@@ -1716,14 +1723,21 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
-			case STRING_TYPE_MPREDUCE:
 				sb.append('(');
 				sb.append(leftStr);
 				sb.append(") - (");
 				sb.append(rightStr);
 				sb.append(')');
 				break;
-
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("subtraction(");
+				sb.append(leftStr);
+				sb.append(',');
+				sb.append(rightStr);
+				sb.append(')');
+				break;
+				
 			default:
 				if (left instanceof Equation) {
 					sb.append(leftBracket(STRING_TYPE));
@@ -1947,7 +1961,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			
 			case STRING_TYPE_MPREDUCE:
 				
-				if ((left instanceof GeoList) && (right instanceof GeoList)){
+				/*if ((left instanceof GeoList) && (right instanceof GeoList)){
 					//Multiplication Matrix times Vector as List 
 					if (((GeoList)left).isMatrix() && !((GeoList)right).isMatrix()){
 						sb.append("(");
@@ -2012,11 +2026,11 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 					sb.append(rightStr);
 					sb.append(")");
 					break;
-				}
+				}*/
 				
-				sb.append("(");
+				sb.append("multiplication(");
 				sb.append(leftStr);
-				sb.append(")*(");
+				sb.append(",");
 				sb.append(rightStr);
 				sb.append(")");
 				break;

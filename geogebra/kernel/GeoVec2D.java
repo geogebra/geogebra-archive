@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;
@@ -594,7 +595,14 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 		return !(Double.isNaN(x) || Double.isNaN( y));
 	}
     
-    final public String toString() {          
+    final public String toString() {
+    	if (isImaginaryUnit()){
+    		switch (kernel.getCASPrintForm()){
+    			case ExpressionNode.STRING_TYPE_MPREDUCE:
+    				return "i";
+    			default:
+    		}
+    	}
 		sbToString.setLength(0);
 		sbToString.append('(');
 		sbToString.append(kernel.format(x));

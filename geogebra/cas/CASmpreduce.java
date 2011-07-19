@@ -30,7 +30,7 @@ public class CASmpreduce extends CASgeneric {
 	private synchronized Interpreter2 getInterpreter() {
 		if (mpreduce == null) {
 			mpreduce = new Interpreter2();
-					
+
 			// the first command sent to mpreduce produces an error
 			try {
 				initMyMPReduceFunctions();
@@ -53,14 +53,14 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		String exp = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE);
-		
-		exp="<<off rounded, complex$ "+exp+">>";
-		
+
+		exp = "<<off complex, roundall, numval, factor$ on rounded, pri$ " + exp	+ ">>";
+
 		String result = evaluateMPReduce(exp);
-		
+
 		// convert result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
-//		System.out.println("   ggbString: " + ggbString);	
+		// System.out.println("   ggbString: " + ggbString);
 		return ggbString;
 	}
 
@@ -76,17 +76,16 @@ public class CASmpreduce extends CASgeneric {
 		return casParser.toGeoGebraString(ve);
 	}
 
-
-    /**
-	 * Evaluates an expression and returns the result as a string in MPReduce syntax, 
-	 * e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
+	/**
+	 * Evaluates an expression and returns the result as a string in MPReduce
+	 * syntax, e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
 	 * 
      * @param exp expression (with command names already translated to MPReduce syntax).
 	 * @return result string (null possible)
 	 */
 	public final String evaluateMPReduce(String exp) {
 		try {
-        	exp=casParser.replaceIndices(exp);
+			exp = casParser.replaceIndices(exp);
 			String ret = evaluateRaw(exp);
 			ret = casParser.insertSpecialChars(ret); // undo special character handling
 			return ret;
@@ -107,7 +106,7 @@ public class CASmpreduce extends CASgeneric {
 		sb.append("); begin return ");
 		sb.append(body);
 		sb.append(" end; ");
-		
+
 		return sb.toString();
 	}
 
@@ -116,15 +115,12 @@ public class CASmpreduce extends CASgeneric {
 		// we need to escape any upper case letters and non-ascii codepoints with '!'
 		StringTokenizer tokenizer = new StringTokenizer(exp, "(),;[] ", true);
 		StringBuilder sb = new StringBuilder();
-		while (tokenizer.hasMoreElements())
-		{
+		while (tokenizer.hasMoreElements()) {
 			String t = tokenizer.nextToken();
 			if (predefinedFunctions.contains(t.toLowerCase()))
 				sb.append(t);
-			else
-			{
-				for (int i = 0; i < t.length(); ++i)
-				{
+			else {
+				for (int i = 0; i < t.length(); ++i) {
 					char c = t.charAt(i);
 					if (Character.isLetter(c) && (((int) c) < 97 || ((int) c) > 122)) {
 						sb.append('!');
@@ -138,7 +134,7 @@ public class CASmpreduce extends CASgeneric {
 
 		System.out.println("eval with MPReduce: " + exp);
 		String result = mpreduce.evaluate(exp);
-		
+
 		sb.setLength(0);
 		for (String s : result.split("\n")) {
 			s = s.trim();
@@ -147,33 +143,28 @@ public class CASmpreduce extends CASgeneric {
 			else if (s.startsWith("***")) { // MPReduce comment
 				Application.debug("MPReduce comment: " + s);
 				continue;
-			}
-			else {
+			} else {
 				// look for any trailing $
 				int len = s.length();
 				while (len > 0 && s.charAt(len - 1) == '$')
 					--len;
-				
+
 				// remove the !
 				for (int i = 0; i < len; ++i) {
 					char character = s.charAt(i);
-					if (character=='!') {
-						if (i+1 < len) {
-							char nextChar=s.charAt(i+1);
-							if (Character.isLetter(nextChar) && (((int) nextChar)<97 || ((int) nextChar)>122)){
-								i++;
-								character=nextChar;
-							}
+					if (character == '!') {
+						if (i + 1 < len) {
+							character = s.charAt(++i);
 						}
 					}
 					sb.append(character);
-				}	
+				}
 			}
 		}
 
 		result = sb.toString();
 		result = result.replaceAll("\\*\\*", "^");
-		
+
 		// TODO: remove
 		System.out.println("   result: " + result);
 		return result;
@@ -188,16 +179,16 @@ public class CASmpreduce extends CASgeneric {
 	@Override
 	public void reset() {
 		try {
-				mpreduce.evaluate("resetreduce;");
-				initMyMPReduceFunctions();
-			} catch (Throwable e){
-				e.printStackTrace();
-				
-				// if we fail, we just re-initialize the interpreter
-				Application.debug("failed to reset MPReduce, creating new MPReduce instance");
-				mpreduce = null;
-				getInterpreter();
-			}
+			mpreduce.evaluate("resetreduce;");
+			initMyMPReduceFunctions();
+		} catch (Throwable e) {
+			e.printStackTrace();
+
+			// if we fail, we just re-initialize the interpreter
+			Application.debug("failed to reset MPReduce, creating new MPReduce instance");
+			mpreduce = null;
+			getInterpreter();
+		}
 	}
 
 	@Override
@@ -208,7 +199,7 @@ public class CASmpreduce extends CASgeneric {
 			System.err.println("Failed to clear variable from MPReduce: " + var);
 		}
 	}
-	
+
 	private synchronized void loadMyMPReduceFunctions() throws Throwable {
 		mpreduce.evaluate("load_package rsolve;");
 		mpreduce.evaluate("load_package numeric;");
@@ -217,9 +208,9 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("load_package defint;");
 		mpreduce.evaluate("load_package linalg;");
 		mpreduce.evaluate("load_package reset;");
+		mpreduce.evaluate("load_package randpoly;");
 	}
 
-	
 	private synchronized void initMyMPReduceFunctions() throws Throwable {
 		mpreduce.evaluate("off nat;");
 			
@@ -227,98 +218,151 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("off arbvars;");
 
 		// make sure x*(x+1) isn't returned factored
-		mpreduce.evaluate("off pri;");
+		//mpreduce.evaluate("off pri;");
 
-		mpreduce.evaluate("off rounded;");
+		mpreduce.evaluate("on rounded;");
+		mpreduce.evaluate("off roundall;");
+		mpreduce.evaluate("off numval;");
+
+		mpreduce.evaluate("precision 16;");
 
 		// make sure integral(1/x) gives ln(abs(x)) [TODO: NOT WORKING]
 		// mpreduce.evaluate("operator log!-temp");
 		// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
 
-		// access functions for elements of a vector 
-		mpreduce.evaluate("procedure x(a); if not numberp(a) and part(a, 0) = list then first(a) else x*a;");
-		mpreduce.evaluate("procedure y(a); if not numberp(a) and part(a, 0) = list then second(a) else x*a;");
-		mpreduce.evaluate("procedure z(a); if not numberp(a) and part(a, 0) = list then third(a) else x*a;");
-		
-			
-		mpreduce.evaluate(" Degree := pi/180;");
-			
-		// erf in Reduce is currently broken: http://sourceforge.net/projects/reduce-algebra/forums/forum/899364/topic/4546339
-		// this is a numeric approximation according to Abramowitz & Stegun 7.1.26.
-		mpreduce.evaluate("procedure dot(vec1,vec2); " +
-				"	begin scalar tmplength; " +
-				"  if not numberp(vec1) and part(vec1,0)=mat and column_dim(vec1)=1 then " +
-				"    vec1:=tp(vec1);" +
-				"  if not numberp(vec2) and part(vec2,0)=mat and column_dim(vec2)=1 then " +
-				"    vec2:=tp(vec2); " +
-				"  return  " +
-				"  if not numberp(vec1) and part(vec1,0)=list then << " +
-				"    if not numberp(vec2) and part(vec2,0)=list then  " +
-				"      <<tmplength:=length(vec1);  " +
-				"      for i:=1:tmplength  " +
-				"	sum part(vec1,i)*part(vec2,i) >> " +
-				"    else if not numberp(vec2) and part(vec2,0)=mat and row_dim(vec2)=1 then" +
-				"      <<tmplength:=length(vec1);  " +
-				"      for i:=1:tmplength  " +
-				"	sum part(vec1,i)*vec2(1,i)>> " +
-				"      else " +
-				"	? " +
-				"  >> " +
-				"  else <<if not numberp(vec1) and part(vec1,0)=mat and row_dim(vec1)=1 then << " +
-				"    if not numberp(vec2) and part(vec2,0)=list then  " +
-				"      <<tmplength:=length(vec2); " +
-				"      for i:=1:tmplength  " +
-				"	sum vec1(1,i)*part(vec2,i)>> " +
-				"    else if not numberp(vec2) and part(vec2,0)=mat and row_dim(vec2)=1 then" +
-				"      <<tmplength:=column_dim(vec1);  " +
-				"      for i:=1:tmplength  " +
-				"	sum vec1(1,i)*vec2(1,i) " +
-				"      >> " +
-				"      else " +
-				"		? " +
-				"    >> " +
-				"  else " +
-				"    ? " +
-				"  >> " +
-				"end;");
+		// access functions for elements of a vector
+		mpreduce.evaluate("procedure x(a); if arglength(a)>-1 and part(a,0)=list then first(a) else x*a;");
+		mpreduce.evaluate("procedure y(a); if arglength(a)>-1 and part(a,0)=list then second(a) else x*a;");
+		mpreduce.evaluate("procedure z(a); if arglength(a)>-1 and part(a,0)=list then third(a) else x*a;");
 
-			mpreduce.evaluate("procedure erf(x); " + 
-			"begin " +
-			"     on rounded;" +
-			"     a1!° :=  0.254829592; "+
-			"     a2!° := -0.284496736; "+
-			"     a3!° :=  1.421413741; "+
-			"     a4!° := -1.453152027; "+
-			"     a5!° :=  1.061405429; "+
-			"     p!°  :=  0.3275911; "+
-			"     sign!° := 1; "+
-			"     if x < 0 then sign!° := -1; "+
-			"     x!° := Abs(x); "+
-			"     t!° := 1.0/(1.0 + p!°*x!°); "+
-			"     y!° := 1.0 - (((((a5!°*t!° + a4!°)*t!°) + a3!°)*t!° + a2!°)*t!° + a1!°)*t!°*Exp(-x!°*x!°); "+
-			"     return sign!°*y!° "+
-			"end;");
+		mpreduce.evaluate(" Degree := pi/180;");
+
+		mpreduce.evaluate("procedure dot(vec1,vec2); "
+				+ "	begin scalar tmplength; "
+				+ "  if arglength(vec1)>-1 and part(vec1,0)=mat and column_dim(vec1)=1 then "
+				+ "    vec1:=tp(vec1);"
+				+ "  if arglength(vec2)>-1 and part(vec2,0)=mat and column_dim(vec2)=1 then "
+				+ "    vec2:=tp(vec2); "
+				+ "  return  "
+				+ "  if arglength(vec1)>-1 and part(vec1,0)=list then << "
+				+ "    if arglength(vec2)>-1 and part(vec2,0)=list then  "
+				+ "      <<tmplength:=length(vec1);  "
+				+ "      for i:=1:tmplength  "
+				+ "			sum part(vec1,i)*part(vec2,i) >> "
+				+ "    else arglength(vec2)>-1 and part(vec2,0)=mat and row_dim(vec2)=1 then"
+				+ "      <<tmplength:=length(vec1);  "
+				+ "      for i:=1:tmplength  "
+				+ "	sum part(vec1,i)*vec2(1,i)>> "
+				+ "      else "
+				+ "	? "
+				+ "  >> "
+				+ "  else <<if arglength(vec1)>-1 and part(vec1,0)=mat and row_dim(vec1)=1 then << "
+				+ "    if arglength(vec2)>-1 and part(vec2,0)=list then  "
+				+ "      <<tmplength:=length(vec2); "
+				+ "      for i:=1:tmplength  "
+				+ "			sum vec1(1,i)*part(vec2,i)>> "
+				+ "    else arglength(vec2)>-1 and part(vec2,0)=mat and row_dim(vec2)=1 then"
+				+ "      <<tmplength:=column_dim(vec1);  "
+				+ "      for i:=1:tmplength  " 
+				+ "			sum vec1(1,i)*vec2(1,i) "
+				+ "      >> " 
+				+ "      else " 
+				+ "		? " 
+				+ "    >> " 
+				+ "  else "
+				+ "    ? " 
+				+ "  >> " 
+				+ "end;");
+
+		mpreduce.evaluate("procedure mattoscalar(m);"
+				+ " if length(m)={1,1} then trace(m) else m;");
+
+		mpreduce.evaluate("procedure multiplication(a,b);"
+				+ "  if arglength(a)>-1 and part(a,0)=mat then"
+				+ "    if arglength(b)>-1 and part(b,0)=mat then"
+				+ "      mattoscalar(a*b)"
+				+ "    else if arglength(b)>-1 and part(b,0)=list then"
+				+ "      mattoscalar(a*<<listtocolumnvector(b)>>)"
+				+ "    else"
+				+ "      a*b"
+				+ "  else if arglength(a)>-1 and part(a,0)=list then"
+				+ "    if arglength(b)>-1 and part(b,0)=mat then"
+				+ "      mattoscalar(<<listtorowvector(a)>>*b)"
+				+ "    else if arglength(b)>-1 and part(b,0)=list then"
+				+ "      mattoscalar(<<listtorowvector(a)>>*<<listtocolumnvector(b)>>)"
+				+ "    else" 
+				+ "      map(~w!°*b,a)" 
+				+ "  else"
+				+ "    if arglength(b)>-1 and part(b,0)=list then" 
+				+ "      map(a*~w!°,b)"
+				+ "    else" 
+				+ "      a*b;");
+
+		mpreduce.evaluate("procedure addition(a,b);"
+				+ "  if arglength(a)>-1 and a=list and arglength(b)>-1 and part(b,0)=list then"
+				+ "    for i:=1:length(a) collect part(a,i)+part(b,i)"
+				+ "  else if arglength(a)>-1 and part(a,0)=list then" 
+				+ "    map(~w!°+b,a)"
+				+ "  else if arglength(b)>-1 and part(b,0)=list then" 
+				+ "    map(a+~w!°,b)"
+				+ "  else" 
+				+ "    a+b;");
+
+		mpreduce.evaluate("procedure subtraction(a,b);"
+				+ "  if arglength(a)>-1 and part(a,0)=list and arglength(b)>-1 and part(b,0)=list then"
+				+ "    for i:=1:length(a) collect part(a,i)-part(b,i)"
+				+ "  else if arglength(a)<-1 and part(a,0)=list then" 
+				+ "    map(~w!°-b,a)"
+				+ "  else if arglength(b)>-1 and part(b,0)=list then" 
+				+ "    map(a-~w!°,b)"
+				+ "  else" 
+				+ "    a-b;");
+		
+		// erf in Reduce is currently broken:
+		// http://sourceforge.net/projects/reduce-algebra/forums/forum/899364/topic/4546339
+		// this is a numeric approximation according to Abramowitz & Stegun
+		// 7.1.26.
+		mpreduce.evaluate("procedure erf(x); "
+				+ "begin "
+				+ "     on rounded;"
+				+ "     a1!° :=  0.254829592; "
+				+ "     a2!° := -0.284496736; "
+				+ "     a3!° :=  1.421413741; "
+				+ "     a4!° := -1.453152027; "
+				+ "     a5!° :=  1.061405429; "
+				+ "     p!°  :=  0.3275911; "
+				+ "     sign!° := 1; "
+				+ "     if x < 0 then sign!° := -1; "
+				+ "     x!° := Abs(x); "
+				+ "     t!° := 1.0/(1.0 + p!°*x!°); "
+				+ "     y!° := 1.0 - (((((a5!°*t!° + a4!°)*t!°) + a3!°)*t!° + a2!°)*t!° + a1!°)*t!°*Exp(-x!°*x!°); "
+				+ "     return sign!°*y!° " + "end;");
 
 		mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
 		mpreduce.evaluate("procedure uigamma(n,m); gamma(n)-igamma(n,m);");
+		mpreduce.evaluate("procedure beta!Regularized(a,b,x); ibeta(a,b,x);");
 		mpreduce.evaluate("procedure arg(z); atan2(repart(z),impart(z));");
+		mpreduce.evaluate("procedure complexpolar(r,phi); r*(cos(phi)+i*sin(phi));");
+		mpreduce.evaluate("procedure complexexponential(r,phi); r*(cos(phi)+i*sin(phi));");
+
 		mpreduce.evaluate("procedure listtocolumnvector(list); "
 				+ "begin scalar lengthoflist; "
 				+ "lengthoflist:=length(list); "
-				+ "matrix m!°(lengthoflist,1); "
-				+ "for i:=1:lengthoflist do " 
-				+ "m!°(i,1):=part(list,i); "
+				+ "matrix m!°(lengthoflist,1); " 
+				+ "for i:=1:lengthoflist do "
+				+ "m!°(i,1):=part(list,i); " 
 				+ "return m!° " 
 				+ "end;");
 
 		mpreduce.evaluate("procedure listtorowvector(list); "
-			+ "begin scalar lengthoflist; "
-			+ "lengthoflist:=length(list); "
-			+ "matrix m!°(1,lengthoflist); "
-			+ "for i:=1:lengthoflist do "
-			+ "m!°(1,i):=part(list,i); "
-			+ "return m!° " 
-			+ "end;");
+				+ "begin scalar lengthoflist; "
+				+ "	lengthoflist:=length(list); "
+				+ "	matrix m!°(1,lengthoflist); "
+				+ "	for i:=1:lengthoflist do " 
+				+ "		m!°(1,i):=part(list,i); "
+				+ "	return m!° " 
+				+ "end;");
+		
 	}
 
 	private String getVersionString() {
