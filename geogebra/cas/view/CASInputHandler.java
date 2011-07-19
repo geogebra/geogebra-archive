@@ -35,8 +35,8 @@ public class CASInputHandler {
 
 	/** 
 	 * Process input of current row.
-	 * @param ggbcmd: command like "Factor" or "Integral"
-	 * @param params: optional command parameters like "x"
+	 * @param ggbcmd command like "Factor" or "Integral"
+	 * @param params optional command parameters like "x"
 	 */	
 	public void processCurrentRow(String ggbcmd, String[] params){
 		// get editor 
@@ -527,7 +527,8 @@ public class CASInputHandler {
 	/**
 	 * Processes all dependent rows starting with the given row that depend on var
 	 * or have dynamic cell references.
-	 * @param var: changed variable
+	 * @param var changed variable
+	 * @param startRow 
 	 * @return whether processing was successful
 	 */
 	public boolean processDependentRows(String var, int startRow) {
