@@ -3,7 +3,6 @@
  */
 package geogebra.cas.view;
 
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
@@ -153,6 +152,8 @@ public class CASTable extends JTable {
 	/**
 	 * Inserts a row at the end and starts editing
 	 * the new row.
+	 * @param newValue 
+	 * @param startEditing 
 	 */
 	public void insertRow(CASTableCellValue newValue, boolean startEditing) {
 		int lastRow = tableModel.getRowCount()-1;
@@ -169,6 +170,9 @@ public class CASTable extends JTable {
 	/**
 	 * Inserts a row after selectedRow and starts editing
 	 * the new row.
+	 * @param selectedRow 
+	 * @param newValue 
+	 * @param startEditing 
 	 */
 	public void insertRowAfter(int selectedRow, CASTableCellValue newValue, boolean startEditing) {							
 		if (newValue == null)
@@ -181,10 +185,8 @@ public class CASTable extends JTable {
 		if (selectedRow + 2 < rowCount)
 		{
 			CASInputHandler h = view.getInputHandler();
-			for (int i=selectedRow+2; i < rowCount; i++) {
-				h.updateReferencesAfterRowInsertOrDelete(selectedRow, i, CASInputHandler.ROW_REFERENCE_DYNAMIC, true);
-				h.updateReferencesAfterRowInsertOrDelete(selectedRow, i, CASInputHandler.ROW_REFERENCE_STATIC, true);
-			}
+			for (int i=0; i < rowCount; i++)
+				h.updateReferencesAfterRowInsert(selectedRow, i);
 		}
 		// update height of new row
 		if (startEditing)
@@ -194,8 +196,10 @@ public class CASTable extends JTable {
 	/**
 	 * Returns the preferred height of a row.
 	 * The result is equal to the tallest cell in the row.
+	 * @param rowIndex Row-Index.
+	 * @return The preferred height.
 	 * 
-	 * @see http://www.exampledepot.com/egs/javax.swing.table/RowHeight.html
+	 * @see "http://www.exampledepot.com/egs/javax.swing.table/RowHeight.html"
 	 */    
     public int getPreferredRowHeight(int rowIndex) {
         // Get the current default height for all rows
@@ -223,6 +227,8 @@ public class CASTable extends JTable {
      *  For each row >= start and < end, the height of a
      *  row is set to the preferred height of the tallest cell
      *  in that row.
+     * @param start 
+     * @param end 
      */
     public void packRows(int start, int end) {
         for (int r=start; r < end; r++) {
@@ -238,6 +244,7 @@ public class CASTable extends JTable {
 
     /**
      * Creates a new row in the cas view.
+     * @return The new row.
      */
     public CASTableCellValue createRow() {
     	stopEditing();
@@ -311,10 +318,8 @@ public class CASTable extends JTable {
 		if (row < rowCount)
 		{
 			CASInputHandler h = view.getInputHandler();
-			for (int i= row; i < rowCount; i++) {
-				h.updateReferencesAfterRowInsertOrDelete(row, i, CASInputHandler.ROW_REFERENCE_DYNAMIC, false);
-				h.updateReferencesAfterRowInsertOrDelete(row, i, CASInputHandler.ROW_REFERENCE_STATIC, false);
-			}
+			for (int i= 0; i < rowCount; i++)
+				h.updateReferencesAfterRowDelete(row, i);
 		}
 
 		this.repaint();
