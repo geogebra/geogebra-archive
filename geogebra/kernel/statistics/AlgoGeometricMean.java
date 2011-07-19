@@ -35,8 +35,7 @@ public class AlgoGeometricMean extends AlgoElement {
 	private GeoNumeric result; //output	
 	private int size;
 	private GeometricMean geoMean;
-	private double[] inputArray;
-	private double val;
+	private double[] inputArray;	
 
 
 
@@ -58,8 +57,8 @@ public class AlgoGeometricMean extends AlgoElement {
 		input = new GeoElement[1];
 		input[0] = inputList;
 
-		output = new GeoElement[1];
-		output[0] = result;
+		setOutputLength(1);
+		setOutput(0,result);
 		setDependencies(); // done by AlgoElement
 	}
 

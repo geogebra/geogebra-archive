@@ -33,8 +33,7 @@ public class AlgoInverseExponential extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseExponential";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

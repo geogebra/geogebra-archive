@@ -33,8 +33,7 @@ public class AlgoInverseWeibull extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseWeibull";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

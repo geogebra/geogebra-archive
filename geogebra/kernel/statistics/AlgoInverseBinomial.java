@@ -33,8 +33,7 @@ public class AlgoInverseBinomial extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseBinomial";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

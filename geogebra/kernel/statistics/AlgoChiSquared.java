@@ -33,8 +33,7 @@ public class AlgoChiSquared extends AlgoDistribution {
     public String getClassName() {
         return "AlgoChiSquared";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

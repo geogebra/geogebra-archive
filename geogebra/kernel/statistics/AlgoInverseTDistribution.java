@@ -33,8 +33,7 @@ public class AlgoInverseTDistribution extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseTDistribution";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

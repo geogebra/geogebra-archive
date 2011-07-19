@@ -33,8 +33,7 @@ public class AlgoInverseCauchy extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseCauchy";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

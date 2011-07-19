@@ -35,8 +35,7 @@ public class AlgoHyperGeometric extends AlgoDistribution {
     public String getClassName() {
         return "AlgoHyperGeometric";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

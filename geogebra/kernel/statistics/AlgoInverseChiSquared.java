@@ -33,8 +33,7 @@ public class AlgoInverseChiSquared extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseChiSquared";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

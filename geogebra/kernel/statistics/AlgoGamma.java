@@ -33,8 +33,7 @@ public class AlgoGamma extends AlgoDistribution {
     public String getClassName() {
         return "AlgoGamma";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

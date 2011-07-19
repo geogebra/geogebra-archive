@@ -43,7 +43,7 @@ public class AlgoInverseZipf extends AlgoDistribution {
     		    double val = c.getDouble();
         		try {
         			ZipfDistribution dist = getZipfDistribution(param, param2);
-        			num.setValue(dist.inverseCumulativeProbability(val));     
+        			num.setValue(dist.inverseCumulativeProbability(val) + 1);     
         			
         		}
         		catch (Exception e) {

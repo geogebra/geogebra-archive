@@ -34,7 +34,7 @@ public class AlgoInversePascal extends AlgoDistribution {
         return "AlgoInversePascal";
     }
 
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

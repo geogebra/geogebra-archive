@@ -33,8 +33,7 @@ public class AlgoInverseGamma extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseGamma";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	

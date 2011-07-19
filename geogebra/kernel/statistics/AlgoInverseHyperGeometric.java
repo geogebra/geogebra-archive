@@ -33,8 +33,7 @@ public class AlgoInverseHyperGeometric extends AlgoDistribution {
     public String getClassName() {
         return "AlgoInverseHyperGeometric";
     }
-
-    @SuppressWarnings("deprecation")
+    
 	protected final void compute() {
     	
     	
@@ -45,7 +44,7 @@ public class AlgoInverseHyperGeometric extends AlgoDistribution {
     		    double val = d.getDouble();
         		try {
         			HypergeometricDistribution dist = getHypergeometricDistribution(param, param2, param3);
-        			num.setValue(dist.inverseCumulativeProbability(val));     // P(T <= val)
+        			num.setValue(dist.inverseCumulativeProbability(val) + 1);     // P(T <= val)
         			
         		}
         		catch (Exception e) {
