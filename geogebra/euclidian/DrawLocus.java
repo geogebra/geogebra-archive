@@ -98,7 +98,11 @@ public class DrawLocus extends Drawable {
     	else
     		gp.reset();     	  
     	double [] coords = new double[2];
-  	
+
+    	// this is for making sure that there is no lineto from nothing
+    	// and there is no lineto if there is an infinite point between the points
+    	boolean linetofirst = true; 
+
     	int size = pointList.size();
 		for (int i=0; i < size; i++) {
 			MyPoint p = (MyPoint) pointList.get(i);    		
@@ -111,11 +115,14 @@ public class DrawLocus extends Drawable {
         		coords[1] = p.y;
 	    		view.toScreenCoords(coords);      		    		
 	    		
-	    		if (p.lineTo) {
+	    		if (p.lineTo && !linetofirst) {
 					gp.lineTo(coords[0], coords[1]);					
 				} else {					
 					gp.moveTo(coords[0], coords[1]);	   						
-				}           	 	    		
+				}
+	    		linetofirst = false;
+    		} else {
+    			linetofirst = true;
     		}
         }
     	
