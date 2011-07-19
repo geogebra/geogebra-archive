@@ -1,21 +1,14 @@
 package geogebra.cas;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
-import geogebra.main.MyResourceBundle;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;
-import org.mathpiper.Version;
 
 public class CASmathpiper extends CASgeneric {
 	
@@ -64,7 +57,6 @@ public class CASmathpiper extends CASgeneric {
 	/**
 	 * Unbinds (deletes) var in MathPiper.
 	 * @param var
-	 * @param isFunction
 	 */
 	public void unbindVariable(String var) {
 		StringBuilder sb = new StringBuilder();
@@ -84,7 +76,7 @@ public class CASmathpiper extends CASgeneric {
 	
 	/**
 	 * Evaluates a valid expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra notation.
-	 * @param casInput: in GeoGebraCAS syntax
+	 * @param casInput in GeoGebraCAS syntax
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
@@ -118,6 +110,9 @@ public class CASmathpiper extends CASgeneric {
 	
 	/**
 	 * Tries to parse a given MathPiper string and returns a String in GeoGebra syntax.
+	 * @param MathPiperString String in MP syntax.
+	 * @return String in ggb syntax.
+	 * @throws Throwable 
 	 */
 	public synchronized String toGeoGebraString(String MathPiperString) throws Throwable {
 		ValidExpression ve = casParser.parseMathPiper(MathPiperString);
@@ -127,6 +122,7 @@ public class CASmathpiper extends CASgeneric {
     /**
 	 * Evaluates a MathPiper expression and returns the result as a string in MathPiper syntax, 
 	 * e.g. evaluateMathPiper("D(x) (x^2)") returns "2*x".
+     * @param exp The expression.
 	 * 
 	 * @return result string (null possible)
 	 */
