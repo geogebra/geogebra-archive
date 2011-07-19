@@ -72,7 +72,7 @@ public class CASmpreduce extends CASgeneric {
 	 */
 	public synchronized String toGeoGebraString(String mpreduceString) throws Throwable {
 		// since casParserparse<CAS>() is basically the same for all CAS anyway, we use the MathPiper one
-		ValidExpression ve = casParser.parseMathPiper(mpreduceString);
+		ValidExpression ve = casParser.parseMPReduce(mpreduceString);
 		return casParser.toGeoGebraString(ve);
 	}
 

@@ -551,6 +551,19 @@ public class Kernel {
 		
 		return ggbCAS.evaluateMaxima(exp);
 	}	
+	
+	/** 
+	 * Evaluates an expression in MPReduce syntax with.
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	final public String evaluateMPReduce(String exp) {
+		if (ggbCAS == null) {
+			getGeoGebraCAS();		
+		}
+		
+		return ggbCAS.evaluateMPReduce(exp);
+	}	
 			
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;

@@ -118,6 +118,13 @@ public class CASparser {
 	}
 	
 	/**
+	 * Tries to convert the given MPReduce string to GeoGebra syntax.
+	 */
+	public ValidExpression parseMPReduce(String MPReduceString) throws Throwable {
+		return kernel.getParser().parseMPReduce(MPReduceString);		
+	}
+	
+	/**
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
 	public ValidExpression parseMaxima(String maximaString) throws Throwable {

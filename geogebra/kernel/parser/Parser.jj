@@ -58,8 +58,9 @@ public class Parser {
     private Kernel kernel;
     private Construction cons;
     private Application app;
-    private boolean ExternalCASParsing = false;
     private boolean GeoGebraCASParsing = false;
+    private boolean ExternalCASParsing = false;
+	private boolean MPReduceParsing = false;
     
     public Parser(Kernel kernel, Construction cons) {
     	 this ( new java.io.StringReader("") ); // dummy stream for parser initing
@@ -71,8 +72,9 @@ public class Parser {
     // reset for new parsing
     public void myReInit(String parseString) {
     	ReInit(new java.io.StringReader(parseString));    	
-    	ExternalCASParsing = false;
     	GeoGebraCASParsing = false;
+    	ExternalCASParsing = false;
+    	MPReduceParsing = false;  
     }
 
     /**
@@ -99,6 +101,16 @@ public class Parser {
     public ValidExpression parseMathPiper(String parseString) throws ParseException {           
         myReInit( parseString ); 
         ExternalCASParsing = true;                         
+        return buildMathPiperExpression();     
+    }
+
+      /**
+     * Parses a MPReduce String and returns a ValidExpression Object     
+     */
+    public ValidExpression parseMPReduce(String parseString) throws ParseException {           
+        myReInit( parseString ); 
+        ExternalCASParsing = true;
+        MPReduceParsing = true;                     
         return buildMathPiperExpression();     
     }
 
@@ -1555,21 +1567,32 @@ ExpressionValue numVecVariable():
 |
     ( c = <SPREADSHEET_LABEL> | c = <LABEL> )
     {
+        // should we read e for Euler constant and i for imaginary unit?
+		boolean lookforEulerImaginary = false;
+
+		if (GeoGebraCASParsing)		{
+		  	// leave e and i untouched in GeoGebraCAS view
+		  	lookforEulerImaginary = false;		}
+		else if (ExternalCASParsing)		{	// MPReduce uses e and i for Euler and imaginary constants
+		  	lookforEulerImaginary = MPReduceParsing;		}
+		else		{ 	// GeoGebraCAS or GeoGebra parsing
+			// only treat e or i specially when they are undefined in GeoGebra
+			lookforEulerImaginary = kernel.lookupLabel(c.image) == null;		}    	
         // return defined variables immediately
-		if (kernel.lookupLabel(c.image) != null)
-      		return new Variable(kernel, c.image);
+		if (lookforEulerImaginary)		{
+			// TREAT e and i specially
+			// e for Euler constant
+			if (c.image.equals("e"))
+			{		 
+				return MySpecialDouble.getEulerConstant(kernel);
+			}
+			// i for imaginary unit
+			else if (c.image.equals("i"))
+			{
+			  	return GeoVec2D.getImaginaryUnit(kernel);
+			}		}      				
 
-        // VARIABLE NAME IS UNDEFINED
-		// check some special variable names
-		// e for Euler constant
-		if (c.image.equals("e"))		{		 
-			return MySpecialDouble.getEulerConstant(kernel);
-		}
-		// i for imaginary unit
-		else if (c.image.equals("i"))		{
-		  	return GeoVec2D.getImaginaryUnit(kernel);		}
-
-       // standard case for undefined variable
+       // standard case for variables
        return new Variable(kernel, c.image);
     }
 }
