@@ -107,9 +107,9 @@ public class Inequality {
 			return;
 		}
 		if(zeroDummy0!=null)
-			normal.replace(zeroDummy0, fv[0]);
+			normal.replaceAndWrap(zeroDummy0, fv[0]);
 		if(zeroDummy1!=null)
-			normal.replace(zeroDummy1, fv[1]);
+			normal.replaceAndWrap(zeroDummy1, fv[1]);
 		Double coefY = normal.getCoefficient(fv[1]);
 		Double coefX = normal.getCoefficient(fv[0]);
 		Function fun = null;
@@ -135,13 +135,13 @@ public class Inequality {
 			type = INEQUALITY_PARAMETRIC_X;
 		} else if (coefX != null && Kernel.isZero(coefX) && coefY == null) {
 			zeroDummy0 = new MyDouble(kernel, 0);
-			normal.replace(fv[0], zeroDummy0 );
+			normal.replaceAndWrap(fv[0], zeroDummy0 );
 			init1varFunction(1);
 			type = funBorder.isPolynomialFunction(false) ?				
 				INEQUALITY_1VAR_Y:INEQUALITY_INVALID;
 		} else if (coefY != null && Kernel.isZero(coefY) && coefX == null) {
 			zeroDummy1 = new MyDouble(kernel, 0);
-			normal.replace(fv[1], zeroDummy1);
+			normal.replaceAndWrap(fv[1], zeroDummy1);
 			init1varFunction(0);
 			type = funBorder.isPolynomialFunction(false) ?				
 					INEQUALITY_1VAR_X:INEQUALITY_INVALID;
@@ -206,8 +206,8 @@ public class Inequality {
 			midX = midpoint.x;
 			midY = midpoint.y;
 		} 
-		normalCopy.replace(fv[0], new MyDouble(kernel, midX));
-		normalCopy.replace(fv[1], new MyDouble(kernel, midY));
+		normalCopy.replaceAndWrap(fv[0], new MyDouble(kernel, midX));
+		normalCopy.replaceAndWrap(fv[1], new MyDouble(kernel, midY));
 		double valAtCenter = ((NumberValue) normalCopy.evaluate())
 				.getDouble();
 		isAboveBorder = (valAtCenter < 0)

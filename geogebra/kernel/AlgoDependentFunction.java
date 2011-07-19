@@ -170,7 +170,7 @@ public class AlgoDependentFunction extends AlgoElement {
                 	//  don't destroy the function
                 	ExpressionNode funcExpression = fun.getExpression().getCopy(fun.getKernel());
                 	// now replace every x in function by the expanded argument
-                	return funcExpression.replace(x, 
+                	return funcExpression.replaceAndWrap(x, 
                                     expandFunctionDerivativeNodes(node.getRight()));                    
             
                 case ExpressionNode.DERIVATIVE:                		

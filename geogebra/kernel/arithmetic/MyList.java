@@ -37,7 +37,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-public class MyList extends ValidExpression implements ListValue {
+public class MyList extends ValidExpression implements ListValue, ReplaceableValue {
 
 	private Kernel kernel;
 	private int matrixRows = -1;  // -1 means not calculated, 0 means not a matrix
@@ -857,8 +857,10 @@ public class MyList extends ValidExpression implements ListValue {
 	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
         for (int i = 0; i < listElements.size(); i++) {
         	ExpressionValue ev = listElements.get(i);
-            ev = ExpressionNode.replaceInEV(ev, oldOb, newOb);
-            listElements.set(i, ev);
+        	if (ev instanceof ReplaceableValue) {
+        		ev = ((ReplaceableValue)ev).replace(oldOb, newOb);
+        		listElements.set(i, ev);
+        	}           
         }     
         return this;
     }

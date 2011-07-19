@@ -25,7 +25,7 @@ import java.util.Iterator;
  * stores left and right hand side of an equation as
  * Exprssions
  */
-public class Equation extends ValidExpression {
+public class Equation extends ValidExpression implements ReplaceableValue {
 
     protected ExpressionNode lhs;
     protected ExpressionNode rhs;
@@ -389,8 +389,8 @@ public class Equation extends ValidExpression {
 	}
 
 	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
-		lhs = lhs.replace(oldOb, newOb);
-		rhs = rhs.replace(oldOb, newOb);
+		lhs = lhs.replaceAndWrap(oldOb, newOb);
+		rhs = rhs.replaceAndWrap(oldOb, newOb);
         return this;
     }
 	

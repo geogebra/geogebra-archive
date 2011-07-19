@@ -247,10 +247,10 @@ public class GeoFunctionConditional extends GeoFunction {
 								ExpressionNode.MULTIPLY, elseFun
 										.getFunctionExpression()));
 			ExpressionNode en2 = en.getCopy(kernel);
-			en2.replace(condFun.getFunction().getFunctionVariable(), ifFun
+			en2.replaceAndWrap(condFun.getFunction().getFunctionVariable(), ifFun
 					.getFunction().getFunctionVariable());
 			if (elseFun != null)
-				en2.replace(elseFun.getFunction().getFunctionVariable(), ifFun
+				en2.replaceAndWrap(elseFun.getFunction().getFunctionVariable(), ifFun
 						.getFunction().getFunctionVariable());
 			uncondFun = new Function(en2, ifFun.getFunction().getFunctionVariable());
 		}

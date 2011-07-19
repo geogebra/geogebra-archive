@@ -97,7 +97,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		setLabel(label);
 		if(isLabelSet() && !isBooleanFunction() && "y".equals(fun.getVarString(0))){
 			FunctionVariable fv = new FunctionVariable(kernel,"x");
-			fun.getExpression().replace(fun.getFunctionVariables()[0], fv);
+			fun.getExpression().replaceAndWrap(fun.getFunctionVariables()[0], fv);
 			fun.getFunctionVariables()[0]=fv;
 			fun.initFunction();
 			update();
@@ -845,7 +845,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	ExpressionNode left = fun1.getFunctionExpression().getCopy(kernel);
        	ExpressionNode right = fun2.getFunctionExpression().getCopy(kernel);    
        	
-    	ExpressionNode sum = new ExpressionNode(fun1.getKernel(), left.replace(x1,x), ExpressionNode.PLUS, right.replace(x2,x));
+    	ExpressionNode sum = new ExpressionNode(fun1.getKernel(), left.replaceAndWrap(x1,x), ExpressionNode.PLUS, right.replaceAndWrap(x2,x));
     	
     	Function f = new Function(sum,x);
     	
@@ -922,7 +922,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		if(lt instanceof FunctionNVar){
 			ExpressionNode ret =((FunctionNVar)lt).getExpression();
 			for(int i=0; i<((FunctionNVar)lt).getVarNumber();i++)
-			ret = ret.replace(((FunctionNVar)lt).getFunctionVariables()[i],
+			ret = ret.replaceAndWrap(((FunctionNVar)lt).getFunctionVariables()[i],
 					varMap.get(((FunctionNVar)lt).getVarString(i)));
 			return ret;
 		}
@@ -989,7 +989,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	ExpressionNode left = fun1.getFunctionExpression().getCopy(kernel);
        	ExpressionNode right = fun2.getFunctionExpression().getCopy(kernel);    
        	
-    	ExpressionNode sum = new ExpressionNode(fun1.getKernel(), left.replace(x1,x), ExpressionNode.MINUS, right.replace(x2,x));
+    	ExpressionNode sum = new ExpressionNode(fun1.getKernel(), left.replaceAndWrap(x1,x), ExpressionNode.MINUS, right.replaceAndWrap(x2,x));
     	
     	Function f = new Function(sum,x);
     	
@@ -1022,7 +1022,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	ExpressionNode left = new ExpressionNode(kernel,num);
        	ExpressionNode right = fun.getFunctionExpression().getCopy(kernel);    
        	
-    	ExpressionNode product = new ExpressionNode(kernel,left, ExpressionNode.MULTIPLY, right.replace(xold,x));
+    	ExpressionNode product = new ExpressionNode(kernel,left, ExpressionNode.MULTIPLY, right.replaceAndWrap(xold,x));
     	
     	Function f = new Function(product,x);
     	
@@ -1399,7 +1399,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				new MyDouble(kernel,1/rd),
 				ExpressionNode.MULTIPLY,
 				new ExpressionNode(kernel,oldX,ExpressionNode.PLUS,new MyDouble(kernel,a*rd-a)));
-		ExpressionNode oldY = fun.getExpression().replace(oldX, newX);
+		ExpressionNode oldY = fun.getExpression().replaceAndWrap(oldX, newX);
 		if(!isBooleanFunction()){
 			
 		

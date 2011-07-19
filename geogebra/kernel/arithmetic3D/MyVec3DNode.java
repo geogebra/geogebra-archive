@@ -19,8 +19,10 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic3D;
 
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.ReplaceableValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyParseError;
@@ -33,7 +35,7 @@ import java.util.HashSet;
  * @author  Markus + ggb3D
  * @version 
  */
-public class MyVec3DNode extends ValidExpression implements Vector3DValue {
+public class MyVec3DNode extends ValidExpression implements Vector3DValue, ReplaceableValue {
 
     private ExpressionValue x, y, z;   
     //private int mode = Kernel.COORD_CARTESIAN;    
@@ -217,5 +219,30 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
 	public String toOutputValueString() {
 		return toValueString();
 	}
+	
+    public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
+    	if (x == oldOb) {
+    		x = newOb;
+    	}
+    	else if (x instanceof ReplaceableValue) {
+    		x =((ReplaceableValue) x).replace(oldOb, newOb);
+    	}
+    	
+    	if (y == oldOb) {
+    		y = newOb;
+    	}
+    	else if (y instanceof ReplaceableValue) {
+    		y =((ReplaceableValue) y).replace(oldOb, newOb);
+    	}
+    	
+    	if (z == oldOb) {
+    		z = newOb;
+    	}
+    	else if (z instanceof ReplaceableValue) {
+    		z =((ReplaceableValue) z).replace(oldOb, newOb);
+    	}
+    	
+    	return this;
+    }
 
 }

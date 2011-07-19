@@ -30,7 +30,7 @@ import java.util.HashSet;
  * @author  Markus
  * @version 
  */
-public class MyVecNode extends ValidExpression implements VectorValue {
+public class MyVecNode extends ValidExpression implements VectorValue, ReplaceableValue {
 
     protected ExpressionValue x;
 	protected ExpressionValue y;   
@@ -71,15 +71,15 @@ public class MyVecNode extends ValidExpression implements VectorValue {
     	if (x == oldOb) {
     		x = newOb;
     	}
-    	else if (x instanceof ExpressionNode) {
-    		x =((ExpressionNode) x).replace(oldOb, newOb);
+    	else if (x instanceof ReplaceableValue) {
+    		x =((ReplaceableValue) x).replace(oldOb, newOb);
     	}
     	
     	if (y == oldOb) {
     		y = newOb;
     	}
-    	else if (y instanceof ExpressionNode) {
-    		y =((ExpressionNode) y).replace(oldOb, newOb);
+    	else if (y instanceof ReplaceableValue) {
+    		y =((ReplaceableValue) y).replace(oldOb, newOb);
     	}
     	
     	return this;

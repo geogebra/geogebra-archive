@@ -35,7 +35,7 @@ import java.util.Set;
  * @version 
  */
 public class Command extends ValidExpression 
-implements ExpressionValue {
+implements ReplaceableValue {
     
      
     // list of arguments
@@ -349,7 +349,7 @@ implements ExpressionValue {
 	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
         for (int i=0; i < args.size(); i++) {
         	ExpressionNode en = (ExpressionNode)args.get(i);
-            en = en.replace(oldOb, newOb);
+            en = en.replaceAndWrap(oldOb, newOb);
             args.set(i, en);
         }     	
         return this;

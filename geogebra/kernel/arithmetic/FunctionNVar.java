@@ -31,7 +31,7 @@ import java.util.Iterator;
  * 
  * @author Markus Hohenwarter + mathieu
  */
-public class FunctionNVar extends ValidExpression implements ExpressionValue,
+public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 		FunctionalNVar {
 
 	/** function expression */
@@ -913,7 +913,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 				case ExpressionNode.PLUS:
 					temp = num.getDouble() - vx;
 					if (Kernel.isZero(temp)) {
-						expression = expression.replace(en, fVars[varNo]);
+						expression = expression.replaceAndWrap(en, fVars[varNo]);
 					} else if (temp < 0) {
 						en.setOperation(ExpressionNode.MINUS);
 						num.set(-temp);
@@ -925,7 +925,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 				case ExpressionNode.MINUS:
 					temp = num.getDouble() + vx;
 					if (Kernel.isZero(temp)) {
-						expression = expression.replace(en, fVars[varNo]);
+						expression = expression.replaceAndWrap(en, fVars[varNo]);
 					} else if (temp < 0) {
 						en.setOperation(ExpressionNode.PLUS);
 						num.set(-temp);
@@ -967,7 +967,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 
 	public void matrixTransform(double a00, double a01, double a10, double a11) {
 		ExpressionNode dummy = new ExpressionNode();
-		expression.replace(fVars[0], dummy);
+		expression.replaceAndWrap(fVars[0], dummy);
 		MyDouble ma00 = new MyDouble(kernel, a00);
 		MyDouble ma01 = new MyDouble(kernel, a01);
 		MyDouble ma10 = new MyDouble(kernel, a10);
@@ -979,15 +979,15 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		ExpressionNode newY = new ExpressionNode(kernel, ma10,
 				ExpressionNode.MULTIPLY, fVars[0]).plus(new ExpressionNode(
 				kernel, ma11, ExpressionNode.MULTIPLY, fVars[1]));
-		expression.replace(fVars[1], newY);
-		expression.replace(dummy, newX);
+		expression = expression.replaceAndWrap(fVars[1], newY);
+		expression = expression.replaceAndWrap(dummy, newX);
 		this.initIneqs(expression, this);
 	}
 
 	public void matrixTransform(double a00, double a01, double a02, double a10,
 			double a11, double a12, double a20, double a21, double a22) {
 		ExpressionNode dummy = new ExpressionNode();
-		expression.replace(fVars[0], dummy);
+		expression = expression.replaceAndWrap(fVars[0], dummy);
 		double[][] b = MyMath.adjoint(a00, a01, a02, a10, a11, a12, a20, a21,
 				a22);
 		MyDouble[][] mbTrans = new MyDouble[3][3];
@@ -1006,13 +1006,13 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 				ExpressionNode.MULTIPLY, fVars[0]).plus(
 				new ExpressionNode(kernel, mbTrans[1][1], ExpressionNode.MULTIPLY,
 						fVars[1])).plus(mbTrans[1][2]);				
-		expression.replace(fVars[1], newY.divide(newZ));
-		expression.replace(dummy, newX.divide(newZ));
+		expression = expression.replaceAndWrap(fVars[1], newY.divide(newZ));
+		expression = expression.replaceAndWrap(dummy, newX.divide(newZ));
 		this.initIneqs(expression, this);
 	}
 	
 	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
-		expression = expression.replace(oldOb, newOb);
+		expression = expression.replaceAndWrap(oldOb, newOb);
         return this;
     }
 

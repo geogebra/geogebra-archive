@@ -206,7 +206,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                     case ExpressionNode.PLUS :
                         temp = num.getDouble() - vx;                    
                         if (Kernel.isZero(temp)) {                      
-                            expression = expression.replace(en, fVars[0]);                          
+                            expression = expression.replaceAndWrap(en, fVars[0]);                          
                         } else if (temp < 0) {
                             en.setOperation(ExpressionNode.MINUS);
                             num.set(-temp);
@@ -218,7 +218,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                     case ExpressionNode.MINUS :
                         temp = num.getDouble() + vx;
                         if (Kernel.isZero(temp)) {
-                            expression = expression.replace(en, fVars[0]);                      
+                            expression = expression.replaceAndWrap(en, fVars[0]);                      
                         } else if (temp < 0) {
                             en.setOperation(ExpressionNode.PLUS);
                             num.set(-temp);
@@ -679,7 +679,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         
         // replace b.fVar in right by a.fVar to have only one function
         // variable in our function
-        right.replace(b.fVars[0], a.fVars[0]);
+        right.replaceAndWrap(b.fVars[0], a.fVars[0]);
         
         ExpressionNode diffExp= new ExpressionNode(a.kernel, left, ExpressionNode.MINUS, right);
         c.setExpression(diffExp);

@@ -47,7 +47,7 @@ import javax.swing.text.Document;
  * @author Markus
  * @version
  */
-public class ExpressionNode extends ValidExpression implements ExpressionValue,
+public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		ExpressionNodeConstants {
 
 	public Application app;
@@ -740,57 +740,47 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	}
 
 	/**
-	 * Replaces every oldOb by newOb in this tree
+	 * Replaces every oldOb by newOb in this ExpressionNode tree and
+	 * makes sure that the result is again an ExpressionNode object.
 	 * 
-	 * @return resulting expression node
+	 * @return resulting ExpressionNode
 	 */
-	public ExpressionNode replace(ExpressionValue oldOb, ExpressionValue newOb) {
-		if (this == oldOb) {
-			if (newOb.isExpressionNode())
-				return (ExpressionNode) newOb;
-			else
-				return new ExpressionNode(kernel, newOb);
-		}
-
-		// left tree
-		if (left!= null) {
-			left = replaceInEV(left, oldOb, newOb);			
-		}
-
-		// right tree
-		if (right != null) {
-			right = replaceInEV(right, oldOb, newOb);
-		}
-		return this;
+	public ExpressionNode replaceAndWrap(ExpressionValue oldOb, ExpressionValue newOb) {
+		ExpressionValue ev = replace(oldOb, newOb);
+		
+		// replace root by new object
+		if (ev.isExpressionNode())
+			return (ExpressionNode) ev;
+		else
+			return new ExpressionNode(kernel, ev);	
 	}
 	
 	/**
-	 * Replaces every oldOb by newOb in exp.
+	 * Replaces every oldOb by newOb in expression.
+	 * @return resulting expression
 	 */
-	public static ExpressionValue replaceInEV(ExpressionValue exp, ExpressionValue oldOb, ExpressionValue newOb) {
-		if (exp == oldOb) {
+	public ExpressionValue replace(ExpressionValue oldOb, ExpressionValue newOb) {
+		if (this == oldOb) {
 			return newOb;
 		}
-		else if (exp.isExpressionNode()) {
-			return ((ExpressionNode) exp).replace(oldOb, newOb);
+		
+		// left tree
+		if (left == oldOb) {
+			left = newOb;
+		} 			
+		else if (left instanceof ReplaceableValue) {
+			left = ((ReplaceableValue) left).replace(oldOb, newOb);			
 		}
-		else if (exp instanceof FunctionNVar) {
-			return ((FunctionNVar)exp).replace(oldOb, newOb);
-		}
-		else if (exp instanceof Equation) {
-			return ((Equation)exp).replace(oldOb, newOb);
-		}
-		else if (exp instanceof MyVecNode) {
-			return ((MyVecNode)exp).replace(oldOb, newOb);
-		}
-		else if (exp instanceof MyList) {
-			return ((MyList)exp).replace(oldOb, newOb);
-		}
-		else if (exp instanceof Command) {
-			return ((Command)exp).replace(oldOb, newOb);
+
+		// right tree
+		if (right == oldOb) {
+			right = newOb;
+		} 			
+		else if (right instanceof ReplaceableValue) {
+			right = ((ReplaceableValue) right).replace(oldOb, newOb);			
 		}
 		
-		return exp;
+		return this;
 	}
 
 	/**

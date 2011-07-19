@@ -151,10 +151,10 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 		ExpressionNode node=f.getExpression();
 		
 		ExpressionNode enf=(ExpressionNode) node.deepCopy(kernel);	//Make new tree for new function
-		//ExpressionNode  enf=new ExpressionNode(kernel,evf);		//System.out.println("enf(før replace): "+enf.toString());
+		//ExpressionNode  enf=new ExpressionNode(kernel,evf);		//System.out.println("enf(fï¿½r replace): "+enf.toString());
 		
 		for(int i=0;i<numberOfParameters;i++){
-			enf=enf.replace((ExpressionValue)gliders[i], mydoubles[i].evaluate()); 
+			enf=enf.replaceAndWrap((ExpressionValue)gliders[i], mydoubles[i].evaluate()); 
 																//System.out.println("Replaced: "+((NumberValue)pars[i]).toString()+"with: "+mydoubles[i].toString());
 		}//for all parameters
 																//System.out.println("enf(etter replace): "+enf.toString());

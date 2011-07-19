@@ -93,7 +93,7 @@ public class AlgoCountIf extends AlgoElement {
     			} 
     			else {
 	    			ExpressionNode ex = (ExpressionNode)boolFun.getFunction().getExpression().deepCopy(kernel);
-	    			ex.replace(var, val.evaluate());
+	    			ex.replaceAndWrap(var, val.evaluate());
 	    			if (((MyBoolean)ex.evaluate()).getBoolean()) count++;
     			}
     		}
