@@ -32,7 +32,7 @@ public class RoundToN extends BuiltinFunction {
         if(argument1 instanceof NumberCons)
         {
 
-            BigNumber decimalToBeRounded = org.mathpiper.lisp.Utility.getNumber(aEnvironment, aStackTop, 1);
+            BigNumber decimalToBeRounded = new BigNumber(org.mathpiper.lisp.Utility.getNumber(aEnvironment, aStackTop, 1));
 
             if(decimalToBeRounded.getPrecision() != requestedPrecision.toInt())
             {

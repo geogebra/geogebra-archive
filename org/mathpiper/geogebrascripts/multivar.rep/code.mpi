@@ -132,68 +132,76 @@ MultiS(_g,_h,MultiNomial(_vars,_terms)) <--
 
 
 
+
+
+
 20 # MultiDivide(_f,g_IsList) <--
 [
+  If(InVerboseMode(),Tell("MultiDivide_1",{f,g}));
   Local(i,v,q,r,nr);
-  v:=MultiExpressionList(f+Sum(g));
-  f:=MakeMultiNomial(f,v);
+  v  := MultiExpressionList(f+Sum(g));
+  f  := MakeMultiNomial(f,v);
   nr := Length(g);
   For(i:=1,i<=nr,i++)
   [
     g[i] := MakeMultiNomial(g[i],v);
   ];
-  {q,r}:=MultiDivide(f,g);
-  q:=MapSingle("NormalForm",q);
-  r:=NormalForm(r);
+  If(Not IsMulti(f),Break());
+  {q,r} := MultiDivide(f,g);
+  q     := MapSingle("NormalForm",q);
+  r     := NormalForm(r);
   {q,r};
 ];
 
+
 10 # MultiDivide(f_IsMulti,g_IsList) <--
 [
+  If(InVerboseMode(),Tell("MultiDivide_2",{f,g}));
   Local(i,nr,q,r,p,v,finished);
-  Bind(nr, Length(g));
-  Bind(v, MultiVars(f));
-  Bind(q, FillList(0,nr));
-  Bind(r, 0);
-  Bind(p, f);
-  Bind(finished,MultiZero(p));
+  nr := Length(g);
+  v  := MultiVars(f);
+  q  := FillList(0,nr);
+  r  := 0;
+  p  := f;
+  finished := MultiZero(p);
   Local(plt,glt);
   While (Not finished)
   [
-    Bind(plt, MultiLT(p));
+    plt := MultiLT(p);  
     For(i:=1,i<=nr,i++)
     [
-      Bind(glt, MultiLT(g[i]));
+      glt := MultiLT(g[i]);
 
       if (MultiLM(glt) = MultiLM(plt) Or MultiTermLess({MultiLM(glt),1}, {MultiLM(plt),1}))
-      if (Select(MultiLM(plt)-MultiLM(glt)) = {}, {{n},n<0})
       [
-        Local(ff);
-      Bind(ff, CreateTerm(v,{MultiLM(plt)-MultiLM(glt),MultiLC(plt)/MultiLC(glt)}));
-        q[i] := q[i] + ff;
-        Local(ltbefore,ltafter);
-        Bind(ltbefore,MultiLeadingTerm(p));
-
-        Bind(p, p - ff*g[i]);
-        Bind(ltafter,MultiLeadingTerm(p));
-
-        if (ltbefore[1] = ltafter[1])
+        
+        if (Select(MultiLM(plt)-MultiLM(glt),{{n},n<0}) = {} )
         [
-          Bind(ltafter,MultiLT(p));
-          Bind(p,p-ltafter);
-        ];
+          Local(ff,ltbefore,ltafter);
+          ff := CreateTerm(v,{MultiLM(plt)-MultiLM(glt),MultiLC(plt)/MultiLC(glt)});
+          If(InVerboseMode(),Tell("      ",NormalForm(ff)));
+          q[i] := q[i] + ff;
+          ltbefore := MultiLeadingTerm(p);
+          p := p - ff*g[i];
+          ltafter := MultiLeadingTerm(p);
+          if (ltbefore[1] = ltafter[1])
+          [
+            ltafter := MultiLT(p);
+            p       := p-ltafter;
+          ];
 
-        Bind(i,nr+2);
+          i := nr + 2;
+        ];
       ];
     ];
 
-    If (i = nr+1,
-    [
-      Bind(r, r + LocalSymbols(a,b)(Subst(a,b)plt));
-      Bind(p,  p - LocalSymbols(a,b)(Subst(a,b)plt));
-    ]);
-
-    Bind(finished,MultiZero(p));
+    If (i = nr + 1,
+      [
+        r := r + LocalSymbols(a,b)(Subst(a,b)plt);
+        p := p - LocalSymbols(a,b)(Subst(a,b)plt);
+      ]
+    );
+    finished := MultiZero(p);
   ];
   {q,r};
 ];
