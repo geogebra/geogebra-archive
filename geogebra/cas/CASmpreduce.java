@@ -52,11 +52,13 @@ public class CASmpreduce extends CASgeneric {
 	 */
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
-		String exp = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE);
+		StringBuilder sb = new StringBuilder();
+		//sb.append("<<off complex, roundall, numval, factor$ on rounded, pri$ ");
+		sb.append("<<off complex, factor$ ");
+		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
+		sb.append(">>");
 
-		exp = "<<off complex, roundall, numval, factor$ on rounded, pri$ " + exp	+ ">>";
-
-		String result = evaluateMPReduce(exp);
+		String result = evaluateMPReduce(sb.toString());
 
 		// convert result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
