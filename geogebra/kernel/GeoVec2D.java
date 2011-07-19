@@ -609,7 +609,10 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
      * interface VectorValue implementation
      */           
     final public GeoVec2D getVector() {
-        return this;
+    	if (this.isImaginaryUnit()) 
+    		return new GeoVec2D(this);
+    	else 
+    		return this;
     }        
         
     final public boolean isConstant() {
@@ -624,7 +627,9 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
         return  mode;
     }        
     
-    final public ExpressionValue evaluate() { return this; }
+    final public ExpressionValue evaluate() { 
+    	return getVector(); 
+    }
     
     final public HashSet<GeoElement> getVariables() { return null; }
     
