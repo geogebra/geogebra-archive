@@ -113,7 +113,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private JLabel[] lblParmeterArray;
 	private JComponent distPanel;
 	private JPanel probPanel;
-	
+
 	private PlotPanelEuclidianView plotPanel;
 	private PlotSettings plotSettings;
 	private JLabel lblBetween;
@@ -516,10 +516,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		plotSettings.xMax = xMax;
 		plotSettings.yMin = yMin;
 		plotSettings.yMax = yMax;
-		
+
 		// don't show the y-axis for continuous case (edge axis looks bad)
 		plotSettings.showYAxis = !isContinuous;
-		
+
 		plotSettings.isEdgeAxis[0] = false;
 		plotSettings.isEdgeAxis[1] = true;
 		plotSettings.forceXAxisBuffer = true;
@@ -605,38 +605,49 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		try {
 
-			if(isContinuous){	
-
-				// build gegebra strings for high and low probabilities
-				// e.g. "Normal[ parms[0] , parms[1] , high ]"
-
-				StringBuilder partialExpr = new StringBuilder();
-				partialExpr.append(cmd[selectedDist]);
-				partialExpr.append("[");
-				for(int i=0; i < parmCount[selectedDist]; i++){
-					partialExpr.append(parms[i]);
-					partialExpr.append(",");
-				}
-				StringBuilder highExpr = new StringBuilder(partialExpr.toString());
-				highExpr.append(high + "]");
-				StringBuilder lowExpr = partialExpr.append(low + "]");
-
-				//System.out.println(highExpr.toString());
-				//System.out.println(lowExpr.toString());
-
-				// calculate the probability
-				if(probMode == PROB_LEFT)
-					prob = evaluateExpression(highExpr.toString());	
-				else if(probMode == PROB_RIGHT)
-					prob = 1 - evaluateExpression(lowExpr.toString());
-				else
-					prob = evaluateExpression(highExpr.toString()) - evaluateExpression(lowExpr.toString());
-
-			}else{
-				//TODO --- handle discrete cases with functions rather than direct sums?
-				if(selectedDist == DIST_BINOMIAL)
-					prob = evaluateExpression("Sum[" + intervalProbList.getLabel() + "]");
+			// Build GeoGebra strings for high and low cumulative probabilities
+			// e.g. "Normal[ parms[0] , parms[1] , high ]"
+			// =================================================
+			
+			StringBuilder partialExpr = new StringBuilder();
+			partialExpr.append(cmd[selectedDist]);
+			partialExpr.append("[");
+			for(int i=0; i < parmCount[selectedDist]; i++){
+				partialExpr.append(parms[i]);
+				partialExpr.append(",");
 			}
+
+			StringBuilder highExpr = new StringBuilder(partialExpr.toString());
+			StringBuilder lowExpr = new StringBuilder(partialExpr.toString());
+
+			highExpr.append(high);
+			lowExpr.append(low);
+
+			// for discrete case boolean cumulative must also be included
+			if(!isContinuous){
+				highExpr.append(", true");
+				lowExpr.append(", true");
+			}
+
+			highExpr.append("]");
+			lowExpr.append("]");
+
+
+			//System.out.println(highExpr.toString());
+			//System.out.println(lowExpr.toString());
+
+			
+			
+			// Use the strings to calculate the interval probability
+			// ========================================
+			
+			if(probMode == PROB_LEFT)
+				prob = evaluateExpression(highExpr.toString());	
+			else if(probMode == PROB_RIGHT)
+				prob = 1 - evaluateExpression(lowExpr.toString());
+			else
+				prob = evaluateExpression(highExpr.toString()) - evaluateExpression(lowExpr.toString());
+
 
 		} catch (Exception e) {		
 			e.printStackTrace();
@@ -647,7 +658,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	/**
-	 * Returns an inverse probability for a selected continuous distribution.
+	 * Returns an inverse probability for a selected distribution.
 	 * @param prob
 	 *            -- left sided probability
 	 */
@@ -867,7 +878,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			}
 
 			// handle inverse probability
-			if(source == fldResult && isContinuous){
+			if(source == fldResult ){
 				if(probMode == PROB_LEFT){
 					high = inverseProbability(value);
 				}
@@ -1002,7 +1013,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		}
 
 		// make result field editable for inverse probability calculation  
-		if(isContinuous && !(probMode == PROB_INTERVAL)){
+		if(probMode != PROB_INTERVAL){
 			fldResult.setBackground(fldLow.getBackground());
 			fldResult.setBorder(fldLow.getBorder());
 			fldResult.setEditable(true);
@@ -1225,7 +1236,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	private void initDistributionConstants(){
 
-		cmd = new String[continuousDistCount];
+		cmd = new String[totalDistCount];
 		cmd[DIST_NORMAL] = "Normal";
 		cmd[DIST_STUDENT] = "TDistribution";
 		cmd[DIST_CHISQUARE] = "ChiSquared";
@@ -1234,8 +1245,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		cmd[DIST_EXPONENTIAL] = "Exponential";
 		cmd[DIST_GAMMA] = "Gamma";
 		cmd[DIST_WEIBULL] = "Weibull";
+		// --- discrete
+		cmd[DIST_BINOMIAL] = "BinomialDist";
+		cmd[DIST_PASCAL] = "Pascal";
+		cmd[DIST_POISSON] = "Poisson";
+		cmd[DIST_HYPERGEOMETRIC] = "HyperGeometric";
 
-		inverseCmd = new String[continuousDistCount];
+
+		inverseCmd = new String[totalDistCount];
 		inverseCmd[DIST_NORMAL] = "InverseNormal";
 		inverseCmd[DIST_STUDENT] = "InverseTDistribution";
 		inverseCmd[DIST_CHISQUARE] = "InverseChiSquare";
@@ -1244,8 +1261,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		inverseCmd[DIST_EXPONENTIAL] = "InverseExponential";
 		inverseCmd[DIST_GAMMA] = "InverseGamma";
 		inverseCmd[DIST_WEIBULL] = "InverseWeibull";
-
-		parmCount = new int[continuousDistCount];
+		// --- discrete
+		inverseCmd[DIST_BINOMIAL] = "InverseBinomial";
+		inverseCmd[DIST_PASCAL] = "InversePascal";
+		inverseCmd[DIST_POISSON] = "InversePoisson";
+		inverseCmd[DIST_HYPERGEOMETRIC] = "InverseHyperGeometric";
+		
+		
+		parmCount = new int[totalDistCount];
 		parmCount[DIST_NORMAL] = 2;
 		parmCount[DIST_STUDENT] = 1;
 		parmCount[DIST_CHISQUARE] = 1;
@@ -1254,6 +1277,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		parmCount[DIST_EXPONENTIAL] = 1;
 		parmCount[DIST_GAMMA] = 2;
 		parmCount[DIST_WEIBULL] = 2;
+		// --- discrete
+		parmCount[DIST_BINOMIAL] = 2;
+		parmCount[DIST_PASCAL] = 2;
+		parmCount[DIST_POISSON] = 1;
+		parmCount[DIST_HYPERGEOMETRIC] = 3;
+
 
 
 		// Create the default parameter map that provides default parameter values
