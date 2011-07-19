@@ -173,7 +173,8 @@ implements
 			//switch to Add mode
 			newTraceLocation = traceCell;
 			isIniting = true;
-			setMode(MODE_ADD);
+			//setMode(MODE_ADD);
+			setMode(MODE_NORMAL);
 		}				
 	}
 	

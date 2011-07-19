@@ -1330,7 +1330,8 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		return table.hasFocus()
 		|| rowHeader.hasFocus()
 		|| table.getTableHeader().hasFocus()
-		|| spreadsheet.getCorner(JScrollPane.UPPER_LEFT_CORNER).hasFocus();
+		|| spreadsheet.getCorner(JScrollPane.UPPER_LEFT_CORNER).hasFocus()
+		|| (formulaBar != null && formulaBar.hasFocus());
 	}
 
 	public void focusGained(FocusEvent arg0) {

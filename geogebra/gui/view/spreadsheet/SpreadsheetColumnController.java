@@ -3,10 +3,11 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -15,12 +16,13 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 public class SpreadsheetColumnController implements KeyListener, MouseListener, MouseMotionListener {
@@ -36,6 +38,8 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	protected int column0 = -1;
 	protected boolean isResizing = false;
 
+	private int overTraceButtonColumn = -1;
+	
 
 	public SpreadsheetColumnController(Application app, MyTable table){
 
@@ -83,7 +87,10 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	}
 
 	public void mouseExited(MouseEvent e) {
+		overTraceButtonColumn = -1;
+		table.getTableHeader().resizeAndRepaint();
 	}
+
 
 	public void mousePressed(MouseEvent e) {
 		int x = e.getX();
@@ -95,17 +102,29 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 		if(!view.hasViewFocus())
 			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
 
-		
+
 		if (!rightClick) {
 			Point point = table.getIndexFromPixel(x, y);
 			if (point != null) {
+
+			
+				// check if the cursor is within the resizing region (i.e. border +- 3pixels)
 				Point point2 = table.getPixel((int)point.getX(), (int)point.getY(), true);
 				Point point3 = table.getPixel((int)point.getX(), (int)point.getY(), false);
 				int x2 = (int)point2.getX();
 				int x3 = (int)point3.getX();
 				isResizing = ! (x > x2 + 2 && x < x3 - 3);
+				
 				if (! isResizing) {
 
+					// launch trace dialog if over a trace button
+					if(point.x == this.overTraceButtonColumn){
+						view.showTraceDialog(null, table.selectedCellRanges.get(0));
+						e.consume();
+						return;
+					}
+					
+					// otherwise handle column selection
 					if(table.getSelectionType() != MyTable.COLUMN_SELECT){
 						table.setSelectionType(MyTable.COLUMN_SELECT);
 						table.getTableHeader().requestFocusInWindow();
@@ -219,10 +238,43 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	}
 
 	public void mouseMoved(MouseEvent e) {
+		
+		
+		// handles mouse over a trace button
+		
+		int column = -1;
+		boolean isOver = false;
+		Point mouseLoc = e.getPoint();
+		Point cellLoc = table.getIndexFromPixel(mouseLoc.x, mouseLoc.y);
+		if (cellLoc != null ) {
+			column = cellLoc.x;
+			if(view.getTraceManager().isTraceColumn(column)){
+				// adjust mouseLoc to the coordinate space of this column header
+				mouseLoc.x = mouseLoc.x - table.getCellRect(0, column, true).x; 
+
+				//int lowBound = table.getCellRect(0, column, true).x + 3;
+				//isOver = mouseLoc.x > lowBound && mouseLoc.x < lowBound + 24;
+				
+				//Point sceeenMouseLoc = MouseInfo.getPointerInfo().getLocation();
+				isOver = ((ColumnHeaderRenderer) table.getColumnModel()
+						.getColumn(column).getHeaderRenderer())
+						.isOverTraceButton(column, mouseLoc, table.getColumnModel().getColumn(column).getHeaderValue());
+			}
+		}
+
+		//System.out.println("isOver = " + isOver );
+		if(isOver && overTraceButtonColumn != column){
+			overTraceButtonColumn = column;
+			table.getTableHeader().resizeAndRepaint();
+		}
+		if(!isOver && overTraceButtonColumn > 0){
+			overTraceButtonColumn = -1;
+			table.getTableHeader().resizeAndRepaint();
+		}
 	}
 
 
-
+	
 
 
 	//=========================================================
@@ -288,42 +340,44 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	//=========================================================
 	//       Renderer Class
 	//=========================================================
-	
-	
-	protected class ColumnHeaderRenderer extends JLabel implements TableCellRenderer  
+
+
+	protected class ColumnHeaderRenderer extends JPanel implements TableCellRenderer  
 	{
 		private static final long serialVersionUID = 1L;
 
 		private Color defaultBackground;
+		private JLabel lblHeader;
+		private JButton btnTrace;
+		private BorderLayout layout;
 
-		private ImageIcon traceIcon = new ImageIcon();
-		private ImageIcon emptyIcon = new ImageIcon();
+		private ImageIcon traceIcon = app.getImageIcon("spreadsheettrace_button.gif");
+		private ImageIcon traceRollOverIcon =  app.getImageIcon("spreadsheettrace_hover.gif");
 
 		public ColumnHeaderRenderer() {    		
-			super("", SwingConstants.CENTER);
+			super(new BorderLayout());
+
+			lblHeader = new JLabel();
+			lblHeader.setHorizontalAlignment(SwingConstants.CENTER);
+			this.add(lblHeader, BorderLayout.CENTER);
+
+			btnTrace = new JButton();
+			btnTrace.setBorderPainted(false);
+
 			setOpaque(true);
 			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
 			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
-			Font font1 = getFont(); 
-			if (font1 == null || font1.getSize() == 0) {
-				kernel.getApplication().getPlainFont();
-				if (font1 == null || font1.getSize() == 0) {
-					font1 = new Font("dialog", 0, 12);
-				}
-			}
-			setFont(font1);
-
-			traceIcon = app.getImageIcon("spreadsheettrace.gif");
-			emptyIcon = new ImageIcon();
-
+			
+			layout = (BorderLayout) this.getLayout();
 		}
 
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus,
 				int rowIndex, int colIndex) {
 
-			setText(value.toString());
-			setIcon(emptyIcon);
+			lblHeader.setFont(app.getPlainFont());
+			
+			lblHeader.setText(value.toString());
 
 			if (((MyTable)table).getSelectionType() == MyTable.ROW_SELECT) {
 				setBackground(defaultBackground);
@@ -335,10 +389,56 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 					setBackground(defaultBackground);
 				}
 			}
-			if(view.getTraceManager().isTraceColumn(colIndex)){
-				setIcon(traceIcon);
+
+			JTableHeader header = table.getTableHeader();
+
+			if(overTraceButtonColumn == colIndex){
+				btnTrace.setIcon(traceRollOverIcon);
 			}
+			else
+				btnTrace.setIcon(traceIcon);
+
+			if(view.getTraceManager().isTraceColumn(colIndex)){
+				this.add(btnTrace,BorderLayout.WEST);	
+			}else{
+				if(layout.getLayoutComponent(BorderLayout.WEST) != null)
+					this.remove(layout.getLayoutComponent(BorderLayout.WEST));
+			}
+
+
+
+
 			return this;
+		}
+
+		private Rectangle rect = new Rectangle();
+		
+		/**
+		 * Returns true if the given mouse location (in local coordinates of the header component)
+		 * is over a trace button.
+		 * @param colIndex
+		 * @param loc
+		 * @param value
+		 * @return
+		 */
+		public boolean isOverTraceButton(int colIndex, Point loc, Object value){
+		
+			if(!view.getTraceManager().isTraceColumn(colIndex))
+				return false;
+
+			try {
+				Component c =  getTableCellRendererComponent(table,
+						value, false, false, -1 , colIndex); 
+				
+				//layout.getLayoutComponent(BorderLayout.WEST).getBounds(rect);
+				btnTrace.getBounds(rect);
+					
+				//System.out.println(loc.toString() + "  :  " + rect.toString());
+				return rect.contains(loc);
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
+			return false;
 		}
 	}
 
