@@ -9,12 +9,12 @@ import geogebra.kernel.arithmetic.ValidExpression;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class CASInputHandler {
 
 	public static char ROW_REFERENCE_STATIC = '#';
 	public static char ROW_REFERENCE_DYNAMIC = '$';
-	private static int REPLACE_INSTEAD_OF_UPDATING = 0; // needed in updateCASrowreferences
 
 	private CASView casView;
 	private Kernel kernel;
@@ -684,75 +684,170 @@ public class CASInputHandler {
 			kernel.setTranslateCommandName(oldValue); 
 		}
 	}
+	
+	
+	/**
+	 * Utility class to store Row-References, used in the updateReferences* and resolveCASReferences-methods.
+	 */
+	private class RowReference
+	{
+		int start; // position of the delimiter of the reference 
+		int end; // position AFTER the reference.
+		int referencedRow;
+		boolean isInputReference;
+		char referenceChar; // ROW_REFERENCE_STATIC or ROW_REFERENCE_DYNAMIC
+		
+		public RowReference(int start, int end, int refRow, boolean isInputReference, char refChar)
+		{
+			this.start = start;
+			this.end = end;
+			this.referencedRow = refRow;
+			this.isInputReference = isInputReference;
+			this.referenceChar = refChar;
+		}
+		
+		public String toString()
+		{
+			return ("RowRef(" + start + "-" + end + " --> " + referencedRow + " | " + isInputReference + ")");
+		}
+	}
+	
+	
+	/**
+	 * Looks at the Input Expression of a given row, and looks for the 
+	 * next delimiter ($ or #) in it.
+	 *     # inserts the previous output
+	 *     #5 inserts the the output of row 5
+	 *     ## inserts the previous input
+	 *     #5# inserts the input of row 5 
+	 * @param str The expression
+	 * @param row The row this expression is in
+	 * @return List of RowReferences
+	 */
+	List<RowReference> getAllReferences(String str, int row)
+	{
+		List<RowReference> retval = new ArrayList<RowReference>();
+		int length = str.length();
+		char curDelimiter;
+		for (int i = 0; i < length; i++) {
+			char ch = str.charAt(i);
+			if (ch == ROW_REFERENCE_STATIC || ch == ROW_REFERENCE_DYNAMIC) {
+				curDelimiter = ch;
+				int start = i;
+				int end = start+1;
+
+				// get digits after #
+				while (end < length && Character.isDigit(str.charAt(end)))
+					end++;
+				
+				int rowRef;
+				if (start == end + 1) // two delimiters in series => reference the previous row
+					rowRef = row - 1;
+				else 
+					rowRef = Integer.parseInt(str.substring(start+1, end)) - 1; // row-refs arent 0based
+
+				// if this was a input reference ($3$), we need to jump over the next delimiter
+				if (end < length && str.charAt(end) == curDelimiter)
+					end++;
+				
+				retval.add(new RowReference(start, end, rowRef, end < length && str.charAt(end) == curDelimiter, curDelimiter));
+				i = end;
+			}
+		}
+		return retval;
+	}
+
+	
 
 	/**
-	 * Replaces references to other rows (e.g. #3, %3) in input string by
+	 * Replaces references to other rows (e.g. #3, $3$) in input string by
 	 * the values from those rows.
+	 * @param str the input expression
+	 * @param selectedRow the row this expression is in
+	 * @param delimiter the delimiter to look for
+	 * @return the string with resolved references.
 	 */
-	public String resolveCASrowReferences(String inputExp, int selectedRow, char delimiter) {
-		if (inputExp == null || inputExp.length() == 0) {
-			return inputExp;
-		}
+	public String resolveCASrowReferences(String str, int selectedRow, char delimiter) {
+		if (str == null || str.length() == 0)
+			return str;
 
 		StringBuilder sb = new StringBuilder();
-		int startPos = 0;
-		int[] delimInfo = getNextDelimiter(inputExp, selectedRow, startPos, delimiter);
-		while (delimInfo != null)
-		{
-			int rowRef = delimInfo[1];
-			char endCharacter = (char)delimInfo[2];
+		int pos = 0;
+		for (RowReference r : getAllReferences(str, selectedRow)) {
+			if (r.referenceChar != delimiter) continue;
+			sb.append( str.substring(pos, r.start));
+			String rowStr;
+			if (r.isInputReference)
+				rowStr = casView.getRowInputValue(r.referencedRow);
+			else
+				rowStr = casView.getRowOutputValue(r.referencedRow);
 
-			sb.append(inputExp.substring(startPos, delimInfo[0]-1));
-			if (rowRef == selectedRow) {
-				// reference to selected row: insert blank
-				sb.append(" ");
+			if (rowStr != "") {
+				sb.append('(');
+				sb.append(rowStr);
+				sb.append(')');
 			}
-			else if (rowRef >= 0 && rowRef < casView.getRowCount()) {
-				// #number or #number# 
-				// insert referenced row
-				String rowStr = endCharacter == delimiter ?
-						casView.getRowInputValue(rowRef) :
-							casView.getRowOutputValue(rowRef);
-						if (isNumberOrVariable(rowStr))
-							sb.append(rowStr);
-						else {
-							sb.append('(');
-							sb.append(rowStr);
-							sb.append(')');
-						}
-			}
-			int len = (int) Math.ceil(Math.log10(delimInfo[1] + 1.1)); // in the String, row-refs aren't 0-based!
-
-			// keep end character after reference
-			if (!Character.isDigit(endCharacter) && endCharacter != delimiter)
-			{
-				sb.append(endCharacter);
-				++len;
-			}
-			startPos = delimInfo[0] + len;
-			delimInfo = getNextDelimiter(inputExp, selectedRow, startPos, delimiter);
+			pos = r.end;
 		}
-		if (startPos < inputExp.length())
-			sb.append(inputExp.substring(startPos));
+		if (pos < str.length())
+			sb.append(str.substring(pos));
 		String result = sb.toString();
 
-		if (result.indexOf(delimiter) < 0) {
+		// maybe by replacing we inserted new references, resolve them as well!
+		if (result.indexOf(delimiter) < 0)
 			return result;
-		} else {
-			// resolve references that are still here
+		else
 			return resolveCASrowReferences(result, selectedRow, delimiter);
+	}
+	
+	
+	/**
+	 * Goes through the input of a given row and updates all the Row-References after a new row was inserted.
+	 * @param insertedAfter The row after which a new row was inserted
+	 * @param currentRow the row whose input should be updated
+	 */
+	public void updateReferencesAfterRowInsert(int insertedAfter, int currentRow) {	
+		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
+		String inputExp = v.getInternalInput();
+		String evalText = v.getEvalText();
+		String evalComm = v.getEvalComment();
+		String [] toUpdate={inputExp,evalText,evalComm};
+		
+		for (int i = 0; i<toUpdate.length; i++){
+			if (toUpdate[i] == null || toUpdate[i].length() == 0)
+				continue;
+			
+			StringBuilder sb = new StringBuilder();
+			int pos = 0;
+			for (RowReference r : getAllReferences(toUpdate[i], currentRow)) {
+				if (r.referencedRow <= insertedAfter)
+					continue;
+				sb.append(toUpdate[i].substring(pos, r.start));
+				sb.append(r.referenceChar);
+				sb.append(r.referencedRow+2); //r.referencedRow is 0based, but the strings aren't!
+				if (r.isInputReference)
+					sb.append(r.referenceChar);
+				pos = r.end;
+			}
+			if (pos < toUpdate[i].length())
+				sb.append(toUpdate[i].substring(pos));
+	
+			String result = sb.toString();
+			switch  (i){
+				case 0: v.setInput(result); break;
+				case 1: v.setProcessingInformation("", result, ""); break;
+				case 2: v.setEvalComment(result);
+			}
 		}
 	}
 
+	
 	/**
-	 * Goes through the input of a given row and updates all the Row-References.
-	 * @param changedRow the row that was changed. For Insertions, that is the row after 
-	 *                   which a new row was inserted, for deletions it's the deleted row
-	 * @param currentRow the row whose input should be updated
-	 * @param delimiter  the delimiter-char of the reference (i.e. $ or #)
-	 * @param isInsertion true for insertions, false for deletions
+	 * Goes through the input of a given row and updates all the Row-References after a row was deleted.
+	 * @param deletedRow The row that was deleted.
+	 * @param currentRow The row whose input should be updated.
 	 */
-	public void updateReferencesAfterRowInsertOrDelete(int changedRow, int currentRow, char delimiter, boolean isInsertion) {	
+	public void updateReferencesAfterRowDelete(int deletedRow, int currentRow) {	
 
 		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
 		String inputExp = v.getInternalInput();
@@ -760,68 +855,37 @@ public class CASInputHandler {
 		String evalComm = v.getEvalComment();
 		String [] toUpdate={inputExp,evalText,evalComm};
 		
-		for (int i=0;i<toUpdate.length;i++){
-		if (toUpdate[i] == null || toUpdate[i].length() == 0) {
-			continue;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		int startPos = 0;
-		int[] delimInfo = getNextDelimiter(toUpdate[i], currentRow, startPos, delimiter);
-		while (delimInfo != null)
-		{
-			int rowRef = delimInfo[1];
-			char endCharacter = (char)delimInfo[2];
-			sb.append(toUpdate[i].substring(startPos, delimInfo[0]-1));
-
-			// note: the references in input strings start at 1, but rowRef is 0-based!
-			sb.append(delimiter);
-			if (isInsertion && rowRef > changedRow)
-				sb.append(rowRef + 2);
-			else if (!isInsertion && rowRef == changedRow) // references deleted row
-				sb.append('?');
-			else if (!isInsertion && rowRef > changedRow)
-				sb.append(rowRef);
-			else
-				sb.append(rowRef+1);
-
-			int len = (int) Math.ceil(Math.log10(delimInfo[1] + 1.1));
-
-			// keep end character after reference
-			if (!Character.isDigit(endCharacter))
-			{
-				sb.append(endCharacter);
-				++len;
+		for (int i = 0; i<toUpdate.length; i++){
+			if (toUpdate[i] == null || toUpdate[i].length() == 0)
+				continue;
+			
+			StringBuilder sb = new StringBuilder();
+			int pos = 0;
+			for (RowReference r : getAllReferences(toUpdate[i], currentRow)) {
+				if (r.referencedRow < deletedRow)
+					continue;
+				
+				sb.append(toUpdate[i].substring(pos, r.start));
+				sb.append(r.referenceChar);
+				if (r.referencedRow == deletedRow) // referenced row was deleted.
+					sb.append("?");
+				else
+					sb.append(r.referencedRow); //r.referencedRow is 0based, but the strings aren't!
+				if (r.isInputReference)
+					sb.append(r.referenceChar);
+				pos = r.end;
 			}
-			startPos = delimInfo[0] + len;
-			delimInfo = getNextDelimiter(toUpdate[i], currentRow, startPos, delimiter);
-		}
-		if (startPos < toUpdate[i].length())
-			sb.append(toUpdate[i].substring(startPos));
-		String result = sb.toString();
-		switch  (i){
-		case 0:		v.setInput(result);
-		break;
-		case 1: v.setProcessingInformation("", result, "");
-		break;
-		case 2: v.setEvalComment(result);
-		}
+			if (pos < toUpdate[i].length())
+				sb.append(toUpdate[i].substring(pos));
+	
+			String result = sb.toString();
+			switch  (i){
+				case 0: v.setInput(result); break;
+				case 1: v.setProcessingInformation("", result, ""); break;
+				case 2: v.setEvalComment(result);
+			}
 		}
 	}
-
-
-	/**
-	 * Returns whether str is a number or variable
-	 */
-	private static boolean isNumberOrVariable(String str) {
-		for (int i=0; i < str.length(); i++) {
-			char ch = str.charAt(i);
-			if (!Character.isLetterOrDigit(ch) && ch != '.')
-				return false;
-		}
-		return true;
-	}
-
 
 
 	/**
@@ -1037,51 +1101,5 @@ public class CASInputHandler {
 			sb.append('}');
 			return sb.toString();
 		}
-	}
-
-	/**
-	 * Looks at the Input Expression of a given row, and looks for the 
-	 * next delimiter ($ or #) in it.
-	 * Returns the position of the next delimiter and the rownumber it 
-	 * references (if any, otherwise 0), and the character at the end of the reference.
-	 * Returns null if no delimiter could be found.
-	 */
-	int[] getNextDelimiter(String inputExpression, int row, int startPos, char delimiter)
-	{
-		int length = inputExpression.length();
-		if (startPos >= length)
-			return null;
-
-		int[] retval = new int[3];
-		for (int i = startPos; i < length; i++) {
-			char ch = inputExpression.charAt(i);
-			if (ch == delimiter) {
-				int start = i+1;
-				int end = start;
-				char endCharacter = end < length ? inputExpression.charAt(end) : ' ';
-
-				// get digits after #
-				while (end < length && Character.isDigit(endCharacter = inputExpression.charAt(end))) {
-					end++;
-				}
-				i = end;
-
-				int rowRef;
-				if (start == end || end == ' ') {
-					// # references previous row
-					rowRef = row - 1;
-				}
-				else {
-					// #n references n-th row
-					rowRef = Integer.parseInt(inputExpression.substring(start, end)) - 1;
-				}
-
-				retval[0] = start;
-				retval[1] = rowRef;
-				retval[2] = (int)endCharacter;
-				return retval;
-			}
-		}
-		return null;
 	}
 }
