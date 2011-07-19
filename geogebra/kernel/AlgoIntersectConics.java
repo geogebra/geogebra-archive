@@ -108,7 +108,11 @@ public class AlgoIntersectConics extends AlgoIntersect {
         
         setInputOutput(); // for AlgoElement     
         initForNearToRelationship();
-        compute();                      
+        compute(); 
+        A.addPointOnConic(getIntersectionPoints()[0]);
+        A.addPointOnConic(getIntersectionPoints()[1]);
+        B.addPointOnConic(getIntersectionPoints()[0]);
+        B.addPointOnConic(getIntersectionPoints()[1]);
     }
     
     // for AlgoElement

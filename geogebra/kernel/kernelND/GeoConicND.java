@@ -916,7 +916,9 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	public final void addPointOnConic(GeoPointND p) {
 		if (pointsOnConic == null)
 			pointsOnConic = new ArrayList<GeoPoint>();
-		pointsOnConic.add((GeoPoint)p);				
+		
+		if (!pointsOnConic.contains(p))
+			pointsOnConic.add((GeoPoint)p);				
 	}
 	
 	/**
