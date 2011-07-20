@@ -65,11 +65,16 @@
     public <methods>;
 }
 
+# Keep Moodle plugin
+-keep class geogebra.moodle.GeoGebraMoodleApplet {
+    public <methods>;
+}
+
 # see META-INF/services
 -keep class org.freehep.graphicsio.raw.RawImageWriterSpi { <methods>; }
 
 # needed so that hoteqn can find Des12.gif, etc.
--keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
+#-keep class geogebra.gui.hoteqn.SymbolLoader { <methods>; }
 
 # JLaTeXMath uses reflection
 -keep class org.scilab.forge.jlatexmath.* { <methods>; }
@@ -81,7 +86,7 @@
 
 
 # Jasymca uses reflection to create functions like LambaSIN
--keep class jasymca.Lambda* {}
+#-keep class jasymca.Lambda* {}
 
 # Rhino Javascript
 #-keep class org.mozilla.classfile.* {  }
