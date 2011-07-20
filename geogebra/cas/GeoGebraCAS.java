@@ -83,7 +83,7 @@ public class GeoGebraCAS {
 			}
 		}catch (MaximaVersionUnsupportedExecption e){
 			app.showError("CAS.MaximaVersionUnsupported");
-			setCurrentCAS(Application.CAS_MATHPIPER);
+			setCurrentCAS(Application.CAS_MPREDUCE);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
