@@ -296,11 +296,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		defaultGeoMap.put(EuclidianConstants.MODE_MIDPOINT, ConstructionDefaults.DEFAULT_POINT_DEPENDENT);
 
 		defaultGeoMap.put(EuclidianConstants.MODE_JOIN, ConstructionDefaults.DEFAULT_LINE);
-		defaultGeoMap.put(EuclidianConstants.MODE_SEGMENT, ConstructionDefaults.DEFAULT_LINE);
-		defaultGeoMap.put(EuclidianConstants.MODE_SEGMENT_FIXED, ConstructionDefaults.DEFAULT_LINE);
+		defaultGeoMap.put(EuclidianConstants.MODE_SEGMENT, ConstructionDefaults.DEFAULT_SEGMENT);
+		defaultGeoMap.put(EuclidianConstants.MODE_SEGMENT_FIXED, ConstructionDefaults.DEFAULT_SEGMENT);
 		defaultGeoMap.put(EuclidianConstants.MODE_RAY, ConstructionDefaults.DEFAULT_LINE);
-		defaultGeoMap.put(EuclidianConstants.MODE_VECTOR, ConstructionDefaults.DEFAULT_LINE);
-		defaultGeoMap.put(EuclidianConstants.MODE_VECTOR_FROM_POINT, ConstructionDefaults.DEFAULT_LINE);
+		defaultGeoMap.put(EuclidianConstants.MODE_VECTOR, ConstructionDefaults.DEFAULT_VECTOR);
+		defaultGeoMap.put(EuclidianConstants.MODE_VECTOR_FROM_POINT, ConstructionDefaults.DEFAULT_VECTOR);
 
 		defaultGeoMap.put(EuclidianConstants.MODE_ORTHOGONAL, ConstructionDefaults.DEFAULT_LINE);
 		defaultGeoMap.put(EuclidianConstants.MODE_PARALLEL, ConstructionDefaults.DEFAULT_LINE);

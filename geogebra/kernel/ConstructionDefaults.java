@@ -37,6 +37,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POINT_COMPLEX =  14;
 	
 	public static final int DEFAULT_LINE = 20;			
+	public static final int DEFAULT_SEGMENT = 21;			
 	public static final int DEFAULT_INEQUALITY = 23; 
 	public static final int DEFAULT_INEQUALITY_1VAR = 24;
 	public static final int DEFAULT_VECTOR = 30;	
@@ -204,6 +205,12 @@ public class ConstructionDefaults {
 		line.setLocalVariableLabel("Line");
 		line.setObjColor(colLine);
 		defaultGeoElements.put(DEFAULT_LINE, line);
+		
+		// segment
+		GeoSegment seg = new GeoSegment(cons);	
+		seg.setLocalVariableLabel("Segment");
+		seg.setObjColor(colLine);
+		defaultGeoElements.put(DEFAULT_SEGMENT, seg);
 		
 		GeoFunctionNVar inequality = new GeoFunctionNVar(cons, null);	
 		//inequality.setLocalVariableLabel("Inequality");
@@ -435,6 +442,10 @@ public class ConstructionDefaults {
 
 		case GeoElement.GEO_CLASS_VECTOR:
 			type = DEFAULT_VECTOR;
+			break;	
+
+		case GeoElement.GEO_CLASS_SEGMENT:
+			type = DEFAULT_SEGMENT;
 			break;	
 
 

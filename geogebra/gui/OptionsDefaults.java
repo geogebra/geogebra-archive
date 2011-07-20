@@ -58,7 +58,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 	 */
 	private DefaultMutableTreeNode pointsNode, pointsFreeNode, pointsDepNode, pointsPathNode, pointsInRegionNode, pointsComplexNode;
 	
-	private DefaultMutableTreeNode lineNode, vectorNode, conicNode, conicSectorNode;
+	private DefaultMutableTreeNode lineNode, segmentNode, vectorNode, conicNode, conicSectorNode;
 	
 	private DefaultMutableTreeNode numberNode, angleNode;
 	
@@ -158,6 +158,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		pointsInRegionNode = new DefaultMutableTreeNode();
 		pointsComplexNode = new DefaultMutableTreeNode();
 		lineNode = new DefaultMutableTreeNode();
+		segmentNode = new DefaultMutableTreeNode();
 		vectorNode = new DefaultMutableTreeNode();
 		conicNode = new DefaultMutableTreeNode();
 		conicSectorNode = new DefaultMutableTreeNode();
@@ -179,6 +180,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		pointsNode.add(pointsComplexNode);
 		
 		rootNode.add(lineNode);
+		rootNode.add(segmentNode);
 		rootNode.add(vectorNode);
 		rootNode.add(conicNode);
 		rootNode.add(conicSectorNode);
@@ -201,6 +203,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		typeToNode.put(pointsInRegionNode, ConstructionDefaults.DEFAULT_POINT_IN_REGION);
 		typeToNode.put(pointsComplexNode, ConstructionDefaults.DEFAULT_POINT_COMPLEX);
 		typeToNode.put(lineNode, ConstructionDefaults.DEFAULT_LINE);
+		typeToNode.put(segmentNode, ConstructionDefaults.DEFAULT_SEGMENT);
 		typeToNode.put(vectorNode, ConstructionDefaults.DEFAULT_VECTOR);
 		typeToNode.put(conicNode, ConstructionDefaults.DEFAULT_CONIC);
 		typeToNode.put(conicSectorNode, ConstructionDefaults.DEFAULT_CONIC_SECTOR);
@@ -235,6 +238,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		pointsInRegionNode.setUserObject(app.getPlain("PointInside"));
 		pointsComplexNode.setUserObject(app.getPlain("ComplexNumber"));
 		lineNode.setUserObject(app.getPlain("Line"));
+		segmentNode.setUserObject(app.getPlain("Segment"));
 		vectorNode.setUserObject(app.getPlain("Vector"));
 		conicNode.setUserObject(app.getPlain("Conic"));
 		conicSectorNode.setUserObject(app.getPlain("Sector"));
