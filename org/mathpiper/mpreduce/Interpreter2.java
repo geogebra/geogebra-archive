@@ -33,280 +33,236 @@ import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 
-
 public class Interpreter2 extends Applet {
 
-    Jlisp jlisp;
-    private static Interpreter2 JlispCASInstance = null;
-    private String startMessage;
-    private String prompt;
-    private Thread reduceThread;
-    private String sendString = null;
-    private StringBuffer inputBuffer = new StringBuffer();
-    Reader in;
-    PrintWriter out;
-    
-    // Communication with the reduce core uses busy-waiting.
-    // This variable defines how long the waiting intervals between polls lasts (in ms).
-    private final static long POLLING_INTERVAL_MS = 10;
-
-
-    public Interpreter2() {
-
-
-
-        jlisp = new Jlisp();
-
-        try {
-
-            in = new InterpreterReader(this);
-
-            out = new PrintWriter(new InterpreterWriter(), false);
-
-            final String[] args = new String[0];
-
-            reduceThread = new Thread(new Runnable() {
-
-                public void run() {
-                    try {
-                        jlisp.startup(args, in, out, false);
-                        out.flush();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-
-            });
-
-            reduceThread.setName("MPReduce");
-
-            reduceThread.start();
-
-            startMessage = evaluate(";");
-
-
-            //Initialize MPReduce.
-            String initializationResponse = evaluate("symbolic procedure update!_prompt; begin setpchar \"\" end;;");
-
-            initializationResponse = evaluate("off int; on errcont; off nat;");
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-
-        }
-
-
-
-    }//end constructor.
-
-
-    public String getStartMessage() {
-        return startMessage;
-    }//end method.
-
-
-
-    public static Interpreter2 getInstance() throws Throwable {
-        if (JlispCASInstance == null) {
-            JlispCASInstance = new Interpreter2();
-        }
-        return JlispCASInstance;
-    }//end method.
-
-    
-
-    public synchronized String evaluate(String send) throws Throwable {
-
-        send = send.trim();
-
-        if (((send.endsWith(";")) || (send.endsWith("$"))) != true) {
-            send = send + ";\n";
-        }
-
-        while (send.endsWith(";;")) {
-            send = send.substring(0, send.length() - 1);
-        }
-
-        while (send.endsWith("$")) {
-            send = send.substring(0, send.length() - 1);
-        }
-
-        send = send + "\n";
-        
-        // System.err.println("Expression for MPReduce "+send);
-
-        this.sendString = send;
-
-
-        try {
-            while (sendString != null) {
-                Thread.sleep(POLLING_INTERVAL_MS);
-            }
-        } catch (InterruptedException ioe) {
-        }
-
-
-        String responseString = this.inputBuffer.toString();
-
-        inputBuffer.delete(0, inputBuffer.length());
-        
-        // System.err.println(responseString);
-
-        return responseString;
-
-    }//end evaluate.
-
-
-
-    public void interruptEvaluation() {
-        try {
-
-            jlisp.interruptEvaluation = true;
-
-        } catch (Throwable e) {
-            //Each excpetion.
-        }
-    }
-
-
-
-    //Lisp in, my out.
-    class InterpreterReader extends Reader {
-
-        Interpreter2 interpreter;
-        int pos, len;
-
-
-        InterpreterReader(Interpreter2 interpreter) {
-            this.interpreter = interpreter;
-            sendString = null;
-        }
-
-
-        public int available() {
-            if (sendString != null) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-
-
-        public void close() {
-        }
-
-
-        public boolean markSupported() {
-            return false;
-        }
-
-
-        public int read() {
-            if (sendString == null) {
-                interpreter.out.flush();
-
-                try {
-                    while (sendString == null) {
-                        Thread.sleep(POLLING_INTERVAL_MS);
-                    }
-                } catch (InterruptedException ioe) {
-                }
-                pos = 0;
-                len = sendString.length();
-            }
-            if (pos == len) {
-                sendString = null;
-                return (int) ' ';
-            } else {
-                return (int) sendString.charAt(pos++);
-            }
-        }
-
-
-        public int read(char[] b) {
-            if (b.length == 0) {
-                return 0;
-            }
-            b[0] = (char) read();
-            return 1;
-        }
-
-
-        public int read(char[] b, int off, int len) {
-            if (b.length == 0 || len == 0) {
-                return 0;
-            }
-            b[off] = (char) read();
-            return 1;
-        }
-
-    }
-
-
-    
-    //Lisp out, my in.
-    class InterpreterWriter extends CharArrayWriter {
-
-        InterpreterWriter() {
-            super(8000);      // nice big buffer by default;
-        }
-
-        public void close() {
-            flush();
-        }
-
-        public void flush() {
-            super.flush();
-            if (size() != 0) // mild optimisation, I suppose!
-            {
-        // The JavaDocs of the Writer class recommends to lock this way in sub-classes.
-        // Here we MUST ensure that if we do the toString() that we do the reset()
-        // before anybody adds any more characters to this stream.
-                synchronized (lock) {
-                    Interpreter2.this.inputBuffer.append(toString());
-                    reset();
-                }
-            }
-
-        }
-
-    }
-
-
-    public static void main(String[] args) {
-        Interpreter2 mpreduce = new Interpreter2();
-
-        String result = "";
-
-        try {
-
-            result = mpreduce.evaluate("off nat;");
-            System.out.println(result + "\n");
-
-            result = mpreduce.evaluate("x^2;");
-            System.out.println(result + "\n");
-
-            result = mpreduce.evaluate("(X-Y)^100;");
-            System.out.println(result + "\n");
-
-
-            result = mpreduce.evaluate("2 + 2;");
-            System.out.println(result + "\n");
-
-
-            result = mpreduce.evaluate("Factorize(100);");
-            System.out.println(result + "\n");
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-        } finally {
-            System.exit(0);
-        }
-
-
-
-
-    }
-
-}//end class.
+	Jlisp jlisp;
+	private static Interpreter2 JlispCASInstance = null;
+	private String startMessage;
+	private Thread reduceThread;
+	private volatile String sendString = null;
+	private StringBuffer inputBuffer = new StringBuffer();
+	private volatile Object inputLock = new Object(); // lock to send data to jlisp
+	private volatile Object outputLock = new Object(); // lock for reading from jlisp
+	Reader in;
+	PrintWriter out;
+
+	public Interpreter2() {
+		jlisp = new Jlisp();
+		try {
+			in = new InterpreterReader(this);
+			out = new PrintWriter(new InterpreterWriter(), false);
+			final String[] args = new String[0];
+			reduceThread = new Thread(new Runnable() {
+				public void run() {
+					try {
+						Jlisp.startup(args, in, out, false);
+						out.flush();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			});
+
+			reduceThread.setName("MPReduce");
+			reduceThread.start();
+			startMessage = evaluate(";");
+			// Initialize MPReduce.
+			@SuppressWarnings("unused")
+			String initializationResponse = evaluate("symbolic procedure update!_prompt; begin setpchar \"\" end;;");
+			initializationResponse = evaluate("off int; on errcont; off nat;");
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}// end constructor.
+
+	public String getStartMessage() {
+		return startMessage;
+	}// end method.
+
+	public static Interpreter2 getInstance() throws Throwable {
+		if (JlispCASInstance == null) {
+			JlispCASInstance = new Interpreter2();
+		}
+		return JlispCASInstance;
+	}// end method.
+
+	public synchronized String evaluate(String send) throws Throwable {
+		send = send.trim();
+		if (((send.endsWith(";")) || (send.endsWith("$"))) != true)
+			send = send + ";\n";
+		
+		while (send.endsWith(";;"))
+			send = send.substring(0, send.length() - 1);
+	
+		while (send.endsWith("$"))
+			send = send.substring(0, send.length() - 1);
+
+		send = send + "\n";
+		// System.err.println("Expression for MPReduce "+send);
+		
+
+		// we will wait until the Interpreter has has consumed sendstring.
+		// (Once he has done that, he'll set sendString to null)
+		synchronized(inputLock) {
+			this.sendString = send;
+			inputLock.notifyAll();
+		}
+		
+		synchronized(outputLock){
+			try {
+				while (sendString != null) {
+					outputLock.wait();
+			}
+			} catch (InterruptedException ioe) {
+			}
+		}
+		String responseString = this.inputBuffer.toString();
+		inputBuffer.delete(0, inputBuffer.length());
+		// System.err.println(responseString);
+		return responseString;
+	}
+
+
+	public void interruptEvaluation() {
+		try {
+			Jlisp.interruptEvaluation = true;
+		} catch (Throwable e) {
+			// Each excpetion.
+		}
+	}
+
+	// Lisp in, my out.
+	class InterpreterReader extends Reader {
+		Interpreter2 interpreter;
+		int pos;
+		String tmp = null;
+
+		InterpreterReader(Interpreter2 interpreter) {
+			this.interpreter = interpreter;
+			sendString = null;
+			tmp = null;
+		}
+
+		public int available() {
+			if (sendString != null)
+				return 1;
+			else
+				return 0;
+		}
+
+		public void close() {
+		}
+
+		public boolean markSupported() {
+			return false;
+		}
+
+		public int read() {
+
+			// if the buffer is empty, we'll wait until we get new input from the interpreter
+			if (tmp == null) {
+				synchronized(inputLock){				
+					try {
+						while (sendString == null) {
+							inputLock.wait();
+						}
+					} catch (InterruptedException ioe)
+					{}
+					pos = 0;
+					tmp = sendString;
+				}
+			}
+
+			if (pos == tmp.length()) {
+				tmp = null;
+				interpreter.out.flush();
+				synchronized(outputLock)
+				{
+					sendString = null;
+					outputLock.notifyAll();
+				}
+				return (int) ' ';
+			} else
+			{
+				return (int) tmp.charAt(pos++);
+			}
+		}
+
+		public int read(char[] b) {
+			if (b.length == 0)
+				return 0;
+			b[0] = (char) read();
+			return 1;
+		}
+
+		public int read(char[] b, int off, int len) {
+			if (b.length == 0 || len == 0)
+				return 0;
+			b[off] = (char) read();
+			return 1;
+		}
+		
+	}
+
+	// Lisp out, my in.
+	class InterpreterWriter extends CharArrayWriter {
+
+		InterpreterWriter() {
+			super(8000); // nice big buffer by default;
+		}
+
+		public void close() {
+			flush();
+		}
+		
+		public void flush() {
+			super.flush();
+			if (size() != 0) // mild optimisation, I suppose!
+			{
+				// The JavaDocs of the Writer class recommends to lock this way in sub-classes.
+				// Here we MUST ensure that if we do the toString() that we do the reset()
+				// before anybody adds any more characters to this stream.
+				synchronized (lock) {
+					Interpreter2.this.inputBuffer.append(toString());
+					reset();
+				}
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		Interpreter2 mpreduce = new Interpreter2();
+
+		String result = "";
+
+		try {
+
+			result = mpreduce.evaluate("off nat;");
+			System.out.println(result + "\n");
+
+			result = mpreduce.evaluate("x^2;");
+			System.out.println(result + "\n");
+
+			result = mpreduce.evaluate("(X-Y)^100;");
+			System.out.println(result + "\n");
+
+			result = mpreduce.evaluate("2 + 2;");
+			System.out.println(result + "\n");
+
+			result = mpreduce.evaluate("Factorize(100);");
+			System.out.println(result + "\n");
+			
+
+			result = mpreduce.evaluate("Hold((x + x) / x);");
+			System.out.println(result + "\n");
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+		} finally {
+			System.exit(0);
+		}
+
+	}
+
+}// end class.
 

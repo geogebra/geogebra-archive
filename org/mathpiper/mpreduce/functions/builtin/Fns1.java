@@ -300,6 +300,7 @@ public class Fns1
         {"list-modules",                new List_modulesFn()},
         {"list-to-string",              new List_to_stringFn()},
         {"list-to-symbol",              new List_to_symbolFn()},
+        {"list-to-vector",              new List_to_vectorFn()},
         {"list2",                       new List2Fn()},
         {"list2*",                      new List2StarFn()},
         {"list3",                       new List3Fn()},
@@ -3290,6 +3291,26 @@ class List_to_symbolFn extends BuiltinFunction
             else return error("Illegal item in list handed to list-to-string");
         }
         return Symbol.intern(s.toString());
+    }
+}
+
+class List_to_vectorFn extends BuiltinFunction
+{
+    public LispObject op1(LispObject arg1) throws Exception
+    {
+        LispObject w = arg1;
+        int n = 0;
+        while (!w.atom)
+        {   n++;
+            w = w.cdr;
+        }
+        LispVector r = new LispVector(n);
+        n = 0;
+        while (!arg1.atom)
+        {   r.vec[n++] = arg1.car;
+            arg1 = arg1.cdr;   
+        }
+        return r;
     }
 }
 

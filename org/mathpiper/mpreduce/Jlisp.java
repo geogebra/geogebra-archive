@@ -101,7 +101,7 @@ import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public class Jlisp extends Environment
 {
-        private static String version = ".015";
+        private static String version = ".016";
 
 	// Within this file I will often reference lispIO and lispErr
 	// directly. Elsewhere they should ONLY be accessed via the Lisp
