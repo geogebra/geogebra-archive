@@ -18,7 +18,6 @@ import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.TableSymbols;
 import geogebra.gui.util.TableSymbolsLaTeX;
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
@@ -42,7 +41,6 @@ import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -81,8 +79,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	private JPanel previewPanel, editPanel, toolPanel;
 	private PopupMenuButton btInsertLaTeX, btInsertUnicode, btInsertGeo;
 	private JLabel previewHeader, editHeader;
-	private String title;
-
+	
 	// text handling fields
 	private GeoText editGeo;
 	private boolean isLaTeX;
@@ -118,7 +115,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		this.app = app;
 		this.startPoint = startPoint;
 		this.isTextMode = isTextMode;
-		this.title = title;
 		this.editGeo = editGeo;
 		textInputDialog = this;
 		inputHandler = new TextInputHandler();
@@ -127,6 +123,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 		// build input dialog GUI
 		createGUI(title, "", false, cols, rows, false, false, false, false, false, false, true);	
+		addHelpButton(Application.WIKI_TEXT_TOOL);
 		editor = (DynamicTextInputPane) inputPanel.getTextComponent();
 		textPreviewer = new TextPreviewPanel(app.getKernel());
 
@@ -375,7 +372,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 */
 	private String[] getGeoObjectList(){
 
-		TreeSet ts = app.getKernel().getConstruction().getGeoSetLabelOrder();
+		TreeSet<GeoElement> ts = app.getKernel().getConstruction().getGeoSetLabelOrder();
 		ArrayList<String> list = new ArrayList<String>(); 
 		Iterator<GeoElement> iter = ts.iterator();
 		while (iter.hasNext()) {

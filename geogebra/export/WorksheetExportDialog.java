@@ -13,21 +13,21 @@ package geogebra.export;
 
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.util.HelpAction;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
-import geogebra.gui.GuiManager;
 import geogebra.util.DownloadManager;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -93,7 +93,7 @@ public class WorksheetExportDialog extends JDialog {
 					cbUseBrowserForJavaScript, cbAllowRescaling, cbRemoveLinebreaks, cbOpenButton, 
 					cbOfflineJars, cbIncludeHTML5;
 	private JComboBox cbFileType, cbAllWorksheets;
-	private JButton exportButton;
+	private JButton exportButton, helpButton;
 	private GraphicSizePanel sizePanel;
 	private boolean kernelChanged = false;			
 	private JTabbedPane tabbedPane;
@@ -163,6 +163,10 @@ public class WorksheetExportDialog extends JDialog {
 			}
 		});
 
+		helpButton = new JButton(app.getMenu("Help"));
+		HelpAction helpAction = new HelpAction(app, app
+				.getImageIcon("help.png"),app.getMenu("Help"),Application.WIKI_EXPORT_WORKSHEET);
+		helpButton.setAction(helpAction);
 		exportButton = new JButton(app.getMenu("Export"));
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
@@ -255,6 +259,8 @@ public class WorksheetExportDialog extends JDialog {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		buttonPanel.add(Box.createHorizontalGlue());
 		
+		buttonPanel.add(helpButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		buttonPanel.add(exportButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		buttonPanel.add(cancelButton);
@@ -667,10 +673,6 @@ public class WorksheetExportDialog extends JDialog {
 		}		
 	}
 
-	private void updateEnabledStates() {				
-		tabbedPane.setEnabledAt(1, !cbOpenButton.isSelected());
-	}
-
 	private void centerOnScreen() {
 		pack();
 		setLocationRelativeTo(app.getMainComponent());
@@ -1001,6 +1003,9 @@ public class WorksheetExportDialog extends JDialog {
 	
 	/**
 	 * Copies all jar files to the given destination directory.
+	 * @param codeBase 
+	 * @param destDir 
+	 * @throws Exception 
 	 */
 	public synchronized void copyJarsTo(URL codeBase, String destDir) throws Exception {
 		for (int i=0; i < Application.JAR_FILES.length; i++) {

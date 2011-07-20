@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.util.HelpAction;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
@@ -21,6 +22,7 @@ import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +31,7 @@ import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -48,7 +51,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	protected String inputText = null;
 	protected InputPanel inputPanel;	
-	protected JButton btApply, btCancel, btProperties, btOK;
+	protected JButton btApply, btCancel, btProperties, btOK, btHelp;
 	protected JPanel optionPane;
 
 	protected JPanel buttonsPanel;
@@ -69,6 +72,13 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	/**
 	 * Creates a non-modal standard input dialog.
+	 * @param app 
+	 * @param message 
+	 * @param title 
+	 * @param initString 
+	 * @param autoComplete 
+	 * @param handler 
+	 * @param geo 
 	 */
 	public InputDialog(Application app,  String message, String title, String initString,
 			boolean autoComplete, InputHandler handler, GeoElement geo) {
@@ -164,6 +174,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		btApply.addActionListener(this);
 		
 		
+		
 		optionPane = new JPanel(new BorderLayout(5,5));
 		buttonsPanel = new JPanel(new BorderLayout(5,5));
 		msgLabel = new JLabel(message);
@@ -190,7 +201,15 @@ public class InputDialog extends JDialog implements ActionListener,
 		
 		setLabels(title);
 	}
-	
+	public void addHelpButton(String articleName){
+		btHelp = new JButton();
+		HelpAction helpAction = new HelpAction(app, app
+				.getImageIcon("help.png"),app.getMenu("Help"),
+				articleName);
+		btHelp.setAction(helpAction);
+		btPanel.add(btHelp,0);
+		btPanel.add(Box.createRigidArea(new Dimension(80, 0)),1);
+	}
 	protected void createBtPanel(boolean showApply){
 		btPanel.add(btOK);
 		btPanel.add(btCancel);		
@@ -200,7 +219,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	/**
 	 * Update the labels of this component (applied if the language was changed).
 	 * 
-	 * @param The title of the dialog which is customized for every dialog
+	 * @param title The title of the dialog which is customized for every dialog
 	 */
 	public void setLabels(String title) {
 		setTitle(title);
@@ -298,7 +317,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		}
 		//setVisible(!finished);
 	}
-    protected ArrayList tempArrayList = new ArrayList();
+    protected ArrayList<GeoElement> tempArrayList = new ArrayList<GeoElement>();
 	
 	public String getText() {
 		return inputPanel.getText();

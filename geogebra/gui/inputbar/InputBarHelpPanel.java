@@ -774,7 +774,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 				app.getGuiManager().openCommandHelp(selectedCommand);
 			}
 			else if(selectedFunction != null)
-				app.getGuiManager().openHelp("PredefinedFunctionsAndOperators");
+				app.getGuiManager().openHelp(Application.WIKI_OPERATORS);
 			else
 				app.getGuiManager().openHelp("InputBar");
 		} 

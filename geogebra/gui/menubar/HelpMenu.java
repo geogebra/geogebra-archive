@@ -1,6 +1,7 @@
 package geogebra.gui.menubar;
 
 import geogebra.GeoGebra;
+import geogebra.gui.util.HelpAction;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
@@ -64,32 +65,12 @@ class HelpMenu extends BaseMenu {
 	 */
 	private void initActions()
 	{
-		helpAction = new AbstractAction(app.getMenu("Help"), app
-				.getImageIcon("help.png")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				Thread runner = new Thread() {
-					public void run() {
-						app.getGuiManager().openHelp("Manual:MainPage");
-					}
-				};
-				runner.start();
-			}
-		};
+		helpAction = new HelpAction(app, app
+				.getImageIcon("help.png"),app.getMenu("Help"),Application.WIKI_MANUAL);
+					
 		
-		tutorialAction = new AbstractAction(app.getMenu("Tutorials")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				Thread runner = new Thread() {
-					public void run() {
-						app.getGuiManager().openHelp("Tutorial:MainPage");
-					}
-				};
-				runner.start();
-			}
-		};
+		tutorialAction = new HelpAction(app,null,app.getMenu("Tutorials"),Application.WIKI_TUTORIAL);
+					
 
 		forumAction = new AbstractAction("GeoGebra Forum", new ImageIcon(app
 				.getInternalImage("users.png"))) {

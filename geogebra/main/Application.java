@@ -154,6 +154,13 @@ public class Application implements KeyEventDispatcher {
 			"geogebra_properties.jar" };
 	
 	public static final String LOADING_GIF = "http://www.geogebra.org/webstart/loading.gif";
+	
+	public static final String WIKI_OPERATORS = "Predefined Functions and Operators";
+	public static final String WIKI_MANUAL = "Manual:Main Page";
+	public static final String WIKI_TUTORIAL = "Tutorial:Main Page";
+	public static final String WIKI_EXPORT_WORKSHEET = "Export_Worksheet_Dialog";
+	public static final String WIKI_ADVANCED = "Advanced Features";
+	public static final String WIKI_TEXT_TOOL = "Insert Text Tool";
 
 	// supported GUI languages (from properties files)
 	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
@@ -344,7 +351,7 @@ public class Application implements KeyEventDispatcher {
 
 	// For language specific settings
 	private Locale currentLocale, englishLocale = null, tooltipLocale = null;
-	private ResourceBundle rbmenu, rbmenuTT, rbcommand, rbcommandTT, rbcommandEnglish, rbcommandOld, rbcommandScripting, rberror, rbcolors, rbplain, rbplainTT, rbmenuEnglish, rbsymbol, rbsettings, rbwiki;
+	private ResourceBundle rbmenu, rbmenuTT, rbcommand, rbcommandTT, rbcommandEnglish, rbcommandOld, rbcommandScripting, rberror, rbcolors, rbplain, rbplainTT, rbmenuEnglish, rbsymbol, rbsettings;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -2239,19 +2246,7 @@ public class Application implements KeyEventDispatcher {
 		} catch (Exception e) {
 			return str;
 		}
-	}
-
-	final public String getWiki(String key) {
-		if (rbwiki == null) {
-			initWikiResourceBundle();
-		}
-
-		try {
-			return rbwiki.getString(key);
-		} catch (Exception e) {
-			return key;
-		}
-	}
+	}	
 	
 	// used when a secondary language is being used for tooltips
 	private boolean tooltipFlag = false;
@@ -2342,12 +2337,7 @@ public class Application implements KeyEventDispatcher {
 		rbplainTT = MyResourceBundle.createBundle(RB_PLAIN, tooltipLocale);
 	}
 	
-	
-	private void initWikiResourceBundle() {
-			
-		rbwiki = MyResourceBundle.createBundle(RB_WIKI, Locale.ENGLISH);		
-		debug(rbwiki.getLocale());
-	}
+		
 
 	private void initSymbolResourceBundle() {
 		rbsymbol = MyResourceBundle.createBundle(RB_SYMBOL, currentLocale);
@@ -4902,7 +4892,8 @@ public class Application implements KeyEventDispatcher {
 	// determines which CAS is being used
 	final public static int CAS_MATHPIPER = ExpressionNode.STRING_TYPE_MATH_PIPER;
 	final public static int CAS_MAXIMA = ExpressionNode.STRING_TYPE_MAXIMA;
-	final public static int CAS_MPREDUCE = ExpressionNode.STRING_TYPE_MPREDUCE;	
+	final public static int CAS_MPREDUCE = ExpressionNode.STRING_TYPE_MPREDUCE;
+		
 
 	
 	public void setDefaultCAS(int CAS) {

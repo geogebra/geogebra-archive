@@ -2895,18 +2895,7 @@ public class GuiManager {
 			BrowserLauncher.openURL(url.toExternalForm());
 		}
 	}
-
-	    public void openHelp() {
-	    	showURLinBrowser(app.getGuiManager().getHelpURL(0,""));
-	    	/*
-	    	try {
-				showURLinBrowser(new URL(GeoGebra.HELP_URL));
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}*/
-	    	
-	    }
-		
+	   	
 	    public void openCommandHelp(String command) {
 	    	String internalCmd = null;
 	    	if (command != null)
@@ -2972,11 +2961,8 @@ public class GuiManager {
 	    		strURL =  app.getEnglishMenu(pageName);
 	    		typeStr = "tool";
 	    		break;
-	    	case HELP_GENERIC:
-	    		String[] str = pageName.split(":");	    		
-	    		strURL =  app.getWiki(str[0]);
-	    		if(str.length>1)
-	    			strURL+=":"+app.getWiki(str[1]);
+	    	case HELP_GENERIC:	    		
+	    			strURL = pageName;
 	    		typeStr = "article";
 	    		break;
 	    	default:
