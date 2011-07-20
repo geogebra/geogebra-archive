@@ -519,7 +519,9 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		// don't show the y-axis for continuous case (edge axis looks bad)
 		plotSettings.showYAxis = !isContinuous;
-
+		//plotSettings.showYAxis = true;
+		
+		
 		plotSettings.isEdgeAxis[0] = false;
 		plotSettings.isEdgeAxis[1] = true;
 		plotSettings.forceXAxisBuffer = true;
@@ -579,6 +581,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			parms[i] = ((GeoNumeric)parmList.get(i)).getDouble();
 		}
 		return parms;
+
 	}
 
 
@@ -608,7 +611,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			// Build GeoGebra strings for high and low cumulative probabilities
 			// e.g. "Normal[ parms[0] , parms[1] , high ]"
 			// =================================================
-			
+
 			StringBuilder partialExpr = new StringBuilder();
 			partialExpr.append(cmd[selectedDist]);
 			partialExpr.append("[");
@@ -636,11 +639,11 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			//System.out.println(highExpr.toString());
 			//System.out.println(lowExpr.toString());
 
-			
-			
+
+
 			// Use the strings to calculate the interval probability
 			// ========================================
-			
+
 			if(probMode == PROB_LEFT)
 				prob = evaluateExpression(highExpr.toString());	
 			else if(probMode == PROB_RIGHT)
@@ -665,12 +668,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private double inverseProbability(double prob){
 
 		double result = 0;
-
-		// retrieve the parameter values from the parmList geo
-		double [] parms = new double[parmList.size()];
-		for(int i = 0; i< parmList.size(); i++){
-			parms[i] = ((GeoNumeric)parmList.get(i)).getDouble();
-		}
+		double[] parms = getCurrentParameters();
 
 		try {
 			// build geogebra string for calculating inverse prob 
@@ -1056,33 +1054,22 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		removeGeos();
 		createGeoElements();
 
+		// set visibility
+		densityCurve.setEuclidianVisible(isContinuous);
+		if(hasIntegral)
+			integral.setEuclidianVisible(isContinuous);
+		discreteGraph.setEuclidianVisible(!isContinuous);
+		discreteIntervalGraph.setEuclidianVisible(!isContinuous);
 
-		if( selectedDist == DIST_GAMMA
-				|| selectedDist == DIST_WEIBULL
-				|| selectedDist == DIST_EXPONENTIAL){
-			mainPanel.remove(plotPanel);
-			mainPanel.add(notAvailablePanel,BorderLayout.CENTER);
-			this.repaint();
-		}else{
-			mainPanel.remove(notAvailablePanel);
-			mainPanel.add(plotPanel, BorderLayout.CENTER);
+		// update 
+		densityCurve.update();
+		if(hasIntegral)
+			integral.update();
+		discreteGraph.update();
+		discreteIntervalGraph.update();
 
-			// set visibility
-			densityCurve.setEuclidianVisible(isContinuous);
-			if(hasIntegral)
-				integral.setEuclidianVisible(isContinuous);
-			discreteGraph.setEuclidianVisible(!isContinuous);
-			discreteIntervalGraph.setEuclidianVisible(!isContinuous);
+		this.repaint();
 
-			// update 
-			densityCurve.update();
-			if(hasIntegral)
-				integral.update();
-			discreteGraph.update();
-			discreteIntervalGraph.update();
-
-			this.repaint();
-		}
 
 		comboDistribution.addActionListener(this);
 	}
@@ -1266,8 +1253,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		inverseCmd[DIST_PASCAL] = "InversePascal";
 		inverseCmd[DIST_POISSON] = "InversePoisson";
 		inverseCmd[DIST_HYPERGEOMETRIC] = "InverseHyperGeometric";
-		
-		
+
+
 		parmCount = new int[totalDistCount];
 		parmCount[DIST_NORMAL] = 2;
 		parmCount[DIST_STUDENT] = 1;
@@ -1294,8 +1281,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		defaultParameterMap.put(DIST_CHISQUARE, new double[] {6}); // df = 6
 
 		defaultParameterMap.put(DIST_F, new double[] {5,2}); // df1 = 5, df2 = 2
-		defaultParameterMap.put(DIST_EXPONENTIAL, new double[] {6}); // df = 6
-		defaultParameterMap.put(DIST_GAMMA, new double[] {6,6}); // df = 6
+		defaultParameterMap.put(DIST_EXPONENTIAL, new double[] {1}); // mean = 1
+		defaultParameterMap.put(DIST_GAMMA, new double[] {3,2}); // alpha = 3, beta = 2
 		defaultParameterMap.put(DIST_CAUCHY, new double[] {0,1}); // median = 0, scale = 1
 		defaultParameterMap.put(DIST_WEIBULL, new double[] {5,1}); // shape = 5, scale = 1
 
@@ -1320,70 +1307,20 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private String buildDensityCurveExpression(int type){
 		String expr = "";
 		String k, mean, sigma, v, v2, median, scale, shape;
-		// retrieve the parameter values from the parmList geo
-		double [] parms = getCurrentParameters();
-
-		switch(type){
-
-		case DIST_NORMAL:
-			//double mean = parms[0];
-			//double sigma = parms[1];
-
-			mean = "Element[" + parmList.getLabel() + ",1]";
-			sigma = "Element[" + parmList.getLabel() + ",2]";
-
-			expr = "Normal[" + mean + "," + sigma + ", x]";
-
-			//expr =  "1 / sqrt(2 Pi " + sigma + "^2) exp(-((x - " + mu + ")^2 / 2 " + sigma + "^2))";
-			break;
-
-		case DIST_STUDENT:
-			//double v = parms[0];
-			v = "Element[" + parmList.getLabel() + ",1]";
-			expr =  "TDistribution[" + v + ",x]";
-			break;
-
-		case DIST_CHISQUARE:
-			//double k = parms[0];
-			k = "Element[" + parmList.getLabel() + ",1]";
-			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
-			break;
-
-		case DIST_F:
-			v = "Element[" + parmList.getLabel() + ",1]";
-			v2 = "Element[" + parmList.getLabel() + ",2]";
-			expr = "FDistribution[" + v + "," + v2 + ",x]";
-			break;
-
-		case DIST_CAUCHY:			
-			median = "Element[" + parmList.getLabel() + ",1]";
-			scale = "Element[" + parmList.getLabel() + ",2]";
-			expr = "Cauchy[" + median + "," + scale + ",x]";
-			break;
-
-		case DIST_EXPONENTIAL:
-			//double k = parms[0];
-			k = "Element[" + parmList.getLabel() + ",1]";
-			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
-			break;
-
-		case DIST_GAMMA:
-			//double k = parms[0];
-			k = "Element[" + parmList.getLabel() + ",1]";
-			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
-			break;
-
-		case DIST_WEIBULL:
-			// weibullPDF(x) = shape / scale (x / scale)^(shape - 1) e^(-(x / scale)^shape)
-			shape = "Element[" + parmList.getLabel() + ",1]";
-			scale = "Element[" + parmList.getLabel() + ",2]";
-			expr = shape + "/"  +  scale + " * (x /" + scale + ")^( " + shape + "- 1) e^(-(x /" + scale + ")^ " + shape + ")";
-			break;
-
-
+		
+		// build geogebra string for creating a density curve wih list values as parameters
+		// e.g." Normal[Element[list1,1],Element[list1,2],x]""
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(cmd[type]);
+		sb.append("[");
+		for(int i=1; i <= parmCount[type]; i++){
+			sb.append("Element[" + parmList.getLabel() + "," + i + "]");
+			sb.append(",");
 		}
-
-		return expr;
+		sb.append("x]");
+		
+		return sb.toString();
 	}
 
 
@@ -1489,7 +1426,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		// retrieve the parameter values from the parmList geo
 		double [] parms = getCurrentParameters();
-		double mean, sigma, v, v2, k, median, scale, shape, mode, n, p, pop, sample, variance;	
+		double mean, sigma, v, v2, k, median, scale, shape, mode, n, p, pop, sample, sd, variance;	
 
 		switch(selectedDist){
 
@@ -1548,26 +1485,27 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 		case DIST_EXPONENTIAL:
-			k = parms[0];		
+			double lambda = parms[0];		
 			xMin = 0;
-			xMax = 4*k;
+			xMax = 4*(1/lambda);   // st dev = 1/lambda	
 			yMin = 0;
-			if(k>2)
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
-			else
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+			yMax = 1.2* lambda;   	
 			break;
 
 
 		case DIST_GAMMA:
-			k = parms[0];		
+			double alpha = parms[0]; // (shape)
+			double beta = parms[1];  //(scale)
+			mode = (alpha - 1) * beta;
+			mean = alpha*beta;
+			sd = Math.sqrt(alpha)*beta;
 			xMin = 0;
-			xMax = 4*k;
+			xMax = mean + 5*sd;  
 			yMin = 0;
-			if(k>2)
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
+			if(alpha > 1)  // mode = (alpha -1)*beta
+				yMax = 1.2 * ((GeoFunction)densityCurve).evaluate(mode);	
 			else
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+				yMax = 1.2 * ((GeoFunction)densityCurve).evaluate(0);	
 			break;
 
 
