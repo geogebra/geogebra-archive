@@ -233,8 +233,10 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	    		int size = pointsOnConic.size();
 	    		for (int i=0; i < size; i++) {
 	    			GeoPoint p = (GeoPoint) pointsOnConic.get(i);
-	    			if (p.getPath()==g)
-	    				pointOnConic = p;
+	    			if (g.isOnPath(p, Kernel.MIN_PRECISION)) { //TODO: modify it.
+    					pointOnConic = p;
+    					break;
+    				}
 	    		}
 			}
 		}
