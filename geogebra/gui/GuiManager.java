@@ -2887,9 +2887,11 @@ public class GuiManager {
 	}
 
 	public void showURLinBrowser(URL url) {
+		Application.debug("opening URL:"+url);
 		if (app.getJApplet() != null) {
 			app.getJApplet().getAppletContext().showDocument(url, "_blank");
 		} else {
+			Application.debug("opening URL:"+url.toExternalForm());
 			BrowserLauncher.openURL(url.toExternalForm());
 		}
 	}
