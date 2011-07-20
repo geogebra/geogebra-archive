@@ -29,7 +29,7 @@ public class PathMoverGeneric implements PathMover {
 					max_step_width, step_width, offset;
 	protected int  mode;	
 	protected boolean posOrientation;
-	private boolean maxBorderSet, minBorderSet;
+	private boolean maxBorderSet, minBorderSet, lastMaxBorderSet, lastMinBorderSet;
 	
 	/**
 	 * Creates new path mover for given path
@@ -115,6 +115,7 @@ public class PathMoverGeneric implements PathMover {
 	public void resetStartParameter() {		
 		curr_param = start_param;	
 		last_param = start_param;
+		maxBorderSet = lastMaxBorderSet = minBorderSet = lastMinBorderSet = false;
 		step_width = max_step_width;		
 	}
 	
@@ -126,6 +127,8 @@ public class PathMoverGeneric implements PathMover {
 		//  check if we are in our interval
 		boolean lineTo = true;				
 		last_param = curr_param;
+		lastMaxBorderSet = maxBorderSet;
+		lastMinBorderSet = minBorderSet;
 		
 		// in the last step we got outside a border and stopped there
 		// now continue at the other border
@@ -277,7 +280,9 @@ public class PathMoverGeneric implements PathMover {
 	}
 
 	final public void stepBack() {			
-		curr_param = last_param;		
+		curr_param = last_param;
+		maxBorderSet = lastMaxBorderSet;
+		minBorderSet = lastMinBorderSet;
 	}
 	
 
