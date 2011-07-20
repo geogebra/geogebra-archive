@@ -316,7 +316,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public double getAnimationSpeed() {
 		if(getAnimationSpeedObject() == null){
 			GeoNumeric num = kernel.getDefaultNumber(isGeoAngle());
-			setAnimationStep(num.getAnimationSpeed());
+			setAnimationSpeed(num.getAnimationSpeed());
 		}
 		return super.getAnimationSpeed();
 	}
