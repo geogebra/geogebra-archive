@@ -15,7 +15,6 @@ package geogebra.kernel;
 import java.util.ArrayList;
 
 import geogebra.cas.CASgeneric;
-import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;

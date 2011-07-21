@@ -284,6 +284,10 @@ public class GeoInterval extends GeoFunction {
 	public boolean isGeoInterval() {
 		return true;
 	}
+	
+	public String toOutputValueString(){
+		return toValueString();
+	}
 
 
 
