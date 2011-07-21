@@ -1080,8 +1080,7 @@ public class AlgebraProcessor {
 					
 				default:
 					// return the GeoElement
-					GeoElement[] ret = {(GeoElement) eval };
-					Application.printStacktrace("output:"+n);
+					GeoElement[] ret = {(GeoElement) eval };					
 					return ret;
 			}			
 		}		
