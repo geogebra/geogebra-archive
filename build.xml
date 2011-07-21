@@ -110,7 +110,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 
 	<!-- build signed and unsigned GeoGebra 3D jar files -->
 	<target name="geogebra3D" 
-		depends="clean, ggb-jar-files3D, copyDebug, signDebug, obfuscate3D, ggb-jar-index3D, 
+		depends="clean, ggb-jar-files3D, copyDebug3D, signDebug, obfuscate3D, ggb-jar-index3D, 
 					copyJars3D, sign, pack, preloadHtml, finish">
 	</target>
 
@@ -288,6 +288,15 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 
 	<!-- put jar files (unobfuscated, unindexed) into subdirectory debug -->
 	<target name="copyDebug" depends="ggb-jar-files">
+		<copy todir="${build.dir}/debug">
+			<fileset dir="${build.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- put jar files (unobfuscated, unindexed) into subdirectory debug -->
+	<target name="copyDebug3D" depends="ggb-jar-files3D">
 		<copy todir="${build.dir}/debug">
 			<fileset dir="${build.dir}">
 				<include name="*.jar" />
