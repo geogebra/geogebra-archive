@@ -34,21 +34,20 @@ import java.util.HashMap;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
@@ -148,6 +147,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	private JLabel lblEndProbOf;
 
+	private JLabel lblProb;
+
+	private JLabel lblDist;
+
+	private JSplitPane sp;
+
 
 
 
@@ -232,15 +237,27 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			//======================================================
 			distPanel = this.createDistributionPanel();	
 			probPanel = this.createProbabilityPanel();
+			distPanel.setBorder(BorderFactory.createEtchedBorder());
+			probPanel.setBorder(BorderFactory.createEtchedBorder());
+
+			probPanel.setBorder(BorderFactory.createCompoundBorder(
+					BorderFactory.createEmptyBorder(2, 2, 2, 2),
+					BorderFactory.createEtchedBorder())); 
+			distPanel.setBorder(probPanel.getBorder());
+
+
+
 
 			JPanel controlPanel = new JPanel();
-			controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));
+			controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));	
 			controlPanel.add(distPanel);
 			controlPanel.add(probPanel);
 
 			// TODO: Rounding button, Print ??? , remove Close button
 			//controlPanel.add(buttonPanel);
-			controlPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+			//controlPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+
+			controlPanel.setBorder(BorderFactory.createEmptyBorder());
 
 
 			// create the plot panel (extension of EuclidianView)
@@ -253,31 +270,52 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 					BorderFactory.createEmptyBorder(2, 2, 2, 2),
 					BorderFactory.createBevelBorder(BevelBorder.LOWERED))); 
 
-			plotPanel.setPreferredSize(new Dimension(350,300));
+			plotPanel.setBorder(BorderFactory.createEmptyBorder());
 
+			//plotPanel.setPreferredSize(new Dimension(500,500));
 
 			// put the sub-panels together into the main panel
 			//=====================================================
-			mainPanel = new JPanel(new BorderLayout());		
-			mainPanel.add(plotPanel, BorderLayout.CENTER);	
 
-			mainPanel.add(controlPanel, BorderLayout.SOUTH);
-			mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2,2,2));
+			Dimension pref = controlPanel.getPreferredSize();
+			controlPanel.setMinimumSize(pref);
+		//	Dimension max = controlPanel.getMaximumSize();
+		//	max.height = pref.height;
+		//	controlPanel.setMaximumSize(max);
 
+
+
+			sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, plotPanel, controlPanel);
+			sp.setResizeWeight(0);
+			sp.setBorder(BorderFactory.createEmptyBorder());
 
 			this.setLayout(new BorderLayout());
-			this.add(mainPanel, BorderLayout.CENTER);
-			//this.getContentPane().add(mainPanel);
-			//this.getContentPane().setPreferredSize(new Dimension(450,450));
+			this.add(sp, BorderLayout.CENTER);
 
+
+/*
+			JPanel main = new JPanel(new BorderLayout());
+			main.add(plotPanel, BorderLayout.CENTER);
+			main.add(controlPanel, BorderLayout.WEST);
+			this.setLayout(new BorderLayout());
+			this.add(main, BorderLayout.CENTER);
+			
+			*/
+	
+			
+			
+			
 			setLabels();
-			//pack();
-			//setLocationRelativeTo(app.getFrame());
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+
+
+
 
 
 	private JPanel createDistributionPanel(){
@@ -288,15 +326,22 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		comboDistribution.setMaximumRowCount(totalDistCount);
 		comboDistribution.setSelectedIndex(selectedDist);
 		comboDistribution.addActionListener(this);
+		lblDist = new JLabel();
+
+		JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		cbPanel.add(lblDist);
+		cbPanel.add(comboDistribution);
+
 
 
 		// create parameter panel
-		JPanel parameterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		parameterPanel.setAlignmentX(0.0f);
-		parameterPanel.add(comboDistribution);
+		JPanel parameterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		//parameterPanel.setAlignmentX(0.0f);
+		//	parameterPanel.add(comboDistribution);
 
 		lblParmeterArray = new JLabel[maxParameterCount];
 		fldParmeterArray = new JTextField[maxParameterCount];
+
 
 		for(int i = 0; i < maxParameterCount; ++i){
 			lblParmeterArray[i] = new JLabel();
@@ -305,14 +350,20 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			fldParmeterArray[i].addActionListener(this);
 			fldParmeterArray[i].addFocusListener(this);
 
-			parameterPanel.add(lblParmeterArray[i]);
-			parameterPanel.add(fldParmeterArray[i]);
+			Box hBox = Box.createHorizontalBox();
+			hBox.add(Box.createRigidArea(new Dimension(3,0)));
+			hBox.add(lblParmeterArray[i]);
+			hBox.add(Box.createRigidArea(new Dimension(3,0)));
+			hBox.add(fldParmeterArray[i]);
+			parameterPanel.add(hBox);
 
 		}
 
 		// put the parameter panel in WEST of a new JPanel and return the result
-		JPanel distPanel = new JPanel(new BorderLayout());
-		distPanel.add(parameterPanel, BorderLayout.WEST);
+		JPanel distPanel = new JPanel();
+		distPanel.setLayout(new BoxLayout(distPanel,BoxLayout.Y_AXIS));
+		distPanel.add(cbPanel);
+		distPanel.add(parameterPanel);
 
 		return distPanel;
 	}
@@ -324,11 +375,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		// create probability mode JComboBox and put it in a JPanel
 		comboProbType = new JComboBox();
 		comboProbType.addActionListener(this);
+		lblProb = new JLabel();
+
 		JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		cbPanel.add(lblProb);
 		cbPanel.add(comboProbType);
 
-		// create panel to hold the entry fields
-		JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+
 
 		lblProbOf = new JLabel();
 		lblBetween = new JLabel();   // <= X <=
@@ -337,8 +391,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		fldLow.setColumns(6);
 		fldLow.addActionListener(this);
 		fldLow.addFocusListener(this);
-
-
 
 		fldHigh = new MyTextField(app.getGuiManager());
 		fldHigh.setColumns(6);
@@ -350,18 +402,35 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		fldResult.addActionListener(this);
 		fldResult.addFocusListener(this);
 
-		fieldPanel.add(lblProbOf);
-		fieldPanel.add(fldLow);
-		fieldPanel.add(lblBetween);
-		fieldPanel.add(fldHigh);
-		fieldPanel.add(lblEndProbOf);
+		// create panel to hold the entry fields
+		JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+		//	fieldPanel.add(cbPanel);
+
+		Box hBox = Box.createHorizontalBox();
+		hBox.add(lblProbOf);
+		hBox.add(Box.createRigidArea(new Dimension(3,0)));
+		hBox.add(fldLow);
+		hBox.add(Box.createRigidArea(new Dimension(3,0)));
+		hBox.add(lblBetween);
+		hBox.add(Box.createRigidArea(new Dimension(3,0)));
+		hBox.add(fldHigh);
+		hBox.add(Box.createRigidArea(new Dimension(3,0)));
+		hBox.add(lblEndProbOf);
+		fieldPanel.add(hBox);
 		fieldPanel.add(fldResult);
 
 
 		// put all sub-panels together and return the result 
-		JPanel probPanel = new JPanel(new BorderLayout());
-		probPanel.add(fieldPanel,BorderLayout.CENTER);
-		probPanel.add(cbPanel,BorderLayout.WEST);
+		//	JPanel probPanel = new JPanel(new BorderLayout());
+		//	probPanel.add(fieldPanel,BorderLayout.CENTER);
+		//	probPanel.add(cbPanel,BorderLayout.WEST);
+
+		JPanel probPanel = new JPanel();
+		probPanel.setLayout(new BoxLayout(probPanel,BoxLayout.Y_AXIS));
+		probPanel.add(cbPanel);
+		probPanel.add(fieldPanel);
+
 
 		return probPanel;
 
@@ -442,7 +511,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		densityCurve.setFixed(true);
 
 
-
 		// create discrete bar graph and associated lists
 		createDiscreteLists();
 		expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
@@ -458,13 +526,11 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		+ "), x(" + highPoint.getLabel() + ") , false ]";
 
 
-
 		if(hasIntegral ){
 			integral  = createGeoFromString(expr);
 			integral.setObjColor(COLOR_PDF_FILL);
 			integral.setAlphaValue(opacityIntegral);
 		}
-
 
 		// create discrete interval bar graph and associated lists
 		expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
@@ -520,8 +586,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		// don't show the y-axis for continuous case (edge axis looks bad)
 		plotSettings.showYAxis = !isContinuous;
 		//plotSettings.showYAxis = true;
-		
-		
+
+
 		plotSettings.isEdgeAxis[0] = false;
 		plotSettings.isEdgeAxis[1] = true;
 		plotSettings.forceXAxisBuffer = true;
@@ -802,12 +868,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
-	// TODO: fonts for controls are not updated yet
 	public void updateFonts() {
-
 		Font font = app.getPlainFont();
 		setFont(font);
 		setFontRecursive(this,font);
+		lblDist.setFont(app.getItalicFont());
+		lblProb.setFont(app.getItalicFont());
 
 	}
 
@@ -1023,6 +1089,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			fldResult.setBorder(BorderFactory.createEmptyBorder());
 			fldResult.setEditable(false);
 			fldResult.setFocusable(false);
+			
 		}
 
 		if(!isContinuous){
@@ -1144,9 +1211,13 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	public void setLabels(){
 
 		//setTitle(app.getMenu("ProbabilityCalculator"));	
-		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
-		probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
+		//distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
+		//probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
 		setLabelArrays();
+
+		lblDist.setText(app.getMenu("Distribution") + ": ");
+		lblProb.setText(app.getMenu("Probability") + ": ");
+		
 
 		comboProbType.removeAllItems();
 		comboProbType.addItem(app.getMenu("IntervalProb"));
@@ -1307,10 +1378,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private String buildDensityCurveExpression(int type){
 		String expr = "";
 		String k, mean, sigma, v, v2, median, scale, shape;
-		
+
 		// build geogebra string for creating a density curve wih list values as parameters
 		// e.g." Normal[Element[list1,1],Element[list1,2],x]""
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append(cmd[type]);
 		sb.append("[");
@@ -1319,7 +1390,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			sb.append(",");
 		}
 		sb.append("x]");
-		
+
 		return sb.toString();
 	}
 
@@ -1461,15 +1532,18 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		case DIST_F:
 			v = parms[0];
 			v2 = parms[1];
-			mode = v2/v *(v-2)/(v2+2);
+			mean = v2 > 2 ? v2 / (v2 - 2): 1;
+			mode = (v-2)/v * v2/(v2+2);
+			// TODO variance only valid for v2 > 4, need to handle v2<4
 			variance = 2*v*v*(v + v2 - 2)/(v2*(v-2)*(v-2)*(v-4));
 			xMin = 0;
-			xMax = mode + 5 * Math.sqrt(variance);
+			xMax = mean + 5 * Math.sqrt(variance);
 			yMin = 0;
 			if(v>2)
 				yMax = 1.2*((GeoFunction)densityCurve).evaluate(mode);	
 			else
-				yMax = 1.2;	
+				yMax = 1.2*((GeoFunction)densityCurve).evaluate(0.01);	
+			//System.out.println("F ymax: " + yMax);
 			break;
 
 		case DIST_CAUCHY:
