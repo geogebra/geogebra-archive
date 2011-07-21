@@ -29,7 +29,7 @@ public class MySpecialDouble extends MyDouble {
 	
 	private String strToString;
 	private int precision; // number of significant digits
-	private boolean isLetterConstant; // for Pi or Euler constant
+	private boolean isLetterConstant; // for Pi, Euler, or Degree constant
 	
 	private static MySpecialDouble eulerConstant;
 	
@@ -37,7 +37,8 @@ public class MySpecialDouble extends MyDouble {
 		super(kernel, val);
 		
 		// check if this is a letter constant, e.g. Pi or Euler number
-		isLetterConstant = Character.isLetter(strToString.charAt(0));
+		char firstChar = strToString.charAt(0);
+		isLetterConstant = Character.isLetter(firstChar) || firstChar == Unicode.degreeChar;
 		
 		if (!isLetterConstant) {
 			// determine precision of strToString
