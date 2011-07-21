@@ -221,6 +221,12 @@ public class Kernel {
 	private ScientificFormat sf;
 	public boolean useSignificantFigures = false;
 	
+	/**
+	 * Specifies whether possible line breaks are to be marked
+	 * in the String representation of {@link ExpressionNode ExpressionNodes}.
+	 */
+	private boolean insertLineBreaks = false;
+
 	// angle unit: degree, radians
 	private int angleUnit = Kernel.ANGLE_DEGREE;
 	
@@ -9012,5 +9018,22 @@ public class Kernel {
 			getDefaultGeo(isAngle?ConstructionDefaults.DEFAULT_ANGLE:
 			ConstructionDefaults.DEFAULT_NUMBER);
 	}
+
+	/**
+	 * Get {@link Kernel#insertLineBreaks insertLineBreaks}.
+	 * 
+	 * @return {@link Kernel#insertLineBreaks insertLineBreaks}.
+	 */
+	public boolean isInsertLineBreaks () {
+		return insertLineBreaks;
+	}
+
+	/**
+	 * Set {@link Kernel#insertLineBreaks insertLineBreaks}.
+	 * 
+	 * @param insertLineBreaks The value to set {@link Kernel#insertLineBreaks insertLineBreaks} to.
+	 */
+	public void setInsertLineBreaks (boolean insertLineBreaks) {
+		this.insertLineBreaks = insertLineBreaks;
+	}
 }
-	

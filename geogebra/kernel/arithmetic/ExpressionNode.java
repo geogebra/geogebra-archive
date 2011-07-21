@@ -1346,8 +1346,8 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 	 * 
 	 */
 	final private String operationToString(String leftStr, String rightStr,
-			boolean valueForm) {
-
+			boolean valueForm) {		
+		
 		ExpressionValue leftEval;
 		StringBuilder sb = new StringBuilder();
 
@@ -1382,6 +1382,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\vee");
 				break;
 
@@ -1408,6 +1409,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\wedge");
 				break;
 
@@ -1433,6 +1435,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MPREDUCE:
@@ -1453,6 +1456,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\neq");
 				break;
 
@@ -1478,6 +1482,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\in");
 				break;
 
@@ -1495,6 +1500,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\subseteq");
 				break;
 
@@ -1512,6 +1518,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\subset");
 				break;
 
@@ -1529,6 +1536,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\setminus");
 				break;
 
@@ -1543,7 +1551,8 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		case LESS:
 			append(sb, leftStr, left, operation, STRING_TYPE);
 			// sb.append(leftStr);
-			sb.append(" < ");
+			if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-< ");
+			else sb.append(" < ");
 			append(sb, rightStr, right, operation, STRING_TYPE);
 			// sb.append(rightStr);
 			break;
@@ -1551,7 +1560,8 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		case GREATER:
 			append(sb, leftStr, left, operation, STRING_TYPE);
 			// sb.append(leftStr);
-			sb.append(" > ");
+			if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\->");
+			else sb.append(" > ");
 			append(sb, rightStr, right, operation, STRING_TYPE);
 			// sb.append(rightStr);
 			break;
@@ -1562,6 +1572,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\leq");
 				break;
 
@@ -1584,6 +1595,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\geq");
 				break;
 
@@ -1606,6 +1618,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\parallel");
 				break;
 
@@ -1623,6 +1636,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\perp");
 				break;
 
@@ -1640,6 +1654,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			sb.append(' ');
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				if (kernel.isInsertLineBreaks()) sb.append("\\-");
 				sb.append("\\times");
 				break;
 
@@ -1698,19 +1713,23 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				if (left.isTextValue()
 						&& (!right.isLeaf() || (right.isGeoElement() && !((GeoElement) right)
 								.isLabelSet()))) {
-					sb.append(" + ");
+					if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-+ ");
+					else sb.append(" + ");
 					sb.append(leftBracket(STRING_TYPE));
 					sb.append(rightStr);
 					sb.append(rightBracket(STRING_TYPE));
 				} else {
 					if (rightStr.charAt(0) == '-') { // convert + - to -
-						sb.append(" - ");
+						if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-- ");
+						else sb.append(" - ");
 						sb.append(rightStr.substring(1));
 					} else if (rightStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) { // Arabic convert + - to -
-						sb.append(" - ");
+						if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-- ");
+						else sb.append(" - ");
 						sb.append(rightStr.substring(3));
 					} else {
-						sb.append(" + ");
+						if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-+ ");
+						else sb.append(" + ");
 						sb.append(rightStr);
 					}
 				}
@@ -1754,19 +1773,23 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 				if (right.isLeaf() || opID(right) >= MULTIPLY) { // not +, -
 					if (rightStr.charAt(0) == '-') { // convert - - to +
-						sb.append(" + ");
+						if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-+ ");
+						else sb.append(" + ");
 						sb.append(rightStr.substring(1));
 					} else if (rightStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) { // Arabic convert - - to +
-						sb.append(" + ");
+						if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-+ ");
+						else sb.append(" + ");
 						sb.append(rightStr.substring(3));
 					} else {
+						if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-- ");
 						// fix for changing height in Algebra View plus / minus
-						sb.append(" - ");
+						else sb.append(" - ");
 						sb.append(rightStr);
 					}
 				} else {
 					// fix for changing height in Algebra View plus / minus
-					sb.append(" - ");
+					if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append(" \\-- ");
+					else sb.append(" - ");
 					sb.append(leftBracket(STRING_TYPE));
 					sb.append(rightStr);
 					sb.append(rightBracket(STRING_TYPE));
@@ -1784,7 +1807,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 					append(sb, rightStr, right, operation, STRING_TYPE);
 					break;
 				}
-				// check for 0 at right
+				// check for 1 at right
 				else if (isEqualString(right, 1, !valueForm)) {
 					append(sb, leftStr, left, operation, STRING_TYPE);
 					break;
@@ -1908,6 +1931,8 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 							}
 						}
 
+						if (STRING_TYPE == STRING_TYPE_LATEX && kernel.isInsertLineBreaks()) sb.append("\\-");
+						
 						if (showMultiplicationSign) {
 							sb.append(multiplicationSign(STRING_TYPE));
 						} 
@@ -2120,7 +2145,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 					sb.append(" ^{");
 					sb.append(rightStr);
 					sb.append("}");
-					sb.append(leftStr.substring(spaceIndex + 1)); // everying
+					sb.append(leftStr.substring(spaceIndex + 1)); // everything
 																	// except
 																	// the
 																	// "\\sin "
