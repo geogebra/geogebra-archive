@@ -31,6 +31,7 @@ REPO=http://www.geogebra.org/svn/trunk/geogebra # for other installations
 #JAVA_HOME=$JAVA5_HOME
 #JAVA_HOME=/usr # Luxembourg server (not perfect, but works)
 JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun # On Debian Linux
+# Currently we use Java 1.5. It can be installed from SVN branches/installer/jdk/*.bin.
 
 # "svn" command path (it should be quite recent, 1.4.4 is too old)
 SVN_COMMAND=/opt/subversion/bin/svn # Luxembourg server
@@ -44,7 +45,8 @@ GC_PASS=xxxxxxxx # This must be changed to the proper password
 #GGB40MAXIMA_ZIP=/home/zoltan/ggb40maxima/ggb40maxima-3.9.245.0_5.24.0.zip # Linz server
 GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
 # This file should be present to update ggb40maxima properly.
-# You can download it (or a similar version) from Google Code Downloads as well.
+# You can download it (or a similar version) from Google Code Downloads as well,
+# or (preferred) SVN branches/installer/maxima/ggb40maxima*.zip.
 
 # To create this package, one should download the source version of Maxima
 # and compile it on a 32 bit machine (for compatibility reasons). Currently
@@ -52,6 +54,7 @@ GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
 # for auxiliary libraries (only libc is required) and its speed.
 # Put this file to the workspace directory.
 LINUX_MAXIMA_TGZ=/home/kovzol/workspace/maxima-5.24.0-cmucl-linux-i686.tar.gz
+# Copy this file from SVN branches/installer/maxima*cmucl.tar.gz.
 
 # If this is set, rsync-www will run:
 WWW_REMOTEDIR=www.geogebra.org:/Library/WebServer/GeoGebra/webstart/
