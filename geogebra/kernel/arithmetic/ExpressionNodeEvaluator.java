@@ -1707,7 +1707,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             			nvs[i] = adn.getNumber();
             		}
             	}
-          		AlgoListElement algo = new AlgoListElement(kernel.getConstruction(), null, (GeoList)subList, nvs,true);
+          		AlgoListElement algo = new AlgoListElement(kernel.getConstruction(),  (GeoList)subList, nvs,true);
            		return algo.getElement();
            }else
             

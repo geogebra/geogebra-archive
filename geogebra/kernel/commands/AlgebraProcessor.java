@@ -1065,7 +1065,7 @@ public class AlgebraProcessor {
 		ExpressionNode myNode = n;
 		if (myNode.isLeaf()) myNode = myNode.getLeftTree();
 		// leaf (no new label specified): just return the existing GeoElement
-		if (eval.isGeoElement() &&  n.getLabel() == null) 
+		if (eval.isGeoElement() &&  n.getLabel() == null && !(n.operation == ExpressionNode.ELEMENT_OF)) 
 		{
 			// take care of spreadsheet $ names: don't loose the wrapper ExpressionNode here
 			// check if we have a Variable 
@@ -1081,6 +1081,7 @@ public class AlgebraProcessor {
 				default:
 					// return the GeoElement
 					GeoElement[] ret = {(GeoElement) eval };
+					Application.printStacktrace("output:"+n);
 					return ret;
 			}			
 		}		
@@ -1106,6 +1107,7 @@ public class AlgebraProcessor {
 		} 
 		//we have to process list in case list=matrix1(1), but not when list=list2 
 		else if (eval instanceof GeoList  && myNode.hasOperations()) {
+			Application.debug("should work");
 			return processList(n, ((GeoList) eval).getMyList());
 		} else if (eval.isGeoElement()) {	
 
