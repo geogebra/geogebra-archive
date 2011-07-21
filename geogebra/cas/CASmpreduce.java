@@ -54,8 +54,8 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
-		//sb.append("<<off complex, roundall, numval, factor$ on rounded, pri$ ");
-		sb.append("<<off complex, factor$ ");
+		sb.append("<<hold!°:=0$ numeric!°:=0$ off complex, rounded, numval, factor$ on pri$ ");
+		//sb.append("<<off complex, factor$ ");
 		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
 		sb.append(">>");
 
@@ -217,6 +217,8 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("load_package linalg;");
 		mpreduce.evaluate("load_package reset;");
 		mpreduce.evaluate("load_package randpoly;");
+		mpreduce.evaluate("load_package taylor;");
+		
 	}
 
 	private synchronized void initMyMPReduceFunctions() throws Throwable {
@@ -225,15 +227,29 @@ public class CASmpreduce extends CASgeneric {
 		// ARBVARS introduces arbitrary new variables when solving singular systems of equations
 		mpreduce.evaluate("off arbvars;");
 
-		// make sure x*(x+1) isn't returned factored
-		//mpreduce.evaluate("off pri;");
-
-		mpreduce.evaluate("on rounded;");
-		mpreduce.evaluate("off roundall;");
 		mpreduce.evaluate("off numval;");
-
 		mpreduce.evaluate("precision 16;");
-
+		mpreduce.evaluate("linelength 50000;");
+		mpreduce.evaluate("scientific_notation {16,5};");
+		
+		// bugfix for reduce, will be removed when the bug is fixed in reduce ( :rd: - problem)
+		mpreduce.evaluate("symbolic procedure xprint(u,flg);"
+				+ "   % U is a standard term."
+				+ "   % Flg is a flag which is true if a term has preceded this term."
+				+ "   % Procedure prints the term and returns NIL."
+				+ "   begin scalar v,w;"
+				+ "      v := tc u;"
+				+ "      u := tpow u;"
+				+ "      if (w := kernlp v) and w neq 1"
+				+ "        then <<v := quotf(v,w);"
+				+ "               if minusf w"
+				+ "                 then <<oprin 'minus; w := !:minus w; flg := nil>>>>;"
+				+ "      if flg then oprin 'plus;"
+				+ "      if w and w neq 1"
+				+ "        then <<if domainp w then maprin w else prin2!* w; oprin 'times>>;"
+				+ "      xprinp u;"
+				+ "      if v neq 1 then <<oprin 'times; xprinf(v,red v,nil)>>"
+				+ "   end;");
 		// make sure integral(1/x) gives ln(abs(x)) [TODO: NOT WORKING]
 		// mpreduce.evaluate("operator log!-temp");
 		// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
