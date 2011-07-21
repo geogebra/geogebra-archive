@@ -225,7 +225,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 	
 	/**
-	 * Invert circle in or line in circle
+	 * Invert circle or line in circle
 	 * @version 2010-01-21
 	 * @author Michael Borcherds 
 	 * @param c Circle used as mirror
@@ -250,19 +250,21 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	    		if (Kernel.isEqual(p, r2)) {	    			
 	    			double dx=x2-x1;
 	    			double dy=y2-y1;
-	    			//(x3,y3) is a point on the line
+	    			//(x3,y3) is reflection of reflection of (x1+2dx,x1+2dy) an thus lies on the line
 	    			double k=r1*r1/2/r2/r2;
 	    			double x3=x1+k*dx;
-	    			double y3=y1+k*dy;	    				    			
-	    			
-	    			if (lines == null) {
-	    				lines = new GeoLine[2];
-	    				lines[0] = new GeoLine(cons);	    				
-	    				lines[1] = new GeoLine(cons);
-	    			}
-	    				lines[0].setCoords(dx, dy, -dx*x3-dy*y3);
-	    			type = GeoConic.CONIC_LINE;	    			
-
+	    			double y3=y1+k*dy;	    				    				    			
+	    				    			
+	    			matrix[4] = dx*0.5;
+	    			matrix[5] = dy*0.5;
+	    			matrix[2] = -dx*x3-dy*y3;
+	    			matrix[0] = 0;
+	    			matrix[1] = 0;
+	    			matrix[3] = 0;
+	    			//we update the eigenvectors etc.
+	    			this.setMatrix(matrix);
+	    			//classification yields CONIC_DOUBLE_LINE, we want a single line
+	    			type = GeoConic.CONIC_LINE;
 	    			return;
 	    		}
 	    		
@@ -501,6 +503,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	this.classifyConic(false);
 	
 	
+	}
+	
+	public boolean isFillable() {
+		return type != GeoConic.CONIC_LINE;
 	}
 
 
