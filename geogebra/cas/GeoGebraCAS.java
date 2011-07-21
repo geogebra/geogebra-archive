@@ -265,13 +265,18 @@ public class GeoGebraCAS {
 		if (ggbExp == null)
 			return null;
 		
-		String latex = ggbExp.toAssignmentLaTeXString();
-		
-		// render in latex if necessary
-		// eg if contains ^2 or \frac
-		if (Application.isLaTeXneeded(latex)) return latex;
-		else return ggbExp.toString();
-					
+		try {
+			// TODO Uncomment once support for latex line breaking is implemented.
+			//app.getKernel().setInsertLineBreaks(true);
+			String latex = ggbExp.toAssignmentLaTeXString();
+			// render in latex if necessary
+			// eg if contains ^2 or \frac
+			if (Application.isLaTeXneeded(latex)) return latex;
+			else return ggbExp.toString();
+		}
+		finally {
+			app.getKernel().setInsertLineBreaks(false);
+		}	
 	}
 	
 	
