@@ -234,9 +234,6 @@ public class CASmpreduce extends CASgeneric {
 		
 		// bugfix for reduce, will be removed when the bug is fixed in reduce ( :rd: - problem)
 		mpreduce.evaluate("symbolic procedure xprint(u,flg);"
-				+ "   % U is a standard term."
-				+ "   % Flg is a flag which is true if a term has preceded this term."
-				+ "   % Procedure prints the term and returns NIL."
 				+ "   begin scalar v,w;"
 				+ "      v := tc u;"
 				+ "      u := tpow u;"
