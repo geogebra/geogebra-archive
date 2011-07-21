@@ -2,6 +2,7 @@ package geogebra.cas;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 
@@ -61,9 +62,14 @@ public class CASmpreduce extends CASgeneric {
 		String result = evaluateMPReduce(sb.toString());
 
 		// convert result back into GeoGebra syntax
-		String ggbString = toGeoGebraString(result);
-		// System.out.println("   ggbString: " + ggbString);
-		return ggbString;
+		if (!(casInput instanceof FunctionNVar)) {
+			String ggbString = toGeoGebraString(result);
+			return ggbString;
+		}
+		else
+		{
+			return "";
+		}
 	}
 
 	/**
