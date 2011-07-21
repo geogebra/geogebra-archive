@@ -389,17 +389,10 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 			return;
 		}
 		
-		// make sure the value of geo is updated in the CAS
-		// e.g. a was 7 and is updated to 8
-		boolean didCASupdate = updateInCAS(geo);
-
+		boolean isCASUpdateNeeded = true;
+		boolean isCASUpdateDone = false;
+		
 		int updateStartRow = 0;
-
-		// TODO: remove
-		//System.out.println("update: " + geo);
-
-		// TODO: avoid updating loops, e.g.
-		// c := Limit[ (3k+1)/k, k, Infinity ]
 
 		// check if we have a cell with an assignment for geo
 		CASTableCellValue cellValue = assignmentCellMap.get(geo.getLabel());
@@ -411,13 +404,19 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 			// set input of assignment row, e.g. a := 2;			
 			String assignmentStr = geo.toCasAssignment(ExpressionNode.STRING_TYPE_GEOGEBRA);
 			cellValue.setInput(assignmentStr);
-			//cellValue.setOutput(geo.toValueString());
+
 			casInputHandler.processRow(row);
-			//consoleTable.repaint();
+			isCASUpdateNeeded = false;
+			isCASUpdateDone = true;
 		}
+		
+		// make sure the value of geo is updated in the CAS
+		// e.g. a was 7 and is updated to 8
+		if (isCASUpdateNeeded)
+			isCASUpdateDone = updateInCAS(geo);
 
 		// update all dependent rows
-		if (didCASupdate)
+		if (isCASUpdateDone)
 			casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
 	}
 
