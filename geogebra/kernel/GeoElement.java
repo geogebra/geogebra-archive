@@ -1958,9 +1958,19 @@ public abstract class GeoElement
 		kernel.setCASPrintForm(type);
 		String body = getCASString(false);
 		kernel.setCASPrintForm(oldType);
-
+		
 		CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
 		String retval;
+		
+		if (type == ExpressionNode.STRING_TYPE_GEOGEBRA) {
+			if (isGeoFunction())
+			{
+				String params = ((GeoFunction) this).getFunction().getVarString();
+				return label + "(" + params + ") :=" + body;
+			} else
+				return label + " :=" + body;				
+		}
+		
 		if (isGeoFunction()) {
 			String params = ((GeoFunction) this).getFunction().getVarString();
 			retval = cas.translateFunctionDeclaration(label, params, body);
