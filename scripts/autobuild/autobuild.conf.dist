@@ -55,6 +55,9 @@ GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
 # Put this file to the workspace directory.
 LINUX_MAXIMA_TGZ=/home/kovzol/workspace/maxima-5.24.0-cmucl-linux-i686.tar.gz
 # Copy this file from SVN branches/installer/maxima*cmucl.tar.gz.
+# Important: currently (2011 July) there is no 64 bit version of cmucl.
+# On running the ggb40maxima script, the 32 bit version of Maxima will be used
+# for the 64 bit Linux portable version as well.
 
 # If this is set, rsync-www will run:
 WWW_REMOTEDIR=www.geogebra.org:/Library/WebServer/GeoGebra/webstart/
