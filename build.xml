@@ -464,11 +464,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 		<jar jarfile="${build.dir}/geogebra_cas.jar"
 			basedir="${src.dir}"
 			includes="geogebra/cas/**,
-					jasymca/**,	
-					edu/jas/**,
-					edu/mas/**,
 					org/apache/log4j/**,
-					org/mathpiper/**,
+					org/mathpiper/mpreduce/**,
 					default.img"
 			excludes="**/*.java" 
 		/>
