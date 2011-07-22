@@ -60,27 +60,20 @@ public class AlgoCasFactors extends AlgoElement {
         	return;
         }    
 
-	    sb.setLength(0);
-	    // added Rationalize to cope with eg Factors[9.1 x^7 - 32 x^6 + 48 x^5 - 40 x^4 + 20 x^3 - 6 x^2 + x ]
-//		String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-//	    sb.append("Factors((");
-//        sb.append(functionIn);
-//        sb.append("))");
-//		String functionOut = kernel.evaluateMathPiper(sb.toString());
-		
 	    try {
 		    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true);
+		    sb.setLength(0);
 		    sb.append("factorize(");
 		    sb.append(functionIn);
 		    sb.append(")");
-			String functionOut = kernel.evaluateMPReduce(sb.toString());	    
-			if (functionOut == null || functionOut.length()==0) {
+	        // cached evaluation of MPReduce as we are only using variable values
+			String listOut = kernel.evaluateMPReduce(sb.toString(), true);	    
+			if (listOut == null || listOut.length()==0) {
 				g.setUndefined(); 
 			}
 			else {
 				// read result back into list
-				g.set(kernel.getAlgebraProcessor().evaluateToList(functionOut));		
-				//g.setDefined(true);
+				g.set(kernel.getAlgebraProcessor().evaluateToList(listOut));
 			}
 	    } catch (Throwable th) {
 	    	g.setUndefined();

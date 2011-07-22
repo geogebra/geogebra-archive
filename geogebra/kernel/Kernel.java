@@ -155,6 +155,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -565,12 +566,41 @@ public class Kernel {
 	 * @throws Throwable 
      */
 	final public String evaluateMPReduce(String exp) {
+		return evaluateMPReduce(exp, false);
+	}	
+	
+	/** 
+	 * Evaluates an expression in MPReduce syntax with.
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	final public String evaluateMPReduce(String exp, boolean useCaching) {
+		String result = null;
+		if (useCaching && mpReduceCache != null) {
+			result = mpReduceCache.get(exp);
+			if (result != null) {
+				// caching worked
+				// TODO: remove
+				System.out.println("used mpReduceCache: " + exp + " -> " + result);
+				return result;
+			}
+		}
+		
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
 		
-		return ggbCAS.evaluateMPReduce(exp);
+		// evaluate
+		result = ggbCAS.evaluateMPReduce(exp);
+		
+		if (useCaching) {
+			if (mpReduceCache == null)
+				mpReduceCache = new HashMap<String, String>();
+			mpReduceCache.put(exp, result);			
+		}
+		return result;
 	}	
+	private HashMap<String, String> mpReduceCache;
 			
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;
@@ -3499,7 +3529,7 @@ public class Kernel {
 	 * Mod[a, b] Polynomial remainder
 	 */
 	final public GeoFunction Mod(String label, GeoFunction a, GeoFunction b) {
-		AlgoPolynomialMod algo = new AlgoPolynomialMod(cons, label, a, b);
+		AlgoCasPolynomialMod algo = new AlgoCasPolynomialMod(cons, label, a, b);
 		GeoFunction f = algo.getResult();
 		return f;
 	}
@@ -3508,7 +3538,7 @@ public class Kernel {
 	 * Div[a, b] Polynomial Division
 	 */
 	final public GeoFunction Div(String label, GeoFunction a, GeoFunction b) {
-		AlgoPolynomialDiv algo = new AlgoPolynomialDiv(cons, label, a, b);
+		AlgoCasPolynomialDiv algo = new AlgoCasPolynomialDiv(cons, label, a, b);
 		GeoFunction f = algo.getResult();
 		return f;
 	}

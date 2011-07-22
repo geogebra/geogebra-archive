@@ -19,7 +19,7 @@ import geogebra.main.Application;
  * 
  * @author Michael Borcherds
  */
-public class AlgoPolynomialMod extends AlgoElement {
+public class AlgoCasPolynomialMod extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f1, f2; // input
@@ -27,7 +27,7 @@ public class AlgoPolynomialMod extends AlgoElement {
     
     private StringBuilder sb = new StringBuilder();
    
-    public AlgoPolynomialMod(Construction cons, String label, GeoFunction f1, GeoFunction f2) {
+    public AlgoCasPolynomialMod(Construction cons, String label, GeoFunction f1, GeoFunction f2) {
     	super(cons);
         this.f1 = f1;            	
         this.f2 = f2;            	
@@ -63,48 +63,27 @@ public class AlgoPolynomialMod extends AlgoElement {
         	return;
         }    
 
-        // MathPiper version       
-	    String functionIn1 = f1.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-	    String functionIn2 = f2.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-
-        /*
-		String functionIn = f.getFunction().
-		getExpression().getCASstring(ExpressionNode.STRING_TYPE_MathPiper, false);*/
-		//Application.debug(functionIn);
-
-	    sb.setLength(0);
-        sb.append("Modulo(");
-        sb.append(functionIn1);
-        sb.append(",");
-        sb.append(functionIn2);
-        sb.append(")");
-		String functionOut = kernel.evaluateMathPiper(sb.toString());
-		
-		//Application.debug("Mod input:"+functionIn1+" "+functionIn2);
-		//Application.debug("Mod output:"+functionOut);
-		
-		boolean MathPiperError=false;
-		
-		if (functionOut == null || functionOut.length()==0) MathPiperError=true; // MathPiper error
-		
-		else if (functionOut.length()>7)
-			if (functionOut.startsWith("Modulo(") || // MathPiper error
-				functionOut.startsWith("Undefined") || // MathPiper error/bug eg Simplify(0.00000000000000001)
-				functionOut.startsWith("FWatom(") )  // MathPiper oddity??
-				MathPiperError=true;
-			
-
-		if (MathPiperError) // MathPiper error
-		{
-		    g.setUndefined();			
-		}
-		else
-		{
-			g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut, false));					
-		}
-		
-		g.setDefined(true);	
-		
+	    try {
+	    	String functionIn1 = f1.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true);
+	 	    String functionIn2 = f2.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true);
+	 	    sb.setLength(0);
+	        sb.append("mod(");
+	        sb.append(functionIn1);
+	        sb.append(",");
+	        sb.append(functionIn2);
+	        sb.append(")");
+	        // cached evaluation of MPReduce as we are only using variable values
+	 		String functionOut = kernel.evaluateMPReduce(sb.toString(), true);  
+			if (functionOut == null || functionOut.length()==0) {
+				g.setUndefined(); 
+			}
+			else {
+				// read result back into function
+				g.set(kernel.getAlgebraProcessor().evaluateToFunction(functionOut, false));		
+			}
+	    } catch (Throwable th) {
+	    	g.setUndefined();
+	    }
     }
     
     final public String toString() {
