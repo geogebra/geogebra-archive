@@ -530,6 +530,7 @@ public class Application implements KeyEventDispatcher {
 		}
 
 		// open file given by startup parameter
+		handleOptionArgsEarly(args); // for --regressionFile=...
 		boolean fileLoaded = handleFileArg(args);
 
 		if (!isApplet) {			
@@ -587,7 +588,8 @@ public class Application implements KeyEventDispatcher {
 							+ "  --settingsFile=PATH|FILENAME\tLoad/save settings from/in a local file\n"
 							+ "  --CAS=[MATHPIPER|MAXIMA|MPREDUCE]\tselect which CAS to use, default MathPiper\n"
 							+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
-							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
+							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n"
+							+ "  --regressionFile=FILENAME\texport textual representations of dependent objects, then exit\n");
 			System.exit(0);
 		}
 		// help debug applets
@@ -1144,7 +1146,10 @@ public class Application implements KeyEventDispatcher {
 			this.getEuclidianView().setAntialiasing(antiAliasing);
 			this.getEuclidianView2().setAntialiasing(antiAliasing);
 		}
-		
+	}
+
+	private void handleOptionArgsEarly(CommandLineArguments args) {		
+		if (args == null) return;
 		if (args.containsArg("regressionFile")) {
 			this.regressionFileName = args.getStringValue("regressionFile");
 			try {
@@ -1156,6 +1161,7 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
+	
 	/**
 	 * This function helps determine if a ggt file was loaded
 	 * because if a ggt file was loaded we will need to load something
@@ -1226,6 +1232,7 @@ public class Application implements KeyEventDispatcher {
 						File f = new File(fileArgument);
 						f = f.getCanonicalFile();
 						success = getGuiManager().loadFile(f, isMacroFile);
+
 					}
 					
 					successRet = successRet && success;
@@ -1235,6 +1242,17 @@ public class Application implements KeyEventDispatcher {
 				}
 			}
 		}
+
+		if (getRegressionFileName() != null) {
+			try {
+				closeRegressionFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.exit(0);
+		}
+		
 		return successRet;
 	}
 
@@ -3414,10 +3432,7 @@ public class Application implements KeyEventDispatcher {
 			setCurrentFile(null);
 			// command list may have changed due to macros
 			updateCommandDictionary();
-			if (getRegressionFileName() != null) {
-				closeRegressionFile();
-				exitAll();
-			}
+			
 			return true;
 		} catch (Exception err) {
 			setCurrentFile(null);
@@ -3438,10 +3453,7 @@ public class Application implements KeyEventDispatcher {
 			setCurrentFile(null);
 			// command list may have changed due to macros
 			updateCommandDictionary();
-			if (getRegressionFileName() != null) {
-				closeRegressionFile();
-				exitAll();
-			}
+
 			return true;
 		} catch (Exception err) {
 			setCurrentFile(null);
@@ -3470,11 +3482,6 @@ public class Application implements KeyEventDispatcher {
 
 			// command list may have changed due to macros
 			updateCommandDictionary();
-			
-			if (getRegressionFileName() != null) {
-				closeRegressionFile();
-				exitAll();
-			}
 			
 			return true;
 		} catch (MyError err) {
