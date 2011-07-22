@@ -783,16 +783,6 @@ public class Kernel {
 		return angleUnit;
 	}
 	
-	final public int getMaximumFractionDigits() {
-		return nf.getMaximumFractionDigits();
-	}
-
-	final public void setMaximumFractionDigits(int digits) {
-		//Application.debug(""+digits);
-		useSignificantFigures = false;
-		nf.setMaximumFractionDigits(digits);
-	}
-	
 	final public String getPiString() {
 		return casPrintFormPI;
 	}
