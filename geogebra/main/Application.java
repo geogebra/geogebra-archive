@@ -3413,6 +3413,10 @@ public class Application implements KeyEventDispatcher {
 			setCurrentFile(null);
 			// command list may have changed due to macros
 			updateCommandDictionary();
+			if (getRegressionFileName() != null) {
+				closeRegressionFile();
+				exitAll();
+			
 			return true;
 		} catch (Exception err) {
 			setCurrentFile(null);
@@ -3433,6 +3437,10 @@ public class Application implements KeyEventDispatcher {
 			setCurrentFile(null);
 			// command list may have changed due to macros
 			updateCommandDictionary();
+			if (getRegressionFileName() != null) {
+				closeRegressionFile();
+				exitAll();
+			
 			return true;
 		} catch (Exception err) {
 			setCurrentFile(null);
