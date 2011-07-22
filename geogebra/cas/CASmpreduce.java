@@ -36,7 +36,6 @@ public class CASmpreduce extends CASgeneric {
 			try {
 				initMyMPReduceFunctions();
 				loadMyMPReduceFunctions();
-				evaluateGeoGebraCAS("1+2");
 			} catch (Throwable e)
 			{}
 			
@@ -68,7 +67,11 @@ public class CASmpreduce extends CASgeneric {
 		}
 		else
 		{
-			return "";
+			int oldPrintForm = casParser.getKernel().getCASPrintForm();
+			casParser.getKernel().setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
+			String ret = casInput.toString();
+			casParser.getKernel().setCASPrintForm(oldPrintForm);
+			return ret;
 		}
 	}
 
