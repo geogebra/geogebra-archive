@@ -8224,14 +8224,17 @@ public class Kernel {
 	 * NumberFormat or ScientificFormat. This method also
 	 * takes getCasPrintForm() into account.
 	 */
-	final public String formatRaw(double x) {		
+	final public String formatRaw(double x) {
+		
+		// format integers without significant figures
+		long rounded = Math.round(x);
+		if (x == rounded && x >= Long.MIN_VALUE && x < Long.MAX_VALUE)
+			return Long.toString(rounded);
+		
 		switch (casPrintForm) {
 			// number formatting for XML string output
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
-				if (Math.abs(x) < Integer.MAX_VALUE && Math.floor(x) == x)
-					return Integer.toString((int) x);
-				else
-					return Double.toString(x);		
+				return Double.toString(x);		
 		
 			// number formatting for CAS
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:				
@@ -8248,14 +8251,9 @@ public class Kernel {
 				else {			
 					double abs = Math.abs(x);
 					// number small enough that Double.toString() won't create E notation
-					if (abs >= 10E-3 && abs < 10E7) {
-						long round = Math.round(x);
-						if (x == round) {
-							return Long.toString(round);
-						} else {
-							return Double.toString(x);	
-						}
-					}
+					if (abs >= 10E-3 && abs < 10E7)
+						return Double.toString(x);	
+
 					// number would produce E notation with Double.toString()
 					else {						
 						// convert scientific notation 1.0E-20 to 1*10^(-20) 
@@ -8272,11 +8270,10 @@ public class Kernel {
 							}
 						}
 						if (Efound)
-							sb.append(")");
-						
+							sb.append(")");	
 						
 						return sb.toString();
-					}					
+					}	
 				}
 								
 			// number formatting for screen output
@@ -8302,11 +8299,10 @@ public class Kernel {
 					x = x * ROUND_HALF_UP_FACTOR;
 				}
 	
-				if (useSignificantFigures) {	
+				if (useSignificantFigures)
 					return formatSF(x);
-				} else {				
+				else			
 					return formatNF(x);
-				}
 			}								
 	}
 	
