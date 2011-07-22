@@ -8228,14 +8228,18 @@ public class Kernel {
 	final public String formatRaw(double x) {
 		
 		// format integers without significant figures
+		boolean isLongInteger = false;
 		long rounded = Math.round(x);
 		if (x == rounded && x >= Long.MIN_VALUE && x < Long.MAX_VALUE)
-			return Long.toString(rounded);
+			isLongInteger = true;
 		
 		switch (casPrintForm) {
 			// number formatting for XML string output
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
-				return Double.toString(x);		
+				if (isLongInteger)
+					return Long.toString(rounded);
+				else
+					return Double.toString(x);		
 		
 			// number formatting for CAS
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:				
@@ -8249,6 +8253,8 @@ public class Kernel {
 					if (casPrintForm == ExpressionNode.STRING_TYPE_MPREDUCE) return (x<0) ? "-infinity" : "infinity";
 					return Double.toString(x); // "Infinity" or "-Infinity"
  				}
+				else if (isLongInteger)
+					return Long.toString(rounded);
 				else {			
 					double abs = Math.abs(x);
 					// number small enough that Double.toString() won't create E notation
@@ -8284,18 +8290,18 @@ public class Kernel {
 				else if (Double.isInfinite(x)) {
 					return (x > 0) ? "\u221e" : "-\u221e"; // infinity
 				}
-				else if (x == Math.PI) {
+				else if (x == Math.PI)
 					return casPrintFormPI;
-				}	
 					
-			// ROUNDING hack							
-			// NumberFormat and SignificantFigures use ROUND_HALF_EVEN as 
-			// default which is not changeable, so we need to hack this 
-			// to get ROUND_HALF_UP like in schools: increase abs(x) slightly
-			//    x = x * ROUND_HALF_UP_FACTOR;
-			// We don't do this for large numbers as 
+					
+				// ROUNDING hack							
+				// NumberFormat and SignificantFigures use ROUND_HALF_EVEN as 
+				// default which is not changeable, so we need to hack this 
+				// to get ROUND_HALF_UP like in schools: increase abs(x) slightly
+				//    x = x * ROUND_HALF_UP_FACTOR;
+				// We don't do this for large numbers as 
 				double abs = Math.abs(x);
-				if ((abs < 10E7 && nf.getMaximumFractionDigits()<10)||abs < 1000) {
+				if (!isLongInteger && ((abs < 10E7 && nf.getMaximumFractionDigits()<10)||abs < 1000)) {
 					// increase abs(x) slightly to round up
 					x = x * ROUND_HALF_UP_FACTOR;
 				}
