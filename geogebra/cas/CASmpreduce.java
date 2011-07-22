@@ -113,7 +113,7 @@ public class CASmpreduce extends CASgeneric {
 		sb.append(parameters);
 		sb.append("); begin return ");
 		sb.append(body);
-		sb.append(" end; ");
+		sb.append(" end ");
 
 		return sb.toString();
 	}
