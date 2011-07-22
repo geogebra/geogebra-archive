@@ -3416,7 +3416,7 @@ public class Application implements KeyEventDispatcher {
 			if (getRegressionFileName() != null) {
 				closeRegressionFile();
 				exitAll();
-			
+			}
 			return true;
 		} catch (Exception err) {
 			setCurrentFile(null);
@@ -3440,7 +3440,7 @@ public class Application implements KeyEventDispatcher {
 			if (getRegressionFileName() != null) {
 				closeRegressionFile();
 				exitAll();
-			
+			}
 			return true;
 		} catch (Exception err) {
 			setCurrentFile(null);
