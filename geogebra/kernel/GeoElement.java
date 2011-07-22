@@ -519,7 +519,7 @@ public abstract class GeoElement
 	protected AlgoElement algoParent = null;
 	/** draw algorithm */
 	protected AlgoElement algoDraw = null;
-	private ArrayList<AlgoElement> algorithmList; 	// directly dependent algos
+	private ArrayList<ConstructionElement> algorithmList; 	// directly dependent algos
 
 	/**	set of all dependent algos sorted in topological order */
 	protected AlgorithmSet algoUpdateSet;
@@ -550,6 +550,7 @@ public abstract class GeoElement
 
 	/**
 	 * We may need a simple method to get the label, as in the CopyPaste class.
+	 * @return label if it is set
 	 */
 	public String getLabelSimple() {
 		return label;
@@ -1188,6 +1189,8 @@ public abstract class GeoElement
 	 * Sets all visual values from given GeoElement.
 	 * This will also affect tracing, label location
 	 * and the location of texts for example.
+	 * @param geo 
+	 * @param keepAdvanced true to skip copying color function and visibility condition
 	 */
 	public void setAllVisualProperties(GeoElement geo, boolean keepAdvanced) {
 		if(keepAdvanced)
@@ -1328,6 +1331,8 @@ public abstract class GeoElement
 
 	/**
 	 * Moves label by updating label offset
+	 * @param x 
+	 * @param y 
 	 */
 	public void setLabelOffset(int x, int y) {
 		double len = GeoVec2D.length(x, y);
@@ -1342,14 +1347,14 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * object should be visible in at least one view
+	 * @return whether object should be visible in at least one view
 	 */
 	final public boolean isVisible() {
 		return isEuclidianVisible() || isAlgebraVisible();
 	}
 
-	/**
-	 * object should be drawn in euclidian view
+	/**	 
+	 * @return whether object should be drawn in euclidian view
 	 */
 	final public boolean isEuclidianVisible() {
 
@@ -1399,6 +1404,7 @@ public abstract class GeoElement
 
 	/**
 	 * Returns the children of the parent algorithm or null.
+	 * @return the children of the parent algorithm or null.
 	 */
 	public GeoElement [] getSiblings() {
 		if (algoParent != null) {
@@ -1447,8 +1453,8 @@ public abstract class GeoElement
 
 		boolean hasFixedDescendent = false;
 
-		Set tree = getAllChildren();
-		Iterator it = tree.iterator();
+		Set<GeoElement> tree = getAllChildren();
+		Iterator<GeoElement> it = tree.iterator();
 		while (it.hasNext() && hasFixedDescendent == false)
 			if (((GeoElement) it.next()).isFixed())
 				hasFixedDescendent = true;
@@ -1498,6 +1504,7 @@ public abstract class GeoElement
 	/**
 	 * Returns whether the label should be shown in
 	 * Euclidian view.
+	 * @return true if label should be shown
 	 */
 	public boolean isLabelVisible() {
 		return labelVisible && isLabelSet();
@@ -1506,6 +1513,7 @@ public abstract class GeoElement
 	/**
 	 * Returns whether the label can be shown in
 	 * Euclidian view.
+	 * @return true if label can be shown
 	 */
 	final public boolean isLabelShowable() {
 		return isDrawable() &&
@@ -1519,13 +1527,14 @@ public abstract class GeoElement
 	 * Returns whether the value (e.g. equation) should be shown
 	 * as part of the label description
 	 * false for eg GeoLocus, Boolean, Button, TextField
+	 * @return true if value should be in description
 	 */
 	public boolean isLabelValueShowable() {
 		return true;
 	}
 
 	/**
-	 * object should be printed in algebra view
+	 * @return whether object should be printed in algebra view
 	 */
 	final public boolean isAlgebraVisible() {
 		return algebraVisible && showInAlgebraView();
@@ -1648,9 +1657,9 @@ public abstract class GeoElement
 		return algoDraw;
 	}
 
-	final public ArrayList getAlgorithmList() {
+	final public ArrayList<ConstructionElement> getAlgorithmList() {
 		if (algorithmList == null)
-			algorithmList = new ArrayList();
+			algorithmList = new ArrayList<ConstructionElement>();
 		return algorithmList;
 	}
 
@@ -1662,6 +1671,7 @@ public abstract class GeoElement
 	 * Returns whether this GeoElement can be
 	 * changed directly.
 	 * Note: for points on lines this is different than isIndependent()
+	 * @return whether this geo can be changed directly
 	 */
 	public boolean isChangeable() {
 		return !fixed && isIndependent();
@@ -1670,6 +1680,7 @@ public abstract class GeoElement
 	/**
 	 * Returns whether this GeoElement is a point
 	 * on a path.
+	 * @return true for points on path
 	 */
 	public boolean isPointOnPath() {
 		return false;
@@ -1677,6 +1688,7 @@ public abstract class GeoElement
 
 	/**
 	 * Returns whether this object may be redefined
+	 * @return whether this object may be redefined
 	 */
 	public boolean isRedefineable() {
 		return !fixed && app.letRedefine() && !(isTextValue() || isGeoImage()) &&
@@ -1687,7 +1699,8 @@ public abstract class GeoElement
 	/**
 	 * Returns whether this GeoElement can be
 	 * moved in Euclidian View.
-	 * Note: this is needed for texts
+	 * Note: this is needed for texts and points on path
+	 * @return true for moveable objects
 	 */
 	public boolean isMoveable() {
 		return isChangeable();
@@ -1705,7 +1718,8 @@ public abstract class GeoElement
 	/**
 	 * Returns whether this (dependent) GeoElement has input points that can be
 	 * moved in Euclidian View.
-	 * @return
+	 * @param view 
+	 * @return whether this geo has only moveable input points
 	 */
 	public boolean hasMoveableInputPoints(EuclidianViewInterface view) {
 		// allow only moving of certain object types
@@ -1735,9 +1749,9 @@ public abstract class GeoElement
 			case GEO_CLASS_VECTOR:
 				if (hasOnlyFreeInputPoints(view) && containsOnlyMoveableGeos(getFreeInputPoints(view))) {
 					// check if first free input point is start point of vector
-					ArrayList freeInputPoints = getFreeInputPoints(view);
+					ArrayList<GeoPoint> freeInputPoints = getFreeInputPoints(view);
 					if (freeInputPoints.size() > 0) {
-						GeoPoint firstInputPoint = (GeoPoint) freeInputPoints.get(0);
+						GeoPoint firstInputPoint = freeInputPoints.get(0);
 						GeoPoint startPoint = ((GeoVector) this).getStartPoint();
 						return (firstInputPoint == startPoint);
 					}
@@ -1750,6 +1764,8 @@ public abstract class GeoElement
 
 	/**
 	 * Returns all free parent points of this GeoElement.
+	 * @param view 
+	 * @return all free parent points of this GeoElement.
 	 */
 	public ArrayList<GeoPoint> getFreeInputPoints(EuclidianViewInterface view) {
 		if (algoParent == null)
@@ -1769,7 +1785,7 @@ public abstract class GeoElement
 		}
 	}
 
-	private static boolean containsOnlyMoveableGeos(ArrayList geos) {
+	private static boolean containsOnlyMoveableGeos(ArrayList<GeoPoint> geos) {
 		if (geos == null || geos.size() == 0)
 			return false;
 
@@ -1783,6 +1799,7 @@ public abstract class GeoElement
 
 	/**
 	 * Returns whether this object's class implements the interface Translateable.
+	 * @return whether this object's class implements the interface Translateable.
 	 */
 	public boolean isTranslateable() {
 		return false;
@@ -1792,6 +1809,7 @@ public abstract class GeoElement
 	 * Returns whether this GeoElement can be
 	 * rotated in Euclidian View.
 	 * Note: this is needed for images
+	 * @return whether this geo can be rotated
 	 */
 	public boolean isRotateMoveable() {
 		return isChangeable() && this instanceof PointRotateable;
@@ -1800,6 +1818,7 @@ public abstract class GeoElement
 	/**
 	 * Returns whether this GeoElement has
 	 * properties that can be edited in a properties dialog.
+	 * @return whether this element has editable properties
 	 */
 	public boolean hasProperties() {
 		//return isDrawable() || isChangeable();
@@ -1835,6 +1854,7 @@ public abstract class GeoElement
 	/**
 	 * Returns the current animation speed of this slider. Note that
 	 * the speed can be negative which will change the direction of the animation.
+	 * @return current animation speed
 	 */
 	public double getAnimationSpeed() {
 		if (animationSpeedObj == null) {
@@ -1906,7 +1926,8 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * Sets the state of this object to animating on or off. Note that this
+	 * Sets the state of this object to animating on or off. 
+	 * @param flag 
 	 *
 	 * @see Animatable interface
 	 */
@@ -1983,6 +2004,8 @@ public abstract class GeoElement
 	/**
 	 * Returns a representation of geo in currently used CAS syntax.
 	 * For example, "a*x^2"
+	 * @param symbolic 
+	 * @return representation of this geo for CAS
 	 */
 	 String getCASString(boolean symbolic) {
 		return symbolic && !isIndependent() ?  getCommandDescription() : toValueString();
@@ -2040,6 +2063,7 @@ public abstract class GeoElement
 	 * Returns whether this object's label has been set and is valid now.
 	 * (this is needed for saving: only object's with isLabelSet() == true should
 	 * be saved)
+	 * @return true if this geo has valid label
 	 */
 	public boolean isLabelSet() {
 		return labelSet;
@@ -2052,6 +2076,7 @@ public abstract class GeoElement
 	 * label as a prefix.
 	 * If newLabel is not already used, this object is renamed to newLabel.
 	 * Otherwise nothing is done.
+	 * @param newLabel 
 	 */
 	public void setLabel(String newLabel) {		
 		if (cons.isSuppressLabelsActive())
@@ -2114,6 +2139,7 @@ public abstract class GeoElement
 	 * Sets label of a GeoElement and updates GeoElement table
 	 * (label, GeoElement). This method should only be used by
 	 * MyXMLHandler.
+	 * @param label 
 	 */
 	public void setLoadedLabel(String label) {
 		if (labelSet) { // label was set before -> rename
@@ -2306,6 +2332,7 @@ public abstract class GeoElement
 	/**
 	 * Returns a point with the spreadsheet coordinates of the given inputLabel.
 	 * Note that this can also be used for names that include $ signs like "$A1".
+	 * @param inputLabel label of spredsheet cell
 	 * @return null for non-spreadsheet names
 	 */
 	public static Point getSpreadsheetCoordsForLabel(String inputLabel) {
@@ -2353,6 +2380,9 @@ public abstract class GeoElement
      * Returns the spreadsheet reference name of this GeoElement using $ signs
      * for absolute spreadsheet reference names
      * like A$1 or $A$1.
+	 * @param col$ 
+	 * @param row$ 
+	 * @return spreadsheet reference name of this GeoElement with $ signs
      */
 	public String getSpreadsheetLabelWithDollars(boolean col$, boolean row$) {
 		String colName = getSpreadsheetColumnName(spreadsheetCoords.x);
@@ -2473,11 +2503,8 @@ public abstract class GeoElement
 	 * possible spreadsheet cell then both row and column are returned as -1.
 	 * 
 	 * @param cellName
-	 *            given cell name
-	 * @param column
-	 *            column index to be found
-	 * @param row
-	 *            row index to be found
+	 *            given cell name	
+	 * @return coordinates of spreedsheet cell
 	 */
 	public static Point spreadsheetIndices(String cellName){
 		
@@ -2522,6 +2549,7 @@ public abstract class GeoElement
 	/**
 	 * Returns the label of this object before rename()
 	 * was called.
+	 * @return label before renaming
 	 */
 	final public String getOldLabel() {
 		return oldLabel;
@@ -2532,6 +2560,8 @@ public abstract class GeoElement
 	 * e.g. labelPrefix = "F", geos.length = 2 sets geo[0].setLabel("F_1")
 	 * and geo[1].setLabel("F_2")
 	 * all members in geos are assumed to be initialized.
+	 * @param labelPrefix 
+	 * @param geos 
 	 */
 	public static void setLabels(String labelPrefix, GeoElement[] geos) {
 		if (geos == null) return;
@@ -2574,6 +2604,8 @@ public abstract class GeoElement
 	/**
 	 * set labels for array of GeoElements pairwise:
 	 * geos[i].setLabel(labels[i])
+	 * @param labels array of labels
+	 * @param geos array of geos
 	 */
 	public static void setLabels(String[] labels, GeoElement[] geos) {
 		setLabels(labels, geos, false);
@@ -2602,7 +2634,10 @@ public abstract class GeoElement
 		}
 	}
 
-	/** Get a free label. Try the suggestedLabel first */
+	/** Get a free label. Try the suggestedLabel first 
+	 * @param suggestedLabel 
+	 * @return free label -- either suggestedLabel or suggestedLabel_index 
+	 */
 	public String getFreeLabel(String suggestedLabel) {
 		if (suggestedLabel != null) {
 			if ("x".equals(suggestedLabel) || "y".equals(suggestedLabel))
@@ -2907,6 +2942,7 @@ public abstract class GeoElement
 
 	/**
 	 * add algorithm to dependency list of this GeoElement
+	 * @param algorithm 
 	 */
 	public final void addAlgorithm(AlgoElement algorithm) {
 		if (!(getAlgorithmList().contains(algorithm)))
@@ -2919,6 +2955,7 @@ public abstract class GeoElement
 	 * The algorithm is NOT added to the updateSet of this GeoElement!
 	 * I.e. when updateCascade() is called the given algorithm will
 	 * not be updated.
+	 * @param algorithm 
 	 */
 	final void addToAlgorithmListOnly(AlgoElement algorithm) {
 		if (!getAlgorithmList().contains(algorithm))
@@ -2929,6 +2966,7 @@ public abstract class GeoElement
 	 * Adds the given algorithm to the update set this GeoElement.
 	 * Note: the algorithm is NOT added to the algorithm list,
 	 * i.e. the dependency graph of the construction.
+	 * @param algorithm 
 	 */
 	final void addToUpdateSetOnly(AlgoElement algorithm) {
 		addToUpdateSets(algorithm);
@@ -2936,6 +2974,7 @@ public abstract class GeoElement
 
 	/**
 	 * remove algorithm from dependency list of this GeoElement
+	 * @param algorithm 
 	 */
 	public final void removeAlgorithm(AlgoElement algorithm) {
 		algorithmList.remove(algorithm);
@@ -2969,6 +3008,7 @@ public abstract class GeoElement
 
 	/**
 	 * remove algorithm from update sets  up the construction graph
+	 * @param algorithm 
 	 */
 	final public void removeFromUpdateSets(AlgoElement algorithm) {
 		boolean removed = algoUpdateSet != null && algoUpdateSet.remove(algorithm);
@@ -2987,7 +3027,7 @@ public abstract class GeoElement
 	/**
 	 * updates this object and notifies kernel.
 	 * Note: no dependent objects are updated.
-	 * @see updateRepaint()
+	 * @see #updateRepaint()
 	 */
 	public void update() {
 
@@ -3037,10 +3077,11 @@ public abstract class GeoElement
 	 * Updates all GeoElements in the given ArrayList and all algorithms that depend on free GeoElements in that list.
 	 * Note: this method is more efficient than calling updateCascade() for all individual
 	 * GeoElements.
+	 * @param geos 
 	 *
-	 * @param tempSet: a temporary set that is used to collect all algorithms that need to be updated
+	 * @param tempSet a temporary set that is used to collect all algorithms that need to be updated
 	 */
-	final static public synchronized void updateCascade(ArrayList geos, TreeSet tempSet) {		
+	final static public synchronized void updateCascade(ArrayList<?> geos, TreeSet<AlgoElement> tempSet) {		
 				// only one geo: call updateCascade()
 		if (geos.size() == 1) {
 			ConstructionElement ce = (ConstructionElement) geos.get(0);
@@ -3072,7 +3113,7 @@ public abstract class GeoElement
 
 		// now we have one nice algorithm set that we can update
 		if (tempSet.size() > 0) {
-			Iterator it = tempSet.iterator();
+			Iterator<AlgoElement> it = tempSet.iterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
 				algo.update();
@@ -3122,22 +3163,23 @@ public abstract class GeoElement
 	/**
 	 * Returns all predecessors of this GeoElement that are random numbers
 	 * and don't have labels.
+	 * @return all random numeric unlabeled predecessors
 	 */
-	public ArrayList getRandomNumberPredecessorsWithoutLabels() {
+	public ArrayList<GeoNumeric> getRandomNumberPredecessorsWithoutLabels() {
 		if (isIndependent())
 			return null;
 		else {
-			ArrayList randNumbers = null;
+			ArrayList<GeoNumeric> randNumbers = null;
 
-			TreeSet pred = getAllPredecessors();
-			Iterator it = pred.iterator();
+			TreeSet<GeoElement> pred = getAllPredecessors();
+			Iterator<GeoElement> it = pred.iterator();
 			while (it.hasNext()) {
-				GeoElement geo = (GeoElement) it.next();
+				GeoElement geo = it.next();
 				if (geo.isGeoNumeric()) {
 					GeoNumeric num = (GeoNumeric) geo;
 					if (num.isRandomGeo() && !num.isLabelSet()) {
 						if (randNumbers == null)
-							randNumbers = new ArrayList();
+							randNumbers = new ArrayList<GeoNumeric>();
 						randNumbers.add(num);
 					}
 				}
@@ -3150,9 +3192,10 @@ public abstract class GeoElement
 	/**
 	 * Returns all predecessors (of type GeoElement) that this object depends on.
 	 * The predecessors are sorted topologically.
+	 * @return all predecessors of this geo 
 	 */
 	public TreeSet<GeoElement> getAllPredecessors() {
-		TreeSet<GeoElement> set = new TreeSet();
+		TreeSet<GeoElement> set = new TreeSet<GeoElement>();
 		addPredecessorsToSet(set, false);
 		set.remove(this);
 		return set;
@@ -3163,8 +3206,8 @@ public abstract class GeoElement
 	 * The predecessors are sorted topologically. Note: when this method is called
 	 * on an independent geo that geo is included in the TreeSet.
 	 */
-	public TreeSet getAllIndependentPredecessors() {
-		TreeSet set = new TreeSet();
+	public TreeSet<GeoElement> getAllIndependentPredecessors() {
+		TreeSet<GeoElement> set = new TreeSet<GeoElement>();
 		addPredecessorsToSet(set, true);
 		return set;
 	}
@@ -3172,7 +3215,7 @@ public abstract class GeoElement
 	// adds all predecessors of this object to the given set
 	// the set is topologically sorted
 	// @param onlyIndependent: whether only indpendent geos should be added
-	final public void addPredecessorsToSet(TreeSet set, boolean onlyIndependent) {
+	final public void addPredecessorsToSet(TreeSet<GeoElement> set, boolean onlyIndependent) {
 		if (algoParent == null) {
 			set.add(this);
 		}
@@ -3183,10 +3226,12 @@ public abstract class GeoElement
 
 	/**
 	 * Returns whether geo depends on this object.
+	 * @param geo 
+	 * @return true if geo depends on this object.
 	 */
 	public boolean isParentOf(GeoElement geo) {
 		if (algoUpdateSet != null) {
-			Iterator it = algoUpdateSet.getIterator();
+			Iterator<AlgoElement> it = algoUpdateSet.getIterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
 				for (int i = 0; i < algo.getOutputLength(); i++) {
@@ -3202,6 +3247,7 @@ public abstract class GeoElement
 
 	/**
 	 * Returns whether this object is parent of other geos.
+	 * @return true if this object is parent of other geos.
 	 */
 	public boolean hasChildren() {
 		return algorithmList != null && algorithmList.size() > 0;
@@ -3209,6 +3255,8 @@ public abstract class GeoElement
 
 	/**
 	 * Returns whether this object is dependent on geo.
+	 * @param geo 
+	 * @return true if this object is dependent on geo.
 	 */
 	public boolean isChildOf(GeoElement geo) {
 		if (geo == null || isIndependent())
@@ -3219,6 +3267,8 @@ public abstract class GeoElement
 
 	/**
 	 * Returns whether this object is dependent on geo.
+	 * @param geo 
+	 * @return true if this object is dependent on geo.
 	 */
 	public boolean isChildOrEqual(GeoElement geo) {
 		return this == geo || isChildOf(geo);
@@ -3226,11 +3276,12 @@ public abstract class GeoElement
 
 	/**
 	 * Returns all children (of type GeoElement) that depend on this object.
+	 * @return  set of all children of this geo
 	 */
 	public TreeSet<GeoElement> getAllChildren() {
-		TreeSet set = new TreeSet();
+		TreeSet<GeoElement> set = new TreeSet<GeoElement>();
 		if (algoUpdateSet != null) {
-			Iterator it = algoUpdateSet.getIterator();
+			Iterator<AlgoElement> it = algoUpdateSet.getIterator();
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
 				for (int i = 0; i < algo.getOutputLength(); i++) {
@@ -3302,19 +3353,7 @@ public abstract class GeoElement
 		} else
 			//	dependent object
 			return algoParent.getMaxConstructionIndex();
-	}
-
-	/**
-	 * Returns the label for a free geo and the definition description
-	 * for a dependent geo.
-	 * @return
-	 */
-//	public String getLabelOrCommandDescription() {
-//		if (algoParent == null)
-//			return getLabel();
-//		else
-//			return algoParent.getCommandDescription();
-//    }
+	}	
 
 	public String getDefinitionDescription() {
 		if (algoParent == null)
@@ -3365,6 +3404,8 @@ public abstract class GeoElement
 
 	/**
 	 * Converts indices to HTML <sub> tags if necessary.
+	 * @param text 
+	 * @return html string
 	 */
 	public static String convertIndicesToHTML(String text) {
 		// check for index
@@ -3401,6 +3442,7 @@ public abstract class GeoElement
 	/**
 	 * Returns type string of GeoElement. Note: this is
 	 * equal to getClassName().substring(3), but faster
+	 * @return type string without "Geo" prefix
 	 */
 	abstract protected String getTypeString();
 	/*{
@@ -3417,7 +3459,7 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * returns Type, label and definition information about this GeoElement
+	 * @return Type, label and definition information about this GeoElement
 	 * (for tooltips and error messages)
 	 */
 	final public String getLongDescription() {
@@ -3437,6 +3479,9 @@ public abstract class GeoElement
 	 * returns Type, label and definition information about this GeoElement
 	 * as html string.
 	 * (for tooltips and error messages)
+	 * @param colored 
+	 * @param addHTMLtag 
+	 * @return description (type + label + definition)
 	 */
 	final public String getLongDescriptionHTML(
 		boolean colored,
@@ -3506,9 +3551,13 @@ public abstract class GeoElement
 
 	/**
 	 * Returns long description for all GeoElements in given array.
+	 * @param geos 
+	 * @param colored 
+	 * @param addHTMLtag true to wrap in &lt;html> ... &lt;/html>
+	 * @return long description for all GeoElements in given array.
 	 */
 	final public static String getToolTipDescriptionHTML(
-		ArrayList geos,
+		ArrayList<GeoElement> geos,
 		boolean colored,
 		boolean addHTMLtag) {
 		if (geos == null)
@@ -3520,7 +3569,7 @@ public abstract class GeoElement
 			sbToolTipDesc.append("<html>");
 		int count=0;
 		for (int i = 0; i < geos.size(); ++i) {
-			GeoElement geo = (GeoElement) geos.get(i);
+			GeoElement geo = geos.get(i);
 			if (geo.showToolTipText()) {
 				count++;
 				sbToolTipDesc.append(geo.getTooltipText(colored));
@@ -3540,6 +3589,7 @@ public abstract class GeoElement
 		* setting of labelMode:
 		* LABEL_NAME : only label
 		* LABEL_NAME_VALUE : label and value
+	    * @return label, value, label+value or caption 
 		*/
 	public String getLabelDescription() {
 		switch (labelMode) {
@@ -3562,6 +3612,7 @@ public abstract class GeoElement
 	/**
 	 * Returns toValueString() if isDefined() ist true, else
 	 * the translation of "undefined" is returned
+	 * @return eithe value string or "undefined"
 	 */
 	final public String toDefinedValueString() {
 		if (isDefined())
@@ -3571,10 +3622,11 @@ public abstract class GeoElement
 	}
 
 	/**
-		* Returns algebraic representation of this GeoElement as Text. If this
-		* is not possible (because there are indices in the representation)
-		* a HTML string is returned.
-		*/
+	* Returns algebraic representation of this GeoElement as Text. If this
+	* is not possible (because there are indices in the representation)
+	* a HTML string is returned.
+	* @return algebraic representation of this GeoElement as Text
+	*/
 	final public String getAlgebraDescriptionTextOrHTML() {
 		if (strAlgebraDescTextOrHTMLneedsUpdate) {
 			String algDesc = getAlgebraDescription();
@@ -3605,7 +3657,7 @@ public abstract class GeoElement
 	}
 
 	/**
-	* returns type and label of a GeoElement
+	* @return type and label of a GeoElement
 	* (for tooltips and error messages)
 	*/
 	final public String getLabelTextOrHTML() {
@@ -3654,17 +3706,18 @@ public abstract class GeoElement
 	
 	/**
 	 * Returns a string used to render a LaTeX form of the geo's algebra description. 
+	 * @param substituteNumbers 
+	 * @return string used to render a LaTeX form of the geo's algebra description.
 	 *  
 	 */
 	public String getLaTeXAlgebraDescription(boolean substituteNumbers){
 		return getLaTeXAlgebraDescription(this, substituteNumbers);
 	}
-	private String getLaTeXAlgebraDescription(GeoElement geo, boolean substituteNumbers){
-		String latexStr;
+	private String getLaTeXAlgebraDescription(GeoElement geo, boolean substituteNumbers){		
 
 		String algebraDesc = geo.getAlgebraDescription();
 		StringBuilder sb = new StringBuilder();
-		String[] temp;
+		
 		if(geo.isGeoList() && ((GeoList)geo).getElementType()==GEO_CLASS_TEXT)
 			return null;
 		// handle undefined
@@ -3814,6 +3867,7 @@ public abstract class GeoElement
 	/**
 		* returns type and label of a GeoElement
 		* (for tooltips and error messages)
+	 * @return type and label of a GeoElement
 		*/
 	final public String getNameDescriptionTextOrHTML() {
 		if (hasIndexLabel())
@@ -3824,6 +3878,7 @@ public abstract class GeoElement
 
 	/**
 	 * Returns whether the str contains any indices (i.e. '_' chars).
+	 * @return whether the str contains any indices (i.e. '_' chars).
 	 */
 	final public boolean hasIndexLabel() {
 		if (strHasIndexLabel != label) {
@@ -3842,6 +3897,9 @@ public abstract class GeoElement
 	/**
 		* returns type and label of a GeoElement as html string
 		* (for tooltips and error messages)
+	 * @param colored 
+	 * @param addHTMLtag 
+	 * @return type and label of a GeoElement as html string
 		*/
 	public String getNameDescriptionHTML(
 		boolean colored,
@@ -3884,7 +3942,7 @@ public abstract class GeoElement
 		return sbNameDescriptionHTML.toString();
 	}
 
-	/*******************************************************
+	/*#******************************************************
 	 * SAVING
 	 *******************************************************/
 
@@ -3911,8 +3969,8 @@ public abstract class GeoElement
 		kernel.setTranslateCommandName(false);
 
 		// make sure numbers are not put in XML in eg Arabic
-		boolean oldI8NValue = kernel.internationalizeDigits;
-		kernel.internationalizeDigits = false;
+		boolean oldI8NValue = Kernel.internationalizeDigits;
+		Kernel.internationalizeDigits = false;
 
 		String type = getXMLtypeString();
 
@@ -3929,7 +3987,7 @@ public abstract class GeoElement
 		sb.append("</element>\n");
 
 		kernel.setTranslateCommandName(oldValue);
-		kernel.internationalizeDigits = oldI8NValue;
+		Kernel.internationalizeDigits = oldI8NValue;
 	}
 
 	public void getScriptTags(StringBuilder sb) {
@@ -4053,6 +4111,7 @@ public abstract class GeoElement
 
 	/**
 	 * returns all visual xml tags (like show, objColor, labelOffset, ...)
+	 * @param sb 
 	 */
 	void getXMLvisualTags(StringBuilder sb) {
 		getXMLvisualTags(sb, true);
@@ -4290,6 +4349,7 @@ public abstract class GeoElement
 	/**
 	 * returns all class-specific xml tags for getXML
 	 * GeoGebra File Format
+	 * @param sb 
 	 */
 	protected void getXMLtags(StringBuilder sb) {
 		//sb.append(getLineStyleXML());
@@ -4304,13 +4364,15 @@ public abstract class GeoElement
 	/**
 	 * returns all class-specific i2g tags for getI2G
 	 * Intergeo File Format (Yves Kreis)
+	 * @param sb 
 	 */
 	protected void getI2Gtags(StringBuilder sb) {
 	}
 
 	/**
 	 * Returns line type and line thickness as xml string.
-	 * @see getXMLtags() of GeoConic, GeoLine and GeoVector
+	 * @param sb 
+	 * @see #getXMLtags(StringBuilder) of GeoConic, GeoLine and GeoVector
 	 */
 	protected void getLineStyleXML(StringBuilder sb) {
 		if (isGeoPoint()) return;
@@ -4330,7 +4392,8 @@ public abstract class GeoElement
 
 	/**
 	 * Returns line type and line thickness as xml string.
-	 * @see getXMLtags() of GeoConic, GeoLine and GeoVector
+	 * @param sb 
+	 * @see #getXMLtags(StringBuilder) of GeoConic, GeoLine and GeoVector
 	 */
 	void getBreakpointXML(StringBuilder sb) {
 		if (isConsProtBreakpoint) {
@@ -4353,7 +4416,7 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * @return
+	 * @return line thickness
 	 */
 	public int getLineThickness() {
 		return lineThickness;
@@ -4367,7 +4430,7 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * @return
+	 * @return line type
 	 */
 	public int getLineType() {
 		return lineType;
@@ -4381,14 +4444,14 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * @param f
+	 * @param th new thickness
 	 */
 	public void setLineThickness(int th) {
 		lineThickness = Math.min(MAX_LINE_WIDTH,Math.max(0,th));
 	}
 
 	/**
-	 * @param i
+	 * @param i new type
 	 */
 	public void setLineType(int i) {
 		lineType = i;
@@ -4667,7 +4730,11 @@ public abstract class GeoElement
 	/**
 	 * Translates all GeoElement objects in geos by a vector in real world coordinates or by
 	 * (xPixel, yPixel) in screen coordinates.
+	 * @param geos 
+	 * @param rwTransVec 
 	 * @param endPosition may be null
+	 * @param viewDirection 
+	 * @return true if something was moved
 	 */
 	public static boolean moveObjects(ArrayList<GeoElement> geos, Coords rwTransVec, Coords endPosition, Coords viewDirection) {
 		if (moveObjectsUpdateList == null)
@@ -4709,12 +4776,12 @@ public abstract class GeoElement
 
 		return moved;
 	}
-	private static ArrayList moveObjectsUpdateList;
-	private static TreeSet tempSet;
+	private static ArrayList<GeoElement> moveObjectsUpdateList;
+	private static TreeSet<AlgoElement> tempSet;
 
-	protected static TreeSet getTempSet() {
+	protected static TreeSet<AlgoElement> getTempSet() {
 		if (tempSet == null) {
-			tempSet = new TreeSet();
+			tempSet = new TreeSet<AlgoElement>();
 		}
 		return tempSet;
 	}
@@ -4762,7 +4829,7 @@ public abstract class GeoElement
 	 * Moves geo by a vector in real world coordinates.
 	 * @return whether actual moving occurred
 	 */
-	private boolean moveObject(Coords rwTransVec, Coords endPosition, Coords viewDirection, ArrayList updateGeos) {
+	private boolean moveObject(Coords rwTransVec, Coords endPosition, Coords viewDirection, ArrayList<GeoElement> updateGeos) {
 		boolean movedGeo = false;
 		GeoElement geo = this;
 		// moveable geo
@@ -4840,11 +4907,12 @@ public abstract class GeoElement
 	 * try to move the geo with coord parent numbers (e.g. point defined by sliders)
 	 * @param rwTransVec
 	 * @param endPosition
+	 * @param viewDirection 
 	 * @param updateGeos
 	 * @param tempMoveObjectList
 	 * @return false if not moveable this way
 	 */
-	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition, Coords viewDirection,  ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition, Coords viewDirection,  ArrayList<GeoElement> updateGeos, ArrayList<GeoElement> tempMoveObjectList){
 		return false;
 	}
 
@@ -4869,20 +4937,20 @@ public abstract class GeoElement
 	 * @param updateGeos
 	 * @param tempMoveObjectList
 	 */
-	protected void addChangeableCoordParentNumberToUpdateList(GeoElement number, ArrayList updateGeos, ArrayList tempMoveObjectList){
+	protected void addChangeableCoordParentNumberToUpdateList(GeoElement number, ArrayList<GeoElement> updateGeos, ArrayList<GeoElement> tempMoveObjectList){
 		if (updateGeos != null) {
 			// add number to update list
 			updateGeos.add(number);
 		} else {
 			// update number right now
 			if (tempMoveObjectList == null)
-				tempMoveObjectList = new ArrayList();
+				tempMoveObjectList = new ArrayList<GeoElement>();
 			tempMoveObjectList.add(number);
 			updateCascade(tempMoveObjectList, getTempSet() );
 		}
 	}
 
-	private ArrayList tempMoveObjectList;
+	private ArrayList<GeoElement> tempMoveObjectList;
 
 	/**
 	 * Returns the position of this GeoElement in
@@ -4891,6 +4959,7 @@ public abstract class GeoElement
 	 * column and the y-coordinate specifies its row location.
 	 * Note that this method
 	 * may return null if no position was specified so far.
+	 * @return position of this GeoElement in GeoGebra's spreadsheet view.
 	 */
 	public Point getSpreadsheetCoords() {
 		if (spreadsheetCoords == null)
@@ -4902,6 +4971,7 @@ public abstract class GeoElement
 	 * Sets the position of this GeoElement in
 	 * GeoGebra's spreadsheet. The x-coordinate specifies its
 	 * column and the y-coordinate specifies its row location.
+	 * @param spreadsheetCoords 
 	 */
 	public void setSpreadsheetCoords(Point spreadsheetCoords) {
 		this.spreadsheetCoords = spreadsheetCoords;
@@ -4952,6 +5022,9 @@ public abstract class GeoElement
 	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA) eg sqrt(x)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA_XML)
 	 * getFormulaString(ExpressionNode.STRING_TYPE_JASYMCA)
+	 * @param ExpressionNodeType 
+	 * @param substituteNumbers 
+	 * @return formula string
 	 */
 	public String getFormulaString(int ExpressionNodeType, boolean substituteNumbers)
 	{
@@ -5099,12 +5172,13 @@ public abstract class GeoElement
 	private boolean spreadsheetTrace;
 
 
-	/** Returns true if this geo is tracing to the spreadsheet */
+	/** @return true if this geo is tracing to the spreadsheet */
 	public boolean getSpreadsheetTrace() {
 		return spreadsheetTrace;
 	}
 
-	/** Set tracing flag for this geo */
+	/** Set tracing flag for this geo 
+	 * @param traceFlag */
 	public void setSpreadsheetTrace(boolean traceFlag) {
 
 		if(traceFlag != true)
@@ -5120,7 +5194,7 @@ public abstract class GeoElement
 		app.getGuiManager().resetTraceColumn(this);
 	}
 
-	/** Determine if geos of this type can be traced to the spreadsheet */
+	/** @return if geos of this type can be traced to the spreadsheet */
 	public boolean isSpreadsheetTraceable() {
 		if (isGeoList() || isGeoNumeric() || isGeoVector() || isGeoPoint()) {
 			return true;
@@ -5395,7 +5469,7 @@ public abstract class GeoElement
 	// G.Sturr, 2010-6-30
 	//=============================================
 
-	HashSet viewSet = new HashSet<Object>();
+	HashSet<Object> viewSet = new HashSet<Object>();
 
 	public void addView(Object view){
 		viewSet.add(view);
@@ -5618,6 +5692,7 @@ public abstract class GeoElement
 	}
 
 	/**
+	 * @param view 
 	 * @return the xmin value for the view
 	 */
 	public double getXmin(EuclidianViewInterface view){
@@ -5644,6 +5719,7 @@ public abstract class GeoElement
 	}
 
 	/**
+	 * @param view 
 	 * @return the xmax value for the view
 	 */
 	public double getXmax(EuclidianViewInterface view){

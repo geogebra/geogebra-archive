@@ -1125,10 +1125,10 @@ GeoPointND, Animatable, Transformable  {
 		}			
 	}
 	
-	private static TreeSet tempSet;	
-	protected static TreeSet getTempSet() {
+	private static TreeSet<AlgoElement> tempSet;	
+	protected static TreeSet<AlgoElement> getTempSet() {
 		if (tempSet == null) {
-			tempSet = new TreeSet();
+			tempSet = new TreeSet<AlgoElement>();
 		}
 		return tempSet;
 	}
