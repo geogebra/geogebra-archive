@@ -1377,7 +1377,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			break;
 
 		case OR:
-			sb.append(leftStr);
+			append(sb, leftStr, left, operation, STRING_TYPE);
 			sb.append(' ');
 
 			switch (STRING_TYPE) {
