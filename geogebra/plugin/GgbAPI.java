@@ -143,6 +143,7 @@ public class GgbAPI {
     
     /** Making MathPiper available for Plugins
      *  (Silent version, without debug to console)
+     *  @deprecated since GeoGebra 4.0
      */
     public String evaluateMathPiper(String cmdString){
     	return kernel.evaluateMathPiper(cmdString);
@@ -290,6 +291,7 @@ public class GgbAPI {
 	/**
 	 * Evaluates the given string as if it was entered into MathPiper's 
 	 * input text field. 	 
+	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead
 	 */
 	public synchronized String evalMathPiper(String cmdString) {
 		
@@ -307,7 +309,8 @@ public class GgbAPI {
 	 * Evaluates the given string as if it was entered into Maxima's
 	 * input text field. 
 	 * @author Ulven
-	 * @version 2010-03-10	 
+	 * @version 2010-03-10	
+	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead 
 	 */
 	public synchronized String evalMaxima(String cmdString) {
 		
@@ -326,13 +329,23 @@ public class GgbAPI {
 		return 	(geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();
 	}//getCurrentCas()
 	*/
+	
+	/**
+	 * Evaluates the given string as if it was entered into GeoGebra CAS's
+	 * input text field.  
+	 * @return evaluation result in GeoGebraCAS syntax
+	 */
+	public synchronized String evalGeoGebraCAS(String cmdString){
+		return evalGeoGebraCAS(cmdString, false);		
+	}
+		
 	/**
 	 * Evaluates the given string as if it was entered into GeoGebra CAS's
 	 * input text field. 
-	 * @author Ulven
-	 * @version 2010-03-10	 
+	 * @param debugOutput states whether debugging information should be printed to the console
+	 * @return evaluation result in GeoGebraCAS syntax
 	 */
-	public synchronized String evalGeoGebraCAS(String cmdString){
+	public synchronized String evalGeoGebraCAS(String cmdString, boolean debugOutput) {
 		String ret="";
 		GeoGebraCAS	ggbcas=(GeoGebraCAS)kernel.getGeoGebraCAS();
 		try{
@@ -342,8 +355,8 @@ public class GgbAPI {
 		}//try-catch
 		
 		// useful for debugging JavaScript
-		// do not remove!
-		Application.debug("evalGeoGebraCAS\n input:"+cmdString+"\n"+"output: "+ret);
+		if (debugOutput)
+			Application.debug("evalGeoGebraCAS\n input:"+cmdString+"\n"+"output: "+ret);
 		return ret;
 	}//evalGeoGebraCAS(String)
 	

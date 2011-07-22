@@ -18,7 +18,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
  * 
  * @author Michael Borcherds
  */
-public class AlgoFactors extends AlgoElement {
+public class AlgoCasFactors extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
@@ -26,7 +26,7 @@ public class AlgoFactors extends AlgoElement {
     
     private StringBuilder sb = new StringBuilder();
    
-    public AlgoFactors(Construction cons, String label, GeoFunction f) {
+    public AlgoCasFactors(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	
     	

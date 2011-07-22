@@ -183,6 +183,7 @@ public class GeoGebraCAS {
 	/** 
 	 * Evaluates an expression in MathPiper syntax.
      * @return result string (null possible)
+     * @deprecated since GeoGebra 4.0
      */
 	final public String evaluateMathPiper(String exp) {		
 		return getMathPiper().evaluateMathPiper(exp);

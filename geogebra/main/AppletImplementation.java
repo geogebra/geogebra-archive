@@ -16,6 +16,7 @@ import geogebra.AppletImplementationInterface;
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
 import geogebra.GeoGebraAppletPreloader;
+import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.MyBoolean;
@@ -713,9 +714,34 @@ public class AppletImplementation implements AppletImplementationInterface {
 		//return success
 		return ret.getBoolean();
 	}
+	
+	/**
+	 * Evaluates the given string as if it was entered into GeoGebra CAS's
+	 * input text field.  
+	 * @return evaluation result in GeoGebraCAS syntax
+	 */
+	public synchronized String evalGeoGebraCAS(String cmdString){
+		return evalGeoGebraCAS(cmdString, false);		
+	}
+		
+	/**
+	 * Evaluates the given string as if it was entered into the GeoGebraCAS
+	 * input text field. 
+	 * @param debugOutput states whether debugging information should be printed to the console
+	 * @return evaluation result in GeoGebraCAS syntax
+	 */
+	public synchronized String evalGeoGebraCAS(final String cmdString, final boolean debugOutput) {				
+		// avoid security problems calling from JavaScript
+		return (String)AccessController.doPrivileged(new PrivilegedAction() {
+			public Object run() {
+				return ggbApi.evalGeoGebraCAS(cmdString, debugOutput);
+			}
+		});		
+	}//evalGeoGebraCAS(String)
 
 	/**
 	 * Evaluates the given string using the MathPiper CAS.
+	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead
 	 */
 	public synchronized String evalMathPiper(String cmdString) {
 		//waitForCAS();
@@ -734,7 +760,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 
 	/**
 	 * Evaluates the given string using the Yacas CAS.
-	 * @deprecated: use evalMathPiper() instead
+	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead
 	 */
 	public synchronized String evalYacas(String cmdString) {
 		return evalMathPiper(cmdString);

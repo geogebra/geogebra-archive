@@ -536,6 +536,7 @@ public class Kernel {
 	 * Evaluates an expression in MathPiper syntax with.
      * @return result string (null possible)
 	 * @throws Throwable 
+	 * @deprecated since GeoGebra 4.0
      */
 	final public String evaluateMathPiper(String exp) {
 		if (ggbCAS == null) {
@@ -7162,7 +7163,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoList Factors(String label, GeoFunction func) {		
-		AlgoFactors algo = new AlgoFactors(cons, label, func);
+		AlgoCasFactors algo = new AlgoCasFactors(cons, label, func);
 		return algo.getResult();			
 	}
 	
