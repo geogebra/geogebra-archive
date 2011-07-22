@@ -2193,6 +2193,7 @@ public class Application implements KeyEventDispatcher {
 	 * @return the scriptingLanguage
 	 */
 	public String getScriptingLanguage() {
+		//in some files we stored language="null" accidentally
 		if("null".equals(scriptingLanguage))
 			scriptingLanguage=null;
 		return scriptingLanguage;
@@ -3703,9 +3704,13 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	private void getScriptingXML(StringBuilder sb) {
-		sb.append("<scripting language=\"");
-		sb.append(getScriptingLanguage());
-		sb.append("\" blocked=\"");
+		sb.append("<scripting");
+		if(getScriptingLanguage() != null){
+			sb.append(" language=\"");
+			sb.append(getScriptingLanguage());
+			sb.append("\"");
+		}
+		sb.append(" blocked=\"");
 		sb.append(isBlockUpdateScripts());
 		sb.append("\"/>\n");		
 	}
