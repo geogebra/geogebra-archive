@@ -221,6 +221,8 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("load_package reset;");
 		mpreduce.evaluate("load_package randpoly;");
 		mpreduce.evaluate("load_package taylor;");
+		mpreduce.evaluate("load_package assist;");
+		mpreduce.evaluate("load_package groebner;");		
 		
 	}
 
@@ -386,7 +388,19 @@ public class CASmpreduce extends CASgeneric {
 				+ "		m!°(1,i):=part(list,i); "
 				+ "	return m!° " 
 				+ "end;");
+
+		mpreduce.evaluate("procedure mod!°(a,b);" +
+				" if numberp(a) and numberp(b) then" +
+				"	 a-b*div(a,b)" +
+				" else" +
+				"	 part(divpol(a,b),2);");
 		
+		mpreduce.evaluate("procedure div(a,b);" +
+				" if numberp(a) and numberp(b) then" +
+				"	floor(a/b)" +
+				" else " +
+				"    part(divpol(a,b),1);");
+
 	}
 
 	private String getVersionString() {
