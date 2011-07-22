@@ -112,7 +112,6 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		private void updateCellEditor(DocumentEvent documentEvent) {
 
 			view.getTable().updateEditor(fldFormula.getText());
-
 		}
 	};
 
@@ -184,6 +183,8 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		// TODO: should these be an anchor cell?
 		table.setAllowEditing(true);
 		boolean succ = view.getTable().editCellAt(table.getSelectedRow(), table.getSelectedColumn());
+		view.getTable().repaint();
+
 	}
 
 
