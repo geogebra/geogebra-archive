@@ -32,93 +32,15 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 	private Application app;
 	private Kernel kernel;
 	private ConstructionProtocolView constprotView;
-	private AbstractAction exportHtmlAction, printPreviewAction;
-	
 	
 	public ConstructionProtocolContextMenu(Application app){
 		this.app = app;
 		this.kernel = app.getKernel();
 		constprotView = app.getGuiManager().getConstructionProtocolView();
-		initActions();
 		initItems();
 	}
 
-	private void initActions() {
 
-		exportHtmlAction = new AbstractAction(app.getPlain("ExportAsWebpage")
-				+ " (" + Application.FILE_EXT_HTML + ") ...") {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.setWaitCursor();
-
-				Thread runner = new Thread() {
-					public void run() {
-						JDialog d = new geogebra.export.ConstructionProtocolExportDialog(
-								constprotView);
-						d.setVisible(true);
-					}
-				};
-				runner.start();
-
-				app.setDefaultCursor();
-			}
-		};
-		
-		printPreviewAction = new AbstractAction(app.getMenu("Print")
-				+ "...", app.getImageIcon("document-print-preview.png")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.setWaitCursor();
-
-				Thread runner = new Thread() {
-					public void run() {
-						
-						try {
-							Construction cons = app.getKernel().getConstruction();
-							constprotView.getTable().print(JTable.PrintMode.FIT_WIDTH, 
-									new MessageFormat(tableHeader(cons)), 
-									new MessageFormat("{0}"), // page numbering 
-									/*showPrintDialog*/ true, 
-									/*attr*/ null, 
-									/*interactive*/ true /*,*/ 
-									/*service*/ /*null*/);
-							// service must be omitted for Java version 1.5.0
-						} catch (HeadlessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (PrinterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-					}
-
-					// This may be too long. FIXME
-					private String tableHeader(Construction cons) {
-					
-						TitlePanel tp = new TitlePanel(app);
-						String author = tp.loadAuthor();
-						String title = cons.getTitle();
-						String date = tp.configureDate(cons.getDate());
-						
-						if (title.equals(""))
-							title = app.getPlain("UntitledConstruction");
-						if (author.equals(""))
-							return title + " (" + date + ")";
-						else
-							return author + ": " + title + " (" + date + ")";
-
-					}
-				};
-				runner.start();
-
-				app.setDefaultCursor();
-			}
-		};
-
-	}	
 	
 	/**
 	 * Initialize the menu items.
@@ -152,8 +74,8 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 			JCheckBoxMenuItem item = new JCheckBoxMenuItem(
 					constprotView.getData().columns[k].getTranslatedTitle());
 			TableColumn column = constprotView.getTableColumns()[k];
-			ColumnKeeper colKeeper = constprotView.new ColumnKeeper(column, constprotView.getData().columns[k]);
 			item.setSelected(constprotView.isColumnInModel(column));
+			ColumnKeeper colKeeper = constprotView.new ColumnKeeper(column, constprotView.getData().columns[k]);
 			item.addActionListener(colKeeper);
 			colMenu.add(item);
 			
@@ -166,13 +88,7 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 				app.getPlain("ShowOnlyBreakpoints"));
 		cbShowOnlyBreakpoints.setSelected(kernel.showOnlyBreakpoints());
 		
-		cbShowOnlyBreakpoints.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				kernel.setShowOnlyBreakpoints(!kernel.showOnlyBreakpoints());
-				constprotView.getData().initView();
-				constprotView.repaint();
-			}
-		});
+		cbShowOnlyBreakpoints.addActionListener(constprotView);
 		optionsMenu.add(cbShowOnlyBreakpoints);
 
 		JCheckBoxMenuItem cbUseColors = new JCheckBoxMenuItem(
@@ -188,8 +104,8 @@ public class ConstructionProtocolContextMenu extends JPopupMenu {
 		add(optionsMenu);
 		
 		//Export and Print menu		
-		add(exportHtmlAction);
-		add(printPreviewAction);
+		add(constprotView.getExportHtmlAction());
+		add(constprotView.getPrintPreviewAction());
 		
 		//Help menu
 		JMenuItem mi = new JMenuItem(app.getMenu("FastHelp"),

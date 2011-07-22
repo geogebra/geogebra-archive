@@ -16,6 +16,7 @@ the Free Software Foundation.
 import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.TitlePanel;
+import geogebra.gui.view.algebra.AlgebraHelperBar;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
@@ -64,6 +65,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -83,7 +85,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-public class ConstructionProtocolView extends JPanel implements Printable {
+public class ConstructionProtocolView extends JPanel implements Printable, ActionListener {
 
 	/**
 	 * 
@@ -121,6 +123,9 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 	private ConstructionProtocolView view=this;
 	public JScrollPane scrollPane;
 	private ConstructionTableCellEditor cellEditor;
+	
+	private ConstructionProtocolStyleBar helperBar;
+	private AbstractAction exportHtmlAction, printPreviewAction;
 	
 	public ConstructionProtocolView(final Application app) {
 		super(new BorderLayout());
@@ -191,9 +196,8 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 		add(protNavBar, BorderLayout.SOUTH);
 		Util.addKeyListenerToAll(protNavBar, keyListener);
 
-
 		initGUI();
-		
+		initActions();
 		
 	}
 
@@ -298,6 +302,7 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 		//setTitle(app.getPlain("ConstructionProtocol"));
 		setFont(app.getPlainFont());
 		//setMenuBar();
+		getStyleBar().setLabels();
 		// set header values (language may have changed)
 		for (int k = 0; k < tableColumns.length; k++) {
 			tableColumns[k].setHeaderValue(data.columns[k].getTranslatedTitle());
@@ -386,7 +391,111 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 	public ConstructionTableData getData(){
 		return data;
 	}
+	
+	public AbstractAction getExportHtmlAction(){
+		return exportHtmlAction;
+	}
 
+	public AbstractAction getPrintPreviewAction(){
+		return printPreviewAction;
+	}
+	
+	
+	/**
+	 * @return The style bar for this view.
+	 */
+	public ConstructionProtocolStyleBar getStyleBar() {
+		if(helperBar == null) {
+			helperBar = newConstructionProtocolHelperBar();
+		}
+		
+		return helperBar;
+	}
+	
+	/**
+	 * @return new Construction Protocol style bar
+	 */
+	protected ConstructionProtocolStyleBar newConstructionProtocolHelperBar(){
+		return new ConstructionProtocolStyleBar(this, app);
+	}
+	
+	private void initActions() {
+
+		exportHtmlAction = new AbstractAction(app.getPlain("ExportAsWebpage")
+				+ " (" + Application.FILE_EXT_HTML + ") ...") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setWaitCursor();
+
+				Thread runner = new Thread() {
+					public void run() {
+						JDialog d = new geogebra.export.ConstructionProtocolExportDialog(view);
+						d.setVisible(true);
+					}
+				};
+				runner.start();
+
+				app.setDefaultCursor();
+			}
+		};
+		
+		
+		printPreviewAction = new AbstractAction(app.getMenu("Print")
+				+ "...", app.getImageIcon("document-print-preview.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.setWaitCursor();
+
+				Thread runner = new Thread() {
+					public void run() {
+						
+						try {
+							Construction cons = app.getKernel().getConstruction();
+							getTable().print(JTable.PrintMode.FIT_WIDTH, 
+									new MessageFormat(tableHeader(cons)), 
+									new MessageFormat("{0}"), // page numbering 
+									/*showPrintDialog*/ true, 
+									/*attr*/ null, 
+									/*interactive*/ true /*,*/ 
+									/*service*/ /*null*/);
+							// service must be omitted for Java version 1.5.0
+						} catch (HeadlessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (PrinterException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+
+					// This may be too long. FIXME
+					private String tableHeader(Construction cons) {
+					
+						TitlePanel tp = new TitlePanel(app);
+						String author = tp.loadAuthor();
+						String title = cons.getTitle();
+						String date = tp.configureDate(cons.getDate());
+						
+						if (title.equals(""))
+							title = app.getPlain("UntitledConstruction");
+						if (author.equals(""))
+							return title + " (" + date + ")";
+						else
+							return author + ": " + title + " (" + date + ")";
+
+					}
+				};
+				runner.start();
+
+				app.setDefaultCursor();
+			}
+		};
+
+	}
+	
 	
 	class ConstructionKeyListener extends KeyAdapter {
 		public void keyPressed(KeyEvent event) {
@@ -584,10 +693,10 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			JCheckBoxMenuItem item = (JCheckBoxMenuItem) e.getSource();
+			//JCheckBoxMenuItem item = (JCheckBoxMenuItem) e.getSource();
 			TableColumnModel model = table.getColumnModel();
-
-			if (item.isSelected()) {
+			
+			if (colData.isVisible == false){
 				colData.isVisible = true;
 				model.addColumn(column);
 				// column is added at right end of model
@@ -1784,4 +1893,10 @@ public class ConstructionProtocolView extends JPanel implements Printable {
 		kernel.attach(this);
 	}
 */
+
+	public void actionPerformed(ActionEvent e) {
+		kernel.setShowOnlyBreakpoints(!kernel.showOnlyBreakpoints());
+		getData().initView();
+		repaint();
+	}
 }

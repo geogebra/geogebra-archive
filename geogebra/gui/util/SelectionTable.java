@@ -331,6 +331,24 @@ public class SelectionTable extends JTable{
 		// Application.debug("=======SET SELECTED INDEX: " + index + "," + row + ", " + column );
 
 	}
+	
+	/*
+	 * It doesn't works, if there are more columns in menu's selection table
+	 */
+	public void addSelectedIndex(int index){
+		Application.debug("addSelectedIndex: "+index);
+		if(index == -1){
+			this.clearSelection();
+			return;
+		}
+
+		//int row = (int) Math.floor(index / getColumnCount()) ;
+		//int column = index - (row * getColumnCount());
+		this.addRowSelectionInterval(index, index);
+		//Application.debug("=======SET SELECTED INDEX: " + index + "," + row + ", " + column );
+		//this.changeSelection(row, column, false, true);
+		//this.changeSelection(row, column, false, false);
+	}
 
 	public Object getSelectedValue(){
 		if(getSelectedRow() != -1 && getSelectedColumn() != -1)

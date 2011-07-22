@@ -19,7 +19,7 @@ public class ConstructionProtocolDockPanel extends DockPanel {
 			Application.VIEW_CONSTRUCTION_PROTOCOL, 	// view id
 			"ConstructionProtocol", 					// view title phrase 
 			null,	// toolbar string
-			false,					// style bar?
+			true,					// style bar?
 			5,						// menu order
 			'L' // ctrl-shift-L
 		);
@@ -31,4 +31,8 @@ public class ConstructionProtocolDockPanel extends DockPanel {
 		return (JComponent) app.getGuiManager().getConstructionProtocolView();
 	}
 
+	protected JComponent loadStyleBar() {
+		return app.getGuiManager().getConstructionProtocolView().getStyleBar();
+	}
+	
 }
