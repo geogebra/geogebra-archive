@@ -59,42 +59,32 @@ public class AlgoFactors extends AlgoElement {
         	g.setUndefined();
         	return;
         }    
-                
-        
-	    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
 
-	    	    
 	    sb.setLength(0);
-	    // added Rationalize to cope with eg Factors[9.1 x^7 - 32 x^6 + 48 x^5 - 40 x^4 + 20 x� - 6 x� + x ]
-        sb.append("Factors((");
-        sb.append(functionIn);
-        sb.append("))");
-		String functionOut = kernel.evaluateMathPiper(sb.toString());
+	    // added Rationalize to cope with eg Factors[9.1 x^7 - 32 x^6 + 48 x^5 - 40 x^4 + 20 x^3 - 6 x^2 + x ]
+//		String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
+//	    sb.append("Factors((");
+//        sb.append(functionIn);
+//        sb.append("))");
+//		String functionOut = kernel.evaluateMathPiper(sb.toString());
 		
-		//Application.debug("Factorize input:"+functionIn);
-		//Application.debug("Factorize output:"+functionOut);
-		
-		boolean yacasError=false;
-		
-		if (functionOut == null || functionOut.length()==0) yacasError=true; // Yacas error
-		
-		else if (functionOut.length()>7)
-			if (functionOut.startsWith("Factor(") || // Yacas error
-			    functionOut.startsWith("FWatom(") )  // Yacas oddity??
-				yacasError=true;
-			
-
-		if (yacasError) // Yacas error
-		{
-			g.setUndefined(); 
-		}
-		else
-		{
-			g.set(kernel.getAlgebraProcessor().evaluateToList(functionOut));					
-		}
-		
-		g.setDefined(true);	
-		
+	    try {
+		    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true);
+		    sb.append("factorize(");
+		    sb.append(functionIn);
+		    sb.append(")");
+			String functionOut = kernel.evaluateMPReduce(sb.toString());	    
+			if (functionOut == null || functionOut.length()==0) {
+				g.setUndefined(); 
+			}
+			else {
+				// read result back into list
+				g.set(kernel.getAlgebraProcessor().evaluateToList(functionOut));		
+				//g.setDefined(true);
+			}
+	    } catch (Throwable th) {
+	    	g.setUndefined();
+	    }
     }
     
     final public String toString() {

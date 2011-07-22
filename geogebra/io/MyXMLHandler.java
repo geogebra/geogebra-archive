@@ -4088,7 +4088,8 @@ public class MyXMLHandler implements DocHandler {
 
 				if (label != null && cmdOutput[i] != null) {
 					cmdOutput[i].setLoadedLabel(label);
-					if (app.getRegressionFileName() != "") {
+					String regFileName = app.getRegressionFileName();
+					if (regFileName != null && regFileName.length() != 0) {
 						app.appendRegressionFile(label + ": ");
 						app.appendRegressionFile(cmdOutput[i].toValueString() + "\n");
 					}
