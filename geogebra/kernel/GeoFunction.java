@@ -800,31 +800,16 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}*/
 	
     // Michael Borcherds 2009-02-15
-	public boolean isEqual(GeoElement geo) {
-		
+	public boolean isEqual(GeoElement geo) {		
 		if (!geo.isGeoFunction() || geo.getGeoClassType() == GeoElement.GEO_CLASS_INTERVAL)
 			return false;
-		
-		
+				
 		// return return geo.isEqual(this); rather than false
 		// in case we improve checking in GeoFunctionConditional in future
 		if (geo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL)
 			return geo.isEqual(this);
-
-		
-		String f = getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-		String g = geo.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-		
-		String diff = ""; 
-			
-		try {
-			diff = kernel.evaluateMathPiper("TrigSimpCombine(ExpandBrackets(" + f + "-(" + g + ")))");
-		}
-		catch (Exception e) { return false; }
-		
-		
-		if ("0".equals(diff)) return true; else return false;
-		
+		else
+			return isDifferenceZeroInCAS(geo);				
 	}
 	
 	/**

@@ -368,19 +368,8 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 	public boolean isEqual(GeoElement geo) {
 		if (!(geo instanceof GeoFunctionNVar))
 			return false;
-		
-		String f = getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-		String g = geo.getFormulaString(ExpressionNode.STRING_TYPE_MATH_PIPER, true);
-		String diff = ""; 
-		try {
-			diff = kernel.evaluateMathPiper("TrigSimpCombine(ExpandBrackets(" + f + "-(" + g + ")))");
-		}
-		catch (Exception e) { return false; }
-		
-		if ("0".equals(diff)) 
-			return true; 
-		else 
-			return false;
+		else
+			return isDifferenceZeroInCAS(geo);		
 	}
 	
 	public boolean isVector3DValue() {

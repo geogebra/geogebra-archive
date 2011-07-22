@@ -4922,6 +4922,25 @@ public abstract class GeoElement
 
 	// Michael Borcherds 2008-04-30
 	public abstract boolean isEqual(GeoElement Geo);
+	
+	/**
+	 * Returns wheter this - g gives 0 in the CAS.
+	 */
+	final public boolean isDifferenceZeroInCAS(GeoElement f) {
+		// use CAS to check f - g = 0
+		try {
+			StringBuilder diffSb = new StringBuilder();
+			diffSb.append(getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true));
+			diffSb.append("-(");
+			diffSb.append(f.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true));
+			diffSb.append(")");
+			String diff = kernel.evaluateMPReduce(diffSb.toString());
+			return ("0".equals(diff));
+		}
+		catch (Exception e) { 
+			return false; 
+		}		
+	}
 
 	/**
 	 * String getFormulaString(int, boolean substituteNumbers)
