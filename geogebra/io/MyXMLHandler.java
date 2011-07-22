@@ -4088,6 +4088,10 @@ public class MyXMLHandler implements DocHandler {
 
 				if (label != null && cmdOutput[i] != null) {
 					cmdOutput[i].setLoadedLabel(label);
+					if (app.getRegressionFileName() != "") {
+						app.appendRegressionFile(label + ": ");
+						app.appendRegressionFile(cmdOutput[i].toValueString() + "\n");
+					}
 				}
 				i++;
 			}

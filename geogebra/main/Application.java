@@ -89,6 +89,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -954,6 +955,28 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	
+	private String regressionFileName = null;
+	private File regressionFile;
+	private FileWriter regressionFileWriter;
+	
+	public String getRegressionFileName () {
+		return regressionFileName;
+	}
+	
+	private void createRegressionFile () throws IOException {
+		regressionFile = new File(regressionFileName);
+		regressionFileWriter = new FileWriter(regressionFile);
+	}
+	
+	public void appendRegressionFile (String text) throws IOException {
+		regressionFileWriter.append(text);
+		regressionFileWriter.flush();
+	}
+	
+	private void closeRegressionFile () throws IOException {
+		regressionFileWriter.close();
+	}
+	
 	
 	/**
 	 * Switches the application to macro editing mode
@@ -1120,6 +1143,16 @@ public class Application implements KeyEventDispatcher {
 			this.antialiasing = false;
 			this.getEuclidianView().setAntialiasing(antiAliasing);
 			this.getEuclidianView2().setAntialiasing(antiAliasing);
+		}
+		
+		if (args.containsArg("regressionFile")) {
+			this.regressionFileName = args.getStringValue("regressionFile");
+			try {
+				createRegressionFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -3428,6 +3461,12 @@ public class Application implements KeyEventDispatcher {
 
 			// command list may have changed due to macros
 			updateCommandDictionary();
+			
+			if (getRegressionFileName() != null) {
+				closeRegressionFile();
+				exitAll();
+			}
+			
 			return true;
 		} catch (MyError err) {
 			setCurrentFile(null);
