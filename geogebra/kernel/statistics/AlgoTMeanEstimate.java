@@ -172,9 +172,9 @@ public class AlgoTMeanEstimate extends AlgoElement {
 			cons.setSuppressLabelCreation(true);
 			result.add(new GeoNumeric(cons, mean - me));
 			result.add(new GeoNumeric(cons, mean + me));
-			result.add(new GeoNumeric(cons, mean));
-			result.add(new GeoNumeric(cons, me));
-			result.add(new GeoNumeric(cons, n-1)); // df
+			//result.add(new GeoNumeric(cons, mean));
+			//result.add(new GeoNumeric(cons, me));
+			//result.add(new GeoNumeric(cons, n-1)); // df
 			cons.setSuppressLabelCreation(oldSuppress);
 			
 
