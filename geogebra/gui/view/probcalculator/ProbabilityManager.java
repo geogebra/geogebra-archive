@@ -571,7 +571,7 @@ public class ProbabilityManager {
 			StringBuilder lowExpr = new StringBuilder(partialExpr.toString());
 
 			highExpr.append(high);
-			lowExpr.append(low);
+			lowExpr.append(isDiscrete(distType) ? low - 1 : low);
 
 			// for discrete case boolean cumulative must also be included
 			if(isDiscrete(distType)){
@@ -594,8 +594,10 @@ public class ProbabilityManager {
 				prob = evaluateExpression(highExpr.toString());	
 			else if(probMode == ProbabilityCalculator.PROB_RIGHT)
 				prob = 1 - evaluateExpression(lowExpr.toString());
-			else
+			else {
+				Application.debug(highExpr.toString()+" "+lowExpr.toString());
 				prob = evaluateExpression(highExpr.toString()) - evaluateExpression(lowExpr.toString());
+			}
 
 
 		} catch (Exception e) {		
