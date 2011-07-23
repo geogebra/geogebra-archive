@@ -31,16 +31,19 @@ public class ProbabilityManager {
 	public static final int DIST_EXPONENTIAL = 5;
 	public static final int DIST_GAMMA = 6;
 	public static final int DIST_WEIBULL = 7;
+	public static final int DIST_LOGISTIC = 8;
+	public static final int DIST_LOGNORMAL = 9;
+	public static final int DIST_ERLANG = 10;
+	//public static final int DIST_UNIFORM = 11;
+	//public static final int DIST_TRIANGULAR = 12;
 
 	// discrete distribution identifiers
-	public static final int DIST_BINOMIAL = 8;
-	public static final int DIST_PASCAL = 9;
-	public static final int DIST_HYPERGEOMETRIC = 10;
-	public static final int DIST_POISSON = 11;
+	public static final int DIST_BINOMIAL = 11;
+	public static final int DIST_PASCAL = 12;
+	public static final int DIST_HYPERGEOMETRIC = 13;
+	public static final int DIST_POISSON = 14;
 
-
-	public static final int continuousDistCount = 8;
-	public static final int totalDistCount = 12;
+	public static final int distCount = 15;
 
 
 	public ProbabilityManager(Application app, ProbabilityCalculator probCalc){
@@ -82,6 +85,8 @@ public class ProbabilityManager {
 		plotMap.put(DIST_EXPONENTIAL, app.getMenu("Distribution.Exponential"));
 		plotMap.put(DIST_CAUCHY, app.getMenu("Distribution.Cauchy"));
 		plotMap.put(DIST_WEIBULL, app.getMenu("Distribution.Weibull"));
+		plotMap.put(DIST_LOGISTIC, app.getCommand("Logistic"));
+		plotMap.put(DIST_LOGNORMAL, app.getCommand("LogNormal"));
 
 		plotMap.put(DIST_GAMMA, app.getMenu("Distribution.Gamma"));
 		plotMap.put(DIST_BINOMIAL, app.getMenu("Distribution.Binomial"));
@@ -119,7 +124,7 @@ public class ProbabilityManager {
 	 */
 	protected static String[][] getParameterLabelArray(Application app){
 
-		String[][] parameterLabels = new String[totalDistCount][4];
+		String[][] parameterLabels = new String[distCount][4];
 
 		parameterLabels[DIST_NORMAL][0] = app.getMenu("Mean");
 		parameterLabels[DIST_NORMAL][1] = app.getMenu("StandardDeviation.short");
@@ -138,6 +143,12 @@ public class ProbabilityManager {
 
 		parameterLabels[DIST_WEIBULL][0] = app.getMenu("Shape");
 		parameterLabels[DIST_WEIBULL][1] = app.getMenu("Scale");
+		
+		parameterLabels[DIST_LOGISTIC][0] = app.getMenu("Mean");
+		parameterLabels[DIST_LOGISTIC][1] = app.getMenu("Scale");
+		
+		parameterLabels[DIST_LOGNORMAL][0] = app.getMenu("Mean");
+		parameterLabels[DIST_LOGNORMAL][1] = app.getMenu("StandardDeviation.short");
 
 		parameterLabels[DIST_GAMMA][0] = app.getMenu("Alpha.short");
 		parameterLabels[DIST_GAMMA][1] = app.getMenu("Beta.short");
@@ -166,7 +177,7 @@ public class ProbabilityManager {
 	 */
 	protected static String[] getCommand(){
 
-		String[] cmd = new String[totalDistCount];
+		String[] cmd = new String[distCount];
 		cmd[DIST_NORMAL] = "Normal";
 		cmd[DIST_STUDENT] = "TDistribution";
 		cmd[DIST_CHISQUARE] = "ChiSquared";
@@ -175,6 +186,10 @@ public class ProbabilityManager {
 		cmd[DIST_EXPONENTIAL] = "Exponential";
 		cmd[DIST_GAMMA] = "Gamma";
 		cmd[DIST_WEIBULL] = "Weibull";
+		cmd[DIST_LOGISTIC] = "Logistic";
+		cmd[DIST_LOGNORMAL] = "LogNormal";
+		
+		
 		// --- discrete
 		cmd[DIST_BINOMIAL] = "BinomialDist";
 		cmd[DIST_PASCAL] = "Pascal";
@@ -193,7 +208,7 @@ public class ProbabilityManager {
 	 */
 	protected static String[] getInverseCommand(){
 
-		String[] inverseCmd = new String[totalDistCount];
+		String[] inverseCmd = new String[distCount];
 		inverseCmd[DIST_NORMAL] = "InverseNormal";
 		inverseCmd[DIST_STUDENT] = "InverseTDistribution";
 		inverseCmd[DIST_CHISQUARE] = "InverseChiSquare";
@@ -202,6 +217,9 @@ public class ProbabilityManager {
 		inverseCmd[DIST_EXPONENTIAL] = "InverseExponential";
 		inverseCmd[DIST_GAMMA] = "InverseGamma";
 		inverseCmd[DIST_WEIBULL] = "InverseWeibull";
+		//TODO ------------- inverse cmds for these dist.
+		inverseCmd[DIST_LOGNORMAL] = "InverseWeibull"; 
+		inverseCmd[DIST_LOGISTIC] = "InverseWeibull";
 		// --- discrete
 		inverseCmd[DIST_BINOMIAL] = "InverseBinomial";
 		inverseCmd[DIST_PASCAL] = "InversePascal";
@@ -218,7 +236,7 @@ public class ProbabilityManager {
 	 */
 	protected static int[] getParmCount(){
 
-		int[] parmCount = new int[totalDistCount];
+		int[] parmCount = new int[distCount];
 		parmCount[DIST_NORMAL] = 2;
 		parmCount[DIST_STUDENT] = 1;
 		parmCount[DIST_CHISQUARE] = 1;
@@ -227,6 +245,8 @@ public class ProbabilityManager {
 		parmCount[DIST_EXPONENTIAL] = 1;
 		parmCount[DIST_GAMMA] = 2;
 		parmCount[DIST_WEIBULL] = 2;
+		parmCount[DIST_LOGNORMAL] = 2;
+		parmCount[DIST_LOGISTIC] = 2;
 		// --- discrete
 		parmCount[DIST_BINOMIAL] = 2;
 		parmCount[DIST_PASCAL] = 2;
@@ -254,7 +274,10 @@ public class ProbabilityManager {
 		defaultParameterMap.put(DIST_GAMMA, new double[] {3,2}); // alpha = 3, beta = 2
 		defaultParameterMap.put(DIST_CAUCHY, new double[] {0,1}); // median = 0, scale = 1
 		defaultParameterMap.put(DIST_WEIBULL, new double[] {5,1}); // shape = 5, scale = 1
-
+		defaultParameterMap.put(DIST_LOGNORMAL, new double[] {0,1}); //  mean = 0, sigma = 1
+		defaultParameterMap.put(DIST_LOGISTIC, new double[] {5,2}); // mean = 5, scale = 2
+		
+		
 		defaultParameterMap.put(DIST_BINOMIAL, new double[] {20, 0.5}); // n = 20, p = 0.5
 		defaultParameterMap.put(DIST_PASCAL, new double[] {20, 0.5}); // n = 20, p = 0.5
 		defaultParameterMap.put(DIST_POISSON, new double[] {4}); // mean = 4
@@ -384,6 +407,29 @@ public class ProbabilityManager {
 				yMax = 4;
 			}
 
+			break;
+
+		case DIST_LOGNORMAL:
+			mean = parms[0];
+			sigma = parms[1];
+			double meanActual = Math.exp(mean + sigma*sigma/2);
+			double var = (Math.exp(sigma*sigma) - 1)*Math.exp(2*mean + sigma*sigma);
+			mode = Math.exp(mean - sigma*sigma);
+			xMin = 0;
+			xMax = mean + 5*Math.sqrt(var);
+			yMin = 0;
+			yMax = 1.2* ((GeoFunction)densityCurve).evaluate(mode);	
+			break;
+
+			
+		case DIST_LOGISTIC:
+			mean = parms[0];
+			scale = parms[1];
+			sd = Math.PI*scale/Math.sqrt(3);
+			xMin = mean - 5*sd;
+			xMax = mean + 5*sd;
+			yMin = 0;
+			yMax = 1.2* ((GeoFunction)densityCurve).evaluate(mean);	
 			break;
 
 
