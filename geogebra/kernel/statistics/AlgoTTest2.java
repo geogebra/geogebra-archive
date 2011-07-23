@@ -114,9 +114,10 @@ public class AlgoTTest2 extends AlgoElement {
 	private double adjustedPValue(double p, double testStatistic){
 
 		// two sided test
-		if(tail.getTextString().equals("!=")) 
+		if(tail.getTextString().equals("!=") 
+				|| tail.getTextString().equals("≠")) 
 			return p;
-
+		
 		// one sided test
 		else if((tail.getTextString().equals(">") && testStatistic > 0)
 				|| (tail.getTextString().equals("<") && testStatistic < 0))
@@ -131,7 +132,8 @@ public class AlgoTTest2 extends AlgoElement {
 
 		if(!(tail.getTextString().equals("<") 
 				|| tail.getTextString().equals(">") 
-				|| tail.getTextString().equals("!="))){
+				|| tail.getTextString().equals("!=")
+				|| tail.getTextString().equals("≠"))){
 			result.setUndefined();
 			return;
 		}

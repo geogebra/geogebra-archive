@@ -106,7 +106,8 @@ public class AlgoTTest extends AlgoElement {
 	private double adjustedPValue(double p, double testStatistic){
 
 		// two sided test
-		if(tail.getTextString().equals("!=")) 
+		if(tail.getTextString().equals("!=") 
+				|| tail.getTextString().equals("≠")) 
 			return p;
 
 		// one sided test
@@ -123,7 +124,8 @@ public class AlgoTTest extends AlgoElement {
 
 		if(!(tail.getTextString().equals("<") 
 				|| tail.getTextString().equals(">") 
-				|| tail.getTextString().equals("!="))){
+				|| tail.getTextString().equals("!=")
+				|| tail.getTextString().equals("≠"))){
 			result.setUndefined();
 			return;
 		}
@@ -161,7 +163,7 @@ public class AlgoTTest extends AlgoElement {
 				p = tTestImpl.tTest(hypMean.getDouble(), val);
 				p = adjustedPValue(p, testStat);
 				
-
+				
 				// put these results into the output list
 				result.clear();
 				result.add(new GeoNumeric(cons, p));
