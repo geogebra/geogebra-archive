@@ -93,6 +93,11 @@ GeoPointND, Animatable, Transformable  {
   
     /**
      * Creates new GeoPoint 
+     * @param c 
+     * @param label 
+     * @param x 
+     * @param y 
+     * @param z 
      */  
     public GeoPoint(Construction c, String label, double x, double y, double z) {               
         super(c, x, y, z); // GeoVec3D constructor
@@ -661,8 +666,8 @@ GeoPointND, Animatable, Transformable  {
         
         // both finite      
         if (isFinite() && P.isFinite())
-			return kernel.isEqual(inhomX, P.inhomX) && 
-                    	kernel.isEqual(inhomY, P.inhomY);
+			return Kernel.isEqual(inhomX, P.inhomX) && 
+                    	Kernel.isEqual(inhomY, P.inhomY);
 		else if (isInfinite() && P.isInfinite())
 			return linDep(P);
 		else return false;                        
@@ -1229,6 +1234,7 @@ GeoPointND, Animatable, Transformable  {
 	 * Returns a comparator for GeoPoint objects.
 	 * (sorts on X coordinate)
 	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
+	 * @return comparator for GeoPoint objects.
 	 */
 	public static Comparator<GeoPoint> getComparatorX() {
 		if (comparatorX == null) {
@@ -1535,6 +1541,22 @@ GeoPointND, Animatable, Transformable  {
 
 		// needed for GeoPointND interface for 3D, do nothing
 		public void setCoords(double x, double y, double z, double w) {
+		}
+		
+		public void moveDependencies(GeoElement oldGeo) {
+			if (oldGeo.isGeoPoint()
+					&& ((GeoPoint) oldGeo).locateableList != null) {
+
+				locateableList = ((GeoPoint) oldGeo).locateableList;
+				for (Locateable loc : locateableList){ 				
+					GeoPointND[]pts = loc.getStartPoints();
+					for(int i=0;i<pts.length;i++)
+						if(pts[i]== (GeoPoint)oldGeo)
+							pts[i] = this;
+					loc.toGeoElement().updateRepaint();
+				}				
+				((GeoPoint) oldGeo).locateableList = null;
+			}
 		}
 
 

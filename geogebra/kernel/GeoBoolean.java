@@ -40,7 +40,7 @@ AbsoluteScreenLocateable {
 	private boolean isDefined = true;	
 	private boolean checkboxFixed = false;
 	
-	private ArrayList condListenersShowObject;
+	private ArrayList<GeoElement> condListenersShowObject;
 		
 	public GeoBoolean(Construction c) {
 		super(c);			
@@ -89,7 +89,7 @@ AbsoluteScreenLocateable {
 	 */
 	public void registerConditionListener(GeoElement geo) {
 		if (condListenersShowObject == null)
-			condListenersShowObject = new ArrayList();
+			condListenersShowObject = new ArrayList<GeoElement>();
 		condListenersShowObject.add(geo);
 	}
 	
@@ -374,5 +374,17 @@ AbsoluteScreenLocateable {
 
 	final public boolean isCasEvaluableObject() {
 		return true;
+	}
+	
+	public void moveDependencies(GeoElement oldGeo) {
+		if (oldGeo.isGeoBoolean()
+				&& ((GeoBoolean) oldGeo).condListenersShowObject != null) {
+
+			condListenersShowObject = ((GeoBoolean) oldGeo).condListenersShowObject;
+			for (GeoElement geo : condListenersShowObject) 				
+				geo.condShowObject = this;
+			
+			((GeoBoolean) oldGeo).condListenersShowObject = null;
+		}
 	}
 }

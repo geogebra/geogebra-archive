@@ -5115,4 +5115,22 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public ArrayList<GeoPoint> getFreeInputPoints(AlgoElement algoParent){
 		return algoParent.getFreeInputPoints();
 	}
+
+	/**
+	 * Replaces num by num2 in xmin, xmax,ymin,ymax. Does not
+	 * add / remove EV listeners from these numerics
+	 * @param num old numeric
+	 * @param num2 new numeric
+	 */
+	public void replaceBoundObject(GeoNumeric num, GeoNumeric num2) {
+		if(xmaxObject == num)
+			xmaxObject = num2;
+		if(xminObject == num)
+			xminObject = num2;
+		if(ymaxObject == num)
+			ymaxObject = num2;
+		if(yminObject == num)
+			yminObject = num2;
+		updateBounds();
+	}
 }

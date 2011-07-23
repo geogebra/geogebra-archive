@@ -1220,12 +1220,12 @@ public abstract class GeoElement
 		}
 
 		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
-		if (!keepAdvanced) // done in setAdvancedVisualStyle()
+		if (!keepAdvanced) // done in setAdvancedVisualStyle()			
 		if (geo.condShowObject != null) {
 			try { setShowObjectCondition(geo.getShowObjectCondition());}
 			catch (Exception e) {}
+		
 		}
-
 		//G.Sturr 2010-6-26
 		if (isSpreadsheetTraceable() && geo.getSpreadsheetTrace()) {
 			setSpreadsheetTrace(true);
@@ -4994,7 +4994,9 @@ public abstract class GeoElement
 	public abstract boolean isEqual(GeoElement Geo);
 	
 	/**
-	 * Returns wheter this - g gives 0 in the CAS.
+	 * Returns wheter this - f gives 0 in the CAS.
+	 * @param f 
+	 * @return wheter this - f gives 0 in the CAS.
 	 */
 	final public boolean isDifferenceZeroInCAS(GeoElement f) {
 		// use CAS to check f - g = 0
@@ -5797,5 +5799,13 @@ public abstract class GeoElement
 	
 	public double getMeasure() {
 		return 0;
+	}
+	/**
+	 * Removes dependencies (conditional visibility, min, max, corner, EV bounds)
+	 * from oldgeo and moves them to this
+	 * @param oldGeo geo whose dependencies should be moved
+	 */
+	public void moveDependencies(GeoElement oldGeo) {
+		//in general case do nothing; overriden in GeoPoint, GeoNumeric and GeoBoolean		
 	}
 }

@@ -23,11 +23,9 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -1135,5 +1133,29 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void removeEVSizeListener(EuclidianView ev) {
 		if(evListeners!=null)
 			evListeners.remove(ev);	
+	}
+	
+	public void moveDependencies(GeoElement oldGeo) {
+		if (!oldGeo.isGeoNumeric())
+			return;
+		GeoNumeric num = (GeoNumeric) oldGeo;
+		if(num.evListeners != null) {
+
+			evListeners = num.evListeners;
+			for (EuclidianView ev : num.evListeners){ 	
+				ev.replaceBoundObject(num,this);				
+			}
+			
+			num.evListeners = null;
+		}
+		if(num.minMaxListeners != null){
+			minMaxListeners = num.minMaxListeners;
+			for(GeoNumeric slider:minMaxListeners){
+				if(slider.getIntervalMaxObject()==num)
+					slider.setIntervalMax(this);
+				if(slider.getIntervalMinObject()==num)
+					slider.setIntervalMin(this);
+			}
+		}
 	}
 }

@@ -15,14 +15,12 @@ package geogebra.kernel;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
-import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.util.Unicode;
 import geogebra.util.Util;
-import geogebra.kernel.kernelND.GeoPointND;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -1485,14 +1483,15 @@ public class Construction {
 	 * @param newGeo Geo to be used instead.
 	 * @throws Exception 
 	 */
-	public void replace(GeoElement oldGeo, GeoElement newGeo) throws Exception {
+	public void replace(GeoElement oldGeo, GeoElement newGeo) throws Exception {		
 		if (oldGeo == null || newGeo == null || oldGeo == newGeo)
 			return;
 
 		// if oldGeo does not have any children, we can simply
 		// delete oldGeo and give newGeo the name of oldGeo
 		if (!oldGeo.hasChildren()) {
-			String oldGeoLabel = oldGeo.label;			
+			String oldGeoLabel = oldGeo.label;
+			newGeo.moveDependencies(oldGeo);
 			oldGeo.remove();
 			
 			if (newGeo.isIndependent())
@@ -1514,7 +1513,7 @@ public class Construction {
 
 			if (newGeo instanceof GeoText)
 				newGeo.updateRepaint();
-
+			
 			return;
 		}
 		
@@ -1569,12 +1568,15 @@ public class Construction {
 							
 		// 3) replace oldGeo by newGeo in XML
 		doReplaceInXML(consXML, oldGeo, newGeo);
+		//moveDependencies(oldGeo,newGeo);
+		
 		
 		// 4) build new construction
 		buildConstruction(consXML);
 	}
 	
 	
+
 	private GeoElement keepGeo;
 	public GeoElement getKeepGeo(){
 		return keepGeo;
