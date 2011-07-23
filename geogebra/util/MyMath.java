@@ -96,15 +96,25 @@ public final class MyMath {
 	}
 
 	final public static double csc(double a) {
-		return 1 / Math.sin(a);
+		double sin = Math.sin(a);
+		if (Kernel.isZero(sin)) return Double.NaN;
+		
+		return 1/sin;
 	}
 
 	final public static double sec(double a) {
-		return 1 / Math.cos(a);
+		
+		// problem with eg sec(270deg)
+		double cos = Math.cos(a);
+		if (Kernel.isZero(cos)) return Double.NaN;
+		
+		return 1/cos;
 	}
 
 	final public static double cot(double a) {
-		return Math.cos(a) / Math.sin(a);
+		double sin = Math.sin(a);
+		if (Kernel.isZero(sin)) return Double.NaN; // not infinity (1/0)
+		return Math.cos(a) / sin;
 	}
 
 	final public static double gamma(double x, Kernel kernel) {
