@@ -1,0 +1,11 @@
+#!/bin/sh
+# WARNING: Do not run this helper script directly!
+# Example usage: cd error-report-3.9.294.0; ../copy-erroneous-ggb relpath/ggbfile.diff
+
+P=`dirname "$1"`
+TP=`echo "$P" | awk '{x=index($0,"/"); print substr($0,x+1)}'`
+B=`basename "$1" .out.diff`
+GGBFILE=$TP/$B.ggb
+OUTFILE=$TP/$B.out
+cp ../"$GGBFILE" ../"$OUTFILE" "$TP"
+echo cp ../"$GGBFILE" ../"$OUTFILE" "$TP"
