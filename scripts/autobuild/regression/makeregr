@@ -3,6 +3,8 @@
 # Example: ./makeregr tests/example1.ggb
 # This will run tests/example1.ggb and generate tests/example1.out.
 
+# Note: it will not overwrite existing .out files. Remove the .out file first to force that.
+
 test -x ./runtest || {
  echo "$0 should be run within its directory, exiting"
  exit 255
@@ -28,7 +30,8 @@ test -r "$T" || {
 D=`dirname "$1"`
 O="$D"/`basename "$1" .ggb`.out
 
+test -r "$O" && exit 250
 echo -n "creating output for test $T..."
 cd stable-jars
-java -jar geogebra.jar --showSplash=false --regressionFile=../"$O" ../"$T" >/dev/null 2>&1
+timeout -k 10 10 java -jar geogebra.jar --showSplash=false --regressionFile=../"$O" ../"$T" >/dev/null 2>&1
 echo " done"
