@@ -1,0 +1,38 @@
+Regression tests
+----------------
+
+This test suite is created for automatizing intensive testing for
+GeoGebra. First the stable-jars/ and devel-jars/ directories
+must be created and the 3.2 GeoGebra JARs should be put to
+stable-jars/ and the development version (to be tested) to
+devel-jars.
+
+To run all tests, just enter
+
+  ./runtests
+
+This should run all *.ggb files and compare their output with the
+pregenerated *.out files, respectively.
+
+If you want to create a new test, just copy the file somewhere in the
+tests/ folder with .ggb extension. The output for this test can be
+generated using
+
+  ./makeregr tests/subpath/testname.ggb
+
+This will create the file tests/subpath/testname.out.
+
+The script "runtests" calls the script "runtest" as many times as many
+*.ggb files exist in the tests/ folder. If there is some difference
+between the pregenerated and the currently created output, then a .diff
+file is put down in the tmp/ directory. Outputs for errors are shown the
+same place in *.err files. You might want to use the
+
+  ./showdiffs
+
+command to view all differences.
+
+This regression test subsystem is borrowed from the formconv utility.
+See http://formconv.sf.net for details.
+
+@author Zoltan Kovacs <zoltan@geogebra.org>

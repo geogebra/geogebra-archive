@@ -1,0 +1,34 @@
+#!/bin/bash
+# Makes an output for the input test.
+# Example: ./makeregr tests/example1.ggb
+# This will run tests/example1.ggb and generate tests/example1.out.
+
+test -x ./runtest || {
+ echo "$0 should be run within its directory, exiting"
+ exit 255
+ }
+
+G=stable-jars/geogebra.jar
+test -r $G || {
+ echo "$G is missing, exiting (please compile stable GeoGebra first and copy the JARs to stable-jars/)"
+ exit 254
+ }
+
+if [ $# -ne 1 ]; then
+ echo "Invalid number of parameters (1 is needed), exiting"
+ exit 252
+ fi
+
+T="$1"
+test -r "$T" || {
+ echo "No test named $T, exiting"
+ exit 251
+ }
+
+D=`dirname "$1"`
+O="$D"/`basename "$1" .ggb`.out
+
+echo -n "creating output for test $T..."
+cd stable-jars
+java -jar geogebra.jar --showSplash=false --regressionFile=../"$O" ../"$T" >/dev/null 2>&1
+echo " done"

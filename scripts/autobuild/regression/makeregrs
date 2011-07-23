@@ -1,0 +1,4 @@
+#!/bin/sh
+# Creates all .out files from all .ggb files.
+
+find tests/ -name '*.ggb' -exec ./makeregr {} ';'

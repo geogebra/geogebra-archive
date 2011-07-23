@@ -1,0 +1,5 @@
+#!/bin/sh
+# After a full regression test (./runtests) shows all differing results.
+# Example: ./showdiffs
+
+find -name '*.diff' -size +0 -print0 | xargs -0 cat
