@@ -281,7 +281,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		setLabelArrays();
 		comboDistribution = new JComboBox();
 		comboDistribution.setRenderer(new ListSeparatorRenderer());
-		comboDistribution.setMaximumRowCount(ProbabilityManager.totalDistCount+1);
+		comboDistribution.setMaximumRowCount(ProbabilityManager.distCount+1);
 		//setComboDistribution();
 		comboDistribution.addActionListener(this);
 		lblDist = new JLabel();
@@ -674,53 +674,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		return succ;	
 
 	}
-
-
-
-	//=================================================
-	//       Geo Handlers
-	//=================================================
-
-	public void removeGeos(){	
-		clearPlotGeoList();
-	}
-
-	private void clearPlotGeoList(){
-		for(GeoElement geo : plotGeoList){
-			if(geo != null)
-				geo.remove();
-		}
-		plotGeoList.clear();
-	}
-
-
-	private void hideAllGeosFromViews(){
-		for(GeoElement geo:plotGeoList){
-			hideGeoFromViews(geo);
-		}
-	}
-
-	private void labelAllGeos(){
-		for(int i= 0; i < plotGeoList.size(); i++ ){
-			plotGeoList.get(i).setLabel("xPrb" + i);
-		}
-	}
-
-
-	private void hideGeoFromViews(GeoElement geo){
-		// add the geo to our view and remove it from EV		
-		geo.addView(plotPanel);
-		plotPanel.add(geo);
-		geo.removeView(app.getEuclidianView());
-		app.getEuclidianView().remove(geo);
-	}
-
-	private void hideToolTips(){
-		for(GeoElement geo:plotGeoList){
-			geo.setTooltipMode(GeoElement.TOOLTIP_OFF);
-		}
-	}
-
 
 
 	//=================================================
@@ -1138,6 +1091,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_CAUCHY));
 		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_WEIBULL));
 		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_GAMMA));
+		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_LOGNORMAL));
+		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_LOGISTIC));
 
 		comboDistribution.addItem(ListSeparatorRenderer.SEPARATOR);
 
@@ -1295,34 +1250,42 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private GeoElement createGeoFromString(String text ){
 		return createGeoFromString(text, null, false);
 	}
-	private GeoElement createGeoFromString(String text, String label){
-		return createGeoFromString(text, null, false);
-	}
+	
 	private GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
 
 		try {
-
+			
+			// create the geo
+			// ================================
 			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
-
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(true);
-			//	Application.debug(text);
+			
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
-
-			if(label != null)
-				geos[0].setLabel(label);
-
-			// set visibility
-			geos[0].setEuclidianVisible(true);	
-			geos[0].setAuxiliaryObject(true);
-			geos[0].setLabelVisible(false);
 
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(oldSuppressLabelMode);
 
+			
+			// set the label
+			// ================================
+			if(label != null)
+				geos[0].setLabel(label);
+			else
+				setProbCalcGeoLabel(geos[0]);
+
+			
+			// set visibility
+			// ================================
+			geos[0].setEuclidianVisible(true);	
+			geos[0].setAuxiliaryObject(true);
+			geos[0].setLabelVisible(false);
+			
+			
+			// put the geo in our list 
+			// ================================
 			plotGeoList.add(geos[0]);
-			//	geos[0].setLabel("xPrb" + plotGeoList.size());
 			//	System.out.println(geos[0].getLabel() + " : " + geos[0].getCommandDescription());
 			return geos[0];
 
@@ -1331,12 +1294,68 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			return null;
 		}
 	}
+	
+	
+	/**
+	 * Sets the label of a geo created by ProbabilityCalculator
+	 * @param geo
+	 */
+	private void setProbCalcGeoLabel(GeoElement geo){
+		geo.setLabel("prbCalc" + plotGeoList.size());
+		//int r = (int) (Math.random()*1e6);
+		//geo.setLabel("pc" + r);
+	}
 
+	
 	private String getGeoString(GeoElement geo){
 		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 	}
 
 
+
+
+	//=================================================
+	//       Geo Handlers
+	//=================================================
+
+	public void removeGeos(){	
+		clearPlotGeoList();
+	}
+
+	private void clearPlotGeoList(){
+		for(GeoElement geo : plotGeoList){
+			if(geo != null)
+				geo.remove();
+		}
+		plotGeoList.clear();
+	}
+
+
+	private void hideAllGeosFromViews(){
+		for(GeoElement geo:plotGeoList){
+			hideGeoFromViews(geo);
+		}
+	}
+
+	private void hideGeoFromViews(GeoElement geo){
+		// add the geo to our view and remove it from EV		
+		geo.addView(plotPanel);
+		plotPanel.add(geo);
+		geo.removeView(app.getEuclidianView());
+		app.getEuclidianView().remove(geo);
+	}
+
+	private void hideToolTips(){
+		for(GeoElement geo:plotGeoList){
+			geo.setTooltipMode(GeoElement.TOOLTIP_OFF);
+		}
+	}
+
+
+
+	
+	
+	
 	//============================================================
 	//           ComboBox Renderer with SEPARATOR
 	//============================================================
