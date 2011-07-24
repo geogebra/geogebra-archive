@@ -112,6 +112,11 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	protected static final int PROB_RIGHT = 2;
 	private int probMode = PROB_INTERVAL;
 
+	public int getProbMode() {
+		return probMode;
+	}
+
+
 	//interval values and current probability
 	private double low = 0, high = 1, probability;
 
@@ -280,7 +285,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			this.setLayout(new BorderLayout());
 			this.add(sp, BorderLayout.CENTER);
-
+	//		add(buttonPanel, BorderLayout.SOUTH);
 
 			/*
 			JPanel main = new JPanel(new BorderLayout());

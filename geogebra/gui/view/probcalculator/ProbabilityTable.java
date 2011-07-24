@@ -16,15 +16,16 @@ import javax.swing.table.DefaultTableModel;
 
 public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 
-	Application app;
-	Kernel kernel;
-	ProbabilityCalculator probCalc;
-	ProbabilityManager probManager;
-	StatTable statTable;
-	String[] columnNames;
+	private Application app;
+	private Kernel kernel;
+	private ProbabilityCalculator probCalc;
+	private ProbabilityManager probManager;
+	private StatTable statTable;
+
+	private int mode;
+	private String[] columnNames;
 	int distType;
-	private int low;
-	private int high;
+	private int low, high;
 	private boolean isIniting;
 
 	public ProbabilityTable(Application app, ProbabilityCalculator probCalc){
@@ -50,16 +51,14 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 
 
 	public void setTable(int distType, double[] parms, int low, int high){
-		
+
 		isIniting = true;
-		
+
 		this.distType = distType;
 		this.low = low;
 		this.high = high;
 
 		statTable.setStatTable(high - low + 1, null, 2, columnNames);
-
-
 
 		DefaultTableModel model = statTable.getModel();
 		int x = low;
@@ -81,7 +80,7 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 		kernel.restorePrintAccuracy();
 
 		updateFonts(app.getPlainFont());
-			
+
 		isIniting = false;
 	}
 
@@ -94,35 +93,71 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 	}
 
 	public void setLabels(){
-		columnNames = new String[2];
-		//TODO use properties
-		columnNames[0] = "X";
-		columnNames[1] = "P(X)";
 
+		columnNames = new String[2];
+		columnNames[0] = "x";
+		columnNames[1] = app.getMenu("ProbabilityOf") + "x" + app.getMenu("EndProbabilityOf");
 	}
 
 
 	public void valueChanged(ListSelectionEvent e) {
 
-		int[] selRow = statTable.getTable().getSelectedRows();
-		if(!isIniting && selRow.length > 0){
+		JTable table = statTable.getTable();
+		
+		int[] selRow = table.getSelectedRows();
+		
+		// exit if initing or nothing selected
+		if(isIniting || selRow.length == 0) return;
+
+		if(probCalc.getProbMode() == ProbabilityCalculator.PROB_INTERVAL){	
 			//System.out.println(Arrays.toString(selectedRow));
-			String lowStr = (String) statTable.getTable().getModel().getValueAt(selRow[0], 0);
-			String highStr = (String) statTable.getTable().getModel().getValueAt(selRow[selRow.length-1], 0);
+			String lowStr = (String) table.getModel().getValueAt(selRow[0], 0);
+			String highStr = (String) table.getModel().getValueAt(selRow[selRow.length-1], 0);
 			int low = Integer.parseInt(lowStr);
 			int high = Integer.parseInt(highStr);
 			//System.out.println(low + " , " + high);
 			probCalc.setInterval(low,high);
 		}
-		
+		else if(probCalc.getProbMode() == ProbabilityCalculator.PROB_LEFT){
+			String lowStr = (String) statTable.getTable().getModel().getValueAt(0, 0);
+			String highStr = (String) statTable.getTable().getModel().getValueAt(selRow[selRow.length-1], 0);
+			int low = Integer.parseInt(lowStr);
+			int high = Integer.parseInt(highStr);
+			//System.out.println(low + " , " + high);
+			probCalc.setInterval(low,high);
+			
+			table.getSelectionModel().removeListSelectionListener(this);
+			table.changeSelection(0,0, false,false);
+			table.changeSelection(selRow[selRow.length-1],0, false,true);
+			table.scrollRectToVisible(table.getCellRect(selRow[selRow.length-1], 0, true));
+			table.getSelectionModel().addListSelectionListener(this);
+		}
+		else if(probCalc.getProbMode() == ProbabilityCalculator.PROB_RIGHT){
+			String lowStr = (String) statTable.getTable().getModel().getValueAt(selRow[0], 0);
+			int maxRow = statTable.getTable().getRowCount()-1;
+			String highStr = (String) statTable.getTable().getModel().getValueAt(maxRow, 0);
+			int low = Integer.parseInt(lowStr);
+			int high = Integer.parseInt(highStr);
+			//System.out.println(low + " , " + high);
+			probCalc.setInterval(low,high);
+			
+			table.getSelectionModel().removeListSelectionListener(this);
+			table.changeSelection(maxRow,0, false,false);
+			table.changeSelection(selRow[0],0, false,true);
+			//table.scrollRectToVisible(table.getCellRect(selRow[0], 0, true));
+			table.getSelectionModel().addListSelectionListener(this);
+			
+		}
+
+
 	}
-	
-	
+
+
 
 	public void setSelectionByRowValue(int lowValue, int highValue){
 
 		statTable.getTable().getSelectionModel().removeListSelectionListener(this);
-		
+
 		int lowIndex = lowValue - low;
 		int highIndex = highValue - low;
 		//System.out.println("-------------");
@@ -132,7 +167,9 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 		repaint();
 		statTable.getTable().getSelectionModel().addListSelectionListener(this);
 	}
-	
-	
-	
+
+
+
+
+
 }

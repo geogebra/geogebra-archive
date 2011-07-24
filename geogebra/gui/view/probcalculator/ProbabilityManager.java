@@ -279,7 +279,7 @@ public class ProbabilityManager {
 		
 		
 		defaultParameterMap.put(DIST_BINOMIAL, new double[] {20, 0.5}); // n = 20, p = 0.5
-		defaultParameterMap.put(DIST_PASCAL, new double[] {20, 0.5}); // n = 20, p = 0.5
+		defaultParameterMap.put(DIST_PASCAL, new double[] {10, 0.5}); // n = 10, p = 0.5
 		defaultParameterMap.put(DIST_POISSON, new double[] {4}); // mean = 4
 		defaultParameterMap.put(DIST_HYPERGEOMETRIC, new double[] {60, 10, 20}); // pop = 60, n = 10, sample = 20
 
@@ -546,7 +546,7 @@ public class ProbabilityManager {
 	 */
 	public double intervalProbability(double low, double high, int distType, double [] parms, int probMode){
 
-		String[] cmd = this.getCommand();
+		String[] cmd = getCommand();
 
 		String exprHigh = "";
 		String exprLow = "";

@@ -1,7 +1,5 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
-import geogebra.gui.view.spreadsheet.MyTable;
-import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;
@@ -38,7 +36,7 @@ public class StatTable extends JScrollPane {
 
 
 	public StatTable(){
-
+		
 
 		// create and initialize the table
 		initTable();
@@ -80,7 +78,7 @@ public class StatTable extends JScrollPane {
 					((JViewport) p).setBackground(getBackground());
 				}
 			}
-
+			
 		};
 
 		// table settings
@@ -104,6 +102,7 @@ public class StatTable extends JScrollPane {
 	}
 
 
+	
 	public void setStatTable(int rows, String[] rowNames, int columns, String[] columnNames){
 
 		tableModel = new DefaultTableModel(rows,columns);
