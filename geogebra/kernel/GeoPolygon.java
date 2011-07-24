@@ -21,6 +21,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -485,6 +486,9 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * @return points of this polygon.
 	 */
 	public GeoPoint [] getPoints() {
+		for(int i=0;i<points.length;i++)
+		Application.debug(points[i].getClass());
+		//Application.debug(points[2].getClass());
 		return (GeoPoint[]) points;
 	}
 	
@@ -532,7 +536,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * its parent algorithm of type AlgoPolygon
 	 */
 	public void calcArea() {
-		area = calcAreaWithSign(getPoints());	
+		area = calcAreaWithSign(getPointsND());	
 		defined = !(Double.isNaN(area) || Double.isInfinite(area));
 	}
 	
@@ -593,7 +597,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * @param points2 
 	 * @return directed area
 	 */	
-	final static public double calcAreaWithSign(GeoPoint[] points2) {
+	final static public double calcAreaWithSign(GeoPointND[] points2) {
 		if (points2 == null || points2.length < 2)
 			return Double.NaN;
 		
@@ -607,9 +611,9 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	   int last = points2.length - 1;
 	   double sum = 0;                     
 	   for (i=0; i < last; i++) {
-			sum += GeoPoint.det(points2[i], points2[i+1]);
+			sum += GeoPoint.det((GeoPoint)points2[i], (GeoPoint)points2[i+1]);
 	   }
-	   sum += GeoPoint.det(points2[last], points2[0]);
+	   sum += GeoPoint.det((GeoPoint)points2[last], (GeoPoint)points2[0]);
 	   return sum / 2.0;  // positive (anticlockwise points) or negative (clockwise)
    }   
 	
