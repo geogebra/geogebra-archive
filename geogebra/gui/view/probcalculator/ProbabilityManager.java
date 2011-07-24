@@ -446,8 +446,11 @@ public class ProbabilityManager {
 		case DIST_PASCAL:
 			n = parms[0];
 			p = parms[1];
+			mean = p*n/(1-p);
+			mode = p*(n-1)/(1-p);
+			sd = Math.sqrt(n*p)/(1-p);
 			xMin = -1;
-			xMax = n + 1;
+			xMax = mean + 4*sd;
 			yMin = 0;	
 			yMax = 1.2* getDiscreteMax(selectedDist, parms, 0, (int) n);
 			break;
@@ -500,10 +503,7 @@ public class ProbabilityManager {
 
 
 	/**
-	 * Returns an interval probability for the given distribution and probability mode.
-	 * If mode == PROB_INTERVAL then P(low <= X <= high) is returned.
-	 * If mode == PROB_LEFT then P(low <= X) is returned.
-	 * If mode == PROB_RIGHT then P(X <= high) is returned.
+	 * Returns P(X = value) for the given discrete distribution 
 	 */
 	public double exactProbability(double value, double [] parms, int distType ){
 
@@ -595,7 +595,7 @@ public class ProbabilityManager {
 			else if(probMode == ProbabilityCalculator.PROB_RIGHT)
 				prob = 1 - evaluateExpression(lowExpr.toString());
 			else {
-				Application.debug(highExpr.toString()+" "+lowExpr.toString());
+				//Application.debug(highExpr.toString()+" "+lowExpr.toString());
 				prob = evaluateExpression(highExpr.toString()) - evaluateExpression(lowExpr.toString());
 			}
 

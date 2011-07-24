@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -67,7 +68,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private Kernel kernel; 
 	private ProbabilityManager probManager;
 
-
 	// selected distribution mode
 	private int selectedDist = ProbabilityManager.DIST_NORMAL;  // default: startup with normal distribution
 
@@ -91,6 +91,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private PlotSettings plotSettings;
 	private JLabel lblBetween, lblProbOf, lblEndProbOf,lblProb , lblDist;
 	private JSplitPane sp;
+	private ProbabilityTable table;
 
 
 	// GeoElements
@@ -113,6 +114,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	//interval values and current probability
 	private double low = 0, high = 1, probability;
+
+
 
 	private ArrayList<GeoElement> pointList;
 
@@ -157,9 +160,21 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	/**************** end constructor ****************/
 
 
+	//=================================================
+	//       Getters/Setters
+	//=================================================
+
+	public ProbabilityManager getProbManager() {
+		return probManager;
+	}
 
 
-
+	public double getLow() {
+		return low;
+	}
+	public double getHigh() {
+		return high;
+	}
 
 	//=================================================
 	//       Create GUI
@@ -236,6 +251,18 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			//plotPanel.setPreferredSize(new Dimension(500,500));
 
+			
+			// create the probability table
+			//======================================================
+			table = new ProbabilityTable(app, this);
+			table.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, SystemColor.controlShadow));
+			
+			
+			JPanel displayPanel = new JPanel(new BorderLayout());
+			displayPanel.add(plotPanel, BorderLayout.CENTER);
+			displayPanel.add(table, BorderLayout.EAST);
+			displayPanel.setBorder(BorderFactory.createEtchedBorder());
+			
 			// put the sub-panels together into the main panel
 			//=====================================================
 
@@ -247,7 +274,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 
-			sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, plotPanel, controlPanel);
+			sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, displayPanel, controlPanel);
 			sp.setResizeWeight(0);
 			sp.setBorder(BorderFactory.createEmptyBorder());
 
@@ -597,6 +624,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		plotPanel.repaint();
 		GeoElement.updateCascade(pointList, getTempSet());
 
+		table.setSelectionByRowValue((int)low, (int)high);
+		
 		isSettingAxisPoints = false;
 	}
 
@@ -681,28 +710,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	//=================================================
 
 
-	@Override
-	public void setVisible(boolean isVisible){
-		super.setVisible(isVisible);
-
-		if(isVisible){
-			if(!isIniting){
-				updateAll();
-			}
-		}else{
-			app.setMoveMode();
-			removeGeos();
-			//detachView();
-		}
-	}
-
-
 	public void updateFonts() {
 		Font font = app.getPlainFont();
 		setFont(font);
 		setFontRecursive(this,font);
 		lblDist.setFont(app.getItalicFont());
 		lblProb.setFont(app.getItalicFont());
+		plotPanel.updateFonts();
+		table.updateFonts(font);
 
 	}
 
@@ -801,6 +816,21 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	}
 
+	
+	public void setInterval(double low, double high){
+		fldHigh.removeActionListener(this);
+		fldLow.removeActionListener(this);
+		this.low = low;
+		this.high = high;
+		fldLow.setText(""+low);
+		fldHigh.setText(""+high);
+		setXAxisPoints();
+		updateIntervalProbability();
+		updateGUI();
+		fldHigh.addActionListener(this);
+		fldLow.addActionListener(this);
+	}
+	
 
 	public void focusGained(FocusEvent arg0) {}
 
@@ -863,6 +893,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private void updatePlot(){
 		updatePlotSettings();
 		updateIntervalProbability();
+		updateDiscreteTable();
 		setXAxisPoints();
 	}
 
@@ -964,8 +995,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		if(probManager.isDiscrete(selectedDist)){
 			discreteGraph.update();
 			discreteIntervalGraph.update();
+		
+			table.setVisible(true);
+			updateDiscreteTable();
+			this.fldParmeterArray[0].requestFocus();
+			
 			
 		}else{
+			table.setVisible(false);
 			densityCurve.update();
 			if(hasIntegral)
 				integral.update();
@@ -976,6 +1013,16 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
+	private void updateDiscreteTable(){
+		if(!probManager.isDiscrete(selectedDist))
+			return;
+		
+		int firstX = (int) ((GeoNumeric)discreteValueList.get(0)).getDouble();
+		int lastX = (int) ((GeoNumeric)discreteValueList.get(discreteValueList.size()-1)).getDouble();
+		table.setTable(selectedDist, getCurrentParameters(), firstX, lastX);
+	}
+	
+	
 	/**
 	 * Redefines the density curve ... not currently used
 	 */
@@ -1015,11 +1062,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				low = lowPoint.getInhomX();
 				updateIntervalProbability();
 				updateGUI();
+				if(probManager.isDiscrete(selectedDist))
+					table.setSelectionByRowValue((int)low, (int)high);
 			}
 			if(geo.equals(highPoint)){	
 				high = highPoint.getInhomX();
 				updateIntervalProbability();
 				updateGUI();
+				if(probManager.isDiscrete(selectedDist))
+					table.setSelectionByRowValue((int)low, (int)high);
 			}
 		}
 	}
@@ -1061,10 +1112,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		lblEndProbOf.setText(app.getMenu("EndProbabilityOf") + " = ");
 		lblProbOf.setText(app.getMenu("ProbabilityOf"));
 
-
+		
 		setComboDistribution();
 
-
+		table.setLabels();
 
 	}
 
@@ -1170,12 +1221,13 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			n = "Element[" + parmList.getLabel() + ",1]";
 			p = "Element[" + parmList.getLabel() + ",2]";
 
-			expr = "Sequence[k,k,0," + n + "]";
+			String n2 = "InversePascal[" + n + "," + p +  ", 0.999]";
+			expr = "Sequence[k,k,0," + n2 + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
 			expr = "Sequence[Pascal[" + n + "," + p + ",";
 			expr += "Element[" + discreteValueList.getLabel() + ",k], false";
-			expr +=	"],k,1," + n + "+ 1 ]";
+			expr +=	"],k,1," + n2 + "+ 1 ]";
 
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
@@ -1186,7 +1238,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		case ProbabilityManager.DIST_POISSON:	
 			mean = "Element[" + parmList.getLabel() + ",1]";
 
-			n = "Element[" + parmList.getLabel() + ",1] + 6*sqrt(" +  "Element[" + parmList.getLabel() + ",1]"  + ")";
+			n = "Element[" + parmList.getLabel() + ",1] + 6*sqrt(" +  mean  + ")";
 
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
