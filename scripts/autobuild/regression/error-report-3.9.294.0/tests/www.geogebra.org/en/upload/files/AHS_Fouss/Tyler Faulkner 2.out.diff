@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Tyler Faulkner 2.out	2011-07-23 22:57:21.934646058 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Tyler Faulkner 2.out	2011-07-24 08:30:48.636490514 +0200
-@@ -1 +1 @@
--f: 0.01769571 x⁶ - 0.18005341 x⁵ + 0.36303959 x⁴ + 0.97757624 x³ - 2.79203651 x² + 0.17135319 x + 6.007919
-+f: 0.01769571x⁶ - 0.18005341x⁵ + 0.36303959x⁴ + 0.97757624x³ - 2.79203651x² + 0.17135319x + 6.007919

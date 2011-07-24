@@ -1,7 +1,0 @@
-d: 1
-f: 1
-m: -1
-c: 3
-text1: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y& & & & & & &  \\ \end{array}
-text3: y = x² + x + 2
-text2: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y&8&4&2&2&4&8&14 \\ \end{array}

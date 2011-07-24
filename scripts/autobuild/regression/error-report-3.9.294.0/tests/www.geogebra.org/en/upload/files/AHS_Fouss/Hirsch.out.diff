@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Hirsch.out	2011-07-23 22:56:50.914646048 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Hirsch.out	2011-07-24 08:29:37.416490534 +0200
-@@ -1 +1 @@
--f: 0.0629955 x⁴ - 0.33410799 x³ - 0.32325598 x² + 1.45576393 x + 4.57419057
-+f: 0.0629955x⁴ - 0.33410799x³ - 0.32325598x² + 1.45576393x + 4.57419057

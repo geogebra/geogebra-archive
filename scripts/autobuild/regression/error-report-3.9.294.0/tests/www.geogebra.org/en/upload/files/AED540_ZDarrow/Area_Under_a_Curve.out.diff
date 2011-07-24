@@ -1,9 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AED540_ZDarrow/Area_Under_a_Curve.out	2011-07-23 22:55:42.444646022 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AED540_ZDarrow/Area_Under_a_Curve.out	2011-07-24 08:27:14.336490575 +0200
-@@ -1,4 +1,4 @@
- A: (0, 0)
- B: (0, 1)
--uppersum: 14.75795453
--lowersum: 3.98278621
-+uppersum: 20.7
-+lowersum: -0.0367963

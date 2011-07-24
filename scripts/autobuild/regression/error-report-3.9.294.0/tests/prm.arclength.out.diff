@@ -1,6 +1,0 @@
---- tests/prm.arclength.out	2011-07-23 22:44:27.214645770 +0200
-+++ tmp/tests/prm.arclength.out	2011-07-24 08:06:31.096490929 +0200
-@@ -1,2 +1,2 @@
- c: (f(t), g(t))
--arclength: 7.22448621
-+arclength: 7.22448622

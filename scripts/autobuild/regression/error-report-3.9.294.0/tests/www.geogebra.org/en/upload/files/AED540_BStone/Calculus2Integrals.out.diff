@@ -1,7 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AED540_BStone/Calculus2Integrals.out	2011-07-23 22:54:43.964646000 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AED540_BStone/Calculus2Integrals.out	2011-07-24 08:25:27.456490606 +0200
-@@ -1,2 +1,2 @@
--g: 0.33333333 x³ + 0.5 x² + x
--h: 0.08333333 x⁴ + 0.16666667 x³ + 0.5 x²
-+g: (x (2 x² + 3 x + 6)) / 6
-+h: (x² (x² + 2 x + 6)) / 12

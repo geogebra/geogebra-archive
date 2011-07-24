@@ -1,9 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/BCCC/Area of a triangle harder.out	2011-07-23 23:18:54.474646540 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/Area of a triangle harder.out	2011-07-24 08:52:29.846490144 +0200
-@@ -1,5 +1,5 @@
- a: 12.80624847
--d: 5x - 4y = 28
-+d: -5x + 4y = -28
- D: (8.19512195, 3.24390244)
- distanceDB: 6.09077671
- A4: 7.07106781

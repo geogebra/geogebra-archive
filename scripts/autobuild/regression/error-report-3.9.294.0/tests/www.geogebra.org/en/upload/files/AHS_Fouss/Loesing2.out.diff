@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Loesing2.out	2011-07-23 22:56:34.494646042 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Loesing2.out	2011-07-24 08:29:04.406490544 +0200
-@@ -1 +1 @@
--Loesing2: 0.00002373 x⁵ - 0.00163233 x⁴ + 0.03769457 x³ - 0.2855978 x² - 0.51818123 x + 15.63999835
-+Loesing2: 0.00002373x⁵ - 0.00163233x⁴ + 0.03769457x³ - 0.2855978x² - 0.51818123x + 15.63999835

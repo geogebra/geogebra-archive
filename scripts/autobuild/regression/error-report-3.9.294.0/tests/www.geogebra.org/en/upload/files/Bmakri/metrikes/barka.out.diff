@@ -1,6 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/Bmakri/metrikes/barka.out	2011-07-23 23:26:22.464646707 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/Bmakri/metrikes/barka.out	2011-07-24 09:02:43.466489969 +0200
-@@ -1,2 +1,2 @@
--p: (18 t, 24 t)
-+p: (18t, 24t)
- d: 0

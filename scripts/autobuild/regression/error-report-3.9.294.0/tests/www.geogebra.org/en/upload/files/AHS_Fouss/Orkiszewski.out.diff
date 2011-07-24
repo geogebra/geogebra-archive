@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Orkiszewski.out	2011-07-23 22:56:59.974646050 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Orkiszewski.out	2011-07-24 08:29:57.576490529 +0200
-@@ -1 +1 @@
--f: 0 x⁶ + 0.00000009 x⁵ - 0.0000264 x⁴ + 0.00407651 x³ - 0.33357302 x² + 14.08212358 x - 67.9928245
-+f: 0x⁶ + 0.00000009x⁵ - 0.0000264x⁴ + 0.00407651x³ - 0.33357302x² + 14.08212358x - 67.9928245

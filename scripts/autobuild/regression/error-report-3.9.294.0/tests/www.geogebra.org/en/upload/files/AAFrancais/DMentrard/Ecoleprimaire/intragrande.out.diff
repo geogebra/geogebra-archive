@@ -1,8 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/intragrande.out	2011-07-23 22:45:40.054645798 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/intragrande.out	2011-07-24 08:08:53.476490888 +0200
-@@ -1,4 +1,4 @@
--aa: 1
-+aa: 8
- M: (1, 1)
- N: (1, 5)
- K: (1, 8)

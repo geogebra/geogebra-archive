@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/McClanahan/McClanahan2.out	2011-07-23 22:56:00.674646028 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/McClanahan/McClanahan2.out	2011-07-24 08:27:56.636490563 +0200
-@@ -1 +1 @@
--f: -0.00021343 x⁷ + 0.0028724 x⁶ - 0.00610543 x⁵ - 0.04060173 x⁴ + 0.09923032 x³ + 0.18989198 x² - 0.20202625 x + 1.79655793
-+f: -0.00021343 x⁷ + 0.0028724x⁶ - 0.00610543x⁵ - 0.04060173x⁴ + 0.09923032x³ + 0.18989198x² - 0.20202625x + 1.79655793

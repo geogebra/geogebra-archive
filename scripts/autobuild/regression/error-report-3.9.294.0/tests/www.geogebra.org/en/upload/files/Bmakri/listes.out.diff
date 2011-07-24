@@ -1,8 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/Bmakri/listes.out	2011-07-23 23:26:52.644646719 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/Bmakri/listes.out	2011-07-24 09:03:39.066489954 +0200
-@@ -1,4 +1,4 @@
- L_3: {29, 22, 15, 8, 1}
- LP_2: {(1, 29), (8, 22), (15, 15), (22, 8), (29, 1)}
- LF_1: {10, 10, 10, 10, 10, 10, 10, 10, 10, 10}
--pin: \begin{array}{llllllllll}χ&1&8&15&22&29&36&43&50&57 \\ y&10&10&10&10&10&10&10&10&10 \\ \end{array}
-+pin: {\left.\begin{array}{llllllllll}\text{χ}&1&8&15&22&29&36&43&50&57 \\ \text{y}&10&10&10&10&10&10&10&10&10 \\ \end{array}\right.}

@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/TheTires.out	2011-07-23 22:57:17.084646058 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/TheTires.out	2011-07-24 08:30:36.726490518 +0200
-@@ -1 +1 @@
--f: 0.0087582 x⁴ - 0.14090905 x³ + 0.64934118 x² - 0.65399966 x + 4.29292118
-+f: 0.0087582x⁴ - 0.14090905x³ + 0.64934118x² - 0.65399966x + 4.29292118

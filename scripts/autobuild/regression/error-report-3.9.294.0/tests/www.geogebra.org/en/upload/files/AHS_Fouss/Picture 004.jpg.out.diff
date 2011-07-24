@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Picture 004.jpg.out	2011-07-23 22:57:01.934646052 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Picture 004.jpg.out	2011-07-24 08:30:01.686490528 +0200
-@@ -1 +1 @@
--f: 0.00073252 x⁴ - 0.00620303 x³ - 0.0894157 x² + 0.41555127 x + 2.79320918
-+f: 0.00073252x⁴ - 0.00620303x³ - 0.0894157x² + 0.41555127x + 2.79320918

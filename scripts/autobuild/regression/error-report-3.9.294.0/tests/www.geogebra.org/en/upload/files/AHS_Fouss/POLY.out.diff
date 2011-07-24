@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/POLY.out	2011-07-23 22:57:09.284646054 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/POLY.out	2011-07-24 08:30:17.426490523 +0200
-@@ -1 +1 @@
--f: 0.10633215 x⁴ - 0.72501302 x³ + 0.82682912 x² + 1.72112271 x + 0.17209853
-+f: 0.10633215x⁴ - 0.72501302x³ + 0.82682912x² + 1.72112271x + 0.17209853

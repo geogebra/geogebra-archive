@@ -1,8 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/intralettre1.out	2011-07-23 22:45:41.634645798 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/intralettre1.out	2011-07-24 08:08:57.406490887 +0200
-@@ -1,4 +1,4 @@
--aa: 6
-+aa: 9
- M: (3.82909091, 2.08)
- N: (4, 5)
- K: (0, 4)

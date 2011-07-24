@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Hurley2.out	2011-07-23 22:56:17.384646034 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Hurley2.out	2011-07-24 08:28:28.706490554 +0200
-@@ -1 +1 @@
--f: -0.08873173 x⁴ - 0.95682597 x³ - 2.73744095 x² - 0.96328317 x + 2.11516174
-+f: -0.08873173 x⁴ - 0.95682597x³ - 2.73744095x² - 0.96328317x + 2.11516174

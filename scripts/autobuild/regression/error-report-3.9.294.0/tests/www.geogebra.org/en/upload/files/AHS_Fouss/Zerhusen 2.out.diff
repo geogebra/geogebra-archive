@@ -1,7 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Zerhusen 2.out	2011-07-23 22:57:29.704646062 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Zerhusen 2.out	2011-07-24 08:31:05.126490510 +0200
-@@ -1,2 +1,2 @@
--f: undefined
--g: 0.00222728 x⁵ - 0.09429029 x⁴ + 1.39151316 x³ - 8.56838007 x² + 20.74102229 x - 7.47209236
-+f: nem definiált
-+g: 0.00222728x⁵ - 0.09429029x⁴ + 1.39151316x³ - 8.56838007x² + 20.74102229x - 7.47209236

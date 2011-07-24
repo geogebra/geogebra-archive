@@ -1,8 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Exemples/integrale.out	2011-07-23 22:51:17.014645922 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Exemples/integrale.out	2011-07-24 08:18:45.036490720 +0200
-@@ -1,3 +1,3 @@
- f: x²
--a: 0.30449833
--F: 0.33333333 x³
-+a: 0.30449827
-+F: x³ / 3

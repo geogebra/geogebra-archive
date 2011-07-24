@@ -1,6 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AED540_BStone/Calculus1Derivatives.out	2011-07-23 22:54:41.564646000 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AED540_BStone/Calculus1Derivatives.out	2011-07-24 08:25:19.196490608 +0200
-@@ -1,2 +1,2 @@
- g: 3 x² + 2 x + 1
--h: 3 * 2 x + 2
-+h: 2 (3 x + 1)

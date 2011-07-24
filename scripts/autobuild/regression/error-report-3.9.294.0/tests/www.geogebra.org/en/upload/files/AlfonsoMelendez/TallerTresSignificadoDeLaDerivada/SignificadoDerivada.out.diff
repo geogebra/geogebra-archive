@@ -1,8 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AlfonsoMelendez/TallerTresSignificadoDeLaDerivada/SignificadoDerivada.out	2011-07-23 22:59:33.444646108 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AlfonsoMelendez/TallerTresSignificadoDeLaDerivada/SignificadoDerivada.out	2011-07-24 08:36:01.036490425 +0200
-@@ -1,4 +1,4 @@
--f': 3 x² - 1
-+f': 3x² - 1
- A: (0, 0)
- a: y = -0.04949676x - 0.3566798
- b: -0.04949676

@@ -1,7 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Grevas1.out	2011-07-23 22:56:42.314646044 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Grevas1.out	2011-07-24 08:29:20.716490539 +0200
-@@ -1,2 +1,2 @@
--f: undefined
--h: -0.00000674 x⁷ + 0.00045753 x⁶ - 0.01226102 x⁵ + 0.16527908 x⁴ - 1.17959409 x³ + 4.19932101 x² - 5.49595526 x - 4.45179669
-+f: nem definiált
-+h: -0.00000674 x⁷ + 0.00045753x⁶ - 0.01226102x⁵ + 0.16527908x⁴ - 1.17959409x³ + 4.19932101x² - 5.49595526x - 4.45179669

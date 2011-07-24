@@ -1,7 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Plotting Coordinates.out	2011-07-23 23:05:54.644646249 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Plotting Coordinates.out	2011-07-24 08:48:17.016490216 +0200
-@@ -1,2 +1,2 @@
--b: -7
--a: 6
-+b: 10
-+a: -3

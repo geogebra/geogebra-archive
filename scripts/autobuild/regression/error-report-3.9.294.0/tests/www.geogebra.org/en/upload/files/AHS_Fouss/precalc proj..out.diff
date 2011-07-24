@@ -1,5 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AHS_Fouss/precalc proj..out	2011-07-23 22:57:45.174646068 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/precalc proj..out	2011-07-24 08:31:39.266490500 +0200
-@@ -1 +1 @@
--f: -0.01777563 x⁴ + 0.33841679 x³ - 2.18931258 x² + 5.45013669 x - 0.63840585
-+f: -0.01777563 x⁴ + 0.33841679x³ - 2.18931258x² + 5.45013669x - 0.63840585

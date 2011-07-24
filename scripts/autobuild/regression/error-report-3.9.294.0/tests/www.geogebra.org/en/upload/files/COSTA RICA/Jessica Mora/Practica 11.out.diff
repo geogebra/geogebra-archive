@@ -1,6 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/COSTA RICA/Jessica Mora/Practica 11.out	2011-07-23 23:30:14.254646793 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/COSTA RICA/Jessica Mora/Practica 11.out	2011-07-24 09:11:09.225339826 +0200
-@@ -1,2 +1,2 @@
--f: If[x < -5, 4 - x / 2, If[x ≥ -5 ∧ x < 3.8, 1 - 5 x - x², 2 x - 3]]
-+f: Ha[x < -5, 4 - x / 2, Ha[-5 ≤ x < 3.8, 1 - 5x - x², 2x - 3]]
- A: (0, 0)

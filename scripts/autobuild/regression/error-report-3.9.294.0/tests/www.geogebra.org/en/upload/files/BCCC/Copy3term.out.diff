@@ -1,9 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/BCCC/Copy3term.out	2011-07-23 23:18:57.614646542 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/Copy3term.out	2011-07-24 08:52:34.866490143 +0200
-@@ -1,3 +1,3 @@
--a: -4
--b: -9
--c: 2
-+a: 3
-+b: -2
-+c: -6

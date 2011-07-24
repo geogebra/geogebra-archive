@@ -1,9 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Exemples/skieurC.out	2011-07-23 22:51:19.134645924 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Exemples/skieurC.out	2011-07-24 08:18:49.386490719 +0200
-@@ -1,5 +1,5 @@
- A: (0, 0)
--g: (x cos(x) + sin(x)) / 3
-+g: (cos(x) x + sin(x)) / 3
- T: y = -0.18726832x - 0.02666614
- s: -0.18726832
- S: 0.18726832

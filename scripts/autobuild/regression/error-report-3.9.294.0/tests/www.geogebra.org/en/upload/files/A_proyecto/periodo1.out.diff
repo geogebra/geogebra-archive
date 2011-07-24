@@ -1,6 +1,0 @@
---- tests/www.geogebra.org/en/upload/files/A_proyecto/periodo1.out	2011-07-23 22:58:57.244646094 +0200
-+++ tmp/tests/www.geogebra.org/en/upload/files/A_proyecto/periodo1.out	2011-07-24 08:34:29.316490451 +0200
-@@ -1,2 +1,2 @@
- A: (0, 0)
--g_1: sin(3 x)
-+g_1: sin(3x)
