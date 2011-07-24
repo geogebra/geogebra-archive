@@ -624,7 +624,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		plotPanel.repaint();
 		GeoElement.updateCascade(pointList, getTempSet());
 
-		table.setSelectionByRowValue((int)low, (int)high);
+		if(probManager.isDiscrete(selectedDist))
+			table.setSelectionByRowValue((int)low, (int)high);
 		
 		isSettingAxisPoints = false;
 	}
