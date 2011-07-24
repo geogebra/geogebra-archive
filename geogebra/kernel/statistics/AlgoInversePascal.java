@@ -48,7 +48,7 @@ public class AlgoInversePascal extends AlgoDistribution {
         			double result = dist.inverseCumulativeProbability(val);
         			
         			// eg InversePascal[1,1,1] returns  2147483647 
-        			if (result > param )
+        			if (result >= Integer.MAX_VALUE)
         				num.setValue(param);
         			else
         				num.setValue(result + 1);    
