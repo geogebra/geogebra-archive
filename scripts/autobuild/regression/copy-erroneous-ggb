@@ -8,4 +8,3 @@ B=`basename "$1" .out.diff`
 GGBFILE=$TP/$B.ggb
 OUTFILE=$TP/$B.out
 cp ../"$GGBFILE" ../"$OUTFILE" "$TP"
-echo cp ../"$GGBFILE" ../"$OUTFILE" "$TP"

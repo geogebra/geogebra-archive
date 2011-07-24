@@ -45,7 +45,7 @@ mkdir -p tmp/"$D" || {
 
 echo -n "testing $T..."
 cd devel-jars
-java -jar geogebra.jar --showSplash=false --regressionFile=../tmp/"$O" ../"$T" >../tmp/"$O".err 2>&1
+timeout -k 10 10 java -jar geogebra.jar --showSplash=false --regressionFile=../tmp/"$O" ../"$T" >../tmp/"$O".err 2>&1
 cd ..
 
 R=$?
