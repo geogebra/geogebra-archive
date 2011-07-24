@@ -359,7 +359,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		// create probability mode JComboBox and put it in a JPanel
 		comboProbType = new JComboBox();
-		comboDistribution.setRenderer(new ListSeparatorRenderer());
+		comboProbType.setRenderer(new ListSeparatorRenderer());
 		comboProbType.addActionListener(this);
 		lblProb = new JLabel();
 
