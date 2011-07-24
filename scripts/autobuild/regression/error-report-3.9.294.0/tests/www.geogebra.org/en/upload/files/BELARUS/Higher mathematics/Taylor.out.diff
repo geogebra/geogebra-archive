@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/BELARUS/Higher mathematics/Taylor.out	2011-07-23 23:22:57.064646631 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BELARUS/Higher mathematics/Taylor.out	2011-07-24 08:56:14.816490080 +0200
+@@ -29,7 +29,7 @@
+ a: ?
+ b: ?x = ?
+ C: (0, 0)
+-d: 0 = 0
++d: ?
+ D: (?, ?)
+ E: (?, ?)
+ e: ?x = ?

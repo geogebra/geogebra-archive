@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/SVC/Volume of a Cuboid.out	2011-07-23 23:18:13.274646524 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/SVC/Volume of a Cuboid.out	2011-07-24 08:51:09.346490167 +0200
+@@ -1,4 +1,4 @@
+-B6: 5
++B6: 6
+ B4: 8
+ a: 2.98964881
+ b: 1.44x + 2.62y = -1.7712

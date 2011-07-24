@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/ELECTRICITE/Potentiometre.out	2011-07-23 22:49:32.004645884 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/ELECTRICITE/Potentiometre.out	2011-07-24 08:15:03.846490783 +0200
+@@ -81,7 +81,7 @@
+ G3: (5, 1.5)
+ r3: x = 6.5
+ s3: x = 5
+-I3: undefined
++I3: nem definiált
+ p1: 0.5
+ a_1: 6.5
+ c_1: 1.5

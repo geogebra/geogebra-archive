@@ -1,0 +1,12 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Simp/Simplifying 6.out	2011-07-23 23:05:31.814646241 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Simp/Simplifying 6.out	2011-07-24 08:47:34.896490228 +0200
+@@ -1,5 +1,5 @@
+-B4: 32
+-B5: 23
+-B6: 14
++B4: 22
++B5: 15
++B6: 4
+ B7: 19
+-B3: 37
++B3: 29

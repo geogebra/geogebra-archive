@@ -1,0 +1,23 @@
+f: abs(x - 5.6) + 1.3
+za: -
+zb: +
+надпись5: null
+r: sin(x)
+zm: 
+zza_1: null
+zza: null
+z_3: null
+z_2: null
+z_1: -
+надпись14: y=h(1.5(x-5.6))
+sq: sqrt(1.5 (x - 5.6))
+f_1: sqrt(x)
+v: sin(1.5 x)
+q: 1.6 sin(x)
+g: abs(abs(x - 5.6) + 1.3)
+h: 1.5 (abs(x - 5.6) + 1.3)
+p: -(abs(x - 5.6) + 1.3)
+s: abs(abs(x) - 5.6) + 1.3
+надпись2: null
+надпись4: y=| x-5.6|+1.3
+надпись7: null

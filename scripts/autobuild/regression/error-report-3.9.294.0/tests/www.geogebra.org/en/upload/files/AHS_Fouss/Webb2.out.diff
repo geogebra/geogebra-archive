@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Webb2.out	2011-07-23 22:57:25.944646060 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Webb2.out	2011-07-24 08:30:56.926490512 +0200
+@@ -1 +1 @@
+-g: -0.00023996 x⁴ - 0.00018155 x³ + 0.03148451 x² + 0.28258778 x + 2.43894478
++g: -0.00023996 x⁴ - 0.00018155x³ + 0.03148451x² + 0.28258778x + 2.43894478

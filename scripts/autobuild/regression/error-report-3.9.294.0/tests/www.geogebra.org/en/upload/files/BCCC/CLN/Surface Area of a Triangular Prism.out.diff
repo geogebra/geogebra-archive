@@ -1,0 +1,12 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Surface Area of a Triangular Prism.out	2011-07-23 23:06:08.114646255 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Surface Area of a Triangular Prism.out	2011-07-24 08:48:42.326490209 +0200
+@@ -1,6 +1,6 @@
+-B4: 8
+-B3: 10
+-B2: 3
++B4: 1
++B3: 6
++B2: 9
+ a: 9
+ b: 10
+ C: 13.45362405

@@ -1,0 +1,32 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Geographie/Napetrole.out	2011-07-23 22:46:53.344645824 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Geographie/Napetrole.out	2011-07-24 08:10:28.616490861 +0200
+@@ -3,7 +3,7 @@
+ I: (-12.36442843, 5.70665928)
+ u: (0.6829737, -0.15345008)
+ J': (-0.32318315, 0.07261258)
+-c: 0 = 0
++c: ?
+ b_1: y = 0.07261258
+ B: (?, ?)
+ C: (?, ?)
+@@ -13,14 +13,14 @@
+ C': (?, ?)
+ B': (?, ?)
+ F: (?, ?)
+-e: 0
+-f: 0
+-g: 0
+-h: 0
+-k: 0
++e: ?
++f: ?
++g: ?
++h: ?
++k: ?
+ i: ?x = ?
+ G: (?, ?)
+-p: 0 = 0
++p: ?
+ j: x = -13
+ l: y = 6
+ K: (-13, 6.7)

@@ -1,0 +1,13 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/GEOMETRIE/bohno.out	2011-07-23 22:48:16.344645856 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/GEOMETRIE/bohno.out	2011-07-24 08:12:53.236490820 +0200
+@@ -37,8 +37,8 @@
+ n: 1
+ q: 2
+ r: (x - 2.125)² + (y - 3.12529)² = 4
+-V: (2.125, 1.12529)
+-W: (2.125, 5.12529)
++V: (2.125, 5.12529)
++W: (2.125, 1.12529)
+ b_1: y = 3.12529
+ C: (2.125, 4.12529)
+ D: (2.125, 4.62529)

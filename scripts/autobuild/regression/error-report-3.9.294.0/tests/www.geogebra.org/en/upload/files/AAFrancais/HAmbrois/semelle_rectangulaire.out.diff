@@ -1,0 +1,10 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/HAmbrois/semelle_rectangulaire.out	2011-07-23 22:50:42.404645910 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/HAmbrois/semelle_rectangulaire.out	2011-07-24 08:17:03.316490749 +0200
+@@ -1,6 +1,6 @@
+ Φx: 8
+ Φy: 8
+-J: (0.98346416, 0)
++J: (0.98346432, 0)
+ c': 0.98346416
+ amax: 0.39173208
+ vi: {0.07513197, 0.11550312, 0.13616909, 0.14387929, 0.14211077, 0.13283708, 0.11726158, 0.09615982, 0.07005408, 0.03930901}

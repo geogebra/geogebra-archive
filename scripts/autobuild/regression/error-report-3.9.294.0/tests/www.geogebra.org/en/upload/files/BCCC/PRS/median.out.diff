@@ -1,0 +1,15 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/PRS/median.out	2011-07-23 23:06:25.424646261 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/PRS/median.out	2011-07-24 08:49:16.256490199 +0200
+@@ -1,7 +1,7 @@
+-B3: 19
+-B4: 14
+-B5: 4
+-B6: 1
+-B7: 13
++B3: 7
++B4: 17
++B5: 17
++B6: 10
++B7: 11
+ D4: {2, 5, 10, 11, 15}
+ D5: 10

@@ -1,0 +1,36 @@
+h: x = 4
+A: (4, 0)
+g: x = 4
+c': 1
+b': -1
+n': 1
+v_a: (0, 1)
+Asints: (?, ?)
+asinver: ?x = ?
+asinhor: ?x = ?
+seg_c: 1
+seg_b: 2
+u: (0, 1)
+v_{ln}: (0, 1)
+fsol: -2 (x + 1)³ - 4
+colorf: If[x ≤ 3, 1, If[x ≤ 6, 1, 0]]
+colorg: If[x ≤ 3, 0, If[x ≤ 6, 1, 1]]
+u': (0, 1)
+u'': (0, 1)
+u_{nalax}: (0, 2)
+listvectorsnalax: {(0, 2)}
+v_{enealax}: (0, -3)
+seg_{c'}: 1
+seg_1: 3
+Asints': (?, ?)
+asinver': ?x = ?
+asinhor': ?x = ?
+seg_d: 1
+v: (0, 2)
+g': x = 3
+A': (3, 0)
+listvectorsnalaxbis: {(0, -2)}
+u'_': (0, -1)
+i: x = 5.71828183
+A_{ln}: (5.71828183, 0)
+v_{lnV}: (0, 4)

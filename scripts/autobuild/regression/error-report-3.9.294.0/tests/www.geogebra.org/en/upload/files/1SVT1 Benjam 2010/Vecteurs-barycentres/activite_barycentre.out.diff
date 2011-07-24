@@ -1,0 +1,13 @@
+--- tests/www.geogebra.org/en/upload/files/1SVT1 Benjam 2010/Vecteurs-barycentres/activite_barycentre.out	2011-07-23 22:44:44.944645776 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/1SVT1 Benjam 2010/Vecteurs-barycentres/activite_barycentre.out	2011-07-24 08:07:07.736490919 +0200
+@@ -18,8 +18,8 @@
+ N: (-4.95106403, -0.69782875)
+ O: (4.95106403, 0.69782875)
+ e: 0.69782875x + 4.95106403y = 0
+-P: (4.95106403, -0.69782875)
+-Q: (-4.95106403, 0.69782875)
++P: (-4.95106403, 0.69782875)
++Q: (4.95106403, -0.69782875)
+ f: 10
+ g: 10
+ k: 10

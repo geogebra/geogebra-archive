@@ -1,0 +1,28 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/SVC/Pie Chart.out	2011-07-23 23:06:52.134646271 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/SVC/Pie Chart.out	2011-07-24 08:50:12.706490183 +0200
+@@ -14,10 +14,10 @@
+ k: (x - 10.04)² + (y - 3.58)² = 4
+ I: (8.15617681, 2.90827819)
+ l: 2
+-A18: 16
+-z: 2
++A18: 3
++z: 1
+ a: 5
+-A2: 1
++A2: 2
+ A3: 2
+ A4: 1
+ A6: 5
+@@ -66,7 +66,7 @@
+ F_1: (-1.9, 4)
+ G_1: (1.36, 3.36)
+ k_1: 3.26
+-text1: \begin{array}{llll}Colour&Number &of&Angle \\  &Students&& \\  & && \\ Red&&& \\ Green&&& \\ Purple&&& \\ Blue&&& \\ \end{array}
+-text4: \begin{array}{l}1 \\ 1 \\ 1 \\ 2 \\ \end{array}
+-text2: \begin{array}{l}72° \\ 72° \\ 72° \\ 144° \\ \end{array}
+-text7: \begin{array}{l}20% \\ 20% \\ 20% \\ 40% \\ \end{array}
++text1: {\left.\begin{array}{llll}\text{Colour}&\text{Number }&\text{of}&\text{Angle} \\ \text{\;}&\text{Students}&& \\ \text{\;}&\text{\;}&& \\ \text{Red}&&& \\ \text{Green}&&& \\ \text{Purple}&&& \\ \text{Blue}&&& \\ \end{array}\right.}
++text4: {\left.\begin{array}{l}1 \\ 1 \\ 1 \\ 2 \\ \end{array}\right.}
++text2: {\left.\begin{array}{l}\text{72°} \\ \text{72°} \\ \text{72°} \\ \text{144°} \\ \end{array}\right.}
++text7: {\left.\begin{array}{l}\text{20%} \\ \text{20%} \\ \text{20%} \\ \text{40%} \\ \end{array}\right.}

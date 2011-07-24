@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/GEOMETRIEACTIVE/corde13.out	2011-07-23 22:46:47.984645822 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/GEOMETRIEACTIVE/corde13.out	2011-07-24 08:10:19.356490864 +0200
+@@ -1,7 +1,7 @@
+ c: (x + 1.15579264)² + (y - 0.35719008)² = 25
+ B: (3.6212846, -1.11913409)
+ d: 95.99899948x² - 0.99500025x y + 195.99404923y² - 257.71140389x - 143.55221893y = 976.20133252
+-C: (-1.91734981, -0.52724156)
++C: (-0.87377755, -1.53083184)
+ poly1: 5.32452785
+ f: 5
+ a_1: 2.26516961

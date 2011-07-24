@@ -1,0 +1,8 @@
+A1: 3
+B1: 5
+B2: 3
+B3: 7
+B4: 7
+B5: 4
+b: 29
+text1: \begin{array}{lll}x& &frequency \\ 1≤x<3& &14 \\ 3≤x<5& &2 \\ 5≤x<7& &2 \\ 7≤x<8& &3 \\ 8≤x<9& &8 \\ \end{array}

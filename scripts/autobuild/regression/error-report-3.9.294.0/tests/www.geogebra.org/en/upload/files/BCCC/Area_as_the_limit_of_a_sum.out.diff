@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/Area_as_the_limit_of_a_sum.out	2011-07-23 23:18:32.104646532 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/Area_as_the_limit_of_a_sum.out	2011-07-24 08:51:47.276490156 +0200
+@@ -1,6 +1,6 @@
+ s: 4
+ B: (1, 0)
+ A: (1, 0)
+-O: 57.99999677
+-U: 34.00000222
++O: 57.99999682
++U: 34
+ g: x² + 1

@@ -1,0 +1,7 @@
+--- tests/www.geogebra.org/en/upload/files/AED540_ZDarrow/Derivative_Worksheet.out	2011-07-23 22:55:44.794646022 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AED540_ZDarrow/Derivative_Worksheet.out	2011-07-24 08:27:19.016490574 +0200
+@@ -1,2 +1,2 @@
+-g: -(3) x² + 3.2 * 2 x + 0.8
+-h: 3 (-1) 2 x + 2 * 3.2
++g: 3(-1) x² + 2 (3.2) x + 0.8
++h: 2 (3(-1) x + 3.2)

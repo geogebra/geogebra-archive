@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Seconde2009/translation.out	2011-07-23 22:52:04.294645940 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Seconde2009/translation.out	2011-07-24 08:20:18.286490694 +0200
+@@ -1,4 +1,4 @@
+-a: x - 15y = -34
++a: -x + 15y = 34
+ A: (-0.15044248, 2.25663717)
+ poly1: 5
+ f: 2

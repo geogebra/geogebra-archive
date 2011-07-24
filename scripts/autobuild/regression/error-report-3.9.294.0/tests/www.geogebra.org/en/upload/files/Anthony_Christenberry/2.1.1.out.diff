@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/Anthony_Christenberry/2.1.1.out	2011-07-23 23:02:16.024646168 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Anthony_Christenberry/2.1.1.out	2011-07-24 08:41:38.706490329 +0200
+@@ -1,4 +1,4 @@
+-a: x - 2y = -4
++a: -x + 2y = 4
+ C'_1: (-1, -1)
+ distanceAC: 2.23606798
+ distanceAC': 2.23606798

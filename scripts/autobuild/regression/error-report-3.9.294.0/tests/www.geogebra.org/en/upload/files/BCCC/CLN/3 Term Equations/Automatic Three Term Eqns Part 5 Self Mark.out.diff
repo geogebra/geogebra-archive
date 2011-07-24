@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/3 Term Equations/Automatic Three Term Eqns Part 5 Self Mark.out	2011-07-23 23:04:55.324646227 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/3 Term Equations/Automatic Three Term Eqns Part 5 Self Mark.out	2011-07-24 08:46:22.866490248 +0200
+@@ -1,3 +1,3 @@
+-B3: 20
+-B4: 14
+-B5: 32
++B3: 5
++B4: 11
++B5: 20

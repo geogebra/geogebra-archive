@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/BELARUS/POLIGONS/suma_n_gon.out	2011-07-23 23:23:26.234646641 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BELARUS/POLIGONS/suma_n_gon.out	2011-07-24 08:57:00.256490067 +0200
+@@ -84,7 +84,7 @@
+ N: (0.39290205, 2.63521959)
+ O: (0.45349763, 4.13358294)
+ P: (0.64630174, 3.59373144)
+-sn: 5
++sn: 9
+ n1: 5
+ l: 0.41866035x + 3.48149131y = 14.58089456
+ m: 2.159406x + 0.77121643y = 7.76471033

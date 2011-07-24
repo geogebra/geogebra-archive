@@ -1,0 +1,14 @@
+--- tests/www.geogebra.org/en/upload/files/COLOMBIA/jose melendez/carritos_corren.out	2011-07-23 23:29:28.694646777 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/COLOMBIA/jose melendez/carritos_corren.out	2011-07-24 09:09:29.525214854 +0200
+@@ -1,8 +1,8 @@
+ A: (0, 0)
+ c: x² + y² = 0
+-T: (0, 0)
++T: (?, ?)
+ b: x = 0
+ e: x² + y² = 0
+-C: (0, 0)
++C: (?, ?)
+ g: x² + y² = 0
+-D: (0, 0)
++D: (?, ?)

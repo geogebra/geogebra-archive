@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Handleton2.out	2011-07-23 22:56:46.864646046 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Handleton2.out	2011-07-24 08:29:29.226490537 +0200
+@@ -1 +1 @@
+-g: -0.00075557 x⁴ - 0.02200835 x³ + 0.4296031 x² - 1.46961402 x + 5.68813246
++g: -0.00075557 x⁴ - 0.02200835x³ + 0.4296031x² - 1.46961402x + 5.68813246

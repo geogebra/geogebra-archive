@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/CLebon/fonction_affine.out	2011-07-23 22:45:09.614645786 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/CLebon/fonction_affine.out	2011-07-24 08:07:56.366490905 +0200
+@@ -6,7 +6,7 @@
+ e: x = 6.07904429
+ C: (0, 0)
+ D: (6.07904429, 0)
+-E: undefined
++E: nem definiált
+ F: (0, 7.59187544)
+ G: (-2.7770849, 0)
+ h: 7.76599302

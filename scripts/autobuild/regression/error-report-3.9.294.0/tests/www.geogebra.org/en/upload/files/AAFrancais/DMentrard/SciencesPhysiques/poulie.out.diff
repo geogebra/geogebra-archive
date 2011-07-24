@@ -1,0 +1,10 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/poulie.out	2011-07-23 22:50:01.854645894 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/poulie.out	2011-07-24 08:15:55.016490768 +0200
+@@ -1,5 +1,5 @@
+-c: 96.8996202x² + 96.8996202y² = 73280.33777435
+-d_1: 6.39762921x² + 6.39762921y² - 1279.5258414x = -63216.18974396
++c: -96.8996202x² - 96.8996202y² = -73280.33777435
++d_1: -6.39762921x² - 6.39762921y² + 1279.5258414x = 63216.18974396
+ S: (100, 0)
+ e: 101.3684369
+ f: 101.3684369

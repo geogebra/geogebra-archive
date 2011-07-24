@@ -1,0 +1,7 @@
+--- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Bublitz2.out	2011-07-23 22:56:07.144646030 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Bublitz2.out	2011-07-24 08:28:07.346490560 +0200
+@@ -1,2 +1,2 @@
+-f: undefined
+-g: 0.06130056 x⁴ - 0.94187305 x³ + 4.53432335 x² - 7.47895314 x + 8.78685658
++f: nem definiált
++g: 0.06130056x⁴ - 0.94187305x³ + 4.53432335x² - 7.47895314x + 8.78685658

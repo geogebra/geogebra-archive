@@ -1,0 +1,18 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/SVC/Surface Area Cuboid.out	2011-07-23 23:18:20.924646528 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/SVC/Surface Area Cuboid.out	2011-07-24 08:51:25.716490162 +0200
+@@ -1,5 +1,5 @@
+-B6: 6
+-B4: 6
++B6: 9
++B4: 2
+ a: 2.98964881
+ b: 1.44x + 2.62y = -1.7712
+ c: 1.44x + 2.62y = 15.82878949
+@@ -37,6 +37,6 @@
+ h_1: 5.88697556
+ i_1: 8.02418476
+ distanceJI: 8.02418476
+-B5: 8
++B5: 3
+ distanceNO: 5.88697556
+ distanceJM: 6.95421528

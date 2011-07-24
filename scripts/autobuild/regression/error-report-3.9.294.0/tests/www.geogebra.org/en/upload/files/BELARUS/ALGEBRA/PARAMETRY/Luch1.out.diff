@@ -1,0 +1,14 @@
+--- tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/PARAMETRY/Luch1.out	2011-07-23 23:21:51.724646607 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/PARAMETRY/Luch1.out	2011-07-24 08:54:17.126490114 +0200
+@@ -54,7 +54,7 @@
+ g: 2.18798736
+ e: 1.98798736
+ h: 4.7
+-i: 4.7
+-j: 2.38798736
+-k: 2.7
+-l: 9.88798736
++i: ?
++j: ?
++k: ?
++l: ?

@@ -1,0 +1,15 @@
+--- tests/www.geogebra.org/en/upload/files/CHILE/Esteban_Diaz/gdpUSACHILE.out	2011-07-23 23:29:07.244646769 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/CHILE/Esteban_Diaz/gdpUSACHILE.out	2011-07-24 09:08:40.809584868 +0200
+@@ -1,4 +1,4 @@
+-f: 0 ℯ^(0.04544012 x)
++f: 0ℯ^(0.04544012x)
+ a: 14201
+ b: 13897
+ c: 13253
+@@ -9,5 +9,5 @@
+ i: 10222
+ j: 9876
+ k: 13956
+-p: 0 ℯ^(0.13854965 x)
++p: 0ℯ^(0.13854965x)
+ A: (2055.68951845, 124297.67133768)

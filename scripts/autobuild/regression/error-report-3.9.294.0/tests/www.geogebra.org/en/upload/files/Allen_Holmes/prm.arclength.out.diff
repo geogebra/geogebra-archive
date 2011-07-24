@@ -1,0 +1,6 @@
+--- tests/www.geogebra.org/en/upload/files/Allen_Holmes/prm.arclength.out	2011-07-23 23:01:24.374646150 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Allen_Holmes/prm.arclength.out	2011-07-24 08:39:41.136490363 +0200
+@@ -1,2 +1,2 @@
+ c: (f(t), g(t))
+-arclength: 7.22448621
++arclength: 7.22448622

@@ -1,0 +1,15 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Drawing Simple Cubic Graphs.out	2011-07-23 23:05:53.704646249 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Drawing Simple Cubic Graphs.out	2011-07-24 08:48:15.056490217 +0200
+@@ -1,7 +1,7 @@
+-d: 1
++d: 2
+ f: 1
+ m: 2
+-c: -2
+-text1: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y& & & & & & &  \\ \end{array}
+-text3: x^{3} - 2
+-text2: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y&-29&-10&-3&-2&-1&6&10 \\ \end{array}
++c: -3
++text1: {\left.\begin{array}{llllllll}\text{x}&-3&-2&-1&0&1&2&3 \\ \text{y}&\text{\;}&\text{\;}&\text{\;}&\text{\;}&\text{\;}&\text{\;}&\text{\;} \\ \end{array}\right.}
++text3: 1 \; x^{3} - 2
++text2: {\left.\begin{array}{llllllll}\text{x}&-3&-2&-1&0&1&2&3 \\ \text{y}&-29&-10&-3&-2&-1&6&10 \\ \end{array}\right.}

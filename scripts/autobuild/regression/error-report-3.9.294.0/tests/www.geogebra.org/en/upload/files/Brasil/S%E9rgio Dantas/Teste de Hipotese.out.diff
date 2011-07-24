@@ -1,0 +1,10 @@
+--- tests/www.geogebra.org/en/upload/files/Brasil/S%E9rgio Dantas/Teste de Hipotese.out	2011-07-23 23:28:34.414646757 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Brasil/S%E9rgio Dantas/Teste de Hipotese.out	2011-07-24 09:07:25.316489889 +0200
+@@ -1,5 +1,5 @@
+-f: 1 / (2.71068738 sqrt(2 * 3.14)) ℯ^(-(x - 145)² / (2 * 2.71068738²))
+-g: 1 / (4.17028828 sqrt(2 * 3.14)) ℯ^(-(x - 155)² / (2 * 4.17028828²))
++f: 1 / (2.71068738sqrt(2 (3.14))) ℯ^((-(x - 145)²) / (2 (2.71068738²)))
++g: 1 / (4.17028828sqrt(2 (3.14))) ℯ^((-(x - 155)²) / (2 (4.17028828²)))
+ h: 0.05646327
+ b: 0.10553434
+ c: 0.14721116

@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/Analisis/Rieman_ejemplo_well_done.out	2011-07-23 23:01:46.924646158 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Analisis/Rieman_ejemplo_well_done.out	2011-07-24 08:40:31.376490348 +0200
+@@ -1,3 +1,3 @@
+-L: {(floor(1 / 2 - x) + x) / 1², (floor(1 / 2 - 2 x) + 2 x) / 2², (floor(1 / 2 - 3 x) + 3 x) / 3², (floor(1 / 2 - 4 x) + 4 x) / 4², (floor(1 / 2 - 5 x) + 5 x) / 5², (floor(1 / 2 - 6 x) + 6 x) / 6², (floor(1 / 2 - 7 x) + 7 x) / 7², (floor(1 / 2 - 8 x) + 8 x) / 8², (floor(1 / 2 - 9 x) + 9 x) / 9², (floor(1 / 2 - 10 x) + 10 x) / 10², (floor(1 / 2 - 11 x) + 11 x) / 11², (floor(1 / 2 - 12 x) + 12 x) / 12², (floor(1 / 2 - 13 x) + 13 x) / 13², (floor(1 / 2 - 14 x) + 14 x) / 14², (floor(1 / 2 - 15 x) + 15 x) / 15², (floor(1 / 2 - 16 x) + 16 x) / 16², (floor(1 / 2 - 17 x) + 17 x) / 17², (floor(1 / 2 - 18 x) + 18 x) / 18², (floor(1 / 2 - 19 x) + 19 x) / 19², (floor(1 / 2 - 20 x) + 20 x) / 20²}
++L: {(floor(1 / 2 - x) + x) / 1², (floor(1 / 2 - 2x) + 2x) / 2², (floor(1 / 2 - 3x) + 3x) / 3², (floor(1 / 2 - 4x) + 4x) / 4², (floor(1 / 2 - 5x) + 5x) / 5², (floor(1 / 2 - 6x) + 6x) / 6², (floor(1 / 2 - 7x) + 7x) / 7², (floor(1 / 2 - 8x) + 8x) / 8², (floor(1 / 2 - 9x) + 9x) / 9², (floor(1 / 2 - 10x) + 10x) / 10², (floor(1 / 2 - 11x) + 11x) / 11², (floor(1 / 2 - 12x) + 12x) / 12², (floor(1 / 2 - 13x) + 13x) / 13², (floor(1 / 2 - 14x) + 14x) / 14², (floor(1 / 2 - 15x) + 15x) / 15², (floor(1 / 2 - 16x) + 16x) / 16², (floor(1 / 2 - 17x) + 17x) / 17², (floor(1 / 2 - 18x) + 18x) / 18², (floor(1 / 2 - 19x) + 19x) / 19², (floor(1 / 2 - 20x) + 20x) / 20²}
+ g: (floor(1 / 2 - x) + x) / 1²
+-h: If[x < 0, 0, If[x < 1, (floor(1 / 2 - x) + x) / 1², 0]]
++h: Ha[x < 0, 0, Ha[x < 1, (floor(1 / 2 - x) + x) / 1², 0]]

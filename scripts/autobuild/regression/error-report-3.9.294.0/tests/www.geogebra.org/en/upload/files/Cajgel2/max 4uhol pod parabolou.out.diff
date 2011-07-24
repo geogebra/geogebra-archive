@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/Cajgel2/max 4uhol pod parabolou.out	2011-07-23 23:31:15.574646817 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Cajgel2/max 4uhol pod parabolou.out	2011-07-24 09:13:20.829504788 +0200
+@@ -1,4 +1,4 @@
+-f: -(x) x + 4
++f: -x x + 4
+ B: (0, 4)
+ C: (0, 4)
+ a: y = 0

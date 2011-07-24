@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/AMTLucca/ConjugadoOpuesto.out	2011-07-23 22:58:28.904646084 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AMTLucca/ConjugadoOpuesto.out	2011-07-24 08:33:21.806490471 +0200
+@@ -1,5 +1,5 @@
+ A: (0, 0)
+ u: (1.64, -1.06)
+-conjugado: 1.64 + 1.06i
++conjugado: 1.64 + 1.06ί
+ v: (1.64, 1.06)
+ w: (-1.64, 1.06)

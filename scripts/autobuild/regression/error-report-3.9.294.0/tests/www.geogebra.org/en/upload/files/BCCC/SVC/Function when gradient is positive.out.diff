@@ -1,0 +1,15 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/SVC/Function when gradient is positive.out	2011-07-23 23:18:05.124646522 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/SVC/Function when gradient is positive.out	2011-07-24 08:50:54.186490171 +0200
+@@ -76,10 +76,10 @@
+ j_2: 1
+ k_2: 1
+ l_2: 1
+-A7: 8
++A7: 9
+ B7: 8
+ B8: 1
+-A9: -1
++A9: -6
+ B9: 5
+ B10: 2
+ B11: 2

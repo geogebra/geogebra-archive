@@ -1,0 +1,10 @@
+--- tests/www.geogebra.org/en/upload/files/AlfonsoMelendez/TallerCincoFuncionYSusDerivadas/TallerCinco.out	2011-07-23 22:59:23.514646104 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AlfonsoMelendez/TallerCincoFuncionYSusDerivadas/TallerCinco.out	2011-07-24 08:35:36.796490432 +0200
+@@ -1,5 +1,5 @@
+-f': 3.5 x⁴ - 9.6 x²
+-f'': 14 x³ - 19.2 x
++f': (x² (35x² - 96)) / 10
++f'': (2x (35x² - 48)) / 5
+ A: (-1.65615734, 5.81453184)
+ B: (1.65615734, -5.81453184)
+ C: (-1.17108009, 3.59755803)

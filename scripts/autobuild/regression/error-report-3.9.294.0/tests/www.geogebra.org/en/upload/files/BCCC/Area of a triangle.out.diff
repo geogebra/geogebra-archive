@@ -1,0 +1,18 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/Area of a triangle.out	2011-07-23 23:18:53.414646540 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/Area of a triangle.out	2011-07-24 08:52:27.856490145 +0200
+@@ -1,9 +1,9 @@
+-A2: 6
+-C1: 0
+-C2: 1
+-A1: 1
+-B1: 9
+-B2: 9
++A2: 3
++C1: 5
++C2: 2
++A1: 0
++B1: 1
++B2: 10
+ a: 7
+ b: 4.47213595
+ c: 3.60555128

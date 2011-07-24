@@ -1,0 +1,12 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Fracs/Cancelling Fractions Part 2.out	2011-07-23 23:05:19.484646237 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Fracs/Cancelling Fractions Part 2.out	2011-07-24 08:47:11.926490234 +0200
+@@ -1,5 +1,5 @@
+-C4: 4
+-C3: 8
+-D3: 27
+-D4: 74
++C4: 3
++C3: 5
++D3: 15
++D4: 61
+ a: 0

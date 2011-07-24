@@ -1,0 +1,7 @@
+m: 1
+c: -2
+text1: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y& & & & & & &  \\ \end{array}
+text2: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y&7&4&1&-2&-5&-8&-11 \\ \end{array}
+text3: y = -3x - 2
+text6: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y&7& & &-2& & &  \\ \end{array}
+text7: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y&7& &1&-2& & &-11 \\ \end{array}

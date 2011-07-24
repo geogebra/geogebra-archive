@@ -1,0 +1,50 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Averages/Finding Modes.out	2011-07-23 23:04:59.214646229 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Averages/Finding Modes.out	2011-07-24 08:46:30.026490246 +0200
+@@ -1,24 +1,24 @@
+-A2: 19
+-A3: 2
+-A4: 6
+-A5: 6
+-A6: 9
+-A7: 9
+-A8: 7
+-A1: 9
+-B2: 17
+-B3: 3
+-B4: 12
+-B5: 1
+-B1: 20
+-C1: 17
+-C2: 11
+-C3: 2
+-C4: 19
+-C5: 1
+-C6: 6
+-C7: 20
+-C9: 13
+-C8: 1
+-A9: 9
++A2: 18
++A3: 12
++A4: 7
++A5: 9
++A6: 4
++A7: 19
++A8: 2
++A1: 7
++B2: 16
++B3: 9
++B4: 5
++B5: 16
++B1: 9
++C1: 16
++C2: 6
++C3: 6
++C4: 1
++C5: 15
++C6: 3
++C7: 19
++C9: 2
++C8: 18
++A9: 5
+ a: 12

@@ -1,0 +1,13 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/Horloge.out	2011-07-23 22:45:33.314645794 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/Horloge.out	2011-07-24 08:08:39.656490892 +0200
+@@ -33,8 +33,8 @@
+ r: 3.1421103
+ s: 3.1421103
+ n': 0.58274509
+-aa: 11
+-bb: 6
++aa: 42
++bb: 7
+ F': (-1.45237188, -0.64372588)
+ N': (4.69568529, -1.095)
+ ww: 3.63452886

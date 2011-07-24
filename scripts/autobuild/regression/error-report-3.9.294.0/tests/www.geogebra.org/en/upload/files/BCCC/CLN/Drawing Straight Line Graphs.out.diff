@@ -1,0 +1,12 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Drawing Straight Line Graphs.out	2011-07-23 23:05:56.874646251 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Drawing Straight Line Graphs.out	2011-07-24 08:48:21.146490215 +0200
+@@ -1,5 +1,5 @@
+-m: -1
+-c: 2
+-text1: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y& & & & & & &  \\ \end{array}
+-text2: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y&-3&-3&-3&-3&-3&-3&-3 \\ \end{array}
++m: 1
++c: -1
++text1: {\left.\begin{array}{llllllll}\text{x}&-3&-2&-1&0&1&2&3 \\ \text{y}&\text{\;}&\text{\;}&\text{\;}&\text{\;}&\text{\;}&\text{\;}&\text{\;} \\ \end{array}\right.}
++text2: {\left.\begin{array}{llllllll}\text{x}&-3&-2&-1&0&1&2&3 \\ \text{y}&-3&-3&-3&-3&-3&-3&-3 \\ \end{array}\right.}
+ text3: y = -3

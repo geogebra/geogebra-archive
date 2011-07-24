@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/Subtracting Negatives.out	2011-07-23 23:21:37.684646601 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/Subtracting Negatives.out	2011-07-24 08:53:50.036490121 +0200
+@@ -14,7 +14,7 @@
+ i: y = -2
+ q: x² + (y + 1)² = 1
+ O_1: (0, -2)
+-P_1: (0, -2)
++P_1: (?, ?)
+ v: (0, 0)
+ Q_1: (0, -2)
+ Z_1: (0, -2)

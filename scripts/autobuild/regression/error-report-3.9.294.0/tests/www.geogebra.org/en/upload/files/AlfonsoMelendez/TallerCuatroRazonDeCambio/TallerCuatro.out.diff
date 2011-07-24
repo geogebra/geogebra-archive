@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/AlfonsoMelendez/TallerCuatroRazonDeCambio/TallerCuatro.out	2011-07-23 22:59:25.834646104 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AlfonsoMelendez/TallerCuatroRazonDeCambio/TallerCuatro.out	2011-07-24 08:35:43.396490430 +0200
+@@ -4,4 +4,4 @@
+ b: 40
+ c: 150
+ d: 90
+-sDer: (40 + 20)² 2 x / (2 sqrt(90² + (40 + 20)² x²))
++sDer: (x (40² + 2 (40) 20 + 20²)) / sqrt(90² + 40² x² + 2 (40) 20 x² + 20² x²)

@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/Proizvodnaja.out	2011-07-23 23:22:17.754646617 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/Proizvodnaja.out	2011-07-24 08:55:06.336490100 +0200
+@@ -1,5 +1,5 @@
+ A: (0, 0.00473358)
+-f': -0.1 * 2 (x - 8)
++f': 2(-0.1) (x - 8)
+ d: x = 2.87107055
+ B: (2.87107055, 7.36940827)
+ касательная: y = 1.02578589x + 4.42430461

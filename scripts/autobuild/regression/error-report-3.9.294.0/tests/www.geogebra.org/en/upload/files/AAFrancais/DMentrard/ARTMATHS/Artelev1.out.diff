@@ -1,0 +1,23 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/ARTMATHS/Artelev1.out	2011-07-23 22:45:14.894645788 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/ARTMATHS/Artelev1.out	2011-07-24 08:08:06.866490902 +0200
+@@ -74,9 +74,9 @@
+ p: 0.11059376x + 0.69013379y = 1.01640469
+ V_1: (4.00288521, 0.8313034)
+ W_1: (4.50760838, 1.20000612)
+-Z_1: undefined
++Z_1: nem definiált
+ A_2: (4.51622608, -0.17882518)
+-B_2: undefined
++B_2: nem definiált
+ C_2: (4.50970296, 0.86487351)
+ poly3: 0.30612472
+ s: 0.05745243
+@@ -101,7 +101,7 @@
+ c_3: 0.71594562
+ u_3: 1.37400911
+ D_2: (?, ?)
+-E_2: undefined
++E_2: nem definiált
+ F_2: (?, ?)
+ G_2: (2.84187964, 1.13214177)
+ H_2: (3.76576842, 0.39101995)

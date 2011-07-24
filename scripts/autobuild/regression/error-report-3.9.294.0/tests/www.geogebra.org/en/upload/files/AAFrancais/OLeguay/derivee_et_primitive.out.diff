@@ -1,0 +1,13 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/OLeguay/derivee_et_primitive.out	2011-07-23 22:52:50.474645958 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/OLeguay/derivee_et_primitive.out	2011-07-24 08:20:58.936490682 +0200
+@@ -1,5 +1,5 @@
+-texte1: \frac{1}{10} (x - 3) x (x + 3)
+-f': ((x + 3) (x + x - 3) + x (x - 3)) / 10
+-texte5: \frac{(x + 3) (x + x - 3) + x (x - 3)}{10}
+-F: 0.025 x⁴ - 0.45 x²
+-texte7: 0.025 x^{4} - 0.45 x^{2}
++texte1: \frac{1}{10} \;  \left( x - 3 \right)  \; x \;  \left( x + 3 \right) 
++f': (3 (x² - 3)) / 10
++texte5: \frac{3 \;  \left( x^{2} - 3 \right) }{10}
++F: (x² (x² - 18)) / 40
++texte7: \frac{x^{2} \;  \left( x^{2} - 18 \right) }{40}

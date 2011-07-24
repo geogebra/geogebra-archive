@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AED540Summer10/Ruchi/Constructing a square on given line segment.out	2011-07-23 22:54:29.344645994 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AED540Summer10/Ruchi/Constructing a square on given line segment.out	2011-07-24 08:24:49.376490616 +0200
+@@ -8,7 +8,7 @@
+ F: (4.08364207, 6.71309262)
+ i: -0.01635793x + 3.07309262y = 20.56315548
+ E: (2.56345369, 3.63182104)
+-F_1: undefined
++F_1: nem definiált
+ G: (1.04326531, 0.55054945)
+ C: (1.01054945, 6.69673469)
+ I: (4.11635793, 0.56690738)

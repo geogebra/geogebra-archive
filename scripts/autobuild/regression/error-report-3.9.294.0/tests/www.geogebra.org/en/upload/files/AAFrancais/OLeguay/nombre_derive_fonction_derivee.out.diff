@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/OLeguay/nombre_derive_fonction_derivee.out	2011-07-23 22:52:56.384645960 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/OLeguay/nombre_derive_fonction_derivee.out	2011-07-24 08:21:10.486490679 +0200
+@@ -16,7 +16,7 @@
+ E: (0.66707539, -0.19154583)
+ d: 15.57496042
+ e: 3.48258885
+-NombreDérivé: \frac{29003}{8328}
++NombreDérivé: {\frac{29003}{8328}}
+ g: 7.03210628
+ f': 2 (x - 1)
+ D: (2.74129443, 3.48258885)

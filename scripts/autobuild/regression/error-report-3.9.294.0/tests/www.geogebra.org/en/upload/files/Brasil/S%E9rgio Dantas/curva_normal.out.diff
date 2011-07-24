@@ -1,0 +1,10 @@
+--- tests/www.geogebra.org/en/upload/files/Brasil/S%E9rgio Dantas/curva_normal.out	2011-07-23 23:28:36.954646757 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Brasil/S%E9rgio Dantas/curva_normal.out	2011-07-24 09:07:27.116489889 +0200
+@@ -1,5 +1,5 @@
+-f: 1 / (sqrt(2 * 3.14)) ℯ^(-(x)² / (2 * 1²))
+-g: 1 / (1.6 sqrt(2 * 3.14)) ℯ^(-(x - 4.7)² / (2 * 1.6²))
++f: 1 / (sqrt(2 (3.14))) ℯ^(-((x)² / (2 (1²))))
++g: 1 / (1.6sqrt(2 (3.14))) ℯ^(-((x - 4.7)² / (2 (1.6²))))
+ h: 0.24940215
+ i: 0.71326145
+ j: 0.28692877

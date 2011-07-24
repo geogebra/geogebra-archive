@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/Cadu/Ciclo_completo.out	2011-07-23 23:30:37.764646803 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Cadu/Ciclo_completo.out	2011-07-24 09:12:06.826524809 +0200
+@@ -12,7 +12,7 @@
+ E: (0, 1)
+ f: y = 1
+ g: x = 0
+-F: undefined
++F: nem definiált
+ w: (?, ?)
+ z: (?, ?)
+ G: (0, 1)

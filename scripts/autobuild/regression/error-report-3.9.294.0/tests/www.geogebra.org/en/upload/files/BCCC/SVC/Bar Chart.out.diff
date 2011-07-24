@@ -1,0 +1,33 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/SVC/Bar Chart.out	2011-07-23 23:06:53.304646271 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/SVC/Bar Chart.out	2011-07-24 08:50:14.636490182 +0200
+@@ -1,5 +1,5 @@
+ A: (0, 0)
+-A2: 0
++A2: 8
+ B: (0, 0)
+ a: 3.0266803
+ C: (0, 0)
+@@ -61,10 +61,10 @@
+ p_1: 3.00000048
+ q_1: 0.29989972
+ r_1: 3.00000043
+-A3: 3
+-A4: 8
+-A5: 3
+-A6: 1
++A3: 1
++A4: 0
++A5: 10
++A6: 10
+ S_1: (0.70130397, 0)
+ V_1: (1, 0)
+ poly2: 0.89804404
+@@ -118,7 +118,7 @@
+ k_3: 0.30070232
+ m_2: 0.97104925
+ i_3: 0.30136669
+-text2: \begin{array}{ll}Colour&Freq \\  &  \\ Red&3 \\ Blue&3 \\ Silver&3 \\ Black&1 \\ Other&2 \\ \end{array}
++text2: {\left.\begin{array}{ll}\text{Colour}&\text{Freq} \\ \text{\;}&\text{\;} \\ \text{Red}&3 \\ \text{Blue}&3 \\ \text{Silver}&3 \\ \text{Black}&1 \\ \text{Other}&2 \\ \end{array}\right.}
+ r_2: 0.35939
+ s_2: x = -0.90645
+ t_2: y = 5.36985379

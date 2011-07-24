@@ -1,0 +1,10 @@
+--- tests/www.geogebra.org/en/upload/files/Brasil/Heitor Fragoso/Funcao_polinomial_do_2_grau.out	2011-07-23 23:27:32.974646733 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Brasil/Heitor Fragoso/Funcao_polinomial_do_2_grau.out	2011-07-24 09:05:05.006489929 +0200
+@@ -6,5 +6,5 @@
+ m: x = 0.6
+ B: (0.6, 0)
+ n: 2.54
+-texto2: \frac{3}{5}
+-texto3: \frac{127}{50}
++texto2: {\frac{3}{5}}
++texto3: {\frac{127}{50}}

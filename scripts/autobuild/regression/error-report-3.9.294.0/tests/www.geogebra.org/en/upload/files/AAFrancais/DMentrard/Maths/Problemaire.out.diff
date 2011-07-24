@@ -1,0 +1,22 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/Problemaire.out	2011-07-23 22:48:59.824645872 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/Problemaire.out	2011-07-24 08:14:10.476490798 +0200
+@@ -9,7 +9,7 @@
+ g: x² + y² - 4x - 4y = -8
+ h: x + y = 4
+ I: (2, 2)
+-J: (2, 2)
++J: (?, ?)
+ u: (0, 0)
+ k: (x - 2)² + (y - 2)² = 4
+ K: (2, 2)
+@@ -18,8 +18,8 @@
+ M: (2, 0)
+ N: (2, 3)
+ O: (2, 1)
+-j: x + 7y = 23
+-p: 0 = -8
++j: -x - 7y = -23
++p: ?
+ P: (9.16829141, 1.97595837)
+ Q: (8.83170859, 2.02404163)
+ v: (?, ?)

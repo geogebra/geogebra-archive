@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/AHS_Fouss/KiteFlight.out	2011-07-23 22:56:23.284646036 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/KiteFlight.out	2011-07-24 08:28:40.486490551 +0200
+@@ -1 +1 @@
+-f: 0.00193849 x⁵ + 0.00739779 x⁴ - 0.04246144 x³ - 0.12657919 x² + 0.2447151 x + 5.06272627
++f: 0.00193849x⁵ + 0.00739779x⁴ - 0.04246144x³ - 0.12657919x² + 0.2447151x + 5.06272627

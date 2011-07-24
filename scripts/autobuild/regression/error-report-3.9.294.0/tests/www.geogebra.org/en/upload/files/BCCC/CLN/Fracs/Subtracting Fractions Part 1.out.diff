@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Fracs/Subtracting Fractions Part 1.out	2011-07-23 23:05:25.244646239 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Fracs/Subtracting Fractions Part 1.out	2011-07-24 08:47:22.726490231 +0200
+@@ -1,5 +1,5 @@
+-B4: 34
++B4: 13
+ B3: 3
+-B5: 1
+-B6: 20
++B5: 2
++B6: 18
+ a: 0

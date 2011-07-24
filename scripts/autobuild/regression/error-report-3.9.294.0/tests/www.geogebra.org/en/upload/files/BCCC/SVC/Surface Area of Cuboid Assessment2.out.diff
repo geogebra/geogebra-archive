@@ -1,0 +1,58 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/SVC/Surface Area of Cuboid Assessment2.out	2011-07-23 23:18:22.134646528 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/SVC/Surface Area of Cuboid Assessment2.out	2011-07-24 08:51:27.926490162 +0200
+@@ -1,10 +1,10 @@
+ B36: 9
+-C36: 5
++C36: 1
+ B35: 10
+-B34: 9
+-C35: 5
+-C34: 4
+-B17: 1
++B34: 6
++C35: 2
++C34: 5
++B17: 2
+ B9: 1
+ C11: 1
+ C10: 1
+@@ -89,18 +89,18 @@
+ u_2: 13.11032467
+ v_2: 7.0205353
+ a_1: (1, 0)
+-A2: 1
++A2: 3
+ A3: 10
+-A4: 10
+-A5: 1
+-A6: 1
++A4: 9
++A5: 8
++A6: 5
+ A7: 7
+-C2: 35
++C2: 27
+ C3: 53
+-C4: 16
+-C5: 24
+-C6: 12
+-C7: 34
++C4: 25
++C5: 52
++C6: 10
++C7: 50
+ poly6: 4
+ v: 2
+ u: 2
+@@ -126,9 +126,9 @@
+ f: 2
+ g: 2
+ h: 2
+-D34: 3
++D34: 5
+ D35: 2
+-D36: 3
++D36: 1
+ poly14: 2.04
+ b_3: 1.98
+ a_3: 1.12712022

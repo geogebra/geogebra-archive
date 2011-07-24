@@ -1,0 +1,10 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/SVC/Area of a Triangle.out	2011-07-23 23:06:43.434646268 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/SVC/Area of a Triangle.out	2011-07-24 08:49:54.106490188 +0200
+@@ -1,5 +1,5 @@
+-A2: 13
+-A1: 9
++A2: 0
++A1: 2
+ b_1: 17
+ c: 22.02271555
+ a: 14

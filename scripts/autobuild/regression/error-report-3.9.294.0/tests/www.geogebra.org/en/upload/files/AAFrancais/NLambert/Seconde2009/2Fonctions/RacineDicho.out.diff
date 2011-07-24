@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Seconde2009/2Fonctions/RacineDicho.out	2011-07-23 22:51:35.214645930 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Seconde2009/2Fonctions/RacineDicho.out	2011-07-24 08:19:20.836490710 +0200
+@@ -1,4 +1,4 @@
+-f: If[x ≥ -1 ∧ x ≤ 1, x³ - x² + x + 1]
++f: Ha[-1 ≤ x ≤ 1, x³ - x² + x + 1]
+ A2: -1
+ B2: 0
+ A3: -1

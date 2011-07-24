@@ -1,0 +1,41 @@
+--- tests/www.geogebra.org/en/upload/files/Armando Landa/3RootsAsymtotesofFunctions.out	2011-07-23 23:03:33.774646197 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Armando Landa/3RootsAsymtotesofFunctions.out	2011-07-24 08:43:07.716490304 +0200
+@@ -1,19 +1,19 @@
+ a_{t2}: 1
+ p'_1: 1
+-p'_2: 3
+-r'_5: 0
+-r'_4: -1
+-r'_3: 2
++p'_2: 2
++r'_5: 3
++r'_4: 3
++r'_3: 3
+ r''_1: -1
+ r''_2: 5
+-n': 2
++n': 1
+ R_1: (0, 0)
+ R_2: (0, 0)
+ n'': 1
+-r'_1: -2
+-r'_2: -1
++r'_1: 2
++r'_2: -3
+ ftest2: -(x - 6)¹ (x - 3) (x - 4)
+-r''_3: 0
++r''_3: -1
+ ftest4: -(x + 2)¹ (x + 3)² (x - 4)^(-1)
+ ftest3: -(x + 2)¹ (x + 3) (x - 4)²
+ R_4: (0, 0)
+@@ -30,8 +30,8 @@
+ PAs5: (?, ?)
+ asinp4: ?x = ?
+ asinp5: ?x = ?
+-colorf: If[x ≤ 2, 1, If[x ≤ 3, 1, 0]]
+-colorg: If[x ≤ 2, 0, If[x ≤ 3, 1, 1]]
++colorf: Ha[x ≤ 2, 1, Ha[x ≤ 3, 1, 0]]
++colorg: Ha[x ≤ 2, 0, Ha[x ≤ 3, 1, 1]]
+ R1L1: (3, 0)
+ R2L1: (4, 0)
+ R3L1: (6, 0)

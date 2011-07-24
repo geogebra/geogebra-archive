@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/GEOMETRIE/Valentin.out	2011-07-23 22:48:11.744645854 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/GEOMETRIE/Valentin.out	2011-07-24 08:12:45.716490822 +0200
+@@ -65,5 +65,5 @@
+ s: (x + 15.1083)² + (y + 10.4038)² = 7.29
+ Q: (-12.88454484, -8.87248913)
+ Q': (-13.39462923, -12.49026412)
+-o: (-13.983 + 10 tan(37.9 / 100 α) cos(α), -2.6356 + 10 tan(37.9 / 100 α) sin(α))
++o: (-13.983 + 10tan(37.9 / 100 α) cos(α), -2.6356 + 10tan(37.9 / 100 α) sin(α))
+ Q'': (-16.82197077, -8.31733588)

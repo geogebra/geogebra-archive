@@ -1,0 +1,17 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/Fonctions/nombderive.out	2011-07-23 22:48:02.344645850 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/Fonctions/nombderive.out	2011-07-24 08:12:30.736490827 +0200
+@@ -1,4 +1,4 @@
+-f_1: 1.5 * 0.17 cos(0.17 x) + (0.5) 3 * 0.17 sin(3 * 0.17 x) + 0.3 * 5 * 0.17 cos(5 * 0.17 x) + (0.4) (-(7)) 0.17 sin(-7 * 0.17 x) - 0.5
++f_1: (15cos(0.17x) 0.17 + 15cos(5 (0.17) x) 0.17 + 28sin(7 (0.17) x) 0.17 + 15sin(3 (0.17) x) 0.17 + 10(-0.5)) / 10
+ T: y = -0.37640498x + 12.20814948
+ a: -0.37640498
+ N1': (14.1961508, 6.86464763)
+@@ -8,7 +8,7 @@
+ h: 8
+ b: -0.37640498
+ l: 525.67103999
+-p: -(0.45) x + 17
++p: -0.45 x + 17
+ j: 4.24508533
+ n: 6.30094268
+ q: 4.75132559

@@ -1,0 +1,6 @@
+--- tests/www.geogebra.org/en/upload/files/BORAMATE/teorema1_kalkulo_integrala_nerea.out	2011-07-23 23:24:47.144646671 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BORAMATE/teorema1_kalkulo_integrala_nerea.out	2011-07-24 08:59:25.976490026 +0200
+@@ -1,2 +1,2 @@
+ A: (0, 0)
+-f: 0.25 x²
++f: x² / 4

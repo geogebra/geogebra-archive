@@ -1,0 +1,29 @@
+--- tests/www.geogebra.org/en/upload/files/Beane/PowerSeries01.out	2011-07-23 23:25:17.254646683 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Beane/PowerSeries01.out	2011-07-24 09:00:24.366490009 +0200
+@@ -7,15 +7,15 @@
+ g6: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶
+ g7: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷
+ g8: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸
+-g10: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10
+-g11: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11
+-g12: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12
+-g13: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13
+-g14: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13 + x^14
+-g15: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13 + x^14 + x^15
+-g16: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16
+-g17: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^17
+-g18: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18
+-g19: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19
+-g20: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x^10 + x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + x^20
++g10: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰
++g11: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹
++g12: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹²
++g13: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³
++g14: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³ + x¹⁴
++g15: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³ + x¹⁴ + x¹⁵
++g16: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³ + x¹⁴ + x¹⁵ + x¹⁶
++g17: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³ + x¹⁴ + x¹⁵ + x¹⁶ + x¹⁷
++g18: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³ + x¹⁴ + x¹⁵ + x¹⁶ + x¹⁷ + x¹⁸
++g19: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³ + x¹⁴ + x¹⁵ + x¹⁶ + x¹⁷ + x¹⁸ + x¹⁹
++g20: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹ + x¹⁰ + x¹¹ + x¹² + x¹³ + x¹⁴ + x¹⁵ + x¹⁶ + x¹⁷ + x¹⁸ + x¹⁹ + x²⁰
+ g9: x⁰ + x¹ + x² + x³ + x⁴ + x⁵ + x⁶ + x⁷ + x⁸ + x⁹

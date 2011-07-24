@@ -1,0 +1,29 @@
+--- tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/korni.out	2011-07-23 23:22:02.964646611 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/korni.out	2011-07-24 08:54:36.886490108 +0200
+@@ -45,14 +45,14 @@
+ d_1: 0.3
+ f_1: 0.3
+ e_1: 0.3
+-x1: -3
+-x2: -4
++x1: -2
++x2: -3
+ x3: 4
+ zm: -
+ zn: -
+ zp: -
+ f: x³ - x² - 16 x - 20
+-d: -2
++d: -3
+ zd2: -
+ zd0: +
+ zd1: +
+@@ -61,7 +61,7 @@
+ zd: -
+ zx2: +
+ zx3: -
+-x4: 0
++x4: -1
+ za0: +
+ za1: +
+ za2: +

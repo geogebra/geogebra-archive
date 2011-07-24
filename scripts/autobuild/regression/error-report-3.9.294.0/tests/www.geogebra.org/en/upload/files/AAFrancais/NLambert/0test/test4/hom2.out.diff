@@ -1,0 +1,7 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/0test/test4/hom2.out	2011-07-23 22:51:04.044645918 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/0test/test4/hom2.out	2011-07-24 08:18:21.176490727 +0200
+@@ -0,0 +1,4 @@
++poly1: 47.31129303
++b: 11.22017381
++c: 12.64221667
++d: 8.62358713

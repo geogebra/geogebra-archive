@@ -1,0 +1,13 @@
+--- tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/Graf_Pr.out	2011-07-23 23:22:07.744646613 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BELARUS/ALGEBRA/Graf_Pr.out	2011-07-24 08:54:46.966490105 +0200
+@@ -12,8 +12,8 @@
+ надпись14: y=h(1.5(x-5.6))
+ sq: sqrt(1.5 (x - 5.6))
+ f_1: sqrt(x)
+-v: sin(1.5 x)
+-q: 1.6 sin(x)
++v: sin(1.5x)
++q: 1.6sin(x)
+ g: abs(abs(x - 5.6) + 1.3)
+ h: 1.5 (abs(x - 5.6) + 1.3)
+ p: -(abs(x - 5.6) + 1.3)

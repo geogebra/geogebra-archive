@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/Brasil/Heitor Fragoso/Polin_mio5grau.out	2011-07-23 23:27:38.054646735 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Brasil/Heitor Fragoso/Polin_mio5grau.out	2011-07-24 09:05:15.516489926 +0200
+@@ -1,5 +1,5 @@
+ A: (-1.18247816, 0)
+-B: (-0.5151615, 0)
++B: (-0.51516149, 0)
+ C: (1.08231569, 0)
+ D: (?, ?)
+ E: (?, ?)

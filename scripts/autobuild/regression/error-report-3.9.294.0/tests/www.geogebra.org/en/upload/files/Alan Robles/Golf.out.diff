@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/Alan Robles/Golf.out	2011-07-23 22:59:10.924646100 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Alan Robles/Golf.out	2011-07-24 08:35:09.586490440 +0200
+@@ -72,4 +72,4 @@
+ B74: 60°
+ B75: 60°
+ I: (0, 0)
+-f: If[x > 0 ∧ x < 254.84199796, -0.003924 x² + 1 x]
++f: Ha[0 < x < 254.84199796, -0.003924 x² + 1x]

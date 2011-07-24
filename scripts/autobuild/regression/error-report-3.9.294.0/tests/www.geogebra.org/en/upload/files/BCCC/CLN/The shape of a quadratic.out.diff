@@ -1,0 +1,12 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/The shape of a quadratic.out	2011-07-23 23:06:10.214646255 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/The shape of a quadratic.out	2011-07-24 08:48:46.156490208 +0200
+@@ -1,5 +1,5 @@
+-d: 2
++d: 1
+ f: 1
+-m: -3
+-c: -3
+-text3: y = x² + 2x - 2
++m: 3
++c: 3
++text3: y = x^{2} + 2x - 2

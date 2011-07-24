@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/Betzen/Misc./taylor_poly_sine.out	2011-07-23 23:25:41.494646691 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Betzen/Misc./taylor_poly_sine.out	2011-07-24 09:01:26.636489991 +0200
+@@ -1 +1 @@
+-f: (-1)⁰ / (2 * 0 + 1)! x^(2 * 0 + 1)
++f: (-1)⁰ / (2 (0) + 1)! x^(2 (0) + 1)

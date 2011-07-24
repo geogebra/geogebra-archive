@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/scatter sm2.out	2011-07-23 23:21:49.194646605 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/scatter sm2.out	2011-07-24 08:54:12.156490115 +0200
+@@ -1,4 +1,4 @@
+-a: 49041x - 51569y = 170323
++a: -49041x + 51569y = -170323
+ A: (1.64932487, -1.73434543)
+ B: (1.64932487, -1.73434543)
+ b: 118.19763071

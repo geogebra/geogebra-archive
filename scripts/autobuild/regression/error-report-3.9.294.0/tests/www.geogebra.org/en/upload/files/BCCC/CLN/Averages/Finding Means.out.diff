@@ -1,0 +1,47 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Averages/Finding Means.out	2011-07-23 23:04:57.174646229 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Averages/Finding Means.out	2011-07-24 08:46:26.296490247 +0200
+@@ -1,22 +1,22 @@
+-A1: 79
+-A3: 34
+-A4: 31
+-A5: 42
+-A6: 16
+-A7: 98
+-A8: 51
+-A2: 24
+-B1: 20
+-B3: 58
+-B4: 98
+-B5: 19
+-B2: 26
+-C1: 64
+-C2: 55
+-C3: 47
+-C4: 69
+-C5: 50
+-C6: 11
+-C7: 52
+-C8: 41
+-C9: 18
++A1: 5
++A3: 4
++A4: 77
++A5: 13
++A6: 1
++A7: 29
++A8: 20
++A2: 1
++B1: 88
++B3: 93
++B4: 45
++B5: 72
++B2: 6
++C1: 60
++C2: 69
++C3: 48
++C4: 25
++C5: 80
++C6: 75
++C7: 30
++C8: 14
++C9: 23

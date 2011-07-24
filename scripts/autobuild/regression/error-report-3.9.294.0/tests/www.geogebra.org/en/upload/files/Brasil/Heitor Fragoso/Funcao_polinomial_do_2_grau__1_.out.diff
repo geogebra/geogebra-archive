@@ -1,0 +1,12 @@
+--- tests/www.geogebra.org/en/upload/files/Brasil/Heitor Fragoso/Funcao_polinomial_do_2_grau__1_.out	2011-07-23 23:27:35.034646735 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Brasil/Heitor Fragoso/Funcao_polinomial_do_2_grau__1_.out	2011-07-24 09:05:08.596489928 +0200
+@@ -6,7 +6,7 @@
+ m: x = 0.375
+ B: (0.375, 0)
+ n: 3.74375
+-texto2: \frac{3}{8}
+-texto3: \frac{-599}{160}
++texto2: {\frac{3}{8}}
++texto3: {\frac{-599}{160}}
+ texto15: null
+ texto16:  A função possui Máximo

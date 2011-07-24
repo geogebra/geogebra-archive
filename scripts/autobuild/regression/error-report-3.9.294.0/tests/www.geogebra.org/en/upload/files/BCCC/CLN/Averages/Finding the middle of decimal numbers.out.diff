@@ -1,0 +1,47 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Averages/Finding the middle of decimal numbers.out	2011-07-23 23:05:00.144646229 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Averages/Finding the middle of decimal numbers.out	2011-07-24 08:46:31.846490246 +0200
+@@ -1,22 +1,22 @@
+-A1: 72
+-A3: 32
+-A4: 48
+-A5: 38
+-A6: 60
+-A7: 41
+-A8: 56
+-A2: 15
+-B1: 55
+-B3: 82
+-B4: 24
+-B5: 5
+-B2: 33
+-C1: 46
+-C2: 82
+-C3: 58
+-C4: 5
+-C5: 4
+-C6: 82
+-C7: 36
+-C8: 56
+-C9: 11
++A1: 43
++A3: 7
++A4: 7
++A5: 72
++A6: 98
++A7: 45
++A8: 13
++A2: 62
++B1: 32
++B3: 27
++B4: 2
++B5: 16
++B2: 45
++C1: 70
++C2: 12
++C3: 61
++C4: 14
++C5: 10
++C6: 51
++C7: 48
++C8: 51
++C9: 55

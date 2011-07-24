@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/ELECTRICITE/ohmmetre.out	2011-07-23 22:49:38.404645886 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/ELECTRICITE/ohmmetre.out	2011-07-24 08:15:15.866490780 +0200
+@@ -19,7 +19,7 @@
+ L: (3.4966087, 4.01298279)
+ j: -0.6552874x + 2.30880887y = 18.49392665
+ k: ?x = ?
+-N: undefined
++N: nem definiált
+ l: 0.6552874x - 2.30880887y = -6.97392665
+ m: ?x = ?
+ M: (-0.12277498, 7.97531314)

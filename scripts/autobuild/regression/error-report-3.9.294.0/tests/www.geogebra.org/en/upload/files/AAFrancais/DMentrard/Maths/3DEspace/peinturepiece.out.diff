@@ -1,0 +1,32 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/3DEspace/peinturepiece.out	2011-07-23 22:47:28.754645838 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/3DEspace/peinturepiece.out	2011-07-24 08:11:30.126490844 +0200
+@@ -51,10 +51,10 @@
+ b1_1: 3.79347897
+ s_1: 4.81261656
+ poly4: ?
+-d1: 8.73118556
+-f1: 4.81261656
+-j1: 8.73118556
+-k1: 4.81261656
++d1: ?
++f1: ?
++j1: ?
++k1: ?
+ poly5: ?
+ l1: ?
+ m1: ?
+@@ -66,10 +66,10 @@
+ s1: 3.79347897
+ t1: 8.73118556
+ poly7: ?
+-a2: 3.79347897
+-b2: 8.73118556
+-c2: 3.79347897
+-d2: 8.73118556
++a2: ?
++b2: ?
++c2: ?
++d2: ?
+ poly8: 41.49660044
+ e2: 8.73118556
+ f2: 4.81261656

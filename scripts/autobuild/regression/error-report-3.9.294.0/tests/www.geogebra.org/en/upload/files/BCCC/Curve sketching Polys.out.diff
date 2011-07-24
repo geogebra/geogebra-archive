@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/Curve sketching Polys.out	2011-07-23 23:18:59.574646542 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/Curve sketching Polys.out	2011-07-24 08:52:39.756490141 +0200
+@@ -1 +1 @@
+-text1: 0 x⁴ + 0 x³ + 0 x² + 0 x
++text1: 0x⁴ + 0x³ + 0x² + 0x

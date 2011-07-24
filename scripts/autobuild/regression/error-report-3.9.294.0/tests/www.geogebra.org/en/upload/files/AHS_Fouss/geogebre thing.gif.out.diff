@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/AHS_Fouss/geogebre thing.gif.out	2011-07-23 22:57:36.984646064 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/geogebre thing.gif.out	2011-07-24 08:31:20.896490505 +0200
+@@ -1 +1 @@
+-McCallum: -0.00012947 x⁵ + 0.00315011 x⁴ - 0.01287873 x³ - 0.1142165 x² + 0.41805943 x + 15.4696914
++McCallum: -0.00012947 x⁵ + 0.00315011x⁴ - 0.01287873x³ - 0.1142165x² + 0.41805943x + 15.4696914

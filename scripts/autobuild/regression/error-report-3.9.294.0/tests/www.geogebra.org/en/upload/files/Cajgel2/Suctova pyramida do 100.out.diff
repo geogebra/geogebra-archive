@@ -1,0 +1,14 @@
+--- tests/www.geogebra.org/en/upload/files/Cajgel2/Suctova pyramida do 100.out	2011-07-23 23:31:10.194646815 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Cajgel2/Suctova pyramida do 100.out	2011-07-24 09:13:04.837504793 +0200
+@@ -35,7 +35,7 @@
+ e_1: 0.98
+ D_1: (0, 2)
+ f_1: 1.04
+-a: 86
+-b: 80
+-c: 89
+-d: 77
++a: 56
++b: 42
++c: 79
++d: 12

@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/3DEspace/Pythagorepyramide.out	2011-07-23 22:47:02.074645828 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/3DEspace/Pythagorepyramide.out	2011-07-24 08:10:43.526490857 +0200
+@@ -35,7 +35,7 @@
+ K: (0.58224735, 1.073689)
+ L: (0.48135771, 1.51901841)
+ M: (0.27957841, 2.40967722)
+-p: 90.58359724x² + 1.50523634x y + 43.36921561y² - 142.31541104x - 17.05589626y = 179.03220307
++p: -90.58359724x² - 1.50523634x y - 43.36921561y² + 142.31541104x + 17.05589626y = -179.03220307
+ poly3: 1.89023607
+ e_3: 2.9840708
+ d_3: 3.03306217

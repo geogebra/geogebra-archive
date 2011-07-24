@@ -1,0 +1,8 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Seconde2009/2Fonctions/AnEx3.out	2011-07-23 22:51:39.864645932 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/NLambert/Seconde2009/2Fonctions/AnEx3.out	2011-07-24 08:19:32.426490707 +0200
+@@ -1,4 +1,4 @@
+-f: If[x ≥ 0 ∧ x ≤ 8, 0.5 x² + 4 x]
++f: Ha[0 ≤ x ≤ 8, 0.5x² + 4x]
+ Df: 8
+ A: (0, 0)
+ B: (0, 0)

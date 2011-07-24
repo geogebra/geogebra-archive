@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Puthoff.out	2011-07-23 22:57:10.794646054 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Puthoff.out	2011-07-24 08:30:21.366490522 +0200
+@@ -1 +1 @@
+-f: -0.02699597 x⁴ + 0.00940525 x³ + 0.15794055 x² - 0.05363892 x + 4.63308736
++f: -0.02699597 x⁴ + 0.00940525x³ + 0.15794055x² - 0.05363892x + 4.63308736

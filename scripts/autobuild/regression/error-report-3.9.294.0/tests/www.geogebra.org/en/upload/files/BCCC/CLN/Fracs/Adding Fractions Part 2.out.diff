@@ -1,0 +1,12 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Fracs/Adding Fractions Part 2.out	2011-07-23 23:05:17.614646237 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Fracs/Adding Fractions Part 2.out	2011-07-24 08:47:08.556490235 +0200
+@@ -1,6 +1,6 @@
+-B4: 9
++B4: 3
+ B8: 4
+-B5: 8
++B5: 4
+ B3: 1
+ a: 0
+-B6: 7
++B6: 2

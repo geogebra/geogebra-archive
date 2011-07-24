@@ -1,0 +1,5 @@
+--- tests/www.geogebra.org/en/upload/files/AHS_Fouss/Cocks.out	2011-07-23 22:56:14.114646034 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AHS_Fouss/Cocks.out	2011-07-24 08:28:21.206490556 +0200
+@@ -1 +1 @@
+-f: -0.0001796 x⁴ + 0.00279818 x³ - 0.01826849 x² + 0.11772865 x + 3.21334089
++f: -0.0001796 x⁴ + 0.00279818x³ - 0.01826849x² + 0.11772865x + 3.21334089

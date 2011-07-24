@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/BCCC/CLN/Brackets/Single Brackets Part 6 Self Mark.out	2011-07-23 23:05:14.774646235 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/BCCC/CLN/Brackets/Single Brackets Part 6 Self Mark.out	2011-07-24 08:47:03.016490237 +0200
+@@ -1,3 +1,3 @@
+-b: 16
+-c: 6
+-a: 5
++b: 20
++c: 11
++a: 20

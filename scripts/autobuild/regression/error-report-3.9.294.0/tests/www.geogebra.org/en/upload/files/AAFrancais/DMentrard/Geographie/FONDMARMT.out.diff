@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Geographie/FONDMARMT.out	2011-07-23 22:46:51.234645824 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Geographie/FONDMARMT.out	2011-07-24 08:10:25.266490862 +0200
+@@ -3,7 +3,7 @@
+ E: (0, 0)
+ b: y = 0
+ c: y = 0
+-aa: -10967
++aa: -930
+ d: x = -5.6
+ L: (-5.6, 0)
+ u: (0, -7.683)

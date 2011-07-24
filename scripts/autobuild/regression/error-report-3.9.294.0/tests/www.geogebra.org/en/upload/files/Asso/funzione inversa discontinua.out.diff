@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/Asso/funzione inversa discontinua.out	2011-07-23 23:04:30.784646219 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Asso/funzione inversa discontinua.out	2011-07-24 08:45:29.256490264 +0200
+@@ -1,7 +1,7 @@
+ f: 1 / (1 + ℯ^(1 / (x - 1)))
+ B: (0, 0)
+ b: x = -8.01833275
+-D: (?, ?)
++D: (-8.01833275, 0.52769294)
+ D': (?, ?)
+ A: (-8.01833275, 64.29366014)
+ A': (64.29366014, -8.01833275)

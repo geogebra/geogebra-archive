@@ -1,0 +1,41 @@
+--- tests/www.geogebra.org/en/upload/files/Armando Landa/1ParametrFunctions04April2011.out	2011-07-23 23:03:29.424646195 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Armando Landa/1ParametrFunctions04April2011.out	2011-07-24 08:42:56.246490307 +0200
+@@ -1,6 +1,6 @@
+-n': 2
+-b': -5
+-c': 1
++n': 1
++b': -1
++c': -3
+ h: x = 2
+ A: (2, 0)
+ g: x = 2
+@@ -9,9 +9,9 @@
+ seg_b: 1
+ u: (0, -1)
+ v_{ln}: (0, -1)
+-fsol: 2 (x)¹
+-colorf: If[x ≤ 1, 1, If[x ≤ 2, 1, 0]]
+-colorg: If[x ≤ 1, 0, If[x ≤ 2, 1, 1]]
++fsol: 2(x)¹
++colorf: Ha[x ≤ 1, 1, Ha[x ≤ 2, 1, 0]]
++colorg: Ha[x ≤ 1, 0, Ha[x ≤ 2, 1, 1]]
+ u': (0, -1)
+ u'': (0, -1)
+ u_{nalax}: (0, -2)
+@@ -66,11 +66,11 @@
+ P_{efe2}: (2, 4)
+ P'_{efe2}: (0, 4)
+ segPP'efe2: 2
+-n'''': 1
+-ftestlev4: 2 abs(x)¹
++n'''': 2
++ftestlev4: 2abs(x)¹
+ P4''_{crt}: (1, 2)
+ vec_{enealax4}: (0, 1)
+ segexplev4: 2.71828183
+ P4'_{crt}: (1, 0)
+-ftestlev5: 2 abs(x)¹
+-ftestlev6: 2 abs(x)¹
++ftestlev5: 2abs(x)¹
++ftestlev6: 2abs(x)¹

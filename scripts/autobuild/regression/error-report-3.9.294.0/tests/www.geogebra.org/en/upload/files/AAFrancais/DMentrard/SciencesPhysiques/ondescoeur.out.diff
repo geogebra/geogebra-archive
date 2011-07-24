@@ -1,0 +1,16 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/ondescoeur.out	2011-07-23 22:49:56.534645892 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/SciencesPhysiques/ondescoeur.out	2011-07-24 08:15:45.646490771 +0200
+@@ -1,5 +1,5 @@
+-h: 17 sin(0.5 x) (-(17 / 2) 2.71828183^(-(0.5) x²))
+-f1: 17 sin(0.5 x) (-(17 / 2) 2.71828183^(-(0.5) x²))
++h: 17sin(0.5x) (-(17 / 2) 2.71828183^(-0.5 x²))
++f1: 17sin(0.5x) (-(17 / 2) 2.71828183^(-0.5 x²))
+ A: (0, 0)
+ B: (20, -49)
+ D: (0, 0)
+@@ -16,4 +16,4 @@
+ K: (-14.85358472, 0.52247547)
+ L: (75.00924113, 0.52247547)
+ d: 89.86282585
+-p: 17 sin(0.5 (x - 10)) (-(17 / 2) 2.71828183^(-(0.5) (x - 10)²))
++p: 17sin(0.5 (x - 10)) (-(17 / 2) 2.71828183^(-0.5 (x - 10)²))

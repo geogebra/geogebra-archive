@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/Bmakri/migadikoi/sigigis.out	2011-07-23 23:26:36.864646713 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/Bmakri/migadikoi/sigigis.out	2011-07-24 09:03:10.296489962 +0200
+@@ -9,7 +9,7 @@
+ f: 0
+ e: x² + y² - 5.24x - 5.8y = -15.2744
+ B: (2.62, 2.9)
+-C: (2.62, 2.9)
++C: (?, ?)
+ g: 0
+ v: (2.62, 2.9)
+ w: (2.62, -2.9)

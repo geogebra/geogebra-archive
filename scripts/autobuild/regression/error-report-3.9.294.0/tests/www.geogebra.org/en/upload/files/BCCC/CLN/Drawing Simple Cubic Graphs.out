@@ -1,0 +1,7 @@
+d: 1
+f: 1
+m: 2
+c: -2
+text1: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y& & & & & & &  \\ \end{array}
+text3: x^{3} - 2
+text2: \begin{array}{llllllll}x&-3&-2&-1&0&1&2&3 \\ y&-29&-10&-3&-2&-1&6&10 \\ \end{array}

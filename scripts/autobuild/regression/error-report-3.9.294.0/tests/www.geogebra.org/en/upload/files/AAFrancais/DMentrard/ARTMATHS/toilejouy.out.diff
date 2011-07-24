@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/ARTMATHS/toilejouy.out	2011-07-23 22:45:18.524645790 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/ARTMATHS/toilejouy.out	2011-07-24 08:08:13.136490900 +0200
+@@ -14,5 +14,5 @@
+ g: 1.4
+ E: (-9.0605567, 11.6624319)
+ F: (-10.4605567, 11.6624319)
+-liste1: {{null, null}, {null, null}, {null, null}}
++liste1: {{Kép, Kép}, {Kép, Kép}, {Kép, Kép}}
+ G: (-9.7605567, 10.9624319)

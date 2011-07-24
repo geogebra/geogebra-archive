@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/AtelierGeom.out	2011-07-23 22:45:26.074645792 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/AtelierGeom.out	2011-07-24 08:08:27.906490896 +0200
+@@ -105,7 +105,7 @@
+ B2: (-1.74383742, -2.23648832)
+ C2: (2.38869149, 9.43341334)
+ m2: 7.89989551
+-D2: (-1.74383742, -2.23648832)
++D2: (2.39064114, -2.23579755)
+ n2: 7.8998954x + 0.00131989y = -13.77908515
+ E2: (-1.74614665, 11.58491998)
+ F2: (-1.74347784, -4.38868573)

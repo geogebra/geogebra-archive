@@ -1,0 +1,11 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/GEOMETRIE/Trihomotheti2.out	2011-07-23 22:48:09.304645852 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/GEOMETRIE/Trihomotheti2.out	2011-07-24 08:12:41.576490824 +0200
+@@ -38,7 +38,7 @@
+ c': 4.34294831
+ a': 3.13636733
+ b': 2.78460051
+-p: 0 = 0
++p: ?
+ H: (?, ?)
+ I: (?, ?)
+ u: (?, ?)

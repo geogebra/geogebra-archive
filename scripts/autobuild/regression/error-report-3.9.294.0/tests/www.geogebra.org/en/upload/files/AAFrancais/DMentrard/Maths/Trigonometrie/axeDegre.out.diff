@@ -1,0 +1,14 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/Trigonometrie/axeDegre.out	2011-07-23 22:48:49.944645868 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Maths/Trigonometrie/axeDegre.out	2011-07-24 08:13:53.366490803 +0200
+@@ -8,9 +8,9 @@
+ F: (-225, 0.71247441)
+ f: 90
+ g: 180
+-f1: 90 sin(1.57 / 90 x)
++f1: 90sin(1.57 / 90 x)
+ H: (0, 0)
+-g1: 90 sin(1.57 / 90 x)
++g1: 90sin(1.57 / 90 x)
+ a: y = 61.23986034
+ I: (-135, 61.23986034)
+ b: 110.67951924

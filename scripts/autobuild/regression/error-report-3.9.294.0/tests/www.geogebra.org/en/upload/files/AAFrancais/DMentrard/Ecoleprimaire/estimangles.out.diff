@@ -1,0 +1,9 @@
+--- tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/estimangles.out	2011-07-23 22:45:38.754645796 +0200
++++ tmp/tests/www.geogebra.org/en/upload/files/AAFrancais/DMentrard/Ecoleprimaire/estimangles.out	2011-07-24 08:08:49.706490889 +0200
+@@ -1,5 +1,5 @@
+ a: 6.43850914
+-aa: 61
++aa: 82
+ C: (-0.58002945, 4.08205364)
+ α: 76°
+ b: 6.43850914
