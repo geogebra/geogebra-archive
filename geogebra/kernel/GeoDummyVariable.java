@@ -4,7 +4,7 @@ package geogebra.kernel;
  * Dummy GeoElement to be used for symbolic variable resolving
  * for the GeoGebra CAS.
  * 
- * @see kernel.setResolveUnkownVarsAsDummyGeos();
+ * @see Kernel#setResolveUnkownVarsAsDummyGeos(boolean)
  * @author Markus Hohenwarter
  */
 public class GeoDummyVariable extends GeoNumeric {

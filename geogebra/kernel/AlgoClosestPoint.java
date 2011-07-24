@@ -12,9 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
-
 
 
 public class AlgoClosestPoint extends AlgoElement implements PathAlgo {
@@ -24,7 +21,7 @@ public class AlgoClosestPoint extends AlgoElement implements PathAlgo {
     private GeoPoint point; // input      
     private GeoPoint P; // output      
 
-    public AlgoClosestPoint(Construction cons, String label, Path path, GeoPoint point) {
+    public AlgoClosestPoint(Construction cons,  Path path, GeoPoint point) {
     	super(cons);
         this.path = path;
         this.point = point;
@@ -33,7 +30,12 @@ public class AlgoClosestPoint extends AlgoElement implements PathAlgo {
         P = new GeoPoint(cons);
         P.setPath(path);
 		setInputOutput(); // for AlgoElement	       	        
-		compute();
+		compute();		
+	}
+    
+    public AlgoClosestPoint(Construction cons, String label, Path path, GeoPoint point) {
+    	this(cons,path,point);
+      
 		P.setLabel(label);
 	}
 

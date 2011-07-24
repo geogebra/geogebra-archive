@@ -38,7 +38,11 @@ public class AlgoOrthoLinePointLine extends AlgoElement {
     private GeoLine l; // input
     private GeoLine g; // output       
 
-    /** Creates new AlgoJoinPoints */
+    /** Creates new AlgoOrthoLinePointLine 
+     * @param cons 
+     * @param label 
+     * @param P 
+     * @param l */
     AlgoOrthoLinePointLine(
         Construction cons,
         String label,
@@ -71,8 +75,8 @@ public class AlgoOrthoLinePointLine extends AlgoElement {
         input[0] = P;
         input[1] = l;
 
-        output = new GeoElement[1];
-        output[0] = g;
+        setOutputLength(1);
+        setOutput(0,g);
         setDependencies(); // done by AlgoElement
     }
 

@@ -377,10 +377,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 					pp.setT(Math.acos(Math.min(1,ha*abspx/hc_2)));
 				} else {	
 					//To solve (1-u^2)*(b*py + (a^2-b^2)*u)^2-a^2*px^2*u^2 = 0, where u = sin(theta)
-					double bpy=hb*abspy;
-					double [] eqn = {bpy*bpy, 2*bpy*hc_2, -bpy*bpy+hc_2*hc_2-ha*ha*abspx*abspx, -2*bpy*hc_2, -hc_2*hc_2 };
-					double [] roots = { 0, 0, 0 , 0};
-					eqnSolver.solveQuartic(eqn,roots);
+					double roots[] = getZeroGradientParams(abspx,abspy);
 	
 					if (roots[0]>0) {
 						pp.setT(Math.asin(roots[0]));
@@ -436,10 +433,9 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 					s=MyMath.acosh(Math.max(1,ha*abspx/hc_2));
 				} else {	
 					//To solve (1+u^2)*(-(b^2+a^2)*u +b*py)^2 - a^2*px^2, where u=sinh(t)
-					double bpy=hb*abspy;
-					double [] eqn = {bpy*bpy, -2*bpy*hc_2, bpy*bpy+hc_2*hc_2-ha*ha*abspx*abspx, -2*bpy*hc_2, hc_2*hc_2 };
-					double [] roots = { 0, 0, 0 , 0};
-					eqnSolver.solveQuartic(eqn,roots);
+
+					double [] roots = getZeroGradientParams(abspx,abspy);
+					
 	
 					if (roots[0]>0) {
 						s=MyMath.asinh(roots[0]);
@@ -509,6 +505,34 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			break;
 		}		
 	}
+	public double [] getZeroGradientParams(Coords P){
+		coordsRWtoEV(P);	
+		
+		// calc parameter 
+		double px = P.getX() / P.getZ();
+		double py = P.getY() / P.getZ();
+		double abspx = Math.abs(px);
+		double abspy = Math.abs(py);
+		return getZeroGradientParams(abspx,abspy);
+	}
+	private double[] getZeroGradientParams(double abspx,double abspy) {	
+		double ha = halfAxes[0];
+		double hb = halfAxes[1];
+		double bpy=hb*abspy;
+		double [] roots = { 0, 0, 0 , 0};
+		double [] eqn;
+		if(type == CONIC_ELLIPSE){
+			double hc_2 = ha*ha - hb*hb;	
+			eqn = new double[]{bpy*bpy, 2*bpy*hc_2, -bpy*bpy+hc_2*hc_2-ha*ha*abspx*abspx, -2*bpy*hc_2, -hc_2*hc_2 };
+		}	
+		else {	
+			double hc_2 = ha*ha + hb*hb;
+			eqn = new double[]{bpy*bpy, -2*bpy*hc_2, bpy*bpy+hc_2*hc_2-ha*ha*abspx*abspx, -2*bpy*hc_2, hc_2*hc_2 };
+		}
+			eqnSolver.solveQuartic(eqn,roots);
+			return roots;
+		}
+
 	/*
 	 * Edited by Kai Chung Tam
 	 */

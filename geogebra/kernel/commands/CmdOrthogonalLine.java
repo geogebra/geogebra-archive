@@ -1,6 +1,7 @@
 package geogebra.kernel.commands;
 
 
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
@@ -56,6 +57,17 @@ public class CmdOrthogonalLine extends CommandProcessor {
 								c.getLabel(),
 								(GeoPoint) arg[0],
 								(GeoLine) arg[1])};
+				return ret;
+			}
+			else if (
+					(ok[0] = (arg[0] .isGeoPoint()))
+					&& (ok[1] = (arg[1] .isGeoConic()))) {
+				GeoElement[] ret =
+				
+						kernel.OrthogonalLineToConic(
+								c.getLabel(),
+								(GeoPoint) arg[0],
+								(GeoConic) arg[1]);
 				return ret;
 			}
 

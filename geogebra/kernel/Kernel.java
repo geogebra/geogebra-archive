@@ -9059,4 +9059,12 @@ public class Kernel {
 	public void setInsertLineBreaks (boolean insertLineBreaks) {
 		this.insertLineBreaks = insertLineBreaks;
 	}
+
+
+	public GeoElement[] OrthogonalLineToConic(String label, GeoPoint geoPoint,
+			GeoConic conic) {
+		AlgoOrthoLinePointConic algo = new AlgoOrthoLinePointConic(cons, label, geoPoint, conic);
+		GeoElement[] lines = algo.getOutput();
+		return lines;
+	}
 }

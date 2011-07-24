@@ -1353,15 +1353,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return;
 		}				
 
+		
+
+
+        handleMovedElement(geo,selGeos.size()>1);
+
+		view.repaintEuclidianView();												
+	}
+	public void handleMovedElement(GeoElement geo, boolean multiple){
+		resetMovedGeoPoint();
 		movedGeoElement = geo;
 
-
-
-		resetMovedGeoPoint();
-
-
 		// multiple geos selected
-		if (movedGeoElement != null && selGeos.size() > 1) {									
+		if (movedGeoElement != null && multiple) {									
 			moveMode = MOVE_MULTIPLE_OBJECTS;
 			startPoint.setLocation(xRW, yRW);	
 			startLoc = mouseLoc;
@@ -1745,9 +1749,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			moveMode = MOVE_NONE;
 		}
 
-		view.repaintEuclidianView();												
 	}
-
 
 
 
@@ -2014,7 +2016,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected static int MAX_CONTINUITY_STEPS = 4; 
 
 	protected void handleMouseDragged(boolean repaint) {
-		// moveMode was set in mousePressed()
+		// moveMode was set in mousePressed()		
 		switch (moveMode) {
 		case MOVE_ROTATE:
 			rotateObject(repaint);
@@ -2126,7 +2128,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			break;	
 
-		default: // do nothing
+		default: // do nothing			
 		}
 	}		
 
@@ -5051,7 +5053,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (!hitPoint) {
 			if (selLines() == 0) {
 				addSelectedVector(hits, 1, false, GeoVector.class);
-			}
+			}			
 			if (selVectors() == 0) {
 				addSelectedLine(hits, 1, false);
 			}

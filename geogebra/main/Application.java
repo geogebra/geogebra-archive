@@ -3223,7 +3223,7 @@ public class Application implements KeyEventDispatcher {
 		System.gc();
 	}
 
-	private void updateSelection() {
+	public void updateSelection() {
 		if (!showMenuBar || !hasFullGui())
 			return;
 		

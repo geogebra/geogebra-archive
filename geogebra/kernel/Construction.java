@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
@@ -1562,7 +1563,13 @@ public class Construction {
 			redefineMap.put(oldGeo, newGeo);
 			return;
 		}			
-		
+		Application app = kernel.getApplication();
+		boolean moveMode = app.getMode() == EuclidianView.MODE_MOVE 
+			&& app.getSelectedGeos().size()>0;
+		String oldSelection = null;
+		if(moveMode){
+			oldSelection = app.getSelectedGeos().get(0).getLabel();
+		}
 		// get current construction XML
 		StringBuilder consXML = getCurrentUndoXML();
 							
@@ -1573,6 +1580,11 @@ public class Construction {
 		
 		// 4) build new construction
 		buildConstruction(consXML);
+		if(moveMode){
+			GeoElement selGeo = kernel.lookupLabel(oldSelection);
+			app.addSelectedGeo(selGeo, false);		
+			app.getEuclidianView().getEuclidianController().handleMovedElement(selGeo,false);
+		}
 	}
 	
 	

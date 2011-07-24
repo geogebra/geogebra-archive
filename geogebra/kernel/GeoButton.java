@@ -14,7 +14,6 @@
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.main.Application;
 
 
 /**

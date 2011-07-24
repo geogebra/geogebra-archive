@@ -15,16 +15,12 @@ the Free Software Foundation.
  */
 package geogebra.kernel;
 
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import geogebra.Matrix.CoordNearest;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.EllipticArcLength;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 
 /**
