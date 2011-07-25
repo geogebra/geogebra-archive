@@ -112,7 +112,7 @@ public class AlgoDependentList extends AlgoElement {
     		// if the siblings are of the same type
     		
     		AlgoElement algo = input[i].getParentAlgorithm();
-    		if (algo != null && algo.getOutput().length>1 && algo.hasSingleOutputType()) {
+    		if (algo != null && algo.getOutputLength()>1 && algo.hasSingleOutputType()) {
     			// all siblings have same type: add them all
     			for (int k=0; k < algo.getOutputLength(); k++) {
     				GeoElement geo = algo.getOutput(k);
