@@ -53,7 +53,14 @@ cd $DIRNAME
 
 # 2. Zipping:
 cp ../../../../build/unpacked/* .
-cd ..
+
+# Creating (and overwriting) unsigned directory:
+mkdir -p unsigned
+cd unsigned
+rm -fR *
+cp ../../../../../build/unsigned/unpacked/* .
+
+cd ../..
 rm -f $DIRNAME.zip # deleting if a previous version already exists
 zip -r $DIRNAME.zip $DIRNAME >> /dev/null
 chmod g+w $DIRNAME.zip
