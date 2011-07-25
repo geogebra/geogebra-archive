@@ -396,7 +396,12 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure arg(z); atan2(repart(z),impart(z));");
 		mpreduce.evaluate("procedure complexpolar(r,phi); r*(cos(phi)+i*sin(phi));");
 		mpreduce.evaluate("procedure complexexponential(r,phi); r*(cos(phi)+i*sin(phi));");
-
+		
+		mpreduce.evaluate("procedure mkdepthone(liste);" +
+				"	for each x in liste join " +
+				"	if arglength(x)>-1 and part(x,0)='list then" +
+				"	mkdepthone(x) else {x};");
+		
 		mpreduce.evaluate("procedure listtocolumnvector(list); "
 				+ "begin scalar lengthoflist; "
 				+ "lengthoflist:=length(list); "

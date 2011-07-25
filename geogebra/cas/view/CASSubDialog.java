@@ -282,11 +282,9 @@ public class CASSubDialog extends JDialog implements ActionListener {
 				}
 				fromExpr=casView.resolveCASrowReferences(fromExpr, editRow);
 				toExpr=casView.resolveCASrowReferences(toExpr, editRow);
-				substList.append('{');
 				substList.append(fromExpr);
-				substList.append(',');
+				substList.append('=');
 				substList.append(toExpr);
-				substList.append('}');
 				substComment.append(fromExpr);
 				substComment.append('=');
 				substComment.append(toExpr);
@@ -298,9 +296,9 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		boolean keepInput = true;
 		
 		// substitute command
-		String subCmd = "SubstituteParallel[" + substList + "," +evalText +"]";
-		if (actionCommand.equals("Evaluate")) {
-			subCmd = "Simplify[" + subCmd + "]"; 
+		String subCmd = "Substitute[" + evalText + "," + substList + "]";
+		if (actionCommand.equals("Substitute")) {
+			subCmd = "SubstituteHold[" + evalText + "," + substList + "]"; 
 			keepInput = false;
 		}
 		else if (actionCommand.equals("Numeric")) {
