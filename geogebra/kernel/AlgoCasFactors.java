@@ -61,13 +61,14 @@ public class AlgoCasFactors extends AlgoElement {
         }    
 
 	    try {
-		    String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true);
+	    	String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
 		    sb.setLength(0);
-		    sb.append("factorize(");
+		    sb.append("Numeric(Factor(");
 		    sb.append(functionIn);
-		    sb.append(")");
+		    sb.append("))");
 	        // cached evaluation of MPReduce as we are only using variable values
-			String listOut = kernel.evaluateMPReduce(sb.toString(), true);	    
+			String listOut = kernel.evaluateCachedGeoGebraCAS(sb.toString());	
+				   
 			if (listOut == null || listOut.length()==0) {
 				g.setUndefined(); 
 			}

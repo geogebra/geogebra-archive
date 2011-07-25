@@ -8,6 +8,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
+import geogebra.util.MaxSizeHashMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -204,7 +205,7 @@ public class GeoGebraCAS {
 	
 
 	// these variables are cached to gain some speed in getPolynomialCoeffs
-	private Map<String, String[]> getPolynomialCoeffsCache = new HashMap<String, String[]>(64);
+	private Map<String, String[]> getPolynomialCoeffsCache = new MaxSizeHashMap<String, String[]>(Kernel.GEOGEBRA_CAS_CACHE_SIZE);
 	private StringBuilder getPolynomialCoeffsSB = new StringBuilder();
 	private StringBuilder sbPolyCoeffs = new StringBuilder();
 	

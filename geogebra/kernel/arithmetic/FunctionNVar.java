@@ -18,6 +18,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.MaxSizeHashMap;
 import geogebra.util.MyMath;
 
 import java.util.HashMap;
@@ -574,7 +575,7 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 				// see http://www.geogebra.org/trac/ticket/929
 				geoVars = expression.getVariables();
 				expression.introduceLocalVariableNames(geoVars);
-				casEvalStringSymbolic = expression.getCASstring(kernel.getCurrentCAS(), true);
+				casEvalStringSymbolic = expression.getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
 			}
 
 			// caching should only be done if the expression doesn't contain
@@ -591,7 +592,7 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 		// build command string for CAS
 		String expString = symbolic ? 
 				casEvalStringSymbolic : 
-				expression.getCASstring(kernel.getCurrentCAS(), false);
+				expression.getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 
 		// substitute % by expString in ggbCasCmd
 		String casString = ggbCasCmd.replaceAll("%", expString);
@@ -609,15 +610,10 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 			}
 			
 			// evaluate expression by CAS
-			String result = kernel.evaluateGeoGebraCAS(casString);
+			String result = symbolic ?
+					kernel.evaluateGeoGebraCAS(casString) :  // symbolic
+					kernel.evaluateCachedGeoGebraCAS(casString); // value string
 			//System.out.println("evaluateGeoGebraCAS: " + casString + " -> " + result);
-
-//			if (ggbCasCmd.startsWith("Derivative")) {
-//				// MathPiper may return Deriv(x) f(x,y) if it doesn't know
-//				// f(x,y)
-//				// this should be converted into Derivative[f(x,y), x]
-//				result = handleDeriv(result);
-//			}
 
 			// parse CAS result back into GeoGebra
 			sb.setLength(0);
@@ -651,8 +647,10 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 		}
 
 		// cache result
-		if (useCaching && resultFun != null)
+		if (useCaching && resultFun != null) {
 			getCasEvalMap().put(casString, resultFun);
+		}
+			
 
 		// System.out.println("NO caching: " + casString + " -> " + resultFun);
 
@@ -662,9 +660,9 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 	private ExpressionNode casEvalExpression;
 	private String casEvalStringSymbolic;
 
-	private HashMap<String, FunctionNVar> getCasEvalMap() {
+	private MaxSizeHashMap<String, FunctionNVar> getCasEvalMap() {
 		if (casEvalMap == null) {
-			casEvalMap = new HashMap<String, FunctionNVar>();
+			casEvalMap = new MaxSizeHashMap<String, FunctionNVar>(MAX_CAS_EVAL_MAP_SIZE);
 		}
 		return casEvalMap;
 	}
@@ -698,7 +696,8 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 //		}
 //	}
 
-	private HashMap<String, FunctionNVar> casEvalMap;
+	private final static int MAX_CAS_EVAL_MAP_SIZE = 100;
+	private MaxSizeHashMap<String, FunctionNVar> casEvalMap;
 
 	/**
 	 * MathPiper may return something like Deriv(x) f(x). This method converts

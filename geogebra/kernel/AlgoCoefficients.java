@@ -72,7 +72,7 @@ public class AlgoCoefficients extends AlgoElement {
         sb.append(")");
 		String functionOut;
 		try {
-			functionOut = kernel.evaluateGeoGebraCAS(sb.toString());
+			functionOut = kernel.evaluateCachedGeoGebraCAS(sb.toString());
 			g.set(kernel.getAlgebraProcessor().evaluateToList(functionOut));	
 			g.setDefined(true);	
 		} catch (Throwable e) {

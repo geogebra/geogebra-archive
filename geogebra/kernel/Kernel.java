@@ -46,110 +46,12 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
-import geogebra.kernel.statistics.AlgoANOVA;
-import geogebra.kernel.statistics.AlgoBernoulliBarChart;
-import geogebra.kernel.statistics.AlgoBinomialDist;
-import geogebra.kernel.statistics.AlgoBinomialDistBarChart;
-import geogebra.kernel.statistics.AlgoCauchy;
-import geogebra.kernel.statistics.AlgoChiSquared;
-import geogebra.kernel.statistics.AlgoDoubleListCovariance;
-import geogebra.kernel.statistics.AlgoDoubleListPMCC;
-import geogebra.kernel.statistics.AlgoDoubleListSXX;
-import geogebra.kernel.statistics.AlgoDoubleListSXY;
-import geogebra.kernel.statistics.AlgoDoubleListSigmaXX;
-import geogebra.kernel.statistics.AlgoDoubleListSigmaXY;
-import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
-import geogebra.kernel.statistics.AlgoExponential;
-import geogebra.kernel.statistics.AlgoFDistribution;
-import geogebra.kernel.statistics.AlgoFit;
-import geogebra.kernel.statistics.AlgoFitExp;
-import geogebra.kernel.statistics.AlgoFitGrowth;
-import geogebra.kernel.statistics.AlgoFitLineX;
-import geogebra.kernel.statistics.AlgoFitLineY;
-import geogebra.kernel.statistics.AlgoFitLog;
-import geogebra.kernel.statistics.AlgoFitLogistic;
-import geogebra.kernel.statistics.AlgoFitNL;
-import geogebra.kernel.statistics.AlgoFitPoly;
-import geogebra.kernel.statistics.AlgoFitPow;
-import geogebra.kernel.statistics.AlgoFitSin;
-import geogebra.kernel.statistics.AlgoGamma;
-import geogebra.kernel.statistics.AlgoGeometricMean;
-import geogebra.kernel.statistics.AlgoHarmonicMean;
-import geogebra.kernel.statistics.AlgoHyperGeometric;
-import geogebra.kernel.statistics.AlgoHyperGeometricBarChart;
-import geogebra.kernel.statistics.AlgoInverseBinomial;
-import geogebra.kernel.statistics.AlgoInverseCauchy;
-import geogebra.kernel.statistics.AlgoInverseChiSquared;
-import geogebra.kernel.statistics.AlgoInverseExponential;
-import geogebra.kernel.statistics.AlgoInverseFDistribution;
-import geogebra.kernel.statistics.AlgoInverseGamma;
-import geogebra.kernel.statistics.AlgoInverseHyperGeometric;
-import geogebra.kernel.statistics.AlgoInverseNormal;
-import geogebra.kernel.statistics.AlgoInversePascal;
-import geogebra.kernel.statistics.AlgoInversePoisson;
-import geogebra.kernel.statistics.AlgoInverseTDistribution;
-import geogebra.kernel.statistics.AlgoInverseWeibull;
-import geogebra.kernel.statistics.AlgoInverseZipf;
-import geogebra.kernel.statistics.AlgoListCovariance;
-import geogebra.kernel.statistics.AlgoListMeanX;
-import geogebra.kernel.statistics.AlgoListMeanY;
-import geogebra.kernel.statistics.AlgoListPMCC;
-import geogebra.kernel.statistics.AlgoListSDX;
-import geogebra.kernel.statistics.AlgoListSDY;
-import geogebra.kernel.statistics.AlgoListSXX;
-import geogebra.kernel.statistics.AlgoListSXY;
-import geogebra.kernel.statistics.AlgoListSYY;
-import geogebra.kernel.statistics.AlgoListSampleSDX;
-import geogebra.kernel.statistics.AlgoListSampleSDY;
-import geogebra.kernel.statistics.AlgoListSigmaXX;
-import geogebra.kernel.statistics.AlgoListSigmaXY;
-import geogebra.kernel.statistics.AlgoListSigmaYY;
-import geogebra.kernel.statistics.AlgoMean;
-import geogebra.kernel.statistics.AlgoMedian;
-import geogebra.kernel.statistics.AlgoMode;
-import geogebra.kernel.statistics.AlgoNormal;
-import geogebra.kernel.statistics.AlgoOrdinalRank;
-import geogebra.kernel.statistics.AlgoPascal;
-import geogebra.kernel.statistics.AlgoPascalBarChart;
-import geogebra.kernel.statistics.AlgoPercentile;
-import geogebra.kernel.statistics.AlgoPoisson;
-import geogebra.kernel.statistics.AlgoPoissonBarChart;
-import geogebra.kernel.statistics.AlgoProduct;
-import geogebra.kernel.statistics.AlgoQ1;
-import geogebra.kernel.statistics.AlgoQ3;
-import geogebra.kernel.statistics.AlgoRSquare;
-import geogebra.kernel.statistics.AlgoRandom;
-import geogebra.kernel.statistics.AlgoRandomBinomial;
-import geogebra.kernel.statistics.AlgoRandomNormal;
-import geogebra.kernel.statistics.AlgoRandomPoisson;
-import geogebra.kernel.statistics.AlgoRandomUniform;
-import geogebra.kernel.statistics.AlgoRootMeanSquare;
-import geogebra.kernel.statistics.AlgoSXX;
-import geogebra.kernel.statistics.AlgoSample;
-import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
-import geogebra.kernel.statistics.AlgoSampleVariance;
-import geogebra.kernel.statistics.AlgoShuffle;
-import geogebra.kernel.statistics.AlgoSigmaXX;
-import geogebra.kernel.statistics.AlgoSpearman;
-import geogebra.kernel.statistics.AlgoStandardDeviation;
-import geogebra.kernel.statistics.AlgoSum;
-import geogebra.kernel.statistics.AlgoSumSquaredErrors;
-import geogebra.kernel.statistics.AlgoTDistribution;
-import geogebra.kernel.statistics.AlgoTMean2Estimate;
-import geogebra.kernel.statistics.AlgoTMeanEstimate;
-import geogebra.kernel.statistics.AlgoTTest;
-import geogebra.kernel.statistics.AlgoTTest2;
-import geogebra.kernel.statistics.AlgoTTestPaired;
-import geogebra.kernel.statistics.AlgoTiedRank;
-import geogebra.kernel.statistics.AlgoVariance;
-import geogebra.kernel.statistics.AlgoWeibull;
-import geogebra.kernel.statistics.AlgoZipf;
-import geogebra.kernel.statistics.RegressionMath;
+import geogebra.kernel.statistics.*;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.MaxSizeHashMap;
 import geogebra.util.ScientificFormat;
 import geogebra.util.Unicode;
-import geogebra3D.kernel3D.AlgoPolyLine3D;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -184,6 +86,9 @@ public class Kernel {
 	public final static double MAX_DOUBLE_PRECISION = 1E-15;
 	/** reciprocal of maximum precision of double numbers */
 	public final static double INV_MAX_DOUBLE_PRECISION = 1E15;	
+	
+	// maximum CAS results cached
+	public static int GEOGEBRA_CAS_CACHE_SIZE = 500;
 	
 	 // style of point/vector coordinates
 	/** A = (3, 2)  and 	B = (3; 90���)*/
@@ -525,19 +430,59 @@ public class Kernel {
      * @return result string (null possible)
 	 * @throws Throwable 
      */
-	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
+	final public String evaluateGeoGebraCAS(String exp) throws Throwable {		
+		return evaluateGeoGebraCAS(exp, false);
+	}	
+	
+	/** 
+	 * Evaluates an expression in GeoGebraCAS syntax where the cache or previous
+	 * evaluations is used. Make sure to only use this method when exp only includes 
+	 * values and no (used) variable names.
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	final public String evaluateCachedGeoGebraCAS(String exp) throws Throwable {		
+		return evaluateGeoGebraCAS(exp, true);
+	}	
+	
+	/** 
+	 * Evaluates an expression in GeoGebraCAS syntax with.
+     * @param useCaching only set to true when exp only includes values and no (used) variable names
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	private String evaluateGeoGebraCAS(String exp, boolean useCaching) throws Throwable {
+		String result = null;
+		if (useCaching && ggbCasCache != null) {
+			result = ggbCasCache.get(exp);
+			if (result != null) {
+				// caching worked
+				// TODO: remove
+				System.out.println("used ggbCasCache: " + exp + " -> " + result);
+				return result;
+			}
+		}
+		
+		// evaluate in GeoGebraCAS
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
+		result = ggbCAS.evaluateGeoGebraCAS(exp);
 		
-		return ggbCAS.evaluateGeoGebraCAS(exp);
+		if (useCaching) {
+			if (ggbCasCache == null)
+				ggbCasCache = new MaxSizeHashMap<String, String>(GEOGEBRA_CAS_CACHE_SIZE);
+			ggbCasCache.put(exp, result);
+		}
+		return result;
 	}	
+	private MaxSizeHashMap<String, String> ggbCasCache;
 	
 	/** 
 	 * Evaluates an expression in MathPiper syntax with.
      * @return result string (null possible)
 	 * @throws Throwable 
-	 * @deprecated since GeoGebra 4.0
+	 * @deprecated since GeoGebra 4.0, use evaluateGeoGebraCAS() instead
      */
 	final public String evaluateMathPiper(String exp) {
 		if (ggbCAS == null) {
@@ -551,6 +496,7 @@ public class Kernel {
 	 * Evaluates an expression in Maxima syntax with.
      * @return result string (null possible)
 	 * @throws Throwable 
+	 * @deprecated since GeoGebra 4.0, use evaluateGeoGebraCAS() instead
      */
 	final public String evaluateMaxima(String exp) {
 		if (ggbCAS == null) {
@@ -559,48 +505,6 @@ public class Kernel {
 		
 		return ggbCAS.evaluateMaxima(exp);
 	}	
-	
-	/** 
-	 * Evaluates an expression in MPReduce syntax with.
-     * @return result string (null possible)
-	 * @throws Throwable 
-     */
-	final public String evaluateMPReduce(String exp) {
-		return evaluateMPReduce(exp, false);
-	}	
-	
-	/** 
-	 * Evaluates an expression in MPReduce syntax with.
-     * @return result string (null possible)
-	 * @throws Throwable 
-     */
-	final public String evaluateMPReduce(String exp, boolean useCaching) {
-		String result = null;
-		if (useCaching && mpReduceCache != null) {
-			result = mpReduceCache.get(exp);
-			if (result != null) {
-				// caching worked
-				// TODO: remove
-				System.out.println("used mpReduceCache: " + exp + " -> " + result);
-				return result;
-			}
-		}
-		
-		if (ggbCAS == null) {
-			getGeoGebraCAS();		
-		}
-		
-		// evaluate
-		result = ggbCAS.evaluateMPReduce(exp);
-		
-		if (useCaching) {
-			if (mpReduceCache == null)
-				mpReduceCache = new HashMap<String, String>();
-			mpReduceCache.put(exp, result);			
-		}
-		return result;
-	}	
-	private HashMap<String, String> mpReduceCache;
 			
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;

@@ -64,16 +64,16 @@ public class AlgoCasPolynomialDiv extends AlgoElement {
         }    
 
 	    try {
-	    	String functionIn1 = f1.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true);
-	 	    String functionIn2 = f2.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true);
+	    	String functionIn1 = f1.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
+	 	    String functionIn2 = f2.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
 	 	    sb.setLength(0);
-	        sb.append("div(");
+	        sb.append("Div(");
 	        sb.append(functionIn1);
 	        sb.append(",");
 	        sb.append(functionIn2);
 	        sb.append(")");
 	        // cached evaluation of MPReduce as we are only using variable values
-	 		String functionOut = kernel.evaluateMPReduce(sb.toString(), true);  
+	 		String functionOut = kernel.evaluateCachedGeoGebraCAS(sb.toString());  
 			if (functionOut == null || functionOut.length()==0) {
 				g.setUndefined(); 
 			}

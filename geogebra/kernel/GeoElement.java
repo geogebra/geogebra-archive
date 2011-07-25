@@ -5002,14 +5002,14 @@ public abstract class GeoElement
 		// use CAS to check f - g = 0
 		try {
 			StringBuilder diffSb = new StringBuilder();
-			diffSb.append(getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true));
+			diffSb.append(getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true));
 			diffSb.append("-(");
-			diffSb.append(f.getFormulaString(ExpressionNode.STRING_TYPE_MPREDUCE, true));
+			diffSb.append(f.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true));
 			diffSb.append(")");
-			String diff = kernel.evaluateMPReduce(diffSb.toString());
+			String diff = kernel.evaluateGeoGebraCAS(diffSb.toString());
 			return ("0".equals(diff));
 		}
-		catch (Exception e) { 
+		catch (Throwable e) { 
 			return false; 
 		}		
 	}
