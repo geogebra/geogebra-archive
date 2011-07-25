@@ -224,7 +224,7 @@ public class AlgoMirror extends AlgoTransformation {
         	return new GeoList(cons);
 		return geo.copy();
 	}
-    
+    private  AlgoClosestPoint pt;
     protected void transformLimitedPath(GeoElement a,GeoElement b){
     	if(mirror != mirrorConic){
     		super.transformLimitedPath(a, b);
@@ -282,28 +282,29 @@ public class AlgoMirror extends AlgoTransformation {
 			setTransformedObject(a,b);
 		}
 		if(a instanceof GeoConicPart){
+			if(pt==null){
+				pt = new AlgoClosestPoint(cons,arc,transformedPoint);
+				cons.removeFromConstructionList(pt);
+			}
 			transformedPoint.removePath();
 			setTransformedObject(
 					((GeoConicPart)a).getPointParam(0),transformedPoint
 			);
 			compute();
-			Application.debug("startbefore"+transformedPoint);
-			arc.pathChanged(transformedPoint);
-			transformedPoint.updateCoords();
+			Application.debug("startbefore"+transformedPoint);						
+			transformedPoint.updateCascade();
 			Application.debug("start"+transformedPoint);
-			double d = transformedPoint.getPathParameter().getT();
+			double d = pt.getP().getPathParameter().getT();
 			transformedPoint.removePath();
 			setTransformedObject(
 					((GeoConicPart)a).getPointParam(1),transformedPoint
 			);
 			compute();
-			//Application.debug("endbefore"+transformedPoint);
-			arc.pathChanged(transformedPoint);
-			transformedPoint.updateCoords();
+			transformedPoint.updateCascade();
 			//Application.debug("end"+transformedPoint);			
-			double e = transformedPoint.getPathParameter().getT();
+			double e = pt.getP().getPathParameter().getT();
 			Application.debug(d+","+e);
-			//arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,true);
+			arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,true);
 			setTransformedObject(a,b);
 			//TODO transform for conic part
 		}
