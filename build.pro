@@ -66,7 +66,7 @@
 }
 
 # Keep Moodle plugin
--keep class geogebra.moodle.GeoGebraMoodleApplet {
+-keep class geogebra.GeoGebraMoodleApplet {
     public <methods>;
 }
 
