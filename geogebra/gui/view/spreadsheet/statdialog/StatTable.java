@@ -5,6 +5,7 @@ import geogebra.main.GeoGebraColorConstants;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 
@@ -52,6 +53,7 @@ public class StatTable extends JScrollPane {
 		this.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new Corner());
 		((JPanel)this.getCorner(ScrollPaneConstants.UPPER_LEFT_CORNER)).
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1,TABLE_GRID_COLOR));
+		
 
 	} 
 
@@ -78,6 +80,9 @@ public class StatTable extends JScrollPane {
 					((JViewport) p).setBackground(getBackground());
 				}
 			}
+			
+			
+			
 			
 		};
 
@@ -179,7 +184,8 @@ public class StatTable extends JScrollPane {
 				rowHeader.setFixedCellHeight(statTable.getRowHeight());
 			}
 			
-			statTable.getTableHeader().setFont(font);
+			if(statTable.getTableHeader() != null)	
+				statTable.getTableHeader().setFont(font);
 		}
 	}
 
@@ -214,16 +220,16 @@ public class StatTable extends JScrollPane {
 		// set the new column width
 		if (tempWidth == -1) {
 			// column is empty
-			prefWidth = defaultColumnWidth
-			- table.getIntercellSpacing().width;
+			prefWidth = defaultColumnWidth- table.getIntercellSpacing().width;
 		} else {
+			
 			prefWidth = Math.max(prefWidth, tableColumn.getMinWidth());
+			//System.out.println("pref width: " + prefWidth);
 		}
 		table.getTableHeader().setResizingColumn(tableColumn);
 		tableColumn.setWidth(prefWidth
 				+ table.getIntercellSpacing().width);
 	}
-
 
 
 
