@@ -53,7 +53,7 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
-		sb.append("<<hold!°:=0$ numeric!°:=0$ off complex, rounded, numval, factor$ on pri$ ");
+		sb.append("<<hold!°:=0$ numeric!°:=0$ off complex, rounded, numval, factor, div$ on pri$ ");
 		//sb.append("<<off complex, factor$ ");
 		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
 		sb.append(">>");
@@ -233,10 +233,35 @@ public class CASmpreduce extends CASgeneric {
 		// ARBVARS introduces arbitrary new variables when solving singular systems of equations
 		mpreduce.evaluate("off arbvars;");
 
+
 		mpreduce.evaluate("off numval;");
 		mpreduce.evaluate("precision 16;");
 		mpreduce.evaluate("linelength 50000;");
 		mpreduce.evaluate("scientific_notation {16,5};");
+		
+		mpreduce.evaluate("let {" +
+				"int(~w/~x,~x) => w*log(abs(x)) when freeof(w,x)," +
+				"int(~w/(~x+~a),~x) => w*log(abs(x+a)) when freeof(w,x) and freeof(a,x)," +
+				"int((~b*~x+~w)/(~x+~a),~x) => int((b*xw)/(x+a),x)+w*log(abs(x+a)) when freeof(w,x) and freeof(a,x) and freeof(b,x)," +
+				"int((~a*~x+~w)/~x,~x) => int(a,x)+w*log(abs(x)) when freeof(w,x) and freeof(a,x)," +
+				"int((~x+~w)/~x,~x) => x+w*log(abs(x)) when freeof(w,x)," +
+				"int(tan(~x),~x) => log(abs(sec(x)))," +
+				"int(~w*tan(~x),~x) => w*log(abs(sec(x))) when freeof(w,x)," +
+				"int(~w+tan(~x),~x) => int(w,x)+log(abs(sec(x)))," +
+				"int(~a+~w*tan(~x),~x) => int(a,x)+w*log(abs(sec(x))) when freeof(w,x)," +
+				"int(cot(~x),~x) => log(abs(sin(x)))," +
+				"int(~w*cot(~x),~x) => w*log(abs(sin(x))) when freeof(w,x)," +
+				"int(~a+cot(~x),~x) => int(a,x)+log(abs(sin(x)))," +
+				"int(~a+~w*cot(~x),~x) => int(a,x)+w*log(abs(sin(x))) when freeof(w,x)," +
+				"int(sec(~x),~x) => -log(abs(tan(x / 2) - 1)) + log(abs(tan(x / 2) + 1))," +
+				"int(~w*sec(~x),~x) => -log(abs(tan(x / 2) - 1))*w + log(abs(tan(x / 2) + 1) )*w when freeof(w,x)," +
+				"int(~w+sec(~x),~x) => -log(abs(tan(x / 2) - 1)) + log(abs(tan(x / 2) + 1) )+int(w,x)," +
+				"int(~a+w*sec(~x),~x) => -log(abs(tan(x / 2) - 1))*w + log(abs(tan(x / 2) + 1) )*w+int(a,x) when freeof(w,x)," +
+				"int(csc(~x),~x) => log(abs(tan(x / 2)))," +
+				"int(~w*csc(~x),~x) => w*log(abs(tan(x / 2))) when freeof(w,x)," +
+				"int(~w+csc(~x),~x) => int(w,x)+log(abs(tan(x / 2)))," +
+				"int(~a+~w*csc(~x),~x) => int(a,x)+w*log(abs(tan(x / 2))) when freeof(w,x)};"
+				);
 		
 		// bugfix for reduce, will be removed when the bug is fixed in reduce ( :rd: - problem)
 		mpreduce.evaluate("symbolic procedure xprint(u,flg);"
