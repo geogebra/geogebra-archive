@@ -63,7 +63,7 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         }    
         
         ExpressionNode root = f.getFunctionExpression();
-        Application.debug((root.operation == ExpressionNode.DIVIDE)+"");
+        //Application.debug((root.operation == ExpressionNode.DIVIDE)+"");
 		
 	    sb.setLength(0);
 	    sb.append("{");

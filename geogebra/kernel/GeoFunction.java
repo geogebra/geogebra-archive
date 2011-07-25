@@ -1039,7 +1039,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @return the limit
 	 */
 	public double getLimit(double x, int direction) {
-   	String functionIn = fun.getExpression().getCASstring(kernel.getCurrentCAS(), true);	    
+   	String functionIn = fun.getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, true);	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    sb.setLength(0);
@@ -1131,7 +1131,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
      * @param positiveInfinity if true, we look for limit at positive infinity, for false, we use negative infinity
      */
     protected void getDiagonalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionIn = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
+    	String functionIn = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
 	    
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
@@ -1204,7 +1204,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
      * @param positiveInfinity if true, we look for limit at positive infinity, for false, we use negative infinity
      */
     protected void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionStr = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
+    	String functionStr = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
         sb.append("Limit(");
@@ -1212,7 +1212,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
         sb.append(',');
         if (!positiveInfinity) sb.append('-'); // -Infinity
         sb.append(Unicode.Infinity);
-        sb.append(')');
+        sb.append(")");
 
         try {
 			String limit = kernel.evaluateGeoGebraCAS(sb.toString()).trim();
@@ -1250,22 +1250,18 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
      */
     protected void getVerticalAsymptotesStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder verticalSB, boolean reverseCondition) {
     	
-    	String functionStr = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
+    	String functionStr = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
     	// solve 1/f(x) == 0 to find vertical asymptotes
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    
-        sb.append("Solve(SimplifyFull(1/(");
-        
+        sb.append("Solve(1/(");        
         sb.append(functionStr);
-        sb.append(")))");
+        sb.append("))");
         
         try {
-
 			String verticalAsymptotes = kernel.evaluateGeoGebraCAS(sb.toString());
-			
-			//Application.debug("solutions: "+verticalAsymptotes);
-			
+			//Application.debug("solutions: "+verticalAsymptotes);			
 	    	
 	    	if (!f.CASError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
 			
@@ -1306,11 +1302,11 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		    		if (!repeat && isInRange) {
 		    		
 			    		sb.setLength(0);
-			            sb.append("Limit(");
+			            sb.append("Numeric(Limit(");
 			            sb.append(functionStr);
 			            sb.append(",");
 			            sb.append(verticalAsymptotesArray[i]);
-			            sb.append(")");
+			            sb.append("))");
 	
 			            try {
 			     		String limit = kernel.evaluateGeoGebraCAS(sb.toString());
