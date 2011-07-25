@@ -9,7 +9,7 @@
  * the Free Software Foundation.
  */
 
-package geogebra.moodle;
+package geogebra;
 
 import edu.xtec.adapter.Adapter;
 import edu.xtec.adapter.AdapterFactory;
