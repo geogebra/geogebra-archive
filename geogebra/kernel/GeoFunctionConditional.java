@@ -20,6 +20,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 
@@ -312,8 +313,9 @@ public class GeoFunctionConditional extends GeoFunction {
 	}
 	
 	private String toString(boolean symbolic) {
-		if (!isDefined())
-			return app.getPlain("Undefined");
+		Application.debug("here");
+		//if (!isDefined())
+			//return app.getPlain("Undefined");
 		
 		// for CAS, translate to CAS format :)
 		if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MPREDUCE
@@ -461,6 +463,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	}
 
 	public String conditionalLaTeX(boolean substituteNumbers) {
+		Application.debug("here");
 		StringBuilder sb = new StringBuilder();
 		
 		if (getElseFunction() == null && !ifFun.isGeoFunctionConditional()) {
@@ -573,6 +576,11 @@ public class GeoFunctionConditional extends GeoFunction {
 			return ret;
 		}
 	}
+	
+	public String toOutputValueString() {
+		return toValueString();
+		
+	}	
 
 
 }
