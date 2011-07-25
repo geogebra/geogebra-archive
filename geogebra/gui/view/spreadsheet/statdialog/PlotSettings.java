@@ -13,6 +13,9 @@ public class PlotSettings {
 	public double yAxesInterval = 1;
 	public boolean yAxesIntervalAuto = true;
 	
+	public double[] gridInterval = {1,1};
+	public boolean gridIntervalAuto = true;
+	
 	public int pointCaptureStyle = EuclidianView.POINT_CAPTURING_OFF;
 	
 	public boolean showYAxis = false;

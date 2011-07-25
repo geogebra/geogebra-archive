@@ -2,6 +2,8 @@ package geogebra.gui.view.probcalculator;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.view.probcalculator.ProbabilityCalculator.ListSeparatorRenderer;
 import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.gui.virtualkeyboard.MyTextField;
@@ -36,12 +38,16 @@ import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -78,9 +84,9 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	// GUI 
-	private JButton btnClose, btnOptions, btnExport, btnDisplay;
-	private JComboBox comboDistribution;
-	private JComboBox comboProbType;
+	private PopupMenuButton btnOptions;
+	private JButton btnClose, btnExport, btnDisplay;
+	private JComboBox comboDistribution, comboProbType, comboRounding;
 	private JTextField[] fldParmeterArray;
 	private JTextField fldLow,fldHigh,fldResult;
 	private JLabel[] lblParmeterArray;
@@ -124,7 +130,31 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	private ArrayList<GeoElement> pointList;
 
+	private ListSeparatorRenderer comboRenderer;
 
+
+	private HashMap<Integer, String> distributionMap;
+
+	private HashMap<String, Integer> reverseDistributionMap;
+
+	private JMenu menuDecimalPlaces;
+
+	private int printDecimals = 4;
+
+	public int getPrintDecimals() {
+		return printDecimals;
+	}
+	public int getPrintFigures() {
+		return printFigures;
+	}
+
+
+	private int printFigures = -1;	
+	
+	
+	
+	
+	
 
 	// colors
 	private static final Color COLOR_PDF = GeoGebraColorConstants.DARKBLUE;
@@ -151,7 +181,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		cons = kernel.getConstruction();
 
 		probManager = new ProbabilityManager(app, this);
-
+		plotSettings = new PlotSettings();	
 		plotGeoList = new ArrayList<GeoElement>();
 
 		initGUI();
@@ -190,28 +220,36 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		try {		
 
-
+			comboRenderer = new ListSeparatorRenderer();
+			
 			// create the button panel for the bottom of the dialog
 			//=====================================================
 			btnClose = new JButton(app.getMenu("Close"));
 			btnClose.addActionListener(this);
-			JPanel rightButtonPanel = new JPanel(new FlowLayout());
-			rightButtonPanel.add(btnClose);
-
-
-			btnOptions = new JButton(app.getPlain("Options"));
+			
+			
+			buildOptionsButton();
+			// btnOptions = new JButton(app.getPlain("Options"));
 			btnOptions.addActionListener(this);
 
+			
+			
 			btnExport = new JButton(app.getPlain("Export"));
 			btnExport.addActionListener(this);
 
-			JPanel centerButtonPanel = new JPanel(new FlowLayout());
-			centerButtonPanel.add(btnOptions);
-			centerButtonPanel.add(btnExport);		
+			
+			JPanel rightButtonPanel = new JPanel(new FlowLayout());
+			rightButtonPanel.add(btnClose);
+			
+			
 
+			JPanel optionsButtonPanel = new JPanel(new FlowLayout());
+			optionsButtonPanel.add(btnOptions);
+		//	centerButtonPanel.add(btnExport);		
+					
 			JPanel buttonPanel = new JPanel(new BorderLayout());
-			//	buttonPanel.add(centerButtonPanel, BorderLayout.CENTER);
-			buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
+				buttonPanel.add(optionsButtonPanel, BorderLayout.EAST);
+			//buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
 			// END button panel
 
 
@@ -285,7 +323,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			this.setLayout(new BorderLayout());
 			this.add(sp, BorderLayout.CENTER);
-	//		add(buttonPanel, BorderLayout.SOUTH);
+			add(buttonPanel, BorderLayout.SOUTH);
 
 			/*
 			JPanel main = new JPanel(new BorderLayout());
@@ -312,7 +350,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		setLabelArrays();
 		comboDistribution = new JComboBox();
-		comboDistribution.setRenderer(new ListSeparatorRenderer());
+		comboDistribution.setRenderer(comboRenderer);
 		comboDistribution.setMaximumRowCount(ProbabilityManager.distCount+1);
 		//setComboDistribution();
 		comboDistribution.addActionListener(this);
@@ -364,7 +402,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		// create probability mode JComboBox and put it in a JPanel
 		comboProbType = new JComboBox();
-		comboProbType.setRenderer(new ListSeparatorRenderer());
+		comboProbType.setRenderer(comboRenderer);
 		comboProbType.addActionListener(this);
 		lblProb = new JLabel();
 
@@ -425,6 +463,60 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	}
 
+	
+	
+	/** 
+	 * Builds popup button with checkbox menu items to hide/show display geos
+	 */
+	private void buildOptionsButton(){
+
+		btnOptions = new PopupMenuButton();
+		btnOptions.setKeepVisible(true);
+		btnOptions.setStandardButton(true);
+		btnOptions.setFixedIcon(GeoGebraIcon.createUpDownTriangleIcon(false,true));
+		btnOptions.setDownwardPopup(false);
+		btnOptions.setText(app.getMenu("Options"));
+
+		JCheckBoxMenuItem menuItem;
+		
+		
+		btnOptions.addPopupMenuItem(this.createMenuDecimalPlaces());
+		
+		menuItem = new JCheckBoxMenuItem(app.getPlain("ShowGrid"));
+		menuItem.setSelected(plotSettings.showGrid);
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				plotSettings.showGrid = !plotSettings.showGrid;
+				updatePlotSettings();
+			}
+		});
+		//btnOptions.addPopupMenuItem(menuItem);
+		
+		menuItem = new JCheckBoxMenuItem(app.getPlain("Export") + "..." );
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		menuItem.setEnabled(false);
+		
+		
+		btnOptions.addPopupMenuItem(menuItem);
+		updateMenuDecimalPlaces();
+		
+		// set the last item since the menu pops in the upward direction
+		// TODO --- why doesn't this work?
+		//btnOptions.setSelectedIndex(2);
+	
+			
+	}
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Creates a panel with message "not available"
 	 */
@@ -601,8 +693,9 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			// discrete axis points should jump from point to point 
 			plotSettings.pointCaptureStyle = EuclidianView.POINT_CAPTURING_ON_GRID;
 			//TODO --- need an adaptive setting here for when we have too many intervals
-			plotSettings.xAxesInterval = 1;
-			plotSettings.xAxesIntervalAuto = false;
+			plotSettings.gridInterval[0] = 1;
+			plotSettings.gridIntervalAuto = false;
+			plotSettings.xAxesIntervalAuto = true;
 		}
 		else
 		{	
@@ -639,9 +732,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	private TreeSet tempSet;
 
-	private HashMap<Integer, String> distributionMap;
-
-	private HashMap<String, Integer> reverseDistributionMap;	
+	
+	
 	private TreeSet getTempSet() {
 		if (tempSet == null) {
 			tempSet = new TreeSet();
@@ -741,16 +833,55 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;
 		Object source = e.getSource();	
-		if(source == btnClose){
-			setVisible(false);
-
-		}
-		else if (source instanceof JTextField) {
+		
+		
+		if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
 		}	
 
 
-		else if(source == comboDistribution){
+		String cmd = e.getActionCommand();
+		
+		// decimal places
+		if (cmd.endsWith("decimals")) {
+			try {
+				String decStr = cmd.substring(0, 2).trim();
+				int decimals = Integer.parseInt(decStr);
+				// Application.debug("decimals " + decimals);
+
+				 printDecimals = decimals;
+				 printFigures = -1;
+				//kernel.setPrintDecimals(decimals);
+				 updateGUI();
+				 updateDiscreteTable();
+				
+			} catch (Exception ex) {
+				app.showError(e.toString());
+			}
+		}
+
+		// significant figures
+		else if (cmd.endsWith("figures")) {
+			try {
+				String decStr = cmd.substring(0, 2).trim();
+				int figures = Integer.parseInt(decStr);
+			//	 Application.debug("figures " + figures);
+
+				 printFigures = figures;
+				 printDecimals = -1;
+				 updateGUI();
+				 updateDiscreteTable();
+			//	kernel.setPrintFigures(figures);
+				
+			} catch (Exception ex) {
+				app.showError(e.toString());
+			}
+		}
+
+		
+		
+		
+		if(source == comboDistribution){
 			comboDistribution.removeActionListener(this);
 			if(comboDistribution.getSelectedItem().equals(ListSeparatorRenderer.SEPARATOR)){
 				comboDistribution.setSelectedItem(distributionMap.get(selectedDist));
@@ -867,7 +998,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private void updateGUI() {
 
 		// override the default decimal place setting
-		kernel.setTemporaryPrintDecimals(5);
+		if(printDecimals >= 0)
+			kernel.setTemporaryPrintDecimals(printDecimals);
+		else
+			kernel.setTemporaryPrintFigures(printFigures);
 
 		// set the visibility and text of the parameter labels and fields
 		for(int i = 0; i < maxParameterCount; ++i ){
@@ -882,15 +1016,18 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				fldParmeterArray[i].setVisible(true);
 				fldParmeterArray[i].removeActionListener(this);
 				fldParmeterArray[i].setText("" + kernel.format( ((GeoNumeric)parmList.get(i)).getDouble() ));
-				//fldParmeterArray[i].setCaretPosition(0);
+				fldParmeterArray[i].setCaretPosition(0);
 				fldParmeterArray[i].addActionListener(this);
 			}
 		}
 
 		// set probability field values 
 		fldLow.setText("" + kernel.format(low));
+		fldLow.setCaretPosition(0);
 		fldHigh.setText("" + kernel.format(high));
+		fldHigh.setCaretPosition(0);
 		fldResult.setText("" + kernel.format(probability));
+		fldResult.setCaretPosition(0);
 
 		// restore the default decimal place setting
 		kernel.restorePrintAccuracy();
@@ -1030,23 +1167,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 	
 	
-	/**
-	 * Redefines the density curve ... not currently used
-	 */
-	private void resetDensityCurve(){
-
-		densityCurve.remove();
-		densityCurve = createGeoFromString(buildDensityCurveExpression(selectedDist));
-
-		densityCurve.setObjColor(COLOR_PDF);
-		densityCurve.setLineThickness(3);
-		densityCurve.setFixed(true);
-		hideGeoFromViews(densityCurve);
-
-	}
-
-
-
 
 	//=================================================
 	//      View Implementation
@@ -1098,8 +1218,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
-
-
 	public void setLabels(){
 
 		//setTitle(app.getMenu("ProbabilityCalculator"));	
@@ -1118,22 +1236,22 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		lblBetween.setText(app.getMenu("XBetween"));   // <= X <=
 		lblEndProbOf.setText(app.getMenu("EndProbabilityOf") + " = ");
 		lblProbOf.setText(app.getMenu("ProbabilityOf"));
-
 		
 		setComboDistribution();
 
+		
+		
+		
 		table.setLabels();
 
 	}
 
 
 	private void setLabelArrays(){
-
+		
 		distributionMap = probManager.getDistributionMap();
 		reverseDistributionMap = probManager.getReverseDistributionMap();
 		parameterLabels = ProbabilityManager.getParameterLabelArray(app);
-
-
 	}
 
 
@@ -1162,6 +1280,120 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		comboDistribution.setSelectedIndex(selectedDist);
 		comboDistribution.addActionListener(this);
 
+	}
+
+
+
+
+
+
+	//=================================================
+	//       Create GeoElement
+	//=================================================
+
+
+	private GeoElement createGeoFromString(String text ){
+		return createGeoFromString(text, null, false);
+	}
+	
+	private GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
+
+		try {
+			
+			// create the geo
+			// ================================
+			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
+			if(suppressLabelCreation)
+				cons.setSuppressLabelCreation(true);
+			
+			GeoElement[] geos = kernel.getAlgebraProcessor()
+			.processAlgebraCommandNoExceptions(text, false);	
+
+			if(suppressLabelCreation)
+				cons.setSuppressLabelCreation(oldSuppressLabelMode);
+
+			
+			// set the label
+			// ================================
+			if(label != null)
+				geos[0].setLabel(label);
+			else
+				setProbCalcGeoLabel(geos[0]);
+
+			
+			// set visibility
+			// ================================
+			geos[0].setEuclidianVisible(true);	
+			geos[0].setAuxiliaryObject(true);
+			geos[0].setLabelVisible(false);
+			
+			
+			// put the geo in our list 
+			// ================================
+			plotGeoList.add(geos[0]);
+			//	System.out.println(geos[0].getLabel() + " : " + geos[0].getCommandDescription());
+			return geos[0];
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * Sets the label of a geo created by ProbabilityCalculator
+	 * @param geo
+	 */
+	private void setProbCalcGeoLabel(GeoElement geo){
+		geo.setLabel("prbCalc" + plotGeoList.size());
+		//int r = (int) (Math.random()*1e6);
+		//geo.setLabel("pc" + r);
+	}
+
+	
+	private String getGeoString(GeoElement geo){
+		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+	}
+
+
+
+
+	//=================================================
+	//       Geo Handlers
+	//=================================================
+
+	public void removeGeos(){	
+		clearPlotGeoList();
+	}
+
+	private void clearPlotGeoList(){
+		for(GeoElement geo : plotGeoList){
+			if(geo != null)
+				geo.remove();
+		}
+		plotGeoList.clear();
+	}
+
+
+	private void hideAllGeosFromViews(){
+		for(GeoElement geo:plotGeoList){
+			hideGeoFromViews(geo);
+		}
+	}
+
+	private void hideGeoFromViews(GeoElement geo){
+		// add the geo to our view and remove it from EV		
+		geo.addView(plotPanel);
+		plotPanel.add(geo);
+		geo.removeView(app.getEuclidianView());
+		app.getEuclidianView().remove(geo);
+	}
+
+	private void hideToolTips(){
+		for(GeoElement geo:plotGeoList){
+			geo.setTooltipMode(GeoElement.TOOLTIP_OFF);
+		}
 	}
 
 
@@ -1298,121 +1530,23 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	}
 
-
-
-
-	//=================================================
-	//       Create GeoElement
-	//=================================================
-
-
-	private GeoElement createGeoFromString(String text ){
-		return createGeoFromString(text, null, false);
-	}
-	
-	private GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
-
-		try {
-			
-			// create the geo
-			// ================================
-			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
-			if(suppressLabelCreation)
-				cons.setSuppressLabelCreation(true);
-			
-			GeoElement[] geos = kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptions(text, false);	
-
-			if(suppressLabelCreation)
-				cons.setSuppressLabelCreation(oldSuppressLabelMode);
-
-			
-			// set the label
-			// ================================
-			if(label != null)
-				geos[0].setLabel(label);
-			else
-				setProbCalcGeoLabel(geos[0]);
-
-			
-			// set visibility
-			// ================================
-			geos[0].setEuclidianVisible(true);	
-			geos[0].setAuxiliaryObject(true);
-			geos[0].setLabelVisible(false);
-			
-			
-			// put the geo in our list 
-			// ================================
-			plotGeoList.add(geos[0]);
-			//	System.out.println(geos[0].getLabel() + " : " + geos[0].getCommandDescription());
-			return geos[0];
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	
 	/**
-	 * Sets the label of a geo created by ProbabilityCalculator
-	 * @param geo
+	 * Redefines the density curve ... not currently used
 	 */
-	private void setProbCalcGeoLabel(GeoElement geo){
-		geo.setLabel("prbCalc" + plotGeoList.size());
-		//int r = (int) (Math.random()*1e6);
-		//geo.setLabel("pc" + r);
-	}
+	private void resetDensityCurve(){
 
-	
-	private String getGeoString(GeoElement geo){
-		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
-	}
+		densityCurve.remove();
+		densityCurve = createGeoFromString(buildDensityCurveExpression(selectedDist));
 
+		densityCurve.setObjColor(COLOR_PDF);
+		densityCurve.setLineThickness(3);
+		densityCurve.setFixed(true);
+		hideGeoFromViews(densityCurve);
 
-
-
-	//=================================================
-	//       Geo Handlers
-	//=================================================
-
-	public void removeGeos(){	
-		clearPlotGeoList();
-	}
-
-	private void clearPlotGeoList(){
-		for(GeoElement geo : plotGeoList){
-			if(geo != null)
-				geo.remove();
-		}
-		plotGeoList.clear();
 	}
 
 
-	private void hideAllGeosFromViews(){
-		for(GeoElement geo:plotGeoList){
-			hideGeoFromViews(geo);
-		}
-	}
-
-	private void hideGeoFromViews(GeoElement geo){
-		// add the geo to our view and remove it from EV		
-		geo.addView(plotPanel);
-		plotPanel.add(geo);
-		geo.removeView(app.getEuclidianView());
-		app.getEuclidianView().remove(geo);
-	}
-
-	private void hideToolTips(){
-		for(GeoElement geo:plotGeoList){
-			geo.setTooltipMode(GeoElement.TOOLTIP_OFF);
-		}
-	}
-
-
-
-	
 	
 	
 	//============================================================
@@ -1421,7 +1555,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	class ListSeparatorRenderer extends JLabel implements ListCellRenderer {
 
-		public static final String SEPARATOR = "SEPARATOR";
+		public static final String SEPARATOR = "---";
 		JSeparator separator;
 
 		public ListSeparatorRenderer() {
@@ -1449,7 +1583,75 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		}
 	}
 
+	
+	
+	
+	/**
+	 * Update the menu with all decimal places.
+	 */
+	private void updateMenuDecimalPlaces() {
+		if (menuDecimalPlaces == null)
+			return;
+		int pos = -1;
 
+		if (printFigures >= 0) {
+			if (printFigures > 0 && printFigures < Application.figuresLookup.length)
+				pos = Application.figuresLookup[printFigures];
+		} else {
+			if (printDecimals > 0 && printDecimals < Application.decimalsLookup.length)
+				pos = Application.decimalsLookup[printDecimals];
+		}
 
+		try {
+			((JRadioButtonMenuItem) menuDecimalPlaces.getMenuComponent(pos))
+					.setSelected(true);
+		} catch (Exception e) {
+		}
 
+	}
+	
+	private JMenu createMenuDecimalPlaces(){
+		menuDecimalPlaces = new JMenu(app.getMenu("Rounding"));
+		String[] strDecimalSpaces = app.getRoundingMenu();
+
+		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this,
+				strDecimalSpaces, Application.strDecimalSpacesAC, 0);
+		
+		return menuDecimalPlaces;
+	}
+	
+	/**
+	 * Create a set of radio buttons automatically.
+	 * 
+	 * @param menu
+	 * @param al
+	 * @param items
+	 * @param actionCommands
+	 * @param selectedPos
+	 */
+	private void addRadioButtonMenuItems(JMenu menu, ActionListener al,
+			String[] items, String[] actionCommands, int selectedPos) {
+		JRadioButtonMenuItem mi;
+		ButtonGroup bg = new ButtonGroup();
+		// String label;
+
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] == "---") {
+				menu.addSeparator();
+			} else {
+				String text = app.getMenu(items[i]);
+				mi = new JRadioButtonMenuItem(text);
+				mi.setFont(app.getFontCanDisplay(text));
+				if (i == selectedPos)
+					mi.setSelected(true);
+				mi.setActionCommand(actionCommands[i]);
+				mi.addActionListener(al);
+				bg.add(mi);
+				menu.add(mi);
+			}
+		}
+	}
+
+	
+	
 }

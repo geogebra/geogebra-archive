@@ -130,6 +130,12 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 		showGrid(plotSettings.showGrid);
 		setShowAxis(EuclidianView.AXIS_Y, plotSettings.showYAxis, false);
 		
+		setAutomaticGridDistance(plotSettings.gridIntervalAuto);
+		if(!plotSettings.gridIntervalAuto){
+			this.setGridDistances(plotSettings.gridInterval);
+		}
+		
+		
 		if(plotSettings.showArrows){
 			setAxesLineStyle(EuclidianView.AXES_LINE_TYPE_ARROW);
 		}else{
@@ -166,7 +172,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 		if(!plotSettings.yAxesIntervalAuto){
 			setAxesNumberingDistance(plotSettings.yAxesInterval, 1);
 		}
-
+		
 		setPointCapturing(plotSettings.pointCaptureStyle);
 
 		// do this last ?

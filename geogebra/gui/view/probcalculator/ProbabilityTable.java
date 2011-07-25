@@ -64,9 +64,13 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 		int x = low;
 		int row = 0;
 
+		
 		// override the default decimal place setting
-		kernel.setTemporaryPrintDecimals(5);
-
+		if(probCalc.getPrintDecimals() >= 0)
+			kernel.setTemporaryPrintDecimals(probCalc.getPrintDecimals());
+		else
+			kernel.setTemporaryPrintFigures(probCalc.getPrintFigures());
+		
 		// set the table model with the prob. values for this distribution
 		while(x<=high){
 			double prob = probManager.exactProbability(x, parms, distType);
@@ -156,16 +160,24 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 
 	public void setSelectionByRowValue(int lowValue, int highValue){
 
-		statTable.getTable().getSelectionModel().removeListSelectionListener(this);
+		if(!probManager.isDiscrete(distType)) 
+			return;
+		
+		try {
+			statTable.getTable().getSelectionModel().removeListSelectionListener(this);
 
-		int lowIndex = lowValue - low;
-		int highIndex = highValue - low;
-		//System.out.println("-------------");
-		//System.out.println(lowIndex + " , " + highIndex);
-		statTable.getTable().changeSelection(lowIndex,0, false,false);
-		statTable.getTable().changeSelection(highIndex,0, false,true);
-		repaint();
-		statTable.getTable().getSelectionModel().addListSelectionListener(this);
+			int lowIndex = lowValue - low;
+			int highIndex = highValue - low;
+			//System.out.println("-------------");
+			//System.out.println(lowIndex + " , " + highIndex);
+			statTable.getTable().changeSelection(lowIndex,0, false,false);
+			statTable.getTable().changeSelection(highIndex,0, false,true);
+			repaint();
+			statTable.getTable().getSelectionModel().addListSelectionListener(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
