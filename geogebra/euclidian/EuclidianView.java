@@ -3698,6 +3698,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				((DrawTextField) d).remove();
 				break;
 			
+			case GeoElement.GEO_CLASS_LIST:
+				drawLayers[layer].remove(d);
+				// remove sub-drawables
+				((DrawList) d).remove();
+				break;
+			
 			default:
 				drawLayers[layer].remove(d);
 				break;

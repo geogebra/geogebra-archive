@@ -113,6 +113,17 @@ public final class DrawList extends Drawable {
 		   // recordToSpreadsheet(geoList);
     }
     
+    /**
+     * This method is necessary, for example when we set another construction
+     * step, and the sub-drawables of this list should be removed as well
+     */
+    final public void remove() {
+    	for (int i=drawables.size()-1; i >= 0; i--) {
+    		view.remove(drawables.get(i).getGeoElement());
+    	}
+    	drawables.clear();
+    }
+    
 	/**
 	 * Draws trace
 	 * @param g2
