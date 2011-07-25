@@ -1,5 +1,7 @@
 package geogebra.gui.view.consprotocol;
 
+import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.PopupMenuButtonMultiple;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.view.consprotocol.ConstructionProtocolView.ColumnKeeper;
@@ -11,6 +13,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -92,12 +95,45 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		
 		//options button
 		
+			
+		// Test code: 
+		// PopupMenuButton without selection table, add JMenuItems directly.
+		// ==============================================================
+		 
+		PopupMenuButton btnOptions2 = new PopupMenuButton();
+		btnOptions2.setKeepVisible(true);
+		btnOptions2.setStandardButton(true);  // mouse clicks over total button region
+		btnOptions2.setIcon(app.getImageIcon("options.png"));
+		
+		JCheckBoxMenuItem menuItem;	
+		menuItem = new JCheckBoxMenuItem(app.getPlain("ShowOnlyBreakpoints"));
+		menuItem.setSelected(app.getKernel().showOnlyBreakpoints());
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				app.getKernel().setShowOnlyBreakpoints(!app.getKernel().showOnlyBreakpoints());
+			}
+		});
+		btnOptions2.addPopupMenuItem(menuItem);
+		
+		menuItem = new JCheckBoxMenuItem(app.getPlain("ColorfulConstructionProtocol"));
+		menuItem.setSelected(cpView.getUseColors());
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				cpView.setUseColors(!cpView.getUseColors());
+			}
+		});
+		btnOptions2.addPopupMenuItem(menuItem);
+		add(btnOptions2);
+		
+		// ==============================================================
+		 
+		
+		
 		String[] optionsArray = new String[] {
 				app.getPlain("ShowOnlyBreakpoints"),
 				app.getPlain("ColorfulConstructionProtocol")
 		};
 		
-	
 		btnOptions = new PopupMenuButtonMultiple(app, optionsArray, -1, 1, 
 				new Dimension(0, iconHeight), SelectionTable.MODE_TEXT){
 			@Override
@@ -121,6 +157,9 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		btnOptions.setKeepVisible(false);	
 		//btnOptions.setToolTipText(app.getPlainTooltip("Options"));
 		add(btnOptions);
+		
+		
+		
 	
 		addSeparator();
 		
