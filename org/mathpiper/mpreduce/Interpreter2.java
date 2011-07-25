@@ -66,10 +66,7 @@ public class Interpreter2 extends Applet {
 			reduceThread.setName("MPReduce");
 			reduceThread.start();
 			startMessage = evaluate(";");
-			// Initialize MPReduce.
-			@SuppressWarnings("unused")
-			String initializationResponse = evaluate("symbolic procedure update!_prompt; begin setpchar \"\" end;;");
-			initializationResponse = evaluate("off int; on errcont; off nat;");
+			initialize();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -78,6 +75,12 @@ public class Interpreter2 extends Applet {
 	public String getStartMessage() {
 		return startMessage;
 	}// end method.
+	
+	public void initialize() throws Throwable{
+			@SuppressWarnings("unused")
+			String initializationResponse = evaluate("symbolic procedure update!_prompt; begin setpchar \"\" end;;");
+			initializationResponse = evaluate("off int; on errcont; off nat;");
+	}
 
 	public static Interpreter2 getInstance() throws Throwable {
 		if (JlispCASInstance == null) {
