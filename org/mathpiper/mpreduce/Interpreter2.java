@@ -28,12 +28,11 @@
  *************************************************************************/
 package org.mathpiper.mpreduce;
 
-import java.applet.Applet;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 
-public class Interpreter2 extends Applet {
+public class Interpreter2 {
 
 	Jlisp jlisp;
 	private static Interpreter2 JlispCASInstance = null;
