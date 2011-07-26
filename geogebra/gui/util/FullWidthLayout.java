@@ -1,4 +1,4 @@
-package geogebra.gui;
+package geogebra.gui.util;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -11,7 +11,7 @@ import java.awt.LayoutManager;
  * unlike GridLayout does not enforce any height. Unncessary space is left empty
  * at the bottom of the container.
  */
-class FullWidthLayout implements LayoutManager {
+public class FullWidthLayout implements LayoutManager {
     private int vgap;
     private int minWidth = 0, minHeight = 0;
     private int preferredWidth = 0, preferredHeight = 0;

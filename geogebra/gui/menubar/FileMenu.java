@@ -33,7 +33,7 @@ class FileMenu extends BaseMenu {
 		loadAction,
 		loadURLAction,
 		exportWorksheet,
-		exportLMSAction,
+		shareAction,
 		exportGraphicAction,
 		exportAnimationAction,
 		exportPgfAction,
@@ -110,7 +110,7 @@ class FileMenu extends BaseMenu {
 	
 			addSeparator();
 			
-			mi = add(exportLMSAction);
+			mi = add(shareAction);
 			
 			addSeparator();
 			
@@ -214,13 +214,12 @@ class FileMenu extends BaseMenu {
 			}
 		};
 
-		exportLMSAction = new AbstractAction(app.getMenu("Share")+"...", app
+		shareAction = new AbstractAction(app.getMenu("Share")+"...", app
 				.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				// TODO: change to GeoGebraTube Upload
-				app.exportToLMS();
+				exportGeoGebraTubeAction.actionPerformed(e);
 			}
 		};
 

@@ -66,10 +66,7 @@ public class TitlePanel extends JPanel {
 		dateField.setFocusLostBehavior(JFormattedTextField.PERSIST);
 		dateField.setFont(app.getPlainFont());
 
-		titleField.setText(cons.getTitle());
-		authorField.setText(loadAuthor());
-
-		dateField.setText(configureDate(cons.getDate()));
+		updateData();
 
 		JPanel p = new JPanel(new BorderLayout(5, 5));
 		p.add(new JLabel(app.getPlain("Title") + ": "), BorderLayout.WEST);
@@ -113,6 +110,13 @@ public class TitlePanel extends JPanel {
 		titleField.addFocusListener(focusListener);
 		authorField.addFocusListener(focusListener);
 		dateField.addFocusListener(focusListener);
+	}
+	
+	public void updateData() {
+		titleField.setText(cons.getTitle());
+		authorField.setText(loadAuthor());
+
+		dateField.setText(configureDate(cons.getDate()));
 	}
 
 	public String configureDate(String src) {
