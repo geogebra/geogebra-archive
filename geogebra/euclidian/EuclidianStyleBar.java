@@ -628,13 +628,19 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				if(geosOK){					
 					//setFgColor(((GeoElement)geos[0]).getObjectColor());
 					setFgColor(Color.black);
+					
+					// if geo is a matrix, this will return a GeoNumeric...
 					geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog();
-					setSliderValue( ((PointProperties)geo).getPointSize());
-					int pointStyle = ((PointProperties)geo).getPointStyle();
-					if(pointStyle == -1) // global default point style
-			    		pointStyle = ev.getPointStyle();
-					setSelectedIndex(pointStyleMap.get(pointStyle));
-					this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
+					
+					// ... so need to check
+					if (geo instanceof PointProperties) {
+						setSliderValue( ((PointProperties)geo).getPointSize());
+						int pointStyle = ((PointProperties)geo).getPointStyle();
+						if(pointStyle == -1) // global default point style
+				    		pointStyle = ev.getPointStyle();
+						setSelectedIndex(pointStyleMap.get(pointStyle));
+						this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
+					}
 				}
 			}
 					
