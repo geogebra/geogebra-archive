@@ -1972,31 +1972,30 @@ public abstract class GeoElement
 	 */
 	public String toCasAssignment(int type) {
 		if (!labelSet) return null;
-
-		String label = getLabel();
-
-		int oldType = kernel.getCASPrintForm();
-		kernel.setCASPrintForm(type);
-		String body = getCASString(false);
-		kernel.setCASPrintForm(oldType);
 		
-		CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
 		String retval;
-		
 		if (type == ExpressionNode.STRING_TYPE_GEOGEBRA) {
+			String body = toValueString();
+			String label = getLabel();
 			if (isGeoFunction())
 			{
 				String params = ((GeoFunction) this).getFunction().getVarString();
-				return label + "(" + params + ") :=" + body;
+				retval = label + "(" + params + ") :=" + body;
 			} else
-				return label + " :=" + body;				
+				retval = label + " :=" + body;				
+		} else {
+			int oldType = kernel.getCASPrintForm();
+			kernel.setCASPrintForm(type);
+			String body = getCASString(false);
+			kernel.setCASPrintForm(oldType);
+			
+			CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
+			if (isGeoFunction()) {
+				String params = ((GeoFunction) this).getFunction().getVarString();
+				retval = cas.translateFunctionDeclaration(label, params, body);
+			} else
+				retval = cas.translateAssignment(label, body);
 		}
-		
-		if (isGeoFunction()) {
-			String params = ((GeoFunction) this).getFunction().getVarString();
-			retval = cas.translateFunctionDeclaration(label, params, body);
-		} else
-			retval = cas.translateAssignment(label, body);
 		return retval;
 	}
 
