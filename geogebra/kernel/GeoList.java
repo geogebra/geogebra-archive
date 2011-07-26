@@ -575,7 +575,6 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 			for (int i = 0; i < lastIndex; i++) {
 				GeoElement geo = (GeoElement) geoList.get(i);
 				sbBuildValueString.append(geo.toOutputValueString());
-				Application.debug(geo.toOutputValueString());
 				sbBuildValueString.append(Application.unicodeComma);
 				sbBuildValueString.append(" ");
 			}
@@ -1176,8 +1175,15 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	public String toLaTeXString(boolean symbolic) {
 
 		if (isMatrix()) {
+			
+			//int rows = size();
+			int cols = ((GeoList)get(0)).size();
+			
 			StringBuilder sb = new StringBuilder();
-			sb.append("\\left(\\begin{array}{ll}");
+			sb.append("\\left(\\begin{array}{");
+			// eg rr
+			for (int i = 0; i < cols ; i++) sb.append('r');
+			sb.append("}");
 			for (int i = 0; i < size(); i++) {
 				GeoList geo = (GeoList) get(i);
 				for (int j = 0; j < geo.size(); j++) {
