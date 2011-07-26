@@ -539,7 +539,7 @@ public class CellRangeProcessor {
 		for(CellRange cr : rangeList){
 			// get column header or column name from each column in this cell range
 			for(int col = cr.getMinColumn(); col <= cr.getMaxColumn(); col++){
-				if(RelativeCopy.getValue(table, col, 0).isGeoText()){
+				if(RelativeCopy.getValue(table, col, 0) != null && RelativeCopy.getValue(table, col, 0).isGeoText()){
 					// use header cell text
 					titleList.add(((GeoText)RelativeCopy.getValue(table, col, 0)).getTextString());
 				}else{
@@ -574,7 +574,7 @@ public class CellRangeProcessor {
 		ArrayList<String> list = new ArrayList<String>();
 		ArrayList<Point> cellList = new ArrayList<Point>();
 
-		// temporary fix for catching duplicate cells
+		// temporary fix for catching duplicate cells caused by ctrl-seelct
 		// will not be needed when sorting of cells by row/column is done
 		HashSet<Point> usedCells = new HashSet<Point>();
 
@@ -589,9 +589,13 @@ public class CellRangeProcessor {
 			 */
 
 			listString.append("{");
+			
+			// create cellList: this holds a list of cell index pairs for the entire range
 			for(CellRange cr:rangeList){
 				cellList.addAll(cr.toCellList(scanByColumn));
 			}
+			
+			// iterate through the cells and add their contents to the expression string
 			for(Point cell: cellList){
 				if(!usedCells.contains(cell)){
 					GeoElement geo = RelativeCopy.getValue(table, cell.x, cell.y);
@@ -604,15 +608,7 @@ public class CellRangeProcessor {
 						//listString.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
 						listString.append(",");
 					}
-					//list.add(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
-					/*
-						if (copyByValue)
-							//list.add(geo.getValueForInputBar());
-							list.add(arg0)
-						else
-							list.add(geo.getLabel());
-					 */
-
+					
 					usedCells.add(cell);
 				}
 			}
@@ -634,10 +630,7 @@ public class CellRangeProcessor {
 			geos = table.kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(listString.toString(), false);
 
-			// get geo name and set label
-			//	String listName = geos[0].getIndexLabel("L");
-			//	geos[0].setLabel(listName);
-
+		
 
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);

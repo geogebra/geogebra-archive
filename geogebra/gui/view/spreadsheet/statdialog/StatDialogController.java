@@ -196,9 +196,10 @@ public class StatDialogController {
 
 				//TODO: dataListAll needs to be created as copy by value ?
 			case StatDialog.MODE_MULTIVAR:
+				
 				dataAll = cr.createCollectionList((ArrayList<CellRange>)dataSource, true); 
 				
-				System.out.println("dataAll: ========> " + dataAll.toDefinedValueString());
+				//System.out.println("dataAll: ========> " + dataAll.toDefinedValueString());
 				
 				/*
 				text = cr.createColumnMatrixExpression((ArrayList<CellRange>)dataSource, copyByValue); 							
