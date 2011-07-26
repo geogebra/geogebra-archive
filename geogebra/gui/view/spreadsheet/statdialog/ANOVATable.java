@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -115,17 +116,19 @@ public class ANOVATable extends BasicStatTable {
 		for (int index=0; index < geoList.size(); index++){
 
 			list = (GeoList) geoList.get(index);
-			double[] val = new double[list.size()];
+			double[] valueArray = new double[list.size()];
 
 			for (int i=0; i < list.size(); i++){
 				GeoElement geo = list.get(i);
 				if (geo.isNumberValue()) {
 					NumberValue num = (NumberValue) geo;
-					val[i] = num.getDouble();	 
+					valueArray[i] = num.getDouble();	 
 				}
-				categoryData.add(val);
 			}
+			categoryData.add(valueArray);
+			//System.out.println(Arrays.toString(valueArray));
 		}
+	
 		return categoryData;
 	}
 	
@@ -133,7 +136,7 @@ public class ANOVATable extends BasicStatTable {
 
 
 	/**
-	 * Calculates ANOVA stats. (Modified form of method found in OneWayAnovaImpl)
+	 * Calculates ANOVA stats. (Modified form of method found in Apache Commons OneWayAnovaImpl)
 	 *
 	 * @param categoryData <code>Collection</code> of <code>double[]</code>
 	 * arrays each containing data for one category
