@@ -1942,11 +1942,11 @@ public class Construction {
 			sb.append("</construction>\n");
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			kernel.setCoordStyle(oldCoordStlye);
+			kernel.setCASPrintForm(oldPrintForm);
+			kernel.setTranslateCommandName(oldValue);   
 		}
-	
-		kernel.setCoordStyle(oldCoordStlye);
-		kernel.setCASPrintForm(oldPrintForm);
-		kernel.setTranslateCommandName(oldValue);                          
 		
 	}
 	
