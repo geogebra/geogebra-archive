@@ -4303,9 +4303,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}	
 
 	protected void handleMousePressedForRecordToSpreadsheetMode(MouseEvent e) {	
-		GeoElement geo;
-		Hits hits;
-
 		view.setHits(mouseLoc);
 		Hits viewHits= view.getHits();
 		Hits pointHits = viewHits.getHits(GeoPoint.class, tempArrayList);
@@ -4343,7 +4340,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 		}
 		else {	// recordObject != null
-			hits = viewHits.getPointVectorNumericHits();
+			Hits hits = viewHits.getPointVectorNumericHits();
 			// got recordObject again: deselect
 			if (!hits.isEmpty() && hits.contains(recordObject) &&
 					// if you drag a point at the end of a vector, we don't want to deselect the vector:
