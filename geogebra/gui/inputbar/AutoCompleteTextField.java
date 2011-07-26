@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.lang.Iterable;
 
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class AutoCompleteTextField extends MathTextField implements 
@@ -283,17 +284,30 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
 
-			/*
-		case KeyEvent.VK_F1:            	
-			updateCurrentWord();
-			showCommandHelp(false);
-			break;          */
-			/* experimental - jump striaght to manual page for current command
-			 * could replace F1 if it works - check with accents/asian languages */
             case KeyEvent.VK_F1:
-                updateCurrentWord();
-                showCommandHelp(true);
-                e.consume();
+            	
+            	if (autoComplete) {
+	    			if (getText().equals("")) {
+	    				
+	    				Object[] options = {app.getPlain("OK"), app.getPlain("ShowOnlineHelp")};
+	    				int n = JOptionPane.showOptionDialog(app.getMainComponent(),
+	    						app.getPlain("InputFieldHelp"),
+	    						app.getPlain("ApplicationName") + " - " + app.getMenu("Help"),
+	    						JOptionPane.YES_NO_OPTION,
+	    						JOptionPane.QUESTION_MESSAGE,
+	    						null,     //do not use a custom Icon
+	    						options,  //the titles of buttons
+	    						options[0]); //default button title
+	
+	    				if (n == 1) app.getGuiManager().openHelp(Application.WIKI_MANUAL);
+	
+	    			} else {
+		                updateCurrentWord();
+		                showCommandHelp(true);
+	    			}
+            	} else app.getGuiManager().openHelp(Application.WIKI_MANUAL);
+            	
+            	e.consume();
                 break;          
 			 
 		default:                                
