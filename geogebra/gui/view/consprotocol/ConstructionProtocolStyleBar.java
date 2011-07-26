@@ -220,11 +220,11 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 	 * Set the tool tip texts (used for language change, and at initialization labels).
 	 */
 	public void setLabels() {
-		btnColumns.setToolTipText(app.getPlainTooltip("Columns"));
-		btnOptions.setToolTipText(app.getPlainTooltip("Options"));
+		btnColumns.setToolTipText(app.getMenuTooltip("Columns"));
+		btnOptions.setToolTipText(app.getMenuTooltip("Options"));
 		btnExport.setToolTipText(app.getPlainTooltip("ExportAsWebpage"));
-		btnPrint.setToolTipText(app.getPlainTooltip("Print"));
-		btnHelp.setToolTipText(app.getPlainTooltip("FastHelp"));
+		btnPrint.setToolTipText(app.getMenuTooltip("Print"));
+		btnHelp.setToolTipText(app.getMenuTooltip("FastHelp"));
 	}
 
 	/**
