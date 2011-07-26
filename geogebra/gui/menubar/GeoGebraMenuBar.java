@@ -219,12 +219,10 @@ public class GeoGebraMenuBar extends JMenuBar {
 		case Application.CAS_MAXIMA:
 			vsb.append('m');
 			break;
-		case Application.CAS_MPREDUCE:
-			vsb.append('r');
-			break;
 			// default: do nothing
 		}
 		if (app.getApplet() != null) vsb.append(" Applet");
+		else if (Application.isWebstartDebug()) vsb.append(" Debug");
 		else if (Application.isWebstart()) vsb.append(" Webstart");
 		
 		StringBuilder sb = new StringBuilder();
@@ -265,6 +263,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 				systemInfo.append(GeoGebra.BUILD_DATE);
 				systemInfo.append(")\nJava: ");
 				systemInfo.append(System.getProperty("java.version"));
+				systemInfo.append(")\nCodebase: ");
+				systemInfo.append(Application.getCodeBase());
 				systemInfo.append("\nOS: ");
 				systemInfo.append(System.getProperty("os.name"));
 				systemInfo.append("\nArchitecture: ");

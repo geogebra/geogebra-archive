@@ -3786,6 +3786,11 @@ public class Application implements KeyEventDispatcher {
 		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_WEBSITE+"webstart");
 	}
 	
+	final public static boolean isWebstartDebug() {
+		if (codebase == null) initCodeBase();
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_WEBSITE+"webstart/debug");
+	}
+	
 	final public static boolean hasFullPermissions() {
 		return hasFullPermissions;
 	}
