@@ -75,6 +75,7 @@ public abstract class InputDialogRadius extends InputDialog{
 		if (ret) {
 			GeoElement circle = createOutput(((NumberInputHandler)inputHandler).getNum());
 			GeoElement[] geos = { circle };
+			app.storeUndoInfo();
 			kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(geos);
 		}
 

@@ -108,6 +108,8 @@ public class InputDialogAngleFixed extends AngleInputDialog implements KeyListen
 			angle.setLabelVisible(true);		
 			angle.updateRepaint();
 			
+			app.storeUndoInfo();
+			
 			return true;
 		}
 
