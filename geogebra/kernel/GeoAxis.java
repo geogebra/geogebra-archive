@@ -70,6 +70,7 @@ public class GeoAxis extends GeoLine {
 	
 	/**
 	 * Returns whether str is equal to this axis' label.
+	 * @param str string for comparsion
 	 * @return whether str is equal to this axis' label.
 	 */
 	public boolean equalsLabel(String str) {

@@ -5092,12 +5092,7 @@ public abstract class GeoElement
 		{
 			ret = substituteNumbers ? this.toValueString()
 					: this.getCommandDescription();
-		}
-		
-		// if GeoList and not matrix, enclose with {}
-		if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && !((GeoList)this).isMatrix()) {
-			ret = "\\left\\lbrace" + ret +  "\\right\\rbrace";
-		}
+		}				
 		
 		
 		// GeoNumeric eg a=1
@@ -5109,6 +5104,9 @@ public abstract class GeoElement
 			ret = toOutputValueString();
 		}
 
+		/* we don't want to deal with list bracess in here since  
+		 * GeoList.toOutputValueString() takes care of it */
+		
 		kernel.setCASPrintForm(tempCASPrintForm);
 
 		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {

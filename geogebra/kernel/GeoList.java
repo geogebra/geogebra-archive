@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -25,7 +24,6 @@ import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
@@ -44,11 +42,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	private static String STR_CLOSE = "}";
 
 	// GeoElement list members
-	private ArrayList geoList;
+	private ArrayList<GeoElement> geoList;
 
 	// lists will often grow and shrink dynamically,
 	// so we keep a cacheList of all old list elements
-	private ArrayList cacheList;
+	private ArrayList<GeoElement> cacheList;
 
 	private boolean isDefined = true;
 	private boolean isDrawable = true;
@@ -61,7 +59,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	 */
 	private boolean showAllProperties = false;
 
-	private ArrayList colorFunctionListener; // Michael Borcherds 2008-04-02
+	private ArrayList<GeoElement> colorFunctionListener; // Michael Borcherds 2008-04-02
 
 	public GeoList(Construction c) {
 		this(c, 20);
@@ -69,8 +67,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 	private GeoList(Construction c, int size) {
 		super(c);
-		geoList = new ArrayList(size);
-		cacheList = new ArrayList(size);
+		geoList = new ArrayList<GeoElement>(size);
+		cacheList = new ArrayList<GeoElement>(size);
 		setEuclidianVisible(false);
 	}
 
@@ -473,6 +471,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	/**
 	 * Removes geo from this list. Note: geo is not removed from the
 	 * construction.
+	 * @param geo element to be removed
 	 */
 	public final void remove(GeoElement geo) {
 		geoList.remove(geo);
@@ -481,6 +480,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	/**
 	 * Removes i-th element from this list. Note: this element is not removed
 	 * from the construction.
+	 * @param index position of element to be removed
 	 */
 	public final void remove(int index) {
 		geoList.remove(index);
@@ -488,6 +488,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 	/**
 	 * Returns the element at the specified position in this list.
+	 * @param index element position
+	 * @return the element at the specified position in this list.
 	 */
 	final public GeoElement get(int index) {
 		return (GeoElement) geoList.get(index);
@@ -495,6 +497,9 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 	/**
 	 * Returns the element at the specified position in this (2D) list.
+	 * @param index element position -- row
+	 * @param index2 element position -- column
+	 * @return the element at the specified position in this (2D) list.
 	 */
 	final public GeoElement get(int index, int index2) {
 		return ((GeoList) geoList.get(index)).get(index2);
@@ -533,6 +538,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	/**
 	 * Returns the cached element at the specified position in this list's
 	 * cache.
+	 * @param index element position
+	 * @return cached alement at given position
 	 */
 	final public GeoElement getCached(int index) {
 		return (GeoElement) cacheList.get(index);
@@ -558,15 +565,17 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 			sbBuildValueString.append("?");
 			return sbBuildValueString;
 		}
-
-		sbBuildValueString.append(STR_OPEN);
-
+		
+		if(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_LATEX)
+			sbBuildValueString.append("\\left\\");
+		sbBuildValueString.append(STR_OPEN);		
 		// first (n-1) elements
 		int lastIndex = geoList.size() - 1;
 		if (lastIndex > -1) {
 			for (int i = 0; i < lastIndex; i++) {
 				GeoElement geo = (GeoElement) geoList.get(i);
 				sbBuildValueString.append(geo.toOutputValueString());
+				Application.debug(geo.toOutputValueString());
 				sbBuildValueString.append(Application.unicodeComma);
 				sbBuildValueString.append(" ");
 			}
@@ -575,8 +584,9 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 			GeoElement geo = (GeoElement) geoList.get(lastIndex);
 			sbBuildValueString.append(geo.toOutputValueString());
 		}
-
-		sbBuildValueString.append(STR_CLOSE);
+		if(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_LATEX)
+			sbBuildValueString.append("\\right\\");
+		sbBuildValueString.append(STR_CLOSE);		
 		return sbBuildValueString;
 	}
 
@@ -588,11 +598,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 	public boolean isListValue() {
 		return true;
-	}
-
-	public ArrayList getMoveableParentPoints() {
-		return null;
-	}
+	}	
 
 	/**
 	 * save object in XML format
@@ -669,7 +675,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	 */
 	public void registerColorFunctionListener(GeoElement geo) {
 		if (colorFunctionListener == null)
-			colorFunctionListener = new ArrayList();
+			colorFunctionListener = new ArrayList<GeoElement>();
 		colorFunctionListener.add(geo);
 	}
 
@@ -1275,9 +1281,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 		P.updateCoords();
 
-		// find closest point on path
-		Point2D.Double closestPoint = getNearestPoint(P);
-
+		
 		GeoElement geo = get(closestPointIndex);
 		if (!(geo instanceof PathOrPoint)) {
 			Application.debug("TODO: " + geo.getClassName()
