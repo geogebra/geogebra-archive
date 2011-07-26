@@ -587,6 +587,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		closeMiniPropertiesPanel();
 
+		if (mode == EuclidianConstants.MODE_RECORD_TO_SPREADSHEET) {
+			if (!app.getGuiManager().hasSpreadsheetView())
+				app.getGuiManager().attachSpreadsheetView();
+			if (!app.getGuiManager().showView(Application.VIEW_SPREADSHEET))
+				app.getGuiManager().setShowView(true, Application.VIEW_SPREADSHEET);
+		}
 
 
 		view.setPreview(switchPreviewableForInitNewMode(mode));	
