@@ -59,9 +59,11 @@ public class InputDialogSegmentFixed extends InputDialog{
 		if (ret) { 
 			GeoElement[] segment = kernel.Segment(null, geoPoint1, ((NumberInputHandler)inputHandler).getNum());
 			GeoElement[] onlysegment = { null };
-			if (segment != null)
+			if (segment != null) {
 				onlysegment[0] = segment[0];
-			kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(onlysegment);
+				app.storeUndoInfo();
+				kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(onlysegment);
+			}
 		}
 
 		return ret;
