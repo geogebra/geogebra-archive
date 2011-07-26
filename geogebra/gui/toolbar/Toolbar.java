@@ -103,16 +103,21 @@ public class Toolbar extends JToolBar {
 		modeToggleMenus.add(temporaryModes);
 		add(temporaryModes);
 
-		setMode(app.getMode());
+		setMode(app.getMode(), true);
 	}
 
 	/**
 	 * Sets toolbar mode. This will change the selected toolbar icon.
 	 * @param mode see EuclidianConstants for mode numbers
 	 * 
+	 * @param int mode Mode to set
+	 * @param boolean createTemporaryMode If temporary modes should be
+	 * added to the toolbar if the mode is not in the toolbar already.
+	 * If the value is false the mode is set to the default one.
+	 * 
 	 * @return true if mode could be selected in toolbar.
 	 */
-	public boolean setMode(int mode) {
+	public boolean setMode(int mode, boolean createTemporaryMode) {
 		boolean success = false;
 
 		// there is no special icon/button for the selection listener mode, use the
@@ -138,12 +143,16 @@ public class Toolbar extends JToolBar {
 			if (success) {
 				this.selectedMode = mode;
 			} else {
-				// don't display move mode icon in other views, this is a bit irritating
-				if (dockPanel == null || mode != EuclidianView.MODE_MOVE) {
-					// we insert a temporary icon if possible
-					temporaryModes.addMode(mode);
-					temporaryModes.setVisible(true);
-					temporaryModes.selectMode(mode);
+				if(createTemporaryMode) {
+					// don't display move mode icon in other views, this is a bit irritating
+					if (dockPanel == null || mode != EuclidianView.MODE_MOVE) {
+						// we insert a temporary icon if possible
+						temporaryModes.addMode(mode);
+						temporaryModes.setVisible(true);
+						temporaryModes.selectMode(mode);
+					}
+				} else {
+					setMode(getFirstMode(), true);
 				}
 			}
 		}

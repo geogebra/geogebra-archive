@@ -45,7 +45,6 @@ public class AlgebraDockPanel extends DockPanel {
 		return scrollPane;
 	}
 	
-	
 
 	protected void setActiveToolBar(){
 		//use the focused euclidian view for active toolbar

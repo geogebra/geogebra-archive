@@ -302,19 +302,6 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 				break;
 				
-				// needed for AlgebraView
-			case KeyEvent.VK_A:
-				
-				if (!event.isShiftDown()) {
-				
-					// different behaviour in Spreadsheet
-					if (!(event.getSource() instanceof MyTable)) {
-						app.selectAll(-1);
-						event.consume();
-					}
-				}
-				break;
-				
 			case KeyEvent.VK_C:
 				// Ctrl-shift-c: copy graphics view to clipboard
 				//   should also work in applets with no menubar
