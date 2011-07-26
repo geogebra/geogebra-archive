@@ -68,30 +68,29 @@ public class ANOVATable extends BasicStatTable {
 
 		GeoList dataList = statDialog.getStatDialogController().getDataSelected();
 		DefaultTableModel model = statTable.getModel();
-		NumberFormat nf = statDialog.getNumberFormat();
 		
 		try {
 			AnovaStats stats = anovaStats(getCategoryData(dataList));
 			
 			// first column, degrees of freedom
-			model.setValueAt(nf.format(stats.dfbg), 0, 0);
-			model.setValueAt(nf.format(stats.dfwg), 1, 0);
-			model.setValueAt(nf.format(stats.dfbg + stats.dfwg), 2, 0);
+			model.setValueAt(statDialog.format(stats.dfbg), 0, 0);
+			model.setValueAt(statDialog.format(stats.dfwg), 1, 0);
+			model.setValueAt(statDialog.format(stats.dfbg + stats.dfwg), 2, 0);
 			
 			// second column, sum of squares
-			model.setValueAt(nf.format(stats.ssbg), 0, 1);
-			model.setValueAt(nf.format(stats.sswg), 1, 1);
-			model.setValueAt(nf.format(stats.sst), 2, 1);
+			model.setValueAt(statDialog.format(stats.ssbg), 0, 1);
+			model.setValueAt(statDialog.format(stats.sswg), 1, 1);
+			model.setValueAt(statDialog.format(stats.sst), 2, 1);
 			
 			// third column, mean sum of squares
-			model.setValueAt(nf.format(stats.msbg), 0, 2);
-			model.setValueAt(nf.format(stats.mswg), 1, 2);
+			model.setValueAt(statDialog.format(stats.msbg), 0, 2);
+			model.setValueAt(statDialog.format(stats.mswg), 1, 2);
 			
 			// fourth column, F test statistics
-			model.setValueAt(nf.format(stats.F), 0, 3);
+			model.setValueAt(statDialog.format(stats.F), 0, 3);
 			
 			// fifth column, P value
-			model.setValueAt(nf.format(stats.P), 0, 4);
+			model.setValueAt(statDialog.format(stats.P), 0, 4);
 			
 			
 		} catch (IllegalArgumentException e) {

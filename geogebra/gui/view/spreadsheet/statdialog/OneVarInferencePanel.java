@@ -274,7 +274,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 	private void updateResultTable(){
 
-		NumberFormat nf = statDialog.getNumberFormat();
+		
 		DefaultTableModel model = resultTable.getModel();
 
 
@@ -283,37 +283,37 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		switch (selectedPlot){
 		case StatComboPanel.PLOT_ZTEST:
 
-			model.setValueAt(nf.format(P),0,0);
-			model.setValueAt(nf.format(testStat), 1, 0);
+			model.setValueAt(statDialog.format(P),0,0);
+			model.setValueAt(statDialog.format(testStat), 1, 0);
 			
 			break;
 
 		case StatComboPanel.PLOT_TTEST:
 
-			model.setValueAt(nf.format(P),0,0);
-			model.setValueAt(nf.format(testStat), 1, 0);
+			model.setValueAt(statDialog.format(P),0,0);
+			model.setValueAt(statDialog.format(testStat), 1, 0);
 			model.setValueAt("", 2, 0);
-			model.setValueAt(nf.format(se), 3, 0);
+			model.setValueAt(statDialog.format(se), 3, 0);
 			break;
 			
 			
 		case StatComboPanel.PLOT_ZINT:
 
-			model.setValueAt(nf.format(lower),0,0);
-			model.setValueAt(nf.format(upper), 1, 0);
-			model.setValueAt(nf.format(mean), 2, 0);
-			model.setValueAt(nf.format(me), 3, 0);
+			model.setValueAt(statDialog.format(lower),0,0);
+			model.setValueAt(statDialog.format(upper), 1, 0);
+			model.setValueAt(statDialog.format(mean), 2, 0);
+			model.setValueAt(statDialog.format(me), 3, 0);
 
 			break;
 			
 		case StatComboPanel.PLOT_TINT:
 
-			model.setValueAt(nf.format(lower),0,0);
-			model.setValueAt(nf.format(upper), 1, 0);
-			model.setValueAt(nf.format(mean), 2, 0);
-			model.setValueAt(nf.format(me), 3, 0);
+			model.setValueAt(statDialog.format(lower),0,0);
+			model.setValueAt(statDialog.format(upper), 1, 0);
+			model.setValueAt(statDialog.format(mean), 2, 0);
+			model.setValueAt(statDialog.format(me), 3, 0);
 			model.setValueAt("", 4, 0);
-			model.setValueAt(nf.format(se), 5, 0);
+			model.setValueAt(statDialog.format(se), 5, 0);
 
 			break;
 		};
@@ -350,11 +350,12 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 	/** Helper method for updateGUI() */
 	private void updateNumberField(JTextField fld,  double n){
-		NumberFormat nf = statDialog.getNumberFormat();
+		
 		fld.removeActionListener(this);
-		fld.setText(nf.format(n));
+		fld.setText(statDialog.format(n));
 		//fld.setCaretPosition(0);
 		fld.addActionListener(this);
+		
 	}
 
 	private void updateGUI(){
@@ -387,13 +388,12 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 
 	private void updateCBAlternativeHyp(){
-
-		NumberFormat nf = statDialog.getNumberFormat();
+	
 		cbAltHyp.removeActionListener(this);
 		cbAltHyp.removeAllItems();
-		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_right + " " + nf.format(hypMean));
-		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_left + " " + nf.format(hypMean));
-		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_two + " " + nf.format(hypMean));
+		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_right + " " + statDialog.format(hypMean));
+		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_left + " " + statDialog.format(hypMean));
+		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_two + " " + statDialog.format(hypMean));
 		
 		if(tail == tail_right)
 			cbAltHyp.setSelectedIndex(0);
@@ -403,6 +403,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 			cbAltHyp.setSelectedIndex(2);
 		
 		cbAltHyp.addActionListener(this);
+		
 	}
 
 	

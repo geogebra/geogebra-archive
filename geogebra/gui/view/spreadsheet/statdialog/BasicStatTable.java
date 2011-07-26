@@ -140,7 +140,6 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 		GeoElement geoRegression = statDialog.getRegressionModel();
 		DefaultTableModel model = statTable.getModel();
 		
-		NumberFormat nf = statDialog.getNumberFormat();
 		String regressionLabel = null;
 		String dataLabel = dataList.getLabel();
 		if(geoRegression != null){
@@ -155,14 +154,14 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 					if(statMap[row][1] != null){
 						expr = statMap[row][1] + "[" + dataLabel + "]";
 						value = evaluateExpression(expr);
-						model.setValueAt(nf.format(value), row, 0);
+						model.setValueAt(statDialog.format(value), row, 0);
 					}
 				}
 				else if(statMap[row].length == 3){
 					if(statMap[row][1] != null && geoRegression != null){
 						expr = statMap[row][1] + "[" + dataLabel + " , " + regressionLabel + "]";
 						value = evaluateExpression(expr);
-						model.setValueAt(nf.format(value), row, 0);
+						model.setValueAt(statDialog.format(value), row, 0);
 					}
 				}
 

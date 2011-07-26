@@ -208,7 +208,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		// create options button and panel
 		optionsPanel= new OptionsPanel(app, settings);
 		optionsButton = new JToggleButton();
-		//optionsButton.setIcon(app.getImageIcon("document-properties.png"));
+		optionsButton.setIcon(app.getImageIcon("document-properties.png"));
 		optionsButton.setFocusable(false);
 		//optionsButton.setIcon(app.getImageIcon("tool.png"));
 		optionsButton.addActionListener(this);
@@ -368,7 +368,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
 
-		optionsButton.setText(app.getMenu("Options"));
+	//	optionsButton.setText(app.getMenu("Options"));
 		optionsPanel.setLabels();
 
 	}

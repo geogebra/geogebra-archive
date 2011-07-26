@@ -3,15 +3,10 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
-import geogebra.gui.view.spreadsheet.CellRange;
-import geogebra.gui.view.spreadsheet.CellRangeProcessor;
-import geogebra.gui.view.spreadsheet.MyTable;
-import geogebra.gui.view.spreadsheet.RelativeCopy;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
@@ -28,26 +23,24 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
-import javax.swing.JToggleButton;
 
 public class StatDialog extends JDialog  implements ActionListener, View, Printable   {
 
@@ -57,7 +50,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private SpreadsheetView spView;	
 	private StatGeo statGeo;
 	private StatDialogController sdc;
-	
+
 
 	public StatDialogController getStatDialogController() {
 		return sdc;
@@ -73,7 +66,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	//protected GeoElement geoRegression;
 	//protected GeoList dataAll, dataSelected;
 
-	
+
 
 	// flags
 	private boolean showDataPanel = false;
@@ -104,7 +97,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public static final int regressionTypes = 8;
 	private int regressionMode = REG_NONE;
 	private int regressionOrder = 2;
-	
+
 
 	// oneVar title panel objects
 	private JLabel lblOneVarTitle;
@@ -129,32 +122,47 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private JSplitPane statDataPanel, displayPanel, comboPanelSplit; 
 	private JPanel cardPanel, buttonPanel;
 	private int defaultDividerSize;
-	private NumberFormat nf;
-	private int numDigits = 4;
+
 	private Dimension defaultDialogDimension;
+
+
+	private int printFigures = -1, printDecimals = 4;
+
+	public int getPrintFigures() {
+		return printFigures;
+	}
+	public int getPrintDecimals() {
+		return printDecimals;
+	}
+
+	private JMenu menuDecimalPlaces;
 
 
 	//=================================
 	// getters/setters
 
-	public NumberFormat getNumberFormat() {
-		// temporary number format
-		//TODO ----- use ggb format?
-		nf = NumberFormat.getInstance(Locale.ENGLISH);
-		nf.setGroupingUsed(false);
-		nf.setMaximumFractionDigits(numDigits);
-		// -----------------------
-		return nf;
+	public String format(double x){
+
+		// override the default decimal place setting
+		if(printDecimals >= 0)
+			kernel.setTemporaryPrintDecimals(printDecimals);
+		else
+			kernel.setTemporaryPrintFigures(printFigures);
+
+		// get the formatted string
+		String result = kernel.format(x);
+
+		// restore the default decimal place setting
+		kernel.restorePrintAccuracy();
+
+		return result;
 	}
-	public void setNumDigits(int numDigits) {
-		this.numDigits = numDigits;
-	}
-	
-	
+
+
 	public GeoElement getRegressionModel() {
 		return sdc.getRegressionModel();
 	}
-	
+
 
 	public StatGeo getStatGeo() {
 		if(statGeo == null)
@@ -198,18 +206,18 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public StatDialog(SpreadsheetView spView, Application app, int mode){
 		super(app.getFrame(),false);
 
-		
-		
+
+
 		isIniting = true;
 		this.app = app;
 		this.kernel = app.getKernel();
 		this.spView = spView;
 		this.mode = mode;
-		
+
 		sdc = new StatDialogController(app, spView, this);
-		
+
 		defaultDialogDimension = new Dimension(700,500);
-		
+
 		boolean dataOK = sdc.setDataSource();
 		if(dataOK){
 			//load data from the data source (based on currently selected geos)
@@ -219,10 +227,10 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			//dispose();
 			return;  
 		}
-		
+
 		createGUI();
 		sdc.updateAllStatPanels(false);
-		
+
 	} 
 
 	/*************************************************  
@@ -230,8 +238,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 
 	private void createGUI(){
-			
-		
+
+
 		// Create two StatCombo panels with default plots.
 		// StatCombo panels display various plots and tables
 		// selected by a comboBox.
@@ -258,21 +266,21 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 
 
-		
+
 		// Create a StatPanel to display basic statistics for the current data set
 		//================================================
 		if(mode == MODE_ONEVAR){
 			statTable = new BasicStatTable(app, this, mode);
 			//statTable.evaluateStatTable(dataSelected,null);
 		}
-		
+
 		else if(mode == MODE_REGRESSION){
 			statTable = new BasicStatTable(app, this, mode);
 			//statTable.evaluateStatTable(dataSelected,geoRegression);
 		}
 
 
-		
+
 		// Create a DataPanel.
 		// Data panels display the current data set(s) and allow temporary editing. 
 		// Edited data is used by the statTable and statCombo panels. 
@@ -283,7 +291,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 
 
-	
+
 		// Init the GUI and attach this view to the kernel
 		//================================================
 		initGUI();
@@ -296,11 +304,11 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		pack();
 
 	}
-	
-	
-		
 
-	
+
+
+
+
 
 	//=================================================
 	//       GUI
@@ -318,21 +326,25 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		btnClose = new JButton();
 		btnClose.addActionListener(this);
 
-		btnPrint = new JButton();
-		btnPrint.addActionListener(this);
+	//	btnPrint = new JButton();
+	//	btnPrint.addActionListener(this);
 
+		createOptionsButton();
+		
+		
 		JPanel rightButtonPanel = new JPanel(new FlowLayout());
-		rightButtonPanel.add(btnPrint);
+		rightButtonPanel.add(btnOptions);
+	//	rightButtonPanel.add(btnPrint);
 		rightButtonPanel.add(btnClose);
 
 		JPanel centerButtonPanel = new JPanel(new FlowLayout());
 
 
 		JPanel leftButtonPanel = new JPanel(new FlowLayout());
-		createOptionsButton();
+		
 		//leftButtonPanel.add(cbShowData);
 		//leftButtonPanel.add(cbShowCombo2);
-		leftButtonPanel.add(btnOptions);
+		
 
 		buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
@@ -438,7 +450,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			lblOneVarTitle.setText(app.getMenu("DataTitle") + ": ");
 			statisticsHeader.setText(app.getMenu("Statistics")); 
 			break;
-			
+
 		case MODE_REGRESSION:
 			setTitle(app.getMenu("RegressionAnalysis"));	
 			statisticsHeader.setText(app.getMenu("Statistics"));
@@ -450,31 +462,32 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			break;
 		}
 
-		
+		this.createOptionsButton();
+
 		btnClose.setText(app.getMenu("Close"));
-		btnPrint.setText(app.getMenu("Print"));	
-		btnOptions.setText(app.getMenu("Show"));
+	//	btnPrint.setText(app.getMenu("Print"));	
+		//	btnOptions.setText(app.getMenu("Options"));
 
 		// call setLabels() for all child panels
 		setLabelsRecursive(this.getContentPane()); 
-		
+
 	}
 
-	
+
 	public void setLabelsRecursive(Container c) {
-		
-	    Component[] components = c.getComponents();
-	    for(Component com : components) {
-	    	if(com instanceof StatPanelInterface){
-	    		//System.out.println(c.getClass().getSimpleName());
-	    		((StatPanelInterface)com).setLabels();
-	    	}
-	    	else if(com instanceof Container) 
-	        	setLabelsRecursive((Container) com);
-	    }
+
+		Component[] components = c.getComponents();
+		for(Component com : components) {
+			if(com instanceof StatPanelInterface){
+				//System.out.println(c.getClass().getSimpleName());
+				((StatPanelInterface)com).setLabels();
+			}
+			else if(com instanceof Container) 
+				setLabelsRecursive((Container) com);
+		}
 	}
-	
-	
+
+
 
 	private JPanel createOneVarTitlePanel(){
 
@@ -496,53 +509,67 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	}
 
 
-
-
-
-
 	private void createOptionsButton(){
 
-		// create options drop down button
-		dialogOptionsPanel= new StatDialogOptionsPanel(app, this);
-		dialogOptionsPanel.setShowCombo2(this.showComboPanel2);
-		dialogOptionsPanel.setShowData(this.showDataPanel);
-		dialogOptionsPanel.setShowStats(this.showStatPanel);
+		if(btnOptions == null){
+			btnOptions = new PopupMenuButton();
+			btnOptions.setKeepVisible(true);
+			btnOptions.setStandardButton(true);
+			btnOptions.setFixedIcon(GeoGebraIcon.createUpDownTriangleIcon(false,true));
+			btnOptions.setDownwardPopup(false);
+		}
+		
+		btnOptions.removeAllMenuItems();
+		btnOptions.setText(app.getMenu("Options"));
 
+		JCheckBoxMenuItem menuItem;
 
-		btnOptions = new PopupMenuButton();
-		btnOptions.setKeepVisible(true);
-		btnOptions.setStandardButton(true);
-		btnOptions.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
-		//optionsButton.setText(app.getMenu("Options"));
-		btnOptions.addPopupMenuItem(dialogOptionsPanel);
-		btnOptions.setDownwardPopup(false);
-		//ImageIcon ptCaptureIcon = app.getImageIcon("tool.png");
-		//	optionsButton.setIconSize(new Dimension(ptCaptureIcon.getIconWidth(),18));
-		//	optionsButton.setIcon(ptCaptureIcon);
+		btnOptions.addPopupMenuItem(this.createMenuDecimalPlaces());
+		updateMenuDecimalPlaces();
 
-
-
-		//dialogOptionsPanel.setShowStats(true);
-
-		dialogOptionsPanel.addPropertyChangeListener("cbShowData", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				showDataPanel = (Boolean) evt.getNewValue();
+		menuItem = new JCheckBoxMenuItem(app.getMenu("ShowData"));
+		menuItem.setSelected(showDataPanel);
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				showDataPanel = !showDataPanel;
 				updateStatDataPanelVisibility();
 			}
 		});
+		btnOptions.addPopupMenuItem(menuItem);
 
-		dialogOptionsPanel.addPropertyChangeListener("cbShowCombo2", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				setShowComboPanel2((Boolean) evt.getNewValue());
-			}
-		});
 
-		dialogOptionsPanel.addPropertyChangeListener("cbShowStats", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				showStatPanel = (Boolean) evt.getNewValue();
+		menuItem = new JCheckBoxMenuItem(app.getMenu("ShowStatistics"));
+		menuItem.setSelected(showStatPanel);
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				showStatPanel = !showStatPanel;
 				updateStatDataPanelVisibility();
 			}
 		});
+		menuItem.setEnabled(true);
+		btnOptions.addPopupMenuItem(menuItem);
+
+
+		menuItem = new JCheckBoxMenuItem(app.getMenu("ShowPlot2"));
+		menuItem.setSelected(showComboPanel2);
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				setShowComboPanel2(!showComboPanel2);
+			}
+		});
+		btnOptions.addPopupMenuItem(menuItem);
+		menuItem.setEnabled(true);
+		
+		JMenuItem item = new JMenuItem(app.getMenu("Print")+ "...");
+		item.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				doPrint();
+			}
+		});
+		btnOptions.addPopupMenuItem(item);
+		
+
+
 
 	}
 
@@ -622,11 +649,15 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			displayPanel.setLeftComponent(null);
 			displayPanel.setDividerSize(0);
 		}
-		
+
 		setLabels();
 		updateFonts();
 	}
 
+	
+	private void doPrint(){
+		new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
+	}
 
 
 
@@ -642,8 +673,53 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			setVisible(false);
 		}
 		else if(source == btnPrint){
-			new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
+			doPrint();
 		}
+
+
+
+		String cmd = e.getActionCommand();
+
+		// decimal places
+		if (cmd.endsWith("decimals")) {
+			try {
+				String decStr = cmd.substring(0, 2).trim();
+				int decimals = Integer.parseInt(decStr);
+				// Application.debug("decimals " + decimals);
+
+				printDecimals = decimals;
+				printFigures = -1;
+				updateDialog(false);
+
+
+			} catch (Exception ex) {
+				app.showError(e.toString());
+			}
+		}
+
+		// significant figures
+		else if (cmd.endsWith("figures")) {
+			try {
+				String decStr = cmd.substring(0, 2).trim();
+				int figures = Integer.parseInt(decStr);
+				//	 Application.debug("figures " + figures);
+
+				printFigures = figures;
+				printDecimals = -1;
+				updateDialog(false);
+
+
+			} catch (Exception ex) {
+				app.showError(e.toString());
+			}
+		}
+
+
+
+
+
+
+
 
 		btnClose.requestFocus();
 	}
@@ -670,7 +746,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 	}
 
-	
+
 	private void updateGUI(){
 		if(isIniting) return;
 		if(mode == StatDialog.MODE_ONEVAR){
@@ -679,33 +755,33 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	}
 
-	
+
 	public void updateFonts() {
 		Font font = app.getPlainFont();
 		setFont(font);
 		setFontRecursive(this.getContentPane(),font);
 
 	}
-	
+
 	public void setFontRecursive(Container c, Font font) {
-	    Component[] components = c.getComponents();
-	    for(Component com : components) {
-	    	com.setFont(font);
-	    	if(com instanceof StatPanelInterface){
-	    		((StatPanelInterface)com).updateFonts(font);
-	    	}
-	        if(com instanceof Container) 
-	            setFontRecursive((Container) com, font);
-	    }
-	    this.pack();
+		Component[] components = c.getComponents();
+		for(Component com : components) {
+			com.setFont(font);
+			if(com instanceof StatPanelInterface){
+				((StatPanelInterface)com).updateFonts(font);
+			}
+			if(com instanceof Container) 
+				setFontRecursive((Container) com, font);
+		}
+		//this.pack();
 	}
-	
+
 
 	//=================================================
 	//      View Implementation
 	//=================================================
 
-		
+
 	public void remove(GeoElement geo) {
 		//Application.debug("removed geo: " + geo.toString());
 		sdc.handleRemovedDataGeo(geo);
@@ -727,13 +803,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public void updateAuxiliaryObject(GeoElement geo) {}
 	public void reset() {}
 	public void setMode(int mode) {}
-	
-	
+
+
 	public void attachView() {
 		//clearView();
 		//kernel.notifyAddAll(this);
 		kernel.attach(this);
-		
+
 		// attachView to plot panels
 		comboStatPanel.attachView();
 		comboStatPanel2.attachView();
@@ -751,11 +827,11 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public void updateDialog(boolean doSetDataSource){
 		sdc.updateDialog(doSetDataSource);
 	}
-	
+
 	public String[] getDataTitles(){
 		return sdc.getDataTitles();
 	}
-	
+
 	//=================================================
 	//      Printing
 	//=================================================
@@ -836,6 +912,77 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		super.paint(graphics);	
 
 	}
+
+
+
+
+	/**
+	 * Update the menu with all decimal places.
+	 */
+	private void updateMenuDecimalPlaces() {
+		if (menuDecimalPlaces == null)
+			return;
+		int pos = -1;
+
+		if (printFigures >= 0) {
+			if (printFigures > 0 && printFigures < Application.figuresLookup.length)
+				pos = Application.figuresLookup[printFigures];
+		} else {
+			if (printDecimals > 0 && printDecimals < Application.decimalsLookup.length)
+				pos = Application.decimalsLookup[printDecimals];
+		}
+
+		try {
+			((JRadioButtonMenuItem) menuDecimalPlaces.getMenuComponent(pos))
+			.setSelected(true);
+		} catch (Exception e) {
+		}
+
+	}
+
+	private JMenu createMenuDecimalPlaces(){
+		menuDecimalPlaces = new JMenu(app.getMenu("Rounding"));
+		String[] strDecimalSpaces = app.getRoundingMenu();
+
+		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this,
+				strDecimalSpaces, Application.strDecimalSpacesAC, 0);
+
+		return menuDecimalPlaces;
+	}
+
+	/**
+	 * Create a set of radio buttons automatically.
+	 * 
+	 * @param menu
+	 * @param al
+	 * @param items
+	 * @param actionCommands
+	 * @param selectedPos
+	 */
+	private void addRadioButtonMenuItems(JMenu menu, ActionListener al,
+			String[] items, String[] actionCommands, int selectedPos) {
+		JRadioButtonMenuItem mi;
+		ButtonGroup bg = new ButtonGroup();
+		// String label;
+
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] == "---") {
+				menu.addSeparator();
+			} else {
+				String text = app.getMenu(items[i]);
+				mi = new JRadioButtonMenuItem(text);
+				mi.setFont(app.getFontCanDisplay(text));
+				if (i == selectedPos)
+					mi.setSelected(true);
+				mi.setActionCommand(actionCommands[i]);
+				mi.addActionListener(al);
+				bg.add(mi);
+				menu.add(mi);
+			}
+		}
+	}
+
+
 
 
 }

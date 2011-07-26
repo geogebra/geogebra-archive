@@ -56,7 +56,6 @@ public class MultiVarStatPanel extends BasicStatTable {
 	public void updatePanel(){
 		GeoList dataList = statDialog.getStatDialogController().getDataSelected();
 		DefaultTableModel model = statTable.getModel();
-		NumberFormat nf = statDialog.getNumberFormat();
 		String[] titles = statDialog.getDataTitles();
 		String[][] cmdMap = getCmdMap();
 		String expr;
@@ -70,7 +69,7 @@ public class MultiVarStatPanel extends BasicStatTable {
 			for(int col = 0; col < cmdMap.length; col++){
 				expr = cmdMap[col][1] + "[" + dataLabel + "]";
 				value = evaluateExpression(expr);
-				model.setValueAt(nf.format(value), row, col);
+				model.setValueAt(statDialog.format(value), row, col);
 			}
 		}
 		statTable.repaint();

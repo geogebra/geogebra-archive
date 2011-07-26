@@ -246,9 +246,9 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 	/** Helper method for updateGUI() */
 	private void updateNumberField(JTextField fld,  double n){
-		NumberFormat nf = statDialog.getNumberFormat();
+		
 		fld.removeActionListener(this);
-		fld.setText(nf.format(n));
+		fld.setText(statDialog.format(n));
 		//fld.setCaretPosition(0);
 		fld.addActionListener(this);
 	}
@@ -281,12 +281,12 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	private void updateCBAlternativeHyp(){
 
 		int selectedIndex = cbAltHyp.getSelectedIndex();
-		NumberFormat nf = statDialog.getNumberFormat();
+			
 		cbAltHyp.removeActionListener(this);
 		cbAltHyp.removeAllItems();
-		cbAltHyp.addItem(getNullHypName() + " " + tail_right + " " + nf.format(hypMean));
-		cbAltHyp.addItem(getNullHypName() + " " + tail_left + " " + nf.format(hypMean));
-		cbAltHyp.addItem(getNullHypName() + " " + tail_two + " " + nf.format(hypMean));
+		cbAltHyp.addItem(getNullHypName() + " " + tail_right + " " + statDialog.format(hypMean));
+		cbAltHyp.addItem(getNullHypName() + " " + tail_left + " " + statDialog.format(hypMean));
+		cbAltHyp.addItem(getNullHypName() + " " + tail_two + " " + statDialog.format(hypMean));
 		if(tail == tail_right)
 			cbAltHyp.setSelectedIndex(0);
 		else if(tail == tail_left)
@@ -294,6 +294,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		else
 			cbAltHyp.setSelectedIndex(2);
 		cbAltHyp.addActionListener(this);
+		
 	}
 
 
@@ -448,7 +449,6 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 	private void updateResultTable(){
 
-		NumberFormat nf = statDialog.getNumberFormat();
 		DefaultTableModel model = resultTable.getModel();
 
 		evaluate();
@@ -457,23 +457,23 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		case StatComboPanel.PLOT_TTEST_2MEANS:
 		case StatComboPanel.PLOT_TTEST_PAIRED:
 
-			model.setValueAt(nf.format(P),0,0);
-			model.setValueAt(nf.format(t), 0,1);
+			model.setValueAt(statDialog.format(P),0,0);
+			model.setValueAt(statDialog.format(t), 0,1);
 			model.setValueAt("", 0,2);
-			model.setValueAt(nf.format(se), 0,3);
-			model.setValueAt(nf.format(df), 0,4);
+			model.setValueAt(statDialog.format(se), 0,3);
+			model.setValueAt(statDialog.format(df), 0,4);
 			break;
 
 		case StatComboPanel.PLOT_TINT_2MEANS:
 		case StatComboPanel.PLOT_TINT_PAIRED:
 
-			String cInt = nf.format(mean) + " \u00B1 "  + nf.format(me);
+			String cInt = statDialog.format(mean) + " \u00B1 "  + statDialog.format(me);
 			model.setValueAt(cInt,0,0);
-			model.setValueAt(nf.format(lower), 0, 1);
-			model.setValueAt(nf.format(upper), 0, 2);
+			model.setValueAt(statDialog.format(lower), 0, 1);
+			model.setValueAt(statDialog.format(upper), 0, 2);
 			model.setValueAt("", 0, 3);
-			model.setValueAt(nf.format(se), 0, 4);
-			model.setValueAt(nf.format(df), 0, 5);
+			model.setValueAt(statDialog.format(se), 0, 4);
+			model.setValueAt(statDialog.format(df), 0, 5);
 
 			break;
 		};
