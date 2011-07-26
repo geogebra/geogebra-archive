@@ -152,6 +152,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		casInputHandler = new CASInputHandler(this);
 
 		addFocusListener(this);
+		attachView();
 	}
 	
 	
@@ -349,16 +350,15 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	private boolean updateInCAS(GeoElement geo) {
 		if (ignoreUpdateVars.contains(geo.getLabel())) {
 			// TODO: remove
-			System.out.println("IGNORE update: " + geo.getLabel());
+			System.out.println("IGNORE updateInCAS: " + geo.getLabel());
 			return false;
 		}
 		try {
 			if (geo.isCasEvaluableObject()) {
 				String funStr = geo.toCasAssignment(cas.getCurrentCASstringType());
 				if (funStr != null) {
+					// System.out.println("updateInCAS: " + funStr);
 					cas.evaluateRaw(funStr);
-					// TODO: remove
-					System.out.println("updateInCAS: " + funStr);
 					return true;
 				}
 			}
