@@ -3,6 +3,7 @@ package geogebra.gui;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.layout.Layout;
+import geogebra.gui.util.FullWidthLayout;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;

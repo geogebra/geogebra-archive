@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.util.FullWidthLayout;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
