@@ -303,7 +303,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	
 	    			} else {
 		                updateCurrentWord();
-		                showCommandHelp(true);
+		                if (app.isCommand(dict.lookup(curWord.toString())))
+		                	showCommandHelp(true);
+		                else
+		                	app.getGuiManager().openHelp(Application.WIKI_MANUAL);
+		                	
 	    			}
             	} else app.getGuiManager().openHelp(Application.WIKI_MANUAL);
             	
