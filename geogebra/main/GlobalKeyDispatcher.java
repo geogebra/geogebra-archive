@@ -6,8 +6,9 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -30,10 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -300,6 +299,19 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					// Ctrl-3: set black/white mode printing and visually impaired users
 					changeFontsAndGeoElements(app, app.getFontSize(), true);
 					consumed = true;
+				}
+				break;
+				
+				// needed for AlgebraView
+			case KeyEvent.VK_A:
+				
+				if (!event.isShiftDown()) {
+				
+					// different behaviour in Spreadsheet
+					if (!(event.getSource() instanceof MyTable)) {
+						app.selectAll(-1);
+						event.consume();
+					}
 				}
 				break;
 				
