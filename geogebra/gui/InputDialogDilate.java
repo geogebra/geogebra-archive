@@ -93,7 +93,10 @@ public class InputDialogDilate extends InputDialog {
 							ret.addAll(Arrays.asList(kernel.Dilate(null,  selGeos[i], num, point)));
 					}
 				}
-				kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(ret);
+				if (!ret.isEmpty()) {
+					kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(ret);
+					app.storeUndoInfo();
+				}
 				return true;
 			}
 			
