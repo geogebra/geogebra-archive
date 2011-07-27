@@ -489,6 +489,8 @@ public class Toolbar extends JToolBar {
 		sb.append(EuclidianView.MODE_AREA);
 		sb.append(" ");
 		sb.append(EuclidianView.MODE_SLOPE);
+		sb.append(" , ");
+		sb.append(EuclidianView.MODE_CREATE_LIST);
 
 		// transformations
 		sb.append(" | ");

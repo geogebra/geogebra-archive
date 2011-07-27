@@ -1268,6 +1268,9 @@ public class Kernel {
 		case EuclidianConstants.MODE_FITLINE:
 			return "FitLine";
 
+		case EuclidianConstants.MODE_CREATE_LIST:
+			return "CreateListGraphicsView";
+
 		case EuclidianConstants.MODE_RECORD_TO_SPREADSHEET:
 			return "RecordToSpreadsheet";
 			

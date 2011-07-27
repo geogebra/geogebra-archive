@@ -144,6 +144,8 @@ public interface EuclidianConstants {
 	
 	public static final int MODE_VECTOR_POLYGON = 70;
 
+	public static final int MODE_CREATE_LIST = 71;
+
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */
 	public static final int MODE_POINT_ON_OBJECT = 501;

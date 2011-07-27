@@ -1998,6 +1998,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 		case EuclidianView.MODE_ROTATE_BY_ANGLE:
 		case EuclidianView.MODE_FITLINE:
+		case EuclidianView.MODE_CREATE_LIST:
 		case EuclidianView.MODE_VISUAL_STYLE:
 		case EuclidianView.MODE_COPY_VISUAL_STYLE:
 			return true;
@@ -2627,6 +2628,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			processSelectionRectangleForTransformations(hits, Dilateable.class);									
 			break;	
 
+		case EuclidianView.MODE_CREATE_LIST:
+				removeParentPoints(hits);				
+				selectedGeos.addAll(hits);
+				app.setSelectedGeos(hits);
+				processMode(hits, e);
+				view.setSelectionRectangle(null);
+			break;
+			
 		case EuclidianView.MODE_FITLINE:
 			for (int i=0; i < hits.size(); i++) {
 				GeoElement geo = (GeoElement) hits.get(i);
@@ -2709,6 +2718,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			processSelectionRectangleForTransformations(hits, Dilateable.class);
 			break;
 
+		//case EuclidianView.MODE_CREATE_LIST:
 		case EuclidianView.MODE_FITLINE:
 			for (int i=0; i < hits.size(); i++) {
 				GeoElement geo = (GeoElement) hits.get(i);
@@ -3189,6 +3199,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case EuclidianView.MODE_FITLINE:
 			ret = fitLine(hits);
+			break;
+
+		case EuclidianView.MODE_CREATE_LIST:
+			ret = createList(hits);
 			break;
 
 		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
@@ -6573,6 +6587,23 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					return ret;             	     	 
 				} 
 			}
+		}
+		return null;
+	}
+
+	final protected GeoElement[] createList(Hits hits) {
+		GeoList list;
+
+		GeoElement[] ret = { null };
+
+		if (hits.size() > 1) 
+		{					
+			GeoPoint[] points = getSelectedPoints();
+			list = list = kernel.List(null, hits, false);
+			if (list != null) {
+				ret[0] = list;
+				return ret;             	     	 
+			} 
 		}
 		return null;
 	}

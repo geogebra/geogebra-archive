@@ -309,6 +309,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		defaultGeoMap.put(EuclidianConstants.MODE_TANGENTS, ConstructionDefaults.DEFAULT_LINE);
 		defaultGeoMap.put(EuclidianConstants.MODE_POLAR_DIAMETER, ConstructionDefaults.DEFAULT_LINE);
 		defaultGeoMap.put(EuclidianConstants.MODE_FITLINE, ConstructionDefaults.DEFAULT_LINE);
+		defaultGeoMap.put(EuclidianConstants.MODE_CREATE_LIST, ConstructionDefaults.DEFAULT_LIST);
 		defaultGeoMap.put(EuclidianConstants.MODE_LOCUS, ConstructionDefaults.DEFAULT_LOCUS);
 
 		defaultGeoMap.put(EuclidianConstants.MODE_POLYGON, ConstructionDefaults.DEFAULT_POLYGON);

@@ -4826,14 +4826,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	{
 		switch (mode)
 		{
-		case MODE_VISUAL_STYLE: return true;
-		case MODE_FITLINE: return true;
-		case MODE_PEN: return true;
-		case MODE_MIRROR_AT_LINE: return true;
-		case MODE_MIRROR_AT_POINT: return true;
-		case MODE_ROTATE_BY_ANGLE: return true;
-		case MODE_TRANSLATE_BY_VECTOR: return true;
-		case MODE_DILATE_FROM_POINT: return true;
+		case MODE_VISUAL_STYLE: 
+		case MODE_FITLINE: 
+		case MODE_CREATE_LIST: 
+		case MODE_PEN: 
+		case MODE_MIRROR_AT_LINE: 
+		case MODE_MIRROR_AT_POINT: 
+		case MODE_ROTATE_BY_ANGLE: 
+		case MODE_TRANSLATE_BY_VECTOR: 
+		case MODE_DILATE_FROM_POINT: 
 		case MODE_COPY_VISUAL_STYLE: return true;
 		default: return false;
 		}
