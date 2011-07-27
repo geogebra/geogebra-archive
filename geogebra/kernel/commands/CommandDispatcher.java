@@ -437,6 +437,7 @@ public class CommandDispatcher {
     	cmdTable.put("Product", new CmdProduct(kernel));
     	cmdTable.put("Frequency", new CmdFrequency(kernel));
     	cmdTable.put("Unique", new CmdUnique(kernel));
+    	cmdTable.put("Identity", new CmdIdentity(kernel));
 
     	cmdTable.put("Classes", new CmdClasses(kernel));
 
