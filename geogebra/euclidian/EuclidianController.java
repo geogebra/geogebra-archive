@@ -14,7 +14,6 @@ package geogebra.euclidian;
 
 import geogebra.Matrix.Coords;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
-import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
@@ -80,7 +79,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.TreeSet;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -208,11 +206,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected GeoElement movedGeoElement;
 	
-	protected GeoElement spreadsheetTraceGeo = null;
+	protected GeoElement recordObject = null;
 
 	protected GeoElement rotGeoElement, rotStartGeo;
 	protected GeoPoint rotationCenter;
-	public GeoElement recordObject;
 	protected MyDouble tempNum;
 	protected double rotStartAngle;
 	protected ArrayList translateableGeos;
@@ -547,12 +544,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void endOfMode(int mode) {
 		switch (mode) {
 		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
-			// just to be sure spreadsheetTraceGeo is set to null
+			// just to be sure recordObject is set to null
 			// usually this is already done at mouseRelease
-			if (spreadsheetTraceGeo != null) {
-				if (((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(spreadsheetTraceGeo))
-					app.getGuiManager().removeSpreadsheetTrace(spreadsheetTraceGeo);
-				spreadsheetTraceGeo = null;
+			if (recordObject != null) {
+				if (((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(recordObject))
+					app.getGuiManager().removeSpreadsheetTrace(recordObject);
+				recordObject.setSelected(false);
+				recordObject = null;
 			}
 			break;
 			
@@ -578,12 +576,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 		}
 
-		if (recordObject != null) {
-			recordObject.setSelected(false);
-			app.getGuiManager().removeSpreadsheetTrace(recordObject);
-			recordObject = null;
-		}
-		
 		if (toggleModeChangedKernel)
 			app.storeUndoInfo();
 	}
@@ -1220,7 +1212,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
-			//handleMousePressedForRecordToSpreadsheetMode(e);
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			GeoElement tracegeo = hits.getFirstHit(GeoPoint.class);
@@ -1234,7 +1225,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			{
 				if (!((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(tracegeo))
 					app.getGuiManager().addSpreadsheetTrace(tracegeo);
-				spreadsheetTraceGeo = tracegeo;
+				recordObject = tracegeo;
 				handleMousePressedForMoveMode(e, false);
 				tracegeo.updateRepaint();
 			}
@@ -2489,10 +2480,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setHitCursor();
 
 
-		if (mode == EuclidianView.MODE_RECORD_TO_SPREADSHEET && spreadsheetTraceGeo != null) {
-			if (((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(spreadsheetTraceGeo))
-				app.getGuiManager().removeSpreadsheetTrace(spreadsheetTraceGeo);
-			spreadsheetTraceGeo = null;
+		if (mode == EuclidianView.MODE_RECORD_TO_SPREADSHEET && recordObject != null) {
+			if (((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(recordObject))
+				app.getGuiManager().removeSpreadsheetTrace(recordObject);
+			recordObject = null;
 			clearSelections();
 		} else {
 			// this is in the else branch to avoid running it twice
@@ -3024,13 +3015,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				moveRotate(hits.getTopHits());
 			}
 			break;
-
-		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
-			//if (selectionPreview) 
-		{
-			changedKernel = record(hits.getTopHits(), e);
-		}
-		break;
 
 		case EuclidianView.MODE_POINT:
 		case EuclidianView.MODE_POINT_ON_OBJECT:
@@ -4315,273 +4299,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return ret;
 	}
 
-	private void recordSingleObjectToSpreadSheet(GeoElement geo) {
-		int i = 1;
-		while (kernel.lookupLabel("A"+i) != null) i++;
-
-		kernel.getApplication().getGuiManager().setScrollToShow(true);
-		if (geo.isGeoPoint()) {
-
-			// find first empty pair of cells in columns A, B
-			while (kernel.lookupLabel("A"+i) != null || kernel.lookupLabel("B"+i) != null) i++;
-
-			GeoPoint p = (GeoPoint)geo;
-
-			GeoNumeric num = new GeoNumeric(kernel.getConstruction(), "A"+i, p.inhomX);
-			num.setAuxiliaryObject(true);
-			num = new GeoNumeric(kernel.getConstruction(), "B"+i, p.inhomY);
-			num.setAuxiliaryObject(true);				
-		} else if (geo.isGeoVector()) {
-			// find first empty pair of cells in columns A, B
-			while (kernel.lookupLabel("A"+i) != null || kernel.lookupLabel("B"+i) != null) i++;
-
-			GeoVector v = (GeoVector)geo;
-
-			double [] coords = new double[2];
-			v.getInhomCoords(coords);
-
-			GeoNumeric num = new GeoNumeric(kernel.getConstruction(), "A"+i, coords[0]);
-			num.setAuxiliaryObject(true);				
-			num = new GeoNumeric(kernel.getConstruction(), "B"+i, coords[1]);
-			num.setAuxiliaryObject(true);				
-
-		} else if (geo.isGeoNumeric()) {
-
-			GeoNumeric num = new GeoNumeric(kernel.getConstruction(), "A"+i, ((NumberValue)geo).getDouble());
-			num.setAuxiliaryObject(true);
-		}
-		kernel.getApplication().getGuiManager().setScrollToShow(false);
-
-	}	
-
-	protected void handleMousePressedForRecordToSpreadsheetMode(MouseEvent e) {	
-		view.setHits(mouseLoc);
-		Hits viewHits= view.getHits();
-		Hits pointHits = viewHits.getHits(GeoPoint.class, tempArrayList);
-		Hits vectorHits = viewHits.getHits(GeoVector.class, tempArrayList2);
-		Hits numberHits = viewHits.getHits(GeoNumeric.class, tempArrayList3);
-		//Application.debug(pointHits.size()+"");
-		// we need the object to record
-		if (recordObject == null) {
-
-			// alt-click on object: special mode, just put it straight in the spreadsheet in column A (and B for Points)		
-			if (e.isAltDown()) {
-
-				if (pointHits != null)
-					recordSingleObjectToSpreadSheet((GeoPoint)pointHits.get(0));
-				else if (vectorHits != null)
-					recordSingleObjectToSpreadSheet((GeoVector)vectorHits.get(0));
-				else if (pointHits != null)
-					recordSingleObjectToSpreadSheet((GeoNumeric)numberHits.get(0));
-
-				return;
-
-			}
-
-
-			if (!pointHits.isEmpty()) {
-				recordObject = (GeoPoint)pointHits.get(0);
-				//app.addSelectedGeo(recordObject);
-				recordObject.setSelected(true);
-				resetSpreadsheetRecording();
-			} else if (!vectorHits.isEmpty()) {
-				recordObject = (GeoVector)vectorHits.get(0);
-				//app.addSelectedGeo(recordObject);
-				recordObject.setSelected(true);
-				resetSpreadsheetRecording();
-			}
-		}
-		else {	// recordObject != null
-			Hits hits = viewHits.getPointVectorNumericHits();
-			// got recordObject again: deselect
-			if (!hits.isEmpty() && hits.contains(recordObject) &&
-					// if you drag a point at the end of a vector, we don't want to deselect the vector:
-					(!recordObject.isGeoVector() || (recordObject.isGeoVector() && noPointsIn(hits)))		
-			) {
-				//app.removeSelectedGeo(recordObject);
-				recordObject.setSelected(false);
-				app.getGuiManager().removeSpreadsheetTrace(recordObject);
-				recordObject = null;
-				moveMode = MOVE_NONE;
-				return;
-			}
-
-			//moveModeSelectionHandled = true;
-
-			if (getMovedGeoPoint() != null) getMovedGeoPoint().setSelected(false);
-			if (movedGeoNumeric != null) movedGeoNumeric.setSelected(false);
-
-			//hits = view.getHits(hits, GeoPoint.class, tempArrayList);
-			if (!pointHits.isEmpty() && pointHits.contains(getMovedGeoPoint()))
-			{
-				getMovedGeoPoint().setSelected(true);
-				moveMode = MOVE_POINT;
-			}
-			else if (!pointHits.isEmpty()) {
-				movedGeoPoint = (GeoPointND)pointHits.get(0);
-				((GeoElement) movedGeoPoint).setSelected(true);
-				moveMode = MOVE_POINT;
-			}
-			else if (!numberHits.isEmpty() && numberHits.contains(movedGeoNumeric))
-			{
-				movedGeoNumeric.setSelected(true);
-				moveMode = MOVE_NUMERIC;
-				startPoint.setLocation(movedGeoNumeric.getSliderX(), movedGeoNumeric.getSliderY());
-			}
-			else if (!numberHits.isEmpty()) {
-				movedGeoNumeric = (GeoNumeric)numberHits.get(0);
-				movedGeoNumeric.setSelected(true);
-				moveMode = MOVE_NUMERIC;
-				startPoint.setLocation(movedGeoNumeric.getSliderX(), movedGeoNumeric.getSliderY());
-			}
-			else {
-				moveMode = MOVE_NONE;
-			}
-
-		}					
-	}
-
 	private boolean noPointsIn(Hits hits)
 	{
 		for (int i = 0 ; i < hits.size(); i++) {
 			if ( ((GeoElement)(hits.get(i))).isGeoPoint()) return false;
 		}
 		return true;
-	}
-
-	final protected boolean record(Hits hits, MouseEvent e) {
-		if (hits.isEmpty())
-			return false;
-
-		// check how many interesting hits we have
-		if (!selectionPreview && hits.size() > 2 - selGeos()) {
-			Hits goodHits = new Hits();
-			//goodHits.add(selectedGeos);
-			hits.getHits(GeoPoint.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoNumeric.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoVector.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-
-			if (goodHits.size() > 2 - selGeos()) {
-				//  choose one geo, and select only this one
-				GeoElement geo = chooseGeo(goodHits, true);
-				hits.clear();
-				hits.add(geo);				
-			} else {
-				hits = goodHits;
-			}
-		}			
-
-		addSelectedPoint(hits, 1, true);
-		addSelectedNumeric(hits, 1, true);
-		addSelectedVector(hits, 1, true);	
-
-		/*
-		if (recordObject != null && selPoints() == 1 && selPoints() == 1 && points[0] == recordObject)
-		{
-			recordObject.setSelected(false);
-			recordObject = null;
-			return true;
-		}*/
-
-		if (recordObject == null) {
-			if (selPoints() == 1) {
-				GeoPoint[] points = getSelectedPoints();
-
-				if (e.isAltDown()) {
-					recordSingleObjectToSpreadSheet(points[0]);
-				}
-				else
-				{
-					recordObject = points[0];
-					resetSpreadsheetRecording();
-				}
-			}
-			else if (selNumbers() == 1) {
-				GeoNumeric[] nums = getSelectedNumbers();
-				if (e.isAltDown()) {
-					recordSingleObjectToSpreadSheet(nums[0]);
-				}
-				else {
-					recordObject = nums[0];
-					resetSpreadsheetRecording();
-				}
-			}
-			else if (selVectors() == 1) {
-				GeoVector[] vecs = getSelectedVectors();
-				if (e.isAltDown()) {
-					recordSingleObjectToSpreadSheet(vecs[0]);
-				}
-				else {
-					recordObject = vecs[0];
-					resetSpreadsheetRecording();
-				}
-			}
-			if (recordObject != null) recordObject.setSelected(true);
-
-			//return true;
-		} else { // recordObject != null
-			if (selPoints() == 1)
-			{
-				GeoPoint[] points = getSelectedPoints();
-				if (points[0] == recordObject) {
-					recordObject.setSelected(false);
-				//	app.getGuiManager().removeSpreadsheetTrace(recordObject);
-					recordObject = null;
-					resetSpreadsheetRecording();
-				}
-			}
-			else if (selNumbers() == 1) {
-				GeoNumeric[] nums = getSelectedNumbers();
-				if (recordObject == nums[0]) {
-					recordObject.setSelected(false);
-				//	app.getGuiManager().removeSpreadsheetTrace(recordObject);
-					recordObject = null;
-					resetSpreadsheetRecording();
-				}
-			}
-			else if (selVectors() == 1) {
-				GeoVector[] vecs = getSelectedVectors();
-				if (recordObject == vecs[0]) {
-					recordObject.setSelected(false);
-				//	app.getGuiManager().removeSpreadsheetTrace(recordObject);
-					recordObject = null;
-					resetSpreadsheetRecording();
-				}
-			}
-			if (recordObject != null) recordObject.setSelected(true);
-			//return true;
-		}
-
-
-		if (selGeos() > 1)
-			return false;
-
-		return false;
-	}
-
-	private void resetSpreadsheetRecording() {
-		moveMode = MOVE_NONE;
-		if (recordObject != null) {
-			recordObject.resetTraceColumns();
-			
-			//G.Sturr 2010-4-22
-			app.getGuiManager().addSpreadsheetTrace(recordObject);
-			
-			recordObject.updateRepaint(); // force repaint to put first point in spreadsheet
-		}
-		movedGeoPoint = null;
-		movedGeoNumeric = null;
-		//view.resetTraceRow();	
-		
-		//G.Sturr 2010-4-22
-		if (recordObject == null) {
-			app.getGuiManager().removeSpreadsheetTrace(recordObject);
-		}
-		
-		
 	}
 
 	//	get two points and create line through them

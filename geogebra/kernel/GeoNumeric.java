@@ -863,12 +863,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	
 	public void update() {  	
 		super.update();		
-		//G.Sturr 2010-5-12
-		EuclidianView view = kernel.getApplication().getEuclidianView();	
-		if (view != null && this == view.getEuclidianController().recordObject){	
-    		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
-    	}
-	  	//END G.Sturr
 		if (minMaxListeners != null) {			
 			for (int i=0; i < minMaxListeners.size(); i++) {
 				GeoNumeric geo = minMaxListeners.get(i);
