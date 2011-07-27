@@ -28,6 +28,7 @@ import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
@@ -568,23 +569,7 @@ public abstract class GeoElement
 			else
 				return algoParent.getCommandDescription();
 		} else {
-			//mpreduce uses e for the euler constant
-			//i for the imaginary unit and
-			//T for true
-			int STRING_TYPE = kernel.getCASPrintForm();
-			switch(STRING_TYPE){
-			case ExpressionNodeConstants.STRING_TYPE_MPREDUCE:
-				
-				if (label.equalsIgnoreCase("e") || label.equalsIgnoreCase("i") || label.equalsIgnoreCase("t")){
-					StringBuilder sb=new StringBuilder();
-					sb.append(ExpressionNodeConstants.UNICODE_PREFIX);
-					sb.append((int) label.charAt(0)); // decimal unicode for e
-					sb.append(ExpressionNodeConstants.UNICODE_DELIMITER);
-					return sb.toString();
-				}	
-			}
-			//standard case
-			return label;
+			return printLabel(kernel.getCASPrintForm(), label);
 		}
 	}
 
@@ -1973,29 +1958,38 @@ public abstract class GeoElement
 	public String toCasAssignment(int type) {
 		if (!labelSet) return null;
 		
+		int oldType = kernel.getCASPrintForm();
+		kernel.setCASPrintForm(type);
 		String retval;
-		if (type == ExpressionNode.STRING_TYPE_GEOGEBRA) {
-			String body = toValueString();
-			String label = getLabel();
-			if (isGeoFunction())
-			{
-				String params = ((GeoFunction) this).getFunction().getVarString();
-				retval = label + "(" + params + ") :=" + body;
-			} else
-				retval = label + " :=" + body;				
-		} else {
-			int oldType = kernel.getCASPrintForm();
-			kernel.setCASPrintForm(type);
-			String body = getCASString(false);
-			kernel.setCASPrintForm(oldType);
-			
-			CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
-			if (isGeoFunction()) {
-				String params = ((GeoFunction) this).getFunction().getVarString();
-				retval = cas.translateFunctionDeclaration(label, params, body);
-			} else
-				retval = cas.translateAssignment(label, body);
+		
+		try {
+			if (type == ExpressionNode.STRING_TYPE_GEOGEBRA) {
+				String body = toValueString();
+				String label = getLabel();				
+				
+				if (this instanceof FunctionalNVar)
+				{
+					String params = ((FunctionalNVar) this).getFunction().getVarString();
+					retval = label + "(" + params + ") := " + body;
+				} else
+					retval = label + " := " + body;				
+			} 
+			else {
+				String body = getCASString(false);
+				String casLabel = getLabel();
+				
+				CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
+				if (this instanceof FunctionalNVar) {
+					String params = ((FunctionalNVar) this).getFunction().getVarString();
+					retval = cas.translateFunctionDeclaration(casLabel, params, body);
+				} else
+					retval = cas.translateAssignment(casLabel, body);
+			}
 		}
+		finally {
+			kernel.setCASPrintForm(oldType);
+		}				
+		
 		return retval;
 	}
 
@@ -2008,6 +2002,31 @@ public abstract class GeoElement
 	 */
 	 String getCASString(boolean symbolic) {
 		return symbolic && !isIndependent() ?  getCommandDescription() : toValueString();
+	 }
+	 
+	/**
+	 * Returns the label depending on the current print form. When sending variables
+	 * to the underlying CAS, we need to make sure that we don't overwrite variable names there,
+	 * so we add the prefix ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX.
+	 * 
+	 * @return label depending on kernel.getCASPrintForm()
+	 */
+	 public static String printLabel(int printForm, String label) {
+		 switch(printForm){
+			default:
+				//standard case
+				return label;
+		
+			case ExpressionNodeConstants.STRING_TYPE_MPREDUCE:
+			case ExpressionNodeConstants.STRING_TYPE_MAXIMA:
+				// make sure we don't interfer with reserved names
+				// or command names in the underlying CAS
+				// see http://www.geogebra.org/trac/ticket/1051
+				StringBuilder sb = new StringBuilder();
+				sb.append(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX);
+				sb.append(label);
+				return sb.toString();
+			}
 	 }
 
 	/* *******************************************************

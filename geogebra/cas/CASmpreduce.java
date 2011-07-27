@@ -17,14 +17,16 @@ public class CASmpreduce extends CASgeneric {
 
 	private final static String RB_GGB_TO_MPReduce = "/geogebra/cas/ggb2mpreduce";
 	private Interpreter2 mpreduce;
+	private final CasParserTools parserTools;
 	
 	// We escape any upper-letter words so Reduce doesn't switch them to lower-letter,
 	// however the following function-names should not be escaped
 	// (note: all functions here must be in lowercase!)
 	final private Set<String> predefinedFunctions = ExpressionNodeConstants.RESERVED_FUNCTION_NAMES;
 
-	public CASmpreduce(CASparser casParser) {
+	public CASmpreduce(CASparser casParser, CasParserTools parserTools) {
 		super(casParser, RB_GGB_TO_MPReduce);
+		this.parserTools = parserTools;
 		getInterpreter();
 	}
 
@@ -98,6 +100,10 @@ public class CASmpreduce extends CASgeneric {
 			exp = casParser.replaceIndices(exp);
 			String ret = evaluateRaw(exp);
 			ret = casParser.insertSpecialChars(ret); // undo special character handling
+			
+			// convert MPReduce's scientific notation from e.g. 3.24e-4 to 3.2E-4
+			ret = parserTools.convertScientificFloatNotation(ret);
+			
 			return ret;
 		} catch (Throwable e) {
 			e.printStackTrace();

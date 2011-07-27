@@ -353,10 +353,10 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 	public String getVarString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < fVars.length - 1; i++) {
-			sb.append(fVars[i].toString());
+			sb.append(GeoElement.printLabel(kernel.getCASPrintForm(), fVars[i].toString()));
 			sb.append(", ");
 		}
-		sb.append(fVars[fVars.length - 1].toString());
+		sb.append(GeoElement.printLabel(kernel.getCASPrintForm(), fVars[fVars.length - 1].toString()));
 		return sb.toString();
 	}
 

@@ -3,6 +3,8 @@ package geogebra.cas;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -104,23 +106,34 @@ public abstract class CASgeneric {
 	 */
 	protected String translateToCAS(ValidExpression ve, int casStringType)
 	{
-		ValidExpression tmp = ve;
-		if (!ve.isExpressionNode())
-			tmp = new ExpressionNode(casParser.getKernel(), ve);			
+		Kernel kernel = casParser.getKernel();
+		int oldPrintForm = kernel.getCASPrintForm();
+		kernel.setCASPrintForm(casStringType);
 		
-		String body = ((ExpressionNode) tmp).getCASstring(casStringType, true);			
-		
-		// handle assignments
-		String label = ve.getLabel();
-		if (label != null) { // is an assignment or a function declaration
-			if (ve instanceof FunctionNVar) {
-				FunctionNVar fun = (FunctionNVar) ve;
-				return translateFunctionDeclaration(label, fun.getVarString(), body);
-			}
-			else	
-				return translateAssignment(label, body);
-		} else
-			return body;
+		try {
+			ValidExpression tmp = ve;
+			if (!ve.isExpressionNode())
+				tmp = new ExpressionNode(casParser.getKernel(), ve);			
+			
+			String body = ((ExpressionNode) tmp).getCASstring(casStringType, true);			
+			
+			// handle assignments
+			String label = ve.getLabel();
+			if (label != null) { // is an assignment or a function declaration
+				// make sure to escape labels to avoid problems with reserved CAS labels
+				label = GeoElement.printLabel(casStringType, label);
+				if (ve instanceof FunctionNVar) {
+					FunctionNVar fun = (FunctionNVar) ve;
+					return translateFunctionDeclaration(label, fun.getVarString(), body);
+				}
+				else	
+					return translateAssignment(label, body);
+			} else
+				return body;
+		}
+		finally {
+			kernel.setCASPrintForm(oldPrintForm);
+		}
 	}
 
 	

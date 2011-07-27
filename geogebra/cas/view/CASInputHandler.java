@@ -540,7 +540,7 @@ public class CASInputHandler {
 		// row1   b := 5
 		// row2   c := b + 8
 		// row3   c + 7
-		// when row1 is change to b:=6, we need to process row2 because it
+		// when row1 is changed to b:=6, we need to process row2 because it
 		// depends on b. This also changes c, so we need to add c to our
 		// list of changed variables. This will ensure that also row3 is
 		// updated.
@@ -611,6 +611,9 @@ public class CASInputHandler {
 	 * @return whether processing was successful
 	 */
 	final public boolean processRow(int row) {
+		// TODO: remove
+		System.out.println("CASInputHandler.processRow: " + row);
+		
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(row);
 
 		// resolve dynamic references for prefix and postfix
@@ -964,7 +967,7 @@ public class CASInputHandler {
 		}
 
 		String ggbResult = null;
-		String assignmentResult = null;
+		//String assignmentResult = null;
 		if (evalInGeoGebra) {
 			// we have just set this variable in the CAS, so ignore the update fired back by the
 			// GeoGebra kernel when we call evalInGeoGebra
@@ -1005,10 +1008,10 @@ public class CASInputHandler {
 			if (ggbResult == null && !isDeleteCommand && CASSuccessful) {	
 				// EVALUATE result of CAS
 				String ggbEval = CASResult;
-				if (assignment) {
-					assignmentResult = getAssignmentResult(evalVE);
-					ggbEval = assignmentResult;
-				} 
+//				if (assignment) {
+//					assignmentResult = getAssignmentResult(evalVE);
+//					ggbEval = assignmentResult;
+//				} 
 
 				try {	
 					// process CAS result in GeoGebra
@@ -1026,14 +1029,16 @@ public class CASInputHandler {
 		// return result string:
 		// use MathPiper if that worked, otherwise GeoGebra
 		if (CASSuccessful) {
-			// assignment: return value of assigned variable, e.g. f(x) := 2 a x
-			if (assignment) {
-				if (assignmentResult == null)
-					assignmentResult = getAssignmentResult(evalVE);
-				return assignmentResult;
+			// assignment without result, e.g. f(x) := 2 a x
+			if (assignment && (CASResult == null || CASResult.length() == 0)) {			
+				// return function definition, e.g. 2 a x
+				return evalVE.toString();
+				//				if (assignmentResult == null)
+				//					assignmentResult = getAssignmentResult(evalVE);
+				//				return assignmentResult;
 			} 
 
-			// no assignment: return CAS result
+			// standard case: return CAS result
 			else {
 				return CASResult;
 			}	
@@ -1050,31 +1055,32 @@ public class CASInputHandler {
 		}
 	}
 
-	/**
-	 * Returns evalVE when isKeepInputUsed() is set and otherwise the value of evalVE.getLabel() in the underlying CAS.
-	 * @param evalVE
-	 * @return
-	 */
-	private String getAssignmentResult(ValidExpression evalVE) {
-		StringBuilder assignmentResult = new StringBuilder();
-		assignmentResult.append(evalVE.getLabelForAssignment());
-		assignmentResult.append(evalVE.getAssignmentOperator());
-
-		if (evalVE.isKeepInputUsed()) {
-			// keep input
-			assignmentResult.append(evalVE.toString());
-		} else {
-			// return value of assigned variable
-			try {
-				// evaluate assignment variable like a or f(x)
-				assignmentResult.append(casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(evalVE.getLabelForAssignment()));
-			} catch (Throwable th1) {
-				return evalVE.getLabelForAssignment();
-			}
-		}
-
-		return assignmentResult.toString();
-	}
+//	/**
+//	 * Returns evalVE when isKeepInputUsed() is set and otherwise the value of evalVE.getLabel() in the underlying CAS.
+//	 * @param evalVE
+//	 * @return
+//	 */
+//	private String getAssignmentResult(ValidExpression evalVE) {
+//		StringBuilder assignmentResult = new StringBuilder();
+//		assignmentResult.append(evalVE.getLabelForAssignment());
+//		assignmentResult.append(evalVE.getAssignmentOperator());
+//
+//		if (evalVE.isKeepInputUsed()) {
+//			// keep input
+//			assignmentResult.append(evalVE.toString());
+//		} else {
+//			// return value of assigned variable
+//			try {
+//				// evaluate assignment variable like a or f(x)
+//				String casLabel = evalVE.getLabelForAssignment();
+//				assignmentResult.append(kernel.evaluateGeoGebraCAS(casLabel));
+//			} catch (Throwable th1) {
+//				return evalVE.getLabelForAssignment();
+//			}
+//		}
+//
+//		return assignmentResult.toString();
+//	}
 
 	private boolean isDeleteCommand(String inputExp) {
 		return inputExp.startsWith("Delete");	

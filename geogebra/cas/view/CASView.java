@@ -363,7 +363,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 				}
 			}
 		} catch (Throwable e) {
-			System.err.println("CASView.add: " + geo + ", " + e.getMessage());
+			System.err.println("CASView.updateInCAS: " + geo + ", " + e.getMessage());
 		}
 		return false;
 	}
@@ -381,11 +381,14 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	/**
 	 * Removes function definitions in the CAS
 	 */
-	public void update(GeoElement geo) {
+	public void update(GeoElement geo) {		
+		// TODO: remove
+		System.out.println("CASView.update START: " + geo.getLabel());
+		
 		// check if update should be ignored
 		if (ignoreUpdateVars.contains(geo.getLabel())) {
 			// TODO: remove
-			System.out.println("IGNORE update: " + geo.getLabel());
+			System.out.println("    IGNORE update: " + geo.getLabel());
 			return;
 		}
 		
@@ -418,6 +421,10 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		// update all dependent rows
 		if (isCASUpdateDone)
 			casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
+		
+		// TODO: remove
+		System.out.println("CASView.update END: " + geo.getLabel());
+	
 	}
 
 	void addToIgnoreUpdates(String var) {

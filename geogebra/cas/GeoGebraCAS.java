@@ -115,7 +115,7 @@ public class GeoGebraCAS {
 		if (currentCAS == Application.CAS_MPREDUCE)
 			return (CASmpreduce) cas;
 		else
-			return new CASmpreduce(casParser);
+			return new CASmpreduce(casParser, new CasParserToolsImpl('e'));
 	}
 	
 //	/**
@@ -352,9 +352,9 @@ public class GeoGebraCAS {
 		sbCASCommand.setLength(0);		
 		
 		// no translation found: 
-		// use key as command name
+		// use key as function name
 		if (translation == null) {			
-			sbCASCommand.append(name);
+			sbCASCommand.append(GeoElement.printLabel(app.getKernel().getCASPrintForm(), name));
 			sbCASCommand.append('(');
 			for (int i=0; i < args.size(); i++) {
 				ExpressionValue ev = (ExpressionValue) args.get(i);				

@@ -17,11 +17,11 @@ public class GeoDummyVariable extends GeoNumeric {
 	}
 	
 	public String toString() {
-		return varName;
+		return GeoElement.printLabel(kernel.getCASPrintForm(), varName);
 	}
 	
 	public String toValueString() {
-		return varName;	
+		return toString();	
 	}		
 
 }
