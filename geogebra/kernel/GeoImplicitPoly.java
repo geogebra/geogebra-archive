@@ -303,6 +303,10 @@ Dilateable, Transformable, EuclidianViewCE {
 	public void setUndefined() {
 		defined=false;
 	}
+	
+	public void setDefined(){
+		defined=true;
+	}
 
 	@Override
 	public boolean showInAlgebraView() {
@@ -445,7 +449,7 @@ Dilateable, Transformable, EuclidianViewCE {
 					else
 						coeff[i][j] = ((NumberValue) ev[i][j].evaluate())
 							.getDouble();
-					isConstant=isConstant&&(coeff[i][j]==0||(i==0&&j==0));
+					isConstant=isConstant&&(Kernel.isZero(coeff[i][j])||(i==0&&j==0));
 				}
 			}
 			getFactors();
@@ -1257,7 +1261,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		this.update();
 		this.defined = true;
 		for(int i=0; i<points.size(); i++)
-			if(!this.isOnPath(points.get(i)))
+			if(!this.isOnPath(points.get(i),1)) //precision must not be too small, error can be > 0.01
 			{
 				this.setUndefined();
 				return;
@@ -1282,13 +1286,13 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 
 	public boolean isOnPath(GeoPointND PI) {
-		return locus.isOnPath(PI, Kernel.STANDARD_PRECISION);
+		return isOnPath(PI, Kernel.STANDARD_PRECISION);
 	}
 	
 	public boolean isOnPath(GeoPointND PI, double eps) {
-		return locus.isOnPath(PI,eps);
+//		return locus.isOnPath(PI,eps);
 		//Application.debug("on path? "+PI+"; eps="+eps);
-/*
+
 		if(!PI.isDefined())
 			return false;
 
@@ -1306,7 +1310,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		
 		double value = this.evalPolyAt(px, py);
 		
-		return Math.abs(value) < Kernel.MIN_PRECISION; */
+		return Math.abs(value) < Kernel.MIN_PRECISION; 
 	}
 
 	public double getMinParameter() {
@@ -1922,12 +1926,6 @@ Dilateable, Transformable, EuclidianViewCE {
 //			scaleX=(view.xmax-view.xmin)/view.getWidth();
 //			scaleY=(view.ymax-view.ymin)/view.getHeight();
 			double prec=5;
-			GeoElement g=kernel.getConstruction().getLastGeoElement();
-			//TODO remove
-			if (g instanceof GeoNumeric){
-				prec=((GeoNumeric)g).getDouble();
-//				Application.debug("s="+prec);
-			}
 			scaleX=prec*Math.sqrt(resolution);
 			scaleY=prec*Math.sqrt(resolution);
 //			Application.debug("scale="+scaleX);
@@ -2025,8 +2023,20 @@ Dilateable, Transformable, EuclidianViewCE {
 					}
 				}
 			}
-//			implicitPoly.setLocus(locus);
-//			Application.debug("gps-size="+gps.size());
+			if (algoUpdateSet!=null){
+				Iterator<AlgoElement> it=algoUpdateSet.getIterator();
+				while(it.hasNext()){
+					AlgoElement elem=it.next();
+					if (elem instanceof AlgoPointOnPath){
+						AlgoPointOnPath ap=(AlgoPointOnPath) elem;
+						if (ap.getPath()==this){
+							ap.getP().setCoords(ap.getP().getCoords(),true);
+						}
+					}
+				}
+//				algoUpdateSet.updateAll();
+			} 
+			
 			}catch(Exception e){
 				e.printStackTrace();
 			}

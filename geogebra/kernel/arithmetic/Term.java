@@ -314,8 +314,12 @@ public class Term implements Comparable, Serializable {
     public String toString() {                          
         if (ExpressionNode.isEqualString(coefficient, 0, true)) 
         	return "0";
-        if (ExpressionNode.isEqualString(coefficient, 1, true)) 
-        	return variableString();
+        if (ExpressionNode.isEqualString(coefficient, 1, true)){
+        	if (variableString().length()>0)
+        		return variableString();
+        	else
+        		return "1";
+        }
         
         StringBuilder sb = new StringBuilder();
         String var = variableString();

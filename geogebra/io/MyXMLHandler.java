@@ -3740,11 +3740,11 @@ public class MyXMLHandler implements DocHandler {
 				((GeoNumeric)pair.geo).setIntervalMax(num2);
 			}
 		} catch (Exception e) {
-			animationSpeedList.clear();
+			minMaxList.clear();
 			e.printStackTrace();
 			throw new MyError(app, "processMinMaxList: " + e.toString());
 		}
-		animationSpeedList.clear();
+		minMaxList.clear();
 	}
 
 	// Michael Borcherds 2008-05-18
@@ -3864,8 +3864,8 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleCoefficients(LinkedHashMap<String, String> attrs) {
 	//	Application.debug(attrs.toString());
 		if (!(geo.isGeoImplicitPoly())) {
-			System.err.println("wrong element type for <coefficients>: "
-					+ geo.getClass());
+			Application.debug("wrong element type for <coefficients>: "
+					+ geo.getClass(),1);
 			return false;
 		}
 		try {
@@ -3918,8 +3918,8 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleUserInput(LinkedHashMap<String, String> attrs) {
 //		Application.debug(attrs.toString());
 		if (!(geo instanceof GeoUserInputElement)) {
-			System.err.println("wrong element type for <userinput>: "
-					+ geo.getClass());
+			Application.debug("wrong element type for <userinput>: "
+					+ geo.getClass(),1);
 			return false;
 		}
 		try{
@@ -4155,6 +4155,10 @@ public class MyXMLHandler implements DocHandler {
 					((Equation) ve).setForceLine();
 				} else if (type.equals("plane")) {
 					((Equation) ve).setForcePlane();
+				} else if (type.equals("conic")){
+					((Equation) ve).setForceConic();
+				} else if (type.equals("implicitPoly")){
+					((Equation) ve).setForceImplicitPoly();
 				}
 			}
 			

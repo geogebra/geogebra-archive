@@ -32,6 +32,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 import geogebra.util.Unicode;
 
 import java.util.HashSet;
@@ -852,10 +853,58 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 	 * transfers every non-polynomial in this tree to a polynomial. This is
 	 * needed to enable polynomial simplification by evaluate()
 	 */
-	final void makePolynomialTree() {
+	final void makePolynomialTree(Equation equ) {
+		
+		if (operation==ExpressionNodeConstants.FUNCTION_NVAR){
+			if (left instanceof FunctionalNVar && right instanceof MyList){
+				MyList list=((MyList)right); 
+				FunctionNVar func=((FunctionalNVar)left).getFunction();
+				ExpressionNode expr=func.getExpression().getCopy(kernel);
+				if (func.getFunctionVariables().length==list.size()){
+					for (int i=0;i<list.size();i++){
+						ExpressionValue ev=list.getListElement(i);
+						if (ev instanceof ExpressionNode){
+							ExpressionNode en=((ExpressionNode)ev).getCopy(kernel);
+							if (!equ.isFunctionDependent()){
+								equ.setFunctionDependent(en.includesPolynomial());
+							}
+							en.makePolynomialTree(equ);
+							ev=en;
+						}else if (list.getListElement(i).isPolynomialInstance()){
+							equ.setFunctionDependent(true);
+						}
+						expr=expr.replaceAndWrap(func.getFunctionVariables()[i], ev);
+					}
+				}else{
+					throw new MyError(app,new String[]{"IllegalArgumentNumber"});
+				}
+				expr.makePolynomialTree(equ);
+				left=expr.left;
+				right=expr.right;
+				operation=expr.getOperation();
+			}
+		}else if (operation==ExpressionNodeConstants.FUNCTION){
+			if (left instanceof GeoFunction){
+				Function func=((Functional)left).getFunction();
+				ExpressionNode expr=func.getExpression().getCopy(kernel);
+				if (right instanceof ExpressionNode){
+					if (!equ.isFunctionDependent()){
+						equ.setFunctionDependent(((ExpressionNode)right).includesPolynomial());
+					}
+					((ExpressionNode)right).makePolynomialTree(equ);
+				}else if (right.isPolynomialInstance()){
+					equ.setFunctionDependent(true);
+				}
+				expr=expr.replaceAndWrap(func.getFunctionVariable(),right);
+				expr.makePolynomialTree(equ);
+				left=expr.left;
+				right=expr.right;
+				operation=expr.getOperation();
+			}
+		}
 		// transfer left subtree
 		if (left.isExpressionNode()) {
-			((ExpressionNode) left).makePolynomialTree();
+			((ExpressionNode) left).makePolynomialTree(equ);
 		} else if (!(left.isPolynomialInstance())) {
 			left = new Polynomial(kernel, new Term(kernel, left, ""));
 		}
@@ -863,7 +912,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		// transfer right subtree
 		if (right != null) {
 			if (right.isExpressionNode()) {
-				((ExpressionNode) right).makePolynomialTree();
+				((ExpressionNode) right).makePolynomialTree(equ);
 			} else if (!(right.isPolynomialInstance())) {
 				right = new Polynomial(kernel, new Term(kernel, right, ""));
 			}

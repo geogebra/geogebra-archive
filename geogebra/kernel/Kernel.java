@@ -2100,6 +2100,12 @@ public class Kernel {
 		GeoImplicitPoly implicitPoly = algo.getImplicitPoly();
 		return implicitPoly;
 	}
+	
+	final public GeoImplicitPoly ImplicitPoly(String label,GeoFunctionNVar func){
+		AlgoImplicitPolyFunction algo=new AlgoImplicitPolyFunction(cons, label, func);
+		GeoImplicitPoly implicitPoly = algo.getImplicitPoly();
+		return implicitPoly;
+	}
 
 	/** Converts number to angle */
 	final public GeoAngle Angle(String label, GeoNumeric num) {
@@ -2331,10 +2337,10 @@ public class Kernel {
 		return conic;
 	}
 	
-	final public GeoImplicitPoly  DependentImplicitPoly(String label, Equation equ) {
+	final public GeoElement  DependentImplicitPoly(String label, Equation equ) {
 		AlgoDependentImplicitPoly algo = new AlgoDependentImplicitPoly(cons, label, equ);
-		GeoImplicitPoly  implicitPoly = algo.getImplicitPoly();
-		return implicitPoly;
+		GeoElement geo = algo.getGeo();
+		return geo;
 	}
 
 	/** Function dependent on coefficients of arithmetic expressions with variables,

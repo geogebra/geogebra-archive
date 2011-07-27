@@ -20,6 +20,7 @@ import geogebra.main.MyError;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * stores left and right hand side of an equation as
@@ -32,6 +33,7 @@ public class Equation extends ValidExpression implements ReplaceableValue {
     
     private Polynomial leftPoly, rightPoly; // polynomial in normalForm   
     private Polynomial normalForm; // polynomial in normalForm
+    private boolean isFunctionDependent; //Equation depends (non-constant) on functions (set in InitEquation)
     protected Kernel kernel;
    
     /** check whether ExpressionNodes are evaluable to instances of Polynomial
@@ -48,7 +50,8 @@ public class Equation extends ValidExpression implements ReplaceableValue {
     	else
     		this.rhs = new ExpressionNode(kernel, rhs);
     
-    	this.kernel = kernel;    	    	
+    	this.kernel = kernel; 
+    	isFunctionDependent=false;
     }  
     
     public ExpressionNode getRHS() {
@@ -62,6 +65,7 @@ public class Equation extends ValidExpression implements ReplaceableValue {
     
     
     private boolean forcePlane = false, forceLine = false;
+    private boolean forceConic = false, forceImplicitPoly = false ;
  
 
     public void setForceLine() {
@@ -82,7 +86,23 @@ public class Equation extends ValidExpression implements ReplaceableValue {
     	return forcePlane;
     }
     
-    /**
+    public boolean isForcedConic() {
+		return forceConic;
+	}
+
+	public void setForceConic() {
+		this.forceConic = true;
+	}
+	
+	 public boolean isForcedImplicitPoly() {
+			return forceImplicitPoly;
+	}
+
+	public void setForceImplicitPoly() {
+		this.forceImplicitPoly = true;
+	}
+
+	/**
      * Adds/subtracts/muliplies/divides ev to this equation to get lhs + ev = rhs = ev
      */
     public void applyOperation(int operation, ExpressionValue ev, boolean switchOrder) {
@@ -110,15 +130,20 @@ public class Equation extends ValidExpression implements ReplaceableValue {
     	
     }
     
+    
     /**
      * Call this method to check that this is a valid equation.
      * May throw MyError (InvalidEquation).     
      */
     public void initEquation() {
-        boolean valid = lhs.includesPolynomial() || rhs.includesPolynomial();
-
-        if (!valid)            
-			throw new MyError(kernel.getApplication(), "InvalidEquation");              
+ /*   	ExpressionNode en=lhs.getCopy(kernel);
+    	en.makePolynomialTree();
+//    	en.evaluate();
+    	lhs=en; */
+//        boolean valid = lhs.includesPolynomial() || rhs.includesPolynomial();
+//
+//        if (!valid)            
+//			throw new MyError(kernel.getApplication(), "InvalidEquation");              
            
         // resolve variables in lhs         
         if (lhs.isLeaf() && lhs.getLeft().isVariable()) {
@@ -139,11 +164,12 @@ public class Equation extends ValidExpression implements ReplaceableValue {
         // copy the expression trees
         ExpressionNode leftEN  = lhs.getCopy(kernel);
         ExpressionNode rightEN = rhs.getCopy(kernel);
+        
  
         // ensure that they only consist of polynomials
-        leftEN.makePolynomialTree();
-        rightEN.makePolynomialTree();		
-        		
+        leftEN.makePolynomialTree(this);
+        rightEN.makePolynomialTree(this);		
+
         // simplify the both sides to single polynomials
         leftPoly  = (Polynomial) leftEN.evaluate();
         rightPoly = (Polynomial) rightEN.evaluate();	      
@@ -154,7 +180,15 @@ public class Equation extends ValidExpression implements ReplaceableValue {
         normalForm.add(leftPoly);             		   		   
     }
     
-    public Polynomial getNormalForm() {        
+    public void setFunctionDependent(boolean isFunctionDependent) {
+		this.isFunctionDependent = isFunctionDependent;
+	}
+
+	public boolean isFunctionDependent() {
+		return isFunctionDependent;
+	}
+
+	public Polynomial getNormalForm() {        
         return normalForm;
     }           
                 

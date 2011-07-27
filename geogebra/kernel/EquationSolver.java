@@ -609,6 +609,9 @@ public class EquationSolver {
 			System.err.println("EquationSolver.LaguerreSolver: "+e.getLocalizedMessage());
 		}
 	
+		if (complexRoots==null)
+			complexRoots=new Complex[0];
+		
 		// sort complexRoots by real part into laguerreRoots
 		double [] laguerreRoots = new double[complexRoots.length];
 		for (int i=0; i < laguerreRoots.length; i++) {

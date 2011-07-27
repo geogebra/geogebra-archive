@@ -78,6 +78,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.TreeSet;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -1587,7 +1588,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			
 			for (GeoElement f: movedGeoImplicitPoly.getAllChildren()){
-				if (f instanceof GeoPoint && f.getParentAlgorithm().getInput().length==1 && f.getParentAlgorithm().getInput()[0] instanceof Path){
+//				if (f instanceof GeoPoint && f.getParentAlgorithm().getInput().length==1 && f.getParentAlgorithm().getInput()[0] instanceof Path){
+				if (f instanceof GeoPoint && movedGeoImplicitPoly.isParentOf(f)){
 					GeoPoint g=(GeoPoint) f;
 					if(!Kernel.isZero(g.getZ())){
 						moveDependentPoints.add(g);
@@ -3549,23 +3551,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		movedGeoImplicitPoly.set(tempImplicitPoly);
 		movedGeoImplicitPoly.translate(xRW - startPoint.x, yRW - startPoint.y);		
 		
-//		if (repaint)
-//			movedGeoImplicitPoly.updateRepaint();
-//		else
-		//update first
-			movedGeoImplicitPoly.updateCascade();
 
 		//set points
 		for (int i=0;i<moveDependentPoints.size();i++){
 			GeoPoint g=moveDependentPoints.get(i);
 			g.setCoords2D(tempDependentPointX.get(i),tempDependentPointY.get(i),1);
 			g.translate(new Coords(xRW - startPoint.x, yRW - startPoint.y,1));
-			g.updateCascade();
+//			g.updateCascade();
 		}
 		
-		//paint
 		if (repaint)
-			kernel.notifyRepaint();
+			movedGeoImplicitPoly.updateRepaint();
+		else
+			movedGeoImplicitPoly.updateCascade();
 		
 //		int i=0;
 //		for (GeoElement elem:movedGeoImplicitPoly.getAllChildren()){
@@ -4900,14 +4898,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					kernel.IntersectImplicitpolyConicSingle(null, p, c, xRW, yRW);
 				}else
 					kernel.IntersectImplicitpolyConic(null, p, c);
-			}else
-				return null;
-		}else if (selImplicitpoly() >= 2){
-			GeoImplicitPoly[] p=getSelectedImplicitpoly();
-			if (singlePointWanted){
-				kernel.IntersectImplicitpolysSingle(null, p[0], p[1], xRW, yRW);
-			}else
-				kernel.IntersectImplicitpolys(null, p[0], p[1]);
+			}else if (selImplicitpoly() >= 2){
+				GeoImplicitPoly[] p=getSelectedImplicitpoly();
+				if (singlePointWanted){
+					kernel.IntersectImplicitpolysSingle(null, p[0], p[1], xRW, yRW);
+				}else
+					kernel.IntersectImplicitpolys(null, p[0], p[1]);
+			}
 		}
 		return null;
 	}

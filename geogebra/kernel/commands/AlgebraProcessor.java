@@ -15,6 +15,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoUserInputElement;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
@@ -837,11 +838,16 @@ public class AlgebraProcessor {
 //		Application.debug("EQUATION: " + equ);        
 //		Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
 		
+		
 		try {
 			equ.initEquation();	
 			//Application.debug("EQUATION: " + equ.getNormalForm());    	
 			// check no terms in z
 			checkNoTermsInZ(equ);
+			
+			if (equ.isFunctionDependent()){
+				return processImplicitPoly(equ);
+			}
 
 			// consider algebraic degree of equation  
 			 // check not equation of eg plane
@@ -855,6 +861,13 @@ public class AlgebraProcessor {
 					return processConic(equ);
 	
 				default :
+					//test for "y= <rhs>" here as well
+					if (equ.getLHS().toString().trim().equals("y")){
+						Function fun = new Function(equ.getRHS());
+						// try to use label of equation							
+						fun.setLabel(equ.getLabel());
+						return processFunction(null, fun);
+					}
 					return processImplicitPoly(equ);
 			}
 		} 
@@ -959,15 +972,20 @@ public class AlgebraProcessor {
 		GeoElement[] ret = new GeoElement[1];
 		String label = equ.getLabel();
 		Polynomial lhs = equ.getNormalForm();
-		boolean isIndependent = lhs.isConstant();
+		boolean isIndependent = !equ.isFunctionDependent()&&lhs.isConstant();
 		GeoImplicitPoly poly;
+		GeoElement geo=null;
 		if (isIndependent){
 			poly=kernel.ImplicitPoly(label, lhs);
+			poly.setUserInput(equ);
+			geo=poly;
 		}else{
-			poly=kernel.DependentImplicitPoly(label, equ);
+			geo=kernel.DependentImplicitPoly(label, equ); //might also return Line or Conic
+			if (geo instanceof GeoUserInputElement){
+				((GeoUserInputElement)geo).setUserInput(equ);
+			}
 		}
-		poly.setUserInput(equ);
-		ret[0]=poly;
+		ret[0]=geo;
 //		Application.debug("User Input: "+equ);
 		ret[0].updateRepaint();
 		return ret;

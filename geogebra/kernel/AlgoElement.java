@@ -1075,7 +1075,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
             }
         } 
         // add expression       
-        String expStr = Util.encodeXML(toString());
+        String expStr = Util.encodeXML(toExpString());
         sb.append(" exp=\"");                    
         sb.append(expStr);
         sb.append("\"");
@@ -1091,6 +1091,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         		sb.append(" type=\"line\"");
         	} else if (getOutput(0).isGeoPlane()) {
         		sb.append(" type=\"plane\"");
+        	} else if (getOutput(0).isGeoConic()){
+        		sb.append(" type=\"conic\"");
+        	}  else if (getOutput(0).isGeoImplicitPoly()){
+        		sb.append(" type=\"implicitPoly\"");
         	}
 
         }
@@ -1222,6 +1226,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
     public String toString() {
     	return getCommandDescription();
+    }
+    
+    protected String toExpString(){
+    	return toString();
     }
 
 	final boolean doStopUpdateCascade() {
