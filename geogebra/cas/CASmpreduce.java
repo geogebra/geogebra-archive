@@ -53,8 +53,7 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
-		sb.append("<<hold!°:=0$ numeric!°:=0$ off complex, rounded, numval, factor, div$ on pri$ ");
-		//sb.append("<<off complex, factor$ ");
+		sb.append("<<numeric!°:=0$ precision 16$ print\\_precision 16$ off complex, rounded, numval, factor, div$ on pri$ ");
 		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
 		sb.append(">>");
 
@@ -129,7 +128,10 @@ public class CASmpreduce extends CASgeneric {
 		while (tokenizer.hasMoreElements()) {
 			String t = tokenizer.nextToken();
 			if (predefinedFunctions.contains(t.toLowerCase()))
-				sb.append(t);
+				if (t.equalsIgnoreCase("round"))
+					sb.append("myround");
+				else
+					sb.append(t);
 			else {
 				for (int i = 0; i < t.length(); ++i) {
 					char c = t.charAt(i);
@@ -235,7 +237,6 @@ public class CASmpreduce extends CASgeneric {
 
 
 		mpreduce.evaluate("off numval;");
-		mpreduce.evaluate("precision 16;");
 		mpreduce.evaluate("linelength 50000;");
 		mpreduce.evaluate("scientific_notation {16,5};");
 		
@@ -264,31 +265,36 @@ public class CASmpreduce extends CASgeneric {
 				);
 		
 		// bugfix for reduce, will be removed when the bug is fixed in reduce ( :rd: - problem)
-		mpreduce.evaluate("symbolic procedure xprint(u,flg);"
-				+ "   begin scalar v,w;"
-				+ "      v := tc u;"
-				+ "      u := tpow u;"
-				+ "      if (w := kernlp v) and w neq 1"
-				+ "        then <<v := quotf(v,w);"
-				+ "               if minusf w"
-				+ "                 then <<oprin 'minus; w := !:minus w; flg := nil>>>>;"
-				+ "      if flg then oprin 'plus;"
-				+ "      if w and w neq 1"
-				+ "        then <<if domainp w then maprin w else prin2!* w; oprin 'times>>;"
-				+ "      xprinp u;"
-				+ "      if v neq 1 then <<oprin 'times; xprinf(v,red v,nil)>>"
-				+ "   end;");
+//		mpreduce.evaluate("symbolic procedure xprint(u,flg);"
+//				+ "   begin scalar v,w;"
+//				+ "      v := tc u;"
+//				+ "      u := tpow u;"
+//				+ "      if (w := kernlp v) and w neq 1"
+//				+ "        then <<v := quotf(v,w);"
+//				+ "               if minusf w"
+//				+ "                 then <<oprin 'minus; w := !:minus w; flg := nil>>>>;"
+//				+ "      if flg then oprin 'plus;"
+//				+ "      if w and w neq 1"
+//				+ "        then <<if domainp w then maprin w else prin2!* w; oprin 'times>>;"
+//				+ "      xprinp u;"
+//				+ "      if v neq 1 then <<oprin 'times; xprinf(v,red v,nil)>>"
+//				+ "   end;");
 		// make sure integral(1/x) gives ln(abs(x)) [TODO: NOT WORKING]
 		// mpreduce.evaluate("operator log!-temp");
 		// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
 
 		// access functions for elements of a vector
-		mpreduce.evaluate("procedure x(a); if arglength(a)>-1 and part(a,0)=list then first(a) else x*a;");
-		mpreduce.evaluate("procedure y(a); if arglength(a)>-1 and part(a,0)=list then second(a) else x*a;");
-		mpreduce.evaluate("procedure z(a); if arglength(a)>-1 and part(a,0)=list then third(a) else x*a;");
+		
+		
+		mpreduce.evaluate("procedure x(a); if arglength(a)>-1 and part(a,0)='list then first(a) else x*a;");
+		mpreduce.evaluate("procedure y(a); if arglength(a)>-1 and part(a,0)='list then second(a) else x*a;");
+		mpreduce.evaluate("procedure z(a); if arglength(a)>-1 and part(a,0)='list then third(a) else x*a;");
 
 		mpreduce.evaluate(" Degree := pi/180;");
 
+		mpreduce.evaluate("procedure myround(x);" 
+				+ "floor(x+0.5);");
+		
 		mpreduce.evaluate("procedure dot(vec1,vec2); "
 				+ "	begin scalar tmplength; "
 				+ "  if arglength(vec1)>-1 and part(vec1,0)='mat and column_dim(vec1)=1 then "
