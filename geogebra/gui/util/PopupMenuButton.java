@@ -67,7 +67,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		
 	}
 
-	protected SelectionTable myTable;
+	private SelectionTable myTable;
 	public SelectionTable getMyTable() {
 		return myTable;
 	}
@@ -307,7 +307,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	//=============================================
 
 	
-	 protected void updateGUI(){
+	 private void updateGUI(){
 
 		 if(isIniting) return;
 		 
@@ -410,14 +410,6 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		
 		myTable.setSelectedIndex(selectedIndex);
 		updateGUI();
-	}
-	
-	public void clearSelection(){
-		myTable.clearSelection();
-	}
-	
-	public void addSelectedIndex(int index){
-		myTable.addSelectedIndex(index);
 	}
 
 	public int getSliderValue() {
