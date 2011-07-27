@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.util.HashSet;
 
@@ -600,6 +601,9 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
     		switch (kernel.getCASPrintForm()){
     			case ExpressionNode.STRING_TYPE_MPREDUCE:
     				return "i";
+    			case ExpressionNode.STRING_TYPE_GEOGEBRA:
+    			case ExpressionNode.STRING_TYPE_LATEX:
+    				return Unicode.IMAGINARY;
     			default:
     		}
     	}
