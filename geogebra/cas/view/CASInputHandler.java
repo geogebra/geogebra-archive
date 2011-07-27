@@ -90,7 +90,7 @@ public class CASInputHandler {
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
 
-
+/*
 		// DIRECT MathPiper use: line starts with "MathPiper:"
 		if (selRowInput.startsWith("MathPiper:")) {
 			String evalText = selRowInput.substring(10);
@@ -100,6 +100,7 @@ public class CASInputHandler {
 			setCellOutput(cellValue, "", result, "");
 			return;
 		}
+		*/
 
 		// STANDARD CASE: GeoGebraCAS input
 		// break text into prefix, evalText, postfix

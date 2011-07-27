@@ -483,14 +483,14 @@ public class Kernel {
      * @return result string (null possible)
 	 * @throws Throwable 
 	 * @deprecated since GeoGebra 4.0, use evaluateGeoGebraCAS() instead
-     */
+     *
 	final public String evaluateMathPiper(String exp) {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
 		
 		return ggbCAS.evaluateMathPiper(exp);
-	}	
+	}	*/
 	
 	/** 
 	 * Evaluates an expression in Maxima syntax with.

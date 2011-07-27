@@ -144,10 +144,10 @@ public class GgbAPI {
     /** Making MathPiper available for Plugins
      *  (Silent version, without debug to console)
      *  @deprecated since GeoGebra 4.0
-     */
+     *
     public String evaluateMathPiper(String cmdString){
     	return kernel.evaluateMathPiper(cmdString);
-    }//evaluateMathPiper(String)
+    }//evaluateMathPiper(String)*/
     	
     /// --- 29.05.08 Ulven: --- ///
     
@@ -292,7 +292,7 @@ public class GgbAPI {
 	 * Evaluates the given string as if it was entered into MathPiper's 
 	 * input text field. 	 
 	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead
-	 */
+	 *
 	public synchronized String evalMathPiper(String cmdString) {
 		
 		String ret = kernel.evaluateMathPiper(cmdString);
@@ -303,7 +303,7 @@ public class GgbAPI {
 		
 		return ret;
 
-	}
+	}*/
 
 	/**
 	 * Evaluates the given string as if it was entered into Maxima's

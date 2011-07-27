@@ -62,13 +62,13 @@ public interface JavaScriptAPI {
 	 * Evaluates the given string as if it was entered into MathPiper's 
 	 * input text field.
 	 */
-	public String evalMathPiper(String cmdString);
+	//public String evalMathPiper(String cmdString);
 	
 	/**
 	 * Evaluates the given string using the Yacas CAS.
 	 * @deprecated: use evalMathPiper() instead
 	 */
-	public String evalYacas(String cmdString);
+	//public String evalYacas(String cmdString);
 
 	/**
 	 * Turns showing of error dialogs on (true) or (off). 

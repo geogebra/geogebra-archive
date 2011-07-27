@@ -72,15 +72,16 @@ public class GeoGebraCAS {
 					currentCAS = CAS;
 					break;
 					
-				case Application.CAS_MPREDUCE:
+				default:
 					cas = getMPReduce();
 					currentCAS = CAS;
 					break;	
-				
-				default:
+				/*
+				case Application.CAS_MATHPIPER:
 					cas = getMathPiper();
 					currentCAS = CAS;
 					break;
+					*/
 			}
 		}catch (MaximaVersionUnsupportedExecption e){
 			app.showError("CAS.MaximaVersionUnsupported");
@@ -97,12 +98,13 @@ public class GeoGebraCAS {
 		cas.reset();
 	}
 	
+	/*
 	private CASmathpiper getMathPiper() {
 		if (currentCAS == Application.CAS_MATHPIPER)
 			return (CASmathpiper) cas;
 		else
 			return new CASmathpiper(casParser, new CasParserToolsImpl('e'));
-	}
+	}*/
 	
 	private CASmaxima getMaxima() {
 		if (currentCAS == Application.CAS_MAXIMA)
@@ -189,10 +191,10 @@ public class GeoGebraCAS {
 	 * Evaluates an expression in MathPiper syntax.
      * @return result string (null possible)
      * @deprecated since GeoGebra 4.0
-     */
+     *
 	final public String evaluateMathPiper(String exp) {		
 		return getMathPiper().evaluateMathPiper(exp);
-	}
+	}*/
 	
 	/** 
 	 * Evaluates an expression in Maxima syntax.

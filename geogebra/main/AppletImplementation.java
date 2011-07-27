@@ -742,7 +742,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	/**
 	 * Evaluates the given string using the MathPiper CAS.
 	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead
-	 */
+	 *
 	public synchronized String evalMathPiper(String cmdString) {
 		//waitForCAS();
 
@@ -756,15 +756,15 @@ public class AppletImplementation implements AppletImplementationInterface {
 
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Evaluates the given string using the Yacas CAS.
 	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead
-	 */
+	 *
 	public synchronized String evalYacas(String cmdString) {
 		return evalMathPiper(cmdString);
-	}
+	}*/
 
 	/**
 	 * prints a string to the Java Console
