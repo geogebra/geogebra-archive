@@ -195,10 +195,6 @@ public class CASparser {
 	 * @see ExpressionNode.operationToString() for XCOORD, YCOORD
 	 */
 	public String insertSpecialChars(String str) {
-		// get names of escaped global variables right
-		// e.g. "ggbcasvara" needs to be changed to "a"
-		str = str.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
-		
 		int prefixLen = ExpressionNode.UNICODE_PREFIX.length();
 		
 		if (str.length() < prefixLen) return str;

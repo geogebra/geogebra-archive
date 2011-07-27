@@ -148,6 +148,10 @@ public class GeoGebraCAS {
 		
 		String ret = cas.evaluateGeoGebraCAS(casInput);
 		
+		// get names of escaped global variables right
+		// e.g. "ggbcasvara" needs to be changed to "a"
+		ret = ret.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");		
+		
 		kernel.internationalizeDigits = oldDigits;
 		
 		return ret;
