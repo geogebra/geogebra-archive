@@ -391,6 +391,9 @@ public class DockManager implements AWTEventListener {
 
 		// has to be called *after* the toolbar was added to the container
 		setFocusedPanel(source);
+		
+		unmarkAlonePanels();
+		markAlonePanel();
 
 		// Manually dispatch a resize event as the size of the 
 		// euclidian view isn't updated all the time.
@@ -589,8 +592,6 @@ public class DockManager implements AWTEventListener {
 		
 		unmarkAlonePanels();
 		markAlonePanel();
-		
-		Application.debug(getDebugTree(0, rootPane));
 	}
 	
 	/**
@@ -1050,11 +1051,9 @@ public class DockManager implements AWTEventListener {
 	 * Use the constants VIEW_EUCLIDIAN, VIEW_ALGEBRA etc. as viewId.
 	 * 
 	 * @param viewId
-	 * @throws IllegalArgumentException
 	 * @return The panel associated to the viewId
 	 */
 	public DockPanel getPanel(int viewId)
-		throws IllegalArgumentException
 	{
 		DockPanel panel = null;
 		for(DockPanel dockPanel : dockPanels) {
@@ -1070,16 +1069,6 @@ public class DockManager implements AWTEventListener {
 			Application.printStacktrace("viewId="+viewId+" not found");
 			return new ErrorDockPanel(app,viewId);
 		}
-		/*
-		if(panel != null) {
-			return panel;
-		} else if (viewId==Application.VIEW_EUCLIDIAN3D){
-			return null;
-		}else{
-			app.setDefaultCursor();
-			throw new IllegalArgumentException("viewId="+viewId+" not found");			
-		}
-		*/
 	}
 	
 	/**
