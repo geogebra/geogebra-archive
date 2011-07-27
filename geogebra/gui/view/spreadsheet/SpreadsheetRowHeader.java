@@ -397,9 +397,46 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 
 		boolean metaDown = Application.isControlDown(e);				
 		boolean altDown = e.isAltDown();				
-
+		boolean shiftDown = e.isShiftDown();
+		
 		//Application.debug(keyCode);
-		switch (keyCode) {				
+		switch (keyCode) {	
+		
+		case KeyEvent.VK_UP :
+
+			if(shiftDown){
+				// extend the column selection
+				int row = table.getSelectionModel().getLeadSelectionIndex();
+				table.changeSelection(row -1, -1, false, true);
+			}
+			else{  
+				// select topmost cell in first column to the left of the selection
+				if(table.minSelectionRow > 0)
+					table.setSelection(0, table.minSelectionRow - 1);
+				else
+					table.setSelection(0, table.minSelectionRow);
+				table.requestFocus();
+			}
+			break;
+
+		case KeyEvent.VK_DOWN :
+			if(shiftDown){
+				// extend the column selection
+				int row = table.getSelectionModel().getLeadSelectionIndex();
+				table.changeSelection(row +1, -1, false, true);
+			}
+			else{  
+				// select topmost cell in first column to the left of the selection
+				if(table.minSelectionRow > 0)
+					table.setSelection(0, table.minSelectionRow + 1);
+				else
+					table.setSelection(0, table.minSelectionRow);
+				table.requestFocus();
+			}
+			break;
+		
+		
+		
 		case KeyEvent.VK_C : // control + c
 			if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
 				table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);

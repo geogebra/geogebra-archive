@@ -647,7 +647,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		
 		// ignore key events coming from tables like the spreadsheet to
 		// allow start editing, moving etc
-		if (event.getSource() instanceof JTable) {			
+		if (event.getSource() instanceof JTable
+				|| app.getGuiManager().getSpreadsheetView().hasFocus()) {			
 			return false;
 		} 	
 		

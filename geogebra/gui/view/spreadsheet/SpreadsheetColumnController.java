@@ -39,7 +39,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	protected boolean isResizing = false;
 
 	private int overTraceButtonColumn = -1;
-	
+
 
 	public SpreadsheetColumnController(Application app, MyTable table){
 
@@ -107,14 +107,14 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 			Point point = table.getIndexFromPixel(x, y);
 			if (point != null) {
 
-			
+
 				// check if the cursor is within the resizing region (i.e. border +- 3pixels)
 				Point point2 = table.getPixel((int)point.getX(), (int)point.getY(), true);
 				Point point3 = table.getPixel((int)point.getX(), (int)point.getY(), false);
 				int x2 = (int)point2.getX();
 				int x3 = (int)point3.getX();
 				isResizing = ! (x > x2 + 2 && x < x3 - 3);
-				
+
 				if (! isResizing) {
 
 					// launch trace dialog if over a trace button
@@ -123,7 +123,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 						e.consume();
 						return;
 					}
-					
+
 					// otherwise handle column selection
 					if(table.getSelectionType() != MyTable.COLUMN_SELECT){
 						table.setSelectionType(MyTable.COLUMN_SELECT);
@@ -238,10 +238,10 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	}
 
 	public void mouseMoved(MouseEvent e) {
-		
-		
+
+
 		// handles mouse over a trace button
-		
+
 		int column = -1;
 		boolean isOver = false;
 		Point mouseLoc = e.getPoint();
@@ -254,7 +254,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 
 				//int lowBound = table.getCellRect(0, column, true).x + 3;
 				//isOver = mouseLoc.x > lowBound && mouseLoc.x < lowBound + 24;
-				
+
 				//Point sceeenMouseLoc = MouseInfo.getPointerInfo().getLocation();
 				isOver = ((ColumnHeaderRenderer) table.getColumnModel()
 						.getColumn(column).getHeaderRenderer())
@@ -274,7 +274,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	}
 
 
-	
+
 
 
 	//=========================================================
@@ -289,9 +289,46 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 
 		boolean metaDown = Application.isControlDown(e);
 		boolean altDown = e.isAltDown();
+		boolean shiftDown = e.isShiftDown();
 		int keyCode = e.getKeyCode();
 
 		switch (keyCode) {
+
+		case KeyEvent.VK_LEFT :
+
+			if(shiftDown){
+				// extend the column selection
+				int column = table.getColumnModel().getSelectionModel().getLeadSelectionIndex();
+				table.changeSelection(-1, column -1, false, true);
+			}
+			else{  
+				// select topmost cell in first column to the left of the selection
+				if(table.minSelectionColumn > 0)
+					table.setSelection(table.minSelectionColumn - 1, 0);
+				else
+					table.setSelection(table.minSelectionColumn, 0);
+				table.requestFocus();
+			}
+			break;
+
+		case KeyEvent.VK_RIGHT :
+
+			if(shiftDown){
+				// extend the column selection
+				int column = table.getColumnModel().getSelectionModel().getLeadSelectionIndex();
+				table.changeSelection(-1, column + 1, false, true);
+			}
+			else{  
+				// select topmost cell in first column to the right of the selection
+				if(table.minSelectionColumn > 0)
+					table.setSelection(table.minSelectionColumn + 1, 0);
+				else
+					table.setSelection(table.minSelectionColumn, 0);
+				table.requestFocus();
+			}
+
+			break;
+
 
 		case KeyEvent.VK_C : // control + c
 			//Application.debug(minSelectionColumn);
@@ -367,7 +404,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 			setOpaque(true);
 			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
 			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
-			
+
 			layout = (BorderLayout) this.getLayout();
 		}
 
@@ -376,7 +413,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 				int rowIndex, int colIndex) {
 
 			lblHeader.setFont(app.getPlainFont());
-			
+
 			lblHeader.setText(value.toString());
 
 			if (((MyTable)table).getSelectionType() == MyTable.ROW_SELECT) {
@@ -412,7 +449,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 		}
 
 		private Rectangle rect = new Rectangle();
-		
+
 		/**
 		 * Returns true if the given mouse location (in local coordinates of the header component)
 		 * is over a trace button.
@@ -422,17 +459,17 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 		 * @return
 		 */
 		public boolean isOverTraceButton(int colIndex, Point loc, Object value){
-		
+
 			if(!view.getTraceManager().isTraceColumn(colIndex))
 				return false;
 
 			try {
 				Component c =  getTableCellRendererComponent(table,
 						value, false, false, -1 , colIndex); 
-				
+
 				//layout.getLayoutComponent(BorderLayout.WEST).getBounds(rect);
 				btnTrace.getBounds(rect);
-					
+
 				//System.out.println(loc.toString() + "  :  " + rect.toString());
 				return rect.contains(loc);
 			} catch (Exception e) {

@@ -753,6 +753,7 @@ public class MyTable extends JTable implements FocusListener
 
 					// cell block selection	
 				} else {
+					setSelectionType(CELL_SELECT);
 					changeSelection(cr.getMinRow(), cr.getMinColumn(), false, false);
 					changeSelection(cr.getMaxRow(), cr.getMaxColumn(), false, true);
 				}
