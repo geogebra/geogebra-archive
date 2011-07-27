@@ -14,6 +14,8 @@ package geogebra.euclidian;
 
 import geogebra.Matrix.Coords;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
+import geogebra.gui.view.spreadsheet.TraceSettings;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
@@ -204,7 +206,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected GeoElement movedLabelGeoElement;
 
-	protected GeoElement movedGeoElement;	
+	protected GeoElement movedGeoElement;
+	
+	protected GeoElement spreadsheetTraceGeo = null;
 
 	protected GeoElement rotGeoElement, rotStartGeo;
 	protected GeoPoint rotationCenter;
@@ -542,6 +546,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected void endOfMode(int mode) {
 		switch (mode) {
+		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
+			// just to be sure spreadsheetTraceGeo is set to null
+			// usually this is already done at mouseRelease
+			if (spreadsheetTraceGeo != null) {
+				if (((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(spreadsheetTraceGeo))
+					app.getGuiManager().removeSpreadsheetTrace(spreadsheetTraceGeo);
+				spreadsheetTraceGeo = null;
+			}
+			break;
+			
 		case EuclidianView.MODE_MOVE:
 			deletePastePreviewSelected();
 			break;
@@ -876,6 +890,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 
 		switch (mode) {
+		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
+			clearSelections();
+			break;
 		case EuclidianView.MODE_VISUAL_STYLE:								
 		case EuclidianView.MODE_MOVE:								
 		case EuclidianView.MODE_SELECTION_LISTENER:
@@ -1203,7 +1220,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
-			handleMousePressedForRecordToSpreadsheetMode(e);
+			//handleMousePressedForRecordToSpreadsheetMode(e);
+			view.setHits(mouseLoc);
+			hits = view.getHits();
+			GeoElement tracegeo = hits.getFirstHit(GeoPoint.class);
+			if (tracegeo == null)
+				tracegeo = hits.getFirstHit(GeoVector.class);
+			if (tracegeo == null)
+				tracegeo = hits.getFirstHit(GeoNumeric.class);
+			if (tracegeo == null)
+				tracegeo = hits.getFirstHit(GeoList.class);
+			if (tracegeo != null)
+			{
+				if (!((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(tracegeo))
+					app.getGuiManager().addSpreadsheetTrace(tracegeo);
+				spreadsheetTraceGeo = tracegeo;
+				handleMousePressedForMoveMode(e, false);
+				tracegeo.updateRepaint();
+			}
 			break;
 
 			// move an object
@@ -2447,7 +2481,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//			app.storeUndoInfo();
 		//		Michael Borcherds 2007-10-12
 
-
 		
 		if (!hits.isEmpty()){
 			//Application.debug("hits ="+hits);
@@ -2455,9 +2488,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}else
 			view.setHitCursor();
 
-		
-		refreshHighlighting(null);
 
+		if (mode == EuclidianView.MODE_RECORD_TO_SPREADSHEET && spreadsheetTraceGeo != null) {
+			if (((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(spreadsheetTraceGeo))
+				app.getGuiManager().removeSpreadsheetTrace(spreadsheetTraceGeo);
+			spreadsheetTraceGeo = null;
+			clearSelections();
+		} else {
+			// this is in the else branch to avoid running it twice
+			refreshHighlighting(null);
+		}
 		
 		
 		// reinit vars

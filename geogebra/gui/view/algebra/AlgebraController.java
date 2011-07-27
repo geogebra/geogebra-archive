@@ -134,7 +134,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 		} 	
 
 		int mode = ev.getMode();
-		if (!skipSelection && mode == EuclidianView.MODE_MOVE ) {
+		if (!skipSelection && (mode == EuclidianView.MODE_MOVE || mode == EuclidianView.MODE_RECORD_TO_SPREADSHEET) ) {
 			// update selection	
 			if (geo == null)
 				app.clearSelectedGeos();
@@ -261,7 +261,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 			EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
 			int mode = ev.getMode();
 
-			if (mode == EuclidianView.MODE_MOVE  && 
+			if ( (mode == EuclidianView.MODE_MOVE || mode == EuclidianView.MODE_SELECTION_LISTENER)  && 
 					!Application.isControlDown(e) && !e.isShiftDown() 
 					&& geo != null  && !app.containsSelectedGeo(geo)) 
 			{					
