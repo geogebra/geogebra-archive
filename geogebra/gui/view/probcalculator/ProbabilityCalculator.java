@@ -46,15 +46,20 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Dialog that displays the graphs of various probability density functions with
@@ -63,7 +68,7 @@ import javax.swing.border.EmptyBorder;
  * @author G. Sturr
  * 
  */
-public class ProbabilityCalculator extends JPanel implements View, ActionListener, FocusListener   {
+public class ProbabilityCalculator extends JPanel implements View, ActionListener, FocusListener, ChangeListener   {
 
 	// enable/disable integral ---- use for testing
 	private boolean hasIntegral = true; 
@@ -82,14 +87,16 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private String[][] parameterLabels;
 	private final static int maxParameterCount = 3; // maximum number of parameters allowed for a distribution
 
+	private JSlider[] sliderArray;
+	
 
 	// GUI 
 	private PopupMenuButton btnOptions;
 	private JButton btnClose, btnExport, btnDisplay;
 	private JComboBox comboDistribution, comboProbType, comboRounding;
-	private JTextField[] fldParmeterArray;
+	private JTextField[] fldParameterArray;
 	private JTextField fldLow,fldHigh,fldResult;
-	private JLabel[] lblParmeterArray;
+	private JLabel[] lblParameterArray;
 	private JComponent distPanel;
 	private JPanel probPanel;
 
@@ -139,18 +146,13 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	private JMenu menuDecimalPlaces;
 
-	private int printDecimals = 4;
+	private int printDecimals = 4,  printFigures = -1;
 
-	public int getPrintDecimals() {
-		return printDecimals;
-	}
-	public int getPrintFigures() {
-		return printFigures;
-	}
+	private JPanel displayPanel;
 
-
-	private int printFigures = -1;	
+	private JSplitPane displayPanel2;	
 	
+	private boolean isCumulative = false;
 	
 	
 	
@@ -266,19 +268,20 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			distPanel.setBorder(probPanel.getBorder());
 
 
-
-
 			JPanel controlPanel = new JPanel();
 			controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));	
 			controlPanel.add(distPanel);
 			controlPanel.add(probPanel);
-
-			// TODO: Rounding button, Print ??? , remove Close button
-			//controlPanel.add(buttonPanel);
-			//controlPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-			controlPanel.setBorder(BorderFactory.createEmptyBorder());
-
+			
+			JPanel controlPanelWrap = new JPanel(new BorderLayout());
+			controlPanelWrap.add(controlPanel, BorderLayout.NORTH);
+			controlPanelWrap.setBorder(BorderFactory.createEmptyBorder());
+			
+			JScrollPane ctrlSP = new JScrollPane(controlPanelWrap);
+			
+			ctrlSP.setMinimumSize(controlPanel.getPreferredSize());
+			
+			
 
 			// create the plot panel (extension of EuclidianView)
 			//======================================================
@@ -299,26 +302,24 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			//======================================================
 			table = new ProbabilityTable(app, this);
 			table.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, SystemColor.controlShadow));
+			JPanel tablePanel = new JPanel(new BorderLayout());
+			tablePanel.add(table, BorderLayout.CENTER);
 			
-			
-			JPanel displayPanel = new JPanel(new BorderLayout());
+			 displayPanel2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plotPanel, tablePanel);
+			displayPanel2.setResizeWeight(1);
+			/*
+			displayPanel = new JPanel(new BorderLayout());
 			displayPanel.add(plotPanel, BorderLayout.CENTER);
-			displayPanel.add(table, BorderLayout.EAST);
+			displayPanel.add(tablePanel, BorderLayout.EAST);
 			displayPanel.setBorder(BorderFactory.createEtchedBorder());
-			
+			*/
 			// put the sub-panels together into the main panel
 			//=====================================================
 
-			Dimension pref = controlPanel.getPreferredSize();
-			controlPanel.setMinimumSize(pref);
-			//	Dimension max = controlPanel.getMaximumSize();
-			//	max.height = pref.height;
-			//	controlPanel.setMaximumSize(max);
+		
 
-
-
-			sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, displayPanel, controlPanel);
-			sp.setResizeWeight(0);
+			sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, displayPanel2, ctrlSP);
+			sp.setResizeWeight(1);
 			sp.setBorder(BorderFactory.createEmptyBorder());
 
 			this.setLayout(new BorderLayout());
@@ -343,7 +344,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 
-
+	private void addRemoveTable(boolean showTable){
+		if(showTable)
+			displayPanel2.setRightComponent(table);
+		else
+			displayPanel2.setRightComponent(null);
+	}
 
 
 	private JPanel createDistributionPanel(){
@@ -357,39 +363,53 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		lblDist = new JLabel();
 
 		JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		cbPanel.add(lblDist);
+	//	cbPanel.add(lblDist);
 		cbPanel.add(comboDistribution);
 
 
 
 		// create parameter panel
-		JPanel parameterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel parameterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		//parameterPanel.setAlignmentX(0.0f);
 		//	parameterPanel.add(comboDistribution);
 
-		lblParmeterArray = new JLabel[maxParameterCount];
-		fldParmeterArray = new JTextField[maxParameterCount];
-
+		lblParameterArray = new JLabel[maxParameterCount];
+		fldParameterArray = new JTextField[maxParameterCount];
+		sliderArray = new JSlider[maxParameterCount];
 
 		for(int i = 0; i < maxParameterCount; ++i){
-			lblParmeterArray[i] = new JLabel();
-			fldParmeterArray[i] = new MyTextField(app.getGuiManager());
-			fldParmeterArray[i].setColumns(6);
-			fldParmeterArray[i].addActionListener(this);
-			fldParmeterArray[i].addFocusListener(this);
-
+			lblParameterArray[i] = new JLabel();
+			fldParameterArray[i] = new MyTextField(app.getGuiManager());
+			fldParameterArray[i].setColumns(6);
+			fldParameterArray[i].addActionListener(this);
+			fldParameterArray[i].addFocusListener(this);
+			sliderArray[i] = new JSlider();
+			sliderArray[i].setPreferredSize(fldParameterArray[i].getPreferredSize());
+			sliderArray[i].addChangeListener(this);
+			
+			
 			Box hBox = Box.createHorizontalBox();
 			hBox.add(Box.createRigidArea(new Dimension(3,0)));
-			hBox.add(lblParmeterArray[i]);
+			hBox.add(lblParameterArray[i]);
 			hBox.add(Box.createRigidArea(new Dimension(3,0)));
-			hBox.add(fldParmeterArray[i]);
-			parameterPanel.add(hBox);
+			JPanel labelPanel = new JPanel(new BorderLayout());
+			labelPanel.add(hBox, BorderLayout.NORTH);
+			
+			JPanel fldSliderPanel = new JPanel(new BorderLayout());
+			fldSliderPanel.add(fldParameterArray[i], BorderLayout.NORTH);
+			fldSliderPanel.add(sliderArray[i], BorderLayout.SOUTH);
+			
+			JPanel fullParmPanel = new JPanel(new BorderLayout());
+			fullParmPanel.add(labelPanel, BorderLayout.WEST);
+			fullParmPanel.add(fldSliderPanel, BorderLayout.EAST);
+			
+			parameterPanel.add(fullParmPanel);
 
 		}
 
 		// put the parameter panel in WEST of a new JPanel and return the result
-		JPanel distPanel = new JPanel();
-		distPanel.setLayout(new BoxLayout(distPanel,BoxLayout.Y_AXIS));
+		JPanel distPanel = new JPanel(new BorderLayout());
+		distPanel.setLayout (new FlowLayout(FlowLayout.LEFT));
 		distPanel.add(cbPanel);
 		distPanel.add(parameterPanel);
 
@@ -407,7 +427,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		lblProb = new JLabel();
 
 		JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		cbPanel.add(lblProb);
+	//	cbPanel.add(lblProb);
 		cbPanel.add(comboProbType);
 
 
@@ -430,7 +450,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		fldResult.addFocusListener(this);
 
 		// create panel to hold the entry fields
-		JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		//	fieldPanel.add(cbPanel);
 
@@ -454,7 +474,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		//	probPanel.add(cbPanel,BorderLayout.WEST);
 
 		JPanel probPanel = new JPanel();
-		probPanel.setLayout(new BoxLayout(probPanel,BoxLayout.Y_AXIS));
+		probPanel.setLayout (new FlowLayout(FlowLayout.LEFT));
 		probPanel.add(cbPanel);
 		probPanel.add(fieldPanel);
 
@@ -466,7 +486,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	
 	
 	/** 
-	 * Builds popup button with checkbox menu items to hide/show display geos
+	 * Builds popup button with options menu items 
 	 */
 	private void buildOptionsButton(){
 
@@ -477,10 +497,23 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		btnOptions.setDownwardPopup(false);
 		btnOptions.setText(app.getMenu("Options"));
 
-		JCheckBoxMenuItem menuItem;
-		
+
+		JMenuItem menuItem;
 		
 		btnOptions.addPopupMenuItem(this.createMenuDecimalPlaces());
+		
+		
+		menuItem = new JCheckBoxMenuItem(app.getMenu("Cumulative"));
+		menuItem.setSelected(isCumulative);
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				isCumulative = !isCumulative;
+				updateDistribution();
+				updatePlotSettings();
+			}
+		});
+		btnOptions.addPopupMenuItem(menuItem);
+		
 		
 		menuItem = new JCheckBoxMenuItem(app.getPlain("ShowGrid"));
 		menuItem.setSelected(plotSettings.showGrid);
@@ -492,15 +525,13 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		});
 		//btnOptions.addPopupMenuItem(menuItem);
 		
-		menuItem = new JCheckBoxMenuItem(app.getPlain("Export") + "..." );
+		menuItem = new JMenuItem(app.getPlain("Export") + "..." );
 		menuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				
 			}
 		});
 		menuItem.setEnabled(false);
-		
-		
 		btnOptions.addPopupMenuItem(menuItem);
 		updateMenuDecimalPlaces();
 		
@@ -851,7 +882,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 				 printDecimals = decimals;
 				 printFigures = -1;
-				//kernel.setPrintDecimals(decimals);
 				 updateGUI();
 				 updateDiscreteTable();
 				
@@ -871,7 +901,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				 printDecimals = -1;
 				 updateGUI();
 				 updateDiscreteTable();
-			//	kernel.setPrintFigures(figures);
 				
 			} catch (Exception ex) {
 				app.showError(e.toString());
@@ -894,7 +923,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				updateGUI();
 			}
 			comboDistribution.addActionListener(this);
-			this.fldParmeterArray[0].requestFocus();
+			this.fldParameterArray[0].requestFocus();
 		}
 
 
@@ -918,7 +947,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			double value = nv.getDouble();
 
 			for(int i=0; i< parmList.size(); ++i)
-				if (source == fldParmeterArray[i]) {
+				if (source == fldParameterArray[i]) {
 					((GeoNumeric)parmList.get(i)).setValue(value); 
 					//validateParms(selectedParms);
 					updatePlot();
@@ -990,47 +1019,44 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		updatePlot();
 		updateProbabilityType();
 		updateGUI();
-		btnClose.requestFocus();
+		this.requestFocus();
 
 	}
 
 
 	private void updateGUI() {
 
-		// override the default decimal place setting
-		if(printDecimals >= 0)
-			kernel.setTemporaryPrintDecimals(printDecimals);
-		else
-			kernel.setTemporaryPrintFigures(printFigures);
-
-		// set the visibility and text of the parameter labels and fields
+		// set visibility and text of the parameter labels and fields
 		for(int i = 0; i < maxParameterCount; ++i ){
-			if(parameterLabels[selectedDist][i] == null){
-				lblParmeterArray[i].setVisible(false);
-				fldParmeterArray[i].setVisible(false);
-			}else{
-				// labels
-				lblParmeterArray[i].setVisible(true);
-				lblParmeterArray[i].setText(parameterLabels[selectedDist][i]);
-				// fields
-				fldParmeterArray[i].setVisible(true);
-				fldParmeterArray[i].removeActionListener(this);
-				fldParmeterArray[i].setText("" + kernel.format( ((GeoNumeric)parmList.get(i)).getDouble() ));
-				fldParmeterArray[i].setCaretPosition(0);
-				fldParmeterArray[i].addActionListener(this);
+			
+			boolean hasParm = i < probManager.getParmCount()[selectedDist];
+			
+			lblParameterArray[i].setVisible(hasParm);
+			fldParameterArray[i].setVisible(hasParm);
+			
+			// hide sliders for now ... need to work out slider range for each parm (tricky)
+			sliderArray[i].setVisible(false);
+			
+			if(hasParm){
+				// set label
+				lblParameterArray[i].setVisible(true);
+				lblParameterArray[i].setText(parameterLabels[selectedDist][i]);
+				// set field
+				fldParameterArray[i].removeActionListener(this);
+				fldParameterArray[i].setText("" + format( ((GeoNumeric)parmList.get(i)).getDouble() ));
+				fldParameterArray[i].setCaretPosition(0);
+				fldParameterArray[i].addActionListener(this);
 			}
 		}
 
-		// set probability field values 
-		fldLow.setText("" + kernel.format(low));
+		// set low/high interval field values 
+		fldLow.setText("" + format(low));
 		fldLow.setCaretPosition(0);
-		fldHigh.setText("" + kernel.format(high));
+		fldHigh.setText("" + format(high));
 		fldHigh.setCaretPosition(0);
-		fldResult.setText("" + kernel.format(probability));
+		fldResult.setText("" + format(probability));
 		fldResult.setCaretPosition(0);
 
-		// restore the default decimal place setting
-		kernel.restorePrintAccuracy();
 	}
 
 
@@ -1133,20 +1159,24 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		 */
 		
 		createGeoElements();
-
+		setSliderDefaults();
 		
 		// update
 		if(probManager.isDiscrete(selectedDist)){
 			discreteGraph.update();
 			discreteIntervalGraph.update();
 		
-			table.setVisible(true);
 			updateDiscreteTable();
-			this.fldParmeterArray[0].requestFocus();
+			
+		//	table.setVisible(true);
+			addRemoveTable(true);
+			
+			this.fldParameterArray[0].requestFocus();
 			
 			
 		}else{
-			table.setVisible(false);
+			addRemoveTable(false);
+			//table.setVisible(false);
 			densityCurve.update();
 			if(hasIntegral)
 				integral.update();
@@ -1163,7 +1193,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		
 		int firstX = (int) ((GeoNumeric)discreteValueList.get(0)).getDouble();
 		int lastX = (int) ((GeoNumeric)discreteValueList.get(discreteValueList.size()-1)).getDouble();
-		table.setTable(selectedDist, getCurrentParameters(), firstX, lastX);
+		table.setTable(selectedDist, getCurrentParameters(), firstX, lastX, isCumulative);
 	}
 	
 	
@@ -1219,10 +1249,9 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	public void setLabels(){
-
-		//setTitle(app.getMenu("ProbabilityCalculator"));	
-		//distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
-		//probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
+	
+		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
+		probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
 		setLabelArrays();
 
 		lblDist.setText(app.getMenu("Distribution") + ": ");
@@ -1421,7 +1450,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			sb.append("Element[" + parmList.getLabel() + "," + i + "]");
 			sb.append(",");
 		}
-		sb.append("x]");
+		if(isCumulative)
+			sb.append("x, true]");
+		else
+			sb.append("x, false]");
 
 		return sb.toString();
 	}
@@ -1448,7 +1480,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
 			expr = "Sequence[BinomialDist[" + n + "," + p + ",";
-			expr += "Element[" + discreteValueList.getLabel() + ",k], false ";
+			expr += "Element[" + discreteValueList.getLabel() + ",k]," + isCumulative;
 			expr +=	"],k,1," + n + "+ 1 ]";
 
 			//System.out.println(expr);
@@ -1465,7 +1497,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
 			expr = "Sequence[Pascal[" + n + "," + p + ",";
-			expr += "Element[" + discreteValueList.getLabel() + ",k], false";
+			expr += "Element[" + discreteValueList.getLabel() + ",k]," + isCumulative;
 			expr +=	"],k,1," + n2 + "+ 1 ]";
 
 			//System.out.println(expr);
@@ -1483,7 +1515,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
 			expr = "Sequence[Poisson[" + mean + ",";
-			expr += "Element[" + discreteValueList.getLabel() + ",k], false";
+			expr += "Element[" + discreteValueList.getLabel() + ",k]," + isCumulative;
 			expr +=	"],k,1," + n + "+ 1 ]";
 
 			//System.out.println(expr);
@@ -1501,7 +1533,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
 			expr = "Sequence[HyperGeometric[" + p + "," + n + "," + s + ",";
-			expr += "Element[" + discreteValueList.getLabel() + ",k], false" ;
+			expr += "Element[" + discreteValueList.getLabel() + ",k]," + isCumulative;
 			expr +=	"],k,1," + n + "+ 1 ]";
 
 			//System.out.println(expr);
@@ -1526,7 +1558,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		// retrieve the parameter values from the parmList geo
 		double [] parms = getCurrentParameters();
 
-		return probManager.getPlotDimensions(selectedDist, parms, densityCurve);
+		return probManager.getPlotDimensions(selectedDist, parms, densityCurve, isCumulative);
 
 	}
 
@@ -1651,7 +1683,49 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			}
 		}
 	}
+	
+	public String format(double x){
 
+		// override the default decimal place setting
+		if(printDecimals >= 0)
+			kernel.setTemporaryPrintDecimals(printDecimals);
+		else
+			kernel.setTemporaryPrintFigures(printFigures);
+
+		// get the formatted string
+		String result = kernel.format(x);
+
+		// restore the default decimal place setting
+		kernel.restorePrintAccuracy();
+
+		return result;
+	}
+
+
+	
+	
+	public void stateChanged(ChangeEvent e) {
+		if(isIniting) return;
+		
+		JSlider source = (JSlider)e.getSource();
+		for(int i = 0 ; i < maxParameterCount; i++){
+			if(source == sliderArray[i]){
+				
+				fldParameterArray[i].setText("" + sliderArray[i].getValue());
+				doTextFieldActionPerformed(fldParameterArray[i]);
+			
+				System.out.println(sliderArray[i].getValue());
+			}
+		}
+		
+	}
+
+	private void setSliderDefaults(){
+		for(int i = 0; i < probManager.getParmCount()[selectedDist]; i++){
+			// TODO: this is breaking the discrete distributions
+			//sliderArray[i].setValue((int) probManager.getDefaultParameterMap().get(selectedDist)[i]);
+		}
+	}
 	
 	
 }

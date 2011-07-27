@@ -300,7 +300,7 @@ public class ProbabilityManager {
 	 * @param parms
 	 * @return
 	 */
-	protected double[] getPlotDimensions(int selectedDist, double [] parms, GeoElement densityCurve){
+	protected double[] getPlotDimensions(int selectedDist, double [] parms, GeoElement densityCurve, boolean isCumulative){
 
 		double xMin = 0, xMax = 0, yMin = 0, yMax = 0;
 
@@ -476,6 +476,10 @@ public class ProbabilityManager {
 
 		}
 
+		if(isCumulative){
+			yMin = 0;
+			yMax = 1.2;
+		}
 		double[] d = {xMin, xMax, yMin, yMax};
 		return d;
 	}
@@ -496,16 +500,17 @@ public class ProbabilityManager {
 		double max = 0;
 
 		for(int i=low; i <= high; i++){
-			max = Math.max(max, exactProbability(i, parms, distType));
+			max = Math.max(max, probability(i, parms, distType, false));
 		}
 		return max;
 	}
 
 
 	/**
-	 * Returns P(X = value) for the given discrete distribution 
+	 * If isCumulative = true,  returns P(X <= value) for the given distribution 
+	 * If isCumulative = false,  returns P(X = value) for the given distribution 
 	 */
-	public double exactProbability(double value, double [] parms, int distType ){
+	public double probability(double value, double [] parms, int distType, boolean isCumulative ){
 
 		String[] cmd = this.getCommand();
 		double prob = 0;
@@ -522,7 +527,7 @@ public class ProbabilityManager {
 				expr.append(parms[i]);
 				expr.append(",");
 			}
-			expr.append(value + ", false]");
+			expr.append(value + "," + isCumulative + "]");
 
 			// Use the string to calculate the probability
 			prob = evaluateExpression(expr.toString());	
@@ -537,6 +542,7 @@ public class ProbabilityManager {
 
 
 
+	
 
 	/**
 	 * Returns an interval probability for the given distribution and probability mode.
