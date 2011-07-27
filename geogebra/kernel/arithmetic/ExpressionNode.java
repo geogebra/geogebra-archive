@@ -3138,7 +3138,11 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			case STRING_TYPE_MATH_PIPER:
 				sb.append("Round(");
 				break;
-
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("myround(");
+				break;
+				
 			default:
 				sb.append("round(");
 			}

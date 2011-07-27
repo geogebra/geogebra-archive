@@ -134,10 +134,7 @@ public class CASmpreduce extends CASgeneric {
 		while (tokenizer.hasMoreElements()) {
 			String t = tokenizer.nextToken();
 			if (predefinedFunctions.contains(t.toLowerCase()))
-				if (t.equalsIgnoreCase("round"))
-					sb.append("myround");
-				else
-					sb.append(t);
+				sb.append(t);
 			else {
 				for (int i = 0; i < t.length(); ++i) {
 					char c = t.charAt(i);
