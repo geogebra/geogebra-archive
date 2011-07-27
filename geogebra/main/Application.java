@@ -2540,18 +2540,6 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
-	final public boolean isCommand(String key) {
-		
-		initTranslatedCommands();		
-
-		try {
-			rbcommand.getString(key);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	final public String getCommandTooltip(String key) {
 		
 		if (tooltipLocale == null) return getCommand(key);

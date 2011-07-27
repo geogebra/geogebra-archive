@@ -302,8 +302,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	    				if (n == 1) app.getGuiManager().openHelp(Application.WIKI_MANUAL);
 	
 	    			} else {
+	    				
 		                updateCurrentWord();
-		                if (app.isCommand(dict.lookup(curWord.toString())))
+		                String lowerCurWord = curWord.toString().toLowerCase();
+		                String closest = dict.lookup(lowerCurWord);
+		                if (closest != null && lowerCurWord.equals(closest.toLowerCase()))		                
 		                	showCommandHelp(true);
 		                else
 		                	app.getGuiManager().openHelp(Application.WIKI_MANUAL);
