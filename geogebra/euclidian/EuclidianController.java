@@ -6590,13 +6590,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected GeoElement[] createList(Hits hits) {
 		GeoList list;
-
 		GeoElement[] ret = { null };
 
-		if (hits.size() > 1) 
+		if (!selectionPreview && hits.size() > 1) 
 		{					
-			GeoPoint[] points = getSelectedPoints();
-			list = list = kernel.List(null, hits, false);
+			list = kernel.List(null, hits, false);
 			if (list != null) {
 				ret[0] = list;
 				return ret;             	     	 
