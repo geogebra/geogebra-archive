@@ -17,8 +17,12 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -47,7 +51,8 @@ import javax.swing.event.ListSelectionListener;
  * @author G. Sturr
  * 
  */
-public class CreateObjectDialog extends InputDialog implements ListSelectionListener{
+public class CreateObjectDialog extends InputDialog 
+implements ListSelectionListener, FocusListener, WindowFocusListener{
 
 	private SpreadsheetView view;
 	private CellRangeProcessor cp;
@@ -128,6 +133,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		centerOnScreen();
 		btCancel.requestFocus();
 		pack();
+		addWindowFocusListener(this);
 	}
 
 
@@ -142,16 +148,8 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 		lblName = new JLabel();
 		fldName = new MyTextField(app.getGuiManager());
-
 		fldName.setShowSymbolTableIcon(true);
-		fldName.addKeyListener(new KeyAdapter(){
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER){
-					createNewGeo();
-					//updateGUI();
-				}
-			}
-		});
+		fldName.addFocusListener(this);
 
 		lblTake = new JLabel();
 		cbScanOrder = new JComboBox();
@@ -341,19 +339,19 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		case TYPE_LIST:
 			titleText = app.getMenu("CreateList");
 			break;
-		
+
 		case TYPE_LISTOFPOINTS:
 			titleText = app.getMenu("CreateListOfPoints");
 			break;
-		
+
 		case TYPE_TABLETEXT:
 			titleText = app.getMenu("CreateTable");
 			break;
-			
+
 		case TYPE_POLYLINE:
 			titleText = app.getMenu("CreatePolyLine");
 			break;
-		
+
 		case TYPE_MATRIX:
 			titleText = app.getMenu("CreateMatrix");
 			break;
@@ -412,8 +410,14 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 			btnValue.removeActionListener(this);
 			btnObject.removeActionListener(this);
 
+			if (source instanceof JTextField) {
+				doTextFieldActionPerformed((JTextField)source);
+			}	
+
+
 			// btCancel acts as create for now
-			if (source == btCancel ) {
+			else if (source == btCancel ) {
+
 				keepNewGeo = true;
 				setVisible(false);
 
@@ -440,6 +444,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 				createNewGeo();
 			} 
 
+
 			btnValue.addActionListener(this);
 			btnObject.addActionListener(this);
 
@@ -448,6 +453,19 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 			setVisible(false);
 		}
 	}
+
+
+	private void doTextFieldActionPerformed(JTextField source) {
+
+		String inputText = source.getText().trim();
+		//Double value = Double.parseDouble(source.getText());
+
+		if(source == fldName){
+			createNewGeo();
+		}
+	}
+
+
 
 
 	public void setVisible(boolean isVisible) {	
@@ -642,6 +660,20 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 		latexIcon.setImage(image);
 
+	}
+
+
+
+	public void windowLostFocus(WindowEvent e) {
+		newGeo.remove();
+		setVisible(false);
+		Application.debug("WindowFocusListener method called: windowLostFocus.");
+	}
+
+	public void focusGained(FocusEvent e) { }
+
+	public void focusLost(FocusEvent e) {
+		doTextFieldActionPerformed((JTextField)(e.getSource()));
 	}
 
 
