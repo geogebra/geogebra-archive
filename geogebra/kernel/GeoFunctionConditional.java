@@ -561,11 +561,11 @@ public class GeoFunctionConditional extends GeoFunction {
 		public Object toLaTeXString(boolean b,String varString) {
 			String ret = null;
 			if(upper == null && lower!= null)
-				ret = varString+" "+(lowerSharp?">":Unicode.GREATER_EQUAL)+" "+lower;
+				ret = varString+" "+(lowerSharp?">":Unicode.GREATER_EQUAL)+" "+kernel.format(lower);
 			else if(lower == null && upper != null)
-				ret = varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+upper;
+				ret = varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+kernel.format(upper);
 			else if(lower!=null && upper!=null)
-				ret = lower+" "+(lowerSharp?"<":Unicode.LESS_EQUAL)+" "+varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+upper;
+				ret = kernel.format(lower)+" "+(lowerSharp?"<":Unicode.LESS_EQUAL)+" "+varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+kernel.format(upper);
 			if(condition!=null && ret == null)
 				return condition.toLaTeXString(b);
 			else if(condition!=null)
