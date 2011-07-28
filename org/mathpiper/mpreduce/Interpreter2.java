@@ -31,6 +31,7 @@ package org.mathpiper.mpreduce;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.concurrent.TimeoutException;
 
 public class Interpreter2 {
 
@@ -89,6 +90,10 @@ public class Interpreter2 {
 	}// end method.
 
 	public synchronized String evaluate(String send) throws Throwable {
+		return evaluate(send, 0);
+	}
+	
+	public synchronized String evaluate(String send, long timeoutMillis) throws Throwable {
 		send = send.trim();
 		if (((send.endsWith(";")) || (send.endsWith("$"))) != true)
 			send = send + ";\n";
@@ -100,7 +105,7 @@ public class Interpreter2 {
 			send = send.substring(0, send.length() - 1);
 
 		send = send + "\n";
-		// System.err.println("Expression for MPReduce "+send);
+		// System.err.println("Expression for MPReduce "+send.trim());
 		
 
 		// we will wait until the Interpreter has has consumed sendstring.
@@ -110,11 +115,20 @@ public class Interpreter2 {
 			inputLock.notifyAll();
 		}
 		
+		long startTime = System.currentTimeMillis();
 		synchronized(outputLock){
 			try {
 				while (sendString != null) {
-					outputLock.wait();
-			}
+					outputLock.wait(timeoutMillis);
+					
+					// check for timeout. >= because otherwise we might wake up EXACTLY after
+					// timeout ms and currentTimeMillis - startTime = timeout. We would then
+					// wait for another timeout ms, altough our timeout has already been reached.
+					if (System.currentTimeMillis() - startTime >= timeoutMillis && sendString != null) {
+						interruptEvaluation();
+						throw new TimeoutException("MPReduce timout for expression: " + send.trim());
+					}
+				}
 			} catch (InterruptedException ioe) {
 			}
 		}

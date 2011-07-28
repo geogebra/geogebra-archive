@@ -148,8 +148,9 @@ public class CASmpreduce extends CASgeneric {
 		}
 		exp = sb.toString();
 
+		long timeout = GeoGebraCAS.getTimeout()*1000;
 		System.out.println("eval with MPReduce: " + exp);
-		String result = mpreduce.evaluate(exp);
+		String result = mpreduce.evaluate(exp, timeout);
 
 		sb.setLength(0);
 		for (String s : result.split("\n")) {
