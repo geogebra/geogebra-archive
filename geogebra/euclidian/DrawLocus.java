@@ -143,7 +143,7 @@ public class DrawLocus extends Drawable {
             g2.setStroke(objStroke);
             Drawable.drawWithValueStrokePure(gp, g2);
                         
-        	if ((geo.getAlphaValue() > 0 || geo.isHatchingEnabled())) {
+        	if (geo.isFillable()&&(geo.getAlphaValue() > 0 || geo.isHatchingEnabled())) {
 				try {
 					
 					fill(g2, geo.isInverseFill()?getShape():gp, false); // fill using default/hatching/image as appropriate
