@@ -2152,7 +2152,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		if (maxAbs > 1) {
 			eps = kernel.getEpsilon() * maxAbs * maxAbs;
 		} else {
-			eps = kernel.getEpsilon();
+			eps = kernel.getEpsilon() * maxAbs * maxAbs; //TODO: Also need to care for small coeff 
 		}
 		return Kernel.isEqual(matrix[0]*matrix[1], matrix[3]*matrix[3], eps);				
 	}
@@ -2281,7 +2281,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 
 		// circle 
-		if (Kernel.isEqual(mu[0], mu[1])) {
+		if (Kernel.isEqual(mu[0]/mu[1],1.0)) {
 			
 			//sets eigen vecs parallel to Ox and Oy
 			eigenvecX = 1;
