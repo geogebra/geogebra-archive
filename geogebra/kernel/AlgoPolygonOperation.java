@@ -18,6 +18,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.GeneralPathClipped;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -108,7 +109,9 @@ public class AlgoPolygonOperation extends AlgoElement {
 		cons.addToAlgorithmList(this);
 
 		// setOutput(); done in compute
-
+		// there we just set something to be sure that getOutput doesn't return null.
+		setOutputLength(1);
+		setOutput(0,poly);
 		// parent of output
 		poly.setParentAlgorithm(this);
 		cons.addToAlgorithmList(this);
@@ -124,6 +127,7 @@ public class AlgoPolygonOperation extends AlgoElement {
 		// of the polygon don't get labels either: in this case we only
 		// have the polygon itself as output object
 		if (!labelPointsAndSegments) {
+			Application.debug("poly");
 			output = new GeoElement[1];
 			output[0] = poly;
 		}
