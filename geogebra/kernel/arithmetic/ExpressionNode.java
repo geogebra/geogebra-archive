@@ -141,7 +141,8 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 	final public void setRight(ExpressionValue r) {
 		right = r;
-		right.setInTree(true); // needed for list operations eg k=2 then k {1,2}
+		if (right != null)
+			right.setInTree(true); // needed for list operations eg k=2 then k {1,2}
 		leaf = operation == NO_OPERATION; // right is a dummy MyDouble by
 											// default
 	}
