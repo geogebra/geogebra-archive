@@ -15,9 +15,6 @@ import org.mathpiper.mpreduce.Interpreter2;
 
 public class CASmpreduce extends CASgeneric {
 	
-	// for test commit
-	// testing problems with °
-	
 	private final static String RB_GGB_TO_MPReduce = "/geogebra/cas/ggb2mpreduce";
 	private Interpreter2 mpreduce;
 	private final CasParserTools parserTools;
