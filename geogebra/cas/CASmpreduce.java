@@ -55,7 +55,7 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
-		sb.append("<<numeric!°:=0$ precision 16$ print\\_precision 16$ off complex, rounded, numval, factor, div$ on pri$ ");
+		sb.append("<<numeric!\u00b0:=0$ precision 16$ print\\_precision 16$ off complex, rounded, numval, factor, div$ on pri$ ");
 		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
 		sb.append(">>");
 
@@ -299,27 +299,27 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure myround(x);" 
 				+ "floor(x+0.5);");
 		
-		mpreduce.evaluate("symbolic procedure isbound!° x; if get(x, 'avalue) then 1 else 0;");
+		mpreduce.evaluate("symbolic procedure isbound!\u00b0 x; if get(x, 'avalue) then 1 else 0;");
 		
 		mpreduce.evaluate("procedure mysolve(eqn, var);" +
-				"  begin scalar solutions!°, bool!°;" +
-				"    solutions!°:=solve(eqn,var);" +
-				"    return for each solution!° in solve(eqn,var) join" +
-				"      if freeof(solution!°,'root_of) then <<" +
+				"  begin scalar solutions!\u00b0, bool!\u00b0;" +
+				"    solutions!\u00b0:=solve(eqn,var);" +
+				"    return for each solution!\u00b0 in solve(eqn,var) join" +
+				"      if freeof(solution!\u00b0,'root_of) then <<" +
 				"	on rounded, numval;" +
-				"	if impart(rhs(aeval(solution!°)))=0 then bool!°:=0 else bool!°:=1;" +
-				"	if numeric!°=0 then off rounded, numval;" +
-				"	if bool!°=0 then {solution!°} else {}" +
+				"	if impart(rhs(aeval(solution!\u00b0)))=0 then bool!\u00b0:=0 else bool!\u00b0:=1;" +
+				"	if numeric!\u00b0=0 then off rounded, numval;" +
+				"	if bool!\u00b0=0 then {solution!\u00b0} else {}" +
 				"        >>" +
 				"      else" +
 				"	{var='?}" +
 				"  end;");
 		
 		mpreduce.evaluate("procedure mycsolve(eqn, var);" +
-				"  begin scalar solutions!°, bool!°;" +
-				"    solutions!°:=solve(eqn,var);" +
-				"    return for each solution!° in solve(eqn,var) collect" +
-				"      if freeof(solution!°,'root_of) then solution!° else" +
+				"  begin scalar solutions!\u00b0, bool!\u00b0;" +
+				"    solutions!\u00b0:=solve(eqn,var);" +
+				"    return for each solution!\u00b0 in solve(eqn,var) collect" +
+				"      if freeof(solution!\u00b0,'root_of) then solution!\u00b0 else" +
 				"	var='?" +
 				"  end;");
 		
@@ -377,10 +377,10 @@ public class CASmpreduce extends CASgeneric {
 				+ "    else if arglength(b)>-1 and part(b,0)='list then"
 				+ "      mattoscalar(<<listtorowvector(a)>>*<<listtocolumnvector(b)>>)"
 				+ "    else" 
-				+ "      map(~w!°*b,a)" 
+				+ "      map(~w!\u00b0*b,a)" 
 				+ "  else"
 				+ "    if arglength(b)>-1 and part(b,0)='list then" 
-				+ "      map(a*~w!°,b)"
+				+ "      map(a*~w!\u00b0,b)"
 				+ "    else" 
 				+ "      a*b;");
 
@@ -388,9 +388,9 @@ public class CASmpreduce extends CASgeneric {
 				+ "  if arglength(a)>-1 and a='list and arglength(b)>-1 and part(b,0)='list then"
 				+ "    for i:=1:length(a) collect part(a,i)+part(b,i)"
 				+ "  else if arglength(a)>-1 and part(a,0)='list then" 
-				+ "    map(~w!°+b,a)"
+				+ "    map(~w!\u00b0+b,a)"
 				+ "  else if arglength(b)>-1 and part(b,0)='list then" 
-				+ "    map(a+~w!°,b)"
+				+ "    map(a+~w!\u00b0,b)"
 				+ "  else" 
 				+ "    a+b;");
 
@@ -398,9 +398,9 @@ public class CASmpreduce extends CASgeneric {
 				+ "  if arglength(a)>-1 and part(a,0)='list and arglength(b)>-1 and part(b,0)='list then"
 				+ "    for i:=1:length(a) collect part(a,i)-part(b,i)"
 				+ "  else if arglength(a)<-1 and part(a,0)='list then" 
-				+ "    map(~w!°-b,a)"
+				+ "    map(~w!\u00b0-b,a)"
 				+ "  else if arglength(b)>-1 and part(b,0)='list then" 
-				+ "    map(a-~w!°,b)"
+				+ "    map(a-~w!\u00b0,b)"
 				+ "  else" 
 				+ "    a-b;");
 		
@@ -411,18 +411,18 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure erf(x); "
 				+ "begin "
 				+ "     on rounded;"
-				+ "     a1!° :=  0.254829592; "
-				+ "     a2!° := -0.284496736; "
-				+ "     a3!° :=  1.421413741; "
-				+ "     a4!° := -1.453152027; "
-				+ "     a5!° :=  1.061405429; "
-				+ "     p!°  :=  0.3275911; "
-				+ "     sign!° := 1; "
-				+ "     if x < 0 then sign!° := -1; "
-				+ "     x!° := Abs(x); "
-				+ "     t!° := 1.0/(1.0 + p!°*x!°); "
-				+ "     y!° := 1.0 - (((((a5!°*t!° + a4!°)*t!°) + a3!°)*t!° + a2!°)*t!° + a1!°)*t!°*Exp(-x!°*x!°); "
-				+ "     return sign!°*y!° " + "end;");
+				+ "     a1!\u00b0 :=  0.254829592; "
+				+ "     a2!\u00b0 := -0.284496736; "
+				+ "     a3!\u00b0 :=  1.421413741; "
+				+ "     a4!\u00b0 := -1.453152027; "
+				+ "     a5!\u00b0 :=  1.061405429; "
+				+ "     p!\u00b0  :=  0.3275911; "
+				+ "     sign!\u00b0 := 1; "
+				+ "     if x < 0 then sign!\u00b0 := -1; "
+				+ "     x!\u00b0 := Abs(x); "
+				+ "     t!\u00b0 := 1.0/(1.0 + p!\u00b0*x!\u00b0); "
+				+ "     y!\u00b0 := 1.0 - (((((a5!\u00b0*t!\u00b0 + a4!\u00b0)*t!\u00b0) + a3!\u00b0)*t!\u00b0 + a2!\u00b0)*t!\u00b0 + a1!\u00b0)*t!\u00b0*Exp(-x!\u00b0*x!\u00b0); "
+				+ "     return sign!\u00b0*y!\u00b0 " + "end;");
 
 		mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
 		mpreduce.evaluate("procedure uigamma(n,m); gamma(n)-igamma(n,m);");
@@ -439,22 +439,22 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure listtocolumnvector(list); "
 				+ "begin scalar lengthoflist; "
 				+ "lengthoflist:=length(list); "
-				+ "matrix m!°(lengthoflist,1); " 
+				+ "matrix m!\u00b0(lengthoflist,1); " 
 				+ "for i:=1:lengthoflist do "
-				+ "m!°(i,1):=part(list,i); " 
-				+ "return m!° " 
+				+ "m!\u00b0(i,1):=part(list,i); " 
+				+ "return m!\u00b0 " 
 				+ "end;");
 
 		mpreduce.evaluate("procedure listtorowvector(list); "
 				+ "begin scalar lengthoflist; "
 				+ "	lengthoflist:=length(list); "
-				+ "	matrix m!°(1,lengthoflist); "
+				+ "	matrix m!\u00b0(1,lengthoflist); "
 				+ "	for i:=1:lengthoflist do " 
-				+ "		m!°(1,i):=part(list,i); "
-				+ "	return m!° " 
+				+ "		m!\u00b0(1,i):=part(list,i); "
+				+ "	return m!\u00b0 " 
 				+ "end;");
 
-		mpreduce.evaluate("procedure mod!°(a,b);" +
+		mpreduce.evaluate("procedure mod!\u00b0(a,b);" +
 				" if numberp(a) and numberp(b) then" +
 				"	 a-b*div(a,b)" +
 				" else" +
