@@ -24,14 +24,14 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -507,13 +507,15 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
 		
 		boolean keyboardInitialized = app.getGuiManager().hasVirtualKeyboard();
-		VirtualKeyboard virtualKeyboard = app.getGuiManager().getVirtualKeyboard();
+		final VirtualKeyboard virtualKeyboard = app.getGuiManager().getVirtualKeyboard();
 		
 		// fix for #664: If the keyboard is not made visible it uses the CPU all
 		// the time - for whatever task. Wierd.
 		if(!keyboardInitialized) {
 			virtualKeyboard.setVisible(true);
-			virtualKeyboard.setVisible(false);
+			SwingUtilities.invokeLater( new Runnable(){ public void
+				run() { virtualKeyboard.setVisible(false);} });
+			
 		}
 		
 		tfKeyboardWidth.setText(Integer.toString(virtualKeyboard.getWidth()));
