@@ -106,8 +106,9 @@ implements ExpressionValue, RealRootFunction, Functional {
     }
     
     final public String getVarString() {
-    	String ret = fVars == null ? "x" : fVars[0].toString();
-    	return GeoElement.printLabel(kernel.getCASPrintForm(), ret);
+    	return fVars == null ? 
+    			GeoElement.printLabel(kernel.getCASPrintForm(), "x") :
+    			fVars[0].toString();
     }
 
     /**

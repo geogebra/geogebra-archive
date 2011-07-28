@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 
 /**
@@ -42,7 +43,7 @@ public class FunctionVariable extends MyDouble {
 	}		
 	
 	final public String toString() {
-		return varStr;
+		return GeoElement.printLabel(kernel.getCASPrintForm(), varStr);
 	}
 
 	/*
