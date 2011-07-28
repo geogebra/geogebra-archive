@@ -2720,12 +2720,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 		sb.setLength(0);
 		sb.append('(');
-		sb.append(kernel.format(euclidianController.xRW));
+		sb.append(kernel.format(kernel.checkDecimalFraction(euclidianController.xRW)));
 		if (kernel.getCoordStyle() == Kernel.COORD_STYLE_AUSTRIAN)
 			sb.append(" | ");
 		else
 			sb.append(", ");
-		sb.append(kernel.format(euclidianController.yRW));
+		sb.append(kernel.format(kernel.checkDecimalFraction(euclidianController.yRW)));
 		sb.append(')');
 
 		g2.setColor(Color.darkGray);

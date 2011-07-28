@@ -3470,7 +3470,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	protected void movePoint(boolean repaint) {
-		movedGeoPoint.setCoords(xRW, yRW, 1.0);
+		movedGeoPoint.setCoords(kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), 1.0);
 		((GeoElement) movedGeoPoint).updateCascade();	
 		movedGeoPointDragged = true;
 
@@ -4223,12 +4223,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 
 	protected GeoPointND createNewPoint(boolean forPreviewable, boolean complex){
-		GeoPointND ret = kernel.Point(null, xRW, yRW, complex);
+		GeoPointND ret = kernel.Point(null, kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), complex);
 		return ret;
 	}
 
 	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
-		return createNewPoint(forPreviewable, path, xRW, yRW, 0);
+		return createNewPoint(forPreviewable, path, kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), 0);
 	}
 	
 	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, double x, double y, double z){
@@ -4247,7 +4247,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	
 	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
-		return createNewPoint(forPreviewable, region, xRW, yRW, 0);
+		return createNewPoint(forPreviewable, region, kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), 0);
 	}
 	
 
