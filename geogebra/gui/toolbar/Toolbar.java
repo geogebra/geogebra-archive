@@ -403,6 +403,8 @@ public class Toolbar extends JToolBar {
 		sb.append(EuclidianView.MODE_MIDPOINT);
 		sb.append(" ");
 		sb.append(EuclidianView.MODE_ATTACH_DETACH);
+		sb.append(" ");
+		sb.append(EuclidianView.MODE_COMPLEX_NUMBER);
 
 		// basic lines
 		sb.append(" | ");
@@ -741,6 +743,10 @@ public class Toolbar extends JToolBar {
 		+ EuclidianView.MODE_INTERSECT 
 		+ " "
 		+ EuclidianView.MODE_MIDPOINT 
+		+ " , "
+		+ EuclidianView.MODE_ATTACH_DETACH 
+		+ " , "
+		+ EuclidianView.MODE_COMPLEX_NUMBER
 		+ " | " 
 		+ EuclidianView.MODE_JOIN + " "
 		+ EuclidianView.MODE_SEGMENT + " " + EuclidianView.MODE_RAY + " , "

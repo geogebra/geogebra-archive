@@ -1089,19 +1089,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 	}
 	
-	protected void createNewPointForModePoint(Hits hits){
-		if (mode==EuclidianView.MODE_POINT){//remove polygons : point inside a polygon is created free, as in v3.2
+	protected void createNewPointForModePoint(Hits hits, boolean complex){
+		if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_COMPLEX_NUMBER){//remove polygons : point inside a polygon is created free, as in v3.2
 			//Application.debug("avant:"+hits);
 			hits.removeAllPolygons();
 			//Application.debug("après:"+hits);
-			createNewPoint(hits, true, false, true, true);
+			createNewPoint(hits, true, false, true, true, complex);
 		}else {// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
-			createNewPoint(hits, true, true,  true, true);
+			createNewPoint(hits, true, true,  true, true, complex);
 		}
 	}
 	
 	protected void createNewPointForModeOther(Hits hits){
-		createNewPoint(hits, true, false, true, true);
+		createNewPoint(hits, true, false, true, true, false);
 	}
 	
 	protected void switchModeForMousePressed(MouseEvent e){
@@ -1111,12 +1111,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		switch (mode) {
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
+		case EuclidianView.MODE_COMPLEX_NUMBER:
+			view.setHits(mouseLoc);
+			hits = view.getHits();
+			createNewPointForModePoint(hits, true); 
+			break;
 		case EuclidianView.MODE_POINT:
 		case EuclidianView.MODE_POINT_ON_OBJECT:				
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
-			createNewPointForModePoint(hits); 
+			createNewPointForModePoint(hits, false); 
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
@@ -1150,7 +1155,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removePolygons();
-			createNewPoint(hits, false, false, false, false); 
+			createNewPoint(hits, false, false, false, false, false); 
 			break;
 
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
@@ -1837,6 +1842,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// mathieu : also if it's mode point, we can drag the point
 			if (Application.isRightClick(e) 
 					|| mode == EuclidianView.MODE_POINT 
+					|| mode == EuclidianView.MODE_COMPLEX_NUMBER
 					|| mode == EuclidianView.MODE_POINT_ON_OBJECT
 					|| mode == EuclidianView.MODE_SLIDER
 					|| mode == EuclidianView.MODE_BUTTON_ACTION
@@ -2522,6 +2528,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void switchModeForRemovePolygons(Hits hits){
 		switch(mode){
 		case EuclidianView.MODE_POINT:
+		case EuclidianView.MODE_COMPLEX_NUMBER:
 		case EuclidianView.MODE_POINT_ON_OBJECT:
 		case EuclidianView.MODE_INTERSECT:
 		case EuclidianView.MODE_INTERSECTION_CURVE:
@@ -3017,10 +3024,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_POINT:
+		case EuclidianView.MODE_COMPLEX_NUMBER:
 		case EuclidianView.MODE_POINT_ON_OBJECT:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
-				if (mode==EuclidianView.MODE_POINT)
+				if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_COMPLEX_NUMBER)
 					hits.keepOnlyHitsForNewPointMode();
 
 				point(hits);
@@ -4016,6 +4024,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	private boolean allowPointCreation() {
 		return  mode == EuclidianView.MODE_POINT || 
 		mode == EuclidianView.MODE_POINT_ON_OBJECT ||
+		mode == EuclidianView.MODE_COMPLEX_NUMBER ||
 		app.isOnTheFlyPointCreationActive(); 
 	}
 
@@ -4023,7 +4032,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
 
 		// inRegionpossible must be false so that the Segment Tool creates a point on the edge of a circle
-		return createNewPoint(hits,onPathPossible, false, intersectPossible,  doSingleHighlighting);		
+		return createNewPoint(hits,onPathPossible, false, intersectPossible,  doSingleHighlighting, false);		
 	}
 
 	// create new point at current position if hits is null
@@ -4031,14 +4040,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// or intersection point
 	// returns wether new point was created or not
 	final protected boolean createNewPoint(Hits hits,
-			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, boolean doSingleHighlighting) {
+			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, boolean doSingleHighlighting, boolean complex) {
 
 		if (!allowPointCreation()) 
 			return false;
 
 
 
-		GeoPointND point = getNewPoint(hits, onPathPossible, inRegionPossible, intersectPossible, doSingleHighlighting);
+		GeoPointND point = getNewPoint(hits, onPathPossible, inRegionPossible, intersectPossible, doSingleHighlighting, complex);
 
 		if (point != null) {
 
@@ -4063,11 +4072,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// creates or get the new point (used for 3D)
 	protected GeoPointND getNewPoint(Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
-			boolean doSingleHighlighting) {
+			boolean doSingleHighlighting, boolean complex) {
 
 		return updateNewPoint(false, hits, 
 				onPathPossible, inRegionPossible, intersectPossible, 
-				doSingleHighlighting, true);
+				doSingleHighlighting, true, complex);
 	}
 	
 	protected Hits getRegionHits(Hits hits){
@@ -4080,7 +4089,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean forPreviewable,
 			Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible,
-			boolean doSingleHighlighting, boolean chooseGeo) {
+			boolean doSingleHighlighting, boolean chooseGeo, boolean complex) {
 
 		// create hits for region
 		Hits regionHits = getRegionHits(hits);//hits.getHits(Region.class, tempArrayList);
@@ -4089,6 +4098,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// removed: Point Tool creates Point on edge of Polygon
 		if (mode != EuclidianView.MODE_POINT
 				&& mode != EuclidianView.MODE_POINT_ON_OBJECT
+				&& mode != EuclidianView.MODE_COMPLEX_NUMBER
 				&& !hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
 
@@ -4188,7 +4198,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			//branches reordered to prefer region if possible (Z.Konecny, 2010-07-30)
 			if (region == null || !inRegionPossible) {
 				if (path == null){
-					point = createNewPoint(forPreviewable);
+					point = createNewPoint(forPreviewable, complex);
 					view.setShowMouseCoords(true);
 				} else {
 					point = createNewPoint(forPreviewable, path);
@@ -4212,8 +4222,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 
-	protected GeoPointND createNewPoint(boolean forPreviewable){
-		GeoPointND ret = kernel.Point(null, xRW, yRW);
+	protected GeoPointND createNewPoint(boolean forPreviewable, boolean complex){
+		GeoPointND ret = kernel.Point(null, xRW, yRW, complex);
 		return ret;
 	}
 

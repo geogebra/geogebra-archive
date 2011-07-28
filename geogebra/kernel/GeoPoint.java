@@ -144,7 +144,8 @@ GeoPointND, Animatable, Transformable  {
 	
 
     public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_POINT;
+    	return toStringMode == Kernel.COORD_COMPLEX ? EuclidianConstants.MODE_COMPLEX_NUMBER
+    			: EuclidianConstants.MODE_POINT;
     }
 
     

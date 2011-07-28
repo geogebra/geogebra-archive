@@ -1075,6 +1075,9 @@ public class Kernel {
 		case EuclidianConstants.MODE_POINT:
 			return "Point";
 			
+		case EuclidianConstants.MODE_COMPLEX_NUMBER:
+			return "ComplexNumber";
+			
 		case EuclidianConstants.MODE_POINT_ON_OBJECT:
 			return "PointOnObject";
 			

@@ -531,7 +531,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		default:
 			return super.getNewPoint(hits, 
 					onPathPossible, inRegionPossible, intersectPossible, 
-					doSingleHighlighting);			
+					doSingleHighlighting, false);			
 
 		}
 		
@@ -1505,11 +1505,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// MOUSE PRESSED
 	
 	protected void createNewPointForModePoint(Hits hits){
-		createNewPoint(hits, true, true, true, true);
+		createNewPoint(hits, true, true, true, true, false);
 	}
 	
 	protected void createNewPointForModeOther(Hits hits){
-		createNewPoint(hits, true, true, true, true);
+		createNewPoint(hits, true, true, true, true, false);
 	}
 
 	
@@ -1523,7 +1523,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:	
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, true, true, true, true);
+			createNewPoint(hits, true, true, true, true, false);
 			break;
 			
 		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
@@ -1536,7 +1536,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, true, false, false, true);
+			createNewPoint(hits, true, false, false, true, false);
 			break;	
 			
 		case EuclidianView3D.MODE_RIGHT_PRISM:

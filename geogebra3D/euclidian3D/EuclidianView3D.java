@@ -2241,7 +2241,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			getEuclidianController().updateNewPoint(true, 
 				hits, 
 				true, true, true, false, //TODO doSingleHighlighting = false ? 
-				false);
+				false, false);
 			
 
 			

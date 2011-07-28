@@ -291,6 +291,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void createDefaultMap(){
 		defaultGeoMap = new HashMap<Integer,Integer>();
 		defaultGeoMap.put(EuclidianConstants.MODE_POINT, ConstructionDefaults.DEFAULT_POINT_FREE);
+		defaultGeoMap.put(EuclidianConstants.MODE_COMPLEX_NUMBER, ConstructionDefaults.DEFAULT_POINT_FREE);
 		defaultGeoMap.put(EuclidianConstants.MODE_POINT_ON_OBJECT, ConstructionDefaults.DEFAULT_POINT_DEPENDENT);
 		defaultGeoMap.put(EuclidianConstants.MODE_INTERSECT, ConstructionDefaults.DEFAULT_POINT_DEPENDENT);
 		defaultGeoMap.put(EuclidianConstants.MODE_MIDPOINT, ConstructionDefaults.DEFAULT_POINT_DEPENDENT);
