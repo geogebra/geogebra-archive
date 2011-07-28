@@ -312,6 +312,14 @@ public class CASmpreduce extends CASgeneric {
 				"	if bool!°=0 then {solution!°} else {}" +
 				"        >>" +
 				"      else" +
+				"	{var='?}" +
+				"  end;");
+		
+		mpreduce.evaluate("procedure mycsolve(eqn, var);" +
+				"  begin scalar solutions!°, bool!°;" +
+				"    solutions!°:=solve(eqn,var);" +
+				"    return for each solution!° in solve(eqn,var) collect" +
+				"      if freeof(solution!°,'root_of) then solution!° else" +
 				"	var='?" +
 				"  end;");
 		
@@ -454,7 +462,10 @@ public class CASmpreduce extends CASgeneric {
 		
 		mpreduce.evaluate("procedure div(a,b);" +
 				" if numberp(a) and numberp(b) then" +
-				"	floor(a/b)" +
+				"	if b>0 then " +
+				"	  floor(a/b)" +
+				"	else" +
+				"	  ceiling(a/b)" +
 				" else " +
 				"    part(divpol(a,b),1);");
 
