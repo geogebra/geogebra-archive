@@ -8038,6 +8038,36 @@ class CmdSetDynamicColor extends CommandProcessor {
 				throw argErr(app, c.getName(), arg[2]);
 			else
 				throw argErr(app, c.getName(), arg[3]);
+		case 5:
+			ok = new boolean[n];
+			arg = resArgs(c);
+			if ((ok[1] = arg[1].isNumberValue())
+					&& (ok[2] = arg[2].isNumberValue())
+					&& (ok[3] = arg[3].isNumberValue())
+					&& (ok[4] = arg[4].isNumberValue())) {
+
+				GeoElement geo = (GeoElement) arg[0];
+
+				GeoList list = new GeoList(cons);
+				list.add(arg[1]);
+				list.add(arg[2]);
+				list.add(arg[3]);
+				list.add(arg[4]); // opacity
+
+				geo.setColorFunction(list);
+				geo.updateRepaint();
+
+				GeoElement[] ret = { geo };
+				return ret;
+
+			} else if (!ok[1])
+				throw argErr(app, c.getName(), arg[1]);
+			else if (!ok[2])
+				throw argErr(app, c.getName(), arg[2]);
+			else if (!ok[3])
+				throw argErr(app, c.getName(), arg[3]);
+			else
+				throw argErr(app, c.getName(), arg[4]);
 
 		default:
 			throw argNumErr(app, c.getName(), n);
