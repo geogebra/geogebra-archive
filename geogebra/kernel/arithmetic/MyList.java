@@ -526,7 +526,9 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 
 	public String toLaTeXString(boolean symbolic) {
 		StringBuilder toLaTeXString = new StringBuilder();
-		if (isMatrix()) {
+		if (size() == 0)
+			return "\\emptyset";
+		else if (isMatrix()) {
 			toLaTeXString.append("\\left(\\begin{array}{ll}");
 
 			for (int i=0; i<size(); i++){
