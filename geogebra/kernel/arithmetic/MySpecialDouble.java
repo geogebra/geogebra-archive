@@ -104,7 +104,16 @@ public class MySpecialDouble extends MyDouble {
 					case Unicode.degreeChar:	return "pi/180";
 					case Unicode.eulerChar: return "e";
 				} 	
-			break;				
+			break;
+			
+			case ExpressionNode.STRING_TYPE_LATEX:
+				ch = strToString.charAt(0);
+				switch (ch) {
+					case Unicode.piChar:	return "\\pi";
+					case Unicode.degreeChar:	return "^{\\circ}";
+					case Unicode.eulerChar: return Unicode.EULER_STRING; // TODO: find better Latex rendering for "e"
+				}
+			break;
 				
 			//default:
 			//	return strToString;		
