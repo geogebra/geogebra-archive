@@ -109,7 +109,7 @@ public class Interpreter2 {
 		
 
 		// we will wait until the Interpreter has has consumed sendstring.
-		// (Once he has done that, he'll set sendString to null)
+		// (Once it has done that, it'll set sendString to null)
 		synchronized(inputLock) {
 			this.sendString = send;
 			inputLock.notifyAll();
@@ -126,6 +126,12 @@ public class Interpreter2 {
 					// wait for another timeout ms, altough our timeout has already been reached.
 					if (System.currentTimeMillis() - startTime >= timeoutMillis && sendString != null) {
 						interruptEvaluation();
+						
+						// wait for JLisp to handle the interruption, then discard the output.
+						while (sendString != null)
+							outputLock.wait();
+						out.flush();
+						inputBuffer.delete(0, inputBuffer.length());
 						throw new TimeoutException("MPReduce timout for expression: " + send.trim());
 					}
 				}
