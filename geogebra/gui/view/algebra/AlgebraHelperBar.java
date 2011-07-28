@@ -44,7 +44,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	/**
 	 * Button to toggle LaTeX rendering
 	 */
-	private JButton toggleLaTeX;
+//	private JButton toggleLaTeX;
 	
 	/**
 	 * Helper bar.
@@ -79,11 +79,11 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 		toggleTypeTreeMode.addActionListener(this);
 		add(toggleTypeTreeMode);
 		
-		addSeparator();
-
-		toggleLaTeX = new JButton(GeoGebraIcon.createLatexIcon(app, "\\sqrt{a}", true, Color.black, null, 16));
-		toggleLaTeX.addActionListener(this);
-		add(toggleLaTeX);
+//		addSeparator();
+//
+//		toggleLaTeX = new JButton(GeoGebraIcon.createLatexIcon(app, "\\sqrt{a}", true, Color.black, null, 16));
+//		toggleLaTeX.addActionListener(this);
+//		add(toggleLaTeX);
 		
 	}
 	
@@ -93,7 +93,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	public void updateStates() {
 		toggleAuxiliary.setSelected(app.showAuxiliaryObjects());
 		toggleTypeTreeMode.setSelected(algebraView.getTreeMode() == AlgebraView.MODE_TYPE);
-		toggleLaTeX.setSelected(!algebraView.isRenderLaTeX());
+//		toggleLaTeX.setSelected(!algebraView.isRenderLaTeX());
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 		} else {
 			toggleTypeTreeMode.setToolTipText(app.getPlainTooltip("TreeModeType"));
 		}
-		toggleLaTeX.setToolTipText(app.getPlainTooltip("SimpleFormulas"));
+//		toggleLaTeX.setToolTipText(app.getPlainTooltip("SimpleFormulas"));
 	}
 
 	/**
@@ -123,9 +123,10 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 			toggleTypeTreeMode.setSelected(algebraView.getTreeMode() == AlgebraView.MODE_TYPE);
 			updateLabels();
 
-		} else if(e.getSource() == toggleLaTeX) {
-			algebraView.setRenderLaTeX(!algebraView.isRenderLaTeX());
-			toggleLaTeX.setSelected(!algebraView.isRenderLaTeX());
 		}
+//		else if(e.getSource() == toggleLaTeX) {
+//			algebraView.setRenderLaTeX(!algebraView.isRenderLaTeX());
+//			toggleLaTeX.setSelected(!algebraView.isRenderLaTeX());
+//		}
 	}
 }
