@@ -252,11 +252,13 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 		pointListPanel.add(Box.createRigidArea(lblName.getSize()));
 
 
+		//TODO: this is not a good way to manage visibility of option panels 
+		// ..fix it if we need more options in the future
 		cards = new JPanel(new CardLayout());
 		cards.add("c0", orderPanel);
 		cards.add("c1", transposePanel);
 		cards.add("c2", xySwitchPanel);
-		cards.add("c3", pointListPanel);
+		cards.add("c3", transposePanel);
 
 
 
@@ -485,6 +487,7 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 				if(!newGeo.isGeoText())
 					newGeo.setAuxiliaryObject(false);
 				newGeo.update();
+				app.storeUndoInfo();
 			}else{
 				newGeo.remove();
 			}
@@ -492,40 +495,23 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 		super.setVisible(isVisible);
 	}
 
-	/*
-	private boolean processInput() {
-		boolean succ = true;
 
-		int column1 = table.selectedCellRanges.get(0).getMinColumn();
-		int column2 = table.selectedCellRanges.get(0).getMaxColumn();
-		int row1 = table.selectedCellRanges.get(0).getMinRow();
-		int row2 = table.selectedCellRanges.get(0).getMaxRow();		
+	private void closeDialog(){
+		//either remove our geo or keep it and make it visible
+		if(keepNewGeo){
+			newGeo.setEuclidianVisible(true);
+			if(!newGeo.isGeoText())
+				newGeo.setAuxiliaryObject(false);
+			newGeo.update();
+			app.storeUndoInfo();
 
-		switch (objectType){
-
-		case TYPE_LIST:	
-			cp.createList(selectedCellRanges, true, ckValue.isSelected());
-			break;
-
-		case TYPE_LISTOFPOINTS:	
-			cp.createPointList(selectedCellRanges, true, ckValue.isSelected());
-			break;
-
-		case TYPE_MATRIX:	
-			cp.createMatrix(column1, column2, row1, row2, ckValue.isSelected());
-			break;
-
-		case TYPE_TABLETEXT:	
-			cp.createTableText(column1, column2, row1, row2, ckValue.isSelected());		
-			break;
-
+		}else{
+			newGeo.remove();
 		}
-
-		return succ;
-
+		setVisible(false);
 	}
 
-	 */
+
 
 
 
@@ -563,7 +549,7 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 				break;
 
 			case TYPE_TABLETEXT:	
-				newGeo = cp.createTableText(column1, column2, row1, row2, copyByValue);		
+				newGeo = cp.createTableText(column1, column2, row1, row2, copyByValue, transpose);		
 				break;
 
 			case TYPE_POLYLINE:	
@@ -666,7 +652,8 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 
 	public void windowLostFocus(WindowEvent e) {
 		// close the window and set the geo when focus is lost
-		setVisible(false);
+		if(isVisible())
+			setVisible(false);
 	}
 
 	public void focusGained(FocusEvent e) { }

@@ -30,7 +30,7 @@ public class CellRangeProcessor {
 	private MyTable table;
 	private Application app;		
 	private Construction cons;
-	
+
 	public CellRangeProcessor(MyTable table) {
 
 		this.table = table;
@@ -59,16 +59,16 @@ public class CellRangeProcessor {
 
 		return false;
 	}
-	
+
 	/*
 	 * top-left must be a function of 2 variables eg A4(x,y)=x y^2
 	 * top row and left column must be numbers
 	 * other cells can be anything (will be erased)
 	 */
 	public boolean isCreateOperationTablePossible(ArrayList<CellRange> rangeList){
-		
+
 		if (rangeList.size() != 1) return false;
-		
+
 		CellRange cr = rangeList.get(0);
 		int r1 = cr.getMinRow();
 		int c1 = cr.getMinColumn();
@@ -78,7 +78,7 @@ public class CellRangeProcessor {
 		for(int r = r1+1; r <= cr.getMaxRow(); ++r){
 			if (!(RelativeCopy.getValue(table, c1,r) instanceof GeoNumeric)) return false;
 		}
-		
+
 		for(int c = c1+1; c <= cr.getMaxColumn(); ++c){
 			if (!(RelativeCopy.getValue(table, c,r1) instanceof GeoNumeric)) return false;
 		}
@@ -177,10 +177,10 @@ public class CellRangeProcessor {
 	/**
 	 * Creates a GeoList containing points constructed from the spreadsheet
 	 * cells found in rangeList
-	 * Uses these defaults: no sorting, perform undo 
+	 * Uses these defaults: no sorting, no undo point 
 	 */
 	public GeoElement createPointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
-		return  createPointList(rangeList, byValue, leftToRight, false, true);
+		return  createPointList(rangeList, byValue, leftToRight, false, false);
 	}
 
 	/**
@@ -218,13 +218,13 @@ public class CellRangeProcessor {
 
 	}
 
-	
+
 	/**
 	 * Creates a GeoList of lists where each element is a list
 	 * of cells in each column spanned by the range list
 	 */
 	public GeoList createCollectionList(ArrayList<CellRange> rangeList, boolean copyByValue) {
-		
+
 		GeoList tempGeo = new GeoList(cons);
 		boolean oldSuppress = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
@@ -239,18 +239,18 @@ public class CellRangeProcessor {
 
 
 
-	
+
 	/**
 	 * Creates a GeoPolyLine out of points constructed from the spreadsheet
 	 * cells found in rangeList.
-	 * Uses these defaults: no sorting, perform undo 
+	 * Uses these defaults: no sorting, no undo point 
 	 * @param rangeList
 	 * @param byValue
 	 * @param leftToRight
 	 * @return
 	 */
 	public GeoElement createPolyLine(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
-		return  createPolyLine(rangeList, byValue, leftToRight, false, true);
+		return  createPolyLine(rangeList, byValue, leftToRight, false, false);
 	}
 
 	/**
@@ -548,7 +548,7 @@ public class CellRangeProcessor {
 				}
 			}
 		}
-		
+
 		String[] title = new String[titleList.size()];
 		title = titleList.toArray(title);
 		return title;
@@ -560,9 +560,9 @@ public class CellRangeProcessor {
 
 
 	/** Creates a GeoList from the cells in an array of cellranges. Empty cells are ignored.
-	 * Uses these defaults: create undo point, do not sort, do not filter by geo type. */
+	 * Uses these defaults: do not create undo point, do not sort, do not filter by geo type. */
 	public GeoElement createList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
-		return  createList(rangeList,  scanByColumn, copyByValue, false, true, null) ;
+		return  createList(rangeList,  scanByColumn, copyByValue, false, false, null) ;
 	}
 
 	/** Creates a GeoList from the cells in an array of cellranges. Empty cells are ignored */
@@ -589,12 +589,12 @@ public class CellRangeProcessor {
 			 */
 
 			listString.append("{");
-			
+
 			// create cellList: this holds a list of cell index pairs for the entire range
 			for(CellRange cr:rangeList){
 				cellList.addAll(cr.toCellList(scanByColumn));
 			}
-			
+
 			// iterate through the cells and add their contents to the expression string
 			for(Point cell: cellList){
 				if(!usedCells.contains(cell)){
@@ -608,7 +608,7 @@ public class CellRangeProcessor {
 						//listString.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
 						listString.append(",");
 					}
-					
+
 					usedCells.add(cell);
 				}
 			}
@@ -616,7 +616,7 @@ public class CellRangeProcessor {
 			// remove last comma
 			if(listString.length()>1)
 				listString.deleteCharAt(listString.length()-1);
-			
+
 			listString.append("}");
 
 			if(isSorted){
@@ -630,7 +630,7 @@ public class CellRangeProcessor {
 			geos = table.kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(listString.toString(), false);
 
-		
+
 
 		} catch (Exception ex) {
 			Application.debug("Creating list failed with exception " + ex);
@@ -691,83 +691,119 @@ public class CellRangeProcessor {
 
 	}
 
+	
+	/**
+	 * Creates a string expression for a matrix formed by the cell range with
+	 * upper left corner (column1, row1) and lower right corner (column2, row2).
+	 * If transpose = true then the matrix is the formed by interchanging rows
+	 * with columns
+	 */
+	public String createMatrixExpression(int column1, int column2, int row1, int row2, boolean copyByValue, boolean transpose){
+
+		GeoElement v2;
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+
+		if(!transpose){
+			for (int j = row1; j <= row2; ++ j) {
+				sb.append("{");
+				for (int i = column1; i <= column2; ++ i) {
+					v2 = RelativeCopy.getValue(table, i, j);
+					if (v2 != null) {
+						if(copyByValue){
+							sb.append(v2.toDefinedValueString());
+						}else{
+							sb.append(v2.getLabel());
+						}
+						sb.append(',');
+					}
+					else {
+						app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
+						return null;
+					}
+				}
+				sb.deleteCharAt(sb.length()-1); // remove trailing comma
+				sb.append("},");
+			}
+
+		} else {
+			for (int j = column1; j <= column2; ++ j) {
+				//if (selected.length > j && ! selected[j])  continue; 	
+				sb.append("{");
+				for (int i = row1; i <= row2; ++ i) {
+					v2 = RelativeCopy.getValue(table, j, i);
+					if (v2 != null) {
+						if(copyByValue){
+							sb.append(v2.toDefinedValueString());
+						}else{
+							sb.append(v2.getLabel());
+						}
+						sb.append(',');
+					}
+					else {
+						app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
+						return null;
+					}
+				}
+				sb.deleteCharAt(sb.length()-1); // remove trailing comma
+				sb.append("},");
+			}	
+		}
+
+		sb.deleteCharAt(sb.length()-1); // remove trailing comma
+		sb.append('}');
+
+		// Application.debug(sb.toString());
+		return sb.toString();
+	}
 
 
 
+
+
+
+	/**
+	 * Creates a Matrix geo from the cell range with upper left corner (column1,
+	 * row1) and lower right corner (column2, row2). 
+	 * NOTE: An undo point is not created.
+	 * 
+	 * @param column1
+	 * @param column2
+	 * @param row1
+	 * @param row2
+	 * @param copyByValue
+	 * @return
+	 */
 	public GeoElement createMatrix(int column1, int column2, int row1, int row2, boolean copyByValue){
 		return createMatrix( column1,  column2,  row1,  row2,  copyByValue, false);
 	}
 
+	/**
+	 * Creates a Matrix geo from the cell range with upper left corner (column1,
+	 * row1) and lower right corner (column2, row2). If transpose = true then
+	 * the matrix is the formed by interchanging rows with columns. 
+	 * NOTE: An undo point is not created.
+	 * 
+	 * @param column1
+	 * @param column2
+	 * @param row1
+	 * @param row2
+	 * @param copyByValue
+	 * @param transpose
+	 * @return
+	 */
 	public GeoElement createMatrix(int column1, int column2, int row1, int row2, boolean copyByValue, boolean transpose){
 
 		GeoElement[] geos = null;
-
-		String text="";
+		String expr = null;
+		
 		try {
-
-			if(!transpose){
-				text="{";
-				for (int j = row1; j <= row2; ++ j) {
-					//if (selected.length > j && ! selected[j])  continue; 	
-					String row = "{";
-					for (int i = column1; i <= column2; ++ i) {
-						GeoElement v2 = RelativeCopy.getValue(table, i, j);
-						if (v2 != null) {
-							if(copyByValue){
-								row += v2.toDefinedValueString() + ",";
-							}else{
-								row += v2.getLabel() + ",";
-							}
-						}
-						else {
-							app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
-							return null;
-						}
-					}
-					row = removeComma(row);
-					text += row +"}" + ",";
-				}
-
-			} else {
-
-				text="{";
-				for (int j = column1; j <= column2; ++ j) {
-					//if (selected.length > j && ! selected[j])  continue; 	
-					String row = "{";
-					for (int i = row1; i <= row2; ++ i) {
-						GeoElement v2 = RelativeCopy.getValue(table, j, i);
-						if (v2 != null) {
-							if(copyByValue){
-								row += v2.toDefinedValueString() + ",";
-							}else{
-								row += v2.getLabel() + ",";
-							}
-						}
-						else {
-							app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
-							return null;
-						}
-					}
-					row = removeComma(row);
-					text += row +"}" + ",";
-				}	
-			}
-
-
-
-			text = removeComma(text)+ "}";
-
-			//Application.debug(text);
-			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
-			// set matrix label
-			// no longer needed
-			//String matrixName = geos[0].getIndexLabel("matrix");
-			//geos[0].setLabel(matrixName);
-
-			app.storeUndoInfo();
+			expr = createMatrixExpression( column1, column2, row1, row2, copyByValue, transpose);
+			//Application.debug(expr);
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(expr, false);
 		} 
 		catch (Exception ex) {
-			Application.debug("creating matrix failed "+text);
+			Application.debug("creating matrix failed "+ expr);
 			ex.printStackTrace();
 		} 
 
@@ -775,49 +811,37 @@ public class CellRangeProcessor {
 			return geos[0];
 		else 
 			return null;
+
 	}
 
 
 
 
-
-	public GeoElement createTableText(int column1, int column2, int row1, int row2, boolean copyByValue){
+	/**
+	 * Creates a TableText geo from the cell range with upper left corner (column1,
+	 * row1) and lower right corner (column2, row2). If transpose = true then
+	 * the TableText matrix is the formed by interchanging rows with columns. 
+	 * NOTE: An undo point is not created.
+	 * @param column1
+	 * @param column2
+	 * @param row1
+	 * @param row2
+	 * @param copyByValue 
+	 * @return
+	 */
+	public GeoElement createTableText(int column1, int column2, int row1, int row2, boolean copyByValue, boolean transpose){
 
 		GeoElement[] geos = null;
-
 		StringBuilder text= new StringBuilder();
+		
 		try {
-			text.append("TableText[{");
-			for (int j = row1; j <= row2; ++ j) {
-				//if (selected.length > j && ! selected[j])  continue; 	
-				text.append('{');
-				for (int i = column1; i <= column2; ++ i) {
-					GeoElement v2 = RelativeCopy.getValue(table, i, j);
-					if (v2 != null) {
-						if(copyByValue){
-							text.append(v2.toDefinedValueString());
-						}else{
-							text.append(v2.getLabel());
-						}
-						if (i < column2) text.append(',');
-					}
-					else {
-						app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
-						return null;
-					}
-				}
-				text.append('}');
-				if (j < row2) text.append(',');
-			}
-
-			//text = removeComma(text)+ "}]";
-
-			text.append("},\"|_\"]");
+			text.append("TableText[");		
+			text.append(createMatrixExpression( column1, column2, row1, row2, copyByValue, transpose));
+			text.append(",\"|_\"]");
 
 			//Application.debug(text);
 			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text.toString(), false);
 
-			app.storeUndoInfo();
 		} 
 		catch (Exception ex) {
 			Application.debug("creating TableText failed " + text);
@@ -831,19 +855,7 @@ public class CellRangeProcessor {
 	}
 
 
-	private static String removeComma(String s)
-	{
-		if (s.endsWith(",")) s = s.substring(0,s.length()-1); 	
-		return s;
-	}
-
-
-
-
-
-
-
-
+	
 
 
 	//===================================================

@@ -237,7 +237,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			item = new JMenuItem(app.getMenu("Table"));
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					cp.createTableText(column1, column2, row1, row2,false);
+					cp.createTableText(column1, column2, row1, row2,false,false);
 				}
 			});	 
 			addSubItem(subMenu,item);	
