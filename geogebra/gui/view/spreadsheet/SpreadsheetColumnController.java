@@ -403,7 +403,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 
 			setOpaque(true);
 			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
-			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.HEADER_GRID_COLOR));
 
 			layout = (BorderLayout) this.getLayout();
 		}

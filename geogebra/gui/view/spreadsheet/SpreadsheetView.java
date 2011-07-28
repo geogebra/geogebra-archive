@@ -195,7 +195,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 		// Create and set the scrollpane corners
 		Corner upperLeftCorner = new Corner(); //use FlowLayout
-		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));		
+		upperLeftCorner.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.HEADER_GRID_COLOR));		
 		upperLeftCorner.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				table.selectAll();

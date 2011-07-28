@@ -122,6 +122,11 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 
 
 
+
+	//===============================================
+	//   Renderer
+	//===============================================
+
 	public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 
 		private static final long serialVersionUID = 1L;
@@ -139,7 +144,7 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 			header = table.getTableHeader() ;
 			//			setOpaque(true);
 			//setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
-			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
+			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.HEADER_GRID_COLOR));
 			
 
 		}
