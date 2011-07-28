@@ -573,10 +573,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
 
         // window dimension panel
-		dimLabel[0].setText("X " + app.getPlain("min") + ":");
-		dimLabel[1].setText("X " + app.getPlain("max") + ":");
-		dimLabel[2].setText("Y " + app.getPlain("min") + ":");
-		dimLabel[3].setText("Y " + app.getPlain("max") + ":");
+		dimLabel[0].setText(app.getPlain("xmin") + ":");
+		dimLabel[1].setText(app.getPlain("xmax") + ":");
+		dimLabel[2].setText(app.getPlain("ymin") + ":");
+		dimLabel[3].setText(app.getPlain("ymax") + ":");
 		axesRatioLabel.setText(app.getPlain("xAxis") + " : " + app.getPlain("yAxis") + " = " );
 	//	dimPanelTitle = "ttt";
 			

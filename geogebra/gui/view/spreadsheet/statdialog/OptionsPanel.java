@@ -352,13 +352,13 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		// graph options
 		ckAutoWindow.setText(app.getMenu("AutoDimension"));
 		ckShowGrid.setText(app.getMenu("ShowGridlines"));
-		lblXMin.setText("X " + app.getPlain("min") + ":");
-		lblXMax.setText("X " + app.getPlain("max") + ":");
-		lblYMin.setText("Y " + app.getPlain("min") + ":");
-		lblYMax.setText("Y " + app.getPlain("max") + ":");
+		lblXMin.setText(app.getPlain("xmin") + ":");
+		lblXMax.setText(app.getPlain("xmax") + ":");
+		lblYMin.setText(app.getPlain("ymin") + ":");
+		lblYMax.setText(app.getPlain("ymax") + ":");
 
-		lblXInterval.setText("X " + app.getMenu("Interval") + ":");
-		lblYInterval.setText("Y " + app.getMenu("Interval") + ":");
+		lblXInterval.setText(app.getPlain("xstep") + ":");
+		lblYInterval.setText(app.getPlain("ystep") + ":");
 
 		ckShowLines.setText(app.getMenu("LineGraph"));
 		
