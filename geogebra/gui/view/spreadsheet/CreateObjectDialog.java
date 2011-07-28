@@ -665,9 +665,8 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 
 
 	public void windowLostFocus(WindowEvent e) {
-		newGeo.remove();
+		// close the window and set the geo when focus is lost
 		setVisible(false);
-		Application.debug("WindowFocusListener method called: windowLostFocus.");
 	}
 
 	public void focusGained(FocusEvent e) { }
