@@ -320,13 +320,33 @@ Dilateable, Transformable, EuclidianViewCE {
 
 	private void addPow(StringBuilder sb, int i){
 		if (i>1){
-			sb.append('^');
 			if (kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_LATEX){
+				sb.append('^');
 				sb.append('{');
 				sb.append(i);
 				sb.append('}');
-			}else
+			}else if ((kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_JASYMCA)||
+						(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_GEOGEBRA_XML)||
+						(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_MATH_PIPER)||
+						(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_MAXIMA)||
+						(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_MPREDUCE)){
+				sb.append('^');
 				sb.append(i);
+			}else{
+				String p="";
+				while(i>0){
+					int c=i%10;
+					switch(c){
+					case 1: p='\u00b9'+p;break;
+					case 2: p='\u00b2'+p;break;
+					case 3: p='\u00b3'+p;break;
+					default:
+						p=(char)('\u2070'+c)+p;
+					}
+					i=i/10;
+				}
+				sb.append(p);
+			}
 		}
 	}
 	
