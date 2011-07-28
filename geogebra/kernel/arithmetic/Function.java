@@ -176,7 +176,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         if (!Kernel.isZero(vy)) {                       
             if (isLeaf && left != fVars[0]) { // special case f(x) = constant               
                 MyDouble c = ((NumberValue) expression.getLeft()).getNumber();
-                c.set(c.getDouble() + vy);
+                c.set(kernel.checkDecimalFraction(c.getDouble() + vy));
                 expression.setLeft(c);
             } else {                
                 // f(x) = f(x) + vy
@@ -206,7 +206,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 double temp;
                 switch (en.getOperation()) {
                     case ExpressionNode.PLUS :
-                        temp = num.getDouble() - vx;                    
+                        temp = kernel.checkDecimalFraction(num.getDouble() - vx);                    
                         if (Kernel.isZero(temp)) {                      
                             expression = expression.replaceAndWrap(en, fVars[0]);                          
                         } else if (temp < 0) {
@@ -218,7 +218,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                         return;
 
                     case ExpressionNode.MINUS :
-                        temp = num.getDouble() + vx;
+                        temp = kernel.checkDecimalFraction(num.getDouble() + vx);
                         if (Kernel.isZero(temp)) {
                             expression = expression.replaceAndWrap(en, fVars[0]);                      
                         } else if (temp < 0) {
@@ -251,6 +251,9 @@ implements ExpressionValue, RealRootFunction, Functional {
     
     // node for (x - vx)
     final private ExpressionNode shiftXnode(double vx) {
+    	
+    	vx = kernel.checkDecimalFraction(vx);
+    	
         ExpressionNode node;        
         if (vx > 0) {
             node =
@@ -275,13 +278,13 @@ implements ExpressionValue, RealRootFunction, Functional {
         try { // is there a constant number to the right
             MyDouble num = (MyDouble) expression.getRight();
             if (num == fVars[0]) { // right side might be the function variable
-                addNumber(vy);
+                addNumber(kernel.checkDecimalFraction(vy));
                 return;
             }
             double temp;
             switch (expression.getOperation()) {
                 case ExpressionNode.PLUS :
-                    temp = num.getDouble() + vy;
+                    temp = kernel.checkDecimalFraction(num.getDouble() + vy);
                     if (Kernel.isZero(temp)) {
                         expression = expression.getLeftTree();
                     } else if (temp < 0) {
@@ -293,7 +296,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                     break;
 
                 case ExpressionNode.MINUS :
-                    temp = num.getDouble() - vy;
+                    temp = kernel.checkDecimalFraction(num.getDouble() - vy);
                     if (Kernel.isZero(temp)) {
                         expression = expression.getLeftTree();
                     } else if (temp < 0) {
