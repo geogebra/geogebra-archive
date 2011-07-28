@@ -299,6 +299,22 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure myround(x);" 
 				+ "floor(x+0.5);");
 		
+		mpreduce.evaluate("symbolic procedure isbound!° x; if get(x, 'avalue) then 1 else 0;");
+		
+		mpreduce.evaluate("procedure mysolve(eqn, var);" +
+				"  begin scalar solutions!°, bool!°;" +
+				"    solutions!°:=solve(eqn,var);" +
+				"    return for each solution!° in solve(eqn,var) join" +
+				"      if freeof(solution!°,'root_of) then <<" +
+				"	on rounded, numval;" +
+				"	if impart(rhs(aeval(solution!°)))=0 then bool!°:=0 else bool!°:=1;" +
+				"	if numeric!°=0 then off rounded, numval;" +
+				"	if bool!°=0 then {solution!°} else {}" +
+				"        >>" +
+				"      else" +
+				"	var='?" +
+				"  end;");
+		
 		mpreduce.evaluate("procedure dot(vec1,vec2); "
 				+ "	begin scalar tmplength; "
 				+ "  if arglength(vec1)>-1 and part(vec1,0)='mat and column_dim(vec1)=1 then "
