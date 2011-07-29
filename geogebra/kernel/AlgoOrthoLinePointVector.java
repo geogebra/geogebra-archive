@@ -48,8 +48,14 @@ public class AlgoOrthoLinePointVector extends AlgoElement {
         
         // compute line through P, Q
         compute();      
+        setIncidence();
         g.setLabel(label);
     }   
+    
+    private void setIncidence() {
+    	P.addIncidence(g);
+	}
+
     
     public String getClassName() {
         return "AlgoOrthoLinePointVector";

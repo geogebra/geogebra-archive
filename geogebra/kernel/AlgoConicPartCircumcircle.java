@@ -55,8 +55,15 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
         
         setInputOutput(); // for AlgoElement      
         compute();               
+        setIncidence();
     }    	        
     
+	private void setIncidence() {
+		A.addIncidence(conicPart);
+		B.addIncidence(conicPart);
+		C.addIncidence(conicPart);
+	}
+
 	public String getClassName() {
 		switch (type) {
 			case GeoConicPart.CONIC_PART_ARC:

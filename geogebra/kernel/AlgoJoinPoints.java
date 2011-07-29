@@ -48,10 +48,16 @@ public class AlgoJoinPoints extends AlgoElement {
         
         // compute line through P, Q
         compute();      
+        addIncidence();
         g.setLabel(label);
     }   
     
-    public String getClassName() {
+    private void addIncidence() {
+        P.addIncidence(g);
+        Q.addIncidence(g);
+	}
+
+	public String getClassName() {
         return "AlgoJoinPoints";
     }
 

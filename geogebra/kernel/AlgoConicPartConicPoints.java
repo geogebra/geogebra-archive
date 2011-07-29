@@ -52,11 +52,17 @@ public class AlgoConicPartConicPoints extends AlgoConicPart {
 
         setInputOutput(); // for AlgoElement      
         compute();
+        setIncidence();
         
         conicPart.setLabel(label);
     }    	
     
-    GeoPoint getStartPoint() {
+    private void setIncidence() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	GeoPoint getStartPoint() {
     	return startPoint;
     }
 

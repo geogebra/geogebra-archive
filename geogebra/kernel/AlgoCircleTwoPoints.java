@@ -34,6 +34,7 @@ public class AlgoCircleTwoPoints extends AlgoSphereNDTwoPoints {
         GeoPoint M,
         GeoPoint P) {
         super(cons,M,P);
+        setIncidence();
     }
     
     AlgoCircleTwoPoints(
@@ -42,6 +43,11 @@ public class AlgoCircleTwoPoints extends AlgoSphereNDTwoPoints {
             GeoPoint M,
             GeoPoint P) {
          super(cons, label,M, P);
+         setIncidence();
+    }
+    
+    private void setIncidence() {
+    	((GeoPoint) getP()).addIncidence(getCircle());
     }
     
     protected GeoQuadricND createSphereND(Construction cons){

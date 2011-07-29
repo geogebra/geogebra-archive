@@ -45,10 +45,17 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract {
 
         // compute line through P, Q
         compute();
+        setIncidence();
+        
         S.setLabel(label);
     }
 
-    public String getClassName() {
+    private void setIncidence() {
+		S.addIncidence(g);
+		S.addIncidence(h);
+	}
+
+	public String getClassName() {
         return "AlgoIntersectLines";
     }
 

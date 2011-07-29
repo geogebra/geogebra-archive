@@ -34,6 +34,8 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		setInputOutput(); 
 		initForNearToRelationship();
 		compute();
+		setIncidence();
+		
 		point.setLabel(label);		
 	}
 	
@@ -56,8 +58,30 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		setInputOutput(); 
 		initForNearToRelationship();
 		compute();
+		setIncidence();
 		point.setLabel(label);		
 	}
+	
+	private void setIncidence() {
+		//point's incidence with parent algo's two intersectable objects
+		if (algo instanceof AlgoIntersectConics) {
+			point.addIncidence( ((AlgoIntersectConics)algo).getA() );
+			point.addIncidence( ((AlgoIntersectConics)algo).getB() );
+			
+			((GeoConic) ((AlgoIntersectConics)algo).getA()).addPointOnConic(point);
+			((GeoConic) ((AlgoIntersectConics)algo).getB()).addPointOnConic(point);
+			
+		} else if  (algo instanceof AlgoIntersectLineConic) {
+			point.addIncidence( ((AlgoIntersectLineConic)algo).getLine() );
+			point.addIncidence( ((AlgoIntersectLineConic)algo).getConic() );
+			
+			((AlgoIntersectLineConic)algo).getConic().addPointOnConic(point);
+		}
+		
+		//points's incidence with one of the intersection points --
+		// this is done in compute(), because it depends on the index, which can be changed dynamically
+	}
+
 	
     protected boolean showUndefinedPointsInAlgebraView() {
     	return true;
@@ -132,8 +156,19 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		if (input[0].isDefined() && input[1].isDefined() && index < parentOutput.length) {	
 			// 	get coordinates from helper algorithm
 			point.setCoords(parentOutput[index]);
+			
+			if (point.getIncidenceList()!=null) {
+				for (int i = 0; i < parentOutput.length; ++i) {
+					if (!parentOutput[index].contains(parentOutput[i]))
+						point.getIncidenceList().remove(parentOutput[i]);
+				}
+			}
+			point.addIncidence(parentOutput[index]);
 		} else {
 			point.setUndefined();
+			for (int i = 0; i < parentOutput.length; ++i) {
+				point.getIncidenceList().remove(parentOutput[i]);
+			}
 		}
 	}   
 	

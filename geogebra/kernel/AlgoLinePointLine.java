@@ -48,9 +48,15 @@ public class AlgoLinePointLine extends AlgoElement {
 
         // compute line 
         compute();
+        setIncidence();
         g.setLabel(label);
     }
 
+    private void setIncidence() {
+    	P.addIncidence(g);
+	}
+
+    
     public String getClassName() {
         return "AlgoLinePointLine";
     }

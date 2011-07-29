@@ -37,14 +37,21 @@ public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
         // create point on path and compute current location
         P = new GeoPoint(cons);
         P.setPath(path);
+        setIncidence();
+        
         P.setCoords(x, y, 1.0);                   
-
+        
         setInputOutput(); // for AlgoElement
        
         P.setLabel(label);
     }
 
-    public AlgoPointOnPath(Construction cons, String label, Path path, double x,
+    private void setIncidence() {
+    	P.addIncidence((GeoElement) path);
+		
+	}
+
+	public AlgoPointOnPath(Construction cons, String label, Path path, double x,
 			double y, NumberValue param) {
     	this(cons,path,x,y,param);
 		P.setLabel(label);

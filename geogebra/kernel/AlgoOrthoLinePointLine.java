@@ -57,10 +57,15 @@ public class AlgoOrthoLinePointLine extends AlgoElement {
 
         // compute line 
         compute();
+        setIncidence();
         g.setLabel(label);
     }
 
-    public String getClassName() {
+    private void setIncidence() {
+    	P.addIncidence(g);
+	}
+
+	public String getClassName() {
         return "AlgoOrthoLinePointLine";
     }
     

@@ -44,9 +44,11 @@ public class AlgoConicFivePoints extends AlgoElement {
         super(cons);
         this.P = P;
         conic = new GeoConic(cons);
+        
         for (int i=0; i < P.length; i++) {
-        	conic.addPointOnConic(P[i]);
+        	conic.addPointOnConic(P[i]); //TODO: move into setIncidence()
         }
+        setIncidence();
         
         setInputOutput(); // for AlgoElement
 
@@ -62,7 +64,14 @@ public class AlgoConicFivePoints extends AlgoElement {
         conic.setLabel(label);
     }
 
-    public String getClassName() {
+    private void setIncidence() {
+		for (int i=0; i< P.length; ++i) {
+			P[i].addIncidence(conic);
+		}
+		
+	}
+
+	public String getClassName() {
         return "AlgoConicFivePoints";
     }
     

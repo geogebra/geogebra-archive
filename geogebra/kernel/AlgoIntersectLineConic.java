@@ -98,9 +98,18 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         setInputOutput(); // for AlgoElement     
         initForNearToRelationship();
         compute();                      
+        setIncidence();
+        
     }
     
-    // for subclasses
+    private void setIncidence() {
+    	for (int i=0; i<P.length; ++i) {
+    		P[i].addIncidence(g);
+    		P[i].addIncidence(c);
+    	}
+	}
+
+	// for subclasses
     protected void initElements() {
     	// g is defined as tangent of c
     	if (isDefinedAsTangent) {
@@ -233,7 +242,10 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	    		int size = pointsOnConic.size();
 	    		for (int i=0; i < size; i++) {
 	    			GeoPoint p = (GeoPoint) pointsOnConic.get(i);
-	    			if (g.isOnPath(p, Kernel.MIN_PRECISION)) { //TODO: modify it.
+	    			//if (g.isOnPath(p, Kernel.MIN_PRECISION)) { 
+	    			if (p.isLabelSet() && 
+	    					p.getIncidenceList()!=null && 
+	    					p.getIncidenceList().contains(g)) { 
     					pointOnConic = p;
     					break;
     				}

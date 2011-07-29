@@ -65,7 +65,14 @@ public class AlgoJoinPointsSegment extends AlgoElement {
                
         // compute line through P, Q
         compute();             
+        setIncidence();
     }   
+    
+    private void setIncidence() {
+    	P.addIncidence(s);
+    	Q.addIncidence(s);
+	}
+    
 
     public String getClassName() {
         return "AlgoJoinPointsSegment";

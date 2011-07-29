@@ -64,9 +64,16 @@ public class AlgoConicPartCircle extends AlgoConicPart {
         
         setInputOutput(); // for AlgoElement      
         compute();               
+        setIncidence();
     }    	
     
-    GeoPoint getStartPoint() {
+    private void setIncidence() {
+    	startPoint.addIncidence(conicPart);
+    	//endPoint.addIncidence(conicPart);
+		
+	}
+
+	GeoPoint getStartPoint() {
     	return startPoint;
     }
     

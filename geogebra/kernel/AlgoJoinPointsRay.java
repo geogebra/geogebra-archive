@@ -47,8 +47,15 @@ public class AlgoJoinPointsRay extends AlgoElement {
         
         // compute line through P, Q
         compute();      
+        setIncidence();
         ray.setLabel(label);
     }   
+    
+    private void setIncidence() {
+    	P.addIncidence(ray);
+    	Q.addIncidence(ray);
+	}
+
     
     public String getClassName() {
         return "AlgoJoinPointsRay";

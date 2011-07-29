@@ -77,7 +77,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
             setPoints(A,B,C);
  
             createCircle();
-            circle.addPointOnConic(getA());
+            circle.addPointOnConic(getA()); //move into setIncidence();
             circle.addPointOnConic(getB());
             circle.addPointOnConic(getC());
             
@@ -89,11 +89,22 @@ public class AlgoCircleThreePoints extends AlgoElement {
 
             setInputOutput(); // for AlgoElement
 
-            compute();            
+            compute();           
+            setIncidence();
     }
     
     
-    /** set the three points of the circle to A, B, C
+    private void setIncidence() {
+    	if (A instanceof GeoPoint)
+    		((GeoPoint) A).addIncidence(circle);
+    	if (B instanceof GeoPoint)
+    		((GeoPoint) B).addIncidence(circle);
+    	if (C instanceof GeoPoint)
+    		((GeoPoint) C).addIncidence(circle);
+		
+	}
+
+	/** set the three points of the circle to A, B, C
 	 * @param A first point
 	 * @param B second point
 	 * @param C third point

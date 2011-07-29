@@ -109,13 +109,21 @@ public class AlgoIntersectConics extends AlgoIntersect {
         setInputOutput(); // for AlgoElement     
         initForNearToRelationship();
         compute(); 
+        setIncidence();
         A.addPointOnConic(getIntersectionPoints()[0]);
         A.addPointOnConic(getIntersectionPoints()[1]);
         B.addPointOnConic(getIntersectionPoints()[0]);
         B.addPointOnConic(getIntersectionPoints()[1]);
     }
     
-    // for AlgoElement
+    private void setIncidence() {
+    	for (int i=0; i<P.length; ++i) {
+    		P[i].addIncidence(A);
+    		P[i].addIncidence(B);
+    	}
+	}
+
+	// for AlgoElement
     public void setInputOutput() {
         input = new GeoElement[2];
         input[0] = A;
@@ -260,7 +268,10 @@ public class AlgoIntersectConics extends AlgoIntersect {
 			int size = pointsOnConic.size();
 			for (int i=0; i < size; i++) {
 				GeoPoint p = (GeoPoint) pointsOnConic.get(i);
-				if (B.isOnPath(p, Kernel.MIN_PRECISION)) {
+				//if (B.isOnPath(p, Kernel.MIN_PRECISION)) {
+				if (p.isLabelSet() && 
+						p.getIncidenceList()!=null && 
+						p.getIncidenceList().contains(B)) {
 					pointOnConic = p;
 					break;
 				}

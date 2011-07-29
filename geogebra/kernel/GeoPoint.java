@@ -1560,5 +1560,31 @@ GeoPointND, Animatable, Transformable  {
 			}
 		}
 
-
+		
+		//for identifying incidence by construction
+		//case by case.
+		//currently implemented for
+		// lines: line by two point, intersect lines, line/conic, point on line
+		//TODO: parallel line, perpenticular line
+		private ArrayList<GeoElement> incidenceList;
+		
+		public ArrayList<GeoElement> getIncidenceList(){
+			return incidenceList;
+		}
+		public void setIncidenceList(ArrayList<GeoElement> list){
+			incidenceList = new ArrayList<GeoElement>(list);
+		}
+		public void createIncidenceList(){
+			incidenceList = new ArrayList<GeoElement>();
+			incidenceList.add(this);
+		}
+		public void addIncidence(GeoElement geo) {
+			if (incidenceList==null)
+				createIncidenceList();
+			if (!incidenceList.contains(geo)) {
+				incidenceList.add(geo);
+			}
+		}
+		
+		
 }
