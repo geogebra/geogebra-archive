@@ -22,6 +22,7 @@ import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.algebra.AlgebraView;
+import geogebra.gui.view.probcalculator.ProbabilityCalculator;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.io.layout.DockPanelXml;
@@ -101,6 +102,7 @@ public class MyXMLHandler implements DocHandler {
 	private static final int MODE_CAS_CELL_PAIR = 162;
 	private static final int MODE_CAS_INPUT_CELL = 163;
 	private static final int MODE_CAS_OUTPUT_CELL = 164;
+	private static final int MODE_PROBABILITY_CALCULATOR = 170;
 	private static final int MODE_KERNEL = 200;
 	private static final int MODE_CONSTRUCTION = 300;
 	private static final int MODE_CONST_GEO_ELEMENT = 301;
@@ -330,7 +332,11 @@ public class MyXMLHandler implements DocHandler {
 
 		case MODE_CAS_SESSION:
 			startCASSessionElement(eName, attrs);
-			break;		
+			break;
+			
+		case MODE_PROBABILITY_CALCULATOR:
+			startProbabilityCalculatorElement(eName, attrs);
+			break;
 
 		case MODE_KERNEL:
 			startKernelElement(eName, attrs);
@@ -448,6 +454,12 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("spreadsheetView"))
 				mode = MODE_GEOGEBRA;
 			break;
+			
+		case MODE_PROBABILITY_CALCULATOR:
+			if (eName.equals("probabilityCalculator"))
+				mode = MODE_GEOGEBRA;
+			break;
+			
 		case MODE_CAS_VIEW:
 			if (eName.equals("casView"))
 				mode = MODE_GEOGEBRA;
@@ -573,6 +585,9 @@ public class MyXMLHandler implements DocHandler {
 		else if (eName.equals("casSession")) {
 			mode = MODE_CAS_SESSION;
 			app.getGuiManager().getCasView().clearView();
+		} 
+		else if (eName.equals("probabilityCalculator")) {
+			mode = MODE_PROBABILITY_CALCULATOR;
 		} 
 		else if (eName.equals("gui")) {
 			mode = MODE_GUI;
@@ -751,6 +766,49 @@ public class MyXMLHandler implements DocHandler {
 		if (!ok)
 			System.err.println("error in <spreadsheetView>: " + eName);
 	}
+
+	// ====================================
+	// <ProbabilityCalculator>
+	// ====================================
+	private void startProbabilityCalculatorElement(String eName, LinkedHashMap<String, String> attrs) {
+		boolean ok = true;
+		
+		switch (eName.charAt(0)) {
+
+		case 'd':
+			if (eName.equals("distribution")) {
+				ok = handleProbabilityDistribution((ProbabilityCalculator)app.getGuiManager().getProbabilityCalculator(), attrs);
+				break;
+			}
+		default:
+			System.err.println("unknown tag in <probabilityCalculator>: " + eName);
+		}
+
+		if (!ok)
+			System.err.println("error in <probabilityCalculator>: " + eName);
+	}
+
+	private boolean handleProbabilityDistribution(ProbabilityCalculator probCalc, LinkedHashMap<String, String> attrs) {
+
+		try {
+			int distributionType = Integer.parseInt((String) attrs.get("type"));
+			boolean isCumulative = parseBoolean((String) attrs.get("isCumulative"));
+
+			// get parameters from comma delimited string
+			String parmString = (String) attrs.get("parameters");
+			String[] parmStringArray = parmString.split(",");
+			double[] parameters = new double[parmStringArray.length];
+			for(int i = 0; i < parmStringArray.length; i++)
+				parameters[i] = Double.parseDouble(parmStringArray[i]);
+
+			// set the prob calculator
+			probCalc.setProbabilityCalculator(distributionType, parameters, isCumulative);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 
 	// ====================================
 	// <AlgebraView>
@@ -1053,17 +1111,17 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			if(Boolean.parseBoolean((String) attrs.get("default"))){
 				sv.setBrowserDefaults(true);
-				
+
 			}else{
-				
-			sv.setInitialBrowserMode(Integer.parseInt((String) attrs.get("mode")));
-			sv.setInitialFileString((String) attrs.get("dir"));
-			sv.setInitialURLString((String) attrs.get("URL"));
-			sv.initFileBrowser();
+
+				sv.setInitialBrowserMode(Integer.parseInt((String) attrs.get("mode")));
+				sv.setInitialFileString((String) attrs.get("dir"));
+				sv.setInitialURLString((String) attrs.get("URL"));
+				sv.initFileBrowser();
 			}
-			
+
 			return true;
-			
+
 		} catch (Exception e) {
 			return false;
 		}

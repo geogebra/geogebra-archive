@@ -30,6 +30,7 @@ import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.consprotocol.ConstructionProtocolView;
 import geogebra.gui.view.probcalculator.ProbabilityCalculator;
+import geogebra.gui.view.probcalculator.ProbabilityManager;
 import geogebra.gui.view.spreadsheet.FunctionInspector;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
@@ -149,15 +150,8 @@ public class GuiManager {
 	private ProbabilityCalculator probCalculator;
 
 	
-	public JComponent getProbabilityCalculator(){
-
-		if(probCalculator == null)
-			probCalculator = new ProbabilityCalculator(app);
-		return probCalculator;		
-	}
-
 	
-	
+
 	public static DataFlavor urlFlavor, uriListFlavor;
 	static {
 		try { 
@@ -375,6 +369,23 @@ public class GuiManager {
 		return true;
 	}
 	
+	public boolean hasProbabilityCalculator() {
+		if (probCalculator == null) return false;
+		if (!probCalculator.isShowing()) return false;
+		return true;
+	}
+	
+	
+	
+	public JComponent getProbabilityCalculator(){
+
+		if(probCalculator == null)
+			probCalculator = new ProbabilityCalculator(app);
+		return probCalculator;		
+	}
+
+	
+	
 	public JComponent getSpreadsheetView() {
 		// init spreadsheet view
     	if (spreadsheetView == null) { 
@@ -428,6 +439,11 @@ public class GuiManager {
 			spreadsheetView.getTraceManager().traceToSpreadsheet(geo);		
 	}	
 	
+	
+	
+	// XML
+	//=====================================================
+	
 	public void getSpreadsheetViewXML(StringBuilder sb) {
 		if (spreadsheetView != null)
 			spreadsheetView.getXML(sb);
@@ -465,6 +481,17 @@ public class GuiManager {
 		}
 
 	}
+	
+	
+	public void getProbabilityCalculatorXML(StringBuilder sb) {
+		if (probCalculator != null)
+			probCalculator.getXML(sb);
+	}
+	
+	//=====================================================
+	// End XML
+	
+	
 	
 	
 	public EuclidianView getEuclidianView2() {
@@ -3030,7 +3057,7 @@ public class GuiManager {
 	     			else
 	     			{
 	     				app.getGuiManager().setShowView(true, Application.VIEW_PROBABILITY_CALCULATOR);
-	     				probCalculator.updateAll();
+	     				probCalculator.setProbabilityCalculator(ProbabilityManager.DIST_NORMAL, null, false);
 	     			}
 
 	     		// nothing more to do, so reset to move mode

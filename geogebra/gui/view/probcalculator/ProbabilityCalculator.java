@@ -33,6 +33,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -83,28 +84,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private int selectedDist = ProbabilityManager.DIST_NORMAL;  // default: startup with normal distribution
 
 
-	// distribution constants 
+	// distribution fields 
 	private String[][] parameterLabels;
 	private final static int maxParameterCount = 3; // maximum number of parameters allowed for a distribution
-
-	private JSlider[] sliderArray;
+	private double[] parameters;
+	private boolean isCumulative = false;
 	
-
-	// GUI 
-	private PopupMenuButton btnOptions;
-	private JButton btnClose, btnExport, btnDisplay;
-	private JComboBox comboDistribution, comboProbType, comboRounding;
-	private JTextField[] fldParameterArray;
-	private JTextField fldLow,fldHigh,fldResult;
-	private JLabel[] lblParameterArray;
-	private JComponent distPanel;
-	private JPanel probPanel;
-
-	private PlotPanelEuclidianView plotPanel;
-	private PlotSettings plotSettings;
-	private JLabel lblBetween, lblProbOf, lblEndProbOf,lblProb , lblDist;
-	private JSplitPane sp;
-	private ProbabilityTable table;
+	// maps for the distribution ComboBox 
+	private HashMap<Integer, String> distributionMap;
+	private HashMap<String, Integer> reverseDistributionMap;
 
 
 	// GeoElements
@@ -114,49 +102,60 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private GeoElement discreteGraph, discreteIntervalGraph;
 	private GeoList discreteValueList, discreteProbList, intervalProbList, intervalValueList;
 	private GeoList parmList;
+	private ArrayList<GeoElement> pointList;
+	
+	// label prefix for geos
+	private static final String labelPrefix = "probcalc";
+
+
+	// GUI elements
+	private PopupMenuButton btnOptions;
+	private JButton btnClose, btnExport, btnDisplay;
+	private JComboBox comboDistribution, comboProbType;
+	private JTextField[] fldParameterArray;
+	private JTextField fldLow,fldHigh,fldResult;
+	private JLabel[] lblParameterArray;
+	private JLabel lblBetween, lblProbOf, lblEndProbOf,lblProb , lblDist;
+
+	private JSlider[] sliderArray;
+	private ListSeparatorRenderer comboRenderer;
+
+
+	// GUI layout panels
+	private JPanel displayPanel, distPanel, probPanel, buttonPanel, tablePanel;
+	private JSplitPane mainSplitPane, plotSplitPane, ctrlSP;	
+	private int defaultDividerSize;  
+
+	private PlotPanelEuclidianView plotPanel;
+	private PlotSettings plotSettings;
+	private ProbabilityTable table;
+
 
 	// initing
 	private boolean isIniting;
 	private boolean isSettingAxisPoints = false;
 
-	// probability modes
+	
+	// probability calculation modes
 	protected static final int PROB_INTERVAL = 0;
 	protected static final int PROB_LEFT = 1;
 	protected static final int PROB_RIGHT = 2;
 	private int probMode = PROB_INTERVAL;
 
-	public int getProbMode() {
-		return probMode;
-	}
+	
+	//interval values
+	private double low = 0, high = 1;
+
+	// current probability result
+	private double probability;
 
 
-	//interval values and current probability
-	private double low = 0, high = 1, probability;
-
-
-
-	private ArrayList<GeoElement> pointList;
-
-	private ListSeparatorRenderer comboRenderer;
-
-
-	private HashMap<Integer, String> distributionMap;
-
-	private HashMap<String, Integer> reverseDistributionMap;
-
+	// rounding 
 	private JMenu menuDecimalPlaces;
-
 	private int printDecimals = 4,  printFigures = -1;
 
-	private JPanel displayPanel;
+	private JPanel controlPanel;
 
-	private JSplitPane displayPanel2;	
-	
-	private boolean isCumulative = false;
-	
-	
-	
-	
 
 	// colors
 	private static final Color COLOR_PDF = GeoGebraColorConstants.DARKBLUE;
@@ -169,7 +168,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private static final int thicknessCurve = 4;
 	private static final int thicknessBarChart = 3;
 
-
+	
 
 
 	/*************************************************
@@ -186,15 +185,37 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		plotSettings = new PlotSettings();	
 		plotGeoList = new ArrayList<GeoElement>();
 
-		initGUI();
+		createLayoutPanels();
+		buildLayout();
 		isIniting = false;
 
 
-		updateAll();
+		//	setProbabilityCalculator(selectedDist, null, isCumulative);
+
 		attachView();
 
 	} 
 	/**************** end constructor ****************/
+
+
+	
+	public void setProbabilityCalculator(int distributionType, double[] parameters, boolean isCumulative){
+
+		this.selectedDist = distributionType;
+		this.isCumulative = isCumulative;
+		this.parameters = parameters;
+		if(parameters == null)
+			this.parameters = probManager.getDefaultParameterMap().get(selectedDist);	
+
+		this.buildLayout();
+		//isIniting = true;
+		updateAll();
+		//isIniting = false;
+
+
+
+	}
+
 
 
 	//=================================================
@@ -213,128 +234,71 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		return high;
 	}
 
+	public int getProbMode() {
+		return probMode;
+	}
+	
+	
 	//=================================================
-	//       Create GUI
+	//       GUI
 	//=================================================
 
 
-	private void initGUI() {
+	private void createLayoutPanels() {
 
 		try {		
 
-			comboRenderer = new ListSeparatorRenderer();
-			
-			// create the button panel for the bottom of the dialog
-			//=====================================================
-			btnClose = new JButton(app.getMenu("Close"));
-			btnClose.addActionListener(this);
-			
-			
-			buildOptionsButton();
-			// btnOptions = new JButton(app.getPlain("Options"));
-			btnOptions.addActionListener(this);
-
-			
-			
-			btnExport = new JButton(app.getPlain("Export"));
-			btnExport.addActionListener(this);
-
-			
-			JPanel rightButtonPanel = new JPanel(new FlowLayout());
-			rightButtonPanel.add(btnClose);
-			
-			
-
-			JPanel optionsButtonPanel = new JPanel(new FlowLayout());
-			optionsButtonPanel.add(btnOptions);
-		//	centerButtonPanel.add(btnExport);		
-					
-			JPanel buttonPanel = new JPanel(new BorderLayout());
-				buttonPanel.add(optionsButtonPanel, BorderLayout.EAST);
-			//buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
-			// END button panel
+			// button panel 
+			//======================================================
+			createButtonPanel();
 
 
-			// create the control panel 
+			// control panel 
 			//======================================================
 			distPanel = this.createDistributionPanel();	
 			probPanel = this.createProbabilityPanel();
-			distPanel.setBorder(BorderFactory.createEtchedBorder());
-			probPanel.setBorder(BorderFactory.createEtchedBorder());
+			//distPanel.setBorder(BorderFactory.createEtchedBorder());
+			//probPanel.setBorder(BorderFactory.createEtchedBorder());
 
-			probPanel.setBorder(BorderFactory.createCompoundBorder(
-					BorderFactory.createEmptyBorder(2, 2, 2, 2),
-					BorderFactory.createEtchedBorder())); 
-			distPanel.setBorder(probPanel.getBorder());
+			//probPanel.setBorder(BorderFactory.createCompoundBorder(
+			//		BorderFactory.createEmptyBorder(2, 2, 2, 2),
+			//		BorderFactory.createEtchedBorder())); 
+			//distPanel.setBorder(probPanel.getBorder());
 
 
-			JPanel controlPanel = new JPanel();
-			controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));	
-			controlPanel.add(distPanel);
-			controlPanel.add(probPanel);
-			
-			JPanel controlPanelWrap = new JPanel(new BorderLayout());
-			controlPanelWrap.add(controlPanel, BorderLayout.NORTH);
-			controlPanelWrap.setBorder(BorderFactory.createEmptyBorder());
-			
-			JScrollPane ctrlSP = new JScrollPane(controlPanelWrap);
-			
-			ctrlSP.setMinimumSize(controlPanel.getPreferredSize());
+			Box vBox = Box.createVerticalBox();
+			vBox.add(distPanel);
+			vBox.add(probPanel);
+
+			controlPanel = new JPanel(new BorderLayout());
+			controlPanel.add(vBox, BorderLayout.NORTH);
+			controlPanel.setBorder(BorderFactory.createEmptyBorder());
+
+			controlPanel.setMinimumSize(controlPanel.getPreferredSize());
 			
 			
 
-			// create the plot panel (extension of EuclidianView)
+			// plot panel (extension of EuclidianView)
 			//======================================================
 			plotPanel = new PlotPanelEuclidianView(app.getKernel());
 			plotPanel.setMouseEnabled(true);
 			plotPanel.setMouseMotionEnabled(true);
-
+			
 			plotPanel.setBorder(BorderFactory.createCompoundBorder(
 					BorderFactory.createEmptyBorder(2, 2, 2, 2),
 					BorderFactory.createBevelBorder(BevelBorder.LOWERED))); 
+			
+			plotPanel.setBorder(BorderFactory.createEmptyBorder());
 
 			plotPanel.setBorder(BorderFactory.createEmptyBorder());
 
-			//plotPanel.setPreferredSize(new Dimension(500,500));
-
 			
-			// create the probability table
+			// table panel
 			//======================================================
 			table = new ProbabilityTable(app, this);
 			table.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, SystemColor.controlShadow));
-			JPanel tablePanel = new JPanel(new BorderLayout());
+			tablePanel = new JPanel(new BorderLayout());
 			tablePanel.add(table, BorderLayout.CENTER);
-			
-			 displayPanel2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plotPanel, tablePanel);
-			displayPanel2.setResizeWeight(1);
-			/*
-			displayPanel = new JPanel(new BorderLayout());
-			displayPanel.add(plotPanel, BorderLayout.CENTER);
-			displayPanel.add(tablePanel, BorderLayout.EAST);
-			displayPanel.setBorder(BorderFactory.createEtchedBorder());
-			*/
-			// put the sub-panels together into the main panel
-			//=====================================================
-
-		
-
-			sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, displayPanel2, ctrlSP);
-			sp.setResizeWeight(1);
-			sp.setBorder(BorderFactory.createEmptyBorder());
-
-			this.setLayout(new BorderLayout());
-			this.add(sp, BorderLayout.CENTER);
-			add(buttonPanel, BorderLayout.SOUTH);
-
-			/*
-			JPanel main = new JPanel(new BorderLayout());
-			main.add(plotPanel, BorderLayout.CENTER);
-			main.add(controlPanel, BorderLayout.WEST);
-			this.setLayout(new BorderLayout());
-			this.add(main, BorderLayout.CENTER);
-
-			 */
-			setLabels();
 
 
 		} catch (Exception e) {
@@ -343,27 +307,78 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
+	private void buildLayout(){
 
-	private void addRemoveTable(boolean showTable){
-		if(showTable)
-			displayPanel2.setRightComponent(table);
-		else
-			displayPanel2.setRightComponent(null);
+		this.removeAll();
+
+
+		plotSplitPane = new JSplitPane();
+		plotSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		plotSplitPane.setLeftComponent(plotPanel);
+		plotSplitPane.setResizeWeight(1);
+		defaultDividerSize = plotSplitPane.getDividerSize();
+
+		JScrollPane scroller = new JScrollPane(controlPanel);
+		scroller.setBorder(BorderFactory.createEmptyBorder());
+		
+		mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, plotSplitPane, scroller);
+		mainSplitPane.setResizeWeight(1);
+		mainSplitPane.setBorder(BorderFactory.createEmptyBorder());
+
+		this.setLayout(new BorderLayout());
+		this.add(mainSplitPane, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.SOUTH);
+		
+		this.setBorder(BorderFactory.createEmptyBorder(0,2,2,2));
+
+		setLabels();
 	}
 
+
+
+
+	private void addRemoveTable(boolean showTable){
+		if(showTable){
+			plotSplitPane.setRightComponent(tablePanel);
+			plotSplitPane.setDividerSize(defaultDividerSize);
+		}else{
+			plotSplitPane.setRightComponent(null);
+			plotSplitPane.setDividerSize(0);
+		}
+	}
+
+	private ListSeparatorRenderer getComboRenderer(){
+		if (comboRenderer == null)
+			comboRenderer = new ListSeparatorRenderer();
+		return comboRenderer;
+
+	}
+
+	private void createButtonPanel(){
+
+		buildOptionsButton();
+		btnOptions.addActionListener(this);
+
+		JPanel optionsButtonPanel = new JPanel(new FlowLayout());
+		optionsButtonPanel.add(btnOptions);
+
+		buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.add(optionsButtonPanel, BorderLayout.EAST);
+
+	}
 
 	private JPanel createDistributionPanel(){
 
 		setLabelArrays();
 		comboDistribution = new JComboBox();
-		comboDistribution.setRenderer(comboRenderer);
+		comboDistribution.setRenderer(getComboRenderer());
 		comboDistribution.setMaximumRowCount(ProbabilityManager.distCount+1);
 		//setComboDistribution();
 		comboDistribution.addActionListener(this);
 		lblDist = new JLabel();
 
 		JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	//	cbPanel.add(lblDist);
+		//	cbPanel.add(lblDist);
 		cbPanel.add(comboDistribution);
 
 
@@ -386,23 +401,23 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			sliderArray[i] = new JSlider();
 			sliderArray[i].setPreferredSize(fldParameterArray[i].getPreferredSize());
 			sliderArray[i].addChangeListener(this);
-			
-			
+
+
 			Box hBox = Box.createHorizontalBox();
 			hBox.add(Box.createRigidArea(new Dimension(3,0)));
 			hBox.add(lblParameterArray[i]);
 			hBox.add(Box.createRigidArea(new Dimension(3,0)));
 			JPanel labelPanel = new JPanel(new BorderLayout());
 			labelPanel.add(hBox, BorderLayout.NORTH);
-			
+
 			JPanel fldSliderPanel = new JPanel(new BorderLayout());
 			fldSliderPanel.add(fldParameterArray[i], BorderLayout.NORTH);
 			fldSliderPanel.add(sliderArray[i], BorderLayout.SOUTH);
-			
+
 			JPanel fullParmPanel = new JPanel(new BorderLayout());
 			fullParmPanel.add(labelPanel, BorderLayout.WEST);
 			fullParmPanel.add(fldSliderPanel, BorderLayout.EAST);
-			
+
 			parameterPanel.add(fullParmPanel);
 
 		}
@@ -422,12 +437,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		// create probability mode JComboBox and put it in a JPanel
 		comboProbType = new JComboBox();
-		comboProbType.setRenderer(comboRenderer);
+		comboProbType.setRenderer(getComboRenderer());
 		comboProbType.addActionListener(this);
 		lblProb = new JLabel();
 
 		JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	//	cbPanel.add(lblProb);
+		//	cbPanel.add(lblProb);
 		cbPanel.add(comboProbType);
 
 
@@ -483,8 +498,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	}
 
-	
-	
+
+
 	/** 
 	 * Builds popup button with options menu items 
 	 */
@@ -499,10 +514,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 		JMenuItem menuItem;
-		
+
 		btnOptions.addPopupMenuItem(this.createMenuDecimalPlaces());
-		
-		
+
+
 		menuItem = new JCheckBoxMenuItem(app.getMenu("Cumulative"));
 		menuItem.setSelected(isCumulative);
 		menuItem.addActionListener(new ActionListener(){
@@ -513,8 +528,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			}
 		});
 		btnOptions.addPopupMenuItem(menuItem);
-		
-		
+
+
 		menuItem = new JCheckBoxMenuItem(app.getPlain("ShowGrid"));
 		menuItem.setSelected(plotSettings.showGrid);
 		menuItem.addActionListener(new ActionListener(){
@@ -524,30 +539,30 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			}
 		});
 		//btnOptions.addPopupMenuItem(menuItem);
-		
+
 		menuItem = new JMenuItem(app.getPlain("Export") + "..." );
 		menuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				
+
 			}
 		});
 		menuItem.setEnabled(false);
 		btnOptions.addPopupMenuItem(menuItem);
 		updateMenuDecimalPlaces();
-		
+
 		// set the last item since the menu pops in the upward direction
 		// TODO --- why doesn't this work?
 		//btnOptions.setSelectedIndex(2);
-	
-			
+
+
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	/**
 	 * Creates a panel with message "not available"
 	 */
@@ -579,17 +594,28 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	//=================================================
 
 	/**
-	 * Creates the required GeoElements for the currently selected distribution type
+	 * Creates the required GeoElements for the currently selected distribution
+	 * type using default parameters.
 	 */
 	private void createGeoElements(){
+		createGeoElements(null);
+	}
+
+	/**
+	 * Creates the required GeoElements for the currently selected distribution
+	 * type using given parameters. If parameters are null, default parameters are used.
+	 */
+	private void createGeoElements(double[] parms){
 
 		this.removeGeos();
 
 		String expr;
 
 		// create list of parameters
+		if(parms == null)
+			parms = ProbabilityManager.getDefaultParameterMap().get(selectedDist);
+
 		parmList = (GeoList) createGeoFromString("{}");
-		double[] parms = ProbabilityManager.getDefaultParameterMap().get(selectedDist);
 		for(int i=0; i < parms.length; i++){
 			parmList.add(new GeoNumeric(cons,parms[i]));
 			//System.out.println("parms:" + i + " " + selectedParameters[i]);
@@ -619,10 +645,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 		if(probManager.isDiscrete(selectedDist)){   
-			
+
 			// discrete distribution 
 			// ====================================================
-			
+
 			// create discrete bar graph and associated lists
 			createDiscreteLists();
 			expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
@@ -652,12 +678,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			discreteGraph.setLineThickness(thicknessBarChart);
 			discreteIntervalGraph.updateCascade();
 
-			
+
 		}else{ 
-			
+
 			// continuous distribution
 			// ====================================================
-			
+
 			// create density curve
 			expr = buildDensityCurveExpression(selectedDist);
 			densityCurve = createGeoFromString(expr);
@@ -756,15 +782,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		if(probManager.isDiscrete(selectedDist))
 			table.setSelectionByRowValue((int)low, (int)high);
-		
+
 		isSettingAxisPoints = false;
 	}
 
 
 	private TreeSet tempSet;
 
-	
-	
+
+
 	private TreeSet getTempSet() {
 		if (tempSet == null) {
 			tempSet = new TreeSet();
@@ -864,15 +890,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;
 		Object source = e.getSource();	
-		
-		
+
+
 		if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
 		}	
 
 
 		String cmd = e.getActionCommand();
-		
+
 		// decimal places
 		if (cmd.endsWith("decimals")) {
 			try {
@@ -880,11 +906,11 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				int decimals = Integer.parseInt(decStr);
 				// Application.debug("decimals " + decimals);
 
-				 printDecimals = decimals;
-				 printFigures = -1;
-				 updateGUI();
-				 updateDiscreteTable();
-				
+				printDecimals = decimals;
+				printFigures = -1;
+				updateGUI();
+				updateDiscreteTable();
+
 			} catch (Exception ex) {
 				app.showError(e.toString());
 			}
@@ -895,38 +921,32 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			try {
 				String decStr = cmd.substring(0, 2).trim();
 				int figures = Integer.parseInt(decStr);
-			//	 Application.debug("figures " + figures);
+				//	 Application.debug("figures " + figures);
 
-				 printFigures = figures;
-				 printDecimals = -1;
-				 updateGUI();
-				 updateDiscreteTable();
-				
+				printFigures = figures;
+				printDecimals = -1;
+				updateGUI();
+				updateDiscreteTable();
+
 			} catch (Exception ex) {
 				app.showError(e.toString());
 			}
 		}
 
-		
-		
-		
+
 		if(source == comboDistribution){
 			comboDistribution.removeActionListener(this);
-			if(comboDistribution.getSelectedItem().equals(ListSeparatorRenderer.SEPARATOR)){
-				comboDistribution.setSelectedItem(distributionMap.get(selectedDist));
-			}
-			else{
-				selectedDist = this.reverseDistributionMap.get(comboDistribution.getSelectedItem());
-				updateDistribution();
-				updatePlot();
-				updateProbabilityType();
-				updateGUI();
-			}
+			if(comboDistribution.getSelectedItem() != null) 
+				if( comboDistribution.getSelectedItem().equals(ListSeparatorRenderer.SEPARATOR)){
+					comboDistribution.setSelectedItem(distributionMap.get(selectedDist));
+				}
+				else{
+					selectedDist = this.reverseDistributionMap.get(comboDistribution.getSelectedItem());
+					updateAll();
+				}
 			comboDistribution.addActionListener(this);
 			this.fldParameterArray[0].requestFocus();
 		}
-
-
 
 		else if (source == comboProbType) {					
 			updateProbabilityType();
@@ -983,7 +1003,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	}
 
-	
+
 	public void setInterval(double low, double high){
 		fldHigh.removeActionListener(this);
 		fldLow.removeActionListener(this);
@@ -997,7 +1017,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		fldHigh.addActionListener(this);
 		fldLow.addActionListener(this);
 	}
-	
+
 
 	public void focusGained(FocusEvent arg0) {}
 
@@ -1028,15 +1048,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		// set visibility and text of the parameter labels and fields
 		for(int i = 0; i < maxParameterCount; ++i ){
-			
+
 			boolean hasParm = i < probManager.getParmCount()[selectedDist];
-			
+
 			lblParameterArray[i].setVisible(hasParm);
 			fldParameterArray[i].setVisible(hasParm);
-			
+
 			// hide sliders for now ... need to work out slider range for each parm (tricky)
 			sliderArray[i].setVisible(false);
-			
+
 			if(hasParm){
 				// set label
 				lblParameterArray[i].setVisible(true);
@@ -1056,6 +1076,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		fldHigh.setCaretPosition(0);
 		fldResult.setText("" + format(probability));
 		fldResult.setCaretPosition(0);
+
+		// set distribution combo box
+		comboDistribution.removeActionListener(this);
+		if(comboDistribution.getSelectedItem() != distributionMap.get(selectedDist))
+			comboDistribution.setSelectedItem(distributionMap.get(selectedDist));
+		comboDistribution.addActionListener(this);
 
 	}
 
@@ -1151,37 +1177,36 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	private void updateDistribution(){
 
-	
+
 		// reset the distributions
 		/*
 		 * TODO: currently this is done simply by removing all the geos and
 		 * creating new ones, is there a better way?
 		 */
-		
+
 		createGeoElements();
-		setSliderDefaults();
-		
+		//setSliderDefaults();
+
 		// update
 		if(probManager.isDiscrete(selectedDist)){
 			discreteGraph.update();
 			discreteIntervalGraph.update();
-		
+
 			updateDiscreteTable();
-			
-		//	table.setVisible(true);
+
 			addRemoveTable(true);
-			
+
 			this.fldParameterArray[0].requestFocus();
-			
-			
+
+
 		}else{
 			addRemoveTable(false);
-			//table.setVisible(false);
+
 			densityCurve.update();
 			if(hasIntegral)
 				integral.update();
 		}
-		
+
 		this.repaint();
 
 	}
@@ -1190,24 +1215,29 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private void updateDiscreteTable(){
 		if(!probManager.isDiscrete(selectedDist))
 			return;
-		
+
 		int firstX = (int) ((GeoNumeric)discreteValueList.get(0)).getDouble();
 		int lastX = (int) ((GeoNumeric)discreteValueList.get(discreteValueList.size()-1)).getDouble();
 		table.setTable(selectedDist, getCurrentParameters(), firstX, lastX, isCumulative);
 	}
-	
-	
+
+
 
 	//=================================================
 	//      View Implementation
 	//=================================================
 
 	public void add(GeoElement geo) {}
-	public void clearView() {}
+	public void clearView() {
+		//this.removeGeos();
+	}
 	public void remove(GeoElement geo) {}
 	public void rename(GeoElement geo) {}
 	public void repaintView() {}
-	public void reset() {}
+	public void reset() {
+		Application.debug("prob calc reset");
+		updateAll();
+	}
 	public void setMode(int mode) {} 
 	public void updateAuxiliaryObject(GeoElement geo) {}
 
@@ -1234,7 +1264,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	public void attachView() {
-		//clearView();
+		clearView();
 		//kernel.notifyAddAll(this);
 		kernel.attach(this);		
 	}
@@ -1249,7 +1279,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	public void setLabels(){
-	
+
 		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
 		probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
 		setLabelArrays();
@@ -1257,27 +1287,26 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		lblDist.setText(app.getMenu("Distribution") + ": ");
 		lblProb.setText(app.getMenu("Probability") + ": ");
 
+		comboProbType.removeActionListener(this);
 		comboProbType.removeAllItems();
 		comboProbType.addItem(app.getMenu("IntervalProb"));
 		comboProbType.addItem(app.getMenu("LeftProb"));
 		comboProbType.addItem(app.getMenu("RightProb"));
+		comboProbType.addActionListener(this);
 
 		lblBetween.setText(app.getMenu("XBetween"));   // <= X <=
 		lblEndProbOf.setText(app.getMenu("EndProbabilityOf") + " = ");
 		lblProbOf.setText(app.getMenu("ProbabilityOf"));
-		
+
 		setComboDistribution();
 
-		
-		
-		
 		table.setLabels();
 
 	}
 
 
 	private void setLabelArrays(){
-		
+
 		distributionMap = probManager.getDistributionMap();
 		reverseDistributionMap = probManager.getReverseDistributionMap();
 		parameterLabels = ProbabilityManager.getParameterLabelArray(app);
@@ -1285,7 +1314,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	private void setComboDistribution(){
-		
+
 		comboDistribution.removeActionListener(this);
 		comboDistribution.removeAllItems();
 		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_NORMAL));
@@ -1306,7 +1335,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_POISSON));
 		comboDistribution.addItem(distributionMap.get(ProbabilityManager.DIST_HYPERGEOMETRIC));
 
-		comboDistribution.setSelectedIndex(selectedDist);
+		comboDistribution.setSelectedItem(distributionMap.get(selectedDist));
 		comboDistribution.addActionListener(this);
 
 	}
@@ -1324,24 +1353,24 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private GeoElement createGeoFromString(String text ){
 		return createGeoFromString(text, null, false);
 	}
-	
+
 	private GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
 
 		try {
-			
+
 			// create the geo
 			// ================================
 			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(true);
-			
+
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
 
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(oldSuppressLabelMode);
 
-			
+
 			// set the label
 			// ================================
 			if(label != null)
@@ -1349,14 +1378,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			else
 				setProbCalcGeoLabel(geos[0]);
 
-			
+
 			// set visibility
 			// ================================
 			geos[0].setEuclidianVisible(true);	
 			geos[0].setAuxiliaryObject(true);
 			geos[0].setLabelVisible(false);
-			
-			
+
+
 			// put the geo in our list 
 			// ================================
 			plotGeoList.add(geos[0]);
@@ -1368,19 +1397,19 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			return null;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Sets the label of a geo created by ProbabilityCalculator
 	 * @param geo
 	 */
 	private void setProbCalcGeoLabel(GeoElement geo){
-		geo.setLabel("prbCalc" + plotGeoList.size());
+		geo.setLabel(labelPrefix + plotGeoList.size());
 		//int r = (int) (Math.random()*1e6);
 		//geo.setLabel("pc" + r);
 	}
 
-	
+
 	private String getGeoString(GeoElement geo){
 		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 	}
@@ -1395,6 +1424,26 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	public void removeGeos(){	
 		clearPlotGeoList();
 	}
+
+	/*
+	public void removeProbCalcGeos(){
+		TreeSet<GeoElement> geoSet = kernel.getConstruction().getGeoSetLabelOrder();
+		String label;
+		HashSet<GeoElement> tempSet = new HashSet<GeoElement>();
+		for(GeoElement geo : geoSet){
+			label = geo.getLabel();
+			if(label.startsWith("prob")){
+				tempSet.add(geo);
+			}
+		}
+		for(GeoElement geo : tempSet){
+			System.out.println("removed: " + geo.getLabel());
+			geo.remove();
+
+		}
+	}
+	 */	
+
 
 	private void clearPlotGeoList(){
 		for(GeoElement geo : plotGeoList){
@@ -1562,7 +1611,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	}
 
-	
+
 	/**
 	 * Redefines the density curve ... not currently used
 	 */
@@ -1579,8 +1628,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
-	
-	
+
+
 	//============================================================
 	//           ComboBox Renderer with SEPARATOR
 	//============================================================
@@ -1615,11 +1664,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		}
 	}
 
-	
-	
-	
+
+	//============================================================
+	//           Number Format
+	//============================================================
+
+
 	/**
-	 * Update the menu with all decimal places.
+	 * Update the menu with the current number format.
 	 */
 	private void updateMenuDecimalPlaces() {
 		if (menuDecimalPlaces == null)
@@ -1636,22 +1688,23 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		try {
 			((JRadioButtonMenuItem) menuDecimalPlaces.getMenuComponent(pos))
-					.setSelected(true);
+			.setSelected(true);
 		} catch (Exception e) {
 		}
 
 	}
-	
+
 	private JMenu createMenuDecimalPlaces(){
 		menuDecimalPlaces = new JMenu(app.getMenu("Rounding"));
 		String[] strDecimalSpaces = app.getRoundingMenu();
 
 		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this,
 				strDecimalSpaces, Application.strDecimalSpacesAC, 0);
-		
+
 		return menuDecimalPlaces;
 	}
-	
+
+
 	/**
 	 * Create a set of radio buttons automatically.
 	 * 
@@ -1683,7 +1736,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			}
 		}
 	}
-	
+
 	public String format(double x){
 
 		// override the default decimal place setting
@@ -1702,23 +1755,29 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
-	
-	
+
+
 	public void stateChanged(ChangeEvent e) {
 		if(isIniting) return;
-		
+
 		JSlider source = (JSlider)e.getSource();
 		for(int i = 0 ; i < maxParameterCount; i++){
 			if(source == sliderArray[i]){
-				
+
 				fldParameterArray[i].setText("" + sliderArray[i].getValue());
 				doTextFieldActionPerformed(fldParameterArray[i]);
-			
+
 				System.out.println(sliderArray[i].getValue());
 			}
 		}
-		
+
 	}
+
+
+	//============================================================
+	//           Sliders
+	//============================================================
+
 
 	private void setSliderDefaults(){
 		for(int i = 0; i < probManager.getParmCount()[selectedDist]; i++){
@@ -1726,6 +1785,43 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			//sliderArray[i].setValue((int) probManager.getDefaultParameterMap().get(selectedDist)[i]);
 		}
 	}
-	
-	
+
+
+
+	//============================================================
+	//           XML
+	//============================================================
+
+	/**
+	 * returns settings in XML format
+	 */
+	public void getXML(StringBuilder sb) {
+
+		if(selectedDist == -1) return;
+
+		sb.append("<probabilityCalculator>\n");
+		sb.append("\t<distribution");
+
+		sb.append(" type=\"");
+		sb.append(selectedDist);
+		sb.append("\"");
+
+
+		sb.append(" isCumulative=\"");
+		sb.append(isCumulative  ? "true" : "false" );
+		sb.append("\"");
+
+		sb.append(" parameters" + "=\"");
+		for (int i = 0 ; i < parameters.length ; i++) {
+			sb.append(parameters[i]);
+			sb.append(",");
+		}
+		sb.deleteCharAt(sb.lastIndexOf(","));
+		sb.append("\"");
+
+		sb.append("/>\n");
+		sb.append("</probabilityCalculator>\n");
+	}
+
+
 }

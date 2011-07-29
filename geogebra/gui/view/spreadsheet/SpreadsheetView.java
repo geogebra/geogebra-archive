@@ -1094,7 +1094,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			initialFilePath = defaultFile;
 			initialURL = DEFAULT_URL;
 			initialBrowserMode = FileBrowserPanel.MODE_FILE;
-			initFileBrowser();
+			//initFileBrowser();
 
 		}else{
 			initialFilePath = fileBrowser.getRootString();

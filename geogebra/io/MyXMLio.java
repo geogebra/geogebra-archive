@@ -848,6 +848,11 @@ public class MyXMLio {
 		if(app.getGuiManager().hasEuclidianView2()){
 			app.getGuiManager().getEuclidianView2().getXML(sb,false);
 		}
+		
+		// save ProbabilityCalculator settings
+		if (app.getGuiManager().hasProbabilityCalculator()){
+			app.getGuiManager().getProbabilityCalculatorXML(sb);
+		}
 
 		sb.append("</geogebra>");
 

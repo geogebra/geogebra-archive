@@ -3698,6 +3698,11 @@ public class Application implements KeyEventDispatcher {
 			getGuiManager().getAlgebraViewXML(sb);
 		}
 		
+		// save ProbabilityCalculator settings
+		if (getGuiManager().hasProbabilityCalculator()){
+			getGuiManager().getProbabilityCalculatorXML(sb);
+		}
+		
 		// coord style, decimal places settings etc
 		kernel.getKernelXML(sb);
 		getScriptingXML(sb);
@@ -3736,6 +3741,12 @@ public class Application implements KeyEventDispatcher {
 
 		return sb.toString();
 	}
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * Returns the CodeBase URL.
