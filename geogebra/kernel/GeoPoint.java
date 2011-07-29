@@ -1584,7 +1584,80 @@ GeoPointND, Animatable, Transformable  {
 			if (!incidenceList.contains(geo)) {
 				incidenceList.add(geo);
 			}
+			if (geo instanceof GeoConicND) {
+				if (!((GeoConicND)geo).getPointsOnConic().contains(this)) {
+					((GeoConicND)geo).getPointsOnConic().add(this);
+				}
+			}
 		}
-		
-		
+		public boolean addIncidenceWithProbabilisticChecking(GeoElement geo) {
+			boolean incident = false;
+			
+			// check if this is currently on geo
+			if (geo.isGeoPoint() && this.isEqual(geo) ||
+					geo.isPath() && ((Path) geo).isOnPath(this, Kernel.EPSILON)) {
+			
+				incident = true;
+				
+				//get all "randomizable" predecessors of this and geo
+				TreeSet<GeoElement> pred = this.getAllRandomizablePredecessors();
+				pred.addAll(geo.getAllRandomizablePredecessors());
+				
+				// store parameters of current construction
+				Iterator<GeoElement> it = pred.iterator();
+				while (it.hasNext()) {
+					GeoElement predGeo = (GeoElement) it.next();
+					predGeo.storeClone();
+				}
+				
+				// alter parameters of construction and test if this is still on geo. Do it N times
+				
+				for (int i = 0; i<5; ++i) {
+					it = pred.iterator();
+					while (it.hasNext()) {
+						GeoElement predGeo = (GeoElement) it.next();
+						predGeo.randomizeForProbabilisticChecking();
+					}
+					if (!this.isFixed())
+						this.updateCascade();
+					if (!geo.isFixed())
+						geo.updateCascade();
+					
+					if (geo.isGeoPoint()) {
+						if (!this.isEqual(geo)) incident = false;
+					} else if (geo.isPath()) {
+						if (!((Path) geo).isOnPath(this, Kernel.EPSILON))
+							incident = false;
+					} else {
+						incident = false;
+					}
+					if (!incident) break;
+				}
+
+				// recover parameters of current construction
+				it = pred.iterator();
+				while (it.hasNext()) {
+					GeoElement predGeo = (GeoElement) it.next();
+					predGeo.recoverFromClone();
+				}
+				if (!this.isFixed())
+					this.updateCascade();
+				if (!geo.isFixed())
+					geo.updateCascade();
+				
+				// if all of the cases are good, add incidence
+				if (incident)
+					addIncidence(geo);
+			}
+			
+			return incident;
+		}	
+		public boolean isRandomizable() {
+			return isChangeable();
+		}
+		public void randomizeForProbabilisticChecking(){
+			setCoords(x + (Math.random() *2 -1) *z,
+					y + (Math.random() *2 -1) *z,
+					z);
+		}		
 }

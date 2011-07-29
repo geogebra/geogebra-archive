@@ -804,6 +804,17 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         }
     }
     
+    final void addRandomizablePredecessorsToSet(TreeSet set) {
+        for (int i = 0; i < input.length; i++) {
+            GeoElement parent = input[i];
+
+    		if (!set.contains(parent)) {  		
+	            parent.addRandomizablePredecessorsToSet(set);
+    		}
+        }
+    }
+    
+    
     /**
 	 * Returns all moveable input points of this algorithm.	 
 	 */   

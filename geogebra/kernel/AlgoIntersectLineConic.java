@@ -59,6 +59,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     // intersection points at the end of compute()
     private boolean isLimitedPathSituation;              
     protected boolean possibleSpecialCase = false;
+    protected boolean handlingSpecialCase = false;
     protected int specialCasePointOnCircleIndex = 0; // index of point on line and conic
     
     public String getClassName() {
@@ -177,6 +178,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     
     // calc intersections of conic c and line g
     protected void compute() {  
+    	if (handlingSpecialCase) return;
+    	
         // g is defined as tangent of c
         if (isDefinedAsTangent) {
             P[0].setCoords(tangentPoint);
@@ -209,6 +212,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
      */
     private boolean handleSpecialCase() {
     	// check if startpoint or endpoint of line is on conic
+    	handlingSpecialCase = true;
+    	
     	GeoPoint pointOnConic = null;    	
     	// When a point incidentally stands on g and c, it may not be considered as special case 
     	/*if (g.startPoint != null && c.isOnPath(g.startPoint, Kernel.MIN_PRECISION)) {    		
@@ -245,16 +250,28 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	    			//if (g.isOnPath(p, Kernel.MIN_PRECISION)) { 
 	    			if (p.isLabelSet() && 
 	    					p.getIncidenceList()!=null && 
-	    					p.getIncidenceList().contains(g)) { 
+	    					p.getIncidenceList().contains(g)) {
+    					pointOnConic = p;
+    					break;
+    				} else if (p.addIncidenceWithProbabilisticChecking(g)) {
     					pointOnConic = p;
     					break;
     				}
 	    		}
 			}
 		}
-
+		if (pointOnConic == null) {
+			if (g.startPoint.addIncidenceWithProbabilisticChecking(c)) {
+				pointOnConic = g.startPoint;
+			} else if (g.endPoint.addIncidenceWithProbabilisticChecking(c)) {
+				pointOnConic = g.endPoint;
+			}
+		}
    
-    	if (pointOnConic == null) return false;
+    	if (pointOnConic == null) {
+    		handlingSpecialCase = false;
+    		return false;
+    	}
     		    
     	// calc new intersection points Q
         intersect(c, g, Q);    
@@ -301,6 +318,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	   	    }     	 
 	   	}	   	
                           
+	   	handlingSpecialCase = false;
 	   	return true;
     }
     

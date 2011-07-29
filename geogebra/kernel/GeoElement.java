@@ -3242,6 +3242,21 @@ public abstract class GeoElement
 		}
 	}
 
+	public TreeSet<GeoElement> getAllRandomizablePredecessors() {
+		TreeSet<GeoElement> set = new TreeSet<GeoElement>();
+		addRandomizablePredecessorsToSet(set);
+		return set;
+	}
+	
+	final public void addRandomizablePredecessorsToSet(TreeSet<GeoElement> set) {
+		if (this.isRandomizable())
+			set.add(this);
+		
+		if (algoParent!=null) { // parent algo
+			algoParent.addRandomizablePredecessorsToSet(set);
+		}
+	}
+	
 	/**
 	 * Returns whether geo depends on this object.
 	 * @param geo 
@@ -5823,5 +5838,24 @@ public abstract class GeoElement
 	 */
 	public void moveDependencies(GeoElement oldGeo) {
 		//in general case do nothing; overriden in GeoPoint, GeoNumeric and GeoBoolean		
+	}
+	
+	private GeoElement tempClone;
+	public void storeClone() {
+		if (tempClone==null)
+			tempClone = this.copy();
+		else
+			tempClone.set(this);
+	}
+	public void recoverFromClone() {
+		if (tempClone!=null)
+			this.set(tempClone);
+	}
+	public void randomizeForProbabilisticChecking(){
+		//overode by subclasses
+		return;
+	}
+	public boolean isRandomizable() {
+		return false;
 	}
 }
