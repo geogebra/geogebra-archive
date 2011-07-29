@@ -510,8 +510,7 @@ public class Toolbar extends JToolBar {
 
 		// dialogs
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_SLIDER);
-		sb.append(" , ");
+		
 		sb.append(EuclidianView.MODE_TEXT);
 		sb.append(" ");
 		sb.append(EuclidianView.MODE_IMAGE);
@@ -526,6 +525,8 @@ public class Toolbar extends JToolBar {
 
 		// objects with actions
 		sb.append(" | ");
+		sb.append(EuclidianView.MODE_SLIDER);
+		sb.append(" ");
 		sb.append(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);
 		sb.append(" ");
 		sb.append(EuclidianView.MODE_BUTTON_ACTION);
