@@ -27,7 +27,7 @@ public abstract class CASgeneric {
      * @return result string (null possible)
 	 * @throws Throwable 
      */
-	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
+	final String evaluateGeoGebraCAS(String exp) throws Throwable {
 		ValidExpression inVE = casParser.parseGeoGebraCASInput(exp);
 		return evaluateGeoGebraCAS(inVE);
 	}
@@ -38,7 +38,7 @@ public abstract class CASgeneric {
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
-	public abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable;
+	abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable;
 	
 	/** 
 	 * Evaluates an expression in the syntax of the currently active CAS

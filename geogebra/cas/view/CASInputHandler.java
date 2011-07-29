@@ -941,7 +941,7 @@ public class CASInputHandler {
 				simplifyCommand.addArgument(inEN);
 				simplifyCommand.setLabel(evalVE.getLabel());
 				// evaluate Simplify[inVE] in CAS and convert result back to GeoGebra expression
-				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(simplifyCommand);
+				CASResult = casView.getCAS().evaluateGeoGebraCAS(simplifyCommand);
 			}
 		} catch (Throwable th1) {
 			throwable = th1;
