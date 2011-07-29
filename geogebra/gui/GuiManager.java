@@ -377,7 +377,7 @@ public class GuiManager {
 	
 	
 	
-	public JComponent getProbabilityCalculator(){
+	public ProbabilityCalculator getProbabilityCalculator(){
 
 		if(probCalculator == null)
 			probCalculator = new ProbabilityCalculator(app);

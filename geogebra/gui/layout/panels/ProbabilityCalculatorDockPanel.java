@@ -22,7 +22,7 @@ public class ProbabilityCalculatorDockPanel extends DockPanel {
 			Application.VIEW_PROBABILITY_CALCULATOR, 		// view id
 			"ProbabilityCalculator", 			// view title phrase
 			null,								// toolbar string
-			false,								// style bar?
+			true,								// style bar?
 			-1, 									// menu order
 			'P'									// menu shortcut
 		);
@@ -33,6 +33,10 @@ public class ProbabilityCalculatorDockPanel extends DockPanel {
 	
 	protected JComponent loadComponent() {
 		return app.getGuiManager().getProbabilityCalculator();
+	}
+	
+	protected JComponent loadStyleBar() {
+		return app.getGuiManager().getProbabilityCalculator().getStyleBar();
 	}
 	
 }
