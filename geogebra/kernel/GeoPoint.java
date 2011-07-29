@@ -1088,10 +1088,10 @@ GeoPointND, Animatable, Transformable  {
 			sb.append(" z=\"" + z + "\"");			
     	} else {
 			sb.append("exp=\"");
-			boolean oldValue = kernel.isTranslateCommandName();
-			kernel.setTranslateCommandName(false);
+			boolean oldValue = kernel.isPrintLocalizedCommandNames();
+			kernel.setPrintLocalizedCommandNames(false);
 			sb.append(Util.encodeXML(getLabel()));
-			kernel.setTranslateCommandName(oldValue);
+			kernel.setPrintLocalizedCommandNames(oldValue);
 			sb.append("\"");			    	
     	}
 		sb.append("/>\n");

@@ -404,24 +404,33 @@ public class GeoGebraCAS {
 	 * Returns true if the two input expressions are structurally equal. 
 	 * For example "2 + 2/3" is structurally equal to "2 + (2/3)"
 	 * but unequal to "(2 + 2)/3"
+	 * @param internalInput includes internal command names
+	 * @param localizedInput includes localized command names
 	 */
-	public boolean isStructurallyEqual(String input1, String input2) {
-		if (input1.equals(input2)) return true;
-	
-		try {
+	public boolean isStructurallyEqual(String internalInput, String localizedInput) {
+		if (internalInput.equals(localizedInput)) return true;
+		
+		try {								
 			// parse both input expressions
-			ValidExpression ve1 = casParser.parseGeoGebraCASInput(input1);
-			String input1normalized = casParser.toString(ve1, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+			// make sure to leave internal command names untranslated here, 
+			// see Binomial problem at http://www.geogebra.org/trac/ticket/808
+			Kernel kernel = app.getKernel();
+			boolean oldValue = kernel.isUsingInternalCommandNames();
+			kernel.setUseInternalCommandNames(true);
+			ValidExpression ve1 = casParser.parseGeoGebraCASInput(internalInput);
+			kernel.setUseInternalCommandNames(oldValue);
+			String input1normalized = casParser.toString(ve1, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);			
 			
-			ValidExpression ve2 = casParser.parseGeoGebraCASInput(input2);
+			ValidExpression ve2 = casParser.parseGeoGebraCASInput(localizedInput);
 			String input2normalized = casParser.toString(ve2, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 			
 			// compare if the parsed expressions are equal
 			return input1normalized.equals(input2normalized);
-		} catch (Throwable th) {
+		} 
+		catch (Throwable th) {
+			System.err.println("GeoGebraCAS.isStructurallyEqual: " + th.getMessage() );
+			return false;
 		}
-		
-		return false;
 	}
 	
 	/**

@@ -888,7 +888,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 			return real ? toRealString():toString();
 		else {
 			 sb.setLength(0);
-            if (kernel.isTranslateCommandName()) {
+            if (kernel.isPrintLocalizedCommandNames()) {
                 sb.append(app.getCommand(cmdname));        
             } else {
                 sb.append(cmdname);
@@ -981,8 +981,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         kernel.internationalizeDigits = false;
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
-        boolean oldValue = kernel.isTranslateCommandName();
-        kernel.setTranslateCommandName(false);                           
+        boolean oldValue = kernel.isPrintLocalizedCommandNames();
+        kernel.setPrintLocalizedCommandNames(false);                           
         
         try {
 	        // command
@@ -999,7 +999,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	e.printStackTrace();
         }
         
-        kernel.setTranslateCommandName(oldValue);      
+        kernel.setPrintLocalizedCommandNames(oldValue);      
         
         kernel.internationalizeDigits = oldDigitsSetting;
 
@@ -1032,8 +1032,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         if (!isPrintedInXML) return; 
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
-        boolean oldValue = kernel.isTranslateCommandName();
-        kernel.setTranslateCommandName(false);             
+        boolean oldValue = kernel.isPrintLocalizedCommandNames();
+        kernel.setPrintLocalizedCommandNames(false);             
         
         try {
         	if (mode == CONSTRAINTS) {
@@ -1056,7 +1056,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	e.printStackTrace();
         }
         
-        kernel.setTranslateCommandName(oldValue);        
+        kernel.setPrintLocalizedCommandNames(oldValue);        
     }
 
     // Expressions should be shown as out = expression

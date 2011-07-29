@@ -297,8 +297,8 @@ public class MyXMLio {
 	private void doParseXML(Reader ir, boolean clearConstruction,
 			boolean isGGTFile, boolean mayZoom) throws Exception {
 		boolean oldVal = kernel.isNotifyViewsActive();
-		boolean oldVal2 = app.isUsingInternalCommandNames();
-		app.setUseInternalCommandNames(true);
+		boolean oldVal2 = kernel.isUsingInternalCommandNames();
+		kernel.setUseInternalCommandNames(true);
 		
 		if (!isGGTFile && mayZoom) {
 			kernel.setNotifyViewsActive(false);
@@ -318,7 +318,7 @@ public class MyXMLio {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			app.setUseInternalCommandNames(oldVal2);
+			kernel.setUseInternalCommandNames(oldVal2);
 			if (!isGGTFile && mayZoom) {
 				kernel.updateConstruction();
 				kernel.setNotifyViewsActive(oldVal);				

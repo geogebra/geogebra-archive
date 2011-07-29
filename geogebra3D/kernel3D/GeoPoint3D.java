@@ -965,10 +965,10 @@ if (!geo.isGeoPoint()) return false;
 			sb.append(" w=\"" + getCoords().get(4) + "\"");			
     	} else {
 			sb.append("exp=\"");
-			boolean oldValue = kernel.isTranslateCommandName();
-			kernel.setTranslateCommandName(false);
+			boolean oldValue = kernel.isPrintLocalizedCommandNames();
+			kernel.setPrintLocalizedCommandNames(false);
 			sb.append(Util.encodeXML(getLabel()));
-			kernel.setTranslateCommandName(oldValue);
+			kernel.setPrintLocalizedCommandNames(oldValue);
 			sb.append("\"");			    	
     	}
 		sb.append("/>\n");

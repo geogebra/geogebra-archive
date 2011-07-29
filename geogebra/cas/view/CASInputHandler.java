@@ -670,8 +670,8 @@ public class CASInputHandler {
 	 * resolved according to the given row number.
 	 */
 	private String evaluateGeoGebraCAS(ValidExpression evalVE, int row) throws Throwable {
-		boolean oldValue = kernel.isTranslateCommandName();
-		kernel.setTranslateCommandName(false);
+		boolean oldValue = kernel.isPrintLocalizedCommandNames();
+		kernel.setPrintLocalizedCommandNames(false);
 
 		try {
 			// resolve dynamic row references
@@ -686,7 +686,7 @@ public class CASInputHandler {
 			return processCASviewInput(evalVE, rowRefEval);
 		}
 		finally {
-			kernel.setTranslateCommandName(oldValue); 
+			kernel.setPrintLocalizedCommandNames(oldValue); 
 		}
 	}
 	

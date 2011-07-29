@@ -90,7 +90,7 @@ public class CASTableCellValue {
 	 */
 	public String getOutput() {
 		if (error != null) {
-			if (kernel.isTranslateCommandName())
+			if (kernel.isPrintLocalizedCommandNames())
 				return view.getApp().getError(error);
 			else 
 				return error;
@@ -256,12 +256,7 @@ public class CASTableCellValue {
 	}
 	
 	/**
-	 * Checks if prefix + eval + postfix
-	 * is structurally equal to the current input.
-	 * 
-	 * @param prefix: beginning part that should not be evaluated
-	 * @param eval: selected part of the input that needs to be evaluated
-	 * @param postfix: end part that should not be evaluated
+	 * Checks if newInput is structurally equal to the current input String.
 	 */
 	public boolean isStructurallyEqualToLocalizedInput(String newInput) {
 		// check if the structure of inputVE and prefix + evalText + postfix is equal

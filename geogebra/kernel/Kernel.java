@@ -175,10 +175,13 @@ public class Kernel {
 	public boolean arcusFunctionCreatesAngle = false;
 	
 	private boolean translateCommandName = true;
+	private boolean useInternalCommandNames = false;
 	private boolean undoActive = false;
 	private boolean notifyViewsActive = true;
 	private boolean viewReiniting = false;
 	private boolean allowVisibilitySideEffects = true;
+
+	
 	
 	// silentMode is used to create helper objects without any side effects	
 	// i.e. in silentMode no labels are created and no objects are added to views
@@ -8638,13 +8641,39 @@ public class Kernel {
 		sb.append("</kernel>\n");
 	}
 	
-	public boolean isTranslateCommandName() {
+	
+	/**
+	 * Returns whether localized command names are printed. 
+	 * @return true for localized command names and false for internal command names
+	 */
+	public boolean isPrintLocalizedCommandNames() {
 		return translateCommandName;
 	}
 
-	public void setTranslateCommandName(boolean b) {
+	/**
+	 * Sets whether localized command names are printed. 
+	 * @param b true to print localized command names and false to print internal command names
+	 */
+	public void setPrintLocalizedCommandNames(boolean b) {
 		translateCommandName = b;
 	}
+	
+	/**
+	 * Returns whether the parser should read internal command names and not translate them. 
+	 * @return true if internal command names should be read
+	 */
+	public boolean isUsingInternalCommandNames() {
+		return useInternalCommandNames;
+	}
+
+	/**
+	 * Sets whether the parser should read internal command names and not translate them. 
+	 * @param b true if internal command names should be read
+	 */
+	public void setUseInternalCommandNames(boolean b) {
+		useInternalCommandNames = b;		
+	}
+
 
 	/**
 	 * States whether the continuity heuristic is active.

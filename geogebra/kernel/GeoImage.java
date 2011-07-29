@@ -518,10 +518,10 @@ implements Locateable, AbsoluteScreenLocateable,
 			sb.append(" z=\"" + corners[number].z + "\"");			
     	} else {
 			sb.append(" exp=\"");
-			boolean oldValue = kernel.isTranslateCommandName();
-			kernel.setTranslateCommandName(false);
+			boolean oldValue = kernel.isPrintLocalizedCommandNames();
+			kernel.setPrintLocalizedCommandNames(false);
 			sb.append(Util.encodeXML(corners[number].getLabel()));
-			kernel.setTranslateCommandName(oldValue);
+			kernel.setPrintLocalizedCommandNames(oldValue);
 			sb.append("\"");			    	
     	}
 		sb.append("/>\n");

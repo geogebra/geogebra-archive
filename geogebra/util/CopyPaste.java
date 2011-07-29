@@ -535,10 +535,10 @@ public class CopyPaste {
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
 		int oldPrintForm = kernel.getCASPrintForm();
-        boolean oldValue = kernel.isTranslateCommandName();
+        boolean oldValue = kernel.isPrintLocalizedCommandNames();
 		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
-        kernel.setTranslateCommandName(false);
+        kernel.setPrintLocalizedCommandNames(false);
 
 		beforeSavingToXML(geoslocal, geostohide, false);
 		try {
@@ -583,7 +583,7 @@ public class CopyPaste {
 		// restore kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
-		kernel.setTranslateCommandName(oldValue);
+		kernel.setPrintLocalizedCommandNames(oldValue);
 		app.setMode(EuclidianView.MODE_MOVE);
 		app.getActiveEuclidianView().setSelectionRectangle(null);
 		

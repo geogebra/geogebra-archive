@@ -59,7 +59,7 @@ implements ReplaceableValue {
         * Should also allow other languages to use English names for different commands
         */
         
-        if (translateName && !app.isUsingInternalCommandNames()) {           
+        if (translateName && !kernel.isUsingInternalCommandNames()) {           
             //  translate command name to internal name
             this.name = app.translateCommand(name);           
         } else {
@@ -161,7 +161,7 @@ implements ReplaceableValue {
     	    	sbToString.setLength(0);
     	    	
     			// GeoGebra command syntax		               
-		        if (kernel.isTranslateCommandName()) {
+		        if (kernel.isPrintLocalizedCommandNames()) {
 		        	sbToString.append(app.getCommand(name));                       
 		        } else {
 		        	sbToString.append(name);

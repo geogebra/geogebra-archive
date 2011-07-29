@@ -62,7 +62,7 @@ public class GeoAxis extends GeoLine {
 	}
 	
 	public String getLabel() {
-		if (kernel.isTranslateCommandName())
+		if (kernel.isPrintLocalizedCommandNames())
 			return app.getPlain(label);
 		else
 			return label;

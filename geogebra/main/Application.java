@@ -5245,26 +5245,6 @@ public class Application implements KeyEventDispatcher {
 		return false;
 	}
 	
-    /* useInternalCommandNames is true during file loading.
-     * 
-     * need to have useInternalCommandNames due to clash with
-     * BinomialDist=Binomial
-     * Binomial=BinomialCoefficient
-     * Should also allow other languages to use English names for different commands
-     */
-
-	private boolean useInternalCommandNames = false;
-
-	public boolean isUsingInternalCommandNames() {
-		return useInternalCommandNames;
-	}
-
-
-	public void setUseInternalCommandNames(boolean b) {
-		useInternalCommandNames = b;		
-	}
-
-	
 	
 
 	//TODO remove this after ggb v>=5 (replace with same from Application3D)

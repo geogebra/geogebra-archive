@@ -3983,8 +3983,8 @@ public abstract class GeoElement
 	 * GeoGebra File Format
 	 */
 	public void getXML(StringBuilder sb) {
-		boolean oldValue = kernel.isTranslateCommandName();
-		kernel.setTranslateCommandName(false);
+		boolean oldValue = kernel.isPrintLocalizedCommandNames();
+		kernel.setPrintLocalizedCommandNames(false);
 
 		// make sure numbers are not put in XML in eg Arabic
 		boolean oldI8NValue = Kernel.internationalizeDigits;
@@ -4004,7 +4004,7 @@ public abstract class GeoElement
 
 		sb.append("</element>\n");
 
-		kernel.setTranslateCommandName(oldValue);
+		kernel.setPrintLocalizedCommandNames(oldValue);
 		Kernel.internationalizeDigits = oldI8NValue;
 	}
 
@@ -4060,8 +4060,8 @@ public abstract class GeoElement
 	 * Intergeo File Format (Yves Kreis)
 	 */
 	public void getI2G(StringBuilder sb, int mode) {
-		boolean oldValue = kernel.isTranslateCommandName();
-		kernel.setTranslateCommandName(false);
+		boolean oldValue = kernel.isPrintLocalizedCommandNames();
+		kernel.setPrintLocalizedCommandNames(false);
 
 		String type = getI2GtypeString();
 
@@ -4108,7 +4108,7 @@ public abstract class GeoElement
 			sb.append(">\n");
 		}
 
-		kernel.setTranslateCommandName(oldValue);
+		kernel.setPrintLocalizedCommandNames(oldValue);
 	}
 
     final void getAuxiliaryXML(StringBuilder sb) {
