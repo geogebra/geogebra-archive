@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-import edu.jas.ps.Coefficients;
 import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootDerivAdapter;
@@ -51,7 +50,7 @@ public class EquationSolver {
 	 * Computes all roots of a polynomial using Laguerre's method for
 	 * degrees > 3.
 	 * The roots are polished and only distinct roots are returned.
-	 * @param roots: array with the coefficients of the polynomial 
+	 * @param roots array with the coefficients of the polynomial 
 	 * @return number of realRoots found
 	 */
 	final public int polynomialRoots(double [] roots) {			

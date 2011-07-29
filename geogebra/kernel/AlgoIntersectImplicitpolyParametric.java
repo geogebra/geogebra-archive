@@ -18,6 +18,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.main.Application;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
@@ -46,6 +47,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 		super(c,labels,setLabels,p,l);
 		this.p=p;
 		this.l=l;
+		compute();
 	}
 
 	public AlgoIntersectImplicitpolyParametric(Construction c, String[] labels,
@@ -53,7 +55,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 		super(c,labels,setLabels,p,f);
 		this.p=p;
 		this.f=f;
-		
+		compute();
 	}
 
 	@Override
@@ -69,6 +71,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 
 	@Override
 	protected void compute() {
+//		Application.debug("compute");
 		if (p==null||!p.isDefined()){
 			return;
 		}

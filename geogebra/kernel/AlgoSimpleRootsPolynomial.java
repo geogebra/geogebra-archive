@@ -28,18 +28,13 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
 public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 
-//	private String[] labels;
-//    private boolean initLabels=true;
 	protected boolean setLabels;
     protected EquationSolver eqnSolver;
     protected GeoElement[] geos;
-   // protected GeoPoint[] points;
-    private PolynomialFunction rootsPoly;
     private OutputHandler<GeoPoint> points;
 	
 	public AlgoSimpleRootsPolynomial(Construction c) {
 		super(c);
-		//points=new GeoPoint[0];
 		eqnSolver=cons.getEquationSolver();
 		points=new OutputHandler<GeoPoint>(new elementFactory<GeoPoint>() {
 					public GeoPoint newElement() {
@@ -68,8 +63,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	 * @param pf assigns a PolynomialFunction to this Algorithm which roots lead to one or more output Points
 	 */
 	public void setRootsPolynomial(PolynomialFunction pf){
-		this.rootsPoly=pf;
-		this.doCalc();
+		doCalc(pf);
 	}
 
 	@Override
@@ -87,13 +81,13 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	@Override
 	protected void setInputOutput() {
 		input=geos;
-		//output=points;
 		setDependencies();
 	}
 	
 	/**
 	 * @param roots array with the coefficients of the polynomial<br/>
 	 * the roots of the polynomial are assigned to the first n elements of <b>roots</b>
+	 * @param eqnSolver 
 	 * @return number of distinct roots
 	 */
 	public static int getRoots(double[] roots,EquationSolver eqnSolver){
@@ -110,7 +104,6 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 			Arrays.sort(roots,0,nrRealRoots);
 			double last=roots[0];
 			for (int i=1;i<nrRealRoots;i++){
-//				Application.debug("diff = "+(roots[i]-last));
 				if (roots[i]-last<=Kernel.MIN_PRECISION){
 					c++;
 				}else{
@@ -124,32 +117,51 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 		return nrRealRoots;
 	}
 
-	protected void doCalc() {
+	protected void doCalc(PolynomialFunction rootsPoly) {
 		double roots[]=rootsPoly.getCoefficients();
-		int nrRealRoots=getRoots(roots,eqnSolver);
+		int nrRealRoots=0;
+		if (roots.length>1)
+			nrRealRoots=getRoots(roots,eqnSolver);
 		makePoints(roots,nrRealRoots);
 	}
 	
+	private double distancePairSq(double[] p1,double[] p2){
+		return (p1[0]-p2[0])*(p1[0]-p2[0])+(p1[1]-p2[1])*(p1[1]-p2[1]);
+	}
 
 	private void makePoints(double[] roots, int nrRealRoots) {
-		List<Double[]> valPairs=new ArrayList<Double[]>();
+		List<double[]> valPairs=new ArrayList<double[]>();
+		int len;
 		for (int i=0;i<nrRealRoots;i++){
-			for (int j=0;j<getNrPoints(roots[i]);j++)
-				valPairs.add(new Double[]{getXValue(roots[i],j),getYValue(roots[i],j)});
-			//points[i].setCoords(getXValue(roots[i]), getYValue(roots[i]), 1);
+			len=getNrPoints(roots[i]);
+			for (int j=0;j<len;j++){
+				double[] pair=getXYPair(roots[i],j);
+				for (int k=0;k<valPairs.size();k++){
+					if (distancePairSq(pair, valPairs.get(k))<Kernel.STANDARD_PRECISION){
+						pair=null;
+						break;
+					}
+				}
+				if (pair!=null)
+					valPairs.add(pair);
+			}
 		}
-		points.adjustOutputSize(valPairs.size());
-		for (int i=0;i<valPairs.size();i++){
-			points.getElement(i).setCoords(valPairs.get(i)[0], valPairs.get(i)[1], 1);
-		}
-		
-		 if (setLabels)
-	            points.updateLabels();
+		setPoints(valPairs);
 	}
 	
 	 public void setLabels(String[] labels){
 		 points.setLabels(labels);
 		 update();
+	 }
+	 
+	 protected void setPoints(List<double[]> valPairs){
+		points.adjustOutputSize(valPairs.size());
+		for (int i=0;i<valPairs.size();i++){
+			points.getElement(i).setCoords(valPairs.get(i)[0], valPairs.get(i)[1], 1);
+		}
+			
+		if (setLabels)
+			points.updateLabels();
 	 }
 	 
 	/**
@@ -190,6 +202,10 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	 */
 	protected double getXValue(double t,int idx){
 		return getXValue(t);
+	}
+	
+	protected double[] getXYPair(double t,int idx){
+		return new double[]{getXValue(t,idx),getYValue(t,idx)};
 	}
 
 	@Override

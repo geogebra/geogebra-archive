@@ -36,7 +36,7 @@ public  GeoElement[] process(Command c) throws MyError {
     boolean[] ok = new boolean[n];
     GeoElement[] arg;
     
-    Application.debug(n,1);
+//    Application.debug(n,1);
 
     switch (n) {
         case 2 :

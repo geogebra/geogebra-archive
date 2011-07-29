@@ -11,18 +11,6 @@ the Free Software Foundation.
 */
 package geogebra.kernel;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-
-import edu.jas.arith.BigRational;
-import edu.jas.gb.GBFactory;
-import edu.jas.gb.GroebnerBase;
-import edu.jas.poly.ExpVector;
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
-import edu.jas.poly.TermOrder;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 

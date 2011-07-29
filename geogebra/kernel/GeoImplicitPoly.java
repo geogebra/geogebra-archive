@@ -18,16 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import edu.jas.arith.BigRational;
-import edu.jas.poly.ExpVector;
-import edu.jas.poly.ExpVectorLong;
-import edu.jas.poly.GenPolynomial;
-import edu.jas.poly.GenPolynomialRing;
-import edu.jas.poly.TermOrder;
-import edu.jas.structure.RingElem;
-import edu.jas.structure.RingFactory;
 import geogebra.Matrix.Coords;
-import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -43,16 +34,10 @@ import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.linear.DecompositionSolver;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
@@ -73,8 +58,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	private double[][] coeffSquarefree;
 	private int degX;
 	private int degY;
-	
-	private static GenPolynomialRing<BigRational> CoeffRing;
 
 	private boolean defined = true;
 	private boolean isConstant;
@@ -90,8 +73,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	public GeoLocus locus;
 	
 //	private Thread factorThread;
-	
-	private GenPolynomial<BigRational> genPoly;
 
 	protected GeoImplicitPoly(Construction c) {
 		super(c);
@@ -426,7 +407,6 @@ Dilateable, Transformable, EuclidianViewCE {
 		isConstant=true;
 		degX=-1;
 		degY=-1;
-		genPoly=null;
 		coeffSquarefree=null;
 		try {
 			degX=c.length-1;
@@ -455,7 +435,6 @@ Dilateable, Transformable, EuclidianViewCE {
 			isConstant=true;
 			degX=-1;
 			degY=-1;
-			genPoly=null;
 			coeff = new double[ev.length][];
 			degX=ev.length-1;
 			coeffSquarefree=null;
@@ -940,42 +919,6 @@ Dilateable, Transformable, EuclidianViewCE {
 		return degY;
 	}
 	
-	
-	
-		
-	/**
-	 * @return the coefficient ring used by toGenPolynomial()
-	 */
-	public static GenPolynomialRing<BigRational> getCoeffRing() {
-		if (CoeffRing==null){
-	    	String[] vars={"y","x"};
-			CoeffRing=new GenPolynomialRing<BigRational>(new BigRational(0),vars.length,new TermOrder(TermOrder.REVILEX),vars);
-		}
-		return CoeffRing;
-	}
-
-	/**
-	 * @return representation of this polynomial as GenPolynomial<BigRational>
-	 */
-	public synchronized GenPolynomial<BigRational> toGenPolynomial(){
-		if (genPoly==null){
-			GenPolynomial<BigRational> gp=new GenPolynomial<BigRational>(getCoeffRing());
-			for (int i=0;i<coeff.length;i++){
-				for (int j=0;j<coeff[i].length;j++){
-					if (coeff[i][j]!=0){
-						BigRational b=toRational(coeff[i][j]);
-						gp=gp.sum(b, new ExpVectorLong(new long[]{i,j}));
-						//Application.debug(coeff[i][j]+" = "+toRational(coeff[i][j]));
-					}
-				}
-			}
-			genPoly=gp;
-			return genPoly;
-		}
-		else
-			return genPoly;
-	}
-	
 	private void getFactors(){
 		/*
 		Runnable r=new Runnable(){
@@ -1362,186 +1305,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	public boolean getTrace() {
 		return trace;
 	}
-	
-	
-	
-	//static - adapter methods for use with JAS
-	
-	public static BigRational toRational(double d){
-		int s=(int)Math.signum(d);
-		d=Math.abs(d);
-		long p=(int)Math.floor(d);
-		long p1=1;
-		long q=1;
-		long q1=0;
-		double res=1/(d-p);
-		while(Math.abs(p/(double)q-d)>Kernel.STANDARD_PRECISION&&(q1==0||Math.abs(p1/(double)q1-d)>Math.abs(p/(double)q-d))){
-			long b=(int)Math.floor(res);
-			long t=p;
-			p=b*p+p1;
-			p1=t;
-			t=q;
-			q=b*q+q1;
-			q1=t;
-			res=1/(res-b);
-		}
-		return new BigRational(p*s,q);
-	}
-	
-	public static double toDouble(BigRational b) {
-		return b.numerator().doubleValue()/b.denominator().doubleValue();
-	}
-	
-	/**
-	 * 
-	 * @param G List of GenPolynomial
-	 * @param varN connected to p.ring.nvar; if varN[i] set, p univariat in x_i is fine with p in G
-	 * @return p univariat in x_i, with varN[i]==true converted to PolynomialFunction, else null
-	 * 			varN[i] remains true, all other set to false
-	 */
-	public static PolynomialFunction getUnivariatPoly(List<GenPolynomial<BigRational>> G,boolean[] varN){	
-		Iterator<GenPolynomial<BigRational>> it=G.iterator();
-    	while(it.hasNext()){
-    		PolynomialFunction pf=getUnivariatPoly(it.next(),varN);
-    		if (pf!=null)
-    			return pf;
-    	}
-    	for (int i=0;i<varN.length;i++){
-			varN[i]=false;
-		}
-    	return null;
-	}
-    
-	/**
-	 * 
-	 * @param p GenPolynomial
-	 * @param varN connected to p.ring.nvar; if varN[i] set, p univariat in x_i is fine
-	 * @return p univariat in x_i, with varN[i]==true converted to PolynomialFunction, else null<br>
-	 * 			varN[i] remains true, all other set to false
-	 */
-    public static PolynomialFunction getUnivariatPoly(GenPolynomial<BigRational> p,boolean[] varN){	
-		ExpVector e=p.degreeVector();
-		double[] coeff;
-		if (varN.length!=p.ring.nvar){
-			Application.debug("Length of varN doesn't match ring.nvar");
-			return null;
-		}
-		int k=-1;
-		for (int i=0;i<varN.length;i++){
-			if (e.getVal(i)!=0){
-				if (k>=0){
-//					Application.debug("not univariat: "+p);
-					return null;
-				}else{
-					k=i;
-				}
-			}
-		}
-		for (int i=0;i<varN.length&&k<0;i++) //if k<0 => constant => 'univariat' in every var, take first one allowed
-			if (varN[i])
-				k=i;
-		if (k<0){
-			return null;
-		}
-//		Application.debug("univar-poly = "+p);
-		if (!varN[k]){
-//			Application.debug("univariat in wrong var: "+p);
-			return null;
-		}
-		for (int i=0;i<varN.length;i++){
-			varN[i]=i==k;
-		}
-		ExpVector dir=ExpVector.create(varN.length, k, 1);
-		coeff=new double[(int) e.getVal(k)+1];
-		for (int i=coeff.length-1;i>=0;i--){
-			BigRational b=p.coefficient(e);
-			coeff[i]=b.numerator().doubleValue()/b.denominator().doubleValue();
-			e=e.subtract(dir);
-		}
-		return new PolynomialFunction(coeff);
-	}
-    
-    /**
-     * GenPolynomial polynomial derivative k variable.<br/>
-     * extended from PolyUtil
-     * @param <C> coefficient type.
-     * @param P GenPolynomial.
-     * @return derivative(P).
-     */
-    public static <C extends RingElem<C>>
-           GenPolynomial<C> 
-           baseDeriviative( GenPolynomial<C> P, int k ) {
-        if ( P == null || P.isZERO() ) {
-            return P;
-        }
-        GenPolynomialRing<C> pfac = P.ring;
-        if ( pfac.nvar <= k ) { 
-           // baseContent not possible by return type
-           throw new RuntimeException(P.getClass().getName()
-                     + " k to big ");
-        }
-        RingFactory<C> rf = pfac.coFac;
-//        GenPolynomial<C> d = pfac.getZERO().clone();
-       // Map<ExpVector,C> dm = d.getMap();
-     //   SortedMap<ExpVector,C> dm = new SortedMap<ExpVector,C>();
-        GenPolynomial<C> d=new GenPolynomial<C>(pfac);
-        for ( Map.Entry<ExpVector,C> m : P.getMap().entrySet() ) {
-            ExpVector f = m.getKey();  
-            long fl = f.getVal(k);
-            if ( fl > 0 ) {
-               C cf = rf.fromInteger( fl );
-               C a = m.getValue(); 
-               C x = a.multiply(cf);
-               if ( x != null && !x.isZERO() ) {
-                  ExpVector e =f.subtract(ExpVector.create( f.length(), k, 1L) );  
-                  d=d.sum(x, e);
-               }
-            }
-        }
-        return d; 
-    }
-    
-    public static boolean isZero(GenPolynomial<BigRational> p,double eps){
-    	Iterator<BigRational> it=p.coefficientIterator();
-		while(it.hasNext()){
-			if (Math.abs(GeoImplicitPoly.toDouble(it.next()))>=eps)
-				return false;
-		}
-		return true;
-    }
-
-    public static GenPolynomial<BigRational> evalGenPolySimple(GenPolynomial<BigRational> p,BigRational a, int k){
-    	GenPolynomial<BigRational> ep=new GenPolynomial<BigRational>(p.ring);
-    	BigRational[] powers=new BigRational[(int)p.degreeVector().getVal(k)+1];
-    	powers[0]=BigRational.ONE;
-    	for (int i=1;i<powers.length;i++){
-    		powers[i]=powers[i-1].multiply(a);
-    	}
-    	for ( Map.Entry<ExpVector,BigRational> m : p.getMap().entrySet() ) {
-            ExpVector f = m.getKey();  
-            long fl = f.getVal(k);
-            ep=ep.sum(powers[(int)fl].multiply(m.getValue()), f.subtract(ExpVector.create(p.ring.nvar, k, fl)));
-        }
-    	return ep;
-    }
-    
-    public double[][] getCoeff(GenPolynomial<BigRational> p){
-    	ExpVector deg=p.degreeVector();
-    	int xVal=0;
-    	int yVal=1;
-    	double[][] c=new double[(int) deg.getVal(xVal)+1][(int) deg.getVal(yVal)+1];
-    	for (int i=0;i<c.length;i++){
-    		for (int j=0;j<c[i].length;j++){
-    			c[i][j]=0;
-    		}
-    	}
-    	Iterator<ExpVector> it=p.exponentIterator();
-    	while(it.hasNext()){
-    		ExpVector e=it.next();
-    		c[(int) e.getVal(xVal)][(int) e.getVal(yVal)]=toDouble(p.coefficient(e));
-    	}
-    	return c;
-    }
     
     /**
      * Return degree of implicit poly (x^n y^m = 1 has degree of m+n)
@@ -2048,13 +1811,18 @@ Dilateable, Transformable, EuclidianViewCE {
 				while(it.hasNext()){
 					AlgoElement elem=it.next();
 					if (elem instanceof AlgoPointOnPath){
-						AlgoPointOnPath ap=(AlgoPointOnPath) elem;
-						if (ap.getPath()==this){
-							ap.getP().setCoords(ap.getP().getCoords(),true);
+						for (int i=0;i<elem.getInput().length;i++){
+							if (elem.getInput()[i]==this){
+								AlgoPointOnPath ap=(AlgoPointOnPath) elem;
+								if (ap.getPath()==this){
+									ap.getP().setCoords(ap.getP().getCoords(),true);
+								}
+								break;
+							}
 						}
 					}
 				}
-//				algoUpdateSet.updateAll();
+//				algoUpdateSet.updateAll(); //makes some problems with dependent implicit curves
 			} 
 			
 			}catch(Exception e){

@@ -7673,6 +7673,12 @@ public class Kernel {
 	}
 	
 	/**
+	 * Returns whether x is greater than y	 	 
+	 */
+	final public static boolean isGreater(double x, double y,double eps) {
+		return x > y + eps;
+	}
+	/**
 	 * Returns whether x is greater than or equal to y	 	 
 	 */
 	final public static boolean isGreaterEqual(double x, double y) {

@@ -14,9 +14,7 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 
-import edu.jas.util.ArrayUtil;
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 /**
  * Find asymptotes of ImplicitCurves
@@ -53,8 +51,8 @@ public class AlgoAsymptoteImplicitPoly extends AlgoElement {
         input = new GeoElement[1];
         input[0] = ip;
 
-        output = new GeoElement[1];
-        output[0] = g;
+        setOutputLength(1);
+        setOutput(0,g);
         setDependencies(); // done by AlgoElement
     }
 
