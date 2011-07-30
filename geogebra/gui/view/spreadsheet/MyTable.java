@@ -1830,33 +1830,11 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	protected boolean initAutoFunction(){
 
-		// Selection is a partial column. 
-		// The targetCell with autoFunction will be created beneath the column 
-		if(selectedCellRanges.size() == 1 && selectedCellRanges.get(0).isPartialColumn()){
-
-			// Try to clear the target cell, exit if this is not possible
-			if(RelativeCopy.getValue(this, maxSelectionColumn, maxSelectionRow + 1) != null){
-				boolean isOK = copyPasteCut.delete(
-						maxSelectionColumn, maxSelectionRow + 1, maxSelectionColumn, maxSelectionRow + 1);
-				if(!isOK) 
-					return false;
-			}
-
-			// Create new targetCell 
-			targetCell = new GeoNumeric(kernel.getConstruction(),0);
-			targetCell.setLabel(GeoElement.getSpreadsheetCellName(maxSelectionColumn, maxSelectionRow + 1));
-
-			// Call stopAutoFunction to create the autofunction cell and clean up
-			stopAutoFunction();
-
-			// Don't stay in this mode, we're done
-			return false;
-		}
-
+	
 		// Selection is a single cell.
 		// The selected cell is the target cell. Allow the user to drag a new selection for the
 		// autoFunction. The autoFunction values are previewed in the targetCell while dragging.
-		else if(selectedCellRanges.size() == 1 && selectedCellRanges.get(0).isSingleCell()){
+		if(selectedCellRanges.size() == 1 && selectedCellRanges.get(0).isSingleCell()){
 
 			// Clear the target cell, exit if this is not possible
 			if(RelativeCopy.getValue(this, minSelectionColumn, minSelectionRow) != null){
@@ -1886,6 +1864,20 @@ public class MyTable extends JTable implements FocusListener
 			app.clearSelectedGeos();
 
 		}
+		
+		// try to create autoFunction cell(s) adjacent to the selection
+		else if(selectedCellRanges.size() == 1){
+
+			try {
+				performAutoFunctionCreation(selectedCellRanges.get(0));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			// Don't stay in this mode, we're done
+			return false;
+		}
+
 
 		// Exit if any other type of selection exists
 		else 
@@ -1896,16 +1888,97 @@ public class MyTable extends JTable implements FocusListener
 
 
 
+	/**
+	 * Creates autofunction cells based on the given cell range and the current autofunction mode.
+	 */
+	protected void performAutoFunctionCreation(CellRange cr){
 
+		if(cr.isColumn() || cr.isRow()) return;
+		
+		boolean success = true;
+		boolean isOK = true;
+		GeoElement targetCell = null;
+		CellRange targetRange;
+
+		// Case 1: Partial row, targetCell created beneath the column 
+		if(cr.isPartialRow() || (!cr.isPartialColumn() && Application.getShiftDown())){
+			targetRange = new CellRange(this, cr.getMaxColumn() + 1, cr.getMinRow(), cr.getMaxColumn() + 1, cr.getMaxRow());
+			for(int row = cr.getMinRow(); row <= cr.getMaxRow(); row ++){
+
+				// try to clear the target cell, exit if this is not possible
+				if(RelativeCopy.getValue(this, cr.getMaxColumn() + 1, row) != null){
+					isOK = copyPasteCut.delete(cr.getMaxColumn() + 1, row, cr.getMaxColumn() + 1, row);	
+				}
+				// create new targetCell
+				if(isOK){ 
+					targetCell = new GeoNumeric(kernel.getConstruction(),0);
+					targetCell.setLabel(GeoElement.getSpreadsheetCellName(cr.getMaxColumn() + 1, row));
+					createAutoFunctionCell(targetCell, new CellRange(this, cr.getMinColumn(), row, cr.getMaxColumn(), row) );
+				}
+			}
+
+			app.setMoveMode();
+			setSelection(targetRange);
+			repaint();
+		}
+		else {
+			
+			targetRange = new CellRange(this, cr.getMinColumn(), cr.getMaxRow() + 1, cr.getMaxColumn(), cr.getMaxRow() + 1);
+			for(int col = cr.getMinColumn(); col <= cr.getMaxColumn(); col ++){
+
+				// try to clear the target cell, exit if this is not possible
+				if(RelativeCopy.getValue(this, col, cr.getMaxRow() + 1) != null){
+					isOK = copyPasteCut.delete(col, cr.getMaxRow() + 1, col, cr.getMaxRow() + 1);	
+				}
+				// create new targetCell
+				if(isOK){ 
+					targetCell = new GeoNumeric(kernel.getConstruction(),0);
+					targetCell.setLabel(GeoElement.getSpreadsheetCellName(col, cr.getMaxRow() + 1));
+					createAutoFunctionCell(targetCell, new CellRange(this, col, cr.getMinRow(), col, cr.getMaxRow()) );
+				}
+			}
+
+			app.setMoveMode();
+			setSelection(targetRange);
+			repaint();
+			
+		}
+
+	}
+
+	
+	
 	/**
 	 * Stops the autofunction from updating and creates a new geo for the target
-	 * cell based on the current autofunction command.
+	 * cell based on the current autofunction mode.
 	 */
 	protected void stopAutoFunction(){
+	
+		setTableMode(TABLE_MODE_STANDARD);
 
+		if(createAutoFunctionCell(targetCell, selectedCellRanges.get(0))){
+			// select the new geo
+			app.setMoveMode();
+			Point coords = targetCell.getSpreadsheetCoords();
+			changeSelection(coords.y, coords.x, false, false);
+			repaint();
+		}
+		
+	}
+
+	
+	
+	/**
+	 * Creates an autofunction in the given target cell based on the current
+	 * autofunction mode and the given cell range.
+	 */
+	protected boolean createAutoFunctionCell(GeoElement targetCell, CellRange cr){
+
+		boolean success = true;
+		
 		// Get the targetCell label and the selected cell range
 		String targetCellLabel = targetCell.getLabel();
-		String cellRangeString = getCellRangeProcessor().getCellRangeString(selectedCellRanges.get(0));
+		String cellRangeString = getCellRangeProcessor().getCellRangeString(cr);
 
 		// Create a String expression for the new autofunction command geo
 		String cmd = null;
@@ -1917,23 +1990,22 @@ public class MyTable extends JTable implements FocusListener
 
 		String expr = targetCellLabel + " = " + cmd + "[" + cellRangeString + "]";
 
-		// Reset mode and then create our new geo
-		setTableMode(TABLE_MODE_STANDARD);
-
 		// Create the new geo
-		if(!selectedCellRanges.get(0).contains(targetCell))
+		if(!selectedCellRanges.get(0).contains(targetCell)){
 			table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(expr,false);
-		else
+		}else{
 			targetCell.setUndefined();
-
-		// select the new geo
-		app.setMoveMode();
-		Point coords = targetCell.getSpreadsheetCoords();
-		changeSelection(coords.y, coords.x, false, false);
-		repaint();
-
+			success = false;
+		}
+		
+		return success;
 	}
-
+	
+	
+	
+	
+	
+	
 	/**
 	 * Updates the autofunction by recalculating the autofunction value as the
 	 * user drags the mouse to create a selection. The current autofunction

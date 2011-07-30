@@ -4145,7 +4145,8 @@ public class Application implements KeyEventDispatcher {
 		if (e.isConsumed())
 			return true;
 		
-		controlDown = isControlDown(e); //G.Sturr 2010-5-30
+		controlDown = isControlDown(e); 
+		shiftDown = e.isShiftDown();
 		
 		// check if key event came from this main component
 		// (needed to take care of multiple application windows or applets)
@@ -4436,17 +4437,18 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	
-	// G.Sturr 2010-5-30: Added global controlDown flag.
-	// Application.dispatchKeyEvent sets this on every keyEvent.
-	// The flag is needed for ctrl-select in the spreadsheet.
+	// global controlDown, shiftDown flags
+	// Application.dispatchKeyEvent sets these on every keyEvent.
 	
 	private static boolean controlDown = false;
-	
+	private static boolean shiftDown = false;
 	public static boolean getControlDown () {
 		return controlDown;
 	}
-
-	//END G.Sturr
+	public static boolean getShiftDown () {
+		return shiftDown;
+	}
+	
 	
 	
 	public static boolean isControlDown(InputEvent e) {
