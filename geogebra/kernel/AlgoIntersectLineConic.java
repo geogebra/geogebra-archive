@@ -263,7 +263,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 		if (pointOnConic == null && g.startPoint != null) {
 			if (g.startPoint.addIncidenceWithProbabilisticChecking(c)) {
 				pointOnConic = g.startPoint;
-			} else if (g.endPoint.addIncidenceWithProbabilisticChecking(c)) {
+			} else if (g.endPoint != null && g.endPoint.addIncidenceWithProbabilisticChecking(c)) {
 				pointOnConic = g.endPoint;
 			}
 		}
