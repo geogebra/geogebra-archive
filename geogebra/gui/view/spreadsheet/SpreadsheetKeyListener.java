@@ -314,9 +314,6 @@ public class SpreadsheetKeyListener implements KeyListener
 			
 			// stop TAB erasing cell before moving
 		case KeyEvent.VK_TAB:
-			if (editor.completionsPopupOpen()) {
-				e.consume(); break;
-			}
 			// disable shift-tab in column A
 			if (table.getSelectedColumn() == 0 && e.isShiftDown()) 
 				e.consume();
