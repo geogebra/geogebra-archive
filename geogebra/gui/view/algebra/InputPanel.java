@@ -415,7 +415,7 @@ ActionListener, ListSelectionListener {
 		// make sure autocomplete works for the Virtual Keyboard
 		if (textComponent instanceof AutoCompleteTextField) {
 			((AutoCompleteTextField)textComponent).updateCurrentWord();
-			((AutoCompleteTextField)textComponent).updateAutoCompletion();
+			((AutoCompleteTextField)textComponent).startAutoCompletion();
 		}
 		
 		textComponent.requestFocus();

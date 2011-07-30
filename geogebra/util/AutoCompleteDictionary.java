@@ -1,7 +1,7 @@
 package geogebra.util;
 
 import java.util.Iterator;
-import java.lang.Iterable;
+import java.util.List;
 
 /**
  * This interface defines the API that dictionaries for autocomplete components
@@ -50,5 +50,5 @@ public interface AutoCompleteDictionary {
    * @return an iterable of strings if there is at least one completion,
    *         otherwise null.
    */
-  public Iterable<String> getCompletions(String s);
+  public List<String> getCompletions(String s);
 }

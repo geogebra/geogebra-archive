@@ -54,7 +54,6 @@ public class SpreadsheetKeyListener implements KeyListener
 		switch (keyCode) {
 		
 		case KeyEvent.VK_UP:
-
 			if (Application.isControlDown(e)) {
 
 				if (model.getValueAt(row, column) != null) {
@@ -302,7 +301,6 @@ public class SpreadsheetKeyListener implements KeyListener
 			break;	
 			
 		case KeyEvent.VK_ENTER:	
-			
 			if (MyCellEditor.tabReturnCol > -1) {
 				table.changeSelection(row , MyCellEditor.tabReturnCol, false, false);
 				MyCellEditor.tabReturnCol = -1;
@@ -316,6 +314,9 @@ public class SpreadsheetKeyListener implements KeyListener
 			
 			// stop TAB erasing cell before moving
 		case KeyEvent.VK_TAB:
+			if (editor.completionsPopupOpen()) {
+				e.consume(); break;
+			}
 			// disable shift-tab in column A
 			if (table.getSelectedColumn() == 0 && e.isShiftDown()) 
 				e.consume();

@@ -146,7 +146,14 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	public void setLabels() {
 		textField.setDictionary(app.getCommandDictionary());	
 	}
-
+	
+	/**
+	 * 
+	 * @return true if the completion popup is open
+	 */
+	public boolean completionsPopupOpen() {
+		return textField.getCompletions() != null;
+	}
 
 	//=======================================================
 	//             In-cell Editing Methods
@@ -366,7 +373,15 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 
 			int keyCode = e.getKeyCode();
 			//Application.debug(e+"");
-
+			// If completing, do not move cells with the following commands
+			if (completionsPopupOpen() && (
+					keyCode == KeyEvent.VK_UP || 
+					keyCode == KeyEvent.VK_DOWN || 
+					keyCode == KeyEvent.VK_ENTER || 
+					keyCode == KeyEvent.VK_ESCAPE || 
+					keyCode == KeyEvent.VK_TAB)) {
+				e.consume(); return;
+			}
 			switch (keyCode) {
 			case KeyEvent.VK_UP:
 				if(isFormulaBarListener) return;

@@ -170,7 +170,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		if (this instanceof AutoCompleteTextField) {
 			AutoCompleteTextField tf = (AutoCompleteTextField)this;
 			tf.updateCurrentWord();
-			tf.updateAutoCompletion();
+			tf.startAutoCompletion();
 		}
 
 		// Under a Mac OS the string is always selected after the insert. A runnable prevents

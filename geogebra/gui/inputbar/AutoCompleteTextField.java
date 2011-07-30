@@ -1,12 +1,13 @@
 package geogebra.gui.inputbar;
 import geogebra.gui.MathTextField;
+import geogebra.gui.autocompletion.CommandCompletionListCellRenderer;
+import geogebra.gui.autocompletion.CompletionsPopup;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
-import geogebra.util.Util;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -14,7 +15,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.lang.Iterable;
+import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -35,9 +36,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private ArrayList<String> history;  
 	private boolean handleEscapeKey = false;
 	
-	private Iterable<String> completions;
-	private Iterator<String> completionIter;
+	private List<String> completions;
+	private int completionIndex;
 	private String cmdPrefix;
+	private CompletionsPopup completionsPopup;
 	
 	/**
 	 * Flag to determine if text must start with "=" to activate autoComplete;
@@ -71,7 +73,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		history = new ArrayList<String>(50);
 		
 		completions = null;
-		completionIter = null;
+		completionIndex = -1;
+		
+		CommandCompletionListCellRenderer cellRenderer = new CommandCompletionListCellRenderer();
+		completionsPopup = new CompletionsPopup(this, cellRenderer, 6);
 		//addKeyListener(this); now in MathTextField
 		setDictionary(dict);
 		
@@ -121,6 +126,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	}
 
+	public List<String> getCompletions() {
+		return completions;
+	}
+	
+	public void setCurrentCompletion(int index) {
+		completionIndex = index;
+	}
 	/**
 	 * Gets whether the component is currently performing autocomplete lookups as
 	 * keystrokes are performed.
@@ -134,7 +146,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public String getCurrentWord() {
 		return curWord.toString();
 	}  
-
+	
+	public int getCurrentWordStart() {
+		return curWordStart;
+	}
 	public void geoElementSelected(GeoElement geo, boolean add) {
 		if (geo != null) {				
 			replaceSelection(" " + geo.getLabel() + " ");
@@ -231,21 +246,24 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			// processEnterKey accepts a selection if there is one 
 			// in this case the ENTER key event is consumed 
 			// so that it is not processed by other objects (e.g. AlgebraInput)
-			if (getAutoComplete() && processAutoCompletionKey()) {
+			if (getAutoComplete() && validateAutoCompletion()) {
 				e.consume();                
 			}                 
 			break;
 
 			// clear textfield
-		case KeyEvent.VK_TAB:
+		/*case KeyEvent.VK_TAB:
 			// Cycle through completions
 			if (getAutoComplete() && completions != null) {
 				clearSelection();
-				updateAutoCompletion(true);
+				updateAutoCompletion(completionIndex + 1);
 				e.consume();
 			}
-			break;
-		case KeyEvent.VK_ESCAPE:   
+			break;*/
+		case KeyEvent.VK_ESCAPE:
+			if (completions != null) {
+				e.consume(); break;
+			}
 			if (!handleEscapeKey) {
 				break;
 			}
@@ -264,20 +282,26 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 
 		case KeyEvent.VK_UP:
+			if (completions != null) {
+				e.consume(); break;
+			}
 			if (!handleEscapeKey) {
 				break;
 			}
 			String text = getPreviousInput();
 			if (text != null) setText(text);
 			break;
-
+	
 		case KeyEvent.VK_DOWN:
+			if (completions != null) {
+				e.consume(); break;
+			}
 			if (!handleEscapeKey) {
 				break;
 			}
 			setText(getNextInput());
-			break; 
-
+			break;
+        
 		case KeyEvent.VK_F9: 
 			// needed for applets
 			if (app.isApplet())
@@ -372,7 +396,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		if (getAutoComplete()) {
 			updateCurrentWord();
-			updateAutoCompletion();
+			startAutoCompletion();
 		}
 
 		/*
@@ -589,13 +613,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		String text = getText();  
 		if (text == null) return;
 		int caretPos = getCaretPosition();          
-
 		// search to the left
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
-				isLetterOrDigit( text.charAt(curWordStart))) --curWordStart;     
+				isLetterOrDigit( text.charAt(curWordStart))) {
+			--curWordStart;     
+		}
 		curWordStart++;
-
 		// search to the right
 		int curWordEnd = caretPos;
 		int length = text.length();
@@ -640,50 +664,25 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	/**
 	 * returns whether the input field's text was changed due to autocompletion
-	 * @param cycling is true if finding next possible completion
+	 * @param index is true if finding next possible completion
 	 *                   otherwise a new completions object must be obtained
 	 */ 
-	public void updateAutoCompletion(boolean cycling) { 
-		String text = getText();
-		
-		if(isEqualsRequired && !text.startsWith("="))
-			return;
-		
-		// Autocompletion for Korean enabled only for the Virtual Keyboard at present
-		if (app.getLocale().getLanguage().equals("ko") && !virtualKeyboardInUse)
-			return;
-		
-		//    start autocompletion only for words with at least two characters                
-		 if (curWord.length() < 2 && !isKoreanMultiChar(curWord.length() > 0 ? curWord.charAt(0) : ' '))  
-			 return;
-		 int caretPos = getCaretPosition();
-		
-		if (lastTyped != null) {
-			char lastCh = curWord.charAt(curWord.length() - 1);
-			curWord.setLength(0);
-			curWord.append(lastTyped);
-			curWord.append(lastCh);
-			//Application.debug(curWord.toString()+" "+Util.toHexString(curWord.toString()));
-			lastTyped += (lastCh+"");
-		}
-
-		// make first letter of word uppercase as every command starts
-		// with an upper case letter
-		//curWord.setCharAt(0, Character.toUpperCase(curWord.charAt(0)));
-
-		// Build completions if not cycling
-		if (!cycling) {
-			cmdPrefix = curWord.toString();
-			completions = dict.getCompletions(curWord.toString());
-		}
-		// Find next completion
+	public void updateAutoCompletion(int index) {
 		if (completions == null) {
 			return;
 		}
-		if (!cycling || !completionIter.hasNext()) {
-			completionIter = completions.iterator();
+		clearSelection();
+		if (index == -1) {
+			return;
 		}
-		String cmd = completionIter.next();
+		String text = getText();
+		int caretPos = getCaretPosition();
+
+		if (index >= completions.size()) {
+			index = 0;
+		}
+		completionIndex = index;
+		String cmd = completions.get(index);
 
 		// build new autocompletion text
 		// make sure when we type eg CA we get CAuchy not Cauchy, in case we want CA=33
@@ -734,13 +733,53 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		updateCurrentWord();
 	}
 
-	public void updateAutoCompletion() {
-		updateAutoCompletion(false);
+	private List<String> resetCompletions() {
+		String text = getText();
+		updateCurrentWord();
+		completions = null;
+		if(isEqualsRequired && !text.startsWith("="))
+			return null;
+		
+		// Autocompletion for Korean enabled only for the Virtual Keyboard at present
+		if (app.getLocale().getLanguage().equals("ko") && !virtualKeyboardInUse)
+			return null;
+		
+		//    start autocompletion only for words with at least two characters                
+		 if (curWord.length() < 2 && !isKoreanMultiChar(curWord.length() > 0 ? curWord.charAt(0) : ' ')) {
+			 completions = null;
+			 return null;			 
+		 }
+		
+		if (lastTyped != null) {
+			char lastCh = curWord.charAt(curWord.length() - 1);
+			curWord.setLength(0);
+			curWord.append(lastTyped);
+			curWord.append(lastCh);
+			//Application.debug(curWord.toString()+" "+Util.toHexString(curWord.toString()));
+			lastTyped += (lastCh+"");
+		}
+
+		cmdPrefix = curWord.toString();
+		completions = dict.getCompletions(cmdPrefix);
+		return completions;
 	}
 	
-	private boolean processAutoCompletionKey() {  	  	  	
+	public void startAutoCompletion() {
+		resetCompletions();
+		updateAutoCompletion(0);
+		completionsPopup.showCompletions();
+	}
+	
+	public void cancelAutoCompletion() {
+		completions = null;
+		if (completionIndex != -1) {
+			completionIndex = -1;
+			clearSelection();
+		}
+	}
+	public boolean validateAutoCompletion() {  	  	  	
 		String selText = getSelectedText();
-
+		completions = null;
 		// if the selection is a command name remove the
 		// selection and set the right case of the command name
 		if (selText != null && selText.endsWith("[]")) {
