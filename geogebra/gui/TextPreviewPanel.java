@@ -2,6 +2,7 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.util.GeoGebraIcon;
 import geogebra.kernel.AlgoDependentText;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
@@ -17,7 +18,15 @@ import geogebra.kernel.parser.TokenMgrError;
 import geogebra.main.MyError;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+
+import javax.swing.ImageIcon;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 /**
  * 
@@ -27,10 +36,6 @@ import java.awt.Font;
  * previewGeoDependent) that are used to preview the two possible types of
  * GeoText, independent and dependent.
  * 
- * TODO: adjust the size of the panel when the bounding box of the preview geo
- * grows larger than the enclosing JScrollpane viewport. Currently the preview
- * geo uses absolute screen coords, so we can't easily get the bounding box
- * dimensions.
  * 
  * @author gsturr 2010-6-30
  * 
@@ -68,7 +73,7 @@ public class TextPreviewPanel extends EuclidianView {
 
 	}
 
-	
+
 	/**
 	 * Removes the preview geos
 	 */
@@ -87,7 +92,7 @@ public class TextPreviewPanel extends EuclidianView {
 		this.repaint();
 	}
 
-	
+
 	/**
 	 * Overrides attachView with an empty method to prevent this panel from
 	 * attaching to the kernel
@@ -96,8 +101,8 @@ public class TextPreviewPanel extends EuclidianView {
 	public void attachView() {
 
 	}
-	
-	
+
+
 
 	/**
 	 * Updates the preview geos and creates new geos if needed.
@@ -153,7 +158,7 @@ public class TextPreviewPanel extends EuclidianView {
 			hasParseError = true;  // odd numbers of quotes give parse errors 
 			showErrorMessage = true;
 		}
-		
+
 
 
 		// resolve variables and evaluate the expression
@@ -219,8 +224,8 @@ public class TextPreviewPanel extends EuclidianView {
 			updateVisualProperties(previewGeoDependent, targetGeo, isLaTeX, showErrorMessage);
 		}
 
-		
-		
+
+
 		// hide/show the preview geos  
 		previewGeoIndependent.setEuclidianVisible(isIndependent);
 		previewGeoIndependent.updateRepaint();
@@ -230,9 +235,79 @@ public class TextPreviewPanel extends EuclidianView {
 			previewGeoDependent.updateRepaint();
 			this.update(previewGeoDependent);
 		}
+
+		// update the panel size to match the geo
+		if(previewGeoIndependent != null && previewGeoIndependent.isEuclidianVisible())
+			updateViewportSize(previewGeoIndependent);
+		if(previewGeoDependent != null && previewGeoDependent.isEuclidianVisible())
+			updateViewportSize(previewGeoDependent);
+
 		this.repaintView();
 
 	}
+
+
+
+	private Dimension d = new Dimension();
+	private ImageIcon testIcon = new ImageIcon();
+	private JTextPane dummyText = new JTextPane();
+	private int padding = 5;  // account for inset
+	/**
+	 * Updates the preferred size of this panel to match the estimated size of
+	 * the given preview geo. This forces the enclosing scrollpane to show
+	 * scrollbars when the size of the preview geo grows larger than the
+	 * scrollpane viewport.
+	 * 
+	 * Note: The preview geo uses absolute screen coords, so we can't easily get
+	 * the bounding box dimensions and must use dummy containers to estimate
+	 * these dimensions.
+	 * 
+	 * @param previewGeo
+	 */
+	private void updateViewportSize(GeoText previewGeo){
+		if(previewGeo == null) return;
+
+		if(previewGeo.isLaTeX()){  
+			// LaTex geo, use dummy ImageIcon 
+			
+			GeoGebraIcon.drawLatexImageIcon(app, testIcon, previewGeo.getTextString(), app.getPlainFont(), true, Color.black, null);
+			//System.out.println("=============> " + testIcon.getIconHeight() + " : " + testIcon.getIconWidth());
+
+			// get the dimensions from the icon and add some padding
+			d.height = testIcon.getIconHeight() + padding;
+			d.width = testIcon.getIconWidth() + padding;
+
+
+		}else {  
+			// Plain text geo, use dummy JTextArea
+			
+			// set font and line spacing (guessing at this value)
+			dummyText.setFont(app.getPlainFont());
+			MutableAttributeSet set = new SimpleAttributeSet();
+			StyleConstants.setLineSpacing(set, (float) 1);
+			//StyleConstants.setSpaceBelow(set, (float) 0.5);
+			dummyText.setParagraphAttributes(set, true);
+			
+
+			dummyText.setText(previewGeo.getTextString());
+			d = dummyText.getPreferredSize();
+
+			// add some padding 
+			d.height += padding;
+			d.width += padding;
+		}
+
+		// update this panel 
+		this.setPreferredSize(d);
+		this.revalidate();
+
+
+	}
+
+
+
+
+
 
 	/**
 	 * Sets the visual properties of a preview geo
@@ -299,7 +374,7 @@ public class TextPreviewPanel extends EuclidianView {
 				inputValue = previewGeoIndependent.getCommandDescription(); 
 			}				
 		} 
-		
+
 		// inputValue is not null, so process it as done in TextInputDialog ---> TextInputHandler 	
 		else {
 
@@ -335,6 +410,10 @@ public class TextPreviewPanel extends EuclidianView {
 
 		return inputValue;
 	}
+
+
+
+
 
 
 }

@@ -1,7 +1,9 @@
 package geogebra.gui.util;
 
 
+import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.FormulaDimension;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
@@ -929,7 +931,45 @@ public class GeoGebraIcon {
 		return icon;
 	}
 
+	
+	/**
+	 * Draws a LaTeX image in the given ImageIcon.
+	 * Drawing is done twice. First draw gives the needed size of the image.
+	 * Second draw renders the image with the correct dimensions.
+	 */
+	public static final void drawLatexImageIcon(Application app, ImageIcon latexIcon, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
 
+		// Create image with dummy size, then draw into it to get the correct size
+		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
+		FormulaDimension d = new FormulaDimension();
+		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
+				bgColor);
+
+		// Now use this size and draw again to get the final image
+		if(d.width == -1 || d.height == -1)
+			return;
+		image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
+		g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
+				bgColor);
+
+		latexIcon.setImage(image);
+
+	}
 
 
 }
