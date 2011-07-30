@@ -3589,6 +3589,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public double getEyeSepFactor(){
 		return eyeSepFactor;
 	}
+
+
+	public boolean isUnitAxesRatio() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	
 }
