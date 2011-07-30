@@ -42,8 +42,8 @@ GC_USER=kovzol
 GC_PASS=xxxxxxxx # This must be changed to the proper password
 
 # The Windows portable version is created based on a template.
-# It can be found in SVN branches/installer/winport/GeoGebra-3.9.x.x-Windows-Portable.zip.
-GGB40_ZIP=/home/kovzol/workspace/GeoGebra-3.9.x.x-Windows-Portable.zip # Linz server
+# It can be found in SVN branches/installer/winport/GeoGebra-Windows-Portable-3-9-x-x.zip.
+GGB40_ZIP=/home/kovzol/workspace/GeoGebra-Windows-Portable-3-9-x-x.zip # Linz server
 
 # Please change this if the original .zip file is changing:
 #GGB40MAXIMA_ZIP=/home/zoltan/ggb40maxima/ggb40maxima-3.9.245.0_5.24.0.zip # Linz server
@@ -51,6 +51,9 @@ GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
 # This file should be present to update ggb40maxima properly.
 # You can download it (or a similar version) from Google Code Downloads as well,
 # or (preferred) SVN branches/installer/maxima/ggb40maxima*.zip.
+
+# By default, we do not create a package for ggb40maxima (Maxima is not supported currently):
+ENABLE_GGB40MAXIMA=0
 
 # To create this package, one should download the source version of Maxima
 # and compile it on a 32 bit machine (for compatibility reasons). Currently

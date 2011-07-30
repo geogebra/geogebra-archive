@@ -57,9 +57,15 @@ echo "$0: JAR files copied to 4.0 and history/$MYVER"
 WARNINGS=`chmod -R g+rw $WWWDIR/$MYDIR $WWWDIR/history 2>&1 | wc -l | awk '{print $1}'`
 echo "$WARNINGS warnings during chmod'ing web files"
 
-# 6. Deploying ggb40maxima as well:
+# 6/1. Deploying ggb40maxima as well:
+if [ "$ENABLE_GGB40MAXIMA" = "1" ]; then # Currently we do not provide this package by default:
+ cd $SVNDIR/geogebra/scripts/autobuild/windows
+ ./ggb40maxima
+ fi
+
+# 6/2. Deploying ggb40 as well:
 cd $SVNDIR/geogebra/scripts/autobuild/windows
-./ggb40maxima
+./ggb40
 
 # 7. Deploying Linux/generic and Linux/portable as well:
 cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
