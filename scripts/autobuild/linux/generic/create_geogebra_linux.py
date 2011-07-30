@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # This script creates the generic version for Linux.
-# @author Christian Schött <schoett@gmx.de>
+# @author Christian Schött <schoett@gmx.de> and Zoltan Kovacs <zoltan@geogebra.org>
 
 # argument 1: version of GeoGebra (eg. 3.2.44.0)
 # argument 2: path of directory containing unpacked geogebra files
@@ -15,11 +15,12 @@
 # argument 9: path of file install.sh
 # argument 10: path of file uninstall.sh
 # argument 11: path of file install-sh
-# argument 12: path of destination directory
+# argument 12: path of file README
+# argument 13: path of destination directory
 
 import os, shutil, sys, tarfile, tempfile
-if len(sys.argv) != 13:
-	print("Error: 12 arguments are expected.")
+if len(sys.argv) != 14:
+	print("Error: 13 arguments are expected.")
 	sys.exit(1)
 if not os.path.exists(sys.argv[2]):
 	print("Error: "+sys.argv[2]+" does not exist.")
@@ -54,6 +55,9 @@ if not os.path.exists(sys.argv[11]):
 if not os.path.exists(sys.argv[12]):
 	print("Error: "+sys.argv[12]+" does not exist.")
 	sys.exit(1)
+if not os.path.exists(sys.argv[13]):
+	print("Error: "+sys.argv[13]+" does not exist.")
+	sys.exit(1)
 geogebra_version = sys.argv[1]
 unpacked_path = os.path.abspath(sys.argv[2])
 unsigned_path = os.path.abspath(sys.argv[3])
@@ -65,7 +69,8 @@ icons_tar_gz_file_path = os.path.abspath(sys.argv[8])
 install_path = os.path.abspath(sys.argv[9])
 uninstall_path = os.path.abspath(sys.argv[10])
 install_sh_path = os.path.abspath(sys.argv[11])
-destination_path = os.path.abspath(sys.argv[12])
+readme_path = os.path.abspath(sys.argv[12])
+destination_path = os.path.abspath(sys.argv[13])
 if not os.path.isdir(unpacked_path):
 	print("Error: "+unpacked_path+" is not a directory.")
 	sys.exit(1)
@@ -95,6 +100,9 @@ if not os.path.isfile(uninstall_path):
 	sys.exit(1)
 if not os.path.isfile(install_sh_path):
 	print("Error: "+install_sh_path+" is not a file.")
+	sys.exit(1)
+if not os.path.isfile(readme_path):
+	print("Error: "+readme_path+" is not a file.")
 	sys.exit(1)
 if not os.path.isdir(destination_path):
 	print("Error: "+destination_path+" is not a directory.")
@@ -131,6 +139,7 @@ try:
 	shutil.copy(uninstall_path, ".")
 	shutil.copy(install_path, ".")
 	shutil.copy(install_sh_path, ".")
+	shutil.copy(readme_path, ".")
 	os.chdir(temp_dir)
 	geogebra_tar_gz_file = tarfile.open(destination_path+"/geogebra-"+geogebra_version+".tar.gz", "w:gz")
 	try:

@@ -47,6 +47,7 @@ $PYTHON3 ./create_geogebra_linux.py \
  install.sh \
  uninstall.sh \
  install-sh \
+ README \
  ../../../../build
 
 # 4. Copying to installer/ directory (deploying):

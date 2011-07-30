@@ -25,7 +25,7 @@
 ./install-sh -m 644 icons/hicolor/128x128/apps/geogebra.png /usr/share/icons/hicolor/128x128/apps
 ./install-sh -m 644 icons/hicolor/192x192/apps/geogebra.png /usr/share/icons/hicolor/192x192/apps
 ./install-sh -m 644 icons/hicolor/256x256/apps/geogebra.png /usr/share/icons/hicolor/256x256/apps
-./install-sh -m 644 icons/hicolor/scalable/apps/geogebra.svg /usr/share/icons/hicolor/scalable/apps
+./install-sh -m 644 icons/hicolor/scalable/apps/geogebra.svgz /usr/share/icons/hicolor/scalable/apps
 
 ./install-sh -m 644 icons/hicolor/16x16/mimetypes/*.* /usr/share/icons/hicolor/16x16/mimetypes
 ./install-sh -m 644 icons/hicolor/22x22/mimetypes/*.* /usr/share/icons/hicolor/22x22/mimetypes
