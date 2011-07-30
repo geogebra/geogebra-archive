@@ -179,15 +179,11 @@ public class InputDialog extends JDialog implements ActionListener,
 		buttonsPanel = new JPanel(new BorderLayout(5,5));
 		msgLabel = new JLabel(message);
 		
-		if (showProperties) {
+		if (showProperties) 
 			btPanel2.add(btProperties);
-			buttonsPanel.add(btPanel2, BorderLayout.EAST);	
-			buttonsPanel.add(btPanel, BorderLayout.WEST);	
-		}
-		else
-		{
-			buttonsPanel.add(btPanel, BorderLayout.EAST);	
-		}
+		
+		buttonsPanel.add(btPanel2, BorderLayout.WEST);	// used for Help or properties
+		buttonsPanel.add(btPanel, BorderLayout.EAST);	
 		
 		createBtPanel(showApply);
 		
@@ -207,8 +203,7 @@ public class InputDialog extends JDialog implements ActionListener,
 				.getImageIcon("help.png"),app.getMenu("Help"),
 				articleName);
 		btHelp.setAction(helpAction);
-		btPanel.add(btHelp,0);
-		btPanel.add(Box.createRigidArea(new Dimension(80, 0)),1);
+		btPanel2.add(btHelp);
 	}
 	protected void createBtPanel(boolean showApply){
 		btPanel.add(btOK);
