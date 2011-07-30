@@ -689,8 +689,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 					((EuclidianView)view).setYmaxObject(minMax);					
 				}	
 				((EuclidianView)view).setXminObject(view.getXminObject());
-				tfAxesRatioX.setEnabled(view.isZoomable());
-				tfAxesRatioY.setEnabled(view.isZoomable());
+				tfAxesRatioX.setEnabled(view.isZoomable() && !view.isUnitAxesRatio());
+				tfAxesRatioY.setEnabled(view.isZoomable() && !view.isUnitAxesRatio());
 				((EuclidianView)view).updateBounds();
 			}
 		}

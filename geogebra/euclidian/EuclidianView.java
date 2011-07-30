@@ -13,7 +13,6 @@
 package geogebra.euclidian;
 
 import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.AlgoBoxPlot;
@@ -25,10 +24,8 @@ import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
-import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
@@ -45,7 +42,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec2D;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
@@ -79,7 +75,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.Transparency;
-import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -268,7 +263,24 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected Line2D.Double tempLine = new Line2D.Double();
 	protected Ellipse2D.Double circle = new Ellipse2D.Double(); //polar grid circles
+	protected boolean unitAxesRatio;
 	
+	/**
+	 * returns true if the axes ratio is 1
+	 * @return true if the axes ratio is 1
+	 */
+	public boolean isUnitAxesRatio(){
+		return unitAxesRatio || gridType == GRID_POLAR;
+	}
+	/**
+	 * Set unit axes ratio to 1
+	 * @param flag true to set to 1, false to allow user 
+	 */
+	public void setUnitAxesRatio(boolean flag){
+		unitAxesRatio =flag;
+		if(flag)
+			updateBounds();
+	}
 
 	protected static RenderingHints defRenderingHints = new RenderingHints(null);
 	{
@@ -521,8 +533,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		  drawLayers = new DrawableList[MAX_LAYERS+1];
 		  for (int k=0; k <= MAX_LAYERS ; k++) {
 		     drawLayers[k] = new DrawableList();
-		  }
-	
+		  }		  
 		evNo = evno;
 		euclidianController = ec;
 		kernel = ec.getKernel();
@@ -717,7 +728,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * Set grid type.
 	 */
 	public void setGridType(int type) {
-		gridType = type;
+		gridType = type;		
+		if(type == GRID_POLAR)
+			updateBounds();
 	}
 
 	
@@ -1089,8 +1102,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * Converts real world coordinates to screen coordinates.
 	 * Note that MAX_SCREEN_COORD is used to avoid huge coordinates.
 	 * 
-	 * @param inOut: input and output array with x and y coords
-	 * @return: if resulting coords are on screen
+	 * @param inOut input and output array with x and y coords
+	 * @return if resulting coords are on screen
 	 */
 	final public boolean toScreenCoords(double[] inOut) {
 		// convert to screen coords
@@ -1341,10 +1354,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		
 		// record the old coord system
-		double xminTemp = getXmin();
-		double xmaxTemp = getXmax();
-		double yminTemp = getYmin();
-		double ymaxTemp = getYmax();	
 		
 		
 		width = getWidth();
@@ -1354,6 +1363,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		// real world values
 		setRealWorldBounds();
+		updateBounds();
 		
 		
 		// ================================================
@@ -1399,8 +1409,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		xmax = (width - xZero) * invXscale;
 		ymax = yZero * invYscale;
 		ymin = (yZero - height) * invYscale;		
-		updateBoundObjects();
-		updateBounds();
+		updateBoundObjects();			
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 		calcPrintingScale();
@@ -1559,8 +1568,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 
 	/** sets the visibility of x and y axis
-	 * @param showXaxis 
-	 * @param showYaxis
+	 * @param xAxis 
+	 * @param yAxis
 	 * @deprecated use {@link EuclidianViewInterface#setShowAxes(boolean, boolean)} 
 	 * or {@link EuclidianViewInterface#setShowAxis(int, boolean, boolean)} instead
 	 */
@@ -3186,13 +3195,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return foundHits;
 	}
 	
-	protected ArrayList foundHits = new ArrayList();
+	protected ArrayList<GeoElement> foundHits = new ArrayList<GeoElement>();
 	
 	/**
 	 * Returns array of GeoElements whose visual representation is inside of
 	 * the given screen rectangle
+	 * @param rect 
+	 * @return elements drawn inside rectangle
 	 */
-	final public ArrayList getHits(Rectangle rect) {
+	final public ArrayList<GeoElement> getHits(Rectangle rect) {
 		foundHits.clear();		
 		
 		if (rect == null) return foundHits;
@@ -4026,6 +4037,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 */
 	public final void zoomAxesRatio(double newRatio, boolean storeUndo) {
 		if(!isZoomable())
+			return;
+		if(isUnitAxesRatio())
 			return;
 		if (axesRatioZoomer == null)
 			axesRatioZoomer = new MyAxesRatioZoomer();
@@ -5027,16 +5040,30 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return true;
 	}
 	private boolean updatingBounds = false;
-	public void updateBounds() {
+	public void updateBounds() {				
 		if (updatingBounds) return;
 		updatingBounds = true;
 		double xmin2 = xminObject.getDouble();
 		double xmax2 = xmaxObject.getDouble();
 		double ymin2 = yminObject.getDouble();
 		double ymax2 = ymaxObject.getDouble();
+		if(isUnitAxesRatio() && height > 0 && width > 0){			
+			double newWidth = (ymax2 - ymin2)*width/(height+0.0);
+			double newHeight = (xmax2 - xmin2)*height/(width+0.0);
+			
+			if(xmax2-xmin2 < newWidth){
+				double c = (xmin2 + xmax2)/2; 
+				xmin2 =  c - newWidth/2;
+				xmax2 =  c + newWidth/2;				
+			} else {
+				double c = (ymin2 + ymax2)/2;
+				ymin2 = c - newHeight/2;
+				ymax2 = c + newHeight/2;				
+			}			
+		}
 		if((xmax2-xmin2 > kernel.MIN_PRECISION)&&(ymax2-ymin2 > kernel.MIN_PRECISION))
 			setRealWorldCoordSystem(xmin2,xmax2,ymin2,ymax2);
-		updatingBounds = false;
+		updatingBounds = false;		
 	}
 	
 	

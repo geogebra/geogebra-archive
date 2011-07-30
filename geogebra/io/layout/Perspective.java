@@ -50,6 +50,11 @@ public class Perspective {
 	private boolean showAxes;
 	
 	/**
+	 * If the axes should be displayed.
+	 */
+	private boolean unitAxesRatio;
+	
+	/**
 	 * If the input panel should be displayed.
 	 */
 	private boolean showInputPanel;
@@ -151,7 +156,7 @@ public class Perspective {
 	}
 
 	/**
-	 * @param The definition string of the toolbar.
+	 * @param toolbarDefinition The definition string of the toolbar.
 	 */
 	public void setToolbarDefinition(String toolbarDefinition) {
 		this.toolbarDefinition = toolbarDefinition;
@@ -165,7 +170,7 @@ public class Perspective {
 	}
 	
 	/**
-	 * @param If the grid should be displayed in this perspective.
+	 * @param showGrid If the grid should be displayed in this perspective.
 	 */
 	public void setShowGrid(boolean showGrid) {
 		this.showGrid = showGrid;
@@ -273,6 +278,9 @@ public class Perspective {
 			sb.append("\" grid=\"");
 			sb.append(getShowGrid());
 			sb.append("\" />\n");
+			if(isUnitAxesRatio()){
+				sb.append("<unitAxesRatio val=\"true\">");
+			}
 		}
 		
 		sb.append("\t<input show=\"");
@@ -286,5 +294,19 @@ public class Perspective {
 		sb.append("</perspective>\n");
 		
 		return sb.toString();
+	}
+
+	/**
+	 * @param unitAxesRatio the unitAxesRatio to set
+	 */
+	public void setUnitAxesRatio(boolean unitAxesRatio) {
+		this.unitAxesRatio = unitAxesRatio;
+	}
+
+	/**
+	 * @return the unitAxesRatio
+	 */
+	public boolean isUnitAxesRatio() {
+		return unitAxesRatio;
 	}
 }

@@ -21,8 +21,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.jar.Attributes.Name;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -66,7 +64,7 @@ public class Layout {
 	public static Perspective[] defaultPerspectives;
 	
 	/**
-	 * {@link #initialize()} has to be called once in order to use this class.
+	 * {@link #initialize(Application)} has to be called once in order to use this class.
 	 */
 	public Layout() {
 		initializeDefaultPerspectives();
@@ -137,7 +135,7 @@ public class Layout {
 		
 		//defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", true, false, false, false, true, false);
 		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "0 | 40 | 1 | 29 | 15 | 2 | 10 | 3 | 4 | 5 | 16 | 51 | 17 | 36 | 30 | 32 ", true, false, false, false, false, false);
-		
+		defaultPerspectives[1].setUnitAxesRatio(true);
 		// geometry - like basic geometry but with more toolbar entries
 		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, "0 | 40 | 1", true, true, true, true, false, true);
 		
@@ -197,6 +195,7 @@ public class Layout {
 			EuclidianView ev = app.getEuclidianView();
 			ev.setShowAxes(perspective.getShowAxes(), false);
 			ev.showGrid(perspective.getShowGrid());
+			ev.setUnitAxesRatio(perspective.isUnitAxesRatio());
 		}
 		
 		app.getGuiManager().setToolBarDefinition(perspective.getToolbarDefinition());
@@ -248,7 +247,7 @@ public class Layout {
 	 * Create a perspective for the current layout.
 	 * 
 	 * @param id
-	 * @return
+	 * @return a perspective for the current layout.
 	 */
 	public Perspective createPerspective(String id) {
 		if(app == null || dockManager.getRoot() == null)
@@ -309,7 +308,7 @@ public class Layout {
 	/**
 	 * Get all current perspectives as array.
 	 * 
-	 * @return
+	 * @return all current perspectives as array.
 	 */
 	public Perspective[] getPerspectives() {
 		Perspective[] array = new Perspective[perspectives.size()];
@@ -318,7 +317,7 @@ public class Layout {
 
 	/**
 	 * @param index
-	 * @return
+	 * @return perspective at given index
 	 */
 	public Perspective getPerspective(int index) {
 		if(index >= perspectives.size())
@@ -362,9 +361,9 @@ public class Layout {
 	
 	/**
 	 * Return the layout as XML.
+	 * @param sb 
 	 * 
 	 * @param asPreference If the collected data is used for the preferences
-	 * @return
 	 */
 	public void getXml(StringBuilder sb, boolean asPreference) {
 		/**
@@ -412,7 +411,7 @@ public class Layout {
 	 * Checks if the given component is in an external window. Used for key dispatching.
 	 * 
 	 * @param component
-	 * @return
+	 * @return whether the given component is in an external window. Used for key dispatching.
 	 */
 	public boolean inExternalWindow(Component component) {
 		DockPanel[] panels = dockManager.getPanels();

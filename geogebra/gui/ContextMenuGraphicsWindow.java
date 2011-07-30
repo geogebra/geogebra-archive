@@ -59,7 +59,10 @@ implements ActionListener {
     	super(app);	
     }
     
-    /** Creates new ZoomMenu */
+    /** Creates new ZoomMenu 
+     * @param app 
+     * @param px 
+     * @param py */
     public ContextMenuGraphicsWindow(Application app, double px, double py) {  
         this(app);      
         
@@ -119,6 +122,9 @@ implements ActionListener {
         	miShowAllObjectsView.setEnabled(false);
         	miStandardView.setEnabled(false);
         }
+        if(ev.isUnitAxesRatio()){
+        	yaxisMenu.setEnabled(false);
+        }
         JMenuItem miProperties = new JMenuItem(app.getPlain("DrawingPad") + " ...");
         miProperties.setIcon(app.getImageIcon("document-properties.png"));
         miProperties.setActionCommand("properties");
@@ -129,8 +135,7 @@ implements ActionListener {
     
     protected void addAxesAndGridCheckBoxes(){
 
-        // checkboxes for axes and grid
-        EuclidianView ev = app.getEuclidianView();
+        // checkboxes for axes and grid        
         JCheckBoxMenuItem cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());
         //cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
         app.setShowAxesSelected(cbShowAxes);
@@ -211,8 +216,7 @@ implements ActionListener {
         };  
   	    
         // get current axes ratio
-        double scaleRatio = ((EuclidianView)app.getGuiManager().getActiveEuclidianView()).getScaleRatio();
-        Kernel kernel = app.getKernel();
+        double scaleRatio = ((EuclidianView)app.getGuiManager().getActiveEuclidianView()).getScaleRatio();        
         
         JMenuItem mi;		
         //int perc;   	         
@@ -238,7 +242,7 @@ implements ActionListener {
             }                                    
             
             mi = new JCheckBoxMenuItem(sb.toString());           
-            mi.setSelected(kernel.isEqual(axesRatios[i], scaleRatio));
+            mi.setSelected(Kernel.isEqual(axesRatios[i], scaleRatio));
             mi.setActionCommand("" + axesRatios[i]);
             mi.addActionListener(al);           
             mi.setBackground(getBackground());

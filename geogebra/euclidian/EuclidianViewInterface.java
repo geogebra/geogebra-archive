@@ -417,4 +417,10 @@ public interface EuclidianViewInterface {
 	public boolean isMoveable(GeoElement geo);
 
 	public ArrayList<GeoPointND> getStickyPointList();
+	
+	/**
+	 * returns true if the axes ratio is 1
+	 * @return true if the axes ratio is 1
+	 */
+	public boolean isUnitAxesRatio();
 }
