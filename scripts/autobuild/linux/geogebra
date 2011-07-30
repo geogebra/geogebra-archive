@@ -8,7 +8,8 @@
 #
 # GG_SCRIPTNAME=<name of originally called script to start GeoGebra> # If unset, name of this script will be used
 #
-# GG_PATH=<path of directory containing geogebra.jar> # If unset, path of this script will be used
+# GG_PATH=<path of directory containing geogebra.jar> # If unset, path of this script will be used.
+# In this case if the path of script does not contain the geogebra.jar file, /usr/share/geogebra will be used.
 #
 # JAVACMD=<Java command> # If unset, java will be used
 
@@ -105,6 +106,8 @@ if [ -z "$GG_PATH" ]; then
 	cd `dirname ${GG_PATH}` > /dev/null
 	GG_PATH=`pwd`
 	popd > /dev/null
+	
+	test -r "${GG_PATH}/geogebra.jar" || GG_PATH=/usr/share/geogebra
 fi
 
 #---------------------------------------------
