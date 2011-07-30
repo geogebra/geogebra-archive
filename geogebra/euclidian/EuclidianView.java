@@ -2317,7 +2317,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			
 			g2.draw(tempLine);
 
-			if (drawArrows && ymin < 0 && ymax > 0) {
+			if (drawArrows) {
 
 				// draw arrow for x-axis
 				tempLine.setLine(width - arrowAdjust, yCrossPix + 0.5, width - arrowAdjust - arrowSize, yCrossPix
@@ -2446,7 +2446,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				
 			g2.draw(tempLine);
 
-			if (drawArrows && xmin < 0 && xmax > 0) {
+			if (drawArrows) {
 				// draw arrow for y-axis
 				tempLine.setLine(xCrossPix + 0.5, arrowAdjust, xCrossPix - arrowSize, arrowAdjust + arrowSize);
 				g2.draw(tempLine);
