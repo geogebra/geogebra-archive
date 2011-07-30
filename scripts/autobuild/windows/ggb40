@@ -5,7 +5,7 @@
 # FIXME: Filename for this script should be changed.
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
-GGB40_ZIP=../../../../GeoGebra-3.9.x.x-Portable-Windows.zip
+GGB40_ZIP=../../../../GeoGebra-3.9.x.x-Windows-Portable.zip
 # You can also add a variable for that into autobuild.conf.
 
 # Please do not edit below this. (FIXME: the above settings should come from the config file.)
@@ -14,13 +14,15 @@ umask 0002 # trying to ensure g+w rights for all created files automatically
 
 TEMPDIR=/tmp/ggb40
 mkdir -p $TEMPDIR
+
 . ../autobuild.conf
+
 cp $GGB40_ZIP $TEMPDIR
 ZIPFILE=`basename $GGB40_ZIP`
 TARGET_DIR=$WWWDIR/installer
 mkdir -p $TARGET_DIR
 
-GGB40_ZIPVERSION=`echo $GGB40_ZIP | sed 's/[0-9a-zA-Z\.\/]*-//g' | sed 's/_[0-9a-zA-Z\.]*//g'`
+GGB40_ZIPVERSION=`basename $GGB40_ZIP | sed 's/GeoGebra-//g' | sed 's/-Windows-Portable.zip//g'`
 
 VERSION_STRING=`cat ../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
@@ -60,7 +62,7 @@ cd ../..
 rm -f "$DIRNAME.zip" # deleting if a previous version already exists
 zip -r "$DIRNAME.zip" "$DIRNAME" >> /dev/null
 chmod g+w "$DIRNAME.zip"
-# GeoGebra 3.9.209.0.zip -> GeoGebra-Windows-Portable-3-9-209.zip
+# GeoGebra 3.9.209.0.zip -> GeoGebra-Windows-Portable-3-9-209-0.zip
 WINDOWS_ZIP_FINAL=GeoGebra-Windows-Portable-`echo $VERSION_STRING | tr . -`.zip
 mv "$DIRNAME.zip" $WINDOWS_ZIP_FINAL
 cp $WINDOWS_ZIP_FINAL $TARGET_DIR

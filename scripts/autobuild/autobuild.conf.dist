@@ -41,6 +41,10 @@ SVN_COMMAND=/opt/subversion/bin/svn # Luxembourg server
 GC_USER=kovzol
 GC_PASS=xxxxxxxx # This must be changed to the proper password
 
+# The Windows portable version is created based on a template.
+# It can be found in SVN branches/installer/winport/GeoGebra-3.9.x.x-Windows-Portable.zip.
+GGB40_ZIP=/home/kovzol/workspace/GeoGebra-3.9.x.x-Windows-Portable.zip # Linz server
+
 # Please change this if the original .zip file is changing:
 #GGB40MAXIMA_ZIP=/home/zoltan/ggb40maxima/ggb40maxima-3.9.245.0_5.24.0.zip # Linz server
 GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
