@@ -68,7 +68,7 @@ public class AlgoIntegralDefinite extends AlgoElementCAS implements AlgoDrawInfo
         }
 
     
-    AlgoIntegralDefinite(
+    public AlgoIntegralDefinite(
         Construction cons,
         GeoFunction f,
         NumberValue a,

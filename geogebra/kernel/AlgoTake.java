@@ -27,6 +27,11 @@ public class AlgoTake extends AlgoElement {
     private int size;
 
     AlgoTake(Construction cons, String label, GeoList inputList, GeoNumeric m, GeoNumeric n) {
+        this(cons, inputList, m, n);
+        outputList.setLabel(label);
+    }
+
+    public AlgoTake(Construction cons, GeoList inputList, GeoNumeric m, GeoNumeric n) {
         super(cons);
         this.inputList = inputList;
         this.m=m;
@@ -37,7 +42,6 @@ public class AlgoTake extends AlgoElement {
 
         setInputOutput();
         compute();
-        outputList.setLabel(label);
     }
 
     public String getClassName() {

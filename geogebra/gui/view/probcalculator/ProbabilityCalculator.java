@@ -1,20 +1,27 @@
 package geogebra.gui.view.probcalculator;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.util.GeoGebraIcon;
-import geogebra.gui.util.PopupMenuButton;
-import geogebra.gui.view.probcalculator.ProbabilityCalculator.ListSeparatorRenderer;
 import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.kernel.AlgoBarChart;
+import geogebra.kernel.AlgoDependentNumber;
+import geogebra.kernel.AlgoIntegralDefinite;
+import geogebra.kernel.AlgoPointOnPath;
+import geogebra.kernel.AlgoTake;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoAxis;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
@@ -33,30 +40,20 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -533,25 +530,38 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		if(parms == null)
 			parms = ProbabilityManager.getDefaultParameterMap().get(selectedDist);
 
-		parmList = (GeoList) createGeoFromString("{}");
+		parmList = (GeoList) createGeoFromString("{}", null, true);
 		for(int i=0; i < parms.length; i++){
 			parmList.add(new GeoNumeric(cons,parms[i]));
 			//System.out.println("parms:" + i + " " + selectedParameters[i]);
 		}
 
+		
 		//create low point
-		expr = "Point[" + app.getPlain("xAxis") + "]";
-		lowPoint = (GeoPoint) createGeoFromString(expr);
+		
+		GeoAxis path = (GeoAxis)kernel.lookupLabel(app.getPlain("xAxis"));
+		
+		AlgoPointOnPath algoLow = new AlgoPointOnPath(cons, (Path)path, 0d, 0d);
+		cons.removeFromConstructionList(algoLow);
+		
+		lowPoint = (GeoPoint) algoLow.getGeoElements()[0];
+
 		lowPoint.setObjColor(COLOR_POINT);
 		lowPoint.setPointSize(4);
 		lowPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
+		plotGeoList.add(lowPoint);
+		
+		// create high point
+		
+		AlgoPointOnPath algoHigh = new AlgoPointOnPath(cons, (Path)path, 0d, 0d);
+		cons.removeFromConstructionList(algoHigh);
+		
+		highPoint = (GeoPoint) algoHigh.getGeoElements()[0];
 
-
-		//create high point
-		highPoint = (GeoPoint) createGeoFromString(expr);
 		highPoint.setObjColor(COLOR_POINT);
 		highPoint.setPointSize(4);
 		highPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
+		plotGeoList.add(highPoint);
 
 		pointList = new ArrayList<GeoElement>();
 		pointList.add(lowPoint);
@@ -569,32 +579,67 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			// create discrete bar graph and associated lists
 			createDiscreteLists();
-			expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
-			discreteGraph = createGeoFromString(expr);
+			//expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
+			
+			AlgoBarChart algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList);
+			cons.removeFromConstructionList(algoBarChart);
+			
+			//discreteGraph = createGeoFromString(expr);
+			discreteGraph = algoBarChart.getGeoElements()[0];
 			discreteGraph.setObjColor(COLOR_PDF);
 			discreteGraph.setAlphaValue(opacityDiscrete);
 			discreteGraph.setLineThickness(thicknessBarChart);
 			discreteGraph.setFixed(true);
+			plotGeoList.add(discreteGraph);
 
 
 			// create discrete interval bar graph and associated lists
-			expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
-			+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
-			intervalProbList  = (GeoList) createGeoFromString(expr);
+			//expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
+			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
+			//intervalProbList  = (GeoList) createGeoFromString(expr);
+			
+			MyDouble one = new MyDouble(kernel, 1d);
+			
+			ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
+			ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
+			ExpressionNode lowPlusOne = new ExpressionNode(kernel, low, ExpressionNode.PLUS, one);
+			ExpressionNode highPlusOne = new ExpressionNode(kernel, high, ExpressionNode.PLUS, one);				
+			
+			AlgoDependentNumber xLow = new AlgoDependentNumber(cons, lowPlusOne, false);
+			cons.removeFromConstructionList(xLow);
+			AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, highPlusOne, false);
+			cons.removeFromConstructionList(xHigh);
+			
+			AlgoTake take2 = new AlgoTake(cons, (GeoList)discreteProbList, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
+			cons.removeFromConstructionList(take2);
 
+			intervalProbList = (GeoList) take2.getGeoElements()[0];
 
-			expr = "Take[" + discreteValueList.getLabel()  + ", x(" 
-			+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
-			intervalValueList  = (GeoList) createGeoFromString(expr);
+			//expr = "Take[" + discreteValueList.getLabel()  + ", x(" 
+			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
+			//intervalValueList  = (GeoList) createGeoFromString(expr);
+			
+			AlgoTake take = new AlgoTake(cons, (GeoList)discreteValueList, (GeoNumeric) xLow.getGeoElements()[0], (GeoNumeric) xHigh.getGeoElements()[0]);
+			cons.removeFromConstructionList(take);
 
-			expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
+			
+			intervalValueList = (GeoList) take.getGeoElements()[0];
+			
 
+			//expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
+			//discreteIntervalGraph  = createGeoFromString(expr);
+
+			AlgoBarChart barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList);
+			cons.removeFromConstructionList(barChart);
+			
+			discreteIntervalGraph = barChart.getGeoElements()[0];
+			
 			//System.out.println(text);
-			discreteIntervalGraph  = createGeoFromString(expr);
 			discreteIntervalGraph.setObjColor(COLOR_PDF_FILL);
 			discreteIntervalGraph.setAlphaValue(opacityDiscreteInterval);
-			discreteGraph.setLineThickness(thicknessBarChart);
+			discreteIntervalGraph.setLineThickness(thicknessBarChart);
 			discreteIntervalGraph.updateCascade();
+			plotGeoList.add(discreteIntervalGraph);
 
 
 		}else{ 
@@ -604,21 +649,36 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			// create density curve
 			expr = buildDensityCurveExpression(selectedDist);
-			densityCurve = createGeoFromString(expr);
+
+			densityCurve = createGeoFromString(expr, null, true);
+			
+			cons.removeFromConstructionList(densityCurve.getParentAlgorithm());
+			
 			densityCurve.setObjColor(COLOR_PDF);
 			densityCurve.setLineThickness(thicknessCurve);
 			densityCurve.setFixed(true);
 
 
-			// create integral
-			expr = "Integral[" + densityCurve.getLabel() + ", x(" + lowPoint.getLabel() 
-			+ "), x(" + highPoint.getLabel() + ") , false ]";
-
 
 			if(hasIntegral ){
-				integral  = createGeoFromString(expr);
+				GeoBoolean f = new GeoBoolean(cons);
+				f.setValue(false);
+				
+				ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
+				ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
+				
+				AlgoDependentNumber xLow = new AlgoDependentNumber(cons, low, false);
+				cons.removeFromConstructionList(xLow);
+				AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
+				cons.removeFromConstructionList(xHigh);
+				
+				AlgoIntegralDefinite algoIntegral = new AlgoIntegralDefinite(cons, (GeoFunction)densityCurve, (NumberValue) xLow.getGeoElements()[0], (NumberValue) xHigh.getGeoElements()[0], f);
+				cons.removeFromConstructionList(algoIntegral);
+
+				integral = algoIntegral.getGeoElements()[0];
 				integral.setObjColor(COLOR_PDF_FILL);
 				integral.setAlphaValue(opacityIntegral);
+				plotGeoList.add(integral);
 			}
 
 		}
@@ -1255,10 +1315,9 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
-
+			
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(oldSuppressLabelMode);
-
 
 			// set the label
 			// ================================
@@ -1293,7 +1352,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 * @param geo
 	 */
 	private void setProbCalcGeoLabel(GeoElement geo){
-		geo.setLabel(labelPrefix + plotGeoList.size());
+		//geo.setLabel(labelPrefix + plotGeoList.size());
 		//int r = (int) (Math.random()*1e6);
 		//geo.setLabel("pc" + r);
 	}

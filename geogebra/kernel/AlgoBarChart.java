@@ -93,6 +93,11 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 		super(a,vals,borders,N);
 	}
 
+	public AlgoBarChart(Construction cons, GeoList discreteValueList,
+			GeoList discreteProbList) {
+		super(cons, discreteValueList, discreteProbList, true);
+	}
+
 	public String getClassName() {
 		return "AlgoBarChart";
 	}

@@ -25,23 +25,14 @@ public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
     private GeoPoint P; // output      
     private NumberValue param;
 
-    AlgoPointOnPath(
+    public AlgoPointOnPath(
         Construction cons,
         String label,
         Path path,
         double x,
         double y) {
-        super(cons);
-        this.path = path;
-        
-        // create point on path and compute current location
-        P = new GeoPoint(cons);
-        P.setPath(path);
-        setIncidence();
-        
-        P.setCoords(x, y, 1.0);                   
-        
-        setInputOutput(); // for AlgoElement
+    	
+    	this(cons, path, x, y);
        
         P.setLabel(label);
     }
@@ -69,6 +60,20 @@ public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
 		this.param = param;
 		setInputOutput(); // for AlgoElement	       	        
 		compute();		
+	}
+
+	public AlgoPointOnPath(Construction cons, Path path, double x, double y) {
+        super(cons);
+        this.path = path;
+        
+        // create point on path and compute current location
+        P = new GeoPoint(cons);
+        P.setPath(path);
+        setIncidence();
+        
+        P.setCoords(x, y, 1.0);                   
+        
+        setInputOutput(); // for AlgoElement
 	}
 
 	public String getClassName() {

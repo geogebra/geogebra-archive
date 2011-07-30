@@ -345,6 +345,13 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	public AlgoFunctionAreaSums(Construction cons, String label,  
 			   GeoList list1, GeoList list2, boolean dummy) {
 
+		this(cons, list1, list2, dummy);
+		sum.setLabel(label);
+	}
+	
+	public AlgoFunctionAreaSums(Construction cons, 
+			   GeoList list1, GeoList list2, boolean dummy) {
+
 		super(cons);
 		
 		type = TYPE_BARCHART_FREQUENCY_TABLE;
@@ -355,7 +362,6 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		sum = new GeoNumeric(cons); // output
 		setInputOutput(); // for AlgoElement	
 		compute();
-		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
 	/**
