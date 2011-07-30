@@ -5,7 +5,7 @@
 # FIXME: Filename for this script should be changed.
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
-GGB40_ZIP=../../../../GeoGebra-3.9.x.x-Windows-Portable.zip
+GGB40_ZIP=../../../../GeoGebra-Windows-Portable-3-9-x-x.zip
 # You can also add a variable for that into autobuild.conf.
 
 # Please do not edit below this. (FIXME: the above settings should come from the config file.)
@@ -22,7 +22,7 @@ ZIPFILE=`basename $GGB40_ZIP`
 TARGET_DIR=$WWWDIR/installer
 mkdir -p $TARGET_DIR
 
-GGB40_ZIPVERSION=`basename $GGB40_ZIP | sed 's/GeoGebra-//g' | sed 's/-Windows-Portable.zip//g'`
+GGB40_ZIPVERSION=`basename $GGB40_ZIP | sed 's/GeoGebra-Windows-Portable-//g' | sed 's/.zip//g' | tr - .`
 
 VERSION_STRING=`cat ../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
