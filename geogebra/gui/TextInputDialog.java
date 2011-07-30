@@ -146,6 +146,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		this.pack();
 	}
 
+	
+	/*
 	// override because we don't want to set mode to another mode
 	public void windowGainedFocus(WindowEvent arg0) {
 		if (!isModal()) {
@@ -153,7 +155,10 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		}
 		app.getGuiManager().setCurrentTextfield(this, true);
 	}
+	
+	*/
 
+	
 	public void reInitEditor(GeoText text, GeoPoint startPoint) {
 
 		this.startPoint = startPoint;
