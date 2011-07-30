@@ -116,6 +116,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     	if (isDefinedAsTangent) {
     		P  = new GeoPoint[1];
     		P[0] = new GeoPoint(cons);
+    		//Q and D are not defined here
     	} 
     	// standard case
     	else {                	
@@ -177,7 +178,9 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     }
     
     // calc intersections of conic c and line g
-    protected void compute() {  
+    protected void compute() {
+    	// within addIncidenceWithProbabilisticChecking(), updateCascade() is called
+    	// and we don't what this.compute() to be invoked repeatedly.
     	if (handlingSpecialCase) return;
     	
         // g is defined as tangent of c
@@ -211,10 +214,9 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
      * @return true if this special case was handled.
      */
     private boolean handleSpecialCase() {
-    	// check if startpoint or endpoint of line is on conic
+    	// see the use in this.compute() 
     	handlingSpecialCase = true;
     	
-    	GeoPoint pointOnConic = null;    	
     	// When a point incidentally stands on g and c, it may not be considered as special case 
     	/*if (g.startPoint != null && c.isOnPath(g.startPoint, Kernel.MIN_PRECISION)) {    		
     		pointOnConic = g.startPoint;    		
@@ -237,39 +239,56 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     		}
     	} */
     	
+    	GeoPoint existingIntersection = null;    	
+    	
+    	//find a point from conic c on line g
     	ArrayList pointsOnConic = c.getPointsOnConic();
 		if (pointsOnConic != null) {
-	    	if (c.getPointsOnConic().contains(g.startPoint))
-	    		pointOnConic = g.startPoint;
-	    	else if (c.getPointsOnConic().contains(g.endPoint))
-	    		pointOnConic = g.endPoint;
-	    	else {
-	    		int size = pointsOnConic.size();
-	    		for (int i=0; i < size; i++) {
-	    			GeoPoint p = (GeoPoint) pointsOnConic.get(i);
-	    			//if (g.isOnPath(p, Kernel.MIN_PRECISION)) { 
-	    			if (p.isLabelSet() && 
-	    					p.getIncidenceList()!=null && 
-	    					p.getIncidenceList().contains(g)) {
-    					pointOnConic = p;
+			//get a point from pointsOnConic to see if it is on g.
+	    	for (int i=0; i < pointsOnConic.size(); ++i ) {
+	    		GeoPoint p = (GeoPoint) pointsOnConic.get(i);	    
+	    		if (p.isLabelSet()) { //an existing intersection should be a labeled one
+	    			if (p.getIncidenceList()!=null && 
+	    				p.getIncidenceList().contains(g)) {
+	    				existingIntersection = p;
     					break;
     				} else if (p.addIncidenceWithProbabilisticChecking(g)) {
-    					pointOnConic = p;
+    					existingIntersection = p;
     					break;
     				}
 	    		}
 			}
 		}
-		if (pointOnConic == null && g.startPoint != null) {
-			if (g.startPoint.addIncidenceWithProbabilisticChecking(c)) {
-				pointOnConic = g.startPoint;
-			} else if (g.endPoint != null && g.endPoint.addIncidenceWithProbabilisticChecking(c)) {
-				pointOnConic = g.endPoint;
-			}
+    	
+		// if existingIntersection is still not found, find a point from line g on conic c
+		if (existingIntersection == null) {
+		  	ArrayList pointsOnLine = g.getPointsOnLine();
+	    	if (pointsOnLine != null) {
+	    		//get a point from pointsOnLine to see if it is on c.
+	    		for (int i=0; i < pointsOnLine.size(); ++i) {
+	    			GeoPoint p = (GeoPoint) pointsOnLine.get(i);
+	    			if (p.isLabelSet()) { //an existing intersection should be a labeled one
+	    				if (p.getIncidenceList()!=null && 
+	    					p.getIncidenceList().contains(c)) {
+	    					existingIntersection = p;
+	    					break;
+	    				} else if (p.addIncidenceWithProbabilisticChecking(c)) {
+	    					existingIntersection = p;
+	    					break;
+	    				}
+	    			}
+	    		}
+	    	}
 		}
-   
-    	if (pointOnConic == null) {
-    		handlingSpecialCase = false;
+  
+		//TODO: maybe there's a point neither from conic c nor from line g that is an existing intersection!
+		//efficient algorithm for this might only rely on automatic proving
+		
+		//when there is no more ProbabilisticChecking
+		handlingSpecialCase = false;
+		
+		// if existingIntersection is still not found, report no special case handled
+    	if (existingIntersection == null) {
     		return false;
     	}
     		    
@@ -283,7 +302,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         int secondIndex = (firstIndex + 1) % 2;
                 
         if (firstIntersection && didSetIntersectionPoint(firstIndex)) {           
-        	if (!P[firstIndex].isEqual(pointOnConic)) {
+        	if (!P[firstIndex].isEqual(existingIntersection)) {
             	// pointOnConic is NOT equal to the loaded intersection point:
         		// we need to swap the indices
         		int temp = firstIndex;
@@ -296,7 +315,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         } 
         
         // pointOnConic should be first intersection point
-        P[firstIndex].setCoords(pointOnConic);        
+        P[firstIndex].setCoords(existingIntersection);        
         
         // the other intersection point should be the second one
         boolean didSetP1 = false;
@@ -308,7 +327,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	   		}
 	    }   
         if (!didSetP1) // this happens when both intersection points are equal
-        	P[secondIndex].setCoords(pointOnConic); 
+        	P[secondIndex].setCoords(existingIntersection); 
 	   	 
 	   	if (isLimitedPathSituation) {
 	   		// make sure the points are on a limited path
@@ -317,8 +336,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	   				P[i].setUndefined();    			          
 	   	    }     	 
 	   	}	   	
-                          
-	   	handlingSpecialCase = false;
+
 	   	return true;
     }
     

@@ -3242,6 +3242,16 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		return isEndOfQuadric;
 	}
 	
+	public void doRemove() {
 		
+		if (pointsOnConic!=null) {
+			for (int i=0; i<pointsOnConic.size(); ++i) {
+				GeoPoint p = pointsOnConic.get(i);
+				p.removeIncidence(this);
+			}
+		}
+		
+		super.doRemove();
+	}
 	
 }

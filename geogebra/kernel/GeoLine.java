@@ -32,6 +32,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.util.MyMath;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
@@ -379,8 +380,10 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
    
 	public final void setStandardStartPoint() {
 
-		if (startPoint == null)
+		if (startPoint == null) {
 			startPoint = new GeoPoint(cons);
+			startPoint.addIncidence(this);
+		}
 
 		// this way the behaviour of pathChanged and pointChanged remain
 		// the same as if there weren't a startPoint
@@ -406,10 +409,12 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 
     public final void setStartPoint(GeoPoint P) {        	
     	startPoint = P;	    	
+    	P.addIncidence(this);
     }
     
     final void setEndPoint(GeoPoint Q) {    	
     	endPoint = Q;
+    	Q.addIncidence(this);
     }
     
 	/**
@@ -1249,6 +1254,64 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		double z1 = b[2][0] * x + b[2][1] * y + b[2][2] * z;
 		setCoords(x1,y1,z1);
 		
+	}
+	
+	/////////
+	/// for incidence checking
+	/////////
+
+	////////////////////////////////////
+	// FROM GEOCONIC
+	////////////////////////////////////
+	protected ArrayList<GeoPoint> pointsOnLine;
+	/**
+	 * Returns a list of points that this line passes through.
+	 * May return null.
+	 * @return list of points that this line passes through.
+	 */
+	public final ArrayList<GeoPoint> getPointsOnLine() {
+		return pointsOnLine;
+	}
+	
+	/**
+	 * Sets a list of points that this line passes through.
+	 * This method should only be used by AlgoMacro.
+	 * @param points list of points that this line passes through
+	 */
+	public final void setPointsOnLine(ArrayList<GeoPoint> points) {
+		pointsOnLine = points;
+	}
+	
+	/**
+	 * Adds a point to the list of points that this line passes through.
+	 */
+	public final void addPointOnLine(GeoPointND p) {
+		if (pointsOnLine == null)
+			pointsOnLine = new ArrayList<GeoPoint>();
+		
+		if (!pointsOnLine.contains(p))
+			pointsOnLine.add((GeoPoint)p);				
+	}
+	
+	/**
+	 * Removes a point from the list of points that this line passes through.
+	 * @param p Point to be removed
+	 */
+	public final void removePointOnLine(GeoPoint p) {
+		if (pointsOnLine != null)
+			pointsOnLine.remove(p);
+	}
+	
+	public void doRemove() {
+		
+		if (pointsOnLine!=null) {
+			for (int i=0; i<pointsOnLine.size(); ++i) {
+				GeoPoint p = pointsOnLine.get(i);
+				p.removeIncidence(this);
+			}
+		}
+		
+		super.doRemove();
 	}
 	
 }

@@ -1200,10 +1200,23 @@ GeoPointND, Animatable, Transformable  {
 			*/		
 		}
 		
+		//TODO: remove this part because the path should be in incidenceList already.
 		if (path != null) {
 			GeoElement geo = path.toGeoElement();
 			if (geo.isGeoConic()) {
 				((GeoConicND) geo).removePointOnConic(this);
+			}
+		}
+		
+		//TODO: modify this using removeIncidence
+		if (incidenceList!=null) {
+			for (int i=0; i<incidenceList.size(); ++i) {
+				GeoElement geo = incidenceList.get(i);
+				if (geo.isGeoConic()) {
+					((GeoConicND) geo).removePointOnConic(this);
+				} else if (geo instanceof GeoLine) {
+					((GeoLine) geo).removePointOnLine(this);
+				}
 			}
 		}
 		
@@ -1574,21 +1587,45 @@ GeoPointND, Animatable, Transformable  {
 		public void setIncidenceList(ArrayList<GeoElement> list){
 			incidenceList = new ArrayList<GeoElement>(list);
 		}
+		
+		/**
+		 * initialize incidenceList, and add the point itself
+		 * to the list as the first element.
+		 */
 		public void createIncidenceList(){
 			incidenceList = new ArrayList<GeoElement>();
 			incidenceList.add(this);
 		}
+		
+		/**
+		 * add geo to incidenceList of this, and also
+		 * add this to pointsOnConic (when geo is a conic) or
+		 * to pointsOnLine (when geo is a line)
+		 * @param geo
+		 */
 		public void addIncidence(GeoElement geo) {
 			if (incidenceList==null)
 				createIncidenceList();
-			if (!incidenceList.contains(geo)) {
+			if (!incidenceList.contains(geo))
 				incidenceList.add(geo);
-			}
-			if (geo instanceof GeoConicND && ((GeoConicND)geo).getPointsOnConic()!=null) {
-				if (!((GeoConicND)geo).getPointsOnConic().contains(this)) {
-					((GeoConicND)geo).getPointsOnConic().add(this);
-				}
-			}
+			
+			//GeoConicND, GeoLine, GeoPoint are the three types who have an incidence list 
+			if (geo.isGeoConic())
+				((GeoConicND)geo).addPointOnConic(this);
+			else if (geo instanceof GeoLine)
+				((GeoLine)geo).addPointOnLine(this);
+			//TODO: if geo instanceof GeoPoint...
+		}
+		
+		public final void removeIncidence(GeoElement geo) {
+			if (incidenceList!=null)
+				incidenceList.remove(geo);
+			
+			if (geo.isGeoConic())
+				((GeoConicND)geo).removePointOnConic(this);
+			else if (geo instanceof GeoLine)
+				((GeoLine)geo).removePointOnLine(this);
+			//TODO: if geo instanceof GeoPoint...
 		}
 		public boolean addIncidenceWithProbabilisticChecking(GeoElement geo) {
 			boolean incident = false;
@@ -1611,7 +1648,6 @@ GeoPointND, Animatable, Transformable  {
 				}
 				
 				// alter parameters of construction and test if this is still on geo. Do it N times
-				
 				for (int i = 0; i<5; ++i) {
 					it = pred.iterator();
 					while (it.hasNext()) {

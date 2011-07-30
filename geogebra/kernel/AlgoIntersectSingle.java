@@ -68,14 +68,16 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 			point.addIncidence( ((AlgoIntersectConics)algo).getA() );
 			point.addIncidence( ((AlgoIntersectConics)algo).getB() );
 			
-			((GeoConic) ((AlgoIntersectConics)algo).getA()).addPointOnConic(point);
-			((GeoConic) ((AlgoIntersectConics)algo).getB()).addPointOnConic(point);
+			//these two lines are already done in point.addIncidence() 
+			//((GeoConic) ((AlgoIntersectConics)algo).getA()).addPointOnConic(point);
+			//((GeoConic) ((AlgoIntersectConics)algo).getB()).addPointOnConic(point);
 			
 		} else if  (algo instanceof AlgoIntersectLineConic) {
 			point.addIncidence( ((AlgoIntersectLineConic)algo).getLine() );
 			point.addIncidence( ((AlgoIntersectLineConic)algo).getConic() );
 			
-			((AlgoIntersectLineConic)algo).getConic().addPointOnConic(point);
+			//this is already done in point.addIncidence()
+			//((AlgoIntersectLineConic)algo).getConic().addPointOnConic(point);
 		}
 		
 		//points's incidence with one of the intersection points --

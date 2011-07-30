@@ -110,17 +110,14 @@ public class AlgoIntersectConics extends AlgoIntersect {
         initForNearToRelationship();
         compute(); 
         setIncidence();
-        A.addPointOnConic(getIntersectionPoints()[0]);
-        A.addPointOnConic(getIntersectionPoints()[1]);
-        B.addPointOnConic(getIntersectionPoints()[0]);
-        B.addPointOnConic(getIntersectionPoints()[1]);
+
     }
     
     private void setIncidence() {
-    	for (int i=0; i<P.length; ++i) {
-    		P[i].addIncidence(A);
+        for (i=0; i < 4; i++) {
+        	P[i].addIncidence(A);
     		P[i].addIncidence(B);
-    	}
+        }
 	}
 
 	// for AlgoElement
