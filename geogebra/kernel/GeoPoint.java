@@ -1584,7 +1584,7 @@ GeoPointND, Animatable, Transformable  {
 			if (!incidenceList.contains(geo)) {
 				incidenceList.add(geo);
 			}
-			if (geo instanceof GeoConicND) {
+			if (geo instanceof GeoConicND && ((GeoConicND)geo).getPointsOnConic()!=null) {
 				if (!((GeoConicND)geo).getPointsOnConic().contains(this)) {
 					((GeoConicND)geo).getPointsOnConic().add(this);
 				}
