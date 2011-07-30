@@ -1362,8 +1362,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			return;
 		
 		// real world values
-		setRealWorldBounds();
-		updateBounds();
+		setRealWorldBounds();		
 		
 		
 		// ================================================
@@ -1409,7 +1408,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		xmax = (width - xZero) * invXscale;
 		ymax = yZero * invYscale;
 		ymin = (yZero - height) * invYscale;		
-		updateBoundObjects();			
+		updateBoundObjects();
+		updateBounds();	
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 		calcPrintingScale();
@@ -5046,7 +5046,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		double xmin2 = xminObject.getDouble();
 		double xmax2 = xmaxObject.getDouble();
 		double ymin2 = yminObject.getDouble();
-		double ymax2 = ymaxObject.getDouble();
+		double ymax2 = ymaxObject.getDouble();		
 		if(isUnitAxesRatio() && height > 0 && width > 0){			
 			double newWidth = (ymax2 - ymin2)*width/(height+0.0);
 			double newHeight = (xmax2 - xmin2)*height/(width+0.0);
