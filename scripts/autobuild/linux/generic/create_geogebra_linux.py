@@ -12,11 +12,14 @@
 # argument 6: path of file geogebra.xml
 # argument 7: path of file geogebra.desktop
 # argument 8: path of file GeoGebra_hicolor_icons.tar.gz
-# argument 9: path of destination directory
+# argument 9: path of file install.sh
+# argument 10: path of file uninstall.sh
+# argument 11: path of file install-sh
+# argument 12: path of destination directory
 
 import os, shutil, sys, tarfile, tempfile
-if len(sys.argv) != 10:
-	print("Error: Nine arguments are expected.")
+if len(sys.argv) != 13:
+	print("Error: 12 arguments are expected.")
 	sys.exit(1)
 if not os.path.exists(sys.argv[2]):
 	print("Error: "+sys.argv[2]+" does not exist.")
@@ -42,6 +45,15 @@ if not os.path.exists(sys.argv[8]):
 if not os.path.exists(sys.argv[9]):
 	print("Error: "+sys.argv[9]+" does not exist.")
 	sys.exit(1)
+if not os.path.exists(sys.argv[10]):
+	print("Error: "+sys.argv[10]+" does not exist.")
+	sys.exit(1)
+if not os.path.exists(sys.argv[11]):
+	print("Error: "+sys.argv[11]+" does not exist.")
+	sys.exit(1)
+if not os.path.exists(sys.argv[12]):
+	print("Error: "+sys.argv[12]+" does not exist.")
+	sys.exit(1)
 geogebra_version = sys.argv[1]
 unpacked_path = os.path.abspath(sys.argv[2])
 unsigned_path = os.path.abspath(sys.argv[3])
@@ -50,7 +62,10 @@ license_txt_path = os.path.abspath(sys.argv[5])
 geogebra_xml_path = os.path.abspath(sys.argv[6])
 geogebra_desktop_path = os.path.abspath(sys.argv[7])
 icons_tar_gz_file_path = os.path.abspath(sys.argv[8])
-destination_path = os.path.abspath(sys.argv[9])
+install_path = os.path.abspath(sys.argv[9])
+uninstall_path = os.path.abspath(sys.argv[10])
+install_sh_path = os.path.abspath(sys.argv[11])
+destination_path = os.path.abspath(sys.argv[12])
 if not os.path.isdir(unpacked_path):
 	print("Error: "+unpacked_path+" is not a directory.")
 	sys.exit(1)
@@ -71,6 +86,15 @@ if not os.path.isfile(geogebra_desktop_path):
 	sys.exit(1)
 if not os.path.isfile(icons_tar_gz_file_path):
 	print("Error: "+icons_tar_gz_file_path+" is not a file.")
+	sys.exit(1)
+if not os.path.isfile(install_path):
+	print("Error: "+install_path+" is not a file.")
+	sys.exit(1)
+if not os.path.isfile(uninstall_path):
+	print("Error: "+uninstall_path+" is not a file.")
+	sys.exit(1)
+if not os.path.isfile(install_sh_path):
+	print("Error: "+install_sh_path+" is not a file.")
 	sys.exit(1)
 if not os.path.isdir(destination_path):
 	print("Error: "+destination_path+" is not a directory.")
@@ -104,6 +128,9 @@ try:
 	shutil.copy(license_txt_path, ".")
 	shutil.copy(geogebra_xml_path, ".")
 	shutil.copy(geogebra_desktop_path, ".")
+	shutil.copy(uninstall_path, ".")
+	shutil.copy(install_path, ".")
+	shutil.copy(install_sh_path, ".")
 	os.chdir(temp_dir)
 	geogebra_tar_gz_file = tarfile.open(destination_path+"/geogebra-"+geogebra_version+".tar.gz", "w:gz")
 	try:
