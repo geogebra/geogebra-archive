@@ -45,6 +45,13 @@ public class AlgoDotPlot extends AlgoElement {
 	private double[] sortedData;
 
     AlgoDotPlot(Construction cons, String label, GeoList inputList) {
+        
+    	this(cons, inputList);
+    	outputList.setLabel(label);
+        
+    }
+
+    public AlgoDotPlot(Construction cons, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
                
@@ -52,7 +59,6 @@ public class AlgoDotPlot extends AlgoElement {
 
         setInputOutput();
         compute();
-        outputList.setLabel(label);
         
     }
 

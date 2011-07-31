@@ -1,19 +1,17 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.kernel.AlgoSort;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.regex.Matcher;
 
 /**
@@ -570,7 +568,8 @@ public class CellRangeProcessor {
 			boolean isSorted, boolean doStoreUndo, Integer geoTypeFilter) {
 
 		GeoElement[] geos = null;
-		StringBuilder listString = new StringBuilder();
+		//StringBuilder listString = new StringBuilder();
+		GeoList geoList = new GeoList(cons);
 		ArrayList<String> list = new ArrayList<String>();
 		ArrayList<Point> cellList = new ArrayList<Point>();
 
@@ -588,7 +587,7 @@ public class CellRangeProcessor {
 			}
 			 */
 
-			listString.append("{");
+			//listString.append("{");
 
 			// create cellList: this holds a list of cell index pairs for the entire range
 			for(CellRange cr:rangeList){
@@ -601,12 +600,14 @@ public class CellRangeProcessor {
 					GeoElement geo = RelativeCopy.getValue(table, cell.x, cell.y);
 					if (geo != null && (geoTypeFilter == null || geo.getGeoClassType() == geoTypeFilter)){
 						if(copyByValue)
-							listString.append(geo.toDefinedValueString());
+							//listString.append(geo.toDefinedValueString());
+							geoList.add(geo.copy());
 						else
-							listString.append(geo.getLabel());
+							//listString.append(geo.getLabel());
+							geoList.add(geo);
 
 						//listString.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
-						listString.append(",");
+						//listString.append(",");
 					}
 
 					usedCells.add(cell);
@@ -614,21 +615,24 @@ public class CellRangeProcessor {
 			}
 
 			// remove last comma
-			if(listString.length()>1)
-				listString.deleteCharAt(listString.length()-1);
+			//if(listString.length()>1)
+			//	listString.deleteCharAt(listString.length()-1);
 
-			listString.append("}");
+			//listString.append("}");
 
 			if(isSorted){
-				listString.insert(0, "Sort[" );
-				listString.append("]");
+				//listString.insert(0, "Sort[" );
+				//listString.append("]");
+				AlgoSort algo = new AlgoSort(cons, geoList);
+				cons.removeFromConstructionList(algo);
+				return algo.getGeoElements()[0];
 			}
 
 
 			//Application.debug(listString);
 			// convert list string to geo
-			geos = table.kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptions(listString.toString(), false);
+			//geos = table.kernel.getAlgebraProcessor()
+			//.processAlgebraCommandNoExceptions(listString.toString(), false);
 
 
 
@@ -639,8 +643,8 @@ public class CellRangeProcessor {
 		if(doStoreUndo)
 			app.storeUndoInfo();
 
-		if(geos != null)
-			return geos[0];
+		if(geoList != null)
+			return geoList;
 		else 
 			return null;
 

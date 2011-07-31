@@ -30,6 +30,11 @@ public class AlgoSort extends AlgoElement {
     private int size;
 
     AlgoSort(Construction cons, String label, GeoList inputList) {
+        this(cons, inputList);
+        outputList.setLabel(label);
+    }
+
+    public AlgoSort(Construction cons, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
                
@@ -37,7 +42,6 @@ public class AlgoSort extends AlgoElement {
 
         setInputOutput();
         compute();
-        outputList.setLabel(label);
     }
 
     public String getClassName() {

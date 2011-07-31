@@ -2,10 +2,12 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoClasses;
+import geogebra.kernel.AlgoDotPlot;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFrequencyPolygon;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoHistogram;
+import geogebra.kernel.AlgoNormalQuantilePlot;
 import geogebra.kernel.AlgoResidualPlot;
 import geogebra.kernel.AlgoText;
 import geogebra.kernel.Construction;
@@ -406,11 +408,16 @@ public class StatGeo   {
 
 	public GeoElement createDotPlot(GeoList dataList){
 
-		String label = dataList.getLabel();	
-		GeoElement geo;
+		//String label = dataList.getLabel();	
+		//GeoElement geo;
 
-		String text = "DotPlot[" + label + "]";
-		geo  = createGeoFromString(text);
+		//String text = "DotPlot[" + label + "]";
+		//geo  = createGeoFromString(text);
+		
+		AlgoDotPlot dp = new AlgoDotPlot(cons, dataList);
+		cons.removeFromConstructionList(dp);
+		GeoElement geo = dp.getGeoElements()[0];
+		
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
 
@@ -440,11 +447,16 @@ public class StatGeo   {
 	
 	public GeoElement createNormalQuantilePlot(GeoList dataList){
 
-		String label = dataList.getLabel();	
-		GeoElement geo;
+		//String label = dataList.getLabel();	
+		//GeoElement geo;
 
-		String text = "NormalQuantilePlot[" + label + "]";
-		geo  = createGeoFromString(text);
+		//String text = "NormalQuantilePlot[" + label + "]";
+		//geo  = createGeoFromString(text);
+		
+		AlgoNormalQuantilePlot qp = new AlgoNormalQuantilePlot(cons, dataList);
+		cons.removeFromConstructionList(qp);
+		GeoElement geo = qp.getGeoElements()[0];		
+		
 		geo.setObjColor(StatDialog.NQPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
 
@@ -480,7 +492,7 @@ public class StatGeo   {
 		// copy the dataList geo
 		GeoList geo = new GeoList(cons);
 		geo.setAuxiliaryObject(true);
-		geo.setLabel("scatterPlotPointList");
+		//geo.setLabel("scatterPlotPointList");
 
 		for(int i=0; i<dataList.size(); ++i)
 			geo.add(dataList.get(i));	
