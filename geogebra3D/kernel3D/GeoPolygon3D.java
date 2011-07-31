@@ -571,6 +571,8 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return getCoordSys().getNormal();
 	}
 	
-	
+	public void calcArea() {
+		//TODO
+	}
 	
 }
