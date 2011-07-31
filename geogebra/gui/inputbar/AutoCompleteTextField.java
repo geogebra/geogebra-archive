@@ -298,7 +298,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	    			} else {
 	    				
 		                updateCurrentWord();
-		                Application.debug(curWord);
 		                String lowerCurWord = curWord.toString().toLowerCase();
 		                String closest = dict.lookup(lowerCurWord);
 		                if (closest != null && lowerCurWord.equals(closest.toLowerCase()))		                
