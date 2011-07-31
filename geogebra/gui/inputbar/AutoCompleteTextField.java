@@ -679,8 +679,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if (completions == null || index < 0 || index >= completions.size()) {
 			return false;
 		}
-		Application.debug(index);
-		Application.debug(completions);
 		String command = completions.get(index);
 		String text = getText();
 		StringBuilder sb = new StringBuilder();
