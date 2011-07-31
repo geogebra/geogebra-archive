@@ -298,6 +298,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	    			} else {
 	    				
 		                updateCurrentWord();
+		                Application.debug(curWord);
 		                String lowerCurWord = curWord.toString().toLowerCase();
 		                String closest = dict.lookup(lowerCurWord);
 		                if (closest != null && lowerCurWord.equals(closest.toLowerCase()))		                
@@ -586,7 +587,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// search to the left
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
-				isLetterOrDigit( text.charAt(curWordStart))) {
+				isLetterOrDigitOrOpenBracket( text.charAt(curWordStart))) {
 			--curWordStart;     
 		}
 		curWordStart++;
@@ -598,6 +599,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		curWord.setLength(0);
 		curWord.append(text.substring(curWordStart, curWordEnd));
+		
+		// remove '[' at end
+		if (curWord.charAt(curWord.length() - 1) == '[')
+			curWord.setLength(curWord.length() - 1);
 	}
 
 	// returns the word at position pos in text
@@ -622,6 +627,17 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	private static boolean isLetterOrDigit(char character) {
 		switch (character) {
+		case '_':  // allow underscore as a valid letter in an autocompletion word
+			return true;
+
+		default:
+			return Character.isLetterOrDigit(character);
+		}
+	}
+	
+	private static boolean isLetterOrDigitOrOpenBracket(char character) {
+		switch (character) {
+		case '[':  
 		case '_':  // allow underscore as a valid letter in an autocompletion word
 			return true;
 
