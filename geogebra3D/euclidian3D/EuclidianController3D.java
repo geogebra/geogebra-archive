@@ -449,7 +449,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	protected GeoPointND getNewPoint(Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
-			boolean doSingleHighlighting) {
+			boolean doSingleHighlighting, boolean complex) {
 		
 				
 		GeoPoint3D point = view3D.getCursor3D();
@@ -590,7 +590,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * create a new free point
 	 * or update the preview point
 	 */
-	protected GeoPointND createNewPoint(boolean forPreviewable){
+	protected GeoPointND createNewPoint(boolean forPreviewable, boolean complex){
 		
 		GeoPoint3D point3D;
 		
@@ -1504,7 +1504,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	///////////////////////////////////////////
 	// MOUSE PRESSED
 	
-	protected void createNewPointForModePoint(Hits hits){
+	protected void createNewPointForModePoint(Hits hits, boolean complex){
 		createNewPoint(hits, true, true, true, true, false);
 	}
 	
