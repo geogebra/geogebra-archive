@@ -66,13 +66,15 @@ public class DrawLine extends Drawable implements Previewable {
 	protected boolean labelVisible;
     
     private ArrayList<GeoPointND> points;// for preview
-    private ArrayList lines; // for preview
+    private ArrayList<GeoLineND> lines; // for preview
     private GeoPointND startPoint, previewPoint2;
    
     // clipping attributes
     private boolean [] attr1 = new boolean[4], attr2 = new boolean[4];
     
-    /** Creates new DrawLine */
+    /** Creates new DrawLine 
+     * @param view 
+     * @param g */
     public DrawLine(EuclidianView view, GeoLineND g) {      
     	this.view = view;   
     	hitThreshold = view.getCapturingThreshold();
@@ -83,6 +85,9 @@ public class DrawLine extends Drawable implements Previewable {
     
 	/**
 	 * Creates a new DrawLine for preview.     
+	 * @param view 
+	 * @param points 
+	 * @param previewMode 
 	 */
 	DrawLine(EuclidianView view, ArrayList<GeoPointND> points, int previewMode) {
 		this.previewMode = previewMode;
@@ -99,10 +104,14 @@ public class DrawLine extends Drawable implements Previewable {
 	int previewMode = PREVIEW_NONE;
     
 	/**
-	 * Creates a new DrawLine for preview of parallel tool  
+	 * Creates a new DrawLine for preview of parallel or perpendicular tool  
+	 * @param view 
+	 * @param points 
+	 * @param lines 
+	 * @param parallel true for paralel, false for perpendicular
 	 */
     public DrawLine(EuclidianView view, ArrayList<GeoPointND> points,
-			ArrayList lines, boolean parallel) {
+			ArrayList<GeoLineND> lines, boolean parallel) {
     	if (parallel) previewMode = PREVIEW_PARALLEL;
     	else previewMode = PREVIEW_PERPENDICULAR;
 		this.view = view; 
@@ -439,7 +448,7 @@ public class DrawLine extends Drawable implements Previewable {
 				
 			case PREVIEW_PARALLEL:
 			    // calc the line g through (xRW,yRW) and perpendicular to l
-				GeoLineND lND = (GeoLineND)lines.get(0);
+				GeoLineND lND = lines.get(0);
 				GeoLine l;
 				Coords equation = lND.getCartesianEquationVector(view.getMatrix());
 				GeoVec3D.cross(xRW, yRW, 1.0, equation.getY(), -equation.getX(), 0.0, ((GeoLine) g));

@@ -67,6 +67,8 @@ implements Previewable {
     
 	/**
 	 * Creates a new DrawSegment for preview.     
+	 * @param view 
+	 * @param points 
 	 */
 	DrawRay(EuclidianView view, ArrayList<GeoPointND> points) {
 		this.view = view; 

@@ -44,7 +44,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 
 	private GeneralPathClipped gp;
 	private double[] coords = new double[2];
-	private ArrayList<GeoPoint> points;
+	private ArrayList<GeoPointND> points;
 
 	/**
 	 * Creates new DrawPolygon
@@ -71,7 +71,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	 * @param points
 	 *            vertices
 	 */
-	DrawPolygon(EuclidianView view, ArrayList<GeoPoint> points) {
+	DrawPolygon(EuclidianView view, ArrayList<GeoPointND> points) {
 		this.view = view;
 		this.points = points;
 
@@ -194,7 +194,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 		if (isVisible) {
 			GeoPointND[] pointsArray = new GeoPointND[size];
 			for (int i = 0; i < size; i++) {
-				pointsArray[i] = (GeoPointND) points.get(i);
+				pointsArray[i] = points.get(i);
 			}
 			addPointsToPath(pointsArray);
 		}

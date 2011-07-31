@@ -1,19 +1,16 @@
 package geogebra.euclidian;
 
 import geogebra.kernel.AlgoElement;
-import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.kernelND.GeoDirectionND;
-import geogebra.kernel.kernelND.GeoPlaneND;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -248,14 +245,14 @@ public interface EuclidianViewInterface {
 	 * @param selectedPoints points
 	 * @return the line previewable
 	 */
-	public Previewable createPreviewLine(ArrayList selectedPoints);
+	public Previewable createPreviewLine(ArrayList<GeoPointND> selectedPoints);
 	
 	/**
 	 * create a previewable for segment construction
 	 * @param selectedPoints points
 	 * @return the segment previewable
 	 */	
-	public Previewable createPreviewSegment(ArrayList selectedPoints);
+	public Previewable createPreviewSegment(ArrayList<GeoPointND> selectedPoints);
 	
 	
 	/**
@@ -263,7 +260,7 @@ public interface EuclidianViewInterface {
 	 * @param selectedPoints points
 	 * @return the ray previewable
 	 */	
-	public Previewable createPreviewRay(ArrayList selectedPoints);
+	public Previewable createPreviewRay(ArrayList<GeoPointND> selectedPoints);
 
 	
 	/**
@@ -271,14 +268,14 @@ public interface EuclidianViewInterface {
 	 * @param selectedPoints points
 	 * @return the ray previewable
 	 */	
-	public Previewable createPreviewVector(ArrayList selectedPoints);
+	public Previewable createPreviewVector(ArrayList<GeoPointND> selectedPoints);
 
 	/**
 	 * create a previewable for polygon construction
 	 * @param selectedPoints points
 	 * @return the polygon previewable
 	 */		
-	public Previewable createPreviewPolygon(ArrayList selectedPoints);
+	public Previewable createPreviewPolygon(ArrayList<GeoPointND> selectedPoints);
 	
 
 	/**
@@ -286,7 +283,7 @@ public interface EuclidianViewInterface {
 	 * @param selectedPoints points
 	 * @return the polygon previewable
 	 */		
-	public Previewable createPreviewPolyLine(ArrayList selectedPoints);
+	public Previewable createPreviewPolyLine(ArrayList<GeoPointND> selectedPoints);
 	
 	/**
 	 * create a previewable for conic construction
@@ -294,7 +291,7 @@ public interface EuclidianViewInterface {
 	 * @param selectedPoints points
 	 * @return the conic previewable
 	 */		
-	public Previewable createPreviewConic(int mode, ArrayList selectedPoints);
+	public Previewable createPreviewConic(int mode, ArrayList<GeoPointND> selectedPoints);
 	
 
 
@@ -303,12 +300,12 @@ public interface EuclidianViewInterface {
 	
 	public void mouseEntered();
 	public void mouseExited();
-	public Previewable createPreviewParallelLine(ArrayList selectedPoints,
-			ArrayList selectedLines);
-	public Previewable createPreviewPerpendicularLine(ArrayList selectedPoints,
-			ArrayList selectedLines);
-	public Previewable createPreviewPerpendicularBisector(ArrayList selectedPoints);
-	public Previewable createPreviewAngleBisector(ArrayList selectedPoints);
+	public Previewable createPreviewParallelLine(ArrayList<GeoPointND> selectedPoints,
+			ArrayList<GeoLineND> selectedLines);
+	public Previewable createPreviewPerpendicularLine(ArrayList<GeoPointND> selectedPoints,
+			ArrayList<GeoLineND> selectedLines);
+	public Previewable createPreviewPerpendicularBisector(ArrayList<GeoPointND> selectedPoints);
+	public Previewable createPreviewAngleBisector(ArrayList<GeoPointND> selectedPoints);
 	
 	
 	
@@ -386,7 +383,7 @@ public interface EuclidianViewInterface {
 	 * @return string translated description of plane from the view was created
 	 */
 	public String getTranslatedFromPlaneString();
-	public Previewable createPreviewAngle(ArrayList selectedPoints);
+	public Previewable createPreviewAngle(ArrayList<GeoPointND> selectedPoints);
 
 	
 	/**

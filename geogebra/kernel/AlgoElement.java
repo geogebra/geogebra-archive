@@ -220,6 +220,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		 * add the geos list to the output
 		 * @param geos
 		 * @param setDependencies says if the dependencies have to be set for this output
+		 * @param refresh if true, output array is recomputed using outputhandler
 		 */
 		public void addOutput(T[] geos, boolean setDependencies, boolean refresh){
 			for (int i=0; i<geos.length; i++){
@@ -433,15 +434,16 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	 * Updates all AlgoElements in the given ArrayList.
 	 * Note: this method is more efficient than calling 
 	 * updateCascade() for all individual AlgoElements.
+     * @param algos 
 	 */
-	public static void updateCascadeAlgos(ArrayList algos) {
+	public static void updateCascadeAlgos(ArrayList<AlgoElement> algos) {
 		if (algos == null) return;		
 		int size = algos.size();
 		if (size == 0) return;
 		
-		ArrayList geos = new ArrayList();
+		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
 		for (int i=0; i < size; i++) {
-			AlgoElement algo = (AlgoElement) algos.get(i);
+			AlgoElement algo = algos.get(i);
 			algo.compute();
 			for (int j=0; j < algo.getOutputLength(); j++) {
 				algo.getOutput(j).update();
@@ -453,10 +455,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		GeoElement.updateCascade(geos, getTempSet());
 	}
 	
-	private static TreeSet tempSet;	
-	private static TreeSet getTempSet() {
+	private static TreeSet<AlgoElement> tempSet;	
+	private static TreeSet<AlgoElement> getTempSet() {
 		if (tempSet == null) {
-			tempSet = new TreeSet();
+			tempSet = new TreeSet<AlgoElement>();
 		}
 		return tempSet;
 	}   
@@ -484,7 +486,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      *  called by every algorithm in topological order
      *  (i.e. possible helper algos call this method before
      *  the using algo does).
-     * @see setInputOutput()
+     * @see #setInputOutput()
      */
     final protected void setDependencies() {  
         // dependents on input
@@ -507,12 +509,12 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * is called.
      */
     private void setRandomUnlabeledInput() {
-    	ArrayList tempList = null;
+    	ArrayList<GeoNumeric> tempList = null;
         for (int i = 0; i < input.length; i++) {  
        	 if (input[i].isGeoNumeric() && !input[i].isLabelSet()) {
        		 GeoNumeric num = (GeoNumeric) input[i];
        		 if (num.isRandomGeo()) {
-       			 if (tempList == null) tempList = new ArrayList();
+       			 if (tempList == null) tempList = new ArrayList<GeoNumeric>();
        			 tempList.add(num);
        		 }
        	 }
@@ -579,31 +581,6 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }
     
     
-    /**
-     * add new geos to output list
-     * @param newOutputs
-     */
-    /* not used anymore : see AlgoElementResizeableOutput
-    public void addToOutputList(GeoElement[] newOutputs){
-    	
-    	//save old outputs
-    	GeoElement[] oldOutputs = output;
-    	
-    	//create new complet outputs list
-    	output = new GeoElement[oldOutputs.length+newOutputs.length];
-    	
-    	//copy old outputs
-    	for (int i=0; i<oldOutputs.length; i++)
-    		output[i] = oldOutputs[i];
-    	
-    	//add new outputs and register them
-    	for (int i=0; i<newOutputs.length; i++){
-    		output[oldOutputs.length+i] = newOutputs[i];
-    	}
-    	
-    	
-    }
-    */
     
     
        
@@ -638,6 +615,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     /**
      * Tells this algorithm to react on the deletion
      * of one of its outputs. 
+     * @param output 
      */
     void remove(GeoElement output) {
     	remove();
@@ -646,6 +624,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     /**
      * Calls doRemove() for all output objects of this
      * algorithm except for keepGeo.
+     * @param keepGeo 
      */
     void removeOutputExcept(GeoElement keepGeo) {
     	
@@ -681,6 +660,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     /** 
      * Returns whether all output objects have
      * the same type.     
+     * @return whether all outputs have the same type
      */
     final public boolean hasSingleOutputType() {
     	int type = getOutput(0).getGeoClassType();
@@ -763,7 +743,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      */ 
     public int getMaxConstructionIndex() {            	
          // index is less than minimum of all dependent algorithm's index of all output
-         ArrayList algoList;
+         ArrayList<ConstructionElement> algoList;
          int size, index;
          int min = cons.steps();                        
          for (int k=0; k < getOutputLength(); ++k) {
@@ -781,9 +761,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * Returns all independent predecessors (of type GeoElement) that this algo depends on.
      * The predecessors are sorted topologically.
      */
-    final public TreeSet getAllIndependentPredecessors() {
+    final public TreeSet<GeoElement> getAllIndependentPredecessors() {
         //  return predecessors of any output, i.e. the inputs of this algo
-        TreeSet set = new TreeSet();
+        TreeSet<GeoElement> set = new TreeSet<GeoElement>();
         addPredecessorsToSet(set, true);
         return set;
     }
@@ -791,7 +771,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     //  adds all predecessors of this object to the given list
     // the set is kept topologically sorted 
     // @param onlyIndependent: whether only indpendent geos should be added
-    final void addPredecessorsToSet(TreeSet set, boolean onlyIndependent) {
+    final void addPredecessorsToSet(TreeSet<GeoElement> set, boolean onlyIndependent) {
         for (int i = 0; i < input.length; i++) {
             GeoElement parent = input[i];
 
@@ -804,7 +784,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         }
     }
     
-    final void addRandomizablePredecessorsToSet(TreeSet set) {
+    final void addRandomizablePredecessorsToSet(TreeSet<GeoElement> set) {
         for (int i = 0; i < input.length; i++) {
             GeoElement parent = input[i];
 
@@ -817,26 +797,28 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
     /**
 	 * Returns all moveable input points of this algorithm.	 
+     * @return list of moveable input points
 	 */   
-    public ArrayList getFreeInputPoints() {
+    public ArrayList<GeoPoint> getFreeInputPoints() {
 		if (freeInputPoints == null) {				
-			freeInputPoints = new ArrayList(input.length);
+			freeInputPoints = new ArrayList<GeoPoint>(input.length);
 			
 			// don't use free points from dependent algos with expression trees 			
 			if (!getClassName().startsWith("AlgoDependent")) {							
 				for (int i=0; i < input.length; i++) {				
 					if (input[i].isGeoPoint() && input[i].isIndependent())
-						freeInputPoints.add(input[i]);	
+						freeInputPoints.add((GeoPoint)input[i]);	
 				}				
 			}
 		}
 	
 		return freeInputPoints;
     }
-    private ArrayList freeInputPoints;
+    private ArrayList<GeoPoint> freeInputPoints;
     
     /**
 	 * Returns all input points of this algorithm.	 
+     * @return list of input points
 	 */
     public ArrayList<GeoPoint> getInputPoints() {	
     	if (inputPoints == null) {
@@ -928,12 +910,11 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	/**
      * translate class name to internal command name
      * GeoGebra File Format
+	 * @return internal command name
      */
     public String getCommandName() {
         String cmdname, classname;
         // get class name
-        //classname = this.getClass().toString();
-        //classname = classname.substring(classname.lastIndexOf('.') + 1);
         classname = getClassName();
         // dependent algorithm is an "Expression"
         if (classname.startsWith("AlgoDependent")) {
@@ -948,6 +929,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     /**
      * translate class name to Intergeo name
      * Intergeo File Format (Yves Kreis)
+     * @return intergeo command name
      */
     String getIntergeoName() {
         String cmdname, classname;
@@ -988,8 +970,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         if (!isPrintedInXML) return; 
         
         // turn off eg Arabic digits
-        boolean oldDigitsSetting = kernel.internationalizeDigits;
-        kernel.internationalizeDigits = false;
+        boolean oldDigitsSetting = Kernel.internationalizeDigits;
+        Kernel.internationalizeDigits = false;
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isPrintLocalizedCommandNames();
@@ -1012,7 +994,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         
         kernel.setPrintLocalizedCommandNames(oldValue);      
         
-        kernel.internationalizeDigits = oldDigitsSetting;
+        Kernel.internationalizeDigits = oldDigitsSetting;
 
     }
     
@@ -1222,6 +1204,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     /**
      * Sets whether the output of this command should
      * be labeled. This setting is used for getXML().
+     * @param flag 
      */
     public void setPrintedInXML(boolean flag) {
         isPrintedInXML = flag;
@@ -1258,6 +1241,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
 	/**
 	 * Makes sure that this algorithm will be updated after the given parentAlgorithm. 
+	 * @param updateAfterAlgo 
 	 * @see #getUpdateAfterAlgo()
 	 */
 	final public void setUpdateAfterAlgo(AlgoElement updateAfterAlgo) {

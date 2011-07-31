@@ -470,7 +470,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	protected double printingScale;
 
 	// Map (geo, drawable) for GeoElements and Drawables
-	protected HashMap DrawableMap = new HashMap(500);
+	protected HashMap<GeoElement,Drawable> DrawableMap = new HashMap<GeoElement,Drawable>(500);
 	
 	protected ArrayList<GeoPointND> stickyPointList = new ArrayList<GeoPointND>();
 
@@ -525,6 +525,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Creates EuclidianView
+	 * @param ec controller
+	 * @param showAxes 
+	 * @param showGrid 
+	 * @param evno number of this view 
 	 */
 	public EuclidianView(EuclidianController ec, boolean[] showAxes,
 			boolean showGrid, int evno) {
@@ -763,6 +767,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Sets the global size for checkboxes.
 	 * Michael Borcherds 2008-05-12
+	 * @param size 13 or 26
 	 */
 	public void setBooleanSize(int size) {
 
@@ -778,6 +783,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	/**
 	 * Sets the global style for point drawing.
+	 * @param style 
 	 */
 	public void setPointStyle(int style) {
 		if (style > 0 && style <= MAX_POINT_STYLE)
@@ -795,6 +801,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	// added by Loic BEGIN
 	/**
 	 * Sets the global style for rightAngle drawing.
+	 * @param style 
 	 */
 	public void setRightAngleStyle(int style) {
 		rightAngleStyle = style;
@@ -835,6 +842,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Creates a stroke with thickness width, dashed according to line style
 	 * type.
+	 * @param width 
+	 * @param type 
+	 * @return stroke
 	 */
 	public static BasicStroke getStroke(float width, int type) {
 		float[] dash;
@@ -1030,7 +1040,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * convert real world coordinate x to screen coordinate x
 	 * 
 	 * @param xRW
-	 * @return
+	 * @return screen equivalent of real world x-coord
 	 */
 	final public int toScreenCoordX(double xRW) {
 		return (int) Math.round(xZero + xRW * xscale);
@@ -1040,7 +1050,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * convert real world coordinate y to screen coordinate y
 	 * 
 	 * @param yRW
-	 * @return
+	 * @return screen equivalent of real world y-coord
 	 */
 	final public int toScreenCoordY(double yRW) {
 		return (int) Math.round(yZero - yRW * yscale);
@@ -1050,7 +1060,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * convert real world coordinate x to screen coordinate x
 	 * 
 	 * @param xRW
-	 * @return
+	 * @return screen equivalent of real world x-coord as double
 	 */
 	final public double toScreenCoordXd(double xRW) {
 		return xZero + xRW * xscale;
@@ -1060,7 +1070,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * convert real world coordinate y to screen coordinate y
 	 * 
 	 * @param yRW
-	 * @return
+	 * @return screen equivalent of real world y-coord
 	 */
 	final public double toScreenCoordYd(double yRW) {
 		return yZero - yRW * yscale;
@@ -1071,7 +1081,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * outside the screen it is clipped to one pixel outside.
 	 * 
 	 * @param xRW
-	 * @return
+	 * @return real world coordinate x to screen coordinate x clipped to screen
 	 */
 	final public int toClippedScreenCoordX(double xRW) {
 		if (xRW > xmax)
@@ -1087,7 +1097,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * outside the screen it is clipped to one pixel outside.
 	 * 
 	 * @param yRW
-	 * @return
+	 * @return real world coordinate y to screen coordinate x clipped to screen
 	 */
 	final public int toClippedScreenCoordY(double yRW) {
 		if (yRW > ymax)
@@ -1148,7 +1158,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Checks if (screen) coords are on screen.
 	 * @param coords
-	 * @return
+	 * @return true if coords are on screen
 	 */
 	final public boolean isOnScreen(double [] coords) {
 		return coords[0] >= 0 && coords[0] <= width && coords[1] >=0 && coords[1] <= height;
@@ -1197,7 +1207,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * convert screen coordinate x to real world coordinate x
 	 * 
 	 * @param x
-	 * @return
+	 * @return real world equivalent of screen x-coord
 	 */
 	final public double toRealWorldCoordX(double x) {
 		return (x - xZero) * invXscale;
@@ -1207,7 +1217,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * convert screen coordinate y to real world coordinate y
 	 * 
 	 * @param y
-	 * @return
+	 * @return real world equivalent of screen y-coord
 	 */
 	final public double toRealWorldCoordY(double y) {
 		return (yZero - y) * invYscale;
@@ -1501,6 +1511,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Returns the ratio yscale / xscale of this view. The scale is the number
 	 * of pixels in screen space that represent one unit in user space.
+	 * @return yscale / xscale ratio
 	 */
 	public double getScaleRatio() {
 		return yscale / xscale;
@@ -1807,17 +1818,20 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		}
 	}
 
-	/**
-	 * Scales construction and draws it to g2d.
-	 * 
-	 * @param forEPS:
-	 *            states if export should be optimized for eps. Note: if this is
-	 *            set to true, no traces are drawn.
-	 * 
-	 */
+	
 	public void exportPaint(Graphics2D g2d, double scale) {
 		exportPaint(g2d, scale, false);
 	}
+	/**
+	 * Scales construction and draws it to g2d.
+	 * @param g2d 
+	 * @param scale 
+	 * 
+	 * @param transparency
+	 *            states if export should be optimized for eps. Note: if this is
+	 *            set to false, no traces are drawn.
+	 * 
+	 */
 	public void exportPaint(Graphics2D g2d, double scale, boolean transparency) {
 		Drawable.exporting = true;
 		exportPaintPre(g2d,scale, transparency);
@@ -1890,6 +1904,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Tells if there are any traces in the background image.
+	 * @return true if there are any traces in background
 	 */
 	protected boolean isTracing() {
 		DrawableIterator it = allDrawableList.getIterator();
@@ -1902,6 +1917,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Tells if there are any images in the background.
+	 * @return whether there are any images in the background.
 	 */
 	protected boolean hasBackgroundImages() {
 		return bgImageList.size() > 0;
@@ -1909,6 +1925,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Returns image of drawing pad sized according to the given scale factor.
+	 * @param scale 
+	 * @return image of drawing pad sized according to the given scale factor.
+	 * @throws OutOfMemoryError 
 	 */
 	public BufferedImage getExportImage(double scale) throws OutOfMemoryError {
 		return getExportImage(scale, false);
@@ -2138,7 +2157,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	
 
-	/**********************************************
+	/*#********************************************
 	 *  drawAxes
 	 **********************************************/
 	final void drawAxes(Graphics2D g2) {
@@ -2501,6 +2520,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Finds maximum pixel width and height needed to draw current x and y axis labels.
 	 * return[0] = max width, return[1] = max height
+	 * @param g2 
+	 * @return point (width,height)
 	 */
 	public Point getMaximumLabelSize (Graphics2D g2) {
 		
@@ -2508,19 +2529,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		g2.setFont(fontAxes);	
 		FontRenderContext frc = g2.getFontRenderContext();
-		
-		int fontsize = fontAxes.getSize();
+				
 		int yAxisHeight = positiveAxes[1] ? (int) yZero : height;		
 		int maxY = positiveAxes[1] ? (int) yZero : height - SCREEN_BORDER;
-		int xoffset, yoffset;
 
-		if (showGrid) {
-			xoffset = -2 - fontsize / 4;
-			yoffset = -2;
-		} else {
-			xoffset = -4 - fontsize / 4;
-			yoffset = fontsize / 2 - 1;
-		}
 
 		double rw = ymax - (ymax % axesNumberingDistances[1]);
 		double pix = yZero - rw * yscale;
@@ -2531,8 +2543,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			if (pix <= maxY) {
 				if (showAxesNumbers[1]) {
 					String strNum = kernel.formatPiE(rw,
-							axesNumberFormat[1]);
-					boolean zero = strNum.equals("0");
+							axesNumberFormat[1]);					
 
 					sb.setLength(0);
 					sb.append(strNum);
@@ -3080,8 +3091,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Returns array of GeoElements whose visual representation is at screen
 	 * coords (x,y). order: points, vectors, lines, conics
+	 * @param p 
+	 * @return array of GeoElements drawn at (x,y)
 	 */
-	final public ArrayList getHits(Point p) {
+	final public ArrayList<GeoElement> getHits(Point p) {
 		return getHits(p, false);
 	}
 	
@@ -3089,13 +3102,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * Returns hits that are suitable for new point mode.
 	 * A polygon is only kept if one of its sides is also in
 	 * hits.
+	 * @param hits 
+	 * @return list of hits suitable for new point
 	 */
-	final public ArrayList getHitsForNewPointMode(ArrayList hits) {	
+	final public ArrayList<GeoElement> getHitsForNewPointMode(ArrayList<GeoElement> hits) {	
 		if (hits == null) return null;
 		
-		Iterator it = hits.iterator();
+		Iterator<GeoElement> it = hits.iterator();
 		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
+			GeoElement geo = it.next();
 			if (geo.isGeoPolygon()) {
 				boolean sidePresent = false;
 				GeoSegmentND [] sides = ((GeoPolygon) geo).getSegments();
@@ -3114,7 +3129,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return hits;
 	}
 
-	final public ArrayList getPointVectorNumericHits(Point p) {
+	final public ArrayList<GeoElement> getPointVectorNumericHits(Point p) {
 		foundHits.clear();
 
 		DrawableIterator it = allDrawableList.getIterator();
@@ -3140,8 +3155,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * returns array of GeoElements whose visual representation is at screen
 	 * coords (x,y). order: points, vectors, lines, conics
+	 * @param p 
+	 * @param includePolygons 
+	 * @return array of GeoElements drawn at (x,y) ordered by type
 	 */
-	final public ArrayList getHits(Point p, boolean includePolygons) {
+	final public ArrayList<GeoElement> getHits(Point p, boolean includePolygons) {
 		foundHits.clear();
 
 		// count lists, images and Polygons
@@ -3230,7 +3248,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * returns array of changeable GeoElements out of hits
 	 */
-	final public ArrayList getMoveableHits(ArrayList hits) {
+	final public ArrayList getMoveableHits(ArrayList<GeoElement> hits) {
 		return getMoveables(hits, TEST_MOVEABLE, null);
 	}
 	
@@ -3241,8 +3259,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * returns array of changeable GeoElements out of hits that implement
 	 * PointRotateable
+	 * @param hits 
+	 * @param rotCenter 
+	 * @return array of changeable GeoElements out of hits that implement
 	 */
-	final public ArrayList getPointRotateableHits(ArrayList hits,
+	final public ArrayList<GeoElement> getPointRotateableHits(ArrayList<GeoElement> hits,
 			GeoPoint rotCenter) {
 		return getMoveables(hits, TEST_ROTATEMOVEABLE, rotCenter);
 	}
@@ -3251,14 +3272,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected final int TEST_ROTATEMOVEABLE = 2;
 
-	protected ArrayList getMoveables(ArrayList hits, int test, GeoPoint rotCenter) {
+	protected ArrayList<GeoElement> getMoveables(ArrayList<GeoElement> hits, int test, GeoPoint rotCenter) {
 		if (hits == null)
 			return null;
 
 		GeoElement geo;
 		moveableList.clear();
 		for (int i = 0; i < hits.size(); ++i) {
-			geo = (GeoElement) hits.get(i);
+			geo = hits.get(i);
 			switch (test) {
 			case TEST_MOVEABLE:
 				// moveable object
@@ -3293,57 +3314,51 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			return moveableList;
 	}
 
-	protected ArrayList moveableList = new ArrayList();
+	protected ArrayList<GeoElement> moveableList = new ArrayList<GeoElement>();
 
 	/**
 	 * returns array of GeoElements of type geoclass whose visual representation
 	 * is at streen coords (x,y). order: points, vectors, lines, conics
+	 * @param p 
+	 * @param geoclass 
+	 * @param result 
+	 * @return array of GeoElements of type geoclass drawn at coords (x,y)
 	 */
-	final public ArrayList getHits(Point p, Class geoclass, ArrayList result) {
+	final public ArrayList<GeoElement> getHits(Point p, Class geoclass, ArrayList<GeoElement> result) {
 		return getHits(getHits(p), geoclass, false, result);
 	}
 
 	/**
-	 * returns array of GeoElements NOT of type geoclass out of hits
+	 * Returns array of GeoElements NOT of type geoclass out of hits
+	 * @param hits 
+	 * @param geoclass 
+	 * @param result 
+	 * @return array of GeoElements NOT of type geoclass out of hits
 	 */
-	final public ArrayList getOtherHits(ArrayList hits, Class geoclass,
-			ArrayList result) {
+	final public ArrayList<GeoElement> getOtherHits(ArrayList<GeoElement> hits, Class geoclass,
+			ArrayList<GeoElement> result) {
 		return getHits(hits, geoclass, true, result);
 	}
 
-	final public ArrayList getHits(ArrayList hits, Class geoclass,
-			ArrayList result) {
+	final public ArrayList<GeoElement> getHits(ArrayList<GeoElement> hits, Class geoclass,
+			ArrayList<GeoElement> result) {
 		return getHits(hits, geoclass, false, result);
 	}
 
-	/**
-	 * Returns array of polygons with n points out of hits.
-	 * 
-	 * @return
-	 *
-	final public ArrayList getPolygons(ArrayList hits, int n, ArrayList polygons) {
-		// search for polygons in hits that exactly have the needed number of
-		// points
-		polygons.clear();
-		getHits(hits, GeoPolygon.class, polygons);
-		for (int k = polygons.size() - 1; k > 0; k--) {
-			GeoPolygon poly = (GeoPolygon) polygons.get(k);
-			// remove poly with wrong number of points
-			if (n != poly.getPoints().length)
-				polygons.remove(k);
-		}
-		return polygons;
-	}*/
 
 	/**
 	 * Stores all GeoElements of type geoclass to result list.
+	 * @param hits 
+	 * @param geoclass 
 	 * 
 	 * @param other ==
 	 *            true: returns array of GeoElements NOT of type geoclass out of
 	 *            hits.
+	 * @param result 
+	 * @return either null (if result is emty) or result
 	 */
-	final protected ArrayList getHits(ArrayList hits, Class geoclass,
-			boolean other, ArrayList result) {
+	final protected ArrayList<GeoElement> getHits(ArrayList<GeoElement> hits, Class geoclass,
+			boolean other, ArrayList<GeoElement> result) {
 		if (hits == null)
 			return null;
 
@@ -3360,9 +3375,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Stores all GeoElements of type GeoPoint, GeoVector, GeoNumeric to result list.
+	 * @param hits 
+	 * @param result 
+	 * @return list of points, vectors and numbers
 	 * 
 	 */
-	final protected ArrayList getRecordableHits(ArrayList hits, ArrayList result) {
+	final protected ArrayList<GeoElement> getRecordableHits(ArrayList<GeoElement> hits, ArrayList<GeoElement> result) {
 		if (hits == null)
 			return null;
 
@@ -3380,20 +3398,26 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * returns array of GeoElements whose visual representation is on top of
 	 * screen coords of Point p. If there are points at location p only the
 	 * points are returned. Otherwise all GeoElements are returned.
+	 * @param p 
+	 * @return list of hit GeoElements
 	 * 
-	 * @see EuclidianController: mousePressed(), mouseMoved()
+	 * @see EuclidianController#mousePressed(MouseEvent) 
+	 * @see EuclidianController#mouseMoved(MouseEvent)
 	 */
-	final public ArrayList getTopHits(Point p) {
+	final public ArrayList<GeoElement> getTopHits(Point p) {
 		return getTopHits(getHits(p));
 	}
 
 	/**
 	 * if there are GeoPoints in hits, all these points are returned. Otherwise
 	 * hits is returned.
+	 * @param hits 
+	 * @return either GeoPoints (if selected) or all hits
 	 * 
-	 * @see EuclidianController: mousePressed(), mouseMoved()
+	 * @see EuclidianController#mousePressed(MouseEvent)
+	 * @see EuclidianController#mouseMoved(MouseEvent)
 	 */
-	final public ArrayList getTopHits(ArrayList hits) {
+	final public ArrayList<GeoElement> getTopHits(ArrayList<GeoElement> hits) {
 		if (hits == null)
 			return null;
 
@@ -3405,9 +3429,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			return hits;
 	}
 
-	protected ArrayList topHitsList = new ArrayList();
+	protected ArrayList<GeoElement> topHitsList = new ArrayList<GeoElement>();
 
-	final public boolean containsGeoPoint(ArrayList hits) {
+	final public boolean containsGeoPoint(ArrayList<GeoElement> hits) {
 		if (hits == null)
 			return false;
 
@@ -3420,6 +3444,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Returns the drawable for the given GeoElement.
+	 * @param geo 
+	 * @return drawable for the given GeoElement.
 	 */
 	final Drawable getDrawable(GeoElement geo) {
 		return (Drawable) DrawableMap.get(geo);
@@ -3471,6 +3497,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	/**
 	 * adds a GeoElement to this view
+	 * @param geo GeoElement to be added
+	 * @return drawable for given GeoElement
 	 */
 	protected Drawable createDrawable(GeoElement geo) {
 		Drawable d = null;
@@ -3643,6 +3671,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	/**
 	 * adds a GeoElement to this view
+	 * @param d drawable to be added
 	 */
 	protected void addToDrawableLists(Drawable d) {
 		if (d == null) return;
@@ -3797,6 +3826,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	/**
 	 * This is only needed for second or above euclidian views
+	 * @param evNo euclidian view number
 	 */
 	public void setEuclidianViewNo(int evNo)
 	{
@@ -3812,6 +3842,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
     	
 	/**
 	 * returns settings in XML format
+	 * @param sb 
+	 * @param asPreference 
 	 */
 	public void getXML(StringBuilder sb,boolean asPreference) {
 		sb.append("<euclidianView>\n");
@@ -3996,6 +4028,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * Zooms around fixed point (center of screen)
+	 * @param zoomFactor 
 	 */
 	public final void zoomAroundCenter(double zoomFactor) {
 		if(!isZoomable())
@@ -4034,6 +4067,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * Zooms towards the given axes scale ratio. Note: Only the y-axis is
 	 * changed here. ratio = yscale / xscale;
+	 * @param newRatio 
+	 * @param storeUndo 
 	 */
 	public final void zoomAxesRatio(double newRatio, boolean storeUndo) {
 		if(!isZoomable())
@@ -4059,17 +4094,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		double factor=0.03d; // don't want objects at edge
 		double xGap = 0;
 		
-		TreeSet allFunctions = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_FUNCTION);
+		TreeSet<GeoElement> allFunctions = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_FUNCTION);
 		
 		
 		int noVisible = 0;
 		// count no of visible functions
-		Iterator it = allFunctions.iterator();
+		Iterator<GeoElement> it = allFunctions.iterator();
 		while (it.hasNext()) 
 			if (((GeoFunction)(it.next())).isEuclidianVisible()) noVisible ++;;
 		
 			Rectangle rect=getBounds();			
-			if (kernel.isZero(rect.getHeight()) || kernel.isZero(rect.getWidth())) {				
+			if (Kernel.isZero(rect.getHeight()) || Kernel.isZero(rect.getWidth())) {				
 				if (noVisible == 0) return; // no functions or objects
 				
 				// just functions
@@ -4101,7 +4136,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			x0RW = Math.min(xmin, x0RW);
 			x1RW = Math.max(xmax, x1RW);
 			
-			if (kernel.isEqual(x0RW, xmin) && kernel.isEqual(x1RW, xmax)) {
+			if (Kernel.isEqual(x0RW, xmin) && Kernel.isEqual(x1RW, xmax)) {
 				// just functions (at sides!), don't need a gap
 				xGap = 0;
 			}
@@ -4143,7 +4178,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		}
 		
-		if (!kernel.isZero(y1RWfunctions - y0RWfunctions) && ok) {
+		if (!Kernel.isZero(y1RWfunctions - y0RWfunctions) && ok) {
 			y0RW = Math.min(y0RW, y0RWfunctions);
 			y1RW = Math.max(y1RW, y1RWfunctions);
 			//Application.debug("min height "+y0RW+" max height "+y1RW);
@@ -4213,11 +4248,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * Sets coord system of this view. Just like setCoordSystem but with
 	 * previous animation.
 	 * 
-	 * @param ox:
+	 * @param ox
 	 *            x coord of old origin
-	 * @param oy:
+	 * @param oy
 	 *            y coord of old origin
-	 * @param newscale
+	 * @param newScale
 	 */
 	final public void setAnimatedCoordSystem(double ox, double oy, double f, double newScale,
 			int steps, boolean storeUndo) {
@@ -4225,7 +4260,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		ox+=(getXZero() - ox)*f;
 		oy+=(getYZero() - oy)*f;
 		
-		if (!kernel.isEqual(xscale, newScale)) {
+		if (!Kernel.isEqual(xscale, newScale)) {
 			// different scales: zoom back to standard view
 			double factor = newScale / xscale;
 			zoom((ox - xZero * factor) / (1.0 - factor), (oy - yZero * factor)
@@ -4481,7 +4516,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		public synchronized void startAnimation() {
 			dx = xZero - ox;
 			dy = yZero - oy;
-			if (kernel.isZero(dx) && kernel.isZero(dy))
+			if (Kernel.isZero(dx) && Kernel.isZero(dy))
 				return;
 
 			// setDrawMode(DRAW_MODE_DIRECT_DRAW);
@@ -4621,9 +4656,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	/**
 	 * 
-	 * @param x
-	 * @param axis:
-	 *            0 for xAxis, 1 for yAxis
+	 * @param dist
+	 * @param axis 0 for xAxis, 1 for yAxis
 	 */
 	public void setAxesNumberingDistance(double dist, int axis) {
 		axesNumberingDistances[axis] = dist;
@@ -4929,49 +4963,49 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	// previewables
 	
 	
-	public Previewable createPreviewLine(ArrayList selectedPoints){
+	public Previewable createPreviewLine(ArrayList<GeoPointND> selectedPoints){
 		
 		return new DrawLine(this, selectedPoints, DrawLine.PREVIEW_LINE);
 	}
 	
-	public Previewable createPreviewPerpendicularBisector(ArrayList selectedPoints){
+	public Previewable createPreviewPerpendicularBisector(ArrayList<GeoPointND> selectedPoints){
 		
 		return new DrawLine(this, selectedPoints, DrawLine.PREVIEW_PERPENDICULAR_BISECTOR);
 	}
 	
-	public Previewable createPreviewAngleBisector(ArrayList selectedPoints){
+	public Previewable createPreviewAngleBisector(ArrayList<GeoPointND> selectedPoints){
 		
 		return new DrawLine(this, selectedPoints, DrawLine.PREVIEW_ANGLE_BISECTOR);
 	}
 	
 	
-	public Previewable createPreviewSegment(ArrayList selectedPoints){
+	public Previewable createPreviewSegment(ArrayList<GeoPointND> selectedPoints){
 		return new DrawSegment(this, selectedPoints);
 	}	
 	
 	
-	public Previewable createPreviewRay(ArrayList selectedPoints){
+	public Previewable createPreviewRay(ArrayList<GeoPointND> selectedPoints){
 		return new DrawRay(this, selectedPoints);
 	}	
 	
-	public Previewable createPreviewVector(ArrayList selectedPoints){
+	public Previewable createPreviewVector(ArrayList<GeoPointND> selectedPoints){
 		return new DrawVector(this, selectedPoints);
 	}
 	
 	
-	public Previewable createPreviewPolygon(ArrayList selectedPoints){
+	public Previewable createPreviewPolygon(ArrayList<GeoPointND> selectedPoints){
 		return new DrawPolygon(this, selectedPoints);
 	}	
 	
-	public Previewable createPreviewConic(int mode, ArrayList selectedPoints){
+	public Previewable createPreviewConic(int mode, ArrayList<GeoPointND> selectedPoints){
 		return new DrawConic(this, mode, selectedPoints);
 	}	
 	
-	public Previewable createPreviewAngle(ArrayList selectedPoints){
+	public Previewable createPreviewAngle(ArrayList<GeoPointND> selectedPoints){
 		return new DrawAngle(this, selectedPoints);
 	}	
 	
-	public Previewable createPreviewPolyLine(ArrayList selectedPoints){
+	public Previewable createPreviewPolyLine(ArrayList<GeoPointND> selectedPoints){
 		return new DrawPolyLine(this, selectedPoints);
 	}	
 	
@@ -4991,13 +5025,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 	}
 
-	public Previewable createPreviewParallelLine(ArrayList selectedPoints,
-			ArrayList selectedLines) {
+	public Previewable createPreviewParallelLine(ArrayList<GeoPointND> selectedPoints,
+			ArrayList<GeoLineND> selectedLines) {
 		return new DrawLine(this, selectedPoints, selectedLines, true);
 	}
 	
-	public Previewable createPreviewPerpendicularLine(ArrayList selectedPoints,
-			ArrayList selectedLines) {
+	public Previewable createPreviewPerpendicularLine(ArrayList<GeoPointND> selectedPoints,
+			ArrayList<GeoLineND> selectedLines) {
 		return new DrawLine(this, selectedPoints, selectedLines, false);
 	}
 	public GeneralPathClipped getBoundingPath(){
@@ -5061,7 +5095,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				ymax2 = c + newHeight/2;				
 			}			
 		}
-		if((xmax2-xmin2 > kernel.MIN_PRECISION)&&(ymax2-ymin2 > kernel.MIN_PRECISION))
+		if((xmax2-xmin2 > Kernel.MIN_PRECISION)&&(ymax2-ymin2 > Kernel.MIN_PRECISION))
 			setRealWorldCoordSystem(xmin2,xmax2,ymin2,ymax2);
 		updatingBounds = false;		
 	}
@@ -5079,6 +5113,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * tranform in view coords
 	 * @param coords
+	 * @return the same coords for classic 2d view
 	 */
 	public Coords getCoordsForView(Coords coords){
 		return coords;
