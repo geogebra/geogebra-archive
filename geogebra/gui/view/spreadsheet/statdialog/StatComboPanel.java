@@ -812,7 +812,9 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		case PLOT_MULTIBOXPLOT:
 			if(doCreate){
-				plotGeoList.add(statGeo.createMultipleBoxPlot( dataListSelected));
+				GeoElement[] boxPlots = statGeo.createMultipleBoxPlot( dataListSelected);
+				for (int i = 0 ; i < boxPlots.length ; i++)
+					plotGeoList.add(boxPlots[i]);
 			}
 			plotPanel.setPlotSettings(statGeo.getMultipleBoxPlotSettings( dataListSelected));
 			boxPlotTitles = statGeo.createBoxPlotTitles(statDialog, plotPanel.getPlotSettings());
