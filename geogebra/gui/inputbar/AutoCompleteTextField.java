@@ -10,6 +10,7 @@ import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
 
 import java.awt.Component;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -79,9 +80,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		completionsPopup = new CompletionsPopup(this, cellRenderer, 6);
 		//addKeyListener(this); now in MathTextField
 		setDictionary(dict);
-		
 	}   
-	
 	
 	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey){
 		this(columns, app, handleEscapeKey, app.getCommandDictionary());
@@ -92,8 +91,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public void showPopupSymbolButton(boolean showPopupSymbolButton){
 		((MyTextField)this).setShowSymbolTableIcon(showPopupSymbolButton);
 	}
-	
-	
 	
 	/**
 	 * Set the dictionary that autocomplete lookup should be performed by.
@@ -242,28 +239,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 			break;
 
-		case KeyEvent.VK_ENTER:
-			// processEnterKey accepts a selection if there is one 
-			// in this case the ENTER key event is consumed 
-			// so that it is not processed by other objects (e.g. AlgebraInput)
-			if (getAutoComplete() && validateAutoCompletion()) {
-				e.consume();                
-			}                 
-			break;
-
-			// clear textfield
-		/*case KeyEvent.VK_TAB:
-			// Cycle through completions
-			if (getAutoComplete() && completions != null) {
-				clearSelection();
-				updateAutoCompletion(completionIndex + 1);
-				e.consume();
-			}
-			break;*/
 		case KeyEvent.VK_ESCAPE:
-			if (completions != null) {
-				e.consume(); break;
-			}
 			if (!handleEscapeKey) {
 				break;
 			}
@@ -282,9 +258,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 
 		case KeyEvent.VK_UP:
-			if (completions != null) {
-				e.consume(); break;
-			}
 			if (!handleEscapeKey) {
 				break;
 			}
@@ -293,9 +266,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			break;
 	
 		case KeyEvent.VK_DOWN:
-			if (completions != null) {
-				e.consume(); break;
-			}
 			if (!handleEscapeKey) {
 				break;
 			}
@@ -765,6 +735,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 	
 	public void startAutoCompletion() {
+		Application.debug("Start autocompletion");
 		resetCompletions();
 		updateAutoCompletion(0);
 		completionsPopup.showCompletions();

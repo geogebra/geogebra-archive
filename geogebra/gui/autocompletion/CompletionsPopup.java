@@ -18,6 +18,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -49,6 +50,8 @@ public class CompletionsPopup {
 	private final JList list;
 	
 	private DocumentListener textFieldDocListener;
+	private KeyListener keyListener;
+	private KeyListener[] textFieldKeyListeners;
 	
 	/**
 	 * Initializes components and registers event listeners.
@@ -84,9 +87,9 @@ public class CompletionsPopup {
 		};
 		textField.getDocument().addDocumentListener(textFieldDocListener);
 		// Handle special keys (e.g. navigation)
-		textField.addKeyListener(new KeyAdapter() {
+		keyListener = new KeyAdapter() {
 			@Override public void keyPressed(KeyEvent e) { handleSpecialKeys(e); }
-		});
+		};
 		// Hide popup when text field loses focus
 		textField.addFocusListener(new FocusAdapter() {
 			@Override public void focusLost(FocusEvent e) { hidePopup(); }
@@ -132,6 +135,12 @@ public class CompletionsPopup {
 		}
 		// Try to show popup just beneath the word to be completed
 		popup.show(textField, startRect.x, startRect.y + startRect.height);
+		// Remove key listeners and replace with own;
+		textFieldKeyListeners = textField.getKeyListeners();
+		for (KeyListener listener: textFieldKeyListeners) {
+			textField.removeKeyListener(listener);
+		}
+		textField.addKeyListener(keyListener);
 	}
 	
 	private boolean isPopupVisible() {
@@ -139,9 +148,15 @@ public class CompletionsPopup {
 	}
 
 	private void hidePopup() {
-		if (isPopupVisible()) {
-			popup.setVisible(false);
-			list.clearSelection();
+		if (!isPopupVisible()) {
+			return;
+		}
+		popup.setVisible(false);
+		list.clearSelection();
+		// Reinstate textField's key listeners
+		textField.removeKeyListener(keyListener);
+		for (KeyListener listener: textFieldKeyListeners) {
+			textField.addKeyListener(listener);
 		}
 	}
 	
@@ -153,27 +168,28 @@ public class CompletionsPopup {
 		d.addDocumentListener(textFieldDocListener);
 	}
 	
-	private void handleSpecialKeys(KeyEvent keyEvent) {
+	public void handleSpecialKeys(KeyEvent keyEvent) {
 		if (!isPopupVisible()) {
 			return;
 		}
 
 		switch(keyEvent.getKeyCode()) {
-		case VK_ESCAPE:			// [ESC]
+		case VK_ESCAPE:			// [ESC] cancels the popup
 			hidePopup();
 			textField.cancelAutoCompletion();
 			keyEvent.consume();
 			break;
-		case VK_ENTER:			// [ENTER]
+		case VK_ENTER:			// [ENTER] validates the completions
 			hidePopup();
-			//
+			textField.validateAutoCompletion();
+			keyEvent.consume();
 			break;
-		case VK_DOWN:			// [DOWN]
+		case VK_DOWN:			// [DOWN] next completion
 		case VK_TAB:			// [TAB]
 			navigateRelative(+1);
 			keyEvent.consume();
 			break;
-		case VK_UP:				// [UP]
+		case VK_UP:				// [UP] prev. completion
 			navigateRelative(-1);
 			keyEvent.consume();
 			break;	
@@ -187,6 +203,7 @@ public class CompletionsPopup {
 			break;
 		default:
 			hidePopup();
+			textField.processKeyEvent(keyEvent);
 		}
 	}
 
