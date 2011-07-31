@@ -160,14 +160,6 @@ public class CompletionsPopup {
 		}
 	}
 	
-	private void updateText() {
-		int index = list.getSelectedIndex();
-		Document d = textField.getDocument();
-		d.removeDocumentListener(textFieldDocListener);
-		textField.updateAutoCompletion(index);
-		d.addDocumentListener(textFieldDocListener);
-	}
-	
 	public void handleSpecialKeys(KeyEvent keyEvent) {
 		if (!isPopupVisible()) {
 			return;
@@ -175,13 +167,13 @@ public class CompletionsPopup {
 
 		switch(keyEvent.getKeyCode()) {
 		case VK_ESCAPE:			// [ESC] cancels the popup
-			hidePopup();
 			textField.cancelAutoCompletion();
+			hidePopup();
 			keyEvent.consume();
 			break;
 		case VK_ENTER:			// [ENTER] validates the completions
+			textField.validateAutoCompletion(list.getSelectedIndex());
 			hidePopup();
-			textField.validateAutoCompletion();
 			keyEvent.consume();
 			break;
 		case VK_DOWN:			// [DOWN] next completion
@@ -228,13 +220,13 @@ public class CompletionsPopup {
 			list.setSelectedIndex(index);
 			list.ensureIndexIsVisible(index);
 		}
-		updateText();
+		// updateText();
 	}
 	
 	private void handleMouseClick(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			updateText();
-			textField.validateAutoCompletion();
+			// updateText();
+			textField.validateAutoCompletion(list.getSelectedIndex());
 			hidePopup();
 		} 
 	}

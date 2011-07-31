@@ -632,77 +632,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	
 	static String lastTyped = null;
 
-	/**
-	 * returns whether the input field's text was changed due to autocompletion
-	 * @param index is true if finding next possible completion
-	 *                   otherwise a new completions object must be obtained
-	 */ 
-	public void updateAutoCompletion(int index) {
-		if (completions == null) {
-			return;
-		}
-		clearSelection();
-		if (index == -1) {
-			return;
-		}
-		String text = getText();
-		int caretPos = getCaretPosition();
-
-		if (index >= completions.size()) {
-			index = 0;
-		}
-		completionIndex = index;
-		String cmd = completions.get(index);
-
-		// build new autocompletion text
-		// make sure when we type eg CA we get CAuchy not Cauchy, in case we want CA=33
-		StringBuilder sb = new StringBuilder();
-		if (!cmd.startsWith(cmdPrefix)) {
-			sb.append(cmdPrefix);
-			sb.append(cmd.substring(cmdPrefix.length()));
-		} else {
-			sb.append(cmd);
-		}
-		sb.append("[]");
-		cmd = sb.toString();            
-
-		// insert the command into current text   
-		sb.setLength(0);
-		sb.append(text.substring(0, curWordStart));
-		if (virtualKeyboardInUse && app.getLocale().getLanguage().equals("ko") && lastTyped == null) {
-			lastTyped = text.substring(curWordStart, caretPos);
-			//Application.debug("lastTyped="+lastTyped+" "+Util.toHexString(lastTyped));
-			//Application.debug("text="+text+" "+Util.toHexString(text));
-		}
-		//Application.debug(Util.toHexString(lastTyped));
-		//String cmdTail = cmd.substring(caretPos - curWordStart);
-		sb.append(cmd);
-		String afterCaret = text.substring(caretPos);
-		if (afterCaret.startsWith("[]"))
-			sb.append(afterCaret.substring(2));
-		else
-			sb.append(afterCaret);
-
-		setText(sb.toString());
-
-		//Application.debug("set selection: " + caretPos + ", " + end);
-
-
-		//setSelectionEnd(caretPos + cmdTail.length());
-		//setSelectionStart(caretPos);    
-		//setCaretPosition(caretPos);
-
-		if (lastTyped == null) {
-			setCaretPosition( cmd.length() + curWordStart);
-			// highlight auto-inserted text
-			moveCaretPosition(caretPos);
-		} else {
-			setCaretPosition(sb.toString().indexOf("[]", curWordStart) );
-		}
-
-		updateCurrentWord();
-	}
-
 	private List<String> resetCompletions() {
 		String text = getText();
 		updateCurrentWord();
@@ -735,9 +664,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 	
 	public void startAutoCompletion() {
-		Application.debug("Start autocompletion");
 		resetCompletions();
-		updateAutoCompletion(0);
 		completionsPopup.showCompletions();
 	}
 	
@@ -745,42 +672,27 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		completions = null;
 		if (completionIndex != -1) {
 			completionIndex = -1;
-			clearSelection();
 		}
 	}
-	public boolean validateAutoCompletion() {  	  	  	
-		String selText = getSelectedText();
-		completions = null;
-		// if the selection is a command name remove the
-		// selection and set the right case of the command name
-		if (selText != null && selText.endsWith("[]")) {
-			int pos = getSelectionEnd();  
-			String text = getText();
-			String selWord = getWordAtPos(text, pos-2);
-			if (selWord == null) return false;
 
-			String cmdWord = dict.lookup(selWord);
-			if (cmdWord == null ||
-					cmdWord.length() != selWord.length()) return false;
-
-			StringBuilder sb = new StringBuilder();
-			int startPos = pos - selWord.length() - 2;
-			if (startPos > 0)
-				sb.append(text.substring(0, startPos));
-			sb.append(cmdWord); 
-			sb.append("[]");    	
-			if (pos < text.length())
-				sb.append(text.substring(pos, text.length()));
-			setText(sb.toString());
-
-			// move caret left to get inside the bracket
-			setCaretPosition(pos - 1);
-			updateCurrentWord();
-			return true;                                
+	public boolean validateAutoCompletion(int index) {
+		if (completions == null || index < 0 || index >= completions.size()) {
+			return false;
 		}
-		return false;
+		Application.debug(index);
+		Application.debug(completions);
+		String command = completions.get(index);
+		String text = getText();
+		StringBuilder sb = new StringBuilder();
+		sb.append(text.substring(0, curWordStart));
+		sb.append(command);
+		sb.append("[]");
+		sb.append(text.substring(curWordStart + curWord.length()));
+		setText(sb.toString());
+		setCaretPosition(curWordStart + command.length() + 1);
+		return true;
 	}
-
+	
 	/**
 	 * Adds string to input textfield's history
 	 * @param str
