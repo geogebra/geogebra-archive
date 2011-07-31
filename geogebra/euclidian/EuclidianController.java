@@ -2394,7 +2394,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			//			}
 
 
-			changedKernel = (moveMode != MOVE_NONE);			
+			// check movedGeoElement.isLabelSet() to stop moving points
+			// in Probability Calculator triggering Undo
+			changedKernel = (movedGeoElement != null && movedGeoElement.isLabelSet()) && (moveMode != MOVE_NONE);			
 			movedGeoElement = null;
 			rotGeoElement = null;	
 

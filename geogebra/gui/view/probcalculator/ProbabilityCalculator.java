@@ -1312,9 +1312,16 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(true);
+			
+			// workaround for eg CmdNormal -> always creates undo point
+			boolean oldEnableUndo = cons.isUndoEnabled();
+			cons.setUndoEnabled(false);
 
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
+			
+			cons.setUndoEnabled(oldEnableUndo);
+
 			
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(oldSuppressLabelMode);

@@ -1416,6 +1416,8 @@ public class Construction {
 	public void storeUndoInfo() {
 		// undo unavailable in applets
 		//if (getApplication().isApplet()) return;
+		
+		if (!isUndoEnabled()) return;
 
 		undoManager.storeUndoInfo();		
 	}
@@ -2141,7 +2143,18 @@ public class Construction {
     		GeoElement num = (GeoElement) it.next();
     		num.updateRandomGeo();
     	}    	     
-    }    
+    }
+    
+    private boolean undoEnabled = true;
+
+	public boolean isUndoEnabled() {
+		return undoEnabled;
+	}
+
+	public void setUndoEnabled(boolean b) {
+		undoEnabled = b;
+		
+	}    
     
    
     
