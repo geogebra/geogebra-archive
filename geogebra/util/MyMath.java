@@ -271,5 +271,10 @@ public final class MyMath {
 						-(a00 * a12 - a02 * a10), 
 						(a00 * a11 - a10 * a01) } };
 	}
+	
+	public static double nextMultiple(double t, double mod){
+		return Math.ceil(t / mod) * mod;
+			
+	}
 
 }

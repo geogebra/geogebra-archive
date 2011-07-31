@@ -56,6 +56,7 @@ import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
+import geogebra.util.MyMath;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -1969,32 +1970,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				//g.clearRect(0,0,width,height);
 				
 				return bufImg;
-				
-				/*
 
-
-
-		
-		// this image might be too big for our memory
-		BufferedImage img = null;
-		try {
-			System.gc();
-			img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		} catch (OutOfMemoryError e) {
-			Application.debug(e.getMessage() + ": BufferedImage.TYPE_INT_RGB");
-			try {
-				System.gc();
-				img = new BufferedImage(width, height,
-						BufferedImage.TYPE_3BYTE_BGR);
-			} catch (OutOfMemoryError e2) {
-				Application.debug(e2.getMessage()
-						+ ": BufferedImage.TYPE_3BYTE_BGR");
-				System.gc();
-				img = new BufferedImage(width, height,
-						BufferedImage.TYPE_BYTE_INDEXED);
-			}
-		}
-		return img;*/
 	}
 
 	final public Graphics2D getBackgroundGraphics() {
@@ -2262,12 +2238,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				// start labels at the y-axis instead of screen border
 				// be careful: axisCross[1] = x value for which the y-axis crosses, 
 				// so xmin is replaced axisCross[1] and not axisCross[0]
-				if(axisCross[1] % axesNumberingDistances[0] != 0)				
-					rw = axisCross[1] - (axisCross[1] % axesNumberingDistances[0]) + axesNumberingDistances[0];
-				else 
-					rw = axisCross[1];
-				smallTickOffset = axesStep;
+					rw = MyMath.nextMultiple(axisCross[1], axesNumberingDistances[0]);
+				smallTickOffset = axesStep;				
 			}
+			
 			double pix = xZero + rw * xscale;    
 			
 			double smallTickPix;
@@ -2401,11 +2375,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				// start labels at the y-axis instead of screen border
 				// be careful: axisCross[1] = x value for which the y-axis crosses, 
 				// so xmin is replaced axisCross[1] and not axisCross[0]
-				if(axisCross[0] % axesNumberingDistances[1] != 0)				
-					rw = axisCross[0] - (axisCross[0] % axesNumberingDistances[1]) + axesNumberingDistances[1];
-				else rw = axisCross[0];
+				rw = MyMath.nextMultiple(axisCross[0], axesNumberingDistances[1]);
 				smallTickOffset = axesStep;
 			}			
+			
 			double pix = yZero - rw * yscale;
 			
 			double tickStep = axesStep / 2;
