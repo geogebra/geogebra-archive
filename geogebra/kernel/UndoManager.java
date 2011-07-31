@@ -113,8 +113,6 @@ public class UndoManager {
 	 */
 	public void storeUndoInfo() {	
 		
-		Application.printStacktrace("");
-		
 		// this can cause a java.lang.OutOfMemoryError for very large constructions
 		final StringBuilder currentUndoXML = construction.getCurrentUndoXML();
 		
