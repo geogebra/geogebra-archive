@@ -2191,9 +2191,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		boolean bold = axesLineType == AXES_LINE_TYPE_FULL_BOLD
 						|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
-		boolean drawArrows = axesLineType == AXES_LINE_TYPE_ARROW
-								|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
-
+		boolean drawArrowsx = (axesLineType == AXES_LINE_TYPE_ARROW
+								|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD)
+								&& !(positiveAxes[0] && xmax < axisCross[1]);
+		boolean drawArrowsy = (axesLineType == AXES_LINE_TYPE_ARROW
+				|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD)
+				&& !(positiveAxes[1] && ymax < axisCross[0]);
 		// AXES_TICK_STYLE_MAJOR_MINOR = 0;
 		// AXES_TICK_STYLE_MAJOR = 1;
 		// AXES_TICK_STYLE_NONE = 2;
@@ -2227,7 +2230,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 //				RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		// make sure arrows don't go off screen (eg EMF export)
-		double arrowAdjust = drawArrows ? axesStroke.getLineWidth() : 0;
+		double arrowAdjustx = drawArrowsx ? axesStroke.getLineWidth() : 0;
+		double arrowAdjusty = drawArrowsy ? axesStroke.getLineWidth() : 0;
 	
 		
 		// ========================================
@@ -2251,15 +2255,21 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 			// numbers
 			double rw = xmin - (xmin % axesNumberingDistances[0]);
-			
-			if(getPositiveAxes()[0])  
+			//by default we start with minor tick to the left of first major tick, exception is for positive only
+			double smallTickOffset = 0;
+			double axesStep = xscale * axesNumberingDistances[0]; // pixelstep
+			if(getPositiveAxes()[0] && rw > xmin){  
 				// start labels at the y-axis instead of screen border
 				// be careful: axisCross[1] = x value for which the y-axis crosses, 
-				// so xmin is replaced axisCross[1] and not axisCross[0] 
-				rw = axisCross[1] - (axisCross[1] % axesNumberingDistances[0]) + axesNumberingDistances[0] ;
-			
+				// so xmin is replaced axisCross[1] and not axisCross[0]
+				if(axisCross[1] % axesNumberingDistances[0] != 0)				
+					rw = axisCross[1] - (axisCross[1] % axesNumberingDistances[0]) + axesNumberingDistances[0];
+				else 
+					rw = axisCross[1];
+				smallTickOffset = axesStep;
+			}
 			double pix = xZero + rw * xscale;    
-			double axesStep = xscale * axesNumberingDistances[0]; // pixelstep
+			
 			double smallTickPix;
 			double tickStep = axesStep / 2;
 			if (pix < SCREEN_BORDER) {
@@ -2295,7 +2305,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						int x, y = (int) (yCrossPix + yoffset);
 						
 						// if label intersects the y-axis then draw it 6 pixels to the left
-						if (zero && showAxes[1]) {
+						if (zero && showAxes[1] && !positiveAxes[1]) {
 							x = (int) (pix + 6);
 						} else {
 							x = (int) (pix + xoffset - layout.getAdvance() / 2);
@@ -2314,14 +2324,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						tempLine.setLine(pix, yZeroTick, pix, yBig);
 						g2.draw(tempLine);
 					}
-				} else if (drawMajorTicks[0] && !drawArrows) {
+				} else if (drawMajorTicks[0] && !drawArrowsx) {
 					// draw last tick if there is no arrow
 					tempLine.setLine(pix, yZeroTick, pix, yBig);
 					g2.draw(tempLine);
 				}
 
-				// small tick
-				smallTickPix = pix - tickStep;
+				// small tick				
+				smallTickPix = pix - tickStep + smallTickOffset;
 				if (drawMinorTicks[0]) {
 					g2.setStroke(tickStroke);
 					tempLine.setLine(smallTickPix, ySmall1, smallTickPix,
@@ -2330,8 +2340,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				}
 			}
 			// last small tick
-			smallTickPix = pix - tickStep;
-			if (drawMinorTicks[0] && (!drawArrows || smallTickPix <= maxX)) {
+			smallTickPix = pix - tickStep + smallTickOffset;
+			if (drawMinorTicks[0]) {
 				g2.setStroke(tickStroke);
 				tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
 				g2.draw(tempLine);
@@ -2341,17 +2351,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			g2.setStroke(axesStroke);
 			
 			//tempLine.setLine(0, yCrossPix, width, yCrossPix);
-			tempLine.setLine(xAxisStart, yCrossPix, width - arrowAdjust - 1 , yCrossPix);
+			tempLine.setLine(xAxisStart, yCrossPix, width - arrowAdjustx - 1 , yCrossPix);
 			
 			g2.draw(tempLine);
 
-			if (drawArrows) {
+			if (drawArrowsx) {
 
 				// draw arrow for x-axis
-				tempLine.setLine(width - arrowAdjust, yCrossPix + 0.5, width - arrowAdjust - arrowSize, yCrossPix
+				tempLine.setLine(width - arrowAdjustx, yCrossPix + 0.5, width - arrowAdjustx - arrowSize, yCrossPix
 						- arrowSize);
 				g2.draw(tempLine);
-				tempLine.setLine(width - arrowAdjust, yCrossPix - 0.5, width - arrowAdjust - arrowSize, yCrossPix
+				tempLine.setLine(width - arrowAdjustx, yCrossPix - 0.5, width - arrowAdjustx - arrowSize, yCrossPix
 						+ arrowSize);
 				g2.draw(tempLine);
 
@@ -2383,47 +2393,47 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}
 
 			// numbers
-			double rw = ymax - (ymax % axesNumberingDistances[1]);
-			double pix = yZero - rw * yscale;
+			double rw = ymin - (ymin % axesNumberingDistances[1]);
+			//by default we start with minor tick to the left of first major tick, exception is for positive only
+			double smallTickOffset = 0;
 			double axesStep = yscale * axesNumberingDistances[1]; // pixelstep
+			if(getPositiveAxes()[1] && rw > ymin){  
+				// start labels at the y-axis instead of screen border
+				// be careful: axisCross[1] = x value for which the y-axis crosses, 
+				// so xmin is replaced axisCross[1] and not axisCross[0]
+				if(axisCross[0] % axesNumberingDistances[1] != 0)				
+					rw = axisCross[0] - (axisCross[0] % axesNumberingDistances[1]) + axesNumberingDistances[1];
+				else rw = axisCross[0];
+				smallTickOffset = axesStep;
+			}			
+			double pix = yZero - rw * yscale;
+			
 			double tickStep = axesStep / 2;
 
-			// first small tick
-			double smallTickPix = pix - tickStep;
-			if (drawMinorTicks[1]
-					&& (!drawArrows || smallTickPix > SCREEN_BORDER)) {
-				g2.setStroke(tickStroke);
-				tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
-				g2.draw(tempLine);
+			if (pix > height - SCREEN_BORDER) {
+				// big tick
+				if (drawMajorTicks[1]) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xBig, pix, xZeroTick, pix);					
+					g2.draw(tempLine);
+				}
+				pix -= axesStep;
+				rw += axesNumberingDistances[1];				
 			}
 
-			// don't get too near to the top of the screen
-			if (pix < SCREEN_BORDER) {
-				if (drawMajorTicks[1] && !drawArrows) {
-					// draw tick if there is no arrow
-					g2.setStroke(tickStroke);
-					tempLine.setLine(xBig, pix, xZeroTick, pix);
-					g2.draw(tempLine);
-				}
-				smallTickPix = pix + tickStep;
-				if (drawMinorTicks[1] && smallTickPix > SCREEN_BORDER) {
-					g2.setStroke(tickStroke);
-					tempLine.setLine(xSmall1, smallTickPix, xSmall2,
-							smallTickPix);
-					g2.draw(tempLine);
-				}
-				pix += axesStep;
-				rw -= axesNumberingDistances[1];
-			}
+			double smallTickPix = pix + tickStep;
+			
 			
 			// draw all of the remaining ticks and labels
 	
 			//int maxY = height - SCREEN_BORDER;
-			int maxY = positiveAxes[1] ? (int) yCrossPix : height - SCREEN_BORDER;
+			int maxY = SCREEN_BORDER;
 			
-			//for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {			
-			for (; pix <= yAxisEnd; rw -= axesNumberingDistances[1], pix += axesStep) {
-				if (pix <= maxY) {
+			//for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
+			//yAxisEnd
+			
+			for (; pix >= maxY; rw += axesNumberingDistances[1], pix -= axesStep) {
+				if (pix >= maxY) {					
 					if (showAxesNumbers[1]) {
 						String strNum = kernel.formatPiE(rw,
 								axesNumberFormat[1]);
@@ -2442,43 +2452,57 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						int x = (int) (xCrossPix + xoffset - layout.getAdvance());
 						int y;
 						// if the label is at the axis cross point then draw it 2 pixels above
-						if (zero && showAxes[0]) {
+						if (zero && showAxes[0] && !positiveAxes[0]) {
 							y = (int) (yCrossPix - 2);
 						} else {
 							y = (int) (pix + yoffset);
 						}
 						g2.drawString(sb.toString(), x, y);
 					}
+					if(drawMajorTicks[1]){
+						g2.setStroke(tickStroke);
+						tempLine.setLine(xBig, pix, xZeroTick, pix);
+						g2.draw(tempLine);
+					}
 				}
-
-				// big tick
-				if (drawMajorTicks[1]) {
+				else if (drawMajorTicks[1] && !drawArrowsy) {
+					// draw last tick if there is no arrow	
 					g2.setStroke(tickStroke);
 					tempLine.setLine(xBig, pix, xZeroTick, pix);
 					g2.draw(tempLine);
 				}
 
-				smallTickPix = pix + tickStep;
+				// small tick				
+				smallTickPix = pix + tickStep - smallTickOffset;
 				if (drawMinorTicks[1]) {
 					g2.setStroke(tickStroke);
 					tempLine.setLine(xSmall1, smallTickPix, xSmall2,
 							smallTickPix);
 					g2.draw(tempLine);
 				}
+
+				
+			}//end for
+			smallTickPix = pix + tickStep - smallTickOffset;
+			if (drawMinorTicks[0]) {
+				g2.setStroke(tickStroke);
+				tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
+				g2.draw(tempLine);
 			}
 
 			// y-Axis
 			
 			//tempLine.setLine(xZero, 0, xZero, height);
-			tempLine.setLine(xCrossPix, arrowAdjust + 1, xCrossPix, yAxisEnd);
+			
+			tempLine.setLine(xCrossPix, arrowAdjusty + (drawArrowsy?1:-1), xCrossPix, yAxisEnd);
 				
 			g2.draw(tempLine);
 
-			if (drawArrows) {
+			if (drawArrowsy) {
 				// draw arrow for y-axis
-				tempLine.setLine(xCrossPix + 0.5, arrowAdjust, xCrossPix - arrowSize, arrowAdjust + arrowSize);
+				tempLine.setLine(xCrossPix + 0.5, arrowAdjusty, xCrossPix - arrowSize, arrowAdjusty + arrowSize);
 				g2.draw(tempLine);
-				tempLine.setLine(xCrossPix - 0.5, arrowAdjust, xCrossPix + arrowSize, arrowAdjust + arrowSize);
+				tempLine.setLine(xCrossPix - 0.5, arrowAdjusty, xCrossPix + arrowSize, arrowAdjusty + arrowSize);
 				g2.draw(tempLine);
 			}								
 		}
