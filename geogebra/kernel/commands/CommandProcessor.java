@@ -5774,7 +5774,7 @@ class CmdKeepIf extends CommandProcessor {
 		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
 		arg = resArgs(c);
-
+Application.debug(n);
 		switch (n) {
 		case 2:
 
@@ -5787,13 +5787,13 @@ class CmdKeepIf extends CommandProcessor {
 							(GeoFunction) booleanFun, ((GeoList) arg[1])) };
 					return ret;
 				}
-
-				if (!ok[0])
-					throw argErr(app, c.getName(), arg[0]);
-				else
-					throw argErr(app, c.getName(), arg[1]);
-
 			}
+
+			if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else
+				throw argErr(app, c.getName(), arg[1]);
+
 
 		default:
 			throw argNumErr(app, c.getName(), n);
