@@ -5446,6 +5446,8 @@ public abstract class GeoElement
 
 
 	public void runUpdateScripts() {
+		if(label!=null && label.contains("magic"))
+			Application.printStacktrace(caption);
 		if(!canHaveUpdateScript() || updateScript.length()==0 || app.isBlockUpdateScripts())
 			return;
 		app.setBlockUpdateScripts(true);

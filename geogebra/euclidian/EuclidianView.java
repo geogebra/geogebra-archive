@@ -2134,7 +2134,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		drawBorderAxes[axis] = drawBorderAxis;
 	}
 	
-	
+	private double getLabelLength(double rw, FontRenderContext frc){
+		TextLayout layout = new TextLayout(kernel.formatPiE(rw,
+				axesNumberFormat[0])+(axesUnitLabels[0] != null && !piAxisUnit[0]?axesUnitLabels[0]:""),
+				fontAxes, frc);
+		return layout.getAdvance();
+	}
 
 	/*#********************************************
 	 *  drawAxes
@@ -2233,7 +2238,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}
 
 			// numbers
+			
 			double rw = xmin - (xmin % axesNumberingDistances[0]);
+			int labelno = (int) Math.round(rw/axesNumberingDistances[0]);
 			//by default we start with minor tick to the left of first major tick, exception is for positive only
 			double smallTickOffset = 0;
 			double axesStep = xscale * axesNumberingDistances[0]; // pixelstep
@@ -2241,14 +2248,19 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				// start labels at the y-axis instead of screen border
 				// be careful: axisCross[1] = x value for which the y-axis crosses, 
 				// so xmin is replaced axisCross[1] and not axisCross[0]
-					rw = MyMath.nextMultiple(axisCross[1], axesNumberingDistances[0]);
-				smallTickOffset = axesStep;				
+				rw = MyMath.nextMultiple(axisCross[1], axesNumberingDistances[0]);
+				smallTickOffset = axesStep;		
+				labelno = 0;
 			}
 			
 			double pix = xZero + rw * xscale;    
 			
 			double smallTickPix;
 			double tickStep = axesStep / 2;
+			double labelLengthMax = Math.max(getLabelLength(rw,frc),getLabelLength(
+					MyMath.nextMultiple(xmax,axesNumberingDistances[0]),frc));
+			int unitsPerLabelX = (int) MyMath.nextPrettyNumber(labelLengthMax/axesStep);			
+			
 			if (pix < SCREEN_BORDER) {
 				// big tick
 				if (drawMajorTicks[0]) {
@@ -2258,9 +2270,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				}
 				pix += axesStep;
 				rw += axesNumberingDistances[0];
+				labelno += 1;
 			}
 			int maxX = width - SCREEN_BORDER;
-			int prevTextEnd = -3;
+			
 			
 			for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
 				if (pix <= maxX) {
@@ -2271,7 +2284,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						// flag to handle drawing a label at axis crossing point
 						boolean zero = strNum.equals("" + kernel.formatPiE(axisCross[1],
 								axesNumberFormat[0]));
-						
+						if (labelno % unitsPerLabelX == 0) {
 						sb.setLength(0);
 						sb.append(strNum);
 						if (axesUnitLabels[0] != null && !piAxisUnit[0])
@@ -2289,8 +2302,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						}
 												
 						// make sure we don't print one string on top of the other
-						if (x > prevTextEnd + 5) {
-							prevTextEnd = (int) (x + layout.getAdvance()); 
+						
+							//prevTextEnd = (int) (x + layout.getAdvance()); 
 							g2.drawString(sb.toString(), x, y);
 						}
 					}
@@ -2315,6 +2328,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 							ySmall2);
 					g2.draw(tempLine);
 				}
+				labelno++;
 			}
 			// last small tick
 			smallTickPix = pix - tickStep + smallTickOffset;
@@ -2371,6 +2385,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 			// numbers
 			double rw = ymin - (ymin % axesNumberingDistances[1]);
+			int labelno = (int) Math.round(rw/axesNumberingDistances[1]);
 			//by default we start with minor tick to the left of first major tick, exception is for positive only
 			double smallTickOffset = 0;
 			double axesStep = yscale * axesNumberingDistances[1]; // pixelstep
@@ -2380,12 +2395,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				// so xmin is replaced axisCross[1] and not axisCross[0]
 				rw = MyMath.nextMultiple(axisCross[0], axesNumberingDistances[1]);
 				smallTickOffset = axesStep;
+				labelno = 0;
 			}			
 			
 			double pix = yZero - rw * yscale;
 			
 			double tickStep = axesStep / 2;
-
+			
+			double maxHeight = new TextLayout("9",
+					fontAxes, frc).getBounds().getHeight()*2;
+			int unitsPerLabelY = (int) MyMath.nextPrettyNumber(maxHeight/axesStep);
+			
 			if (pix > height - SCREEN_BORDER) {
 				// big tick
 				if (drawMajorTicks[1]) {
@@ -2394,7 +2414,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 					g2.draw(tempLine);
 				}
 				pix -= axesStep;
-				rw += axesNumberingDistances[1];				
+				rw += axesNumberingDistances[1];	
+				labelno ++;
 			}
 
 			double smallTickPix = pix + tickStep;
@@ -2408,7 +2429,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			//for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
 			//yAxisEnd
 			
-			for (; pix >= maxY; rw += axesNumberingDistances[1], pix -= axesStep) {
+			for (; pix >= maxY; rw += axesNumberingDistances[1], pix -= axesStep, labelno ++) {
 				if (pix >= maxY) {					
 					if (showAxesNumbers[1]) {
 						String strNum = kernel.formatPiE(rw,
@@ -2417,7 +2438,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						// flag for handling label at axis cross point
 						boolean zero = strNum.equals("" + kernel.formatPiE(axisCross[0],
 								axesNumberFormat[0]));
-						
+						if(labelno % unitsPerLabelY == 0){
 						sb.setLength(0);
 						sb.append(strNum);
 						if (axesUnitLabels[1] != null && !piAxisUnit[1])
@@ -2433,7 +2454,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						} else {
 							y = (int) (pix + yoffset);
 						}
-						g2.drawString(sb.toString(), x, y);
+						g2.drawString(sb.toString(), x, y);}
 					}
 					if(drawMajorTicks[1]){
 						g2.setStroke(tickStroke);

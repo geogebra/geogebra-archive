@@ -276,5 +276,19 @@ public final class MyMath {
 		return Math.ceil(t / mod) * mod;
 			
 	}
+	public static double nextPrettyNumber(double t){
+		if(t<1)
+			return 1;
+		double pot = Math.pow(10, Math.floor(Math.log10(t)));
+		double n = t / pot;
+
+		if (n > 5) {
+			return 10 * pot;
+		} else if (n > 2) {
+			return 5 * pot;
+		} else {
+			return 2*pot;
+		}
+	}
 
 }
