@@ -43,9 +43,13 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}  
 	
 	public GeoText(Construction c, String label, String value) {
+		this(c, value);
+		setLabel(label);
+	}  
+	
+	public GeoText(Construction c, String value) {
 		this(c);
 		setTextString(value);
-		setLabel(label);
 	}  
 	
 	/**

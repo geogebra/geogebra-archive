@@ -106,7 +106,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	// geos
 	private GeoList regressionAnalysisList;
 	private ArrayList<GeoElement> plotGeoList;
-	private GeoElement histogram, dotPlot, boxPlotTitles, frequencyPolygon, normalCurve;
+	private GeoElement histogram, dotPlot, boxPlotTitles[], frequencyPolygon, normalCurve;
 
 
 	// display panels 	
@@ -818,7 +818,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			}
 			plotPanel.setPlotSettings(statGeo.getMultipleBoxPlotSettings( dataListSelected));
 			boxPlotTitles = statGeo.createBoxPlotTitles(statDialog, plotPanel.getPlotSettings());
-			plotGeoList.add(boxPlotTitles);
+			for (int i = 0 ; i < boxPlotTitles.length ; i++)
+				plotGeoList.add(boxPlotTitles[i]);
 			
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			optionsButton.setVisible(false);

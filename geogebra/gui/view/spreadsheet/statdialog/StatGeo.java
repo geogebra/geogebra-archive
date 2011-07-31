@@ -6,14 +6,15 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFrequencyPolygon;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoHistogram;
-import geogebra.kernel.AlgoListLength;
 import geogebra.kernel.AlgoResidualPlot;
+import geogebra.kernel.AlgoText;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.MyDouble;
@@ -382,23 +383,24 @@ public class StatGeo   {
 
 	}
 
-	public GeoElement createBoxPlotTitles(StatDialog statDialog, PlotSettings ps){
+	public GeoElement[] createBoxPlotTitles(StatDialog statDialog, PlotSettings ps){
 
 		String[] dataTitles = statDialog.getDataTitles();	
-		GeoElement geo;
+		
+		int length = dataTitles.length;
+		GeoElement[] ret = new GeoElement[length];
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("{");
 		for (int i = 0; i < dataTitles.length; i++){
-			sb.append("Text[\"  " + dataTitles[dataTitles.length - i - 1] + "\", (" + ps.xMin + "," + (i+1) + ")],");
+			//sb.append("Text[\"  " + dataTitles[dataTitles.length - i - 1] + "\", (" + ps.xMin + "," + (i+1) + ")],");
+			GeoPoint p = new GeoPoint(cons, ps.xMin, i+1d, 1d);
+			GeoText t = new GeoText(cons, ""+dataTitles[dataTitles.length - i - 1]);
+			AlgoText text = new AlgoText(cons, t, p, null, null);
+			cons.removeFromAlgorithmList(text);
+			ret[i] = text.getGeoElements()[0];
+			ret[i].setBackgroundColor(Color.WHITE);
+			ret[i].setObjColor(Color.BLACK);
 		}
-		sb.deleteCharAt(sb.lastIndexOf(","));
-		sb.append("}");
-		geo  = createGeoFromString(sb.toString());
-		geo.setBackgroundColor(Color.WHITE);
-		geo.setObjColor(Color.BLACK);
-		//((GeoList)geo).setFontStyle(Font.BOLD);
-		return geo;		
+		return ret;		
 	}
 
 

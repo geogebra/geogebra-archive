@@ -52,6 +52,11 @@ public class AlgoText extends AlgoElement {
 	}   
 
 	public AlgoText(Construction cons, String label, GeoElement geo, GeoPoint p, GeoBoolean substituteVars, GeoBoolean latex) {
+		this(cons, geo, p, substituteVars, latex);
+		text.setLabel(label);		
+	}
+
+	public AlgoText(Construction cons, GeoElement geo, GeoPoint p, GeoBoolean substituteVars, GeoBoolean latex) {
 		super(cons);
 		this.geo = geo;
 		this.startPoint = p;
@@ -78,7 +83,6 @@ public class AlgoText extends AlgoElement {
 
 		// compute value of dependent number
 		compute();      
-		text.setLabel(label);		
 	}
 
 	public String getClassName() {

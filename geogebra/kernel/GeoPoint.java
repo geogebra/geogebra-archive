@@ -100,9 +100,13 @@ GeoPointND, Animatable, Transformable  {
      * @param z 
      */  
     public GeoPoint(Construction c, String label, double x, double y, double z) {               
+        this(c, x, y, z); 
+        setLabel(label);
+    }
+    
+    public GeoPoint(Construction c, double x, double y, double z) {               
         super(c, x, y, z); // GeoVec3D constructor
     	setAnimationType(ANIMATION_INCREASING);
-        setLabel(label);
     }
     
     public GeoPoint(Construction c, Path path) {
