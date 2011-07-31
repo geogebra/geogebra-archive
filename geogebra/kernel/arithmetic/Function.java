@@ -562,8 +562,13 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
         
         // get coefficients as strings
+        int oldPrintForm = kernel.getCASPrintForm();
+        kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_MPREDUCE);
         String function = node.getCASstring(ExpressionNode.STRING_TYPE_MPREDUCE, symbolic); 
-        String [] strCoeffs = kernel.getPolynomialCoeffs(function, fVars[0].toString());
+        String var = fVars[0].toString();
+        kernel.setCASPrintForm(oldPrintForm);
+        
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function, var);
         
         try {
 	        if (strCoeffs == null)

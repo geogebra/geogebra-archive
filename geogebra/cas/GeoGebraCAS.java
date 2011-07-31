@@ -246,9 +246,13 @@ public class GeoGebraCAS {
 			// expand expression and get coefficients of
 			// "3*a*x^2 + b" in form "{ b, 0, 3*a }" 
 			String tmp = evaluateMPReduce(sbPolyCoeffs.toString());
-
+		
 			if ("{}".equals(tmp) || "".equals(tmp) || tmp == null)  // no result
 				return null;
+			
+			// get names of escaped global variables right
+			// e.g. "ggbcasvara" needs to be changed to "a"
+			tmp = tmp.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
 
 			tmp = tmp.substring(1, tmp.length()-1); // strip '{' and '}'
 			result = tmp.split(",");

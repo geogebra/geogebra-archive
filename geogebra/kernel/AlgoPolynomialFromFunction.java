@@ -67,12 +67,15 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
         }    
                 
         // get numeric string for function
-        //String function = f.getFunction().getExpression().getJSCLString(false);        		
-        String function = f.getFunction().
-			getExpression().getCASstring(ExpressionNode.STRING_TYPE_MPREDUCE, false);    		
-		
+        //String function = f.getFunction().getExpression().getJSCLString(false); 
+        int oldPrintForm = kernel.getCASPrintForm();
+        kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_MPREDUCE);
+        String function = f.getCASString(false);    		
+        String var = f.getVarString();
+        kernel.setCASPrintForm(oldPrintForm);
+        
         // expand expression and get polynomial coefficients
-        String [] strCoeffs = kernel.getPolynomialCoeffs(function, f.getFunction().getFunctionVariable().toString());
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function, var);
         if (strCoeffs == null) {
         	 g.setDefined(false);
         	 return;
