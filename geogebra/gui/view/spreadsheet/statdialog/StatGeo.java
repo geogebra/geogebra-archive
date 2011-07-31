@@ -1,13 +1,21 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.kernel.AlgoBoxPlot;
+import geogebra.kernel.AlgoClasses;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoFrequencyPolygon;
 import geogebra.kernel.AlgoFunctionAreaSums;
+import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.AlgoResidualPlot;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -196,17 +204,20 @@ public class StatGeo   {
 	public GeoElement createHistogram(GeoList dataList, int numClasses, StatPanelSettings settings, boolean isFrequencyPolygon){
 
 		GeoElement geo;
-		String label = dataList.getLabel();	
-		String classes;
+		//String label = dataList.getLabel();	
+		//String classes;
 		getDataBounds(dataList);
 		double classWidth = (xMaxData - xMinData)/(numClasses); 
-
+		AlgoElement al, al2;
 		if(settings.useManualClasses){
 			classWidth = settings.classWidth;
-			classes = "Classes[" + label + "," + settings.classStart + "," + settings.classWidth + "]";
+			al = new AlgoClasses(cons, dataList, new GeoNumeric(cons, settings.classStart), new GeoNumeric(cons, settings.classWidth), null);
+			//classes = "Classes[" + label + "," + settings.classStart + "," + settings.classWidth + "]";
 		}else{
-			classes = "Classes[" + label + "," + numClasses + "]";
+			al = new AlgoClasses(cons, dataList, null, null, new GeoNumeric(cons, numClasses));
+			//classes = "Classes[" + label + "," + numClasses + "]";
 		}
+		cons.removeFromConstructionList(al);
 		
 		double density = -1;
 		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
@@ -216,12 +227,16 @@ public class StatGeo   {
 
 		String text;
 		if(isFrequencyPolygon)
-			text = "FrequencyPolygon[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
-		else
-			text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
+			//text = "FrequencyPolygon[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
+		al2 = new AlgoFrequencyPolygon(cons, new GeoBoolean(cons, settings.isCumulative), (GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
+			else
+				al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), (GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
+			//text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
+		cons.removeFromConstructionList(al2);
 
 		//Application.debug(text);
-		geo = createGeoFromString(text);
+		//geo = createGeoFromString(text);
+		geo = al2.getGeoElements()[0];
 		if(isFrequencyPolygon){
 			geo.setObjColor(Color.BLACK);
 		}else{
@@ -285,12 +300,17 @@ public class StatGeo   {
 
 
 	public GeoElement createBoxPlot(GeoList dataList){
-
-		String label = dataList.getLabel();	
+		
+		//String label = dataList.getLabel();	
 		GeoElement geo;
 
-		String	text = "BoxPlot[1,0.5," + label + "]";
-		geo  = createGeoFromString(text);
+		//String	text = "BoxPlot[1,0.5," + label + "]";
+		//geo  = createGeoFromString(text);
+		
+		AlgoBoxPlot boxPlot = new AlgoBoxPlot(cons, new MyDouble(kernel, 1d), new MyDouble(kernel, 0.5), dataList);
+		cons.removeFromConstructionList(boxPlot);
+		geo = boxPlot.getGeoElements()[0];
+		
 		geo.setObjColor(StatDialog.BOXPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
 		return geo;		

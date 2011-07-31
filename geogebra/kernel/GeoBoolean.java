@@ -47,6 +47,11 @@ AbsoluteScreenLocateable {
 		setEuclidianVisible(false);
 	}
 
+	public GeoBoolean(Construction cons, boolean b) {
+		this(cons);
+		value = b;
+	}
+
 	public String getClassName() {
 		return "GeoBoolean";
 	}

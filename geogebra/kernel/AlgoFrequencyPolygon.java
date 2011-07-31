@@ -69,6 +69,16 @@ public class AlgoFrequencyPolygon extends AlgoElement {
 			GeoBoolean useDensity, 
 			GeoNumeric density) {
 
+		this(cons, isCumulative, list1, list2, useDensity, density);
+		outputPolyLine.setLabel(label);
+	}
+
+	public AlgoFrequencyPolygon(Construction cons,
+			GeoBoolean isCumulative,					   
+			GeoList list1, 
+			GeoList list2, 
+			GeoBoolean useDensity, 
+			GeoNumeric density) {
 		super(cons);
 		this.list1 = list1;
 		this.list2 = list2;
@@ -80,8 +90,8 @@ public class AlgoFrequencyPolygon extends AlgoElement {
 
 		setInputOutput();
 		compute();
-		outputPolyLine.setLabel(label);
 	}
+
 
 	public String getClassName() {
 		return "AlgoFrequencyPolygon";

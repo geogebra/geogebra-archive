@@ -70,6 +70,16 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 	}
 	
 	
+	public AlgoHistogram(Construction cons,
+			GeoBoolean isCumulative,					   
+			GeoList list1, 
+			GeoList list2, 
+			GeoBoolean useDensity, 
+			GeoNumeric density) {
+		super(cons, isCumulative, list1, list2, useDensity, density);		
+	}
+	
+
 	public String getClassName() {
 		return "AlgoHistogram";
 	}

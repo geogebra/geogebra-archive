@@ -106,8 +106,14 @@ public class AlgoBoxPlot extends AlgoElement implements AlgoDrawInformation {
 	 * @param list1
 	 *            rawData
 	 */
-	public AlgoBoxPlot(Construction cons, String label,NumberValue a, NumberValue b, GeoList list1
-			) {
+	public AlgoBoxPlot(Construction cons, String label,NumberValue a, NumberValue b, GeoList list1) {
+
+		this(cons, a, b, list1);
+		
+		sum.setLabel(label);
+	}
+
+	public AlgoBoxPlot(Construction cons, NumberValue a, NumberValue b, GeoList list1) {
 
 		super(cons);
 
@@ -123,7 +129,6 @@ public class AlgoBoxPlot extends AlgoElement implements AlgoDrawInformation {
 		// sum.setLabelVisible(false);
 		setInputOutput(); // for AlgoElement
 		compute();
-		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
 

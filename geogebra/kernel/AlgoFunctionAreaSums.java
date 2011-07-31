@@ -519,6 +519,15 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	public AlgoFunctionAreaSums(Construction cons, String label, GeoBoolean isCumulative,  
 			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density) {
 
+
+		this(cons, isCumulative, list1, list2,  useDensity, density);
+		
+		sum.setLabel(label);
+	}
+	
+	public AlgoFunctionAreaSums(Construction cons, GeoBoolean isCumulative,  
+			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density) {
+
 		super(cons);
 		
 		type = TYPE_HISTOGRAM_DENSITY;
@@ -535,7 +544,6 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		sum = new GeoNumeric(cons); // output
 		setInputOutput(); // for AlgoElement	
 		compute();
-		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
 	

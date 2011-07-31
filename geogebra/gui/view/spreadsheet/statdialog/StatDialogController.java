@@ -197,7 +197,10 @@ public class StatDialogController {
 				//TODO: dataListAll needs to be created as copy by value ?
 			case StatDialog.MODE_MULTIVAR:
 				
+				cons.setSuppressLabelCreation(true);
+
 				dataAll = cr.createCollectionList((ArrayList<CellRange>)dataSource, true); 
+				cons.setSuppressLabelCreation(false);
 				
 				//System.out.println("dataAll: ========> " + dataAll.toDefinedValueString());
 				
@@ -223,8 +226,8 @@ public class StatDialogController {
 
 		//System.out.println(" dataAll text: " + text);
 		if(dataAll != null){
-			dataAll.setAuxiliaryObject(true);
-			dataAll.setLabel("dataListAll");
+			//dataAll.setAuxiliaryObject(true);
+			//dataAll.setLabel("dataListAll");
 		}
 
 
@@ -232,10 +235,12 @@ public class StatDialogController {
 		// create/update dataListSelected
 
 		if(dataSelected == null){
+			cons.setSuppressLabelCreation(true);
 			dataSelected = new GeoList(cons);			
+			cons.setSuppressLabelCreation(false);
 		}
-		dataSelected.setAuxiliaryObject(true);
-		dataSelected.setLabel("dataListSelected");
+		//dataSelected.setAuxiliaryObject(true);
+		//dataSelected.setLabel("dataListSelected");
 
 
 		try {			
