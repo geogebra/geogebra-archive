@@ -785,6 +785,15 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public String getVarString() {	
 		return fun == null ? "x" : fun.getVarString();
 	}
+	
+	public void setVarString(String varStr) {
+		try {
+			fun.getFunctionVariable().setVarString(varStr);
+		}
+		catch (Exception e) {
+			System.err.println("GeoFunction.setVarString: " + e.getMessage());
+		}
+	}
 
 	final public boolean isFunctionInX() {		
 		return true;
@@ -1049,7 +1058,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
         sb.append('(');
         sb.append(functionIn);
         sb.append(',');
-        sb.append(fun.getFunctionVariables()[0]);
+        sb.append(getVarString());
         sb.append(',');
         sb.append(Double.toString(x));
         sb.append(')');
@@ -1136,6 +1145,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	try {
         sb.append("Derivative(");
         sb.append(functionIn);
+        sb.append(',');
+        sb.append(f.getVarString());
         sb.append(")");
 		String firstDerivative = kernel.evaluateCachedGeoGebraCAS(sb.toString());
 		
@@ -1149,7 +1160,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				
 				sb.setLength(0);
 		        sb.append("Limit(");
-		        sb.append(firstDerivative);		        
+		        sb.append(firstDerivative);		
+		        sb.append(',');
+		        sb.append(f.getVarString());
 		        sb.append(',');
 		        if (!positiveInfinity) sb.append('-'); // -Infinity
 		        sb.append(Unicode.Infinity);
@@ -1159,11 +1172,15 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				
 				if (!f.CASError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
 					sb.setLength(0);
-			        sb.append("Limit(Simplify(");
+			        sb.append("Limit(");
 			        sb.append(functionIn);
-			        sb.append("-");
+			        sb.append(" - ");
 			        sb.append(gradientStrMinus);
-			        sb.append("*x),");
+			        sb.append(" * ");
+			        sb.append(f.getVarString());
+			        sb.append(',');
+			        sb.append(f.getVarString());
+			        sb.append(',');
 			        if (!positiveInfinity) sb.append('-'); // -Infinity
 			        sb.append(Unicode.Infinity);
 			        sb.append(')');
@@ -1174,7 +1191,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 						sb.setLength(0);
 						sb.append("y=");
 						sb.append(gradientStrMinus);
-						sb.append("*x+");
+						sb.append(" * ");
+						sb.append(f.getVarString());
+						sb.append(" + ");
 						sb.append(interceptStrMinus);
 						
 						if (!SB.toString().endsWith(sb.toString())) { // not duplicated
@@ -1206,6 +1225,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	else sb.setLength(0);
         sb.append("Limit(");
         sb.append(functionStr);
+        sb.append(',');
+        sb.append(f.getVarString());
         sb.append(',');
         if (!positiveInfinity) sb.append('-'); // -Infinity
         sb.append(Unicode.Infinity);
@@ -1254,7 +1275,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	    
         sb.append("Solve(1/(");        
         sb.append(functionStr);
-        sb.append("))");
+        sb.append(")");
+        sb.append(",");
+        sb.append(f.getVarString());
+        sb.append(")");
         
         try {
 			String verticalAsymptotes = kernel.evaluateCachedGeoGebraCAS(sb.toString());
@@ -1301,6 +1325,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			    		sb.setLength(0);
 			            sb.append("Numeric(Limit(");
 			            sb.append(functionStr);
+			            sb.append(',');
+			            sb.append(f.getVarString());
 			            sb.append(",");
 			            sb.append(verticalAsymptotesArray[i]);
 			            sb.append("))");

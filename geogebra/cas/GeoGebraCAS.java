@@ -152,7 +152,11 @@ public class GeoGebraCAS {
 		
 		// get names of escaped global variables right
 		// e.g. "ggbcasvara" needs to be changed to "a"
-		ret = ret.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");		
+		ret = ret.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
+		
+//		// get names of escaped temporary variables right
+//		// e.g. "ggbtmpvara" needs to be changed to "a"
+//		ret = ret.replaceAll(ExpressionNode.TMP_VARIABLE_PREFIX, "");	
 		
 		kernel.internationalizeDigits = oldDigits;
 		
@@ -160,13 +164,14 @@ public class GeoGebraCAS {
 	}
 	
 	/** 
-	 * Evaluates an expression in GeoGebraCAS syntax with the currently active CAS
-	 * (MathPiper or Maxima).
-     * @return result string (null possible)
+	 * Evaluates an expression in GeoGebraCAS syntax.
+	 * 
+     * @return result string in GeoGebra syntax (null possible)
 	 * @throws Throwable 
      */
 	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
-		return cas.evaluateGeoGebraCAS(exp);
+		ValidExpression inVE = casParser.parseGeoGebraCASInput(exp);
+		return evaluateGeoGebraCAS(inVE);
 	}
 	
 	/** 
@@ -208,7 +213,7 @@ public class GeoGebraCAS {
 	{
 		return getMPReduce().evaluateMPReduce(exp);
 	}
-	
+
 
 	// these variables are cached to gain some speed in getPolynomialCoeffs
 	private Map<String, String[]> getPolynomialCoeffsCache = new MaxSizeHashMap<String, String[]>(Kernel.GEOGEBRA_CAS_CACHE_SIZE);

@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.main.Application;
 /**
  * Find asymptotes
@@ -32,7 +33,9 @@ public class AlgoAsymptoteFunction extends AlgoElement {
     	super(cons);
         this.f = f;            	
     	
-        g = new GeoList(cons);                
+        g = new GeoList(cons);    	
+		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+	
         setInputOutput(); // for AlgoElement        
         compute();
         g.setLabel(label);
@@ -62,29 +65,33 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         	return;
         }    
         
-        ExpressionNode root = f.getFunctionExpression();
-        //Application.debug((root.operation == ExpressionNode.DIVIDE)+"");
-		
-	    sb.setLength(0);
-	    sb.append("{");
-		f.getHorizontalPositiveAsymptote(f, sb);
-		f.getHorizontalNegativeAsymptote(f, sb);
-	    
-		f.getDiagonalPositiveAsymptote(f, sb);
-		f.getDiagonalNegativeAsymptote(f, sb);
-		
-    	f.getVerticalAsymptotes(f, sb, false);
-
-	    sb.append("}");
-		
-	    //Application.debug(sb.toString());
-		g.set(kernel.getAlgebraProcessor().evaluateToList(sb.toString()));	
-		
-		g.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-		
-		g.setDefined(true);	
-
-		
+        // temporarily change function variable name to avoid problems with CAS variables
+        // e.g. f(x) = x^2 becomes f(tmpvarx) = tmpvarx^2
+//        String oldVarString = f.getVarString();
+//        f.setVarString(ExpressionNode.TMP_VARIABLE_PREFIX+oldVarString);
+        
+	    try {
+		    sb.setLength(0);
+		    sb.append("{");
+			f.getHorizontalPositiveAsymptote(f, sb);
+			f.getHorizontalNegativeAsymptote(f, sb);
+		    
+			f.getDiagonalPositiveAsymptote(f, sb);
+			f.getDiagonalNegativeAsymptote(f, sb);
+			
+	    	f.getVerticalAsymptotes(f, sb, false);
+	
+		    sb.append("}");
+			
+		    //Application.debug(sb.toString());
+			g.set(kernel.getAlgebraProcessor().evaluateToList(sb.toString()));	
+	    }
+	    catch (Throwable th) {
+	    	g.setUndefined();
+	    }
+	    finally {
+//	        f.setVarString(oldVarString);
+	    }		
     }
     
     

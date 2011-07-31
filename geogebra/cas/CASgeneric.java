@@ -20,18 +20,7 @@ public abstract class CASgeneric {
 		this.casParser = casParser;
 		this.translationResourcePath = translationResourcePath;
 	}
-	
-	/** 
-	 * Evaluates an expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra syntax.
-	 * @param exp The expression in GeogebraCAS syntax.
-     * @return result string (null possible)
-	 * @throws Throwable 
-     */
-	final String evaluateGeoGebraCAS(String exp) throws Throwable {
-		ValidExpression inVE = casParser.parseGeoGebraCASInput(exp);
-		return evaluateGeoGebraCAS(inVE);
-	}
-	
+
 	/**
 	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
 	 * @param casInput in GeoGebraCAS syntax
@@ -113,7 +102,7 @@ public abstract class CASgeneric {
 		try {
 			ValidExpression tmp = ve;
 			if (!ve.isExpressionNode())
-				tmp = new ExpressionNode(casParser.getKernel(), ve);			
+				tmp = new ExpressionNode(kernel, ve);			
 			
 			String body = ((ExpressionNode) tmp).getCASstring(casStringType, true);			
 			
