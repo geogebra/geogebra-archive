@@ -1291,6 +1291,9 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		// GeoPoint P = (GeoPoint) PI;
 
 		P.updateCoords();
+		
+		// update closestPointIndex
+		getNearestPoint(P);
 
 		
 		GeoElement geo = get(closestPointIndex);
