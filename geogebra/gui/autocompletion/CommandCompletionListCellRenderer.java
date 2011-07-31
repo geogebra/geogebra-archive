@@ -16,7 +16,7 @@ public class CommandCompletionListCellRenderer extends DefaultListCellRenderer {
 	
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-		String cmd = (String) value + "[]";
+		String cmd = (String) value;
 		JLabel label = (JLabel) super.getListCellRendererComponent(list, cmd, index, isSelected, cellHasFocus);
 		return label;
 	}

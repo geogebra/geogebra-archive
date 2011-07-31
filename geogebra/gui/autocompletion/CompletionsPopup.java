@@ -12,7 +12,9 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.main.Application;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -94,7 +96,7 @@ public class CompletionsPopup {
 		textField.addFocusListener(new FocusAdapter() {
 			@Override public void focusLost(FocusEvent e) { hidePopup(); }
 		});
-		// Allow the user click on a option for completion
+		// Allow the user click on an option for completion
 		list.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent e) { handleMouseClick(e); }
 		});
@@ -220,12 +222,10 @@ public class CompletionsPopup {
 			list.setSelectedIndex(index);
 			list.ensureIndexIsVisible(index);
 		}
-		// updateText();
 	}
 	
 	private void handleMouseClick(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			// updateText();
 			textField.validateAutoCompletion(list.getSelectedIndex());
 			hidePopup();
 		} 

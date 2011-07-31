@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -278,7 +280,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
 
-            case KeyEvent.VK_F1:
+        case KeyEvent.VK_F1:
             	
             	if (autoComplete) {
 	    			if (getText().equals("")) {
@@ -309,8 +311,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
             	} else app.getGuiManager().openHelp(Application.WIKI_MANUAL);
             	
             	e.consume();
-                break;          
-			 
+                break;
 		default:                                
 		}                                   
 	}
@@ -354,8 +355,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if ( (!isLetterOrDigit(charPressed) && !modifierKeyPressed) || 
 				(ctrlC && Application.MAC_OS) // don't want selection cleared
 		) return;        
-
-
+		
 		clearSelection();
 
 		//Application.debug(e.isAltDown()+"");
@@ -402,16 +402,37 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		
 		// only handle parentheses
 		char ch = e.getKeyChar();
-				
+		int caretPos = getCaretPosition();
+		
+		String text = getText();
+		
+		if (ch == ',') {
+        	if (caretPos < text.length() && text.charAt(caretPos) == ',') {
+        		// User typed ',' just in ahead of an existing ',':
+        		// We may be in the position of filling in the next argument of an autocompleted command
+        		// Look for a pattern of the form ", < Argument Description > ," or ", < Argument Description > ]"
+        		// If found, select the argument description so that it can easily be typed over with the value
+        		// of the argument.
+        		Pattern argPattern = Pattern.compile(", +<[ \\-\\w]*> *[,\\]]");
+        		Matcher argMatcher = argPattern.matcher(text);
+        		argMatcher.region(caretPos, text.length());
+        		if (argMatcher.lookingAt()) {
+        			setCaretPosition(argMatcher.end() - 1);
+        			moveCaretPosition(argMatcher.start() + 2);
+        			e.consume();
+        		}
+        		return;
+    		}
+		}
+
 		if (!(ch == '(' || ch == '{' || ch == '[' || ch == '}' || ch == ')' || ch == ']')) {
 			super.keyTyped(e);
 			return;
 		}
 		
-		String text = getText();
-		
 		clearSelection();
-		int caretPos = getCaretPosition();
+		caretPos = getCaretPosition();
+		
 		
 		if (ch == '}' || ch == ')' || ch == ']') {
 			
@@ -675,9 +696,28 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		cmdPrefix = curWord.toString();
 		completions = dict.getCompletions(cmdPrefix);
+		completions = getSyntax(completions);
 		return completions;
 	}
 	
+	private List<String> getSyntax(List<String> completions) {
+		if (completions == null) {
+			return null;
+		}
+		ArrayList<String> syntaxCompletions = new ArrayList<String>();
+		for (String completion: completions) {
+			String syntaxes = app.getCommandSyntax(completion);
+			if (syntaxes.contains("Syntax")) {
+				syntaxCompletions.add(completion + "[]");
+			} else {
+				String[] signatures = syntaxes.split("\\n");
+				for (String signature: signatures) {
+					syntaxCompletions.add(signature);
+				}
+			}
+		}
+		return syntaxCompletions;
+	}
 	public void startAutoCompletion() {
 		resetCompletions();
 		completionsPopup.showCompletions();
@@ -699,10 +739,15 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		StringBuilder sb = new StringBuilder();
 		sb.append(text.substring(0, curWordStart));
 		sb.append(command);
-		sb.append("[]");
 		sb.append(text.substring(curWordStart + curWord.length()));
 		setText(sb.toString());
-		setCaretPosition(curWordStart + command.length() + 1);
+		int bracketIndex = command.indexOf('[');
+		int commaIndex = command.indexOf(',', bracketIndex);
+		if (commaIndex == -1) {
+			commaIndex = command.length() - 1;
+		}
+		setCaretPosition(curWordStart + commaIndex);
+		moveCaretPosition(curWordStart + bracketIndex + 1);
 		return true;
 	}
 	
