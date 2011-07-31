@@ -1454,7 +1454,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		int maxFractionDigtis = Math.max(-exp, kernel.getPrintDecimals());
 		
 		if (automaticAxesNumberingDistances[axis]) {
-			if (piAxisUnit[axis]) {
+			//force same unit if scales are same, see #1082
+			if(axis==1 && automaticAxesNumberingDistances[0] && Kernel.isEqual(xscale,yscale))
+				axesNumberingDistances[1] = axesNumberingDistances[0];
+			else if (piAxisUnit[axis]) {
 				axesNumberingDistances[axis] = Math.PI;
 			} else {
 				double pot = Math.pow(10, exp);
