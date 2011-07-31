@@ -8,7 +8,7 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.AutoCompleteTextField;
-import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -82,6 +82,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	
 	/**
 	 * The "key pressed" event is generated when a key is pushed down. 
+	 * @param event 
+	 * @return if key was consumed
 	 */
 	protected boolean handleKeyPressed(KeyEvent event) {	
 		
@@ -148,6 +150,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	/**
 	 * Handles general keys like ESC and function keys that don't involved
 	 * selected GeoElements.
+	 * @param event 
+	 * @return if key was consumed
 	 */
 	public boolean handleGeneralKeys(KeyEvent event) {
 		boolean consumed = false;
@@ -316,7 +320,10 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 						// Copy selected geos
 						app.setWaitCursor();
+						boolean scriptsBlocked = app.isBlockUpdateScripts();
+						app.setBlockUpdateScripts(true);
 						CopyPaste.copyToXML(app, app.getSelectedGeos());
+						app.setBlockUpdateScripts(scriptsBlocked);
 						app.updateMenubar();
 						app.setDefaultCursor();
 						consumed = true;
@@ -816,10 +823,10 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		return false;
 	}
 	
-	private TreeSet tempSet;	
-	private TreeSet getTempSet() {
+	private TreeSet<AlgoElement> tempSet;	
+	private TreeSet<AlgoElement> getTempSet() {
 		if (tempSet == null) {
-			tempSet = new TreeSet();
+			tempSet = new TreeSet<AlgoElement>();
 		}
 		return tempSet;
 	}
@@ -831,6 +838,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * F4: copy value to input field
 	 * F5: copy name to input field
 	 * @param fkey number
+	 * @param geo 
 	 */
 	public void handleFunctionKeyForAlgebraInput(int fkey, GeoElement geo) {
 		if (!app.hasFullGui() || !app.showAlgebraInput()) 
@@ -913,6 +921,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	/**
 	 * Changes the font size of the user interface and construction element styles (thickness,
 	 * size) for a given fontSize. 
+	 * @param app 
 	 * @param fontSize 12-32pt
 	 * @param blackWhiteMode whether only black should be used as a color
 	 * @return whether change was performed
