@@ -225,7 +225,10 @@ public class EditMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {			
 				app.setWaitCursor();
+				boolean scriptsBlocked = app.isBlockUpdateScripts();
+				app.setBlockUpdateScripts(true);
 				CopyPaste.copyToXML(app, app.getSelectedGeos());
+				app.setBlockUpdateScripts(scriptsBlocked);
 				app.updateMenubar();
 				app.setDefaultCursor();
 			}
