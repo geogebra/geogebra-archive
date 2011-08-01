@@ -457,10 +457,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			}
 			
 		}
-
-		
+	
 		// auto-close parentheses
-		if (caretPos == text.length() || Character.isWhitespace(text.charAt(caretPos))) {		
+		if (caretPos == text.length() || isCloseBracketOrWhitespace(text.charAt(caretPos))) {		
 			switch (ch){
 				case '(':
 					// opening parentheses: insert closing parenthesis automatically
@@ -483,6 +482,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		setCaretPosition(Math.min(text.length(), caretPos));
 	}
 
+
+	private boolean isCloseBracketOrWhitespace(char c) {
+		return Character.isWhitespace(c) || c == ')' || c == ']' || c == '}';
+	}
 
 	protected String lookup(String s) {
 		
