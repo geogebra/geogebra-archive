@@ -234,6 +234,9 @@ public class Application implements KeyEventDispatcher {
 		// supportedLocales.add(new Locale("ur")); // Urdu
 		supportedLocales.add(new Locale("vi")); // Vietnamese
 		supportedLocales.add(new Locale("cy")); // Welsh
+		if(GeoGebra.IS_PRE_RELEASE){
+			supportedLocales.add(new Locale("ia")); // Interlingua
+		}
 
 		if (GeoGebra.IS_PRE_RELEASE)
 			supportedLocales.add(new Locale("ji")); // Yiddish
