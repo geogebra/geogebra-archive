@@ -77,8 +77,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private Kernel kernel; 
 	private ProbabilityManager probManager;
 	private ProbabiltyCalculatorStyleBar styleBar;
-	
-	
+
+
 	// selected distribution mode
 	private int selectedDist = ProbabilityManager.DIST_NORMAL;  // default: startup with normal distribution
 
@@ -88,7 +88,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private final static int maxParameterCount = 3; // maximum number of parameters allowed for a distribution
 	private double[] parameters;
 	private boolean isCumulative = false;
-	
+
 	// maps for the distribution ComboBox 
 	private HashMap<Integer, String> distributionMap;
 	private HashMap<String, Integer> reverseDistributionMap;
@@ -102,7 +102,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private GeoList discreteValueList, discreteProbList, intervalProbList, intervalValueList;
 	private GeoList parmList;
 	private ArrayList<GeoElement> pointList;
-	
+
 	// label prefix for geos
 	private static final String labelPrefix = "probcalc";
 
@@ -125,7 +125,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	private PlotPanelEuclidianView plotPanel;
 	private PlotSettings plotSettings;
-	
+
 	private ProbabilityTable table;
 
 
@@ -133,14 +133,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private boolean isIniting;
 	private boolean isSettingAxisPoints = false;
 
-	
+
 	// probability calculation modes
 	protected static final int PROB_INTERVAL = 0;
 	protected static final int PROB_LEFT = 1;
 	protected static final int PROB_RIGHT = 2;
 	private int probMode = PROB_INTERVAL;
 
-	
+
 	//interval values
 	private double low = 0, high = 1;
 
@@ -151,6 +151,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	// rounding 
 	private int printDecimals = 4,  printFigures = -1;
 
+	// valid prob interval flag
+	boolean validProb;
 
 	// colors
 	private static final Color COLOR_PDF = GeoGebraColorConstants.DARKBLUE;
@@ -163,7 +165,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private static final int thicknessCurve = 4;
 	private static final int thicknessBarChart = 3;
 
-	
+
 
 
 	/*************************************************
@@ -194,7 +196,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 
-	
+
 	public void setProbabilityCalculator(int distributionType, double[] parameters, boolean isCumulative){
 
 		this.selectedDist = distributionType;
@@ -217,12 +219,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		if(styleBar == null) {
 			styleBar = new ProbabiltyCalculatorStyleBar(app, this);
 		}
-		
+
 		return styleBar;
 	}
-	
-	
-	
+
+
+
 	//=================================================
 	//       Getters/Setters
 	//=================================================
@@ -242,7 +244,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	public int getProbMode() {
 		return probMode;
 	}
-	
+
 	public boolean isCumulative() {
 		return isCumulative;
 	}
@@ -292,24 +294,24 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			controlPanel.setBorder(BorderFactory.createEmptyBorder());
 
 			controlPanel.setMinimumSize(controlPanel.getPreferredSize());
-			
-			
+
+
 
 			// plot panel (extension of EuclidianView)
 			//======================================================
 			plotPanel = new PlotPanelEuclidianView(app.getKernel());
 			plotPanel.setMouseEnabled(true);
 			plotPanel.setMouseMotionEnabled(true);
-			
+
 			plotPanel.setBorder(BorderFactory.createCompoundBorder(
 					BorderFactory.createEmptyBorder(2, 2, 2, 2),
 					BorderFactory.createBevelBorder(BevelBorder.LOWERED))); 
-			
-			plotPanel.setBorder(BorderFactory.createEmptyBorder());
 
 			plotPanel.setBorder(BorderFactory.createEmptyBorder());
 
-			
+			plotPanel.setBorder(BorderFactory.createEmptyBorder());
+
+
 			// table panel
 			//======================================================
 			table = new ProbabilityTable(app, this);
@@ -337,7 +339,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		JScrollPane scroller = new JScrollPane(controlPanel);
 		scroller.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, plotSplitPane, scroller);
 		mainSplitPane.setResizeWeight(1);
 		mainSplitPane.setBorder(BorderFactory.createEmptyBorder());
@@ -369,7 +371,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	}
 
-	
+
 	private JPanel createDistributionPanel(){
 
 		setLabelArrays();
@@ -536,26 +538,26 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			//System.out.println("parms:" + i + " " + selectedParameters[i]);
 		}
 
-		
+
 		//create low point
-		
+
 		GeoAxis path = (GeoAxis)kernel.lookupLabel(app.getPlain("xAxis"));
-		
+
 		AlgoPointOnPath algoLow = new AlgoPointOnPath(cons, (Path)path, 0d, 0d);
 		cons.removeFromConstructionList(algoLow);
-		
+
 		lowPoint = (GeoPoint) algoLow.getGeoElements()[0];
 
 		lowPoint.setObjColor(COLOR_POINT);
 		lowPoint.setPointSize(4);
 		lowPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
 		plotGeoList.add(lowPoint);
-		
+
 		// create high point
-		
+
 		AlgoPointOnPath algoHigh = new AlgoPointOnPath(cons, (Path)path, 0d, 0d);
 		cons.removeFromConstructionList(algoHigh);
-		
+
 		highPoint = (GeoPoint) algoHigh.getGeoElements()[0];
 
 		highPoint.setObjColor(COLOR_POINT);
@@ -580,10 +582,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			// create discrete bar graph and associated lists
 			createDiscreteLists();
 			//expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
-			
+
 			AlgoBarChart algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList);
 			cons.removeFromConstructionList(algoBarChart);
-			
+
 			//discreteGraph = createGeoFromString(expr);
 			discreteGraph = algoBarChart.getGeoElements()[0];
 			discreteGraph.setObjColor(COLOR_PDF);
@@ -597,19 +599,19 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			//expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
 			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
 			//intervalProbList  = (GeoList) createGeoFromString(expr);
-			
+
 			MyDouble one = new MyDouble(kernel, 1d);
-			
+
 			ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
 			ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
 			ExpressionNode lowPlusOne = new ExpressionNode(kernel, low, ExpressionNode.PLUS, one);
 			ExpressionNode highPlusOne = new ExpressionNode(kernel, high, ExpressionNode.PLUS, one);				
-			
+
 			AlgoDependentNumber xLow = new AlgoDependentNumber(cons, lowPlusOne, false);
 			cons.removeFromConstructionList(xLow);
 			AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, highPlusOne, false);
 			cons.removeFromConstructionList(xHigh);
-			
+
 			AlgoTake take2 = new AlgoTake(cons, (GeoList)discreteProbList, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
 			cons.removeFromConstructionList(take2);
 
@@ -618,22 +620,22 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			//expr = "Take[" + discreteValueList.getLabel()  + ", x(" 
 			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
 			//intervalValueList  = (GeoList) createGeoFromString(expr);
-			
+
 			AlgoTake take = new AlgoTake(cons, (GeoList)discreteValueList, (GeoNumeric) xLow.getGeoElements()[0], (GeoNumeric) xHigh.getGeoElements()[0]);
 			cons.removeFromConstructionList(take);
 
-			
+
 			intervalValueList = (GeoList) take.getGeoElements()[0];
-			
+
 
 			//expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
 			//discreteIntervalGraph  = createGeoFromString(expr);
 
 			AlgoBarChart barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList);
 			cons.removeFromConstructionList(barChart);
-			
+
 			discreteIntervalGraph = barChart.getGeoElements()[0];
-			
+
 			//System.out.println(text);
 			discreteIntervalGraph.setObjColor(COLOR_PDF_FILL);
 			discreteIntervalGraph.setAlphaValue(opacityDiscreteInterval);
@@ -651,9 +653,9 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			expr = buildDensityCurveExpression(selectedDist);
 
 			densityCurve = createGeoFromString(expr, null, true);
-			
+
 			cons.removeFromConstructionList(densityCurve.getParentAlgorithm());
-			
+
 			densityCurve.setObjColor(COLOR_PDF);
 			densityCurve.setLineThickness(thicknessCurve);
 			densityCurve.setFixed(true);
@@ -663,15 +665,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			if(hasIntegral ){
 				GeoBoolean f = new GeoBoolean(cons);
 				f.setValue(false);
-				
+
 				ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
 				ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
-				
+
 				AlgoDependentNumber xLow = new AlgoDependentNumber(cons, low, false);
 				cons.removeFromConstructionList(xLow);
 				AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
 				cons.removeFromConstructionList(xHigh);
-				
+
 				AlgoIntegralDefinite algoIntegral = new AlgoIntegralDefinite(cons, (GeoFunction)densityCurve, (NumberValue) xLow.getGeoElements()[0], (NumberValue) xHigh.getGeoElements()[0], f);
 				cons.removeFromConstructionList(algoIntegral);
 
@@ -801,7 +803,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		// retrieve the parameter values from the parmList geo
 		double [] parms = getCurrentParameters();
-
 		return probManager.intervalProbability(low, high, selectedDist, parms, probMode);
 	}
 
@@ -823,18 +824,44 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 * TODO: get this to work!
 	 * @return
 	 */
-	private boolean validateProbFields(){
+	private boolean isValidInterval(double xLow, double xHigh){
 
-		boolean succ = true;
-		succ = low <= high;
-		if( selectedDist == ProbabilityManager.DIST_BINOMIAL){
-			low = Math.round(low);
-			high = Math.round(high);
-			succ = low >= 0;
-			//	succ = high <= selectedParameters[0];
+		if (xHigh < xLow) return false;
 
+		boolean isValid = true;
+		double[] parms = getCurrentParameters();
+
+		switch (selectedDist){
+
+		case ProbabilityManager.DIST_BINOMIAL:
+			isValid = xLow >= 0 && xHigh<= parms[0];  // 0 <= x <= n
+			break;
+
+		case ProbabilityManager.DIST_PASCAL: 
+			isValid = xLow >= 0;   // 0 <= x 
+			break;
+
+			
+		case ProbabilityManager.DIST_POISSON: 
+		case ProbabilityManager.DIST_CHISQUARE:
+		case ProbabilityManager.DIST_EXPONENTIAL:
+			if(probMode != PROB_LEFT)
+				isValid = xLow >= 0;   // 0 <= x 
+			break;
+			
+			
+		case ProbabilityManager.DIST_F:	
+			if(probMode != PROB_LEFT)
+				isValid = xLow > 0;   // 0 <= x 
+			break;
+
+		case ProbabilityManager.DIST_HYPERGEOMETRIC: 
+			isValid = xLow >= 0 && xHigh<= parms[2];  // 0 <= x <= sample size
+			break;
 		}
-		return succ;	
+
+
+		return isValid;	
 
 	}
 
@@ -907,33 +934,49 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			nv = kernel.getAlgebraProcessor().evaluateToNumeric(inputText, false);		
 			double value = nv.getDouble();
 
-			for(int i=0; i< parmList.size(); ++i)
-				if (source == fldParameterArray[i]) {
-					((GeoNumeric)parmList.get(i)).setValue(value); 
-					//validateParms(selectedParms);
-					updatePlot();
+			if(source == fldLow){
+				if(isValidInterval(value,high)){
+					low = value;
+					setXAxisPoints();
+				}else{
+					updateGUI();
 				}
 
-			if(source == fldLow){
-				low = value;
-				setXAxisPoints();
-
 			}
-			if(source == fldHigh){
-				high = value;
-				setXAxisPoints();
+
+			else if(source == fldHigh){
+				if(isValidInterval(low,value)){
+					high = value;
+					setXAxisPoints();
+				}else{
+					updateGUI();
+				}
 			}
 
 			// handle inverse probability
-			if(source == fldResult ){
-				if(probMode == PROB_LEFT){
-					high = inverseProbability(value);
+			else if(source == fldResult ){
+				if(value < 0 || value > 1){
+					updateGUI();
+				}else{
+					if(probMode == PROB_LEFT){
+						high = inverseProbability(value);
+					}
+					if(probMode == PROB_RIGHT){
+						low = inverseProbability(1-value);
+					}
+					setXAxisPoints();
 				}
-				if(probMode == PROB_RIGHT){
-					low = inverseProbability(1-value);
-				}
-				setXAxisPoints();
 			}
+
+			else 
+				// handle parm entry
+				for(int i=0; i< parmList.size(); ++i)
+					if (source == fldParameterArray[i]) {
+						((GeoNumeric)parmList.get(i)).setValue(value);
+						// TODO
+						//validateParms(selectedParms);
+						updatePlot();
+					}
 
 			updateIntervalProbability();
 			updateGUI();
@@ -1035,10 +1078,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
-	private void updateIntervalProbability(){		
+	private void updateIntervalProbability(){
 		probability = intervalProbability();
+		if(probManager.isDiscrete(selectedDist))
+			this.discreteIntervalGraph.updateCascade();
+		else
+			this.integral.updateCascade();Application.debug("");
 	}
 
+	
 	private void updateProbabilityType(){
 
 		if(isIniting) return;	
@@ -1195,18 +1243,26 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		double[] coords = new double[2];;
 		if(!isSettingAxisPoints && !isIniting){
 			if(geo.equals(lowPoint)){	
-				low = lowPoint.getInhomX();
-				updateIntervalProbability();
-				updateGUI();
-				if(probManager.isDiscrete(selectedDist))
-					table.setSelectionByRowValue((int)low, (int)high);
+				if(isValidInterval(lowPoint.getInhomX(), high)){
+					low = lowPoint.getInhomX();
+					updateIntervalProbability();
+					updateGUI();
+					if(probManager.isDiscrete(selectedDist))
+						table.setSelectionByRowValue((int)low, (int)high);
+				}else{
+					setXAxisPoints();
+				}
 			}
-			if(geo.equals(highPoint)){	
-				high = highPoint.getInhomX();
-				updateIntervalProbability();
-				updateGUI();
-				if(probManager.isDiscrete(selectedDist))
-					table.setSelectionByRowValue((int)low, (int)high);
+			if(geo.equals(highPoint)){
+				if(isValidInterval(low, highPoint.getInhomX())){
+					high = highPoint.getInhomX();
+					updateIntervalProbability();
+					updateGUI();
+					if(probManager.isDiscrete(selectedDist))
+						table.setSelectionByRowValue((int)low, (int)high);
+				}else{
+					setXAxisPoints();
+				}
 			}
 		}
 	}
@@ -1312,17 +1368,17 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(true);
-			
+
 			// workaround for eg CmdNormal -> always creates undo point
 			boolean oldEnableUndo = cons.isUndoEnabled();
 			cons.setUndoEnabled(false);
 
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
-			
+
 			cons.setUndoEnabled(oldEnableUndo);
 
-			
+
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(oldSuppressLabelMode);
 
@@ -1623,7 +1679,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	//============================================================
 	//           Number Format
 	//============================================================
-	
+
 	/**
 	 * Formats a number string using local format settings
 	 */
