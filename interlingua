@@ -1,0 +1,12 @@
+#!/bin/sh
+cd geogebra/properties
+for f in menu colors symbols error command plain
+	do	
+		cat $f.properties |grep =|grep -v "#" |grep -v "%0" | sed "s/\([^=]*\)=\(.*\)/\1=\1 \($f\)/" > $f"_ia.properties"
+		cat $f.properties |grep =|grep  "%0" |grep -v "%1" | sed "s/\([^=]*\)=\(.*\)/\1=\1 \($f\):%0/" >> $f"_ia.properties"
+		cat $f.properties |grep =|grep  "%1" |grep -v "%2" | sed "s/\([^=]*\)=\(.*\)/\1=\1 \($f\):%0,%1/" >> $f"_ia.properties"
+		cat $f.properties |grep =|grep  "%3" |grep -v "%4" | sed "s/\([^=]*\)=\(.*\)/\1=\1 \($f\):%0,%1,%2/" >> $f"_ia.properties"
+		cat $f.properties |grep =|grep  "%3" |grep -v "%4" | sed "s/\([^=]*\)=\(.*\)/\1=\1 \($f\):%0,%1,%2,%3/" >> $f"_ia.properties"
+		cat $f.properties |grep =|grep  "%4" |grep -v "#" | sed "s/\([^=]*\)=\(.*\)/\1=\1 \($f\):%0,%1,%2,%3/" >> $f"_ia.properties"
+	done
+	
