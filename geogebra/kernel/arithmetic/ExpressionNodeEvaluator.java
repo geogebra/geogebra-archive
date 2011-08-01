@@ -108,7 +108,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	return myList;
         }
         
-        else if (lt instanceof FunctionalNVar && rt instanceof FunctionalNVar) {              	            	
+        else if (lt instanceof FunctionalNVar && rt instanceof FunctionalNVar && operation != EQUAL_BOOLEAN && operation!=NOT_EQUAL) {              	            	
         	return GeoFunction.operationSymb(operation,(FunctionalNVar)lt, (FunctionalNVar)rt);            	            	
         }           
         //we want to use function arithmetic in cases like f*2 or f+x^2, but  not for f(2), f'(2) etc.
