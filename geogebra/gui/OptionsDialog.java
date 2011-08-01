@@ -179,24 +179,19 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		tabbedPane = new IconTabbedPane();
 		
 		// defaults
-		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), defaultsPanel);
+		tabbedPane.addTab("", app.getImageIcon("options-large.png"), defaultsPanel);
 		
 		// euclidian properties
-		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), euclidianPanelScroll);
+		tabbedPane.addTab("", app.getImageIcon("euclidian.png"), euclidianPanelScroll);
 		
 		// spreadsheet properties
-		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), spreadsheetPanel);
+		tabbedPane.addTab("",  app.getImageIcon("spreadsheet.png"), spreadsheetPanel);
 		
 		// CAS properties
-		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), casPanel);
+		tabbedPane.addTab("",  app.getImageIcon("cas.png"), casPanel);
 		
 		// advanced
-		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), advancedPanel);
+		tabbedPane.addTab("",  app.getImageIcon("options-advanced.png"), advancedPanel);
 		
 		// disable some tabs for applets
 		if(app.isApplet()) {
