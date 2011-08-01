@@ -95,9 +95,9 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputPanel.getSymbolButton().setDownwardPopup(false);
 
 		// create toggle button to hide/show the input help panel
-		btnToggleInputPanel = new JToggleButton();
-		btnToggleInputPanel.setSelectedIcon(GeoGebraIcon.listRightIcon());
-		btnToggleInputPanel.setIcon(GeoGebraIcon.listLeftIcon());
+		btnToggleInputPanel = new JToggleButton();	
+		btnToggleInputPanel.setIcon(app.getImageIcon("29.07.2011_left_1.png"));
+		btnToggleInputPanel.setSelectedIcon(app.getImageIcon("29.07.2011_right_1.png"));
 		btnToggleInputPanel.setPreferredSize(new Dimension(14,14));
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
@@ -178,6 +178,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		// update the help panel
 		app.getInputHelpPanel().setLabels();
 		app.getInputHelpPanel().setCommands();
+		if(btnToggleInputPanel!=null)
+			btnToggleInputPanel.setToolTipText(app.getMenu("InputHelp"));
 	}	
 
 
