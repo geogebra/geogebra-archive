@@ -1,14 +1,38 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoListLength;
+import geogebra.kernel.AlgoListMax;
+import geogebra.kernel.AlgoListMin;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.statistics.AlgoListMeanX;
+import geogebra.kernel.statistics.AlgoListMeanY;
+import geogebra.kernel.statistics.AlgoListPMCC;
+import geogebra.kernel.statistics.AlgoListSXX;
+import geogebra.kernel.statistics.AlgoListSXY;
+import geogebra.kernel.statistics.AlgoListSYY;
+import geogebra.kernel.statistics.AlgoListSampleSDX;
+import geogebra.kernel.statistics.AlgoListSampleSDY;
+import geogebra.kernel.statistics.AlgoMean;
+import geogebra.kernel.statistics.AlgoQ1;
+import geogebra.kernel.statistics.AlgoQ3;
+import geogebra.kernel.statistics.AlgoRSquare;
+import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
+import geogebra.kernel.statistics.AlgoSigmaXX;
+import geogebra.kernel.statistics.AlgoSpearman;
+import geogebra.kernel.statistics.AlgoStandardDeviation;
+import geogebra.kernel.statistics.AlgoSum;
+import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.text.NumberFormat;
 
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -141,10 +165,10 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 		DefaultTableModel model = statTable.getModel();
 		
 		String regressionLabel = null;
-		String dataLabel = dataList.getLabel();
-		if(geoRegression != null){
-			regressionLabel = geoRegression.getLabel();
-		}
+		//String dataLabel = dataList.getLabel();
+		//if(geoRegression != null){
+		//	regressionLabel = geoRegression.getLabel();
+		//}
 
 		String expr;
 		double value;
@@ -152,15 +176,21 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 			for(int column=0; column < 1; column++){
 				if(statMap[row].length == 2){
 					if(statMap[row][1] != null){
-						expr = statMap[row][1] + "[" + dataLabel + "]";
-						value = evaluateExpression(expr);
+						//expr = statMap[row][1] + "[" + dataLabel + "]";
+						//value = evaluateExpression(expr);
+						AlgoElement algo = getStatMapAlgo(statMap[row][1], dataList, geoRegression);
+						kernel.getConstruction().removeFromConstructionList(algo);
+						value = ((GeoNumeric)algo.getGeoElements()[0]).getDouble();
 						model.setValueAt(statDialog.format(value), row, 0);
 					}
 				}
 				else if(statMap[row].length == 3){
 					if(statMap[row][1] != null && geoRegression != null){
-						expr = statMap[row][1] + "[" + dataLabel + " , " + regressionLabel + "]";
-						value = evaluateExpression(expr);
+						//expr = statMap[row][1] + "[" + dataLabel + " , " + regressionLabel + "]";
+						//value = evaluateExpression(expr);
+						AlgoElement algo = getStatMapAlgo(statMap[row][1], dataList, geoRegression);
+						kernel.getConstruction().removeFromConstructionList(algo);
+						value = ((GeoNumeric)algo.getGeoElements()[0]).getDouble();
 						model.setValueAt(statDialog.format(value), row, 0);
 					}
 				}
@@ -168,6 +198,59 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 			}
 		}
 
+	}
+
+
+	private AlgoElement getStatMapAlgo(String algoName, GeoList dataList,
+			GeoElement geoRegression) {
+		AlgoElement ret = null;
+		Construction cons = kernel.getConstruction();
+		
+		if (algoName.equals("Length")) {
+			ret = new AlgoListLength(cons, dataList);
+		} else if (algoName.equals("Mean")) {
+			ret = new AlgoMean(cons, dataList);
+		} else if (algoName.equals("SD")) {
+			ret = new AlgoStandardDeviation(cons, dataList);
+		} else if (algoName.equals("SampleSD")) {
+			ret = new AlgoSampleStandardDeviation(cons, dataList);
+		} else if (algoName.equals("Sum")) {
+			ret = new AlgoSum(cons, dataList);
+		} else if (algoName.equals("SigmaXX")) {
+			ret = new AlgoSigmaXX(cons, dataList);
+		} else if (algoName.equals("Min")) {
+			ret = new AlgoListMin(cons, dataList);
+		} else if (algoName.equals("Q1")) {
+			ret = new AlgoQ1(cons, dataList);
+		} else if (algoName.equals("Q3")) {
+			ret = new AlgoQ3(cons, dataList);
+		} else if (algoName.equals("Max")) {
+			ret = new AlgoListMax(cons, dataList);
+		} else if (algoName.equals("MeanX")) {
+			ret = new AlgoListMeanX(cons, dataList);
+		} else if (algoName.equals("MeanY")) {
+			ret = new AlgoListMeanY(cons, dataList);
+		} else if (algoName.equals("SampleSDX")) {
+			ret = new AlgoListSampleSDX(cons, dataList);
+		} else if (algoName.equals("SampleSDY")) {
+			ret = new AlgoListSampleSDY(cons, dataList);
+		} else if (algoName.equals("PMCC")) {
+			ret = new AlgoListPMCC(cons, dataList);
+		} else if (algoName.equals("Spearman")) {
+			ret = new AlgoSpearman(cons, dataList);
+		} else if (algoName.equals("SXX")) {
+			ret = new AlgoListSXX(cons, dataList);
+		} else if (algoName.equals("SYY")) {
+			ret = new AlgoListSYY(cons, dataList);
+		} else if (algoName.equals("SXY")) {
+			ret = new AlgoListSXY(cons, dataList);
+		} else if (algoName.equals("RSquare")) {
+			ret = new AlgoRSquare(cons, dataList, (GeoFunctionable) geoRegression);
+		} else if (algoName.equals("SumSquaredErrors")) {
+			ret = new AlgoSumSquaredErrors(cons, dataList, (GeoFunctionable) geoRegression);
+		}
+		
+		return ret;
 	}
 
 

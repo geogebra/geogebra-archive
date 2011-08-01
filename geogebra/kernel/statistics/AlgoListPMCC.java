@@ -29,6 +29,10 @@ public class AlgoListPMCC extends AlgoStats2D {
         super(cons,label,geoListx,AlgoStats2D.STATS_PMCC);
     }
 
+	public AlgoListPMCC(Construction cons, GeoList geoListx) {
+        super(cons,geoListx,AlgoStats2D.STATS_PMCC);
+    }
+
     public String getClassName() {
         return "AlgoListPMCC";
     }

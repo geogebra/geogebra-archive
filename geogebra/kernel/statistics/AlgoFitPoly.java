@@ -41,6 +41,11 @@ public class AlgoFitPoly extends AlgoElement{
     private GeoElement      geodegree;
     
     public AlgoFitPoly(Construction cons, String label, GeoList geolist,NumberValue degree) {
+        this(cons, geolist, degree);
+        geofunction.setLabel(label);
+    }//Constructor
+    
+    public AlgoFitPoly(Construction cons, GeoList geolist,NumberValue degree) {
         super(cons);
         this.geolist=geolist;
         this.degree=degree;
@@ -48,7 +53,6 @@ public class AlgoFitPoly extends AlgoElement{
         geofunction=new GeoFunction(cons);
         setInputOutput();
         compute();
-        geofunction.setLabel(label);
     }//Constructor
     
     public String getClassName() {return "AlgoFitPoly";}

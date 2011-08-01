@@ -29,6 +29,10 @@ public class AlgoListSXX extends AlgoStats2D {
         super(cons,label,geoListx,AlgoStats2D.STATS_SXX);
     }
 
+	public AlgoListSXX(Construction cons, GeoList geoListx) {
+        super(cons,geoListx,AlgoStats2D.STATS_SXX);
+    }
+
     public String getClassName() {
         return "AlgoListSXX";
     }

@@ -33,6 +33,11 @@ public class AlgoFitLineX extends AlgoElement {
     private GeoLine  g;     // output   
 
     public AlgoFitLineX(Construction cons, String label, GeoList geoList) {
+        this(cons, geoList);    
+        g.setLabel(label);
+    }
+
+    public AlgoFitLineX(Construction cons, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
                
@@ -40,7 +45,6 @@ public class AlgoFitLineX extends AlgoElement {
         setInputOutput(); // for AlgoElement
         
         compute();      
-        g.setLabel(label);
     }
 
     public String getClassName() {

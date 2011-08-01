@@ -74,6 +74,11 @@ public abstract class AlgoStats2D extends AlgoElement {
     }
 
     public AlgoStats2D(Construction cons, String label, GeoList geoListx, int stat) {
+        this(cons, geoListx, stat);
+        result.setLabel(label);
+    }
+
+    public AlgoStats2D(Construction cons, GeoList geoListx, int stat) {
         super(cons);
         mode=MODE_LISTOFPOINTS;
         this.geoListx = geoListx;
@@ -89,7 +94,6 @@ public abstract class AlgoStats2D extends AlgoElement {
         setOutput(0,result);
         setDependencies(); // done by AlgoElement
         compute();
-        result.setLabel(label);
     }
 
     public String getClassName() {

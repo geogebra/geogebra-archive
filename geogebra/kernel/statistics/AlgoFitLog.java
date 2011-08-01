@@ -40,12 +40,16 @@ public class AlgoFitLog extends AlgoElement{
 
     
     public AlgoFitLog(Construction cons, String label, GeoList geolist) {
+        this(cons, geolist);
+        geofunction.setLabel(label);
+    }//Constructor
+    
+    public AlgoFitLog(Construction cons, GeoList geolist) {
         super(cons);
         this.geolist=geolist;
         geofunction=new GeoFunction(cons);
         setInputOutput();
         compute();
-        geofunction.setLabel(label);
     }//Constructor
     
     public String getClassName() {return "AlgoFitLog";}

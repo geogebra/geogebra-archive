@@ -29,6 +29,10 @@ public class AlgoListSampleSDY extends AlgoStats2D {
         super(cons,label,geoListy,AlgoStats2D.STATS_SAMPLESDY);
     }
 
+	public AlgoListSampleSDY(Construction cons, GeoList geoListy) {
+        super(cons,geoListy,AlgoStats2D.STATS_SAMPLESDY);
+    }
+
     public String getClassName() {
         return "AlgoListSampleSDY";
     }

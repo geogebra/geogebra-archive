@@ -53,6 +53,11 @@ public abstract class AlgoStats1D extends AlgoElement {
 	}
 
 	AlgoStats1D(Construction cons, String label, GeoList geoList, GeoNumeric Truncate, int stat) {
+		this(cons, geoList, Truncate, stat);
+		result.setLabel(label);
+	}
+
+	AlgoStats1D(Construction cons, GeoList geoList, GeoNumeric Truncate, int stat) {
 		super(cons);
 		this.geoList = geoList;
 		this.stat=stat;
@@ -65,7 +70,10 @@ public abstract class AlgoStats1D extends AlgoElement {
 
 		setInputOutput();
 		compute();
-		result.setLabel(label);
+	}
+
+	public AlgoStats1D(Construction cons, GeoList geoList, int stat) {
+		this(cons, geoList, null, stat);
 	}
 
 	public abstract String getClassName();

@@ -29,6 +29,10 @@ public class AlgoListSampleSDX extends AlgoStats2D {
         super(cons,label,geoListx,AlgoStats2D.STATS_SAMPLESDX);
     }
 
+	public AlgoListSampleSDX(Construction cons, GeoList geoListx) {
+        super(cons,geoListx,AlgoStats2D.STATS_SAMPLESDX);
+    }
+
     public String getClassName() {
         return "AlgoListSampleSDX";
     }

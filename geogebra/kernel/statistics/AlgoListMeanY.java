@@ -29,6 +29,10 @@ public class AlgoListMeanY extends AlgoStats2D {
         super(cons,label,geoListx,AlgoStats2D.STATS_MEANY);
     }
 
+	public AlgoListMeanY(Construction cons, GeoList geoListx) {
+        super(cons,geoListx,AlgoStats2D.STATS_MEANY);
+    }
+
     public String getClassName() {
         return "AlgoListMeanY";
     }

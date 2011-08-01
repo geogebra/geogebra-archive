@@ -51,6 +51,11 @@ public class AlgoSpearman extends AlgoElement {
 	}
 
 	public AlgoSpearman(Construction cons, String label, GeoList geoList) {
+		this(cons, geoList);      
+		result.setLabel(label);
+	}
+
+	public AlgoSpearman(Construction cons, GeoList geoList) {
 		super(cons);
 		this.geoListX = null;
 		this.geoListY = null;
@@ -60,7 +65,6 @@ public class AlgoSpearman extends AlgoElement {
 		setInputOutput(); // for AlgoElement
 
 		compute();      
-		result.setLabel(label);
 	}
 
 

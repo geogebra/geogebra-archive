@@ -105,6 +105,11 @@ public final class AlgoFitLogistic extends AlgoElement{
     private GeoFunction     geofunction;                    //output
     
     public AlgoFitLogistic(Construction cons, String label, GeoList geolist) {
+        this(cons, geolist);
+        geofunction.setLabel(label);
+    }//Constructor
+    
+    public AlgoFitLogistic(Construction cons, GeoList geolist) {
         super(cons);
         app=kernel.getApplication();
         k=app.getKernel();
@@ -112,7 +117,6 @@ public final class AlgoFitLogistic extends AlgoElement{
         geofunction=new GeoFunction(cons);
         setInputOutput();
         compute();
-        geofunction.setLabel(label);
     }//Constructor
     
     public String getClassName() {return "AlgoFitLogistic";}

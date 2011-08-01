@@ -1049,7 +1049,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    sb.setLength(0);
-        sb.append("Limit");
+        sb.append("Numeric(Limit");
         if (direction == -1) sb.append("Above");
         else if (direction == 1) sb.append("Below");       
         sb.append('(');
@@ -1058,7 +1058,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
         sb.append(getVarString());
         sb.append(',');
         sb.append(Double.toString(x));
-        sb.append(')');
+        sb.append("))");
 
 
 		

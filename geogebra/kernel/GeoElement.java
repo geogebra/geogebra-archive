@@ -28,6 +28,7 @@ import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -2764,7 +2765,6 @@ public abstract class GeoElement
 				} while (!cons.isFreeLabel(str));
 				return str;
 			} else if (isGeoList()) {
-				Application.printStacktrace("");
 				GeoList list = (GeoList) this;
 				int counter = 0;
 				String str;
@@ -5173,9 +5173,15 @@ public abstract class GeoElement
 	 		if (geoFun.isIndependent()) {
 	 			ret = geoFun.toValueString();
 	 		} else {
-	 			ret = substituteNumbers ?
-	 					geoFun.getFunction().toValueString():
-	 					geoFun.getFunction().toString();
+	 			
+	 			Function fun = geoFun.getFunction();
+	 			
+	 			if (fun == null) {
+	 				ret = app.getPlain("undefined");
+	 			} else	 			
+		 			ret = substituteNumbers ?
+		 					geoFun.getFunction().toValueString():
+		 					geoFun.getFunction().toString();
 	 		}
 		}
 		// matrices
@@ -5212,8 +5218,8 @@ public abstract class GeoElement
 
 		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
 			if ("?".equals(ret)) ret = app.getPlain("undefined");
-			else if ((Unicode.Infinity+"").equals(ret)) ret = app.getPlain("\\infty");
-			else if ((Unicode.MinusInfinity+"").equals(ret)) ret = app.getPlain("-\\infty");
+			else if ((Unicode.Infinity+"").equals(ret)) ret = "\\infty";
+			else if ((Unicode.MinusInfinity+"").equals(ret)) ret = "-\\infty";
 		}
 
 		return ret;

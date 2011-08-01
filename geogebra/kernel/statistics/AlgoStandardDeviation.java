@@ -29,6 +29,10 @@ public class AlgoStandardDeviation extends AlgoStats1D {
         super(cons,label,geoList,AlgoStats1D.STATS_SD);
     }
 
+	public AlgoStandardDeviation(Construction cons, GeoList geoList) {
+        super(cons,geoList,AlgoStats1D.STATS_SD);
+    }
+
     public String getClassName() {
         return "AlgoStandardDeviation";
     }

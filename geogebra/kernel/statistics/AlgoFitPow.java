@@ -40,12 +40,16 @@ public class AlgoFitPow extends AlgoElement{
 
     
     public AlgoFitPow(Construction cons, String label, GeoList geolist) {
+        this(cons, geolist);
+        geofunction.setLabel(label);
+    }//Constructor
+    
+    public AlgoFitPow(Construction cons, GeoList geolist) {
         super(cons);
         this.geolist=geolist;
         geofunction=new GeoFunction(cons);
         setInputOutput();
         compute();
-        geofunction.setLabel(label);
     }//Constructor
     
     public String getClassName() {return "AlgoFitPow";}

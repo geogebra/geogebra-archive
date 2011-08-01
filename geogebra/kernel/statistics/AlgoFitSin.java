@@ -114,6 +114,11 @@ public class AlgoFitSin extends AlgoElement{
     
     /** Implements AlgoElement */
     public AlgoFitSin(Construction cons, String label, GeoList geolist) {
+        this(cons, geolist);
+        geofunction.setLabel(label);
+    }//Constructor
+
+    public AlgoFitSin(Construction cons, GeoList geolist) {
         super(cons);
         app=kernel.getApplication();
         k=app.getKernel();
@@ -121,7 +126,6 @@ public class AlgoFitSin extends AlgoElement{
         geofunction=new GeoFunction(cons);
         setInputOutput();
         compute();
-        geofunction.setLabel(label);
     }//Constructor
 
     /** Implements AlgoElement */    

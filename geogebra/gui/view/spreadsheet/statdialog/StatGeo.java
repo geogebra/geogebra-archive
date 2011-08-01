@@ -21,6 +21,12 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.statistics.AlgoFitLineX;
+import geogebra.kernel.statistics.AlgoFitLog;
+import geogebra.kernel.statistics.AlgoFitLogistic;
+import geogebra.kernel.statistics.AlgoFitPoly;
+import geogebra.kernel.statistics.AlgoFitPow;
+import geogebra.kernel.statistics.AlgoFitSin;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -530,17 +536,41 @@ public class StatGeo   {
 
 	public GeoElement createRegressionPlot(GeoList dataList, int regType, int order){
 
-		// if regression mode = none a dummy linear model is 
-		// created with visibility set to false
-		boolean regNone = regType == StatDialog.REG_NONE;
-		if(regNone) regType = StatDialog.REG_LINEAR;
-
-		// create the geo
-		String label = dataList.getLabel();	
-		String text = regCmd[regType] + "[" + label + "]";
-		if(regType == StatDialog.REG_POLY)
-			text = regCmd[regType] + "[" + label + "," + order + "]";
-		GeoElement geo  = createGeoFromString(text);	
+		boolean regNone = false;
+		
+		AlgoElement algo;
+		
+		switch (regType) {
+		case StatDialog.REG_LOG:
+			algo = new AlgoFitLog(cons, dataList);
+			break;
+		case StatDialog.REG_POLY:
+			algo = new AlgoFitPoly(cons, dataList, new MyDouble(kernel, order));
+			break;
+		case StatDialog.REG_POW:
+			algo = new AlgoFitPow(cons, dataList);
+			break;
+		case StatDialog.REG_EXP:
+			algo = new AlgoFitSin(cons, dataList);
+			break;
+		case StatDialog.REG_SIN:
+			algo = new AlgoFitSin(cons, dataList);
+			break;
+		case StatDialog.REG_LOGISTIC:
+			algo = new AlgoFitLogistic(cons, dataList);
+			break;
+		case StatDialog.REG_NONE:
+			regNone = true;
+			// fall through to linear
+		case StatDialog.REG_LINEAR:
+		default:
+			algo = new AlgoFitLineX(cons, dataList);
+			break;
+		
+		}
+		
+		cons.removeFromConstructionList(algo);
+		GeoElement geo = algo.getGeoElements()[0];
 
 		// set geo options
 		geo.setObjColor(StatDialog.REGRESSION_COLOR);

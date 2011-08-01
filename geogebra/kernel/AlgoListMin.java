@@ -33,7 +33,7 @@ public class AlgoListMin extends AlgoElement {
         min.setLabel(label);
     }
 
-    AlgoListMin(Construction cons, GeoList geoList) {
+    public AlgoListMin(Construction cons, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
                

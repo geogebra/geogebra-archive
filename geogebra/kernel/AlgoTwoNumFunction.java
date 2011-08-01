@@ -31,18 +31,21 @@ public abstract class AlgoTwoNumFunction extends AlgoElement {
     protected GeoNumeric num;     // output           
         
     protected AlgoTwoNumFunction(Construction cons, String label, NumberValue a, NumberValue b) {       
-	  super(cons); 
-      this.a = a;
-      this.b = b;
-      num = new GeoNumeric(cons); 
-      setInputOutput(); // for AlgoElement
-      
-      // compute angle
-      compute();     
-          
-      num.setLabel(label);
-    }   
-  
+  	  	this(cons, a, b);
+        num.setLabel(label);
+      }   
+    
+    protected AlgoTwoNumFunction(Construction cons, NumberValue a, NumberValue b) {       
+  	  super(cons); 
+        this.a = a;
+        this.b = b;
+        num = new GeoNumeric(cons); 
+        setInputOutput(); // for AlgoElement
+        
+        // compute angle
+        compute();     
+      }   
+    
     public abstract String getClassName();
     
     // for AlgoElement

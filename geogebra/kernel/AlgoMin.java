@@ -36,9 +36,13 @@ public class AlgoMin extends AlgoTwoNumFunction {
 	 * @param b
 	 */
     AlgoMin(Construction cons, String label, NumberValue a, NumberValue b) {       
-	  super(cons, label, a, b); 
-    }   
-  
+  	  super(cons, label, a, b); 
+      }   
+    
+    AlgoMin(Construction cons, NumberValue a, NumberValue b) {       
+  	  super(cons, a, b); 
+      }   
+    
     public String getClassName() {
         return "AlgoMin";
     }

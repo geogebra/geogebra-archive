@@ -32,7 +32,7 @@ public class AlgoListMax extends AlgoElement {
         max.setLabel(label);
     }
 
-    AlgoListMax(Construction cons, GeoList geoList) {
+    public AlgoListMax(Construction cons, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
                
