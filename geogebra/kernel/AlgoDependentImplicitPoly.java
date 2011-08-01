@@ -1,5 +1,10 @@
 package geogebra.kernel;
 
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -17,7 +22,8 @@ public class AlgoDependentImplicitPoly extends AlgoElement {
 	private Equation equation;
 	private ExpressionValue[][] coeff;  // input
 	private GeoElement geoElement;     // output (will be a implicitPoly, line or conic)
-	private FunctionNVar[] dependentFromFunctions;
+//	private FunctionNVar[] dependentFromFunctions;
+	private Set<FunctionNVar> dependentFromFunctions;
     
 	protected AlgoDependentImplicitPoly(Construction c,String label, Equation equ) {
 		super(c, false);
@@ -84,23 +90,27 @@ public class AlgoDependentImplicitPoly extends AlgoElement {
 		if (!first){
 			try{
 				if (equation.isFunctionDependent()){
-					boolean functionChanged=false;
-					for (int i=0;i<dependentFromFunctions.length;i++){
-						if (dependentFromFunctions[i]!=null){
-							if (!(input[i] instanceof FunctionalNVar)){
-								functionChanged=true;
-								break;
-							}else{
-								if (((FunctionalNVar)input[i]).getFunction()!=dependentFromFunctions[i]){
-									functionChanged=true;
-									break;
-								}
-							}
-						}
-					}
-					if (functionChanged){
+//					boolean functionChanged=false;
+					Set<FunctionNVar> functions=new HashSet<FunctionNVar>();
+					addAllFunctionalDescendents(this, functions, new TreeSet<AlgoElement>());
+					
+//					for (int i=0;i<dependentFromFunctions.length;i++){
+//						if (dependentFromFunctions[i]!=null){
+//							if (!(input[i] instanceof FunctionalNVar)){
+//								functionChanged=true;
+//								break;
+//							}else{
+//								if (((FunctionalNVar)input[i]).getFunction()!=dependentFromFunctions[i]){
+//									functionChanged=true;
+//									break;
+//								}
+//							}
+//						}
+//					}
+					if (!functions.equals(dependentFromFunctions)){
 						equation.initEquation();
 						coeff=equation.getNormalForm().getCoeff();
+						dependentFromFunctions=functions;
 					}
 				}
 			}catch(MyError e){
@@ -218,19 +228,27 @@ public class AlgoDependentImplicitPoly extends AlgoElement {
 		((GeoConic)geoElement).setDefined();
 		((GeoConic)geoElement).setCoeffs(dCoeff);
 	}
+	
+	protected void addAllFunctionalDescendents(AlgoElement algo,Set<FunctionNVar> set,Set<AlgoElement> algos){
+		GeoElement[] in=algo.getInput();
+		for (int i=0;i<in.length;i++){
+			AlgoElement p=in[i].getParentAlgorithm();
+			if (p!=null && !algos.contains(p)){
+				algos.add(p);
+				addAllFunctionalDescendents(p, set, algos);
+			}
+			if (in[i] instanceof FunctionalNVar){
+				set.add(((FunctionalNVar)in[i]).getFunction());
+			}
+		}
+	}
 
 	@Override
 	protected void setInputOutput() {
 		if (input==null){
 			input = equation.getGeoElementVariables();
-			dependentFromFunctions=new FunctionNVar[input.length];
-			for (int i=0;i<input.length;i++){
-				if (input[i] instanceof FunctionalNVar){
-					dependentFromFunctions[i]=((FunctionalNVar)input[i]).getFunction();
-				}else{
-					dependentFromFunctions[i]=null;
-				}
-			}
+			dependentFromFunctions=new HashSet<FunctionNVar>();
+			addAllFunctionalDescendents(this, dependentFromFunctions, new TreeSet<AlgoElement>());
 		}
 		if (getOutputLength()==0)
 			setOutputLength(1);        
