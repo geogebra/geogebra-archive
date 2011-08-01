@@ -29,6 +29,7 @@ import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
+import geogebra.main.MyError;
 
 
 import java.util.HashMap;
@@ -97,7 +98,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		//TODO: Remove following code for 5.0 -- it's there to make sure no functions of y are created	
 		if(isLabelSet() && !isBooleanFunction() && "y".equals(fun.getVarString(0))){
 			this.remove();
-			app.showError("InvalidFunction");
+			throw new MyError(app,"InvalidFunction");
 		}
 	}
 	
