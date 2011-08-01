@@ -127,7 +127,6 @@ public class AlgoPolygonOperation extends AlgoElement {
 		// of the polygon don't get labels either: in this case we only
 		// have the polygon itself as output object
 		if (!labelPointsAndSegments) {
-			Application.debug("poly");
 			output = new GeoElement[1];
 			output[0] = poly;
 		}
@@ -290,7 +289,8 @@ public class AlgoPolygonOperation extends AlgoElement {
 		 */
 
 
-		boolean pointsSegmentsShowLabel = true;
+		boolean pointsSegmentsShowLabel = (app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_ALWAYS_ON)
+		|| (app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_USE_DEFAULTS && cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_SEGMENT).isLabelVisible());
 
 		// set labels for points only if the original points had labels
 		if (labelPointsAndSegments) {
