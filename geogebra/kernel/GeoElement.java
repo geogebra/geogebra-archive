@@ -2762,6 +2762,7 @@ public abstract class GeoElement
 				} while (!cons.isFreeLabel(str));
 				return str;
 			} else if (isGeoList()) {
+				Application.printStacktrace("");
 				GeoList list = (GeoList) this;
 				int counter = 0;
 				String str;
@@ -5446,8 +5447,6 @@ public abstract class GeoElement
 
 
 	public void runUpdateScripts() {
-		if(label!=null && label.contains("magic"))
-			Application.printStacktrace(caption);
 		if(!canHaveUpdateScript() || updateScript.length()==0 || app.isBlockUpdateScripts())
 			return;
 		app.setBlockUpdateScripts(true);
