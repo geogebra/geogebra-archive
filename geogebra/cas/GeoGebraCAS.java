@@ -332,7 +332,11 @@ public class GeoGebraCAS {
 						String str = toString(ev, symbolic);
 						if (ev.isListValue()) {
 							// is a list, remove { and }
-							sbCASCommand.append(str.substring(1, str.length() - 1));
+							// resp. list( ... ) in mpreduce
+							if (currentCAS==Application.CAS_MPREDUCE)
+								sbCASCommand.append(str.substring(5, str.length() - 1));
+							else
+								sbCASCommand.append(str.substring(1, str.length() - 1));
 						} else {
 							// not a list, just append
 							sbCASCommand.append(str);

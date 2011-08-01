@@ -742,7 +742,7 @@ public class Kernel {
 			break;
 				
 		case ExpressionNode.STRING_TYPE_MPREDUCE:
-			casPrintFormPI = "PI";
+			casPrintFormPI = "pi";
 			break;
 		
 		case ExpressionNode.STRING_TYPE_LATEX:

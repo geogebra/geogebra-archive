@@ -3468,21 +3468,23 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 		case FUNCTION_NVAR:
 		case ELEMENT_OF:
-			if(valueForm){
-				if (left instanceof FunctionalNVar && right instanceof MyList){
-					FunctionNVar func=((FunctionalNVar)left).getFunction();
-					ExpressionNode en=func.expression.getCopy(kernel);
-					for (int i=0;i<func.getVarNumber()&&i<((MyList)right).size();i++)
-						en.replace(func.getFunctionVariables()[i], ((MyList)right).getListElement(i));
-//					sb.append(leftBracket(STRING_TYPE));
+			if (valueForm) {
+				if (left instanceof FunctionalNVar && right instanceof MyList) {
+					FunctionNVar func = ((FunctionalNVar) left).getFunction();
+					ExpressionNode en = func.expression.getCopy(kernel);
+					for (int i = 0; i < func.getVarNumber()
+							&& i < ((MyList) right).size(); i++)
+						en.replace(func.getFunctionVariables()[i],
+								((MyList) right).getListElement(i));
+					// sb.append(leftBracket(STRING_TYPE));
 					sb.append(en.toValueString());
-//					sb.append(rightBracket(STRING_TYPE));
-				}else{
+					// sb.append(rightBracket(STRING_TYPE));
+				} else {
 					sb.append(leftBracket(STRING_TYPE));
 					sb.append(leftStr);
 					sb.append(rightBracket(STRING_TYPE));
 				}
-			}else{
+			} else {
 				// multivariate functions
 				if (left.isGeoElement()) {
 					sb.append(((GeoElement) left).getLabel());
@@ -3491,7 +3493,11 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				sb.append(leftBracket(STRING_TYPE));
 				// rightStr is a list of arguments, e.g. {2, 3}
 				// drop the curly braces { and }
-				sb.append(rightStr.substring(1, rightStr.length() - 1));
+				// or list( and ) in case of mpreduce
+				if (STRING_TYPE == STRING_TYPE_MPREDUCE)
+					sb.append(rightStr.substring(5, rightStr.length() - 1));
+				else
+					sb.append(rightStr.substring(1, rightStr.length() - 1));
 				sb.append(rightBracket(STRING_TYPE));
 			}
 			break;
