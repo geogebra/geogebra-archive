@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.Kernel;
+import geogebra.main.MyError;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -318,6 +319,9 @@ public class Polynomial extends ValidExpression implements Serializable, Express
                         t[j] = null;
                     }
                 }
+                
+                if (!ti.coefficient.evaluate().isNumberValue()) throw new MyError(kernel.getApplication(), ti.coefficient.evaluate().toString());
+                
                 // add simplified term to list
                 if (!ti.coefficient.isConstant() ||
                     ((NumberValue)ti.coefficient.evaluate()).getDouble() != 0.0) { 
