@@ -165,7 +165,8 @@ public class GeoGebraColorConstants {
 		
 		if (ret == null)
 			ret = geogebraColor.get(app.reverseGetColor(colorName));
-		
+		if (ret == null)
+			ret = htmlColorMap().get(colorName);
 		return ret;
 	}
 
