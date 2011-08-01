@@ -5108,7 +5108,7 @@ public abstract class GeoElement
 			diffSb.append(f.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true));
 			diffSb.append(")");
 			String diff = kernel.evaluateGeoGebraCAS(diffSb.toString());
-			return ("0".equals(diff));
+			return (Double.valueOf(diff)==0d);
 		}
 		catch (Throwable e) { 
 			return false; 
