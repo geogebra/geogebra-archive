@@ -44,6 +44,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -3725,6 +3727,34 @@ public abstract class GeoElement
 		return strAlgebraDescription;
 	}
 
+	/**
+	 * Returns simplified algebraic representation of this GeoElement. 
+ 	 * Used by the regression test output creator.    
+	 */
+	final public String getAlgebraDescriptionRegrOut() {
+		if (strAlgebraDescriptionNeedsUpdate) {
+			if (isDefined()) {
+				strAlgebraDescription = toStringMinimal();
+			} else {
+				StringBuilder sbAlgebraDesc = new StringBuilder();
+				sbAlgebraDesc.append(app.getPlain("undefined"));
+				strAlgebraDescription = sbAlgebraDesc.toString();
+			}
+
+			strAlgebraDescriptionNeedsUpdate = false;
+		}
+		else {
+			strAlgebraDescription = toStringMinimal();
+		}
+
+		return strAlgebraDescription;
+	}
+
+    public String toStringMinimal() {
+        return toString();
+    }
+
+	
 	public String getLaTeXdescription() {
 		if (strLaTeXneedsUpdate) {
 			if (isDefined() && !isInfinite()) {
@@ -4395,6 +4425,43 @@ public abstract class GeoElement
 		getScriptTags(sb);
 	}
 
+	/**
+	 * returns some class-specific xml tags for getConstructionRegrOut
+	 * (default implementation, may be overridden in certain subclasses)
+	 * @param sb 
+	 */
+	protected void getXMLtagsMinimal(StringBuilder sb) {
+		sb.append(toValueStringMinimal());
+	}
+
+	/**
+	 * returns class-specific value string for getConstructionRegressionOut
+	 * (default implementation, may be overridden in certain subclasses)
+	 */
+	protected String toValueStringMinimal() {
+		return toValueString();
+	}
+	
+    /** returns the number in rounded format to 6 decimal places,
+     *  in case of the number is very close to 0, it returns the exact value
+     * 
+     * @param number
+     * @return formatted String
+     */
+    protected String regrFormat (double number) {
+            if (Math.abs(number) < 0.000001) {
+                    Double numberD = new Double(number);
+                    return numberD.toString();
+            }
+    DecimalFormat df = new DecimalFormat("#.######");
+    DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+    dfs.setDecimalSeparator('.');
+    df.setDecimalFormatSymbols(dfs);
+    return df.format(number);
+    }
+
+	
+	
 	/**
 	 * returns all class-specific i2g tags for getI2G
 	 * Intergeo File Format (Yves Kreis)

@@ -800,6 +800,13 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		sbToString.append(kernel.format( getArea() ));
 	    return sbToString.toString();
    }      
+
+   final public String toStringMinimal() {
+		sbToString.setLength(0);
+		sbToString.append(regrFormat(getArea()));
+	    return sbToString.toString();
+   }      
+   
    private StringBuilder sbToString = new StringBuilder(50);
 
    final public String toValueString() {

@@ -961,27 +961,18 @@ public class Application implements KeyEventDispatcher {
 	
 	
 	private String regressionFileName = null;
-	private File regressionFile;
-	private FileWriter regressionFileWriter;
 	
-	public String getRegressionFileName () {
-		return regressionFileName;
+	public void createRegressionFile () throws IOException {
+		if (regressionFileName == null) {
+			return;
+		}
+		File regressionFile = new File(regressionFileName);
+		FileWriter regressionFileWriter = new FileWriter(regressionFile);
+		kernel.updateConstruction();
+		regressionFileWriter.append(myXMLio.getConstructionRegressionOut());
+		regressionFileWriter.close(); 
+		System.exit(0);
 	}
-	
-	private void createRegressionFile () throws IOException {
-		regressionFile = new File(regressionFileName);
-		regressionFileWriter = new FileWriter(regressionFile);
-	}
-	
-	public void appendRegressionFile (String text) throws IOException {
-		regressionFileWriter.append(text);
-		regressionFileWriter.flush();
-	}
-	
-	private void closeRegressionFile () throws IOException {
-		regressionFileWriter.close();
-	}
-	
 	
 	/**
 	 * Switches the application to macro editing mode
@@ -1155,12 +1146,6 @@ public class Application implements KeyEventDispatcher {
 		if (args == null) return;
 		if (args.containsArg("regressionFile")) {
 			this.regressionFileName = args.getStringValue("regressionFile");
-			try {
-				createRegressionFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -1246,15 +1231,6 @@ public class Application implements KeyEventDispatcher {
 			}
 		}
 
-		if (getRegressionFileName() != null) {
-			try {
-				closeRegressionFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.exit(0);
-		}
 		
 		return successRet;
 	}

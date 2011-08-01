@@ -510,5 +510,4 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 
 
-
 }

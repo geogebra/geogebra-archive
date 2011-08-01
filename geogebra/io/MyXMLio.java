@@ -871,4 +871,15 @@ public class MyXMLio {
 	 * ImageIO.getWriterFormatNames(); for (int i=0; i < formats.length; i++) {
 	 * Application.debug(formats[i]); } }
 	 */
+
+	/** 
+	* Returns .out representation for regression testing. 
+	*/ 
+	public String getConstructionRegressionOut() {
+		StringBuilder sb = new StringBuilder();
+		cons.getConstructionRegressionOut(sb);
+		return sb.toString();
+	}		         
+
 }
+

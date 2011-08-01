@@ -866,6 +866,21 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         return sb.toString();
     }
 
+    public String getAlgebraDescriptionRegrOut() {
+   	 sb.setLength(0);
+       
+       if (getOutput(0).isLabelSet()) sb.append(getOutput(0).getAlgebraDescriptionRegrOut());       
+       for (int i = 1; i < getOutputLength(); ++i) {
+           if (getOutput(i).isLabelSet()) {
+               sb.append("\n");
+               sb.append(getOutput(i).getAlgebraDescriptionRegrOut());               
+           }           
+       }
+       return sb.toString();
+   }
+
+
+    
     public String getDefinitionDescription() {
         return toString();
     }    

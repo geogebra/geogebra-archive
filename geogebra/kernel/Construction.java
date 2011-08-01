@@ -1953,6 +1953,55 @@ public class Construction {
 	}
 	
 	/**
+	 * Returns this construction in regression file .out format. Markus
+	 * suggested to use the logic from getConstructionXML for this method. --
+	 * Zoltan, 2011-07-26
+	 */
+	public void getConstructionRegressionOut(StringBuilder sb) {
+		
+		// change kernel settings temporarily
+		int oldCoordStlye = kernel.getCoordStyle();
+		int oldPrintForm = kernel.getCASPrintForm();
+        boolean oldValue = kernel.isPrintLocalizedCommandNames();
+		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);	
+		//kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
+        kernel.setPrintLocalizedCommandNames(false); 
+		kernel.setTemporaryPrintDecimals(6);
+		kernel.setTemporaryPrintFigures(6);
+
+		try {
+			ConstructionElement ce;
+			int size = ceList.size();
+			for (int i = 0; i < size; ++i) {
+				ce = (ConstructionElement) ceList.get(i);
+				sb.append(ce.getNameDescription() + " = ");
+
+				if (ce instanceof GeoElement) {
+					// sb.append(((GeoElement) ce).toValueString());
+					((GeoElement) ce).getXMLtagsMinimal(sb);
+					
+				} else if (ce instanceof AlgoElement) {
+					sb.append(((AlgoElement) ce).getCommandDescription());
+					sb.append(" == ");
+					sb.append(((AlgoElement) ce).getAlgebraDescriptionRegrOut());
+				}
+				sb.append("\n");
+			}
+		} catch (Exception e) {
+			sb.append(e.getMessage());
+		} finally {
+			kernel.setCoordStyle(oldCoordStlye);
+			kernel.setCASPrintForm(oldPrintForm);
+			kernel.setPrintLocalizedCommandNames(oldValue);   
+		}
+
+	}    	
+	
+	
+	
+	
+	/**
 	 * Returns this construction in I2G format. Intergeo File Format.
 	 * (Yves Kreis)
 	 * @param sb String builder to which the XML is appended

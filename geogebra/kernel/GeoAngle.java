@@ -378,6 +378,16 @@ public final class GeoAngle extends GeoNumeric {
 		getScriptTags(sb);
 	}
 
+	/**
+	 * returns some class-specific xml tags for getConstructionRegressionOut
+	 */
+    protected void getXMLtagsMinimal(StringBuilder sb) {
+    	sb.append(regrFormat(rawValue));
+    	if (isDrawable() || isSliderable()) {
+    		sb.append(" " + regrFormat(arcSize));
+    	}
+    }
+	
 	private void getXMLAllowReflexAngleTag(StringBuilder sb) {
 		if (isIndependent())
 			return;

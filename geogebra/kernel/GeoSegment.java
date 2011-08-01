@@ -225,21 +225,31 @@ GeoSegmentND {
 	* startpoint and endpoint of this segment.
 	*/
 	// Michael Borcherds 2008-05-01
-   final public boolean isEqual(GeoElement geo) {      
-	   if (!geo.isGeoSegment()) return false;
-	   GeoSegment s = (GeoSegment)geo;
-	   return startPoint.isEqual(s.startPoint) && endPoint.isEqual(s.endPoint);             	                  
-   }
+	final public boolean isEqual(GeoElement geo) {
+		if (!geo.isGeoSegment())
+			return false;
+		GeoSegment s = (GeoSegment) geo;
+		return startPoint.isEqual(s.startPoint) && endPoint.isEqual(s.endPoint);
+	}
 	
-   final public String toString() {
-		sbToString.setLength(0);      
+	final public String toString() {
+		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = ");
 		sbToString.append(kernel.format(length));
-	   return sbToString.toString();
+		return sbToString.toString();
+	}
+
+	final public String toStringMinimal() {
+		sbToString.setLength(0);
+		sbToString.append(regrFormat(length));
+		return sbToString.toString();
    }      
+
+   
    private StringBuilder sbToString = new StringBuilder(30);
-private boolean forceSimpleTransform;
+
+   private boolean forceSimpleTransform;
    
    final public String toValueString() {
 	   return kernel.format(length);

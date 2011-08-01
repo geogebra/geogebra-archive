@@ -389,6 +389,10 @@ implements Traceable {
 
     }
 
+	protected void getXMLtagsMinimal(StringBuilder sb) {
+		sb.append(regrFormat(x) + " " + regrFormat(y) + " " + regrFormat(z));
+	}
+	
     /**
      * returns all class-specific i2g tags for saveI2G
      * Intergeo File Format (Yves Kreis)

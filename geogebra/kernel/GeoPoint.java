@@ -913,7 +913,7 @@ GeoPointND, Animatable, Transformable  {
 /***********************************************************/
     
     final public String toString() {     
-		sbToString.setLength(0);                               
+    	sbToString.setLength(0);                               
 		sbToString.append(label);	
 		
 		switch (kernel.getCoordStyle()) {
@@ -932,11 +932,29 @@ GeoPointND, Animatable, Transformable  {
 		sbToString.append(buildValueString());       
         return sbToString.toString();
     }
+    
+    final public String toStringMinimal() {
+    	sbToString.setLength(0);
+    	sbToString.append(toValueStringMinimal());
+    	return sbToString.toString();
+    }
+    
     private StringBuilder sbToString = new StringBuilder(50);        
     
     final public String toValueString() {
     	return buildValueString().toString();	
     }       
+    
+	final public String toValueStringMinimal() {
+		sbBuildValueString.setLength(0);
+		if (isInfinite()) {
+			sbBuildValueString.append(app.getPlain("undefined"));
+			return sbBuildValueString.toString();
+		}
+		sbBuildValueString
+				.append(regrFormat(inhomX) + " " + regrFormat(inhomY));
+		return sbBuildValueString.toString();
+	} 
     
 	private StringBuilder buildValueString() { 
 		sbBuildValueString.setLength(0);
@@ -1081,7 +1099,7 @@ GeoPointND, Animatable, Transformable  {
 		}
  
     }
-    
+	
     public String getStartPointXML() {
     	StringBuilder sb = new StringBuilder();    	
 		sb.append("\t<startPoint ");

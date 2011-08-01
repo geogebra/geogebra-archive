@@ -1228,6 +1228,28 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		classifyConic();
 	}
 
+	public String toValueStringMinimal() {
+		return getXMLtagsMinimal();
+	}
+
+	public String toStringMinimal() {
+		return getXMLtagsMinimal();
+	}	
+	
+	/**
+	 * returns some class-specific xml tags for getConstructionRegressionOut
+	 */
+	protected String getXMLtagsMinimal() {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < 5; i++)
+			sb.append(regrFormat(matrix[i]) + " ");
+		sb.append(regrFormat(matrix[5]));
+
+		return sb.toString();
+	}
+	// I'm not sure if this is the right place for the *Minimal() methods.
+	// In v3.2 they were put into kernel.GeoConic. It seems both are OK.
+	// -- Zoltan, 2011-08-01
 	
 
 	private double[] coeffs = new double[6];	

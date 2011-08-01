@@ -2306,6 +2306,14 @@ public class GuiManager {
 		}
 
 		boolean success = app.loadXML(file, isMacroFile);
+		
+		try {
+			app.createRegressionFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
         updateGUIafterLoadFile(success, isMacroFile);
         app.setDefaultCursor();
         return success;

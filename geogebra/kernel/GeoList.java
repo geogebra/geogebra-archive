@@ -552,6 +552,32 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		sbToString.append(buildValueString());
 		return sbToString.toString();
 	}
+	
+	public String toStringMinimal() {
+		sbBuildValueString.setLength(0);
+		if (!isDefined) {
+			sbBuildValueString.append("?");
+			return sbBuildValueString.toString();
+		}
+
+		// first (n-1) elements
+		int lastIndex = geoList.size() - 1;
+		if (lastIndex > -1) {
+			for (int i = 0; i < lastIndex; i++) {
+				GeoElement geo = (GeoElement) geoList.get(i);
+
+				sbBuildValueString.append(geo.getAlgebraDescriptionRegrOut());
+				sbBuildValueString.append(" ");
+			}
+
+			// last element
+			GeoElement geo = (GeoElement) geoList.get(lastIndex);
+			sbBuildValueString.append(geo.getAlgebraDescriptionRegrOut());
+		}
+
+		return sbBuildValueString.toString();
+	}
+
 
 	StringBuilder sbToString = new StringBuilder(50);
 

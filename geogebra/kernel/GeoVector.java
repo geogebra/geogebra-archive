@@ -368,6 +368,14 @@ Transformable, GeoVectorND {
 		sbToString.append(buildValueString());
 		return sbToString.toString();
 	}
+
+	final public String toStringMinimal() {            
+		sbToString.setLength(0);
+		sbToString.append(regrFormat(x) + " " + regrFormat(y));
+		return sbToString.toString();
+	}
+
+	
 	private StringBuilder sbToString = new StringBuilder(50); 
 
 	final public String toValueString() {

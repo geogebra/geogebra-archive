@@ -673,6 +673,13 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	public String toValueString() {
 		return buildValueString().toString();
 	}
+	
+	public String toStringMinimal() {
+		StringBuilder sbToString = getSbToString();
+		sbToString.setLength(0);
+		getXMLtagsMinimal(sbToString);
+		return sbToString.toString();
+		}
     
     private StringBuilder buildValueString() {		
         double [] P = new double[2];                       			 

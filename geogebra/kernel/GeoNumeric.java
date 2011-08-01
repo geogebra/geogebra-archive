@@ -376,6 +376,17 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return sbToString.toString();
 	}
 
+	final public String toStringMinimal() {
+		if(sbToString == null)return null;
+		sbToString.setLength(0);
+		sbToString.append(toValueStringMinimal());
+		return sbToString.toString();
+	}
+	
+    public String toValueStringMinimal() { 
+    	return regrFormat(value); 
+ 	} 
+	
 	private StringBuilder sbToString = new StringBuilder(50);
 	private ArrayList<GeoNumeric> minMaxListeners;
 	private boolean randomSlider = false;
