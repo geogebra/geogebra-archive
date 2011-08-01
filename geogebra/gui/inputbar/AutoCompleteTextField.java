@@ -621,7 +621,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		curWord.append(text.substring(curWordStart, curWordEnd));
 		
 		// remove '[' at end
-		if (curWord.charAt(curWord.length() - 1) == '[')
+		if (curWord.toString().endsWith("["))
 			curWord.setLength(curWord.length() - 1);
 	}
 
