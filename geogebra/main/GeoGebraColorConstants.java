@@ -1,24 +1,8 @@
 package geogebra.main;
 
-import geogebra.gui.util.GeoGebraIcon;
-
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.color.ColorSpace;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 
 
@@ -157,7 +141,7 @@ public class GeoGebraColorConstants {
 	 * Returns Color object corresponding with given GeoGebra color name string 
 	 * @param app
 	 * @param colorName
-	 * @return
+	 * @return Color object corresponding with given GeoGebra color name string
 	 */
 	public static Color getGeogebraColor(Application app, String colorName){
 		
@@ -174,7 +158,7 @@ public class GeoGebraColorConstants {
 	 * Returns GeoGebra color name string corresponding with given Color object 
 	 * @param app
 	 * @param color
-	 * @return
+	 * @return GeoGebra color name string corresponding with given Color object
 	 */
 	public static String getGeogebraColorName(Application app, Color color){
 		return app.getColor(geogebraColorReverse.get(color));
@@ -260,12 +244,11 @@ public class GeoGebraColorConstants {
 	/**
 	 * Returns array of colors for color popup menus
 	 * @param colorSetType
-	 * @return
+	 * @return array of colors for color popup menus
 	 */
 	public static Color[] getPopupArray(int colorSetType) {
 
-		Color[] colors = new Color[27];
-		HashMap<String, Color> hm = htmlColorMap();
+		Color[] colors = new Color[27];		
 
 		for(int i = 0; i< 9; i++){
 			if(colorSetType == COLORSET_STANDARD){
@@ -294,7 +277,7 @@ public class GeoGebraColorConstants {
 	 * Returns array of localized color names 
 	 * @param app
 	 * @param color
-	 * @return
+	 * @return array of localized color names
 	 */
 	public static String[] getColorNames(Application app, Color[] color){
 		String[] s = new String[color.length];
@@ -453,112 +436,9 @@ public class GeoGebraColorConstants {
 
 		return colors;
 	}
-
-
-
-
-
-
-	private static void createAndShowGUI() {
-		//Create and set up the window.
-		JFrame frame = new JFrame("FrameDemo");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setPreferredSize(new Dimension(600, 600));
-
-		JPanel p = new JPanel();
-		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-		p.setBackground(Color.white);
-		p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-
-
-		ImageIcon ic;
-		JLabel lbl;
-
-		p.add(new JLabel(" ")); 
-		p.add(new JLabel("============== Primary Colors ========== ")); 
-
-		for (int i = 0; i < primaryColors.length; i++){	
-			String text  = geogebraColorReverse.get(primaryColors[i]);
-			ic = GeoGebraIcon.createColorSwatchIcon( 1.0f,  new Dimension(64,24), primaryColors[i] , null);
-			lbl = new JLabel(text);
-			lbl.setIcon(ic);
-			p.add(lbl);
-		}
-
-		p.add(new JLabel(" ")); 
-		p.add(new JLabel("============== Light Primary Colors ========== ")); 
-
-		for (int i = 0; i < lightPrimaryColors.length; i++){	
-			String text  = geogebraColorReverse.get(lightPrimaryColors[i]);
-			ic = GeoGebraIcon.createColorSwatchIcon( 1.0f,  new Dimension(64,24), lightPrimaryColors[i] , null);
-			lbl = new JLabel(text);
-			lbl.setIcon(ic);
-			p.add(lbl);
-		}
-
-		p.add(new JLabel(" ")); 
-		p.add(new JLabel("============== Dark Primary Colors ========== ")); 
-
-		for (int i = 0; i < darkPrimaryColors.length; i++){	
-			String text  = geogebraColorReverse.get(darkPrimaryColors[i]);
-			ic = GeoGebraIcon.createColorSwatchIcon( 1.0f,  new Dimension(64,24), darkPrimaryColors[i] , null);
-			lbl = new JLabel(text);
-			lbl.setIcon(ic);
-			p.add(lbl);
-		}
-
-		p.add(new JLabel(" ")); 
-		p.add(new JLabel("============== Gray Colors ========== ")); 
-
-		for (int i = 0; i < grayColors.length; i++){	
-			String text  = geogebraColorReverse.get(grayColors[i]);
-			ic = GeoGebraIcon.createColorSwatchIcon( 1.0f,  new Dimension(64,24), grayColors[i] , null);
-			lbl = new JLabel(text);
-			lbl.setIcon(ic);
-			p.add(lbl);
-		}
-
-
-		p.add(new JLabel(" ")); 
-		p.add(new JLabel("============== GeoGebraColor ========== ")); 
-
-		for (Entry<String, Color> entry : geogebraColor.entrySet()){	
-			String text  = entry.getKey();
-			ic = GeoGebraIcon.createColorSwatchIcon( 1.0f,  new Dimension(64,24), entry.getValue() , null);
-			lbl = new JLabel(text);
-			lbl.setIcon(ic);
-			p.add(lbl);
-		}
-
-
-		p.add(new JLabel(" ")); 
-		p.add(new JLabel("============== HTML Map Sorted by Color String ========== ")); 
-
-		TreeMap<String, Color> sortedStringMap = new TreeMap<String, Color>(htmlColorMap());
-		for (Entry<String, Color> entry : sortedStringMap.entrySet()){	
-			String text  = entry.getKey();
-			ic = GeoGebraIcon.createColorSwatchIcon( 1.0f,  new Dimension(64,24), entry.getValue() , null);
-			lbl = new JLabel(text);
-			lbl.setIcon(ic);
-			p.add(lbl);
-		}
-
-		
-		frame.getContentPane().add(new JScrollPane(p), BorderLayout.CENTER);
-
-		//Display the window.
-		frame.pack();
-		frame.setVisible(true);
-	}
-
-	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createAndShowGUI();
-			}
-		});
-	}
-
-
-
 }
+
+
+
+
+
