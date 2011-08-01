@@ -34,6 +34,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -79,7 +81,29 @@ public class CompletionsPopup {
 		popup.setFocusable(false);
 		registerListeners();
 	}
+	
+	private class PopupListener implements PopupMenuListener {
 
+		public void popupMenuCanceled(PopupMenuEvent e) {
+		}
+
+		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+			textField.removeKeyListener(keyListener);
+			for (KeyListener listener: textFieldKeyListeners) {
+				textField.addKeyListener(listener);
+			}			
+		}
+
+		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+			textFieldKeyListeners = textField.getKeyListeners();
+			for (KeyListener listener: textFieldKeyListeners) {
+				textField.removeKeyListener(listener);
+			}
+			textField.addKeyListener(keyListener);
+		}
+		
+	}
+		
 	private void registerListeners() {
 		// Suggest completions on text changes, store reference to listener object
 		textFieldDocListener = new DocumentListener() {
@@ -100,6 +124,7 @@ public class CompletionsPopup {
 		list.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent e) { handleMouseClick(e); }
 		});
+		popup.addPopupMenuListener(new PopupListener());
 	}
 	
 	public void showCompletions() {
@@ -138,11 +163,6 @@ public class CompletionsPopup {
 		// Try to show popup just beneath the word to be completed
 		popup.show(textField, startRect.x, startRect.y + startRect.height);
 		// Remove key listeners and replace with own;
-		textFieldKeyListeners = textField.getKeyListeners();
-		for (KeyListener listener: textFieldKeyListeners) {
-			textField.removeKeyListener(listener);
-		}
-		textField.addKeyListener(keyListener);
 	}
 	
 	private boolean isPopupVisible() {
@@ -156,10 +176,6 @@ public class CompletionsPopup {
 		popup.setVisible(false);
 		list.clearSelection();
 		// Reinstate textField's key listeners
-		textField.removeKeyListener(keyListener);
-		for (KeyListener listener: textFieldKeyListeners) {
-			textField.addKeyListener(listener);
-		}
 	}
 	
 	public void handleSpecialKeys(KeyEvent keyEvent) {

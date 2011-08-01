@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
 
 public class AutoCompleteTextField extends MathTextField implements 
 AutoComplete, KeyListener, GeoElementSelectionListener {
@@ -39,7 +40,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private boolean handleEscapeKey = false;
 	
 	private List<String> completions;
-	private int completionIndex;
 	private String cmdPrefix;
 	private CompletionsPopup completionsPopup;
 	
@@ -80,7 +80,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		history = new ArrayList<String>(50);
 		
 		completions = null;
-		completionIndex = -1;
 		
 		CommandCompletionListCellRenderer cellRenderer = new CommandCompletionListCellRenderer();
 		completionsPopup = new CompletionsPopup(this, cellRenderer, 6);
@@ -133,9 +132,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		return completions;
 	}
 	
-	public void setCurrentCompletion(int index) {
-		completionIndex = index;
-	}
 	/**
 	 * Gets whether the component is currently performing autocomplete lookups as
 	 * keystrokes are performed.
@@ -391,6 +387,25 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
             setText(input.substring(0, input.length()));
         }*/	
 	}      
+	
+	/*public void caretUpdate(CaretEvent e) {
+		super.caretUpdate(e);
+		Application.debug(e.getDot());
+		Matcher argMatcher = syntaxArgPattern.matcher(getText());
+		while (argMatcher.find()) {
+			Application.debug(argMatcher.start());
+			Application.debug(argMatcher.end());
+			if (argMatcher.start() <= e.getDot() 
+					&& e.getDot() <= argMatcher.end()) {
+				this.setEnabled(false);
+				setCaretPosition(argMatcher.end() - 1);
+				moveCaretPosition(argMatcher.start() + 1);
+				//addCaretListener(this);
+				this.setEnabled(true);
+				break;
+			}
+		}
+	}*/
 	
 	private void clearSelection() {
 		int start = getSelectionStart();
@@ -692,6 +707,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		int caretPos = getCaretPosition();
 		Matcher argMatcher = syntaxArgPattern.matcher(text);
 		boolean hasNextArgument = argMatcher.find(caretPos);
+		if (find && !hasNextArgument) {
+			hasNextArgument = argMatcher.find();
+		}
 		if (hasNextArgument && (find || argMatcher.start() == caretPos)) {
 			setCaretPosition(argMatcher.end() - 1);
 			moveCaretPosition(argMatcher.start() + 1);
@@ -762,9 +780,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	
 	public void cancelAutoCompletion() {
 		completions = null;
-		if (completionIndex != -1) {
-			completionIndex = -1;
-		}
 	}
 
 	public boolean validateAutoCompletion(int index) {
@@ -852,7 +867,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 
 	/**
-	 * @param command: command name in local language
+	 * @param command command name in local language
 	 * @return syntax description of command as html text or null
 	 */
 	private String getCmdSyntax(String command) {
