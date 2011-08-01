@@ -402,9 +402,11 @@ public interface Manager3DInterface {
 			 public GeoConicND Intersect(
 					 String label,
 					 GeoPlaneND plane,
-					 GeoQuadricND quadric) ;
+					 GeoQuadric3D quadric) ;
 
-			
+			 public GeoConicND Intersect(
+					 GeoPlaneND plane,
+					 GeoQuadric3D quadric) ;
 
 			////////////////////////////////////////////////
 			// FUNCTIONS (2 VARS)
@@ -540,6 +542,10 @@ public interface Manager3DInterface {
 
 			public GeoElement IntersectPlanes(
 					String label,
+					GeoCoordSys2D cs1,
+					GeoCoordSys2D cs2);
+			
+			public GeoElement IntersectPlanes(
 					GeoCoordSys2D cs1,
 					GeoCoordSys2D cs2);
 

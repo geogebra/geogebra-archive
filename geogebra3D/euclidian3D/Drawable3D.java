@@ -421,9 +421,11 @@ public abstract class Drawable3D extends DrawableND {
 		if (createdByDrawList())
 			return isCreatedByDrawListVisible() && ((Drawable3D) getDrawListCreator()).isVisible();
 		
+
 		return (getGeoElement().hasDrawable3D() 
 				&& getGeoElement().isEuclidianVisible() 
 				&& getGeoElement().isDefined());  
+	
 	}
 	
 

@@ -2161,7 +2161,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (previewDrawLine3D==null) {
 			previewLine = new GeoLine3D(getKernel().getConstruction());
 			previewLine.setObjColor(Color.YELLOW);
-			previewLine.setIsPickable(true);
+			previewLine.setIsPickable(false);
 			previewDrawLine3D = new DrawLine3D(this, previewLine);
 		}
 		return previewDrawLine3D;
@@ -2174,7 +2174,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (previewDrawConic3D==null) {
 			previewConic = new GeoConic3D(getKernel().getConstruction());
 			previewConic.setObjColor(Color.YELLOW);
-			previewConic.setIsPickable(true);
+			previewConic.setIsPickable(false);
 			previewDrawConic3D = new DrawConic3D(this, previewConic);
 		}
 		return previewDrawConic3D;

@@ -695,7 +695,7 @@ public class Manager3D implements Manager3DInterface {
 	public GeoConic3D Intersect(
 			 String label,
 			 GeoPlaneND plane,
-			 GeoQuadricND quadric){
+			 GeoQuadric3D quadric){
 		
 		
 		AlgoIntersectPlaneQuadric algo = new AlgoIntersectPlaneQuadric(cons, label, (GeoPlane3D) plane, (GeoQuadric3D) quadric);
@@ -703,6 +703,15 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getConic();
 	}
 	
+	public GeoConic3D Intersect(
+			 GeoPlaneND plane,
+			 GeoQuadric3D quadric){
+		
+		
+		AlgoIntersectPlaneQuadric algo = new AlgoIntersectPlaneQuadric(cons, (GeoPlane3D) plane, (GeoQuadric3D) quadric);
+		
+		return algo.getConic();
+	}
 	
 			
 	////////////////////////////////////////////////
@@ -998,6 +1007,14 @@ public class Manager3D implements Manager3DInterface {
 			GeoCoordSys2D cs2) {
 		
 		AlgoIntersectCS2D2D algo = new AlgoIntersectCS2D2D(cons,label, cs1, cs2);
+		return algo.getIntersection();
+	}
+	
+	final public GeoElement IntersectPlanes(
+			GeoCoordSys2D cs1,
+			GeoCoordSys2D cs2) {
+		
+		AlgoIntersectCS2D2D algo = new AlgoIntersectCS2D2D(cons, cs1, cs2);
 		return algo.getIntersection();
 	}
 }

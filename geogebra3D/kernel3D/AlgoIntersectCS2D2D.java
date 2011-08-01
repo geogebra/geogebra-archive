@@ -53,6 +53,12 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
  
     }
 
+    public AlgoIntersectCS2D2D(Construction cons, GeoCoordSys cs1, GeoCoordSys cs2) {
+
+    	super(cons,(GeoElement) cs1, (GeoElement) cs2);
+ 
+    }
+
     
     protected GeoElement3D createIntersection(Construction cons){
     	

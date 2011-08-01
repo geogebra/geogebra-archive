@@ -26,6 +26,7 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.Drawable3DLists.Drawable3DList;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.AlgoIntersectCS1D2D;
 import geogebra3D.kernel3D.AlgoIntersectCS2D2D;
@@ -42,7 +43,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
@@ -115,6 +118,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	private int xOld;
 	
 	private Hits3D goodHits;
+	private ArrayList<Object[]> tempArrayList4 = new ArrayList<Object[]>();
+	private ArrayList<Drawable3D> intersectionCurves = new ArrayList<Drawable3D>();
 	
 	//SELECTED GEOS
 	/** 2D coord sys (plane, polygon, ...) */
@@ -1259,6 +1264,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			view3D.createPreviewConic();
 			view3D.createPreviewLine();
 			previewDrawable = null;
+			/*
+			if (tempArrayList4!=null) {
+				for (int i=0; i<tempArrayList4.size(); ++i){
+					((GeoElement)tempArrayList4.get(i)[2]).remove();
+				}
+				tempArrayList4.clear();
+			}*/
 			break;
 			
 		default:
@@ -1882,14 +1894,36 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				resultedGeo=null;
 				return false;	
 			}
+			
+			//add selected geo into consideration
+			if (selectedGeos.size()==1 && !hits.contains(selectedGeos.get(0)))
+				hits.addAll(0, selectedGeos);
+			
+			for (int i = 0; i<tempArrayList4.size(); ++i) {
+				tempArrayList4.get(i)[3] = false;
+			}
+		
+			
+			for (int i = 0; i<hits.size(); ++i) {
+				for (int j=i+1; j<hits.size(); ++j) {
+					this.createIntersectionCurve((GeoElement)hits.get(i), (GeoElement)hits.get(j));
+				}
+			}
+					
+			decideIntersection();
+			
+			
+			/*
 			if (hits.containsGeoPoint()) {
 				hits.clear();
 				resultedGeo=null;
 				return false;
 			}
 			
-			Boolean createIntersection; //return
-			
+			boolean createIntersection; //return
+			*/
+
+			/*
 			if (selectedGeos.size()==1 && !hits.contains(selectedGeos.get(0)))
 				hits.addAll(0, selectedGeos);
 			
@@ -1910,8 +1944,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					hits.remove(1);
 			((Hits3D)hits).removeAllPolygonsAndQuadricsButOne();
 			goodHits = (Hits3D) hits.getHits(2);
-			
-
+			*/
+/*
 			if(goodHits.size()==2){
 				if (goodHits.get(0) instanceof GeoPlane3D && goodHits.get(1) instanceof GeoPlane3D) {
 					GeoCoordSys2D firstPlane = (GeoCoordSys2D) goodHits.get(0);
@@ -1950,10 +1984,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			} else { //intersectable objects should only be in pairs
 				resultedGeo=null;
 			}
-			
-			addSelectedCS2D(goodHits, 2, true);
-			addSelectedQuadric(goodHits, 2, true);
-		
+	*/		
+			if (goodHits!=null) {
+				addSelectedCS2D(goodHits, 2, true);
+				addSelectedQuadric(goodHits, 2, true);
+			}
 	
 			
 			if (selCS2D()>=2)  { // cs2D-cs2D
@@ -2001,7 +2036,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 				GeoElement plane = (GeoElement) getSelectedCS2D()[0];
 				GeoQuadric3D quad = getSelectedQuadric()[0];
-				GeoElement[] ret = {kernel.getManager3D().Intersect( null, (GeoPlaneND) plane, (GeoQuadricND) quad)};
+				GeoElement[] ret = {kernel.getManager3D().Intersect( null, (GeoPlaneND) plane, (GeoQuadric3D) quad)};
 				return ret[0].isDefined();
 			}
 			
@@ -2013,42 +2048,179 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		}
 	
 	
+	public boolean createIntersectionCurve(GeoElement A, GeoElement B) {
+		boolean intersectable = false;
+
+		for (int i=0; i<tempArrayList4.size(); ++i) {
+			if ( tempArrayList4.get(i)[0]==A && tempArrayList4.get(i)[1]==B
+					|| tempArrayList4.get(i)[0]==B && tempArrayList4.get(i)[1]==A) {
+				tempArrayList4.get(i)[3] = true;
+				return true;
+			}
+		}
+
+		/* TODO line/polygon preview
+		 * if (A.isGeoLine() && B.isGeoPolygon()) {
+			//add intersection to tempArrayList} else*/ 
+		if (A.isGeoPlane() && B.isGeoPlane()) {
+			//add intersection to tempArrayList
+			//if intersection of A,B does not exist, create it
+			GeoElement[] ret = new GeoElement[1];
+			ret[0] = getKernel().getManager3D().IntersectPlanes(
+					(GeoCoordSys2D)A, (GeoCoordSys2D) B);
+			
+			ret[0].setLineThickness(0);
+			ret[0].setObjColor(Color.white);
+			ret[0].setIsPickable(true);
+			tempArrayList4.add(new Object[] {A,B,ret[0],true,true});
+		
+			Drawable3D d = new DrawLine3D(view3D, (GeoLineND) ret[0]);
+			intersectionCurves.add(d);
+			view3D.addToDrawable3DLists(d);
+			
+			intersectable = true;
+			
+		} /* TODO plane/polygon preview
+		else if (A.isGeoPlane() && B.isGeoPolygon()) {
+			//add intersection to tempArrayList
+			} else if (B.isGeoPlane() && A.isGeoPolygon()) {
+			//add intersection to tempArrayList
+			} */
+		else if (A.isGeoPlane() && B instanceof GeoQuadric3D) {
+			//add intersection to tempArrayList
+			GeoElement[] ret = {kernel.getManager3D().Intersect((GeoPlaneND) A, (GeoQuadric3D) B)};
+			ret[0].setLineThickness(0);
+			ret[0].setObjColor(Color.white);
+			ret[0].setIsPickable(true);
+			tempArrayList4.add(new Object[] {A,B,ret[0],true,true});
+			
+			Drawable3D d = new DrawConic3D(view3D, (GeoConicND) ret[0]);
+			intersectionCurves.add(d);
+			view3D.addToDrawable3DLists(d);
+			intersectable = true;
+			
+		} else if (B.isGeoPlane() && A instanceof GeoQuadric3D) {
+			//add intersection to tempArrayList
+			GeoElement[] ret = {kernel.getManager3D().Intersect((GeoPlaneND) B, (GeoQuadric3D) A)};
+			//ret[0].setEuclidianVisible(false);
+			ret[0].setLineThickness(0);
+			ret[0].setObjColor(Color.white);
+			ret[0].setIsPickable(true);
+			tempArrayList4.add(new Object[] {A,B,ret[0],true,true});
+			Drawable3D d = new DrawConic3D(view3D, (GeoConicND) ret[0]);
+			intersectionCurves.add(d);
+			view3D.addToDrawable3DLists(d);
+			intersectable = true;
+		}
+
+		return intersectable;
+		
+		
+	}
 	
 	
-	
-	private boolean decideHideIntersection() {
+	private void decideIntersection() {
 
 			//TODO for mouseExit
 			if (mouseLoc==null)
-				return false; 
+				return;
 
 			view3D.setHits3D(mouseLoc);
 			Hits hits = view3D.getHits();
+			view3D.update();
+			
+			
+			//Application.debug(hits);
 
 			if (hits == null || hits.size()==0) //should not happen
-				return false;
+				return;
+			
+			resultedGeo = null;
 			
 			int i = 0;
-			while (hits.size() > i && hits.get(0)!= resultedGeo) {
-				GeoElement geo = (GeoElement) hits.get(0);
+			boolean found; //see if a preview intersection is found
+			while (i < hits.size()) {
 				
-				if (geo.isPath() && geo.getLineThickness() < 0.5f ||
-						geo.isRegion() && geo.getLineThickness() < 0.5f && geo.getAlphaValue() < 0.1f)
-					hits.remove(0);
-				else
-					++i;
+				found = false;
+				
+				for (int j = 0; j<tempArrayList4.size(); ++j) {
+					//find a preview intersection
+					if (hits.get(i) == tempArrayList4.get(j)[2]) {
+						found = true;
+						if ((Boolean)tempArrayList4.get(j)[3] && resultedGeo==null) {
+							resultedGeo = ((GeoElement)hits.get(i));
+							++i;
+						} else {
+							hits.remove(i);
+						}
+						break;
+					}
+				}
+				
+				//if it is not a preview for intersection
+				//remove it if it is "transparent"
+				if (!found) {
+					GeoElement geo = (GeoElement) hits.get(i);
+					if (geo.isPath() && geo.getLineThickness() < 0.5f ||
+							geo.isRegion() && geo.getLineThickness() < 0.5f && geo.getAlphaValue() < 0.1f)
+						hits.remove(0);
+					else
+						++i;
+				}
 			}
 			
-			if (hits.get(0) != resultedGeo) {
-				hideIntersection = true; //means "not displaying intersection"
-				goodHits = (Hits3D) goodHits.getHits(1);
-				return false;
-			} else {
-				hideIntersection = false;
-				return true;
+			if (resultedGeo == null) {
+				hideIntersection = true;
+				view3D.setPreview(null);
+				return;
+			}
+			
+			GeoElement A = resultedGeo.getParentAlgorithm().getInput()[0];
+			GeoElement B = resultedGeo.getParentAlgorithm().getInput()[1];
+			
+			//Application.debug(hits);
+			//for (int j=0; j<hits.size(); ++j) {
+			//	System.out.print(((GeoElement)hits.get(j)).isPickable()? "pickable " : "non-pickable");
+			//	System.out.println(((GeoElement)hits.get(j)).getObjectColor());
+			//}
+			
+			if (hits.size()==0) {
+				hideIntersection = true;
+				return;
+			}
+			
+			if (goodHits == null)
+				goodHits = new Hits3D();
+			goodHits.clear();
+			
+			
+			// since resultedGeo!=null, hits contains at least two element.
+			// if one of the two is not one of A,B or resultedGeo, we say that
+			// resultedGeo is blocked by unrelated geo, 
+			// and then we just keep the first hit as goodHit and hide the intersection
+			if ( hits.get(0)!= resultedGeo && hits.get(0)!=A && hits.get(0)!=B
+					|| hits.get(1)!=resultedGeo && hits.get(1)!=A && hits.get(1)!=B) {
+				goodHits.add((GeoElement)hits.get(0));
+				hideIntersection = true;
+				return;
+			}
+		
+			//else, we show the intersection, and add A,B to highligtedgeos
+			hideIntersection = false;
+			
+			goodHits.add(A);
+			goodHits.add(B);
+			
+			if (resultedGeo.isGeoLine()) {
+				view3D.previewLine.set(resultedGeo);
+				view3D.setPreview(view3D.previewDrawLine3D);
+			} else if (resultedGeo.isGeoConic()) {
+				view3D.previewConic.set(resultedGeo);
+				view3D.setPreview(view3D.previewDrawConic3D);
+			} else { //this shouldn't happen
+				Application.debug("this shouldn't happen");
 			}
 
-			
 		}
 
 

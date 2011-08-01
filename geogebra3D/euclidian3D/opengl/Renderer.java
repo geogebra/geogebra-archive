@@ -1212,8 +1212,9 @@ public class Renderer implements GLEventListener {
       
         
         /* create MOUSE_PICK_WIDTH x MOUSE_PICK_WIDTH pixel picking region near cursor location */
-        glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
- 
+        //glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
+        //TODO just for testing:
+        glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), 6, 6, viewport, 0);
         setProjectionMatrix();
         //gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
     	gl.glMatrixMode(GLlocal.GL_MODELVIEW);

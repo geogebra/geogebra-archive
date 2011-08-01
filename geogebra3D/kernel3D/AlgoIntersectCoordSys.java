@@ -51,6 +51,13 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
      */    
     AlgoIntersectCoordSys(Construction cons, String label, GeoElement cs1, GeoElement cs2) {
 
+    	this(cons, cs1, cs2);
+    	intersection.setLabel(label);
+ 
+    }
+    
+    AlgoIntersectCoordSys(Construction cons, GeoElement cs1, GeoElement cs2) {
+
     	super(cons);
 
 
@@ -60,10 +67,8 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
   
     	setInputOutput(new GeoElement[] {(GeoElement) cs1,(GeoElement) cs2}, new GeoElement[] {intersection});
 
-    	intersection.setLabel(label);
  
     }
-    
  
     
     /**

@@ -60,6 +60,16 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
      */    
     AlgoIntersectPlaneQuadric(Construction cons, String label, GeoPlane3D plane, GeoQuadric3D quadric) {
 
+    	this(cons, plane, quadric);
+    	conic.setLabel(label);
+    	
+ 
+ 
+    }
+    
+ 
+    AlgoIntersectPlaneQuadric(Construction cons, GeoPlane3D plane, GeoQuadric3D quadric) {
+
     	super(cons);
 
 
@@ -70,14 +80,8 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
     	conic.setIsIntersection(true); //should be called before setDependencies (in setInputOutput)
   
     	setInputOutput(new GeoElement[] {plane,quadric}, new GeoElement[] {conic});
-    	conic.setLabel(label);
-    	
- 
  
     }
-    
- 
-
 
 
     
