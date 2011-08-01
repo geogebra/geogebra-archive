@@ -13,6 +13,7 @@ import geogebra.main.Application;
 
 import java.awt.Point;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -570,7 +571,8 @@ public class RelativeCopy {
 			//.processAlgebraCommandNoExceptionHandling(text, false);
 
 			// check if text was the label of an existing geo 
-			if (text.equals(newValues[0].getLabel())) {
+			// toLowerCase() added to fix bug A1=1, enter just 'a1' into cell B1 -> A1 disappears
+			if (text.equals(newValues[0].getLabel().toLowerCase(Locale.US))) {
 				// make sure we create a copy of this existing or auto-created geo 
 				// by providing the new cell name in the beginning
 				text = name + " = " + text;		
