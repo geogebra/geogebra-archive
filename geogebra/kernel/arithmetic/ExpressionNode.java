@@ -548,6 +548,16 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				((ExpressionNode) right).getPolynomialVars(vars);
 			} else if (right.isPolynomialInstance()) {
 				vars.add(right.toString());
+			} else if (right.isListValue()){ //to get polynomial vars in GeoFunctionNVar
+				MyList list=((ListValue)right).getMyList();
+				for (int i=0;i<list.size();i++){
+					ExpressionValue elem=list.getListElement(i);
+					if (elem.isExpressionNode()) {
+						((ExpressionNode) elem).getPolynomialVars(vars);
+					} else if (elem.isPolynomialInstance()) {
+						vars.add(elem.toString());
+					}
+				}
 			}
 		}
 	}
