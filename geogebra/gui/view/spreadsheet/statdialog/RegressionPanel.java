@@ -2,9 +2,8 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
@@ -340,9 +339,12 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 				nv = app.getKernel().getAlgebraProcessor().evaluateToNumeric(inputText, true);		
 				double value = nv.getDouble();
 
-				String str = "\"\" + " + statDialog.getRegressionModel().getLabel() + "(" + value + ")";
-				GeoText text = app.getKernel().getAlgebraProcessor().evaluateToText(str, false);
-				fldOutputY.setText(text.getTextString());
+				//String str = "\"\" + " + statDialog.getRegressionModel().getLabel() + "(" + value + ")";
+				//GeoText text = app.getKernel().getAlgebraProcessor().evaluateToText(str, false);
+				
+				double output = ((GeoFunctionable)statDialog.getRegressionModel()).getGeoFunction().evaluate(value);
+				
+				fldOutputY.setText(app.getKernel().format(output));
 
 			} catch (NumberFormatException e) {
 				e.printStackTrace();

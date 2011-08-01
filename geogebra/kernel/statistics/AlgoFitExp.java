@@ -38,6 +38,11 @@ public class AlgoFitExp extends AlgoElement {
 	private RegressionMath regMath;
 
 	public AlgoFitExp(Construction cons, String label, GeoList geolist) {
+		this(cons, geolist);
+		geofunction.setLabel(label);
+	}// Constructor
+
+	public AlgoFitExp(Construction cons, GeoList geolist) {
 		super(cons);
 
 		regMath = kernel.getRegressionMath();
@@ -46,7 +51,6 @@ public class AlgoFitExp extends AlgoElement {
 		geofunction = new GeoFunction(cons);
 		setInputOutput();
 		compute();
-		geofunction.setLabel(label);
 	}// Constructor
 
 	public String getClassName() {

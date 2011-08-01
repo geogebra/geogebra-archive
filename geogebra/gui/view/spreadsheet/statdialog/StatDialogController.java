@@ -7,6 +7,8 @@ import geogebra.gui.view.spreadsheet.RelativeCopy;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -51,7 +53,7 @@ public class StatDialogController {
 	public GeoElement getRegressionModel() {
 		return geoRegression;
 	}
-	public void setRegressionModel(GeoElement regressionModel) {
+	public void setRegressionModel(GeoFunction regressionModel) {
 		this.geoRegression = regressionModel;
 	}
 	
@@ -409,7 +411,7 @@ public class StatDialogController {
 			geoRegression.remove();
 		}
 
-		geoRegression = statGeo.createRegressionPlot(dataSelected, sd.getRegressionMode(), sd.getRegressionOrder());
+		geoRegression = (GeoElement)statGeo.createRegressionPlot(dataSelected, sd.getRegressionMode(), sd.getRegressionOrder());
 		geoRegression.removeView(app.getEuclidianView());
 		geoRegression.setAuxiliaryObject(true);
 		app.getEuclidianView().remove(geoRegression);

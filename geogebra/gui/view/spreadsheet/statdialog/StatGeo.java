@@ -13,6 +13,7 @@ import geogebra.kernel.AlgoText;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -21,6 +22,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLog;
 import geogebra.kernel.statistics.AlgoFitLogistic;
@@ -534,7 +536,7 @@ public class StatGeo   {
 
 
 
-	public GeoElement createRegressionPlot(GeoList dataList, int regType, int order){
+	public GeoFunctionable createRegressionPlot(GeoList dataList, int regType, int order){
 
 		boolean regNone = false;
 		
@@ -551,7 +553,7 @@ public class StatGeo   {
 			algo = new AlgoFitPow(cons, dataList);
 			break;
 		case StatDialog.REG_EXP:
-			algo = new AlgoFitSin(cons, dataList);
+			algo = new AlgoFitExp(cons, dataList);
 			break;
 		case StatDialog.REG_SIN:
 			algo = new AlgoFitSin(cons, dataList);
@@ -580,7 +582,7 @@ public class StatGeo   {
 		// hide the dummy geo
 		if(regNone) geo.setEuclidianVisible(false);
 
-		return geo;
+		return (GeoFunctionable)geo;
 
 	}
 
