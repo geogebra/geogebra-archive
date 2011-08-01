@@ -8,6 +8,7 @@ import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
@@ -240,7 +241,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 
 		// license
 		String text = app.loadTextFile(Application.LICENSE_FILE);
-		JTextArea textArea = new JTextArea(21, 45);
+		// We may want to modify the window size when the license file changes:
+		JTextArea textArea = new JTextArea(27, 100); // window size fine tuning (rows, cols)
 		JScrollPane scrollPane = new JScrollPane(textArea,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -317,7 +319,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 
 		JOptionPane infoPane = new JOptionPane(panel,
 				JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
-
+		
 		final JDialog dialog = infoPane.createDialog(app.getMainComponent(),
 				app.getMenu("About") + " / " + app.getMenu("License"));
 
