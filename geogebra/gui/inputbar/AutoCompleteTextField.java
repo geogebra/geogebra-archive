@@ -10,7 +10,6 @@ import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
 
 import java.awt.Component;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -50,6 +49,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */
 	private boolean isEqualsRequired = false; 
 	
+	/**
+	 * Pattern to find an argument description as found in the syntax information
+	 * of a command.
+	 */
+	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *<[ \\-\\w]*> *[,\\]]");
 
 	/**
 	 * Constructs a new AutoCompleteTextField that uses the dictionary of the
@@ -279,7 +283,19 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			if (app.isApplet())
 				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
-
+		
+		case KeyEvent.VK_RIGHT:
+			if (moveToNextArgument(false)) {
+				e.consume();
+			}
+			break;
+			
+		case KeyEvent.VK_TAB:
+			if (moveToNextArgument(true)) {
+				e.consume();
+			}
+			break;
+		
         case KeyEvent.VK_F1:
             	
             	if (autoComplete) {
@@ -413,12 +429,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
         		// Look for a pattern of the form ", < Argument Description > ," or ", < Argument Description > ]"
         		// If found, select the argument description so that it can easily be typed over with the value
         		// of the argument.
-        		Pattern argPattern = Pattern.compile(", +<[ \\-\\w]*> *[,\\]]");
-        		Matcher argMatcher = argPattern.matcher(text);
-        		argMatcher.region(caretPos, text.length());
-        		if (argMatcher.lookingAt()) {
-        			setCaretPosition(argMatcher.end() - 1);
-        			moveCaretPosition(argMatcher.start() + 2);
+        		if (moveToNextArgument(false)) {
         			e.consume();
         		}
         		return;
@@ -670,7 +681,26 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 	
 	static String lastTyped = null;
-
+	
+	/* -----------------------------------------
+	 * Autocompletion 
+	 * -----------------------------------------
+	 */
+	
+	private boolean moveToNextArgument(boolean find) {
+		String text = getText();
+		int caretPos = getCaretPosition();
+		Matcher argMatcher = syntaxArgPattern.matcher(text);
+		boolean hasNextArgument = argMatcher.find(caretPos);
+		if (hasNextArgument && (find || argMatcher.start() == caretPos)) {
+			setCaretPosition(argMatcher.end() - 1);
+			moveCaretPosition(argMatcher.start() + 1);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	private List<String> resetCompletions() {
 		String text = getText();
 		updateCurrentWord();
@@ -699,28 +729,32 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		cmdPrefix = curWord.toString();
 		completions = dict.getCompletions(cmdPrefix);
-		completions = getSyntax(completions);
+		completions = getSyntaxes(completions);
 		return completions;
 	}
 	
-	private List<String> getSyntax(List<String> completions) {
-		if (completions == null) {
+	/*
+	 * Take a list of commands and return all possible syntaxes
+	 * for these commands
+	 */
+	private List<String> getSyntaxes(List<String> commands) {
+		if (commands == null) {
 			return null;
 		}
-		ArrayList<String> syntaxCompletions = new ArrayList<String>();
-		for (String completion: completions) {
-			String syntaxes = app.getCommandSyntax(completion);
-			if (syntaxes.contains("Syntax")) {
-				syntaxCompletions.add(completion + "[]");
+		ArrayList<String> syntaxes = new ArrayList<String>();
+		for (String cmd: commands) {
+			String syntaxString = app.getCommandSyntax(cmd);
+			if (syntaxString.contains("Syntax")) {
+				syntaxes.add(cmd + "[]");
 			} else {
-				String[] signatures = syntaxes.split("\\n");
-				for (String signature: signatures) {
-					syntaxCompletions.add(signature);
+				for (String syntax: syntaxString.split("\\n")) {
+					syntaxes.add(syntax);
 				}
 			}
 		}
-		return syntaxCompletions;
+		return syntaxes;
 	}
+	
 	public void startAutoCompletion() {
 		resetCompletions();
 		completionsPopup.showCompletions();
