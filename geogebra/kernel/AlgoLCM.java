@@ -12,11 +12,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.math.BigInteger;
-
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
-import geogebra.util.MyMath;
+
+import java.math.BigInteger;
 
 /**
  * Computes LCM[a, b]
@@ -24,8 +22,7 @@ import geogebra.util.MyMath;
  * @version 
  */
 public class AlgoLCM extends AlgoTwoNumFunction {        
-	
-	private StringBuilder sb;
+		
         
     AlgoLCM(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons, label, a, b); 
@@ -43,7 +40,11 @@ public class AlgoLCM extends AlgoTwoNumFunction {
     			num.setUndefined();
     			return;
     		}
-    		
+    		//this is the only case whwn gcd == zero
+    		if(Kernel.isZero(a.getDouble()) && Kernel.isZero(b.getDouble())){
+    			num.setValue(0);
+    			return;
+    		}
     		if (a.getDouble() == Math.floor(a.getDouble()) && b.getDouble() == Math.floor(b.getDouble()))
     		{  
     			BigInteger i1 = BigInteger.valueOf((long)a.getDouble());

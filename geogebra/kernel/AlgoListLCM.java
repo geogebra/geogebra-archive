@@ -72,8 +72,8 @@ public class AlgoListLCM extends AlgoElement {
     	
     	for (int i = 1 ; i < geoList.size() ; i++) {
     		double nd = ((GeoNumeric)(geoList.get(i))).getDouble();
-    		// can't store integers greater than this in a double accurately
-    		if(!kernel.isInteger(nd) || Math.abs(lcm.doubleValue())>1e15){
+    		
+    		if(!kernel.isInteger(nd)){
     			num.setUndefined();
     			return;
     		}    		
@@ -88,6 +88,11 @@ public class AlgoListLCM extends AlgoElement {
     	
     	double resultD = Math.abs(lcm.doubleValue());
     	
+    	// can't store integers greater than this in a double accurately
+    	if(Math.abs(lcm.doubleValue())>1e15){
+			num.setUndefined();
+			return;
+		}    		
     	num.setValue(resultD);
     	
     }
