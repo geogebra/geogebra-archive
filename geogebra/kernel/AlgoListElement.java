@@ -229,10 +229,10 @@ public class AlgoListElement extends AlgoElement {
 	}
 	
 	public String getCommandDescription(boolean real) {
-		if(!shortSyntax)
+		
 			return super.getCommandDescription(real);
-              
-        
+        /*      
+        	TODO re enable this for shortSyntax flag true for 5.0
             sb.setLength(0);
             
             
@@ -247,7 +247,7 @@ public class AlgoListElement extends AlgoElement {
             }
             sb.append(")");
             return sb.toString();           
-              
+              */
     }
 
 }
