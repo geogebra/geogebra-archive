@@ -12,12 +12,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import geogebra.gui.inputbar.AutoCompleteTextField;
-import geogebra.main.Application;
 
-import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.HierarchyBoundsAdapter;
@@ -41,7 +37,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 /**
  * Provides completion popup for {@link AutoCompleteTextField}.
