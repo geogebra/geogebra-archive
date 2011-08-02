@@ -7249,7 +7249,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric Limit(String label, GeoFunction func, NumberValue num) {		
-		AlgoLimit algo = new AlgoLimit(cons, label, func, num);
+		AlgoCasLimit algo = new AlgoCasLimit(cons, label, func, num);
 		return algo.getResult();			
 	}
 	
@@ -7258,7 +7258,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric LimitBelow(String label, GeoFunction func, NumberValue num) {		
-		AlgoLimitBelow algo = new AlgoLimitBelow(cons, label, func, num);
+		AlgoCasLimitBelow algo = new AlgoCasLimitBelow(cons, label, func, num);
 		return algo.getResult();			
 	}
 	
@@ -7267,7 +7267,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric LimitAbove(String label, GeoFunction func, NumberValue num) {		
-		AlgoLimitAbove algo = new AlgoLimitAbove(cons, label, func, num);
+		AlgoCasLimitAbove algo = new AlgoCasLimitAbove(cons, label, func, num);
 		return algo.getResult();			
 	}
 	

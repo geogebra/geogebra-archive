@@ -23,7 +23,7 @@ import geogebra.main.Application;
  * 
  * @author Michael Borcherds
  */
-public class AlgoLimit extends AlgoElement {
+public class AlgoCasLimit extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	protected GeoFunction f;
@@ -32,7 +32,7 @@ public class AlgoLimit extends AlgoElement {
     
     protected StringBuilder sb = new StringBuilder();
    
-    public AlgoLimit(Construction cons, String label, GeoFunction f, NumberValue num) {
+    public AlgoCasLimit(Construction cons, String label, GeoFunction f, NumberValue num) {
     	super(cons);
         this.f = f;            	
         this.num = num;

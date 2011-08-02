@@ -23,9 +23,9 @@ import geogebra.main.Application;
  * 
  * @author Michael Borcherds
  */
-public class AlgoLimitBelow extends AlgoLimit {
+public class AlgoCasLimitBelow extends AlgoCasLimit {
   
-    public AlgoLimitBelow(Construction cons, String label, GeoFunction f, NumberValue num) {
+    public AlgoCasLimitBelow(Construction cons, String label, GeoFunction f, NumberValue num) {
     	super(cons, label, f, num);
     }
     

@@ -1057,7 +1057,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
         sb.append(funVarStr[1]); // function variable
         sb.append(',');
         sb.append(Double.toString(x));
-        sb.append("))");
+        sb.append("),");
+        // increase precision to improve problems like http://www.geogebra.org/trac/ticket/1106
+        sb.append("50)");
 
 		try {
 			String functionOut = kernel.evaluateCachedGeoGebraCAS(sb.toString());
