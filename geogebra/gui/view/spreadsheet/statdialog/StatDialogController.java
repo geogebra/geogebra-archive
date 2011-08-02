@@ -411,7 +411,7 @@ public class StatDialogController {
 			geoRegression.remove();
 		}
 
-		geoRegression = (GeoElement)statGeo.createRegressionPlot(dataSelected, sd.getRegressionMode(), sd.getRegressionOrder());
+		geoRegression = (GeoElement)statGeo.createRegressionPlot(dataSelected, sd.getRegressionMode(), sd.getRegressionOrder(), false);
 		geoRegression.removeView(app.getEuclidianView());
 		geoRegression.setAuxiliaryObject(true);
 		app.getEuclidianView().remove(geoRegression);

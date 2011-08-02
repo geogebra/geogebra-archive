@@ -86,6 +86,16 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @param f function
 	 */
 	public GeoFunction(Construction c, String label, Function f) {
+		this(c, f);
+		setLabel(label);
+		//TODO: Remove following code for 5.0 -- it's there to make sure no functions of y are created	
+		if(isLabelSet() && !isBooleanFunction() && "y".equals(fun.getVarString(0))){
+			this.remove();
+			throw new MyError(app,"InvalidFunction");
+		}
+	}
+	
+	public GeoFunction(Construction c, Function f) {
 		super(c);
 		fun = f;				
 		fun.initFunction();
@@ -93,12 +103,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			GeoElement ge = cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_INEQUALITY_1VAR);
 			setVisualStyle(ge);
 			setAlphaValue(ge.getAlphaValue());		
-		}
-		setLabel(label);
-		//TODO: Remove following code for 5.0 -- it's there to make sure no functions of y are created	
-		if(isLabelSet() && !isBooleanFunction() && "y".equals(fun.getVarString(0))){
-			this.remove();
-			throw new MyError(app,"InvalidFunction");
 		}
 	}
 	

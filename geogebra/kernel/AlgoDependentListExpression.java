@@ -45,6 +45,11 @@ public class AlgoDependentListExpression extends AlgoElement {
      * @param root expression deining the list
      */
     public AlgoDependentListExpression(Construction cons, String label, ExpressionNode root) {
+    	this(cons, root);     
+        list.setLabel(label);
+    }   
+    
+    public AlgoDependentListExpression(Construction cons, ExpressionNode root) {
     	super(cons);
         this.root = root;  
         
@@ -53,7 +58,6 @@ public class AlgoDependentListExpression extends AlgoElement {
         
         // compute value of dependent list
         compute();      
-        list.setLabel(label);
     }   
     
 	public String getClassName() {

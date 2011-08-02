@@ -46,6 +46,12 @@ public class AlgoListElement extends AlgoElement {
 	 */
 	public AlgoListElement(Construction cons, String label, GeoList geoList,
 			NumberValue num) {
+		this(cons, geoList, num);
+		element.setLabel(label);
+	}
+
+	public AlgoListElement(Construction cons, GeoList geoList,
+			NumberValue num) {
 		super(cons);
 		this.geoList = geoList;
 		this.num = num;
@@ -73,7 +79,6 @@ public class AlgoListElement extends AlgoElement {
 
 		setInputOutput();
 		compute();
-		element.setLabel(label);
 	}
 
 	/**

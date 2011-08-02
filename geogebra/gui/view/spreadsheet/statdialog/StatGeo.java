@@ -2,17 +2,23 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoClasses;
+import geogebra.kernel.AlgoDependentListExpression;
 import geogebra.kernel.AlgoDotPlot;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFrequencyPolygon;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoHistogram;
+import geogebra.kernel.AlgoListElement;
+import geogebra.kernel.AlgoListMax;
+import geogebra.kernel.AlgoListMin;
 import geogebra.kernel.AlgoNormalQuantilePlot;
 import geogebra.kernel.AlgoResidualPlot;
+import geogebra.kernel.AlgoStemPlot;
 import geogebra.kernel.AlgoText;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
@@ -20,8 +26,10 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitLineX;
 import geogebra.kernel.statistics.AlgoFitLog;
@@ -29,6 +37,8 @@ import geogebra.kernel.statistics.AlgoFitLogistic;
 import geogebra.kernel.statistics.AlgoFitPoly;
 import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
+import geogebra.kernel.statistics.AlgoMean;
+import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -78,50 +88,6 @@ public class StatGeo   {
 	}
 
 
-	//=================================================
-	//       Create GeoElement
-	//=================================================
-
-
-	public GeoElement createGeoFromString(String text ){
-		return createGeoFromString(text, null, false);
-	}
-	public GeoElement createGeoFromString(String text, String label){
-		return createGeoFromString(text, null, false);
-	}
-	public GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
-
-		try {
-
-			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
-
-			if(suppressLabelCreation)
-				cons.setSuppressLabelCreation(true);
-			//Application.debug(text);
-			
-			GeoElement[] geos = kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptions(text, false);	
-
-			if(label != null)
-				geos[0].setLabel(label);
-
-			// set visibility
-			geos[0].setEuclidianVisible(true);	
-			geos[0].setAuxiliaryObject(true);
-			geos[0].setLabelVisible(false);
-
-			if(suppressLabelCreation)
-				cons.setSuppressLabelCreation(oldSuppressLabelMode);
-
-			return geos[0];
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-
 
 	public GeoElement redefineGeoFromString(GeoElement geo, String newValue){
 
@@ -142,24 +108,14 @@ public class StatGeo   {
 		}
 	}
 
-
+/*
 	private double evaluateExpression(String expr){
 
 		NumberValue nv;
 		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);	
 
 		return nv.getDouble();
-	}
-
-
-	//==========================================================
-
-	public GeoText createXTitle(String titleString){
-		GeoText geo = null;
-		String	text = '\"' + titleString + '\"';
-		geo  = (GeoText) createGeoFromString(text);
-		return geo;		
-	}
+	}*/
 
 
 
@@ -175,19 +131,38 @@ public class StatGeo   {
 	}
 	private void getDataBounds(GeoList dataList, boolean isPointList, boolean isMatrix){
 
-		String label = dataList.getLabel();
+		//String label = dataList.getLabel();
 		dataBounds = new double[4];
 
 		if(isMatrix){
 			
-			dataBounds[0] = this.evaluateExpression("Min[ Element[" + label + ", 1] ]");
-			dataBounds[1] = this.evaluateExpression("Max[ Element[" + label + ", 1] ]");
+			GeoNumeric index = new GeoNumeric(cons, 1);
+			AlgoListElement le = new AlgoListElement(cons, dataList, index);
+			GeoList list = (GeoList) le.getGeoElements()[0];
+			AlgoListMax maxAlgo = new AlgoListMax(cons, list);
+			AlgoListMin minAlgo = new AlgoListMin(cons, list);
+			cons.removeFromConstructionList(minAlgo);
+			cons.removeFromConstructionList(maxAlgo);
+			
+			GeoNumeric maxGeo = (GeoNumeric) maxAlgo.getGeoElements()[0];
+			GeoNumeric minGeo = (GeoNumeric) minAlgo.getGeoElements()[0];
+			
+			//dataBounds[0] = this.evaluateExpression("Min[ Element[" + label + ", 1] ]");
+			//dataBounds[1] = this.evaluateExpression("Max[ Element[" + label + ", 1] ]");
+			dataBounds[0] = ((GeoNumeric)minAlgo.getGeoElements()[0]).getDouble();
+			dataBounds[1] = ((GeoNumeric)maxAlgo.getGeoElements()[0]).getDouble();
 			
 			//System.out.println(s + ":  " + dataBounds[0] + "--------" + dataBounds[0] );
 			double min, max;
 			for(int i = 1; i < dataList.size(); i++){
-				min = this.evaluateExpression("Min[ Element[" + label + "," + (i+1) + "]]");
-				max = this.evaluateExpression("Max[ Element[" + label + "," + (i+1) + "]]");
+				//min = this.evaluateExpression("Min[ Element[" + label + "," + (i+1) + "]]");
+				//max = this.evaluateExpression("Max[ Element[" + label + "," + (i+1) + "]]");
+				
+				index.setValue(i);
+				index.updateCascade();
+				min = minGeo.getDouble();
+				max = maxGeo.getDouble();
+				
 				dataBounds[0] = Math.min(dataBounds[0], min);
 				dataBounds[1] = Math.max(dataBounds[1], max);
 			}
@@ -195,13 +170,41 @@ public class StatGeo   {
 
 
 		else if(isPointList){
-			dataBounds[0] = this.evaluateExpression("Min[x(" + label + ")]");
-			dataBounds[1] = this.evaluateExpression("Max[x(" + label + ")]");
-			dataBounds[2] = this.evaluateExpression("Min[y(" + label + ")]");
-			dataBounds[3] = this.evaluateExpression("Max[y(" + label + ")]");
+			ExpressionNode enX = new ExpressionNode(kernel, dataList, ExpressionNode.XCOORD, null);
+			ExpressionNode enY = new ExpressionNode(kernel, dataList, ExpressionNode.YCOORD, null);
+			AlgoDependentListExpression listX = new AlgoDependentListExpression(cons, enX);
+			AlgoDependentListExpression listY = new AlgoDependentListExpression(cons, enY);
+			
+			AlgoListMax maxX = new AlgoListMax(cons, (GeoList)listX.getGeoElements()[0]);
+			AlgoListMax maxY = new AlgoListMax(cons, (GeoList)listY.getGeoElements()[0]);
+			AlgoListMin minX = new AlgoListMin(cons, (GeoList)listX.getGeoElements()[0]);
+			AlgoListMin minY = new AlgoListMin(cons, (GeoList)listY.getGeoElements()[0]);
+			
+			cons.removeFromConstructionList(listX);
+			cons.removeFromConstructionList(listY);
+			cons.removeFromConstructionList(maxX);
+			cons.removeFromConstructionList(maxY);
+			cons.removeFromConstructionList(minX);
+			cons.removeFromConstructionList(minY);
+			dataBounds[0] = ((GeoNumeric)minX.getGeoElements()[0]).getDouble();
+			dataBounds[1] = ((GeoNumeric)maxX.getGeoElements()[0]).getDouble();
+			dataBounds[2] = ((GeoNumeric)minY.getGeoElements()[0]).getDouble();
+			dataBounds[3] = ((GeoNumeric)maxY.getGeoElements()[0]).getDouble();
+			
+			//dataBounds[0] = this.evaluateExpression("Min[x(" + label + ")]");
+			//dataBounds[1] = this.evaluateExpression("Max[x(" + label + ")]");
+			//dataBounds[2] = this.evaluateExpression("Min[y(" + label + ")]");
+			//dataBounds[3] = this.evaluateExpression("Max[y(" + label + ")]");
 		}else{
-			dataBounds[0] = this.evaluateExpression("Min[" + label + "]");
-			dataBounds[1] = this.evaluateExpression("Max[" + label + "]");
+			AlgoListMax max = new AlgoListMax(cons, dataList);
+			AlgoListMin min = new AlgoListMin(cons, dataList);
+			cons.removeFromConstructionList(min);
+			cons.removeFromConstructionList(max);
+
+			dataBounds[0] = ((GeoNumeric)min.getGeoElements()[0]).getDouble();
+			dataBounds[1] = ((GeoNumeric)max.getGeoElements()[0]).getDouble();
+			//dataBounds[0] = this.evaluateExpression("Min[" + label + "]");
+			//dataBounds[1] = this.evaluateExpression("Max[" + label + "]");
 		}
 
 		xMinData = dataBounds[0];
@@ -263,11 +266,33 @@ public class StatGeo   {
 	public GeoElement createNormalCurveOverlay(GeoList dataList){
 
 		GeoElement geo;
-		String label = dataList.getLabel();	
-		String text = "Normal[Mean[" + label + "],SD[" + label + "],x]";
+		//String label = dataList.getLabel();	
+		//String text = "Normal[Mean[" + label + "],SD[" + label + "],x]";
+		
+		AlgoMean mean = new AlgoMean(cons, dataList);
+		AlgoStandardDeviation sd = new AlgoStandardDeviation(cons, dataList);
+		
+		cons.removeFromConstructionList(mean);
+		cons.removeFromConstructionList(sd);
+		
+		GeoElement meanGeo = mean.getGeoElements()[0];
+		GeoElement sdGeo = sd.getGeoElements()[0];
+		
+		FunctionVariable x = new FunctionVariable(kernel);
+		
+		ExpressionNode normal = new ExpressionNode(kernel, x, ExpressionNode.MINUS, meanGeo);
+		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, sdGeo);
+		normal = new ExpressionNode(kernel, normal, ExpressionNode.POWER, new MyDouble(kernel,2.0));
+		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, new MyDouble(kernel,-2.0));
+		normal = new ExpressionNode(kernel, normal, ExpressionNode.EXP, null);
+		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, new MyDouble(kernel,1/Math.sqrt(2*Math.PI)));
+		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, sdGeo);
+		
+		Function f = new Function(normal, x);		
+		geo = new GeoFunction(cons, f);
 
 		//Application.debug(text);
-		geo = createGeoFromString(text);
+		//geo = createGeoFromString(text);
 		geo.setObjColor(Color.BLACK);
 
 		return geo;	
@@ -438,13 +463,23 @@ public class StatGeo   {
 		PlotSettings ps = new PlotSettings();
 
 		getDataBounds(dataList);
-		String label = dataList.getLabel();	
+		//String label = dataList.getLabel();	
 
 		double buffer = .25*(xMaxData - xMinData);		
 		ps.xMin = xMinData - buffer;
 		ps.xMax = xMaxData + buffer;
 		ps.yMin = -1.0;
-		ps.yMax = evaluateExpression("Max[y(" + dotPlot.getLabel() +  ")]") + 1;
+		
+		ExpressionNode en = new ExpressionNode(kernel, dotPlot, ExpressionNode.YCOORD, null);
+		AlgoDependentListExpression list = new AlgoDependentListExpression(cons, en);
+		
+		AlgoListMax max = new AlgoListMax(cons, (GeoList)list.getGeoElements()[0]);
+		
+		cons.removeFromConstructionList(list);
+		cons.removeFromConstructionList(max);
+
+		//ps.yMax = evaluateExpression("Max[y(" + dotPlot.getLabel() +  ")]") + 1;
+		ps.yMax = ((GeoNumeric)max.getGeoElements()[0]).getDouble() + 1;
 		ps.showYAxis = false;
 		ps.forceXAxisBuffer = true;
 
@@ -536,7 +571,7 @@ public class StatGeo   {
 
 
 
-	public GeoFunctionable createRegressionPlot(GeoList dataList, int regType, int order){
+	public GeoElement createRegressionPlot(GeoList dataList, int regType, int order, boolean residual){
 
 		boolean regNone = false;
 		
@@ -573,16 +608,24 @@ public class StatGeo   {
 		
 		cons.removeFromConstructionList(algo);
 		GeoElement geo = algo.getGeoElements()[0];
+		
+		if (residual) {
+			AlgoResidualPlot algoRP = new AlgoResidualPlot(cons, dataList, (GeoFunctionable) geo);
+			geo = algoRP.getGeoElements()[0];
+			geo.setObjColor(StatDialog.DOTPLOT_COLOR);
+			geo.setAlphaValue(0.25f);
+		} else {
 
-		// set geo options
-		geo.setObjColor(StatDialog.REGRESSION_COLOR);
-		if(regType == StatDialog.REG_LINEAR)	
-			((GeoLine)geo).setToExplicit();	
+			// set geo options
+			geo.setObjColor(StatDialog.REGRESSION_COLOR);
+			if(regType == StatDialog.REG_LINEAR)	
+				((GeoLine)geo).setToExplicit();	
+	
+			// hide the dummy geo
+			if(regNone) geo.setEuclidianVisible(false);
+		}
 
-		// hide the dummy geo
-		if(regNone) geo.setEuclidianVisible(false);
-
-		return (GeoFunctionable)geo;
+		return geo;
 
 	}
 
@@ -605,13 +648,13 @@ public class StatGeo   {
 		ps.forceXAxisBuffer = false;
 
 	}
-
+/*
 	public GeoElement createResidualPlot(GeoList dataList, int regType, int order){
 
 		GeoElement geo = null;
 
 		if (regType == StatDialog.REG_NONE){
-			return createGeoFromString("{}");
+			return new GeoList(cons);
 		}
 
 		String label = dataList.getLabel();	
@@ -627,7 +670,7 @@ public class StatGeo   {
 
 		return geo;
 
-	}
+	}*/
 
 	public PlotSettings getResidualPlotSettings(GeoList dataList, GeoElement residualPlot, StatPanelSettings settings){
 
@@ -683,11 +726,15 @@ public class StatGeo   {
 
 	public String getStemPlotLatex(GeoList dataList, int adjustment){
 
-		String label = dataList.getLabel();	
-		GeoElement tempGeo;
+		//String label = dataList.getLabel();	
 
-		String	text = "StemPlot[" + label + "," + adjustment + "]";
-		tempGeo  = createGeoFromString(text);
+		//String	text = "StemPlot[" + label + "," + adjustment + "]";
+		//tempGeo  = createGeoFromString(text);
+		
+		AlgoStemPlot sp = new AlgoStemPlot(cons, dataList, new GeoNumeric(cons, adjustment));
+		GeoElement tempGeo = sp.getGeoElements()[0];
+		cons.removeFromConstructionList(sp);
+		
 		String latex = tempGeo.getLaTeXdescription();
 		tempGeo.remove();
 

@@ -52,7 +52,7 @@ public class AlgoDependentFunction extends AlgoElement {
        	f.setLabel(derivativeLabel != null ? derivativeLabel : label);
     }
     
-    AlgoDependentFunction(Construction cons, Function fun) {
+    public AlgoDependentFunction(Construction cons, Function fun) {
         super(cons);
         this.fun = fun;
         f = new GeoFunction(cons);

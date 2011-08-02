@@ -37,7 +37,7 @@ public class AlgoStemPlot extends AlgoElement {
 		text.setLabel(label);
 	}
 
-	AlgoStemPlot(Construction cons, GeoList geoList, GeoNumeric scaleAdjustment) {
+	public AlgoStemPlot(Construction cons, GeoList geoList, GeoNumeric scaleAdjustment) {
 		super(cons);
 		this.geoList = geoList;
 		this.scaleAdjustment = scaleAdjustment;

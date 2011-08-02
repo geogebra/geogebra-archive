@@ -39,6 +39,11 @@ public class AlgoResidualPlot extends AlgoElement {
 	
 
 	AlgoResidualPlot(Construction cons, String label, GeoList inputList, GeoFunctionable function2) {
+		this(cons, inputList, function2);
+		outputList.setLabel(label);
+	}
+
+	public AlgoResidualPlot(Construction cons, GeoList inputList, GeoFunctionable function2) {
 		super(cons);
 		this.inputList = inputList;
 		this.function = function2;       
@@ -46,7 +51,6 @@ public class AlgoResidualPlot extends AlgoElement {
 
 		setInputOutput();
 		compute();
-		outputList.setLabel(label);
 	}
 
 	public String getClassName() {

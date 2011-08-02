@@ -796,7 +796,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		case PLOT_RESIDUAL:
 			if(doCreate)
-				plotGeoList.add(statGeo.createResidualPlot(dataListSelected, statDialog.getRegressionMode(), statDialog.getRegressionOrder()));
+				plotGeoList.add((GeoElement) statGeo.createRegressionPlot(dataListSelected, statDialog.getRegressionMode(), statDialog.getRegressionOrder(), true));
 			if(statDialog.getRegressionMode() != statDialog.REG_NONE)
 				plotPanel.setPlotSettings(statGeo.getResidualPlotSettings(dataListSelected, plotGeoList.get(plotGeoList.size()-1), settings));
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
