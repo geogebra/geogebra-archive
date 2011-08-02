@@ -110,7 +110,7 @@ public abstract class CASgeneric {
 			String label = ve.getLabel();
 			if (label != null) { // is an assignment or a function declaration
 				// make sure to escape labels to avoid problems with reserved CAS labels
-				label = GeoElement.printLabel(casStringType, label);
+				label = Kernel.printVariableName(casStringType, label);
 				if (ve instanceof FunctionNVar) {
 					FunctionNVar fun = (FunctionNVar) ve;
 					return translateFunctionDeclaration(label, fun.getVarString(), body);

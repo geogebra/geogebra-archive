@@ -24,6 +24,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -166,6 +167,7 @@ public class Kernel {
 	
 	private int casPrintForm;		
 	private String casPrintFormPI; // for pi
+	private boolean useTempVariablePrefix;
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
@@ -757,6 +759,84 @@ public class Kernel {
 	final public int getCASPrintForm() {
 		return casPrintForm;
 	}
+	
+	/**
+	 * Returns whether all variable names are currently prefixed 
+	 * by ExpressionNode.TMP_VARIABLE_PREFIX, i.e. "a" becomes "ggbtmpvara"
+	 */
+	public boolean isUseTempVariablePrefix() {
+		return useTempVariablePrefix;
+	}
+
+	/**
+	 * Sets whether all variable names should be prefixed 
+	 * by ExpressionNode.TMP_VARIABLE_PREFIX, i.e. "a" becomes "ggbtmpvara"
+	 */
+	public void setUseTempVariablePrefix(boolean useTempVariablePrefix) {
+		this.useTempVariablePrefix = useTempVariablePrefix;
+	}
+	
+	/**
+	 * Retuns variable label depending on isUseTempVariablePrefix() and 
+	 * kernel.getCASPrintForm(). A label may be prefixed here by 
+	 * ExpressionNode.TMP_VARIABLE_PREFIX or 
+	 * @param label
+	 * @return
+	 */
+	public String printVariableName(String label) {
+		if (isUseTempVariablePrefix()) {
+			return addTempVariablePrefix(label);
+		} else {
+			return printVariableName(getCASPrintForm(), label);
+		}
+	}
+	
+	/**
+	 * Returns the label depending on the current print form. When sending variables
+	 * to the underlying CAS, we need to make sure that we don't overwrite variable names there,
+	 * so we add the prefix ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX.
+	 * 
+	 * @param printForm 
+	 * @return label depending on kernel.getCASPrintForm()
+	 */
+	 public static String printVariableName(int printForm, String label) {
+		 switch(printForm){		
+			case ExpressionNodeConstants.STRING_TYPE_MPREDUCE:
+			case ExpressionNodeConstants.STRING_TYPE_MAXIMA:
+				// make sure we don't interfer with reserved names
+				// or command names in the underlying CAS
+				// see http://www.geogebra.org/trac/ticket/1051
+				return addCASVariablePrefix(label);
+				
+			default:
+				//standard case
+				return label;
+		 } 
+	 }
+	 
+	/**
+	 * Returns ExpressionNodeConstants.TMP_VARIABLE_PREFIX + label.
+	 */
+	 private static String addTempVariablePrefix(String label) {
+		 return addPrefix(ExpressionNodeConstants.TMP_VARIABLE_PREFIX, label);
+	 }
+	 
+	 /**
+	 * Returns ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX + label.
+	 */
+	 private static String addCASVariablePrefix(String label) {
+		 return addPrefix(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX, label);
+	 }
+	 
+	 /**
+	  * Returns prefix + label.
+	  */
+	 private static String addPrefix(String prefix, String label) {
+		 StringBuilder sb = new StringBuilder();
+		 sb.append(prefix);
+		 sb.append(label);
+		 return sb.toString();
+	 }
 	
 	final public int getCurrentCAS() {
 		return ((GeoGebraCAS)getGeoGebraCAS()).currentCAS;
@@ -7160,7 +7240,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric Degree(String label, GeoFunction func) {		
-		AlgoDegree algo = new AlgoDegree(cons, label, func);
+		AlgoCasDegree algo = new AlgoCasDegree(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -7205,7 +7285,7 @@ public class Kernel {
 	 * Michael Borcherds 2008-04-04
 	 */
 	final public GeoList Coefficients(String label, GeoFunction func) {		
-		AlgoCoefficients algo = new AlgoCoefficients(cons, label, func);
+		AlgoCasCoefficients algo = new AlgoCasCoefficients(cons, label, func);
 		return algo.getResult();			
 	}
 	

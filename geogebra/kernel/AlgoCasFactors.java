@@ -61,10 +61,13 @@ public class AlgoCasFactors extends AlgoElement {
         }    
 
 	    try {
-	    	String functionIn = f.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
+	    	// get function and function variable string using temp variable prefixes,
+			// e.g. f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
+			String [] funVarStr = f.getTempVarCASString(false);
+		
 		    sb.setLength(0);
 		    sb.append("Numeric(Factor(");
-		    sb.append(functionIn);
+		    sb.append(funVarStr[0]); // function expression
 		    sb.append("))");
 	        // cached evaluation of MPReduce as we are only using variable values
 			String listOut = kernel.evaluateCachedGeoGebraCAS(sb.toString());	

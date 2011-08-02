@@ -67,7 +67,6 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
         }    
                 
         // get numeric string for function
-        //String function = f.getFunction().getExpression().getJSCLString(false); 
         int oldPrintForm = kernel.getCASPrintForm();
         kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_MPREDUCE);
         String function = f.getCASString(false);    		

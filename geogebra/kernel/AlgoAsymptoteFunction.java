@@ -65,11 +65,6 @@ public class AlgoAsymptoteFunction extends AlgoElement {
         	return;
         }    
         
-        // temporarily change function variable name to avoid problems with CAS variables
-        // e.g. f(x) = x^2 becomes f(tmpvarx) = tmpvarx^2
-//        String oldVarString = f.getVarString();
-//        f.setVarString(ExpressionNode.TMP_VARIABLE_PREFIX+oldVarString);
-        
 	    try {
 		    sb.setLength(0);
 		    sb.append("{");
@@ -88,9 +83,6 @@ public class AlgoAsymptoteFunction extends AlgoElement {
 	    }
 	    catch (Throwable th) {
 	    	g.setUndefined();
-	    }
-	    finally {
-//	        f.setVarString(oldVarString);
 	    }		
     }
     

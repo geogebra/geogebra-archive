@@ -572,7 +572,7 @@ public abstract class GeoElement
 			else
 				return algoParent.getCommandDescription();
 		} else {
-			return printLabel(kernel.getCASPrintForm(), label);
+			return kernel.printVariableName(label);
 		}
 	}
 
@@ -2007,33 +2007,6 @@ public abstract class GeoElement
 		return symbolic && !isIndependent() ?  getCommandDescription() : toValueString();
 	 }
 	 
-	/**
-	 * Returns the label depending on the current print form. When sending variables
-	 * to the underlying CAS, we need to make sure that we don't overwrite variable names there,
-	 * so we add the prefix ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX.
-	 * @param printForm 
-	 * @param label 
-	 * 
-	 * @return label depending on kernel.getCASPrintForm()
-	 */
-	 public static String printLabel(int printForm, String label) {
-		 switch(printForm){
-			default:
-				//standard case
-				return label;
-		
-			case ExpressionNodeConstants.STRING_TYPE_MPREDUCE:
-			case ExpressionNodeConstants.STRING_TYPE_MAXIMA:
-				// make sure we don't interfer with reserved names
-				// or command names in the underlying CAS
-				// see http://www.geogebra.org/trac/ticket/1051
-				StringBuilder sb = new StringBuilder();
-				sb.append(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX);
-				sb.append(label);
-				return sb.toString();
-			}
-	 }
-
 	/* *******************************************************
 	 * GeoElementTable Management
 	 * Hashtable: String (label) -> GeoElement
@@ -5207,8 +5180,8 @@ public abstract class GeoElement
 		
 		
 		// GeoNumeric eg a=1
-		if ("".equals(ret) && this.isGeoNumeric() && !substituteNumbers && label != null) {
-			ret = label;
+		if ("".equals(ret) && this.isGeoNumeric() && !substituteNumbers && isLabelSet()) {
+			ret = kernel.printVariableName(label);
 		}
 		if ("".equals(ret) && !this.isGeoText()) {
 			// eg Text[ (1,2), false]
@@ -5256,8 +5229,8 @@ public abstract class GeoElement
 		}
 
 		// GeoNumeric eg a=1
-		if ("".equals(ret) && this.isGeoNumeric() && !substituteNumbers && label != null) {
-			ret = label;
+		if ("".equals(ret) && this.isGeoNumeric() && !substituteNumbers && isLabelSet()) {
+			ret = kernel.printVariableName(label);
 		}
 		if ("".equals(ret) && !this.isGeoText()) {
 			// eg Text[ (1,2), false]

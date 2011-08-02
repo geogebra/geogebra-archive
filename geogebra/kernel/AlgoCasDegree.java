@@ -12,35 +12,32 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionNode;
 /**
  * Try to expand the given function 
  * 
  * @author Michael Borcherds
  */
-public class AlgoCoefficients extends AlgoElement {
+public class AlgoCasDegree extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
-    private GeoList g; // output        
+    private GeoNumeric num; // output        
     
     private StringBuilder sb = new StringBuilder();
    
-    public AlgoCoefficients(Construction cons, String label, GeoFunction f) {
-    	this(cons,f);
-        g.setLabel(label);
-    }
-    
-    public AlgoCoefficients(Construction cons, GeoFunction f) {
+    public AlgoCasDegree(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	
     	
-        g = new GeoList(cons);                
+        num = new GeoNumeric(cons);                
         setInputOutput(); // for AlgoElement        
         compute();
-	}
-
-	public String getClassName() {
-        return "AlgoCoefficients";
+        num.setLabel(label);
+    }
+    
+    public String getClassName() {
+        return "AlgoDegree";
     }
     
     // for AlgoElement
@@ -48,36 +45,38 @@ public class AlgoCoefficients extends AlgoElement {
         input = new GeoElement[1];
         input[0] = f;
 
-        setOutputLength(1);
-        setOutput(0,g);
+        output = new GeoElement[1];
+        output[0] = num;
         setDependencies(); // done by AlgoElement
     }
 
-    public GeoList getResult() {
-        return g;
+    public GeoNumeric getResult() {
+        return num;
     }
 
     protected final void compute() {       
         if (!f.isDefined()) {
-        	g.setUndefined();
+        	num.setUndefined();
         	return;
         }    
-                
-        
-	    String functionIn = f.getFormulaString(kernel.getCurrentCAS(), true);
-
+               
+     	// get function and function variable string using temp variable prefixes,
+		// e.g. f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
+		String [] funVarStr = f.getTempVarCASString(false);
+	    
 	    sb.setLength(0);
-        sb.append("Coefficients(");
-        sb.append(functionIn);
+        sb.append("Degree(");
+        sb.append(funVarStr[0]); // function expression
+        sb.append(",");
+        sb.append(funVarStr[1]); // function variable
         sb.append(")");
 		String functionOut;
 		try {
 			functionOut = kernel.evaluateCachedGeoGebraCAS(sb.toString());
-			g.set(kernel.getAlgebraProcessor().evaluateToList(functionOut));	
-			g.setDefined(true);	
+			num.setValue(Double.parseDouble(functionOut));	
 		} catch (Throwable e) {
-			e.printStackTrace();
-			g.setUndefined();
+			System.err.println("AlgoCasDegree: " + e.getMessage());
+			num.setUndefined();
 		}
 		
     }

@@ -68,15 +68,20 @@ public class AlgoCasIntegral extends AlgoCasBase {
 		// var.getLabel() can return a number in wrong alphabet (need ASCII)
 		boolean internationalizeDigits = kernel.internationalizeDigits;
 		kernel.internationalizeDigits = false;
+		
+		// get variable string with tmp prefix, 
+		// e.g. "x" becomes "ggbtmpvarx" here
+		boolean isUseTempVariablePrefix = kernel.isUseTempVariablePrefix();
+		kernel.setUseTempVariablePrefix(true);
+		String varStr = var != null ? var.getLabel() : f.getVarString();
+		kernel.setUseTempVariablePrefix(isUseTempVariablePrefix);
+		kernel.internationalizeDigits = internationalizeDigits;		
 
 		 sb.setLength(0);
 		 sb.append("Integral(%");
 		 sb.append(",");
-		 sb.append(var != null ? var.getLabel() : f.getVarString());
+		 sb.append(varStr);
 		 sb.append(")");
-		 
-		kernel.internationalizeDigits = internationalizeDigits;
-
 		 
 		 // find symbolic derivative of f
 		 g.setUsingCasCommand(sb.toString(), f, true);	

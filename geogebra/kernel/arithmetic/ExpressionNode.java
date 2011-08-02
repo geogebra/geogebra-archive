@@ -1041,39 +1041,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 	}
 	
 	
-	/**
-	 * Renames all GeoElements in geoVars to use local variable names.
-	 * @param geoVars set of GeoElement variables
-	 */
-	public void introduceLocalVariableNames(HashSet<GeoElement> geoVars) {
-		if (geoVars == null) return;
-		
-		// get all GeoElement variables in this expression tree 
-		Construction cons = kernel.getConstruction();
 
-		// set labels of all geos to use temp variable names
-		for (GeoElement geo : geoVars) {
-			if (geo.isLabelSet())
-				cons.addLocalVariable(TMP_VARIABLE_PREFIX + geo.getLabel(), geo);
-		}
-	}
-	
-	/**
-	 * Renames all GeoElements in this expression tree back to their previous variable names.
-	 * This undoes introduceLocalVariableNames().
-	 * @param geoVars set of GeoElement variables
-	 */
-	public void undoLocalVariableNames(HashSet<GeoElement> geoVars) {			
-		if (geoVars == null) return;
-
-		Construction cons = kernel.getConstruction();
-
-		// set labels of all geos back to their old labels
-		for (GeoElement geo : geoVars) {
-			if (geo.isLabelSet())
-				cons.removeLocalVariable(geo.getLabel());
-		}
-	}
 
 	final public boolean isLeaf() {
 		return leaf; // || operation == NO_OPERATION;

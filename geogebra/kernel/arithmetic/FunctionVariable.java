@@ -40,10 +40,14 @@ public class FunctionVariable extends MyDouble {
 	
 	public void setVarString(String varStr) {
 		this.varStr = varStr;
-	}		
+	}
+	
+	public String getSetVarString() {
+		return varStr;
+	}
 	
 	final public String toString() {
-		return GeoElement.printLabel(kernel.getCASPrintForm(), varStr);
+		return kernel.printVariableName(varStr);
 	}
 
 	/*

@@ -154,9 +154,9 @@ public class GeoGebraCAS {
 		// e.g. "ggbcasvara" needs to be changed to "a"
 		ret = ret.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
 		
-//		// get names of escaped temporary variables right
-//		// e.g. "ggbtmpvara" needs to be changed to "a"
-//		ret = ret.replaceAll(ExpressionNode.TMP_VARIABLE_PREFIX, "");	
+		// get names of escaped temporary variables right
+		// e.g. "ggbtmpvara" needs to be changed to "a"
+		ret = ret.replaceAll(ExpressionNode.TMP_VARIABLE_PREFIX, "");	
 		
 		kernel.internationalizeDigits = oldDigits;
 		
@@ -373,7 +373,7 @@ public class GeoGebraCAS {
 		// no translation found: 
 		// use key as function name
 		if (translation == null) {			
-			sbCASCommand.append(GeoElement.printLabel(app.getKernel().getCASPrintForm(), name));
+			sbCASCommand.append(app.getKernel().printVariableName(name));
 			sbCASCommand.append('(');
 			for (int i=0; i < args.size(); i++) {
 				ExpressionValue ev = (ExpressionValue) args.get(i);				

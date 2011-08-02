@@ -12,7 +12,7 @@ public class AlgoCompleteSquare extends AlgoElement {
 	private FunctionVariable fv;
 	private MyDouble a,h,k; //a(x-h)^2+k
 	private int lastDeg;
-	private AlgoCoefficients algoCoef;
+	private AlgoCasCoefficients algoCoef;
 	public AlgoCompleteSquare(Construction cons,String label,GeoFunction f){
 		super(cons);
 		this.f=f;
@@ -54,7 +54,7 @@ public class AlgoCompleteSquare extends AlgoElement {
 		}
 		if(!isQuadratic){
 			if(algoCoef==null)
-				algoCoef = new AlgoCoefficients(cons,f);
+				algoCoef = new AlgoCasCoefficients(cons,f);
 			else
 				algoCoef.compute();
 			coefs = algoCoef.getResult();

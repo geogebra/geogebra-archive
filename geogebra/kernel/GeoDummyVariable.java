@@ -17,7 +17,7 @@ public class GeoDummyVariable extends GeoNumeric {
 	}
 	
 	public String toString() {
-		return GeoElement.printLabel(kernel.getCASPrintForm(), varName);
+		return kernel.printVariableName(varName);
 	}
 	
 	public String toValueString() {

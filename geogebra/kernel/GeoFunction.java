@@ -781,15 +781,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 	
 	public String getVarString() {	
-		return fun == null ? "x" : fun.getVarString();
-	}
-	
-	public void setVarString(String varStr) {
-		try {
-			fun.getFunctionVariable().setVarString(varStr);
-		}
-		catch (Exception e) {
-			System.err.println("GeoFunction.setVarString: " + e.getMessage());
+		if (fun == null) {
+			return kernel.printVariableName("x");
+		} else {
+			return fun.getVarString();
 		}
 	}
 
@@ -1046,23 +1041,24 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @return the limit
 	 */
 	public double getLimit(double x, int direction) {
-   	String functionIn = fun.getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, false);	    
-    	if (sb == null) sb = new StringBuilder();
+		// get function and function variable string using temp variable prefixes,
+		// e.g. f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
+		String [] funVarStr = getTempVarCASString(false);
+   	
+	     if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    sb.setLength(0);
         sb.append("Numeric(Limit");
         if (direction == -1) sb.append("Above");
         else if (direction == 1) sb.append("Below");       
         sb.append('(');
-        sb.append(functionIn);
+        sb.append(funVarStr[0]); // function expression
         sb.append(',');
-        sb.append(getVarString());
+        sb.append(funVarStr[1]); // function variable
         sb.append(',');
         sb.append(Double.toString(x));
         sb.append("))");
 
-
-		
 		try {
 			String functionOut = kernel.evaluateCachedGeoGebraCAS(sb.toString());
 			NumberValue nv = kernel.getAlgebraProcessor().evaluateToNumeric(functionOut, false);
@@ -1135,75 +1131,65 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
      * @param positiveInfinity if true, we look for limit at positive infinity, for false, we use negative infinity
      */
     protected void getDiagonalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionIn = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
-	    
-    	if (sb == null) sb = new StringBuilder();
-    	else sb.setLength(0);
-    	
+
     	try {
-        sb.append("Derivative(");
-        sb.append(functionIn);
-        sb.append(',');
-        sb.append(f.getVarString());
-        sb.append(")");
-		String firstDerivative = kernel.evaluateCachedGeoGebraCAS(sb.toString());
-		
-		if (!f.CASError(firstDerivative, false)) {
+    		// get first derivative
+        	GeoFunction deriv = f.getGeoDerivative(1);
+        	
+        	// get function and function variable string using temp variable prefixes,
+    		// e.g. f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
+    		String [] funVarStr = deriv.getTempVarCASString(false);
+    		
+        	if (sb == null) sb = new StringBuilder();
+        	else sb.setLength(0);    	
 	
-		
 			String gradientStrMinus="";
 			String interceptStrMinus="";
 			
-			{
-				
+			sb.setLength(0);
+	        sb.append("Limit(");
+	        sb.append(funVarStr[0]); // derivative expression		
+	        sb.append(',');
+	        sb.append(funVarStr[1]); // derivative function variable
+	        sb.append(',');
+	        if (!positiveInfinity) sb.append('-'); // -Infinity
+	        sb.append(Unicode.Infinity);
+	        sb.append(')');
+
+			gradientStrMinus = kernel.evaluateCachedGeoGebraCAS(sb.toString());
+			
+			if (!f.CASError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
 				sb.setLength(0);
 		        sb.append("Limit(");
-		        sb.append(firstDerivative);		
+		        sb.append(funVarStr[0]); // derivative function expression
+		        sb.append(" - ");
+		        sb.append(gradientStrMinus);
+		        sb.append(" * ");
+		        sb.append(funVarStr[1]); // derivative function variable
 		        sb.append(',');
-		        sb.append(f.getVarString());
+		        sb.append(funVarStr[1]); // derivative function variable
 		        sb.append(',');
 		        if (!positiveInfinity) sb.append('-'); // -Infinity
 		        sb.append(Unicode.Infinity);
 		        sb.append(')');
 
-				gradientStrMinus = kernel.evaluateCachedGeoGebraCAS(sb.toString());
+		        interceptStrMinus = kernel.evaluateCachedGeoGebraCAS(sb.toString());
 				
-				if (!f.CASError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
+				if (!f.CASError(interceptStrMinus, false)) {
 					sb.setLength(0);
-			        sb.append("Limit(");
-			        sb.append(functionIn);
-			        sb.append(" - ");
-			        sb.append(gradientStrMinus);
-			        sb.append(" * ");
-			        sb.append(f.getVarString());
-			        sb.append(',');
-			        sb.append(f.getVarString());
-			        sb.append(',');
-			        if (!positiveInfinity) sb.append('-'); // -Infinity
-			        sb.append(Unicode.Infinity);
-			        sb.append(')');
-
-			        interceptStrMinus = kernel.evaluateCachedGeoGebraCAS(sb.toString());
+					sb.append("y = ");
+					sb.append(gradientStrMinus);
+					sb.append(" * x +");
+					sb.append(interceptStrMinus);
 					
-					if (!f.CASError(interceptStrMinus, false)) {
-						sb.setLength(0);
-						sb.append("y=");
-						sb.append(gradientStrMinus);
-						sb.append(" * ");
-						sb.append(f.getVarString());
-						sb.append(" + ");
-						sb.append(interceptStrMinus);
-						
-						if (!SB.toString().endsWith(sb.toString())) { // not duplicated
-							if (SB.length() > 1) SB.append(',');
-							SB.append(sb);
-							//Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
-						}
-						
+					if (!SB.toString().endsWith(sb.toString())) { // not duplicated
+						if (SB.length() > 1) SB.append(',');
+						SB.append(sb);
+						//Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
 					}
-				}		
-			}
-		}
+					
+				}
+			}		
     	}  catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -1217,14 +1203,17 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
      * @param SB StringBuilder for the result
      * @param positiveInfinity if true, we look for limit at positive infinity, for false, we use negative infinity
      */
-    protected void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
-    	String functionStr = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+    protected void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {    	
+    	// get function and function variable string using temp variable prefixes,
+		// e.g. f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
+		String [] funVarStr = f.getTempVarCASString(false);
+    	
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
         sb.append("Limit(");
-        sb.append(functionStr);
+        sb.append(funVarStr[0]); // function expression
         sb.append(',');
-        sb.append(f.getVarString());
+        sb.append(funVarStr[1]); // function variable
         sb.append(',');
         if (!positiveInfinity) sb.append('-'); // -Infinity
         sb.append(Unicode.Infinity);
@@ -1242,7 +1231,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		    	sb.append("y=");
 		    	sb.append(limit);
 		    	if (!SB.toString().endsWith(sb.toString())) { // not duplicated
-		    	
 			    	if (SB.length() > 1) SB.append(',');
 			    	SB.append(sb);
 		    	}
@@ -1265,17 +1253,19 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
      * @param reverseCondition if true, we reverse the parent conditional function condition
      */
     protected void getVerticalAsymptotesStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder verticalSB, boolean reverseCondition) {
-    	
-    	String functionStr = f.getFunction().getExpression().getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
-    	// solve 1/f(x) == 0 to find vertical asymptotes
+    	// get function and function variable string using temp variable prefixes,
+		// e.g. f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
+		String [] funVarStr = f.getTempVarCASString(false);
+		
+ 	    // solve 1/f(x) == 0 to find vertical asymptotes
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
 	    
         sb.append("Solve(1/(");        
-        sb.append(functionStr);
-        sb.append(")");
+        sb.append(funVarStr[0]); // function expression with "ggbtmpvarx" as function variable
+        sb.append(")=0");
         sb.append(",");
-        sb.append(f.getVarString());
+        sb.append(funVarStr[1]); // function variable "ggbtmpvarx"
         sb.append(")");
         
         try {
@@ -1283,14 +1273,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			//Application.debug("solutions: "+verticalAsymptotes);			
 	    	
 	    	if (!f.CASError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
-			
 		    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
 		    	verticalAsymptotes = verticalAsymptotes.replace('}',' ');
 		    	//verticalAsymptotes = verticalAsymptotes.replace('(',' '); // eg (-1)
 		    	//verticalAsymptotes = verticalAsymptotes.replace(')',' ');
 		    	verticalAsymptotes = verticalAsymptotes.replaceAll("x==", "");
 		    	verticalAsymptotes = verticalAsymptotes.replaceAll("x =", "");
-		    	verticalAsymptotes = verticalAsymptotes.replaceAll("Complex(.*)", ""); // remove complex roots (MathPiper)
+		    	//verticalAsymptotes = verticalAsymptotes.replaceAll("Complex(.*)", ""); // remove complex roots (MathPiper)
 		    	
 		    	//verticalAsymptotes = verticalAsymptotes.replaceAll("%i", ""); // remove complex roots (Maxima)
 
@@ -1322,9 +1311,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		    		
 			    		sb.setLength(0);
 			            sb.append("Numeric(Limit(");
-			            sb.append(functionStr);
+			            sb.append(funVarStr[0]); // function expression with "ggbtmpvarx" as function variable
 			            sb.append(',');
-			            sb.append(f.getVarString());
+			            sb.append(funVarStr[1]); // function variable "ggbtmpvarx"
 			            sb.append(",");
 			            sb.append(verticalAsymptotesArray[i]);
 			            sb.append("))");
@@ -1366,11 +1355,28 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     }
 	
     /**
-	 * Returns a representation of geo in currently used CAS syntax.
+	 * Returns this function in currently set CAS print form.
 	 * For example, "a*x^2"
 	 */
 	public String getCASString(boolean symbolic) {
 		return fun.getExpression().getCASstring(symbolic);
+	}
+	
+    /**
+	 * Returns geo and its function variable in currently set CAS print form
+	 * unsing temp variable prefixes.
+	 * For example, f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
+	 */
+	final public String [] getTempVarCASString(boolean symbolic) {
+		 boolean oldUseTempVariablePrefix = kernel.isUseTempVariablePrefix();
+		 kernel.setUseTempVariablePrefix(true);
+		 String [] ret = 
+		 {
+			   getCASString(symbolic),
+			   getVarString()
+		 };
+		 kernel.setUseTempVariablePrefix(oldUseTempVariablePrefix);
+		 return ret;
 	}
     
 	 

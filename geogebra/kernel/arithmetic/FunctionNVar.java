@@ -371,8 +371,7 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 
 			// look for Variable objects with name of function variable and
 			// replace them
-			int replacements = expression.replaceVariables(fVar.toString(),
-					fVar);
+			int replacements = expression.replaceVariables(fVar.getSetVarString(), fVar);
 			isConstantFunction = isConstantFunction && replacements == 0;
 
 			if (replacements == 0) {
@@ -564,17 +563,17 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 	final public FunctionNVar evalCasCommand(String ggbCasCmd, boolean symbolic) {
 		// remember expression and its CAS string
 		boolean useCaching = true;
-		HashSet<GeoElement> geoVars = null;
+
+		// make sure to use temporary variable names 
+		// e.g. a in Derivative[a*x^2,x] needs to be renamed temporarily when a exists in GeoGebra
+		// see http://www.geogebra.org/trac/ticket/929
+		boolean oldTempVariableValue = kernel.isUseTempVariablePrefix();
+		kernel.setUseTempVariablePrefix(true);
 		
 		// did expression change since last time?
 		if (casEvalExpression != expression) {
 			casEvalExpression = expression;
 			if (symbolic) {
-				// make sure to use free symbolic variables, 
-				// e.g. a in Derivative[a*x^2,x] needs to be renamed temporarily when a exists in GeoGebra
-				// see http://www.geogebra.org/trac/ticket/929
-				geoVars = expression.getVariables();
-				expression.introduceLocalVariableNames(geoVars);
 				casEvalStringSymbolic = expression.getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
 			}
 
@@ -582,7 +581,7 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 			// other functions
 			// e.g. this is important for f(x) = x^2, g(x,y) = f(x) + y,
 			// Derivative(g(x,y), x)
-			// where we cannot cache the derivative of g because f may have
+			// where we cannot cache the derivative of g because g may have
 			// changed
 			useCaching = symbolic
 					&& !expression
@@ -593,6 +592,9 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 		String expString = symbolic ? 
 				casEvalStringSymbolic : 
 				expression.getCASstring(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+		
+		// set back kernel
+		kernel.setUseTempVariablePrefix(oldTempVariableValue);
 
 		// substitute % by expString in ggbCasCmd
 		String casString = ggbCasCmd.replaceAll("%", expString);
@@ -638,12 +640,6 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 			resultFun = null;
 		} catch (Throwable e) {
 			resultFun = null;
-		}
-		finally {
-			// make sure to set back original variable names if we introduced temp local variables above
-			if (geoVars != null) {
-				expression.undoLocalVariableNames(geoVars);
-			}
 		}
 
 		// cache result
