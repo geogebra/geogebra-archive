@@ -643,7 +643,7 @@ public class Construction {
 	 * Registers an algorithm that wants to be notified when setEuclidianViewBounds() is called.	 
 	 * @param elem construction element to be registered
 	 */
-	final void registerEuclidianViewCE(EuclidianViewCE elem) {
+	public final void registerEuclidianViewCE(EuclidianViewCE elem) {
 		if (!euclidianViewCE.contains(elem))
 			euclidianViewCE.add(elem);
 	}

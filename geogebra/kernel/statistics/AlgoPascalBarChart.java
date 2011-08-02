@@ -44,7 +44,7 @@ public class AlgoPascalBarChart extends AlgoFunctionAreaSums implements Euclidia
 	private AlgoPascalBarChart( 
 			NumberValue n, NumberValue p, GeoBoolean isCumulative,NumberValue a,NumberValue b,double[]vals,
 			double[]borders,int N) {
-        super(n, p, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_HYPERGEOMETRIC,a,b,vals,borders,N);
+        super(n, p, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_PASCAL,a,b,vals,borders,N);
     }
 	
 
