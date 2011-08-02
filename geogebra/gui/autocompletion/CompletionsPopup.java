@@ -16,8 +16,12 @@ import geogebra.main.Application;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.HierarchyBoundsAdapter;
+import java.awt.event.HierarchyEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -95,6 +99,7 @@ public class CompletionsPopup {
 		}
 
 		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+			// Remove key listeners and replace with own;
 			textFieldKeyListeners = textField.getKeyListeners();
 			for (KeyListener listener: textFieldKeyListeners) {
 				textField.removeKeyListener(listener);
@@ -124,9 +129,33 @@ public class CompletionsPopup {
 		list.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent e) { handleMouseClick(e); }
 		});
+		// This doesn't work very well :(
+		textField.addHierarchyBoundsListener(new HierarchyBoundsAdapter() {
+			public void ancestorMoved(HierarchyEvent e) {
+				if (isPopupVisible()) {
+					placePopup();
+				}
+			}
+		});
 		popup.addPopupMenuListener(new PopupListener());
 	}
 	
+	protected void placePopup() {
+		Rectangle startRect;
+		try {
+			startRect = textField.modelToView(textField.getCurrentWordStart());
+		} catch (BadLocationException e) {
+			// This won't happen of course :)
+			startRect = new Rectangle(0, 0, 0, 0);
+		}
+		// Try to show popup just beneath the word to be completed
+		popup.show(textField, startRect.x, startRect.y + startRect.height);
+		// If it overlaps the word, then show the popup above the word
+		if (popup.getLocationOnScreen().y - textField.getLocationOnScreen().y < startRect.y + startRect.height) {
+			popup.show(textField, startRect.x, startRect.y - popup.getHeight());
+		}		
+	}
+
 	public void showCompletions() {
 		if (!textField.getAutoComplete()) {
 			return;
@@ -153,16 +182,7 @@ public class CompletionsPopup {
 		// Let the UI calculate the preferred size
 		popup.setPreferredSize(null);
 		popup.pack();
-		
-		Rectangle startRect;
-		try {
-			startRect = textField.modelToView(textField.getCurrentWordStart());
-		} catch (BadLocationException e) {
-			startRect = new Rectangle(0, 0, 0, 0);
-		}
-		// Try to show popup just beneath the word to be completed
-		popup.show(textField, startRect.x, startRect.y + startRect.height);
-		// Remove key listeners and replace with own;
+		placePopup();
 	}
 	
 	private boolean isPopupVisible() {
