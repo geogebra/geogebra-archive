@@ -104,7 +104,7 @@ public class GeoGebraColorConstants {
 		geogebraColor.put("gray7", GRAY7);
 		geogebraColor.put("gray6", GRAY6); 
 		geogebraColor.put("gray5", GRAY5);
-		geogebraColor.put("gray4", GRAY4);
+		geogebraColor.put("gray", GRAY4);
 		geogebraColor.put("gray3", GRAY3);
 		geogebraColor.put("gray2", GRAY2);
 		geogebraColor.put("gray1", GRAY1);
@@ -147,8 +147,9 @@ public class GeoGebraColorConstants {
 		
 		Color ret = geogebraColor.get(colorName);
 		
-		if (ret == null)
+		if (ret == null){			
 			ret = geogebraColor.get(app.reverseGetColor(colorName));
+		}
 		if (ret == null)
 			ret = htmlColorMap().get(colorName);
 		return ret;
