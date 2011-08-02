@@ -20,6 +20,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 
@@ -528,27 +529,32 @@ public class GeoFunctionConditional extends GeoFunction {
 			b.lowerSharp = lowerSharp;
 			b.upperSharp = upperSharp;
 			b.condition = condition;
+			boolean simple = e.getOperation()==ExpressionNode.GREATER||
+			e.getOperation()==ExpressionNode.GREATER_EQUAL||
+			e.getOperation()==ExpressionNode.LESS||
+			e.getOperation()==ExpressionNode.LESS_EQUAL||
+			e.getOperation()==ExpressionNode.EQUAL_BOOLEAN;
 						
-			if(e.getLeft() instanceof FunctionVariable && e.getRight() instanceof MyDouble){
-				double d = ((MyDouble)e.getRight()).getDouble();
+			if(simple && e.getLeft() instanceof FunctionVariable && e.getRight() instanceof MyDouble){
+				double d = ((MyDouble)e.getRight()).getDouble();				
 				if(e.getOperation()==ExpressionNode.GREATER && (lower == null || lower<=d))//x > d
 					{b.lower = d; b.lowerSharp = true;}
-				else if(e.getOperation()==ExpressionNode.GREATER_EQUAL && (lower == null || lower<d))//x > d
+				else if((e.getOperation()==ExpressionNode.GREATER_EQUAL || e.getOperation()==ExpressionNode.EQUAL_BOOLEAN)&& (lower == null || lower<d))//x > d
 					{b.lower = d; b.lowerSharp = false;}
 				else if(e.getOperation()==ExpressionNode.LESS && (upper == null || upper>=d))//x > d
 					{b.upper = d; b.upperSharp = true;}
-				else if(e.getOperation()==ExpressionNode.LESS_EQUAL && (upper == null || upper>d))//x > d
+				if((e.getOperation()==ExpressionNode.LESS_EQUAL|| e.getOperation()==ExpressionNode.EQUAL_BOOLEAN) && (upper == null || upper>d))//x > d
 					{b.upper = d; b.upperSharp = false;}
 			}
-			else if(e.getRight() instanceof FunctionVariable && e.getLeft() instanceof MyDouble){
+			else if(simple && e.getRight() instanceof FunctionVariable && e.getLeft() instanceof MyDouble){
 				double d = ((MyDouble)e.getLeft()).getDouble();
 				if(e.getOperation()==ExpressionNode.LESS && (lower == null || lower<=d))//x > d
 					{b.lower = d; b.lowerSharp = true;}
-				else if(e.getOperation()==ExpressionNode.LESS_EQUAL && (lower == null || lower<d))//x > d
+				else if((e.getOperation()==ExpressionNode.LESS_EQUAL || e.getOperation()==ExpressionNode.EQUAL_BOOLEAN) && (lower == null || lower<d))//x > d
 					{b.lower = d; b.lowerSharp = false;}
 				else if(e.getOperation()==ExpressionNode.GREATER && (upper == null || upper>=d))//x > d
 					{b.upper = d; b.upperSharp = true;}
-				else if(e.getOperation()==ExpressionNode.GREATER_EQUAL && (upper == null || upper>d))//x > d
+				if((e.getOperation()==ExpressionNode.GREATER_EQUAL|| e.getOperation()==ExpressionNode.EQUAL_BOOLEAN) && (upper == null || upper>d))//x > d
 					{b.upper = d; b.upperSharp = false;}
 			}else{
 				if(condition==null)
@@ -564,8 +570,12 @@ public class GeoFunctionConditional extends GeoFunction {
 				ret = varString+" "+(lowerSharp?">":Unicode.GREATER_EQUAL)+" "+kernel.format(lower);
 			else if(lower == null && upper != null)
 				ret = varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+kernel.format(upper);
-			else if(lower!=null && upper!=null)
-				ret = kernel.format(lower)+" "+(lowerSharp?"<":Unicode.LESS_EQUAL)+" "+varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+kernel.format(upper);
+			else if(lower!=null && upper!=null){				
+				if(Kernel.isEqual(lower,upper) && !lowerSharp && !upperSharp)
+					ret=varString+" = "+kernel.format(lower);
+				else
+					ret = kernel.format(lower)+" "+(lowerSharp?"<":Unicode.LESS_EQUAL)+" "+varString+" "+(upperSharp?"<":Unicode.LESS_EQUAL)+" "+kernel.format(upper);
+			}
 			if(condition!=null && ret == null)
 				return condition.toLaTeXString(b);
 			else if(condition!=null)
@@ -573,6 +583,17 @@ public class GeoFunctionConditional extends GeoFunction {
 			return ret;
 		}
 	}
+	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {
+		 ExpressionNode en = new ExpressionNode(kernel,this,ExpressionNode.FUNCTION,fun.getFunctionVariable());
+		 Function fn = new Function(en,fun.getFunctionVariable());
+		 curve.setFunctionY(fn);
+		 Function varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
+		 curve.setFunctionX(varFun);
+		 double min = app.getEuclidianView().getXminForFunctions();
+		 double max = app.getEuclidianView().getXmaxForFunctions();
+		 curve.setInterval(min, max);		 
+		 curve.setHideRangeInFormula(true);
+	 }
 	
 	public String toOutputValueString() {
 		return toValueString();

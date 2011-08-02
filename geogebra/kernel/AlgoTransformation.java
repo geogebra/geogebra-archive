@@ -3,7 +3,7 @@ package geogebra.kernel;
 /**
  * Algorithms for transformations 
  */
-public abstract class AlgoTransformation extends AlgoElement {
+public abstract class AlgoTransformation extends AlgoElement implements EuclidianViewCE{
 
 	/**
 	 * Create new transformation algo

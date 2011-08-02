@@ -54,6 +54,8 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 
 
 	private ParametricCurveDistanceFunction distFun;
+
+	private boolean hideRangeInFormula;
 	
 	/**
 	 * Creates new curve
@@ -444,17 +446,21 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 			
 			String param = getVarString();
 			
-			sbTemp.append("\\left.\\begin{array}{ll} x = ");
+			if(!hideRangeInFormula)
+				sbTemp.append("\\left.");
+			sbTemp.append("\\begin{array}{ll} x = ");
 			sbTemp.append(funX.toLaTeXString(symbolic));
 			sbTemp.append("\\\\ y = ");
 			sbTemp.append(funY.toLaTeXString(symbolic));
-			sbTemp.append(" \\end{array}\\right} \\; ");
-			sbTemp.append(kernel.format(startParam));
-			sbTemp.append(" \\le ");
-			sbTemp.append(param);
-			sbTemp.append(" \\le ");
-			sbTemp.append(kernel.format(endParam));
-			
+			sbTemp.append(" \\end{array}");
+			if(!hideRangeInFormula){
+				sbTemp.append("\\right} \\; ");
+				sbTemp.append(kernel.format(startParam));
+				sbTemp.append(" \\le ");
+				sbTemp.append(param);
+				sbTemp.append(" \\le ");
+				sbTemp.append(kernel.format(endParam));
+			}
 			return sbTemp.toString();
 		} else
 			return app.getPlain("undefined");		
@@ -798,6 +804,11 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 			 this.setFunctionX(xFun);			 	
 			 this.setInterval(0, limit-1);
 
+			
+		}
+
+		public void setHideRangeInFormula(boolean b) {
+			hideRangeInFormula = b;
 			
 		}
 

@@ -80,7 +80,9 @@ public class AlgoApplyMatrix extends AlgoTransformation {
         }                    
         
         setInputOutput();
-        compute();          
+        compute();    
+        if(inGeo.isGeoFunction())
+        	cons.registerEuclidianViewCE(this);
     }           
     
     public String getClassName() {

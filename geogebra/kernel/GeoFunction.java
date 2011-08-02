@@ -1390,14 +1390,18 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	  * Converts this function to cartesian curve and stores result to given curve
 	  * @param curve Curve to be stored to
 	  */
-	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {
-		 //we can't use fun directly here as we want this to work also with conditional functions
+	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {		 
 		 curve.setFunctionY((Function)getFunction().deepCopy(kernel));
 		 Function varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
 		 curve.setFunctionX(varFun);
-		 double min = app.getEuclidianView().getXminForFunctions();
-		 double max = app.getEuclidianView().getXmaxForFunctions();
-		 curve.setInterval(min, max);
+		 if(this.hasInterval()){
+			 curve.setInterval(intervalMin, intervalMax);
+		 }else{
+			 double min = app.getEuclidianView().getXminForFunctions();
+			 double max = app.getEuclidianView().getXmaxForFunctions();		 
+			 curve.setInterval(min, max);
+			 curve.setHideRangeInFormula(true);
+		 }
 	 }
 
 	public void dilate(NumberValue r, GeoPoint S) {

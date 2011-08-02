@@ -69,7 +69,9 @@ public class AlgoRotate extends AlgoTransformation {
         	out = (PointRotateable) outGeo;
         
         setInputOutput();
-        compute();        
+        compute();       
+        if(inGeo.isGeoFunction())
+        	cons.registerEuclidianViewCE(this);
     }
 
     public String getClassName() {
