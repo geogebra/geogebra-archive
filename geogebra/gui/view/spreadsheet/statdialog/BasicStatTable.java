@@ -20,6 +20,7 @@ import geogebra.kernel.statistics.AlgoListSYY;
 import geogebra.kernel.statistics.AlgoListSampleSDX;
 import geogebra.kernel.statistics.AlgoListSampleSDY;
 import geogebra.kernel.statistics.AlgoMean;
+import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
 import geogebra.kernel.statistics.AlgoRSquare;
@@ -222,6 +223,8 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 			ret = new AlgoListMin(cons, dataList);
 		} else if (algoName.equals("Q1")) {
 			ret = new AlgoQ1(cons, dataList);
+		} else if (algoName.equals("Median")) {
+			ret = new AlgoMedian(cons, dataList);
 		} else if (algoName.equals("Q3")) {
 			ret = new AlgoQ3(cons, dataList);
 		} else if (algoName.equals("Max")) {
