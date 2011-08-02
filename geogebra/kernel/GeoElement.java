@@ -2011,6 +2011,8 @@ public abstract class GeoElement
 	 * Returns the label depending on the current print form. When sending variables
 	 * to the underlying CAS, we need to make sure that we don't overwrite variable names there,
 	 * so we add the prefix ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX.
+	 * @param printForm 
+	 * @param label 
 	 * 
 	 * @return label depending on kernel.getCASPrintForm()
 	 */
@@ -3786,8 +3788,10 @@ public abstract class GeoElement
 			return null;
 		// handle undefined
 		if(!geo.isDefined()){
-			// enclose in mbox so that spaces are preserved
-			sb.append("\\mbox{" + geo.getAlgebraDescription() + "}") ;
+			// we need to keep the string simple (no \mbox) so that isLatexNeeded may return true
+			sb.append(label);
+			sb.append("\\,");
+			sb.append(app.getPlain("undefined"));			
 
 		// handle non-GeoText prefixed with ":", e.g.  "a: x = 3"
 		}else if(algebraDesc.indexOf(":") > -1 & !geo.isGeoText()){
