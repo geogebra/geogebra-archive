@@ -1217,16 +1217,18 @@ public class Construction {
 		
 		// handle i or e case
 		if (createdGeo != null) {
-			// make sure that label creation is turned on
-			boolean oldSuppressLabelsActive = isSuppressLabelsActive();
-			setSuppressLabelCreation(false);
+			
+			
+			// removed: not needed for e,i and causes bug with using Circle[D, CD 2] in locus
+			//boolean oldSuppressLabelsActive = isSuppressLabelsActive();
+			//setSuppressLabelCreation(false);
 			
 			createdGeo.setAuxiliaryObject(auxilliary);
 			createdGeo.setLabel(label);
 			createdGeo.setFixed(fix);
 			
 			// revert to previous label creation state
-			setSuppressLabelCreation(oldSuppressLabelsActive);	
+			//setSuppressLabelCreation(oldSuppressLabelsActive);	
 			return createdGeo;
 		}
 						
