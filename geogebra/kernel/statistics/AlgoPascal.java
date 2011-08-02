@@ -35,8 +35,7 @@ public class AlgoPascal extends AlgoDistribution {
         return "AlgoPascal";
     }
 
-    @SuppressWarnings("deprecation")
-	protected final void compute() {
+    protected final void compute() {
     	
     	
     	if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()  && input[3].isDefined()) {

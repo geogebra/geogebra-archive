@@ -19,6 +19,7 @@ import org.apache.commons.math.distribution.BinomialDistributionImpl;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.apache.commons.math.distribution.IntegerDistribution;
 import org.apache.commons.math.distribution.PascalDistributionImpl;
+import org.apache.commons.math.distribution.ZipfDistributionImpl;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 
 import geogebra.euclidian.EuclidianView;
@@ -88,6 +89,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	public static final int TYPE_BARCHART_POISSON = 42;
 	public static final int TYPE_BARCHART_HYPERGEOMETRIC = 43;
 	public static final int TYPE_BARCHART_BERNOULLI = 44;
+	public static final int TYPE_BARCHART_ZIPF = 45;
 	
 	
 	
@@ -722,6 +724,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		case TYPE_BARCHART_PASCAL:
 		case TYPE_BARCHART_HYPERGEOMETRIC:
 		case TYPE_BARCHART_POISSON:
+		case TYPE_BARCHART_ZIPF:	
 			ArrayList<GeoElement> inputList = new ArrayList<GeoElement>();
 			inputList.add(p1geo);
 			if(p2geo != null)
@@ -1201,9 +1204,11 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		case TYPE_BARCHART_POISSON:
 		case TYPE_BARCHART_HYPERGEOMETRIC:
 		case TYPE_BARCHART_PASCAL:
+		case TYPE_BARCHART_ZIPF:	
 			
 				
 			if(type == TYPE_BARCHART_BINOMIAL
+					|| type == TYPE_BARCHART_ZIPF
 					|| type == TYPE_BARCHART_POISSON
 					|| type == TYPE_BARCHART_HYPERGEOMETRIC
 					|| type == TYPE_BARCHART_PASCAL){
@@ -1689,7 +1694,16 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				first = 0;
 				last = -1;
 				break;
+			case TYPE_BARCHART_ZIPF:
+				if(!(p1geo.isDefined() && p2geo.isDefined()))
+					return false;
+				n = (int)Math.round(p1.getDouble());
+				p = p2.getDouble();
+				dist = new ZipfDistributionImpl(n, p);
 				
+				first = 1;
+				last = -1;
+				break;	
 			case TYPE_BARCHART_POISSON:
 				if(!p1geo.isDefined())
 					return false;

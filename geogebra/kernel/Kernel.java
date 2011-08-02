@@ -4195,6 +4195,18 @@ public class Kernel {
 		return num;
 	}
 	
+	final public GeoNumeric Zipf(String label, NumberValue a, NumberValue b) {
+		AlgoZipfBarChart algo = new AlgoZipfBarChart(cons, label, a, b);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
+	final public GeoNumeric Zipf(String label, NumberValue a, NumberValue b, GeoBoolean cumulative) {
+		AlgoZipfBarChart algo = new AlgoZipfBarChart(cons, label, a, b, cumulative);
+		GeoNumeric num = algo.getSum();
+		return num;
+	}
+	
 	final public GeoNumeric InverseZipf(String label, NumberValue a, NumberValue b, NumberValue c) {
 		AlgoInverseZipf algo = new AlgoInverseZipf(cons, label, a, b, c);
 		GeoNumeric num = algo.getResult();
