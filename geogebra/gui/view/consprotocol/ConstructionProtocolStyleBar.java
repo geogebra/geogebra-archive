@@ -1,20 +1,16 @@
 package geogebra.gui.view.consprotocol;
 
 import geogebra.gui.util.PopupMenuButton;
-import geogebra.gui.util.SelectionTable;
 import geogebra.gui.view.consprotocol.ConstructionProtocolView.ColumnKeeper;
 import geogebra.main.Application;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 
 public class ConstructionProtocolStyleBar extends JToolBar implements ActionListener {
@@ -77,7 +73,7 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		};
 		btnColumns.setKeepVisible(true);
 		btnColumns.setStandardButton(true);  // mouse clicks over total button region
-		btnColumns.setIcon(app.getImageIcon("show_columns.png"));
+		btnColumns.setIcon(app.getImageIcon("header_column.png"));
 		
 		add(btnColumns);
 		
@@ -96,7 +92,7 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		};
 		btnOptions.setKeepVisible(true);
 		btnOptions.setStandardButton(true);  // mouse clicks over total button region
-		btnOptions.setIcon(app.getImageIcon("options.png"));
+		btnOptions.setIcon(app.getImageIcon("document-properties.png"));
 		
 		miShowOnlyBreakpoints = new JCheckBoxMenuItem(app.getPlain("ShowOnlyBreakpoints"));
 		miShowOnlyBreakpoints.setSelected(app.getKernel().showOnlyBreakpoints());
