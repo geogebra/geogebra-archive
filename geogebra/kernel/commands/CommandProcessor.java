@@ -7782,7 +7782,7 @@ class CmdSetColor extends CommandProcessor {
 			try {
 
 				String color = geogebra.util.Util.removeSpaces(
-						((GeoText) arg[1]).getTextString()).toUpperCase();
+						((GeoText) arg[1]).getTextString());
 				// lookup Color
 				//HashMap<String, Color> colors = app.getColorsHashMap();
 				//Color col = colors.get(color);
@@ -7797,10 +7797,10 @@ class CmdSetColor extends CommandProcessor {
 				//	// Application.debug(color);
 				//}
 
-				if (col == null) {
+				if (col == null) 
 					throw argErr(app, c.getName(), arg[1]);
-				}
-
+				
+				
 				if (background)
 					arg[0].setBackgroundColor(col);
 				else

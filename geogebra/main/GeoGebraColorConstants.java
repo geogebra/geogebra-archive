@@ -2,6 +2,7 @@ package geogebra.main;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 
@@ -145,13 +146,13 @@ public class GeoGebraColorConstants {
 	 */
 	public static Color getGeogebraColor(Application app, String colorName){
 		
-		Color ret = geogebraColor.get(colorName);
+		Color ret = geogebraColor.get(colorName.toLowerCase(Locale.US));
 		
 		if (ret == null){			
 			ret = geogebraColor.get(app.reverseGetColor(colorName));
 		}
 		if (ret == null)
-			ret = htmlColorMap().get(colorName);
+			ret = htmlColorMap().get(colorName.toUpperCase(Locale.US));
 		return ret;
 	}
 

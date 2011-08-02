@@ -2266,12 +2266,10 @@ public class Application implements KeyEventDispatcher {
 			
 			Enumeration<String> enumer = rbcolors.getKeys();
 			while (enumer.hasMoreElements()) {
-				String key = enumer.nextElement();
+				String key = enumer.nextElement();								
 				if (str.equals(Util.removeSpaces(rbcolors.getString(key).toLowerCase(Locale.US))))
 					return key;
 			}
-			
-			
 			
 			return str;
 		} catch (Exception e) {
