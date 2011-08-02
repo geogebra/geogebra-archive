@@ -212,7 +212,7 @@ public class CASmpreduce extends CASgeneric {
 	@Override
 	public void unbindVariable(String var) {
 		try {
-			mpreduce.evaluate("clear(" + var + ");");
+			mpreduce.evaluate("clear(" + ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX + var + ");");
 		} catch (Throwable e) {
 			System.err.println("Failed to clear variable from MPReduce: " + var);
 		}
