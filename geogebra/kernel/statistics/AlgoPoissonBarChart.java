@@ -15,6 +15,7 @@ package geogebra.kernel.statistics;
 import geogebra.kernel.AlgoDrawInformation;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.Construction;
+import geogebra.kernel.EuclidianViewCE;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.arithmetic.NumberValue;
 
@@ -23,25 +24,27 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @version 2011-06-21
  */
 
-public class AlgoPoissonBarChart extends AlgoFunctionAreaSums {
+public class AlgoPoissonBarChart extends AlgoFunctionAreaSums implements EuclidianViewCE{
 
 	private static final long serialVersionUID = 1L;
 
 	public AlgoPoissonBarChart(Construction cons, String label, 
 			NumberValue mean) {
         super(cons,label, mean, null, null, null, AlgoFunctionAreaSums.TYPE_BARCHART_POISSON);
+        cons.registerEuclidianViewCE(this);
     }
 	
 	
 	public AlgoPoissonBarChart(Construction cons, String label, 
 			NumberValue mean, GeoBoolean isCumulative) {
         super(cons,label, mean, null, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_POISSON);
+        cons.registerEuclidianViewCE(this);
     }
 	
 	private AlgoPoissonBarChart( 
 			NumberValue mean, GeoBoolean isCumulative,NumberValue a,NumberValue b,double[]vals,
 			double[]borders,int N) {
-        super(mean, null, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_HYPERGEOMETRIC,a,b,vals,borders,N);
+        super(mean, null, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_POISSON,a,b,vals,borders,N);
     }
 
     public String getClassName() {

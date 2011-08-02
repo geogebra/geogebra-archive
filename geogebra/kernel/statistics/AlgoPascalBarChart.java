@@ -15,6 +15,7 @@ package geogebra.kernel.statistics;
 import geogebra.kernel.AlgoDrawInformation;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.Construction;
+import geogebra.kernel.EuclidianViewCE;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.arithmetic.NumberValue;
 
@@ -23,19 +24,21 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @version 2011-06-21
  */
 
-public class AlgoPascalBarChart extends AlgoFunctionAreaSums {
+public class AlgoPascalBarChart extends AlgoFunctionAreaSums implements EuclidianViewCE {
 
 	private static final long serialVersionUID = 1L;
 
 	public AlgoPascalBarChart(Construction cons, String label, 
 			NumberValue n, NumberValue p) {
         super(cons,label, n, p, null, null, AlgoFunctionAreaSums.TYPE_BARCHART_PASCAL);
+        cons.registerEuclidianViewCE(this);
     }
 	
 	
 	public AlgoPascalBarChart(Construction cons, String label, 
 			NumberValue n, NumberValue p, GeoBoolean isCumulative) {
         super(cons,label, n, p, null, isCumulative, AlgoFunctionAreaSums.TYPE_BARCHART_PASCAL);
+        cons.registerEuclidianViewCE(this);
     }
 	
 	private AlgoPascalBarChart( 

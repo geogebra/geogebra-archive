@@ -1290,6 +1290,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		
 			// fill in frequencies
 			for (int i=0; i < N-1; i++) {
+				Application.debug(i);
 				geo = list2.get(i);
 				if (!geo.isGeoNumeric()) {
 					sum.setUndefined();
@@ -1303,6 +1304,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 			
 			// area of rectangles = total frequency				
 			sum.setValue(area);	
+			sum.updateCascade();
 
 			
 			break;
@@ -1668,7 +1670,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	/**
 	 * Prepares list1 and list2 for use with probability distribution bar charts
 	 */
-	private boolean prepareDistributionLists(){
+	private boolean prepareDistributionLists(){		
 		IntegerDistribution dist = null;
 		int first = 0, last = 0;
 		try{
@@ -1692,7 +1694,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				dist = new PascalDistributionImpl(n, p);
 				
 				first = 0;
-				last = -1;
+				last = (int)Math.max(1,kernel.getXmax()+1);
 				break;
 			case TYPE_BARCHART_ZIPF:
 				if(!(p1geo.isDefined() && p2geo.isDefined()))
@@ -1701,8 +1703,8 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				p = p2.getDouble();
 				dist = new ZipfDistributionImpl(n, p);
 				
-				first = 1;
-				last = -1;
+				first = 0;
+				last = n;
 				break;	
 			case TYPE_BARCHART_POISSON:
 				if(!p1geo.isDefined())
@@ -1710,7 +1712,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				double lambda = p1.getDouble();
 				dist = new PoissonDistributionImpl(lambda);
 				first = 0;
-				last = -1;
+				last = (int)Math.max(1,kernel.getXmax()+1);
 				break;
 				
 			case TYPE_BARCHART_HYPERGEOMETRIC:
@@ -1757,19 +1759,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 
 		double prob;
 		double cumProb = 0;
-		if(last == -1){
-			int i = first;
-			while(cumProb < 1 - 1e-6){
-				list1.add(new GeoNumeric(cons,i));
-				prob = dist.probability(i);
-				cumProb += prob;
-				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean())
-					list2.add(new GeoNumeric(cons, cumProb));
-				else
-					list2.add(new GeoNumeric(cons, prob));
-				i++;
-			}
-		}
+		
 		for(int i = first; i <= last; i++ ){
 			list1.add(new GeoNumeric(cons,i));
 			prob = dist.probability(i);
