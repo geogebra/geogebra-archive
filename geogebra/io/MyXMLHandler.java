@@ -3992,6 +3992,9 @@ public class MyXMLHandler implements DocHandler {
 				((GeoUserInputElement)geo).setInputForm();
 			else
 				((GeoUserInputElement)geo).setExtendedForm();
+			if (attrs.get("valid")!=null){
+				((GeoUserInputElement)geo).setValidInputForm(attrs.get("valid").equals("true"));
+			}
 			return true;
 		}catch (Exception e) {
 			Application.debug(e.getMessage());

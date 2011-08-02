@@ -23,18 +23,20 @@ public abstract class GeoUserInputElement extends GeoElement {
 	
 	private ValidExpression userInput;
 	private boolean inputForm;
+	private boolean validInputForm;
 
 	public GeoUserInputElement(Construction c) {
 		super(c);
+		validInputForm=true;
 	}
 	
 	public GeoUserInputElement(Construction c,ValidExpression userInput) {
-		super(c);
+		this(c);
 		this.userInput=userInput;
 	}
 	
 	public void setInputForm(){
-		inputForm=true;
+		inputForm=true&&validInputForm;
 	}
 	
 	public void setExtendedForm(){
@@ -50,10 +52,14 @@ public abstract class GeoUserInputElement extends GeoElement {
 	}
 
 	public String toString(){
-		if (inputForm&&userInput!=null){
-			return label+": "+userInput.toValueString();
-		}else{
-			return label+": "+toValueString();
+		return label+": "+toValueString();
+	}
+	
+	public String toValueString(){
+		if (validInputForm&&inputForm&&userInput!=null){
+			return userInput.toValueString();
+		}else{			
+			return toRawValueString();
 		}
 	}
 	
@@ -72,9 +78,23 @@ public abstract class GeoUserInputElement extends GeoElement {
 			sb.append("\" value=\"");
 			sb.append(userInput);
 		}
+		sb.append("\" valid=\"");
+		sb.append(validInputForm);
 		sb.append("\" />\n");
 	}
 	
+	protected abstract String toRawValueString();
+	
+	public void setValidInputForm(boolean b){
+		validInputForm=b;
+		if (!validInputForm){
+			inputForm=false;
+		}
+	}
+
+	public boolean isValidInputForm() {
+		return validInputForm;
+	}
 	
 
 }

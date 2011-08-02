@@ -332,7 +332,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 	
 	@Override
-	public String toValueString() {
+	protected String toRawValueString() {
 		if (coeff==null)
 			return "";		
 		StringBuilder sb=new StringBuilder();
@@ -385,11 +385,6 @@ Dilateable, Transformable, EuclidianViewCE {
 		return sb.toString();
 	}
 	
-	@Override
-	public String toString() {
-		return super.toString();
-//		return label+": "+toValueString();
-	}
 
 	@Override
     public String getClassName() {
@@ -719,6 +714,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		}
 //		Application.debug("new degX="+degX+"; new degY="+degY);
 		coeff=newCoeffMinDeg;
+		setValidInputForm(false); //we changed the polynomial => not the same as the userInput
 		updatePath();
 		if (algoUpdateSet!=null){
 			double a=0,ax=0,ay=0,b=0,bx=0,by=0;

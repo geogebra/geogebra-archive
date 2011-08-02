@@ -471,6 +471,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 						app.storeUndoInfo();
 					}
 				};
+				action.setEnabled(inputElement.isValidInputForm());
 			}
 			addAction(action);
 		}
