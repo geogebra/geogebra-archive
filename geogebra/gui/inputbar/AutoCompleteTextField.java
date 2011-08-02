@@ -34,6 +34,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private int curWordStart;
 
 	protected AutoCompleteDictionary dict;
+	protected boolean isCASInput = false;
 	protected boolean autoComplete;
 	private int historyIndex;
 	private ArrayList<String> history;  
@@ -89,7 +90,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	
 	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey){
 		this(columns, app, handleEscapeKey, app.getCommandDictionary());
-		setDictionary(app.getCommandDictionary());
+		// setDictionary(app.getAllCommandsDictionary());
 	}
 
 	
@@ -97,6 +98,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		((MyTextField)this).setShowSymbolTableIcon(showPopupSymbolButton);
 	}
 	
+	/**
+	 * Set whether this is a CAS Input field
+	 */
+	public void setCASInput(boolean val) {
+		isCASInput = val;
+	}
 	/**
 	 * Set the dictionary that autocomplete lookup should be performed by.
 	 *
@@ -761,13 +768,18 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 		ArrayList<String> syntaxes = new ArrayList<String>();
 		for (String cmd: commands) {
-			String syntaxString = app.getCommandSyntax(cmd);
-			if (syntaxString.contains("Syntax")) {
-				syntaxes.add(cmd + "[]");
+			String syntaxString;
+			if (isCASInput) {
+				syntaxString = app.getCommandSyntaxCAS(cmd);
 			} else {
-				for (String syntax: syntaxString.split("\\n")) {
-					syntaxes.add(syntax);
-				}
+				syntaxString = app.getCommandSyntax(cmd);
+			}
+			if (syntaxString.endsWith(isCASInput ? "SyntaxCAS" : "Syntax")) {
+				syntaxes.add(cmd + "[]");
+				continue;
+			}
+			for (String syntax: syntaxString.split("\\n")) {
+				syntaxes.add(syntax);
 			}
 		}
 		return syntaxes;
@@ -884,7 +896,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		String internalCmd = app.translateCommand(command);
 		//String key = internalCmd + "Syntax";
 		//String syntax = app.getCommand(key);
-		String syntax = app.getCommandSyntax(internalCmd);
+		String syntax;
+		if (isCASInput) {
+			syntax = app.getCommandSyntaxCAS(internalCmd);
+		} else {
+			syntax = app.getCommandSyntax(internalCmd);
+		}
 
 		// check if we really found syntax information
 		//if (key.equals(syntax)) return null;
