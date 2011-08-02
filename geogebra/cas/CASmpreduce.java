@@ -305,7 +305,10 @@ public class CASmpreduce extends CASgeneric {
 		
 		mpreduce.evaluate("procedure mysolve(eqn, var);"
 				+ " begin scalar solutions!!, bool!!;"
-				+ "  if freeof(eqn,=) then 1 else eqn:=lhs(eqn)-rhs(eqn);"
+				+ "  if arglength(eqn)>-1 and part(eqn,0)='list then"
+				+ "    eqn:=for each x in eqn collect"
+				+ "      if freeof(x,=) then x else lhs(x)-rhs(x)"
+				+ "  else if freeof(eqn,=) then 1 else eqn:=lhs(eqn)-rhs(eqn);"
 				+ "  solutions!!:=solve(eqn,var);"
 				+ "	 if depth(solutions!!)<2 then"
 				+ "		solutions!!:=for each x in solutions!! collect {x};"
@@ -331,6 +334,10 @@ public class CASmpreduce extends CASgeneric {
 		
 		mpreduce.evaluate("procedure mycsolve(eqn, var);" +
 				"  begin scalar solutions!!, bool!!;" +
+				"  if arglength(eqn)>-1 and part(eqn,0)='list then" +
+				"    eqn:=for each x in eqn collect" +
+				"      if freeof(x,=) then x else lhs(x)-rhs(x)" +
+				"  else if freeof(eqn,=) then 1 else eqn:=lhs(eqn)-rhs(eqn);" +
 				"    solutions!!:=solve(eqn,var);" +
 				"    if depth(solutions!!)<2 then" +
 				"      solutions!!:=for each x in solutions!! collect {x};" +
