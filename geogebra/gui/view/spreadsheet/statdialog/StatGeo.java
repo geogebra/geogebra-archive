@@ -285,7 +285,7 @@ public class StatGeo   {
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.POWER, new MyDouble(kernel,2.0));
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, new MyDouble(kernel,-2.0));
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.EXP, null);
-		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, new MyDouble(kernel,1/Math.sqrt(2*Math.PI)));
+		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, new MyDouble(kernel,Math.sqrt(2*Math.PI)));
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, sdGeo);
 		
 		Function f = new Function(normal, x);		
