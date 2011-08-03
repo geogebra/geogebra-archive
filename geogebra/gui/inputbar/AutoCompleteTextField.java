@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.CaretEvent;
 
 public class AutoCompleteTextField extends MathTextField implements 
 AutoComplete, KeyListener, GeoElementSelectionListener {
@@ -54,7 +53,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * Pattern to find an argument description as found in the syntax information
 	 * of a command.
 	 */
-	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *<[ \\-\\w]*> *[,\\]]");
+	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *<[ \\-\\w]*> *(?=[,\\]])");
 
 	/**
 	 * Constructs a new AutoCompleteTextField that uses the dictionary of the
@@ -718,7 +717,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			hasNextArgument = argMatcher.find();
 		}
 		if (hasNextArgument && (find || argMatcher.start() == caretPos)) {
-			setCaretPosition(argMatcher.end() - 1);
+			setCaretPosition(argMatcher.end());
 			moveCaretPosition(argMatcher.start() + 1);
 			return true;
 		} else {
@@ -809,12 +808,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		sb.append(text.substring(curWordStart + curWord.length()));
 		setText(sb.toString());
 		int bracketIndex = command.indexOf('[');
-		int commaIndex = command.indexOf(',', bracketIndex);
-		if (commaIndex == -1) {
-			commaIndex = command.length() - 1;
-		}
-		setCaretPosition(curWordStart + commaIndex);
-		moveCaretPosition(curWordStart + bracketIndex + 1);
+		setCaretPosition(curWordStart + bracketIndex);
+		moveToNextArgument(false);
 		return true;
 	}
 	
