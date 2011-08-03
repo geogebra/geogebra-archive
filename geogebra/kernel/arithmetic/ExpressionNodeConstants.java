@@ -108,7 +108,7 @@ public interface ExpressionNodeConstants {
     public static final int BETA = 390;    
     public static final int BETA_INCOMPLETE = 400;    
     public static final int BETA_INCOMPLETE_REGULARIZED = 410;    
-    public static final int ERF = 420;     // error function [aka phi(x)]
+    public static final int ERF = 420;
     public static final int LOG10 = 430;  
     public static final int LOG2 = 440; 
     public static final int CBRT = 450;   
