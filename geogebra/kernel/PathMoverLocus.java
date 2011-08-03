@@ -30,6 +30,13 @@ public class PathMoverLocus extends PathMoverGeneric {
 		myPointList = locus.getMyPointList();
 	}
 	
+	public void init(GeoPoint p) {
+		if (p.getPath() instanceof GeoLocus) {
+			myPointList = ((GeoLocus)p.getPath()).getMyPointList();
+		}
+		super.init(p);
+	}
+	
 	protected void calcPoint(GeoPoint p) {
 		double param = curr_param;		
 		PathParameter pp = p.getPathParameter();
