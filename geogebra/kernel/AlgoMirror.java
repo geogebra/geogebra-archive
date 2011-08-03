@@ -110,7 +110,7 @@ public class AlgoMirror extends AlgoTransformation {
         cons.registerEuclidianViewCE(this);
         transformedPoint = new GeoPoint(cons);
         compute();        
-        if(A.isGeoFunction())
+        if(inGeo.isGeoFunction())
         	cons.registerEuclidianViewCE(this);
     }           
     
