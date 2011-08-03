@@ -1287,7 +1287,6 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		
 			// fill in frequencies
 			for (int i=0; i < N-1; i++) {
-				Application.debug(i);
 				geo = list2.get(i);
 				if (!geo.isGeoNumeric()) {
 					sum.setUndefined();
