@@ -144,6 +144,7 @@ SUPPORTING PARTNERS
 SOFTWARE 
 libraries used by GeoGebra:
 * MathPiper, http://www.mathpiper.org/ (GPL)
+* Reduce, http://reduce-algebra.sourceforge.net/ (BSD)
 * The Apache Commons Mathematics Library, 
   http://commons.apache.org/math/ (Apache Software License)
 * FreeHEP Java Libraries, http://java.freehep.org (LGPL)
