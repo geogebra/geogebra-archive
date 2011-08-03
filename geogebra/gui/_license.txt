@@ -127,7 +127,7 @@ TRANSLATORS
 SUPPORTING PARTNERS
   * City Council Linz
     2011-2012: Support for Austrian developer group in Linz, Austria
-  * Upper Austrian Govnerment
+  * Upper Austrian Government
     2010-2012: Support for Austrian developer group in Linz, Austria
   * Google Summer of Code 2011
     2011: Support of 7 student programmers as part of GSoC 2011
