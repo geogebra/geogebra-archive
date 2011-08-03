@@ -100,7 +100,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	private GeoElement densityCurve, integral;
 	private GeoElement discreteGraph, discreteIntervalGraph;
 	private GeoList discreteValueList, discreteProbList, intervalProbList, intervalValueList;
-	private GeoList parmList;
+	//private GeoList parmList;
 	private ArrayList<GeoElement> pointList;
 
 	// label prefix for geos
@@ -187,7 +187,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		isIniting = false;
 
 
-		//	setProbabilityCalculator(selectedDist, null, isCumulative);
+		//setProbabilityCalculator(selectedDist, null, isCumulative);
 
 		attachView();
 
@@ -205,7 +205,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		if(parameters == null)
 			this.parameters = probManager.getDefaultParameterMap().get(selectedDist);	
 
-		this.buildLayout();
+		//this.buildLayout();
 		//isIniting = true;
 		updateAll();
 		//isIniting = false;
@@ -510,35 +510,17 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	//       Plotting
 	//=================================================
 
+	
 	/**
 	 * Creates the required GeoElements for the currently selected distribution
-	 * type using default parameters.
+	 * type and parameters. 
 	 */
 	private void createGeoElements(){
-		createGeoElements(null);
-	}
-
-	/**
-	 * Creates the required GeoElements for the currently selected distribution
-	 * type using given parameters. If parameters are null, default parameters are used.
-	 */
-	private void createGeoElements(double[] parms){
 
 		this.removeGeos();
 
 		String expr;
-
-		// create list of parameters
-		if(parms == null)
-			parms = ProbabilityManager.getDefaultParameterMap().get(selectedDist);
-
-		parmList = (GeoList) createGeoFromString("{}", null, true);
-		for(int i=0; i < parms.length; i++){
-			parmList.add(new GeoNumeric(cons,parms[i]));
-			//System.out.println("parms:" + i + " " + selectedParameters[i]);
-		}
-
-
+	
 		//create low point
 
 		GeoAxis path = (GeoAxis)kernel.lookupLabel(app.getPlain("xAxis"));
@@ -553,6 +535,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		lowPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
 		plotGeoList.add(lowPoint);
 
+		
 		// create high point
 
 		AlgoPointOnPath algoHigh = new AlgoPointOnPath(cons, (Path)path, 0d, 0d);
@@ -680,6 +663,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				integral = algoIntegral.getGeoElements()[0];
 				integral.setObjColor(COLOR_PDF_FILL);
 				integral.setAlphaValue(opacityIntegral);
+				integral.setEuclidianVisible(true);
 				plotGeoList.add(integral);
 			}
 
@@ -699,9 +683,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	protected void updatePlotSettings(){
 
 		double xMin, xMax, yMin, yMax;
-
-		//TODO: does this belong here or in getPlotDimensions?
-		parmList.updateCascade();
 
 		// get the plot window dimensions
 		double[] d = getPlotDimensions();
@@ -759,7 +740,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		highPoint.setCoords(high, 0.0, 1.0);
 		plotPanel.repaint();
 		GeoElement.updateCascade(pointList, getTempSet());
-
+		tempSet.clear();
+		
 		if(probManager.isDiscrete(selectedDist))
 			table.setSelectionByRowValue((int)low, (int)high);
 
@@ -768,9 +750,6 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	private TreeSet tempSet;
-
-
-
 	private TreeSet getTempSet() {
 		if (tempSet == null) {
 			tempSet = new TreeSet();
@@ -779,18 +758,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
-	/**
-	 * Returns the parameter values from the parmList geo
-	 */
-	private double[] getCurrentParameters(){
-
-		double [] parms = new double[parmList.size()];
-		for(int i = 0; i< parmList.size(); i++){
-			parms[i] = ((GeoNumeric)parmList.get(i)).getDouble();
-		}
-		return parms;
-
-	}
+	
 
 
 	/**
@@ -801,9 +769,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 */
 	private double intervalProbability(){
 
-		// retrieve the parameter values from the parmList geo
-		double [] parms = getCurrentParameters();
-		return probManager.intervalProbability(low, high, selectedDist, parms, probMode);
+		return probManager.intervalProbability(low, high, selectedDist, parameters, probMode);
 	}
 
 
@@ -813,10 +779,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 * @param prob 
 	 */
 	private double inverseProbability(double prob){
-
-		double[] parms = getCurrentParameters();
-
-		return probManager.inverseProbability(selectedDist, prob, parms);
+		
+		return probManager.inverseProbability(selectedDist, prob, parameters);
 	}
 
 
@@ -829,12 +793,12 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		if (xHigh < xLow) return false;
 
 		boolean isValid = true;
-		double[] parms = getCurrentParameters();
+		
 
 		switch (selectedDist){
 
 		case ProbabilityManager.DIST_BINOMIAL:
-			isValid = xLow >= 0 && xHigh<= parms[0];  // 0 <= x <= n
+			isValid = xLow >= 0 && xHigh<= parameters[0];  // 0 <= x <= n
 			break;
 
 		case ProbabilityManager.DIST_PASCAL: 
@@ -856,7 +820,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			break;
 
 		case ProbabilityManager.DIST_HYPERGEOMETRIC: 
-			isValid = xLow >= 0 && xHigh<= parms[2];  // 0 <= x <= sample size
+			isValid = xLow >= 0 && xHigh<= parameters[2];  // 0 <= x <= sample size
 			break;
 		}
 
@@ -908,12 +872,14 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				if( comboDistribution.getSelectedItem().equals(ListSeparatorRenderer.SEPARATOR)){
 					comboDistribution.setSelectedItem(distributionMap.get(selectedDist));
 				}
-				else{
+				else if(selectedDist != this.reverseDistributionMap.get(comboDistribution.getSelectedItem())){
 					selectedDist = this.reverseDistributionMap.get(comboDistribution.getSelectedItem());
-					updateAll();
+					parameters = probManager.getDefaultParameterMap().get(selectedDist);
+					this.setProbabilityCalculator(selectedDist, parameters, isCumulative);
 				}
 			comboDistribution.addActionListener(this);
-			this.fldParameterArray[0].requestFocus();
+			
+			this.requestFocus();
 		}
 
 		else if (source == comboProbType) {					
@@ -970,12 +936,13 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			else 
 				// handle parm entry
-				for(int i=0; i< parmList.size(); ++i)
+				for(int i=0; i< parameters.length; ++i)
 					if (source == fldParameterArray[i]) {
-						((GeoNumeric)parmList.get(i)).setValue(value);
+						parameters[i] = value;
 						// TODO
 						//validateParms(selectedParms);
-						updatePlot();
+						//updatePlot();
+						updateAll();
 					}
 
 			updateIntervalProbability();
@@ -1023,7 +990,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		updatePlot();
 		updateProbabilityType();
 		updateGUI();
-		this.requestFocus();
+		//this.requestFocus();
 
 	}
 
@@ -1047,7 +1014,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 				lblParameterArray[i].setText(parameterLabels[selectedDist][i]);
 				// set field
 				fldParameterArray[i].removeActionListener(this);
-				fldParameterArray[i].setText("" + format( ((GeoNumeric)parmList.get(i)).getDouble() ));
+				fldParameterArray[i].setText("" + format( parameters[i]));
 				fldParameterArray[i].setCaretPosition(0);
 				fldParameterArray[i].addActionListener(this);
 			}
@@ -1083,7 +1050,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		if(probManager.isDiscrete(selectedDist))
 			this.discreteIntervalGraph.updateCascade();
 		else
-			this.integral.updateCascade();Application.debug("");
+			this.integral.updateCascade();
 	}
 
 	
@@ -1173,6 +1140,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		 * creating new ones, is there a better way?
 		 */
 
+		
 		createGeoElements();
 		//setSliderDefaults();
 
@@ -1185,7 +1153,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			addRemoveTable(true);
 
-			this.fldParameterArray[0].requestFocus();
+			//this.fldParameterArray[0].requestFocus();
 
 
 		}else{
@@ -1207,7 +1175,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 		int firstX = (int) ((GeoNumeric)discreteValueList.get(0)).getDouble();
 		int lastX = (int) ((GeoNumeric)discreteValueList.get(discreteValueList.size()-1)).getDouble();
-		table.setTable(selectedDist, getCurrentParameters(), firstX, lastX, isCumulative);
+		table.setTable(selectedDist, parameters, firstX, lastX, isCumulative);
 	}
 
 
@@ -1226,14 +1194,16 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 	public void add(GeoElement geo) {}
 	public void clearView() {
+		//Application.debug("prob calc clear view");
 		//this.removeGeos();
+		//plotPanel.clearView();
 	}
 	public void remove(GeoElement geo) {}
 	public void rename(GeoElement geo) {}
 	public void repaintView() {}
 	public void reset() {
-		Application.debug("prob calc reset");
-		updateAll();
+		//Application.debug("prob calc reset");
+		//updateAll();
 	}
 	public void setMode(int mode) {} 
 	public void updateAuxiliaryObject(GeoElement geo) {}
@@ -1269,7 +1239,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	public void attachView() {
-		clearView();
+		//clearView();
 		//kernel.notifyAddAll(this);
 		kernel.attach(this);		
 	}
@@ -1432,34 +1402,21 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	//       Geo Handlers
 	//=================================================
 
-	public void removeGeos(){	
+	public void removeGeos(){
+		if(pointList != null)
+			pointList.clear();
 		clearPlotGeoList();
+		plotPanel.clearView();
 	}
-
-	/*
-	public void removeProbCalcGeos(){
-		TreeSet<GeoElement> geoSet = kernel.getConstruction().getGeoSetLabelOrder();
-		String label;
-		HashSet<GeoElement> tempSet = new HashSet<GeoElement>();
-		for(GeoElement geo : geoSet){
-			label = geo.getLabel();
-			if(label.startsWith("prob")){
-				tempSet.add(geo);
-			}
-		}
-		for(GeoElement geo : tempSet){
-			System.out.println("removed: " + geo.getLabel());
-			geo.remove();
-
-		}
-	}
-	 */	
 
 
 	private void clearPlotGeoList(){
+		
 		for(GeoElement geo : plotGeoList){
-			if(geo != null)
+			if(geo != null){
+				geo.setFixed(false);
 				geo.remove();
+			}
 		}
 		plotGeoList.clear();
 	}
@@ -1498,17 +1455,15 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 */
 	private String buildDensityCurveExpression(int type){
 		String expr = "";
-		String k, mean, sigma, v, v2, median, scale, shape;
-
-		// build geogebra string for creating a density curve wih list values as parameters
-		// e.g." Normal[Element[list1,1],Element[list1,2],x]""
+		
+		// build geogebra string for creating a density curve with list values as parameters
+		// e.g." Normal[0,1,x] "
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(ProbabilityManager.getCommand()[type]);
 		sb.append("[");
-		for(int i=1; i <= ProbabilityManager.getParmCount()[type]; i++){
-			sb.append("Element[" + parmList.getLabel() + "," + i + "]");
-			sb.append(",");
+		for(int i=0; i < parameters.length; i++){
+			sb.append(parameters[i] + ",");
 		}
 		if(isCumulative)
 			sb.append("x, true]");
@@ -1533,8 +1488,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		switch(selectedDist){
 
 		case ProbabilityManager.DIST_BINOMIAL:	
-			n = "Element[" + parmList.getLabel() + ",1]";
-			p = "Element[" + parmList.getLabel() + ",2]";
+			n = "" + parameters[0];
+			p = "" + parameters[1];
 
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
@@ -1549,8 +1504,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			break;
 
 		case ProbabilityManager.DIST_PASCAL:	
-			n = "Element[" + parmList.getLabel() + ",1]";
-			p = "Element[" + parmList.getLabel() + ",2]";
+			n = "" + parameters[0];
+			p = "" + parameters[1];
 
 			String n2 = "InversePascal[" + n + "," + p +  ", 0.999]";
 			expr = "Sequence[k,k,0," + n2 + "]";
@@ -1566,10 +1521,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			break;
 
 
-		case ProbabilityManager.DIST_POISSON:	
-			mean = "Element[" + parmList.getLabel() + ",1]";
-
-			n = "Element[" + parmList.getLabel() + ",1] + 6*sqrt(" +  mean  + ")";
+		case ProbabilityManager.DIST_POISSON:
+			
+			mean = "" + parameters[0];
+			n = "" + (parameters[0] + 6*Math.sqrt(parameters[0]));
 
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
@@ -1585,9 +1540,9 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 		case ProbabilityManager.DIST_HYPERGEOMETRIC:	
-			p = "Element[" + parmList.getLabel() + ",1]";  // population size
-			n = "Element[" + parmList.getLabel() + ",2]";  // n
-			s = "Element[" + parmList.getLabel() + ",3]";  // sample size
+			p = "" + parameters[0];  // population size
+			n = "" + parameters[1];  // n
+			s = "" + parameters[2];  // sample size
 
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
@@ -1615,10 +1570,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 */
 	private double[] getPlotDimensions(){
 
-		// retrieve the parameter values from the parmList geo
-		double [] parms = getCurrentParameters();
-
-		return probManager.getPlotDimensions(selectedDist, parms, densityCurve, isCumulative);
+		return probManager.getPlotDimensions(selectedDist, parameters, densityCurve, isCumulative);
 
 	}
 
