@@ -3444,8 +3444,20 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			}
 			break;
 
-		case FUNCTION_NVAR:
+			// TODO: put back into case FUNCTION_NVAR:, see #1115
 		case ELEMENT_OF:
+			sb.append(app.getCommand("Element"));
+			sb.append('[');
+			if (left.isGeoElement()) {
+				sb.append(((GeoElement) left).getLabel());
+			} else
+				sb.append(leftStr);
+			sb.append(", ");
+			sb.append(((MyList) right).getListElement(0).toString());
+			sb.append(']');
+			break;
+			
+		case FUNCTION_NVAR:
 			if (valueForm) {
 				if (left instanceof FunctionalNVar && right instanceof MyList) {
 					FunctionNVar func = ((FunctionalNVar) left).getFunction();
