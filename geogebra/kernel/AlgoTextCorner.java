@@ -67,15 +67,17 @@ implements EuclidianViewCE {
 		txt.calculateCornerPoint(corner, (int) number.getDouble());	    	
     }    	   
     
-    public void euclidianViewUpdate() {
+    public boolean euclidianViewUpdate() {
     	// update text to update it's bounding box
     	kernel.notifyUpdate(txt);
     	
     	// now compute()
     	compute();
     	
-    	// update corner and all dependent elements
-    	corner.updateCascade(); 
+    	// update corner
+    	corner.update();  
+    	
+    	return true; //update cascade of dependent objects done in Construction
     }
     
     final public boolean wantsEuclidianViewUpdate() {

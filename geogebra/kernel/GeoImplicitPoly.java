@@ -20,19 +20,13 @@ package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
-import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.kernel.commands.AlgebraProcessor;
-import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.kernel.parser.ParseException;
-import geogebra.kernel.parser.Parser;
+
 import geogebra.main.Application;
-import geogebra.main.MyError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,10 +59,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	private boolean trace; //for traceable interface
 	
 	private Coords [] pointsOnCurve;
-	private Coords lastClosestPoint;
-
-	private Parser parser;
-	private AlgebraProcessor algebraProcessor;
 	
 	public GeoLocus locus;
 	
@@ -80,9 +70,6 @@ Dilateable, Transformable, EuclidianViewCE {
 		degY=-1;
 		coeffSquarefree=null;
 		pointsOnCurve = null;
-		lastClosestPoint = null;
-		parser = c.getKernel().getParser();
-		algebraProcessor = c.getKernel().getAlgebraProcessor();
 		locus=new GeoLocus(c);
 		locus.setDefined(true);
 		c.registerEuclidianViewCE(this);
@@ -91,7 +78,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	protected GeoImplicitPoly(Construction c, String label,double[][] coeff){
 		this(c);
 		setLabel(label);
-		setCoeff(coeff);
+		setCoeff(coeff,true);
 	}
 	
 	protected GeoImplicitPoly(Construction c, String label,Polynomial poly){
@@ -143,43 +130,28 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 	
 	
-	/**
-	 * Create conic from this implicitPoly (if degX == degY == 2)
-	 * @param g GeoConic for storing this implicitPoly
-	 */
-	public void toGeoConic(GeoConicND g)
-	{
-		if(degX != 2 || degY != 2)
-		{
-			g.setUndefined();
-			return;
-		}
-		
-		double [] matrix = new double[6];
-		matrix[0] = coeff[2][0];
-		matrix[1] = coeff[0][2];	
-		matrix[2] = coeff[0][0];
-		matrix[3] = .5*coeff[1][1];
-		matrix[4] = .5*coeff[1][0];
-		matrix[5] = .5*coeff[0][1];
-		g.setMatrix(matrix);
-	}
+//	/**
+//	 * Create conic from this implicitPoly (if degX == degY == 2)
+//	 * @param g GeoConic for storing this implicitPoly
+//	 */
+//	public void toGeoConic(GeoConicND g)
+//	{
+//		if(degX != 2 || degY != 2)
+//		{
+//			g.setUndefined();
+//			return;
+//		}
+//		
+//		double [] matrix = new double[6];
+//		matrix[0] = coeff[2][0];
+//		matrix[1] = coeff[0][2];	
+//		matrix[2] = coeff[0][0];
+//		matrix[3] = .5*coeff[1][1];
+//		matrix[4] = .5*coeff[1][0];
+//		matrix[5] = .5*coeff[0][1];
+//		g.setMatrix(matrix);
+//	}
 	
-	/**
-	 * Create this implicitPoly from geoConic
-	 * @param g geoConic
-	 */
-	public void fromGeoConic(GeoConicND g)
-	{
-		double [][] coeffs = new double[3][3];
-		coeffs[2][0] = g.matrix[0];
-		coeffs[0][2] = g.matrix[1];	
-		coeffs[0][0] = g.matrix[2];
-		coeffs[1][1] = 2*g.matrix[3];
-		coeffs[1][0] = 2*g.matrix[4];
-		coeffs[0][1] = 2*g.matrix[5];
-		this.setCoeff(coeffs);
-	}
 	
 	@Override
 	public GeoElement copy() {
@@ -275,7 +247,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		if (!(geo instanceof GeoImplicitPoly))
 			return;
 		super.set(geo);
-		setCoeff(((GeoImplicitPoly)geo).getCoeff());
+		setCoeff(((GeoImplicitPoly)geo).getCoeff(),false);
 		locus.set(((GeoImplicitPoly)geo).locus);
 		this.defined=geo.isDefined();
 	}
@@ -399,6 +371,14 @@ Dilateable, Transformable, EuclidianViewCE {
 	 * @param c assigns given coefficient-array to be the coefficients of this Polynomial.
 	 */
 	public void setCoeff(double[][] c){
+		setCoeff(c,true);
+	}
+	
+	/**
+	 * @param c assigns given coefficient-array to be the coefficients of this Polynomial.
+	 * @param calcPath : the path should be calculated "new".
+	 */
+	public void setCoeff(double[][] c,boolean calcPath){
 		isConstant=true;
 		degX=-1;
 		degY=-1;
@@ -415,7 +395,8 @@ Dilateable, Transformable, EuclidianViewCE {
 					isConstant=isConstant&&(c[i][j]==0||(i==0&&j==0));	
 				}
 			}
-			updatePath();
+			if (calcPath)
+				updatePath();
 		} catch (Exception e) {
 			setUndefined();
 			e.printStackTrace();
@@ -750,7 +731,7 @@ Dilateable, Transformable, EuclidianViewCE {
 						Iterator<AlgoElement> it=algoUpdateSet.getIterator();
 						while(it!=null&&it.hasNext()){
 							AlgoElement elem=it.next();
-							if (elem instanceof AlgoPointOnPath){
+							if (elem instanceof AlgoPointOnPath && isIndependent()){
 								GeoPoint point=((AlgoPointOnPath)elem).getP();
 								if (!Kernel.isZero(point.getZ())){
 									double x=point.getX()/point.getZ();
@@ -770,112 +751,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	
 	public void plugInPoly(double[][] polyX,double[][] polyY){
 		plugInRatPoly(polyX,polyY,null,null);
-/*		if (true)
-			return;
-		int degXPolyX=polyX.length-1;
-		int degYPolyX=0;
-		for (int i=0;i<polyX.length;i++){
-			if (polyX[i].length-1>degYPolyX)
-				degYPolyX=polyX[i].length-1;
-		}
-		int degXPolyY=polyY.length-1;
-		int degYPolyY=0;
-		for (int i=0;i<polyY.length;i++){
-			if (polyY[i].length-1>degYPolyY)
-				degYPolyY=polyY[i].length-1;
-		}
-//		Application.debug(String.format("XX=%d,YX=%d,XY=%d,YY=%d", degXPolyX,degYPolyX,degXPolyY,degYPolyY));
-		int newDegX=degXPolyX*degX+degXPolyY*degY;
-		int newDegY=degYPolyX*degX+degYPolyY*degY;
-		double[][] newCoeff=new double[newDegX+1][newDegY+1];
-		double[][] tmpCoeff=new double[newDegX+1][newDegY+1];
-		int tmpCoeffDegX=0;
-		int tmpCoeffDegY=0;
-		int newCoeffDegX=0;
-		int newCoeffDegY=0;
-	//	double[][] xCoeff=new double[newDegX+1][newDegY+1];
-		for (int i=0;i<newDegX;i++){
-			for (int j=0;j<newDegY;j++){
-				newCoeff[i][j]=0;
-				tmpCoeff[i][j]=0;
-	//			xCoeff[i][j]=0;
-			}
-		}
-		for (int x=coeff.length-1;x>=0;x--){
-			for (int y=coeff[x].length-1;y>=0;y--){
-				tmpCoeff[0][0]+=coeff[x][y];
-				if (y>0){
-//					Application.debug(String.format("x=%d,y=%d,tX=%d,tY=%d,dXY=%d,dYY=%d",x,y,tmpCoeffDegX,tmpCoeffDegY,degXPolyY,degYPolyY));
-					polyMult(tmpCoeff,polyY,tmpCoeffDegX,tmpCoeffDegY,degXPolyY,degYPolyY);
-					tmpCoeffDegX+=degXPolyY;
-					tmpCoeffDegY+=degYPolyY;
-				}
-			}
-			for (int i=0;i<=tmpCoeffDegX;i++){
-				for (int j=0;j<=tmpCoeffDegY;j++){
-					newCoeff[i][j]+=tmpCoeff[i][j];
-					tmpCoeff[i][j]=0;
-				}
-			}
-			newCoeffDegX=Math.max(newCoeffDegX, tmpCoeffDegX);
-			newCoeffDegY=Math.max(newCoeffDegY, tmpCoeffDegY);
-			tmpCoeffDegX=0;
-			tmpCoeffDegY=0;
-			if (x>0){
-//				Application.debug(String.format("x=%d,nX=%d,nY=%d,dXY=%d,dYY=%d",x,newCoeffDegX,newCoeffDegY,degXPolyY,degYPolyY));
-				polyMult(newCoeff,polyX,newCoeffDegX,newCoeffDegY,degXPolyX,degYPolyX);
-				newCoeffDegX+=degXPolyX;
-				newCoeffDegY+=degYPolyX;
-			}
-		}
-		
-		//maybe we made the degree larger than necessary, so we try to get it down.
-		double[][] newCoeffMinDeg=null;
-//	Application.debug("old degX="+newDegX+"; old degY="+newDegY);
-		degX=0;
-		degY=0;
-		for (int i=newDegX;i>=0;i--){
-			for (int j=newDegY;j>=0;j--){
-				if (Math.abs(newCoeff[i][j])>Kernel.EPSILON){
-					if (newCoeffMinDeg==null){
-						newCoeffMinDeg=new double[i+1][];
-						degX=i;
-					}
-					if (newCoeffMinDeg[i]==null){
-						newCoeffMinDeg[i]=new double[j+1];
-						if (j>degY)
-							degY=j;
-					}
-					newCoeffMinDeg[i][j]=newCoeff[i][j];
-				}
-			}
-			if (newCoeffMinDeg!=null&&newCoeffMinDeg[i]==null){
-				newCoeffMinDeg[i]=new double[1];
-				newCoeffMinDeg[i][0]=0;
-			}
-		}
-		if (newCoeffMinDeg==null){
-			newCoeffMinDeg=new double[1][1];
-			newCoeffMinDeg[0][0]=0;
-		}
-//		Application.debug("new degX="+degX+"; new degY="+degY);
-		coeff=newCoeffMinDeg;
-//		xCoeff[0][0]=1;
-//		for (int x=0;x<=degX;x++){
-//			for (int i=0;i<=newDegX;i++){ //maybe a smaller loop suffices
-//				for (int j=0;j<=newDegY;j++)
-//					tmpCoeff[i][j]=xCoeff[i][j];
-//			}
-//			for (int y=0;y<=degY;y++){
-//				for (int i=0;i<=x;i++){ //wrong bounds
-//					for (int j=0;j<=y;j++){
-//						newCoeff[i][j]+=coeff[x][y]*tmpCoeff[i][j];
-//					}
-//				}
-//			}
-//		}
-
- */
 	}
 	
 	/**
@@ -916,158 +791,8 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 	
 	private void getFactors(){
-		/*
-		Runnable r=new Runnable(){
-			public void run() {
-				toGenPolynomial();
-				FactorAbstract<BigRational> fEngine=FactorFactory.getImplementation(BigRational.ONE);
-//				SquarefreeAbstract<BigRational> sqEngine=SquarefreeFactory.getImplementation(BigRational.ONE);
-				Iterator<GenPolynomial<BigRational>> it=fEngine.factors(genPoly).keySet().iterator();
-				GenPolynomial<BigRational> res=it.next();
-				while(it.hasNext()){
-					res=res.multiply(it.next());
-				}
-				Application.debug("squarefree: "+res);
-				coeffSquarefree=getCoeff(res);
-			}
-		};
-		if (factorThread!=null&&factorThread.isAlive()){
-			factorThread.interrupt();
-		}
-		factorThread=new Thread(r);
-		factorThread.setPriority(Thread.MIN_PRIORITY);
-		factorThread.start();
-		*/
-//		toGenPolynomial();
-////		FactorAbstract<BigRational> fEngine=FactorFactory.getImplementation(BigRational.ONE);
-//		SquarefreeAbstract<BigRational> sqEngine=SquarefreeFactory.getImplementation(BigRational.ONE);
-//		Application.debug("start squarefree");
-//		Application.debug("squarefree: "+sqEngine.baseSquarefreePart(genPoly));
-	}
-	
-	
-	public Coords getPointOnCurve()
-	{
-		double c=0;
-		GeoLine line = new GeoLine(cons, "", 0, 1, c);
-		line.remove();
-		AlgoIntersectImplicitpolyParametric algo = new AlgoIntersectImplicitpolyParametric(cons, this, line);
-		algo.remove();
-		algo.compute();
-		GeoPoint [] ip = (GeoPoint[]) algo.getIntersectionPoints();
-		while(ip.length == 0 && c < 10000)
-		{
-			c += 0.5;
-			line.setCoords(0, 1, c);
-			line.update();
-			algo.setOutputLength(0);
-			algo.update();
-			algo.compute();
-			ip = (GeoPoint[]) algo.getIntersectionPoints();
-			if(ip.length > 0)
-				break;
-			line.setCoords(0, 1, -c);
-			line.update();
-			algo.setOutputLength(0);
-			algo.update();
-			algo.compute();
-			ip = (GeoPoint[]) algo.getIntersectionPoints();
-			if(ip.length > 0)
-				break;
-			line.setCoords(1, 0, c);
-			line.update();
-			algo.setOutputLength(0);
-			algo.update();
-			algo.compute();
-			ip = (GeoPoint[]) algo.getIntersectionPoints();
-			if(ip.length > 0)
-				break;
-			line.setCoords(1, 0, -c);
-			line.update();
-			algo.setOutputLength(0);
-			algo.update();
-			algo.compute();
-			ip = (GeoPoint[]) algo.getIntersectionPoints();
-			if(ip.length > 0)
-				break;
-		}
-		
-		Coords coord = ip[0].getCoordsInD(2);
-		return coord;
-	}
-	
-	
-	public void setNearestPointOnCurve(GeoPointND PI){
-		
-		if(this.isOnPath(PI))
-			return;
-		
-		Coords coords = PI.getCoordsInD(2);
-		double x = coords.getX();
-		double y = coords.getY();
-		
-		Coords gp;
-		if(lastClosestPoint == null)
-			gp = getPointOnCurve();
-		else
-			gp = lastClosestPoint;
-		
-		double r = Math.sqrt(Math.pow(gp.getX() - x, 2) + Math.pow(gp.getY() - y, 2));
-		double coeffs[] = {1, 0, 1,  -2*x, -2*y, -r*r+x*x+y*y};
-		
-		GeoConic circle = new GeoConic(cons, "", coeffs);
-		GeoImplicitPoly poly = new GeoImplicitPoly(circle);
-		circle.remove();
-		poly.remove();
 
-		AlgoIntersectImplicitpolys algo = new AlgoIntersectImplicitpolys(cons, this, poly);
-		algo.compute();
-		GeoPoint [] ip = (GeoPoint[]) algo.getIntersectionPoints();
-		
-		double down = 0, up = r;
-		while(ip.length != 1 && !Kernel.isEqual(down, up))
-		{
-			if(down > up)
-			{
-				double t = up;
-				up = down;
-				down = t;
-			}
-			
-			if (ip.length == 2)
-				if(ip[0].distance(ip[1]) < 1E-2)
-					break;
-			
-			if(ip.length >= 2)
-			{
-				r -= (up-down)/2;
-				up = r;
-			}	
-			else
-			{
-				r += (up-down)/2;
-				down = r;
-			}
-		
-			coeffs[5] = -r*r+x*x+y*y;
-			circle.setCoeffs(coeffs);
-			circle.update();
-			poly.fromGeoConic(circle);
-			
-			algo = new AlgoIntersectImplicitpolys(cons, this, poly);
-			algo.compute();
-			ip = (GeoPoint[]) algo.getIntersectionPoints();
-		}
-		
-		PI.setCoords2D(ip[0].getX(), ip[0].getY(), 1);
-		PI.updateCoords();
-		
-		if(lastClosestPoint == null)
-			lastClosestPoint = new Coords(PI.getCoordsInD(2).get());
-		else
-			lastClosestPoint.set(PI.getCoordsInD(2));
 	}
-	
 	
 	final public double distance(GeoPoint p) {
 		AlgoClosestPoint algo = new AlgoClosestPoint(cons, "", this, p);
@@ -1216,7 +941,7 @@ Dilateable, Transformable, EuclidianViewCE {
 				else
 					coeffMatrix[i][j] = partialSolution[k++];
 		
-		this.setCoeff(coeffMatrix);
+		this.setCoeff(coeffMatrix,true);
 		this.update();
 		this.defined = true;
 		for(int i=0; i<points.size(); i++)
@@ -1233,15 +958,11 @@ Dilateable, Transformable, EuclidianViewCE {
 	public void pointChanged(GeoPointND PI) {
 		if (locus.getPoints().size()>0)
 			locus.pointChanged(PI);
-//		setNearestPointOnCurve(PI);
-//		PI.getPathParameter().setT(0);
 	}
 
 	public void pathChanged(GeoPointND PI) {
 		if (locus.getPoints().size()>0)
 			locus.pathChanged(PI);
-//		setNearestPointOnCurve(PI);
-//		PI.getPathParameter().setT(0);
 	}
 
 	public boolean isOnPath(GeoPointND PI) {
@@ -1249,8 +970,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 	
 	public boolean isOnPath(GeoPointND PI, double eps) {
-//		return locus.isOnPath(PI,eps);
-		//Application.debug("on path? "+PI+"; eps="+eps);
 
 		if(!PI.isDefined())
 			return false;
@@ -1341,85 +1060,10 @@ Dilateable, Transformable, EuclidianViewCE {
 				new double[][]{{cx*cx*cy + cy*cy*cy - cy*cr*cr, -2*cy*cy + cr*cr, cy}, {-2*cx*cy,0,0}, {cy,0,0}},
 				new double[][]{{cx*cx + cy*cy, -2*cy, 1}, {-2*cx,0,0}, {1,0,0}},
 				new double[][]{{cx*cx + cy*cy, -2*cy, 1}, {-2*cx,0,0}, {1,0,0}});
-		
-/*		double r = c.getCircleRadius();
-		GeoPoint S = new GeoPoint(cons, "", c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
-		S.remove();
-		if(S.inhomX != 0 || S.inhomY != 0)
-			translate(new Coords(-S.getX(), -S.getY()));
-		
-		translate(new Coords(-S.getX(), -S.getY()));
-		
-		String fun = new String("");
-		
-		int degx = coeff.length;
-		int degy = coeff[0].length;
-		
-		int deg = (degx > degy) ? degx : degy;
-		
-		String [] u = new String[degx+degy];
-		for(int i=0; i<degx+degy; i++)
-			u[i] = new String("");
-		
-		for(int i=0; i<degx; i++)
-			for(int j=0; j<degy; j++)
-				if(!Kernel.isZero(coeff[i][j]))
-				{
-					if(coeff[i][j] > 0)
-						u[i+j] += " + ";
-					u[i+j] += coeff[i][j] + "*x^" + i + "*y^" + j;
-				}
-		
-		for(int i=0; i<degx+degy; i++)
-			if(u[i].length() > 0)
-				u[i] = " * (" + u[i] + ")";
-			else 
-				u[i] = "* 0";
-		
-		for(int i=0; i<deg; i++)
-			fun += " + " + Math.pow(r, 2*i) + "*(x^2+y^2)^" + (deg-i-1) + u[i];
-		fun += " = 0";
-		
-		ValidExpression ve = null;
-		try{
-			ve = parser.parseGeoGebraExpression(fun);
-		} catch(ParseException e)
-		{
-			throw new MyError(app, "Error");
-		}
-		
-		GeoElement geo = (GeoElement) algebraProcessor.processEquation((Equation) ve)[0];
-		GeoImplicitPoly gp = ((GeoImplicitPoly)geo);
-		gp.normalize();
-		setCoeff(gp.getCoeff());
-		geo.remove();
-		
-		if(S.inhomX != 0 || S.inhomY != 0)
-			translate(new Coords(S.getX(), S.getY()));
-			*/
-	}
-	
-	public void normalize()
-	{
-		double div = 0;
-		
-		outer_loop:
-			for(int i=coeff.length-1; i >= 0; i--)
-				for(int j=coeff[0].length-1; j >= 0; j--)
-					if(coeff[i][j] != 0)
-					{
-						div = coeff[i][j];
-						break outer_loop;
-					}
-		
-		for(int i=0; i<coeff.length; i++)
-			for(int j=0; j<coeff[0].length; j++)
-				coeff[i][j] /= div;
 	}
 
 	public void mirror(GeoPoint Q) {
 		plugInPoly(new double[][]{{2*Q.inhomX},{-1}},new double[][]{{2*Q.inhomY,-1}});
-		//doTransformation(new String(2.0 * Q.inhomX + "- a"), new String(2.0 * Q.inhomY + "- b"));
 	}
 
 	public void mirror(GeoLine g) {
@@ -1429,45 +1073,12 @@ Dilateable, Transformable, EuclidianViewCE {
 		}
 		double[] dir=new double[2];
 		g.getDirection(dir);
-		//g.setStandardStartPoint();
 		double dx=dir[0];
 		double dy=dir[1];
 		double x=g.getStartPoint().inhomX;
 		double y=g.getStartPoint().inhomY;
 		double n=1/(dx*dx+dy*dy);
 		plugInPoly(new double[][]{{2*n*dy*(x*dy-y*dx),2*n*dx*dy},{1-2*dy*dy*n,0}},new double[][]{{2*n*dx*(y*dx-x*dy),1-2*n*dx*dx},{2*n*dx*dy,0}});
-		
-		
-		/*
-		String newX, newY;
-		if(g.getX() == 0)
-		{
-			this.translate(new Coords(-g.getZ()/g.getY(), 0));
-			doTransformation("x", "-y");
-			this.translate(new Coords(g.getZ()/g.getY(), 0));
-			return;
-		}
-		Coords v = new Coords(g.getZ()/g.getX(), 0);
-		this.translate(v);
-		
-		double R = Math.PI - Math.atan(-g.getX()/g.getY());
-		double cosR = Math.cos(R), sinR=Math.sin(R);
-		
-		newX = cosR + "*a + " + sinR + "*b";
-		newY = -sinR + "*c + " + cosR + "*d";
-		doTransformation(newX, newY);
-		
-		doTransformation("-a", "b");
-		
-		cosR = Math.cos(Math.PI-R);
-		sinR= Math.sin(Math.PI-R);
-		
-		newX = cosR + "*a + " + sinR + "*b";
-		newY = -sinR + "*c + " + cosR + "*d";
-		doTransformation(newX, newY);
-		
-		v.set(1, -v.getX());
-		this.translate(v);*/
 		
 	}
 
@@ -1476,70 +1087,16 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 	
 	public void translate(double vx,double vy){
-//		Application.debug("Translate, children:"+algoUpdateSet);
-		//translate directly the coefficients
 		double a=-vx; //-translate in X-dir
 		double b=-vy; //-translate in Y-dir
-//		Application.debug(String.format("Translate vx=%f,vy=%f",vx,vy));
-	//	doTransformation(new String("a+(" + a+")"), new String("b+(" + b+")"));
 		plugInPoly(new double[][]{{a},{1}},new double[][]{{b,1}});
-
-/*		double[][] newCoeff=new double[coeff.length][];
-		double[] transX=new double[degX+1];
-		double[] transY=new double[degY+1];
-		transX[0]=1;
-		for (int k=1;k<degX+1;k++)
-			transX[k]=0;
-		for (int i=0;i<newCoeff.length;i++){
-			newCoeff[i]=new double[coeff[i].length];
-			for (int j=0;j<newCoeff[i].length;j++){
-				newCoeff[i][j]=0;
-				transY[j]=0;
-			}
-		//	String s="";
-			for (int k=i;k>=1;k--){
-				transX[k]+=transX[k-1]*a;
-		//		s+=","+transX[k];
-			}
-		//	Application.debug(s);
-			transY[0]=1;
-			for (int j=0;j<newCoeff[i].length;j++){
-				for (int k=j;k>=1;k--){
-					transY[k]+=transY[k-1]*b;
-				}
-				for (int x=0;x<=i;x++)
-					for (int y=0;y<=j;y++){
-						newCoeff[x][y]+=coeff[i][j]*transX[i-x]*transY[j-y];
-					}
-			}
-		}
-		coeff=newCoeff;
-//		// for curves given by equation
-//		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
-//			return;
-//		
-//		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
-//			
-//		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
-//		for(int i=0; i<parentCharacteristicPoints.length; i++)
-//		{
-//			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
-//			points[i].translate(v);
-//			points[i].remove();
-//		}
-//		this.throughPoints(points);
-	*/
 	}
 
 	public void rotate(NumberValue phiValue) {
 		double phi=phiValue.getDouble();
 		double cos=Math.cos(phi);
 		double sin=Math.sin(-phi);
-		plugInPoly(new double[][]{{0,-sin},{cos,0}},new double[][]{{0,cos},{sin,0}});
-//		double cosR = Math.cos(r.getDouble()), sinR = Math.sin(r.getDouble());
-//		String newX = cosR + "*a + " + sinR + "*b";
-//		String newY = -sinR + "*c + " + cosR + "*d";
-//		doTransformation(newX, newY);		
+		plugInPoly(new double[][]{{0,-sin},{cos,0}},new double[][]{{0,cos},{sin,0}});	
 	}
 
 	public void rotate(NumberValue phiValue, GeoPoint S) {
@@ -1549,50 +1106,11 @@ Dilateable, Transformable, EuclidianViewCE {
 		double x=S.getInhomX();
 		double y=S.getInhomY();
 		plugInPoly(new double[][]{{x*(1-cos)+y*sin,-sin},{cos,0}},new double[][]{{-x*sin+y*(1-cos),cos},{sin,0}});
-//		this.translate(new Coords(-S.getX()/S.getZ(), -S.getY()/S.getZ()));
-//		this.rotate(r);
-//		this.translate(new Coords(S.getX()/S.getZ(), S.getY()/S.getZ()));
 	}
 
 	public void dilate(NumberValue rval, GeoPoint S) {
 		double r=1/rval.getDouble();
 		plugInPoly(new double[][]{{(1-r)*S.getInhomX()},{r}},new double[][]{{(1-r)*S.getInhomY(),r}});
-//	double f = 1/r.getDouble();	
-//		doTransformation(new String(f + "*a + " + (1-f)*S.inhomX), 
-//				new String(f + "*b + " + (1-f)*S.inhomY));
-	}
-
-	public void doTransformation(String newX, String newY)
-	{
-		kernel.setTemporaryPrintFigures(20);
-		String cmd = this.toString();
-		kernel.restorePrintAccuracy();
-		
-		cmd = cmd.replace("x", "(" + newX + ")");
-		cmd = cmd.replace("y", "(" + newY + ")");
-		
-		cmd = cmd.replace("a", "x");
-		cmd = cmd.replace("b", "y");
-		cmd = cmd.replace("c", "x");
-		cmd = cmd.replace("d", "y");
-		
-		ValidExpression ve = null;
-		try{
-			ve = parser.parseGeoGebraExpression(cmd);
-		} catch(ParseException e)
-		{
-			Application.debug(cmd);
-			throw new MyError(app, "Error");
-		}
-		
-		GeoElement geo = (GeoElement) algebraProcessor.processEquation((Equation) ve)[0];
-		
-		if(geo instanceof GeoConicND)
-			this.fromGeoConic((GeoConicND)geo);
-		else
-			this.setCoeff(((GeoImplicitPoly)geo).getCoeff());
-		
-		geo.remove();
 	}
 	
 	@Override
@@ -1613,10 +1131,12 @@ Dilateable, Transformable, EuclidianViewCE {
 	  */
 	 
 
-		public void euclidianViewUpdate() {
+		public boolean euclidianViewUpdate() {
 			if (isDefined()){
 				updatePath();
+				return true;
 			}
+			return false;
 //			Application.debug("EuclidianViewUpdate");
 		}
 	 
@@ -1818,7 +1338,7 @@ Dilateable, Transformable, EuclidianViewCE {
 						}
 					}
 				}
-//				algoUpdateSet.updateAll(); //makes some problems with dependent implicit curves
+//				algoUpdateSet.updateAll();
 			} 
 			
 			}catch(Exception e){

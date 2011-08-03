@@ -584,8 +584,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
     
        
-    public void euclidianViewUpdate() {
+    public boolean euclidianViewUpdate() {
     	update();
+    	return false;
     }
        
     public void remove() {  

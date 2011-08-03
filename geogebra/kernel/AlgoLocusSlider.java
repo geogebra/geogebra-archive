@@ -668,9 +668,10 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
 				  farYmax - farYmin);      	
     }
     
-    public void euclidianViewUpdate() {
+    public boolean euclidianViewUpdate() {
       	updateScreenBorders();
-  		update();    	
+  		update(); 
+  		return false;
    	}
  	
 }

@@ -657,16 +657,35 @@ public class Construction {
 	}
 	
 	/**
-	 * Calls update on all euclidian view construction elements
+	 * Calls euclidianViewUpdate on all registered euclidian view construction elements
+	 * Those elements which return true, will also get an update of their dependent objects.
 	 * @return true iff there were any elements to update
 	 */
 	public boolean notifyEuclidianViewCE() {
 		boolean didUpdate = false;		
 		int size = euclidianViewCE.size();	
+		AlgorithmSet updateSet=null;
 		for (int i=0; i < size; i++) {
 			didUpdate = true;
-			((EuclidianViewCE) euclidianViewCE.get(i)).euclidianViewUpdate();			
-		}		
+			boolean needsUpdateCascade=euclidianViewCE.get(i).euclidianViewUpdate();
+			if (needsUpdateCascade){
+				if (updateSet==null)
+					updateSet=new AlgorithmSet();
+				if (euclidianViewCE.get(i) instanceof GeoElement){
+					GeoElement geo=(GeoElement)euclidianViewCE.get(i);
+					updateSet.addAll(geo.getAlgoUpdateSet());
+				}
+				else if (euclidianViewCE.get(i) instanceof AlgoElement){
+					AlgoElement algo=(AlgoElement)euclidianViewCE.get(i);
+					GeoElement[] geos=algo.getOutput();
+					for (GeoElement geo:geos){
+						updateSet.addAll(geo.getAlgoUpdateSet());
+					}
+				}
+			}
+		}
+		if (updateSet!=null)
+			updateSet.updateAll();
 		return didUpdate;
 	}	
 	

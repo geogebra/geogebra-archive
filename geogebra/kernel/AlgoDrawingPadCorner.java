@@ -136,11 +136,12 @@ implements EuclidianViewCE {
     	return true;
     }
     
-    public final void euclidianViewUpdate() {
+    public final boolean euclidianViewUpdate() {
     	compute();
 
     	// update output:
     	corner.updateCascade();    
+    	return false;
     }
     
     final public String toString() {

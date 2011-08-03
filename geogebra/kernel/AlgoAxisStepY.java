@@ -53,13 +53,13 @@ public class AlgoAxisStepY extends AlgoElement {
 	
     protected GeoNumeric getResult() { return num; }        
  
-    public void euclidianViewUpdate() {
+    public boolean euclidianViewUpdate() {
 
     	compute();
     	
     	// update num and all dependent elements
     	num.updateCascade(); 
-   	
+    	return false;
     }
     
     final public boolean wantsEuclidianViewUpdate() {

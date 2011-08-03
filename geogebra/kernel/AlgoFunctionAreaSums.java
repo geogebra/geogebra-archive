@@ -631,8 +631,9 @@ implements EuclidianViewCE, AlgoDrawInformation{
 
 	
 
-	final public void euclidianViewUpdate() {
+	final public boolean euclidianViewUpdate() {
 		compute();
+		return false;
 	}
 	
 	public abstract String getClassName();
