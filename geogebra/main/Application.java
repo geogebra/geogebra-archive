@@ -2504,6 +2504,20 @@ public class Application implements KeyEventDispatcher {
 		return rbcommand.getKeys();
 	}
 	
+	final public String getInternalCommand(String cmd) {
+		initTranslatedCommands();		
+		Enumeration<String> enume;
+		String s;
+		enume = rbcommand.getKeys();
+		while (enume.hasMoreElements()) {
+			s = enume.nextElement();
+			if (!s.endsWith("Syntax") && !s.endsWith("SyntaxCAS")) {
+				if (getCommand(s).equals(cmd)) return s;
+			}
+		}
+		return null;
+	}
+	
 	final public String getCommand(String key) {
 		
 		if (tooltipFlag) return getCommandTooltip(key);

@@ -768,6 +768,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 		ArrayList<String> syntaxes = new ArrayList<String>();
 		for (String cmd: commands) {
+			
+			cmd = app.getInternalCommand(cmd);
+			
 			String syntaxString;
 			if (isCASInput) {
 				syntaxString = app.getCommandSyntaxCAS(cmd);
@@ -775,6 +778,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				syntaxString = app.getCommandSyntax(cmd);
 			}
 			if (syntaxString.endsWith(isCASInput ? "SyntaxCAS" : "Syntax")) {
+				Application.debug(syntaxString+" "+cmd);
 				syntaxes.add(cmd + "[]");
 				continue;
 			}
