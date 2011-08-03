@@ -162,7 +162,11 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 	public void updatePanel(){
 
 		GeoList dataList = statDialog.getStatDialogController().getDataSelected();
+		
 		GeoElement geoRegression = statDialog.getRegressionModel();
+		// when the regr. mode is none geoRegression is a dummy linear model, so reset it to null 
+		if(statDialog.getRegressionMode() == statDialog.REG_NONE) geoRegression = null;
+		
 		DefaultTableModel model = statTable.getModel();
 		
 		String regressionLabel = null;
