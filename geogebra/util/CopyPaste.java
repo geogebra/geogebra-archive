@@ -540,7 +540,10 @@ public class CopyPaste {
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
         kernel.setPrintLocalizedCommandNames(false);
 
+		boolean dontSaveScriptsToXML = GeoElement.getWhetherNotSaveScriptsToXML();
+        
 		beforeSavingToXML(geoslocal, geostohide, false);
+		GeoElement.setWhetherNotSaveScriptsToXML(true);
 		try {
 			// step 5
 			copiedXML = new StringBuilder();
@@ -558,9 +561,11 @@ public class CopyPaste {
 			copiedXML = new StringBuilder();
 		}
 		//kernel.restoreCurrentUndoInfo();
+		GeoElement.setWhetherNotSaveScriptsToXML(dontSaveScriptsToXML);
 		afterSavingToXML(geoslocal, geostohide);
 
 		beforeSavingToXML(geoslocalsw, geostohidesw, true);
+		GeoElement.setWhetherNotSaveScriptsToXML(true);
 		try {
 			// step 5
 			copiedXMLforSameWindow = new StringBuilder();
@@ -578,6 +583,7 @@ public class CopyPaste {
 			copiedXMLforSameWindow = new StringBuilder();
 		}
 		//kernel.restoreCurrentUndoInfo();
+		GeoElement.setWhetherNotSaveScriptsToXML(dontSaveScriptsToXML);
 		afterSavingToXML(geoslocalsw, geostohidesw);
 
 		// restore kernel settings

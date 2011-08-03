@@ -430,6 +430,17 @@ public abstract class GeoElement
 	private int hatchingDistance = 10;
 	private boolean inverseFill = false;
 
+	// dontSaveScriptsToXML is introduced for Copy & Paste in new Window
+	protected static boolean dontSaveScriptsToXML = false;
+
+	public static boolean getWhetherNotSaveScriptsToXML() {
+		return dontSaveScriptsToXML;
+	}
+
+	public static void setWhetherNotSaveScriptsToXML(boolean cond) {
+		dontSaveScriptsToXML = cond;
+	}
+
 	//=================================
 	// G.Sturr new fill options
 	protected String imageFileName = "";
@@ -446,7 +457,7 @@ public abstract class GeoElement
 	public final static int COLORSPACE_HSB = 1;
 	public final static int COLORSPACE_HSL = 2;
 	private int colorSpace = COLORSPACE_RGB;
-
+	
 	public int getColorSpace() {
 		return colorSpace;
 	}
@@ -4222,7 +4233,7 @@ public abstract class GeoElement
 			sb.append(alphaValue);
 			sb.append("\"");
 
-			if (colFunction!=null)
+			if (colFunction!=null && !dontSaveScriptsToXML)
 			{
 				sb.append(" dynamicr=\"");
 				sb.append(Util.encodeXML(colFunction.get(0).getLabel()));
@@ -4399,7 +4410,8 @@ public abstract class GeoElement
 		getXMLfixedTag(sb);
 		getAuxiliaryXML(sb);
 		getBreakpointXML(sb);
-		getScriptTags(sb);
+		if (!dontSaveScriptsToXML)
+			getScriptTags(sb);
 	}
 
 	/**
@@ -4483,7 +4495,7 @@ public abstract class GeoElement
 	}
 
 	private String getShowObjectConditionXML() {
-		if (condShowObject != null) {
+		if (condShowObject != null && !dontSaveScriptsToXML) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("\t<condition showObject=\"");
 			sb.append(Util.encodeXML(condShowObject.getLabel()));
