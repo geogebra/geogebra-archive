@@ -243,7 +243,6 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 
 		public void mouseClicked(MouseEvent e) {
 			Object ob = e.getSource();	
-			System.out.println("sdsadasdasdasdsadsadsd");
 			// right click shows context menu
 			if (Application.isRightClick(e)) {
 				System.out.println("popup time!");
