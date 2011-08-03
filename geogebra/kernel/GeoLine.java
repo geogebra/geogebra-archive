@@ -29,6 +29,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.Point2D;
@@ -409,12 +410,14 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 
     public final void setStartPoint(GeoPoint P) {        	
     	startPoint = P;	    	
-    	P.addIncidence(this);
+    	if(P!=null)
+    		P.addIncidence(this);
     }
     
     final void setEndPoint(GeoPoint Q) {    	
     	endPoint = Q;
-    	Q.addIncidence(this);
+    	if(Q!=null)
+    		Q.addIncidence(this);
     }
     
 	/**
