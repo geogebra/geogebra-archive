@@ -31,7 +31,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.statistics.AlgoFitExp;
-import geogebra.kernel.statistics.AlgoFitLineX;
+import geogebra.kernel.statistics.AlgoFitLineY;
 import geogebra.kernel.statistics.AlgoFitLog;
 import geogebra.kernel.statistics.AlgoFitLogistic;
 import geogebra.kernel.statistics.AlgoFitPoly;
@@ -58,9 +58,6 @@ public class StatGeo   {
 	private double xMinData, xMaxData, yMinData, yMaxData;		
 	private double[] dataBounds;
 
-	private String[] regCmd = new String[StatDialog.regressionTypes];
-
-
 	public static final int TABLE_ONE_VAR = 0;
 	public static final int TABLE_TWO_VAR = 1;
 	public static final int TABLE_REGRESSION = 2;
@@ -76,14 +73,6 @@ public class StatGeo   {
 		kernel = app.getKernel();
 		cons = kernel.getConstruction();
 
-		regCmd[StatDialog.REG_NONE] = "";
-		regCmd[StatDialog.REG_LINEAR] = app.getCommand("FitLine");
-		regCmd[StatDialog.REG_LOG] = app.getCommand("FitLog");
-		regCmd[StatDialog.REG_POLY] = app.getCommand("FitPoly");
-		regCmd[StatDialog.REG_POW] = app.getCommand("FitPow");
-		regCmd[StatDialog.REG_EXP] = app.getCommand("FitExp");
-		regCmd[StatDialog.REG_SIN] = app.getCommand("FitSin");
-		regCmd[StatDialog.REG_LOGISTIC] = app.getCommand("FitLogistic");		
 
 	}
 
@@ -601,7 +590,7 @@ public class StatGeo   {
 			// fall through to linear
 		case StatDialog.REG_LINEAR:
 		default:
-			algo = new AlgoFitLineX(cons, dataList);
+			algo = new AlgoFitLineY(cons, dataList);
 			break;
 		
 		}
