@@ -778,7 +778,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				syntaxString = app.getCommandSyntax(cmd);
 			}
 			if (syntaxString.endsWith(isCASInput ? "SyntaxCAS" : "Syntax")) {
-				Application.debug(syntaxString+" "+cmd);
 				syntaxes.add(cmd + "[]");
 				continue;
 			}
