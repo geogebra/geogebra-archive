@@ -8,11 +8,11 @@ For details please read on and see the file LICENSE.txt
 
 Libraries used by GeoGebra:
 * MathPiper, http://www.mathpiper.org/ (GPL)
+* Reduce, http://reduce-algebra.sourceforge.net/ (BSD)
 * The Apache Commons Mathematics Library, 
   http://commons.apache.org/math/ (Apache Software License)
 * FreeHEP Java Libraries, http://java.freehep.org (LGPL)
 * EPS Graphics, http://epsgraphics.sf.net (GPL)
-* JAS, http://krum.rz.uni-mannheim.de/jas/ (GPL)
 * JLaTeXMath, http://forge.scilab.org/index.php/p/jlatexmath/ (GPL)
 * JUNG, http://jung.sourceforge.net (BSD)
 * Tango Icon Gallery, http://tango.freedesktop.org (Public Domain)
