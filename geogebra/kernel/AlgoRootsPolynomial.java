@@ -458,7 +458,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     	} else {	    
 	        for (int i = 0; i < number; i++) {
 	            //  check labeling      
-	            if (!rootPoints[i].isLabelSet()) {
+	            if (!rootPoints[i].isLabelSet() && rootPoints[i].labelWanted) {
 	            	// use user specified label if we have one
 	            	String newLabel = (labels != null && i < labels.length) ? labels[i] : null;	            	
 	                rootPoints[i].setLabel(newLabel);	                
