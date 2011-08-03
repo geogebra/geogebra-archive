@@ -23,13 +23,13 @@ public class PathMoverGeneric implements PathMover {
 	private static final int BOUNDS_FIXED_INFINITE = 3;
 	private static final int BOUNDS_INFINITE_FIXED = 4;
 	
-	private Path path;
+	protected Path path;
 	protected double start_param, start_paramUP;
 	protected double curr_param, last_param, param_extent, min_param, max_param,
 					max_step_width, step_width, offset;
 	protected int  mode;	
 	protected boolean posOrientation;
-	private boolean maxBorderSet, minBorderSet, lastMaxBorderSet, lastMinBorderSet;
+	protected boolean maxBorderSet, minBorderSet, lastMaxBorderSet, lastMinBorderSet;
 	
 	/**
 	 * Creates new path mover for given path
@@ -279,7 +279,7 @@ public class PathMoverGeneric implements PathMover {
 		}	
 	}
 
-	final public void stepBack() {			
+	public void stepBack() {			
 		curr_param = last_param;
 		maxBorderSet = lastMaxBorderSet;
 		minBorderSet = lastMinBorderSet;

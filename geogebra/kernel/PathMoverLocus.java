@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class PathMoverLocus extends PathMoverGeneric {		
 	
 	private ArrayList<MyPoint> myPointList;
+	protected boolean noLineToSet, lastNoLineToSet;
 	
 	/**
 	 * Creates new path mover for given locus
@@ -34,6 +35,7 @@ public class PathMoverLocus extends PathMoverGeneric {
 		if (p.getPath() instanceof GeoLocus) {
 			myPointList = ((GeoLocus)p.getPath()).getMyPointList();
 		}
+		lastNoLineToSet = noLineToSet = false;
 		super.init(p);
 	}
 	
@@ -59,4 +61,134 @@ public class PathMoverLocus extends PathMoverGeneric {
 		p.updateCoords();
 	}		
 
+	public boolean getNext(GeoPoint p) {													
+		//  check if we are in our interval
+		boolean lineTo = true;				
+		last_param = curr_param;
+		lastMaxBorderSet = maxBorderSet;
+		lastMinBorderSet = minBorderSet;
+		lastNoLineToSet = noLineToSet;
+		
+		// in the last step we got outside a border and stopped there
+		// now continue at the other border
+		if (maxBorderSet) {			
+			curr_param = min_param;	
+			lineTo = path.isClosedPath();
+			maxBorderSet = false;
+		} 
+		else if (minBorderSet) {
+			curr_param = max_param;	
+			lineTo = path.isClosedPath();
+			minBorderSet = false;		
+		} else if (noLineToSet) {
+			curr_param = borderParam(curr_param);
+			lineTo = false;
+			noLineToSet = false;
+		}
+		
+		// STANDARD CASE
+		else {
+			double new_param = curr_param + step_width;				
+			
+			// new_param too big
+			if (new_param >= max_param || noLineTo(new_param)) {
+				// slow down by making smaller steps
+				while ((new_param >= max_param || noLineTo(new_param)) && smallerStep()) {				
+					 new_param = curr_param + step_width;	
+				} 
+					
+				// max border reached
+				if (new_param >= max_param) {
+					new_param = max_param;
+					maxBorderSet = true;					
+				} else if (noLineTo(new_param)) {
+					new_param = borderParam(new_param);
+					noLineToSet = true;
+				}							
+			} 	
+			
+			// new_param too small
+			else if (new_param <= min_param || noLineTo(new_param)) {
+				// slow down by making smaller steps
+				while ((new_param <= min_param || noLineTo(new_param)) && smallerStep()) {
+					 new_param = curr_param + step_width;						
+				} 
+					
+				// min border reached
+				if (new_param <= min_param) {
+					new_param = min_param;
+					minBorderSet = true;					
+				} else if (noLineTo(new_param)) {
+					new_param = borderParam(new_param);
+					noLineToSet = true;
+				}		
+			}		
+			
+			// set parameter
+			curr_param = new_param;	
+		}					
+		
+		// calculate point for current parameter
+		calcPoint(p);
+		
+		return lineTo;
+	}
+
+	public void stepBack() {
+		super.stepBack();
+		lastNoLineToSet = noLineToSet;
+	}
+
+	protected boolean noLineTo(double new_param) {
+
+		if (curr_param < new_param) {
+			int leftIndexCurr = (int) Math.max(0, Math.floor(curr_param));
+			int rightIndexNew = (int) Math.min(myPointList.size()-1, Math.ceil(new_param));
+			for (int i = leftIndexCurr + 1; i <= rightIndexNew; i++) {
+				if (((MyPoint) myPointList.get(i)).lineTo == false)
+					return true;
+			}
+		} else if (curr_param > new_param) {
+			int leftIndexNew = (int) Math.max(0, Math.floor(new_param));
+			int rightIndexCurr = (int) Math.min(myPointList.size()-1, Math.ceil(curr_param));
+			for (int i = leftIndexNew + 1; i <= rightIndexCurr; i++) {
+				if (((MyPoint) myPointList.get(i)).lineTo == false)
+					return true;
+			} 
+		}
+		return false;
+	}
+	
+	protected double borderParam(double param) {
+
+		if (curr_param < param) {
+			int rightIndexCurr = (int) Math.min(myPointList.size()-1, Math.ceil(curr_param));
+			return rightIndexCurr;
+		} else if (curr_param > param) {
+			int leftIndexCurr = (int) Math.max(0, Math.floor(curr_param));
+			return leftIndexCurr;
+		}
+
+		// from this, suppose param is already an index
+		int paramindex = (int) Math.round(param);
+		paramindex = (int) Math.max(0, paramindex);
+		paramindex = (int) Math.min(paramindex, myPointList.size()-1);
+		if (posOrientation) {
+			for (int i = paramindex + 2; i <= myPointList.size()-1; i++) {
+				// lineTo at i == paramindex + 1 cannot happen
+				if (((MyPoint) myPointList.get(i)).lineTo == true)
+					return i-1;
+			}
+			maxBorderSet = true;
+			return max_param;
+		} else {
+			for (int i = paramindex - 1; i >= 0; i--) {
+				// lineTo at i == paramindex cannot happen
+				if (((MyPoint) myPointList.get(i)).lineTo == true)
+					return i;
+			}
+			minBorderSet = true;
+			return min_param;
+		}
+	}
 }
