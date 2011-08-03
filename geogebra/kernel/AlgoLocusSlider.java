@@ -326,6 +326,8 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
     	pointCount = 0;	 	     	
     	useCache = 0;
     	countUpdates = 0;
+    	lastX = Double.MAX_VALUE;
+    	lastY = Double.MAX_VALUE;
     	maxTimeExceeded = false;
     	foundDefined = false;
     	boolean prevQcopyDefined = false;
