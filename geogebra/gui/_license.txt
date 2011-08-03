@@ -18,7 +18,7 @@ DEVELOPERS
   * Calixte Denizet (France 2010-)
   * Arpad Fekete (Hungary 2010-)  
   * Zbynek Konecny (Czech Republic 2010-)  
-  * Ted Kosan (USA 2010-)  
+  * Ted Kosan (USA 2008-)  
   * Zoltan Kovacs (Hungary 2010-)  
   * Yves Kreis (Luxembourg 2005-)  
   * Florian Sonner (Germany 2008-)
