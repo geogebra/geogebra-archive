@@ -8,6 +8,7 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
 import geogebra.kernel.roots.RealRootUtil;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -265,6 +266,8 @@ public class DrawInequality extends Drawable {
 
 	@Override
 	public boolean hit(int x, int y) {
+		if(!geo.isEuclidianVisible())
+			return false;		
 		if (geo instanceof GeoFunction && ((GeoFunction) geo).showOnAxis()
 				&& Math.abs(y - view.toScreenCoordY(0)) > 3)
 			return false;
