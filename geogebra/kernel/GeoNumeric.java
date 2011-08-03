@@ -247,7 +247,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 
 	public boolean showInEuclidianView() {
-		return isDrawable() && isDefined() && !isInfinite() && 
+		return isDrawable() && isDefined() && 
 			(intervalMin == null || intervalMax == null || 
 					(intervalMinActive && intervalMaxActive));
 	}

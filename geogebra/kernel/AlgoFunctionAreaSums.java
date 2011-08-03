@@ -1208,11 +1208,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		case TYPE_BARCHART_ZIPF:	
 			
 				
-			if(type == TYPE_BARCHART_BINOMIAL
-					|| type == TYPE_BARCHART_ZIPF
-					|| type == TYPE_BARCHART_POISSON
-					|| type == TYPE_BARCHART_HYPERGEOMETRIC
-					|| type == TYPE_BARCHART_PASCAL){
+			if(type != TYPE_BARCHART_FREQUENCY_TABLE){
 				if(!prepareDistributionLists()) {
 					sum.setUndefined();
 					return;
@@ -1301,11 +1297,19 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				
 				area += yval[i] * step;
 			}
-
 			
-			// area of rectangles = total frequency				
-			sum.setValue(area);	
-			sum.updateCascade();
+			
+			// area of rectangles = total frequency
+			if(type == TYPE_BARCHART_FREQUENCY_TABLE){
+				sum.setValue(area);					
+			}
+			else{
+				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean()){
+					sum.setValue(Double.POSITIVE_INFINITY);
+				}
+				else sum.setValue(1.0);
+				sum.updateCascade();
+			}
 
 			
 			break;
@@ -1335,7 +1339,11 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				a = (NumberValue)ageo;
 				b = (NumberValue)bgeo;
 				
-				sum.setValue(yval[0]+yval[1]);
+				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean()){
+					sum.setValue(Double.POSITIVE_INFINITY);
+				}
+				else sum.setValue(1.0);
+				sum.updateCascade();
 
 				
 		 
