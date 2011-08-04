@@ -6,14 +6,29 @@ import geogebra.gui.util.ImageSelection;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragGestureRecognizer;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -28,11 +43,12 @@ import javax.swing.JPopupMenu;
  * @author gsturr 2010-6-30
  *
  */
-public class PlotPanelEuclidianView extends EuclidianView implements ComponentListener {
+public class PlotPanelEuclidianView extends EuclidianView 
+implements ComponentListener, DragGestureListener, DragSourceListener {
 
 
 	private EuclidianController ec;
-	PlotPanelEuclidianView thisEV;
+	PlotPanelEuclidianView plotPanelEV;
 
 	private static boolean[] showAxes = { true, true };
 	private static boolean showGrid = false;
@@ -52,8 +68,18 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 		this.setEVParams();
 	}
 
+	private boolean overDragRegion = false;
+	private DragSource ds;
 
+	protected void enableDnD(){
+		ds = new DragSource();
+		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
+	}
 
+	protected static Cursor defaultCursor = Cursor.getDefaultCursor(); 
+	protected static Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
+	protected static Cursor grabbingCursor, grabCursor; 
+	
 
 	/*************************************************
 	 * Construct the panel
@@ -61,9 +87,13 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 	public PlotPanelEuclidianView(Kernel kernel) {
 		super(new PlotPanelEuclidianController(kernel), showAxes, showGrid);
 
-		thisEV = this;
+		plotPanelEV = this;
 		this.ec = this.getEuclidianController();
-
+		
+		grabCursor = getCursorForImage(app.getImageIcon("cursor_grab.gif").getImage());
+		grabbingCursor = getCursorForImage(app.getImageIcon("cursor_grabbing.gif").getImage());
+		
+		
 		setMouseEnabled(false);
 		setMouseMotionEnabled(false);
 		setMouseWheelEnabled(false);
@@ -71,6 +101,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 		setAxesCornerCoordsVisible(false);
 		setContextMenuEnabled(true);
 
+		this.addMouseMotionListener( new MyMouseMotionListener());
 
 		setAntialiasing(true);
 		updateFonts();
@@ -81,6 +112,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 		plotSettings = new PlotSettings();
 
 		addComponentListener(this);
+		enableDnD();
 
 	}
 
@@ -269,6 +301,36 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 
 
 
+	class MyMouseMotionListener implements MouseMotionListener{
+
+		
+
+		public void mouseDragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void mouseMoved(MouseEvent e) {
+			overDragRegion = e.getPoint().y < 5;
+			//if(overDragRegion)
+				//plotPanelEV.setSelectionRectangle(new Rectangle(0, 0, plotPanelEV.getWidth(), plotPanelEV.getHeight()));
+			//else
+				//plotPanelEV.setSelectionRectangle(null);
+		}
+	}
+	
+	public void setDefaultCursor() {
+		if(overDragRegion)
+			setCursor(grabCursor);
+		else
+			setCursor(defaultCursor);
+	}
+	
+	
+
+	
+	
+	
 
 	//=============================================
 	//      Context Menu
@@ -288,7 +350,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 
 
 	ArrayList<AbstractAction> actionList;
-	
+
 	public ArrayList<AbstractAction> getActionList() {
 		if(actionList == null){
 			actionList = new ArrayList<AbstractAction>();
@@ -298,7 +360,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 		}
 		return actionList;
 	}
-	
+
 	public void setActionList(ArrayList<AbstractAction> actionList) {
 		this.actionList = actionList;
 	}
@@ -306,8 +368,8 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 	public void appendActionList(AbstractAction action) {
 		getActionList().add(action);
 	}
-	
-	
+
+
 
 	AbstractAction exportGraphicAction = new AbstractAction(app.getPlain("ExportAsPicture") + "...", app
 			.getImageIcon("image-x-generic.png")) {
@@ -354,7 +416,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 				public void run() {
 					app.setWaitCursor();
 					// copy drawing pad to the system clipboard
-					Image img = thisEV.getExportImage(1d);
+					Image img = plotPanelEV.getExportImage(1d);
 					ImageSelection imgSel = new ImageSelection(img);
 					Toolkit.getDefaultToolkit().getSystemClipboard()
 					.setContents(imgSel, null);
@@ -366,12 +428,76 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 	};
 
 
+
+
+
+
+	//=====================================================
+	// Drag and Drop 
+	//=====================================================
+
+
+	public void dragDropEnd(DragSourceDropEvent e) {}
+	public void dragEnter(DragSourceDragEvent e) {}
+	public void dragExit(DragSourceEvent e) {}
+	public void dragOver(DragSourceDragEvent e) {}
+	public void dropActionChanged(DragSourceDragEvent e) {}
+
+
+	private ArrayList<String> geoLabelList;
+
+	public void dragGestureRecognized(DragGestureEvent dge) {
+
+		if(overDragRegion){
+			plotPanelEV.setSelectionRectangle(null);
+			// start drag
+			ds.startDrag(dge, DragSource.DefaultCopyDrop, null, 
+					new Point(0,0), new TransferablePlotPanel(),  this);
+		}
+		
+	}
+
+
+	public static final DataFlavor plotPanelFlavor = new DataFlavor(PlotPanelEuclidianView.class, "plotPanel");
+	/**
+	 * 	Extension of Transferable for exporting PlotPanelEV contents
+	 */
+	public class TransferablePlotPanel implements Transferable {
+
+		
+		private final DataFlavor supportedFlavors[] = { plotPanelFlavor, DataFlavor.imageFlavor };
+
+		private String plotPanelIdentifier;
+		private Image image;
+		
+		public TransferablePlotPanel() {
+			image = plotPanelEV.getExportImage(1d);
+			plotPanelIdentifier = "ProbabilityCalculator";
+		}
+
+		public DataFlavor[] getTransferDataFlavors() {
+			return supportedFlavors;
+		}
+
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
+			for(int i = 0; i < supportedFlavors.length; i++)
+			if (flavor.equals(supportedFlavors[i]))
+				return true;
+			return false;
+		}
+
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+			if (flavor.equals(plotPanelFlavor))
+				return plotPanelIdentifier;
+			if (flavor.equals(DataFlavor.imageFlavor)){			
+				return  image;
+			}
+			throw new UnsupportedFlavorException(flavor);
+		}
+	}
+
+
 	
-
-
-
-
-
 
 
 

@@ -2,6 +2,7 @@ package geogebra.euclidian;
 
 
 import geogebra.gui.view.algebra.AlgebraViewTransferHandler;
+import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -47,7 +48,8 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		DataFlavor.imageFlavor,
 		DataFlavor.stringFlavor,
 		DataFlavor.javaFileListFlavor,
-		AlgebraViewTransferHandler.algebraViewFlavor };
+		AlgebraViewTransferHandler.algebraViewFlavor,
+		PlotPanelEuclidianView.plotPanelFlavor};
 
 	private boolean debug  = true;
 
@@ -112,6 +114,13 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		// 3) GGB files
 		//------------------------------------------
 
+		
+		// first try to get an image
+		if (t.isDataFlavorSupported(PlotPanelEuclidianView.plotPanelFlavor)){
+			app.getGuiManager().getProbabilityCalculator().exportGeosToEV();
+		return true;
+		}
+		
 		// first try to get an image
 		boolean imageDropped = ev.getApplication().getGuiManager().loadImage(startPoint, t, false);
 		if(imageDropped) return true;

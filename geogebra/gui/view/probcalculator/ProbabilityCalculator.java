@@ -1776,14 +1776,14 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				doGraphicsCopy();	
+				exportGeosToEV();	
 			}
 		};
 
 		plotPanel.appendActionList(exportToEVAction);
 	}
 
-	private void doGraphicsCopy(){
+	public void exportGeosToEV(){
 		
 		app.setWaitCursor();
 			
