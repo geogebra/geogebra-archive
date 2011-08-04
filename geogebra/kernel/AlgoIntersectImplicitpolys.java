@@ -189,8 +189,77 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		int m=a.getDegX();
 		int n=b.getDegX();
 		
-		//setting up reduced sylvester-matrix
+		//calculate the reduced Sylvester matrix. Complexity will be O(mnpq + m^2nq^2)
+		//where p=a.getDegY(), q=b.getDegY() 
+		//we should minimize m^2 n q^2 by choosing to use polyX or polyY univarType.
+		//if we exchange X and Y, m^2 n q^2 becomes p^2 q n^2, so what we need to compare
+		// is m^2 q and p^2 n
+		// TODO: if m^2 q > p^2 n, "exchange X and Y". 
+		
+		int q = a.getDegY();
 		PolynomialFunction[][] mat=new PolynomialFunction[n][n];
+		PolynomialFunction[] aNew = new PolynomialFunction[m+n];
+		PolynomialFunction[] bPolys = new PolynomialFunction[n+1];
+		
+		for (int i=0; i<=n; ++i)
+			bPolys[i] = new PolynomialFunction(b.getCoeff()[i]);
+		for (int i=0; i<n-1; ++i)
+			aNew[i] = new PolynomialFunction(new double[]{0});
+		for (int i=n-1; i<n+m; ++i)
+			aNew[i] = new PolynomialFunction(a.getCoeff()[i-n+1]);
+		
+		int leadIndex = n+m-1;
+		//Note: leadIndex of (n+1+t)-th row is equal to X-degree of b, + t. Use
+		//this row to help eliminate aNew[leadIndex].
+		while (leadIndex>= 2*n) {
+			if ( !(aNew[leadIndex].degree() == 0  && aNew[leadIndex].getCoefficients()[0] == 0) ) {
+				for (int j = leadIndex-n; j<leadIndex; ++j)
+					aNew[j] = aNew[j].multiply(bPolys[n]).subtract(
+							bPolys[j-leadIndex+n].multiply(aNew[leadIndex]));
+			}
+			--leadIndex;
+		}
+		while (leadIndex>= n) {
+			if ( !(aNew[leadIndex].degree() == 0  && aNew[leadIndex].getCoefficients()[0] == 0) ) {
+				for (int j = leadIndex-n; j<leadIndex; ++j)
+					aNew[j] = aNew[j].multiply(bPolys[n]).subtract(
+							bPolys[j-leadIndex+n].multiply(aNew[leadIndex]));
+			}
+			
+			for (int j=0; j<n; ++j)
+				mat[2*n-1-leadIndex][j] = new PolynomialFunction(aNew[leadIndex-n+j].getCoefficients());
+			
+			--leadIndex;
+		}
+		
+
+		
+		
+		//Calculate Sylvester matrix by definition. Complexity will be O((m+n)^3 * pq)
+		//where p=a.getDegY(), q=b.getDegY() 
+		/*
+		PolynomialFunction[][] mat=new PolynomialFunction[m+n][m+n];
+		for (int i = 0; i<n; ++i) {
+			for (int j = 0; j<i; ++j)
+				mat[i][j] = new PolynomialFunction(new double[]{0});
+			for (int j = i; j<= i+m; ++j)
+				mat[i][j] = new PolynomialFunction(a.getCoeff()[j-i]);
+			for (int j = i+m+1; j<n+m; ++j)
+				mat[i][j] = new PolynomialFunction(new double[]{0});
+		}
+		for (int i = n; i<m+n; ++i) {
+			for (int j = 0; j<i-n; ++j)
+				mat[i][j] = new PolynomialFunction(new double[]{0});
+			for (int j = i-n; j<= i; ++j)
+				mat[i][j] = new PolynomialFunction(b.getCoeff()[j-i+n]);
+			for (int j = i+1; j<n+m; ++j)
+				mat[i][j] = new PolynomialFunction(new double[]{0});
+		}
+		*/
+		
+		
+		//old code
+		/*PolynomialFunction[][] mat=new PolynomialFunction[n][n];
 		for (int i=0;i<n;i++){
 			for (int j=0;j<n;j++){
 				mat[i][j]=new PolynomialFunction(new double[]{0});
@@ -203,7 +272,8 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 					mat[i][j]=mat[i][j].subtract(p.multiply(new PolynomialFunction(b.getCoeff()[m+i-k-j])));
 				}
 			}
-		}
+		}*/
+		
 //		Application.debug(Arrays.deepToString(mat));
 		
 		//Gauß-Bareiss for calculating the determinant
