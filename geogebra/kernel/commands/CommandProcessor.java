@@ -5973,6 +5973,10 @@ class CmdTDistribution extends CommandProcessor {
 		boolean cumulative = false; // default for n=2
 		switch (n) {
 		case 3:
+			if (!arg[1].isGeoFunction() || !((GeoFunction)arg[1]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[1]);
+			}
+			
 			if (arg[2].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[2]).getBoolean();
 			} else
@@ -6079,6 +6083,11 @@ class CmdChiSquared extends CommandProcessor {
 		boolean cumulative = false; // default for n=2
 		switch (n) {
 		case 3:
+			
+			if (!arg[1].isGeoFunction() || !((GeoFunction)arg[1]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[1]);
+			}
+			
 			if (arg[2].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[2]).getBoolean();
 			} else
@@ -6185,6 +6194,10 @@ class CmdExponential extends CommandProcessor {
 		boolean cumulative = false; // default for n=2
 		switch (n) {
 		case 3:
+			if (!arg[1].isGeoFunction() || !((GeoFunction)arg[1]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[1]);
+			}
+			
 			if (arg[2].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[2]).getBoolean();
 			} else
@@ -6286,6 +6299,10 @@ class CmdLogNormal extends CommandProcessor {
 		
 		switch (n) {
 		case 4:
+			if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[2]);
+			}
+			
 			if (arg[3].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[3]).getBoolean();
 			} else
@@ -6347,6 +6364,10 @@ class CmdLogistic extends CommandProcessor {
 		
 		switch (n) {
 		case 4:
+			if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[2]);
+			}
+			
 			if (arg[3].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[3]).getBoolean();
 			} else
@@ -6405,6 +6426,10 @@ class CmdLogistic extends CommandProcessor {
 			
 			switch (n) {
 			case 4:
+				if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+					throw argErr(app, c.getName(), arg[1]);
+				}
+				
 				if (arg[3].isGeoBoolean()) {
 					cumulative = ((GeoBoolean)arg[3]).getBoolean();
 				} else
@@ -6473,6 +6498,10 @@ class CmdLogistic extends CommandProcessor {
 			boolean cumulative = false; // default for n=3
 			switch (n) {
 			case 4:
+				if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+					throw argErr(app, c.getName(), arg[1]);
+				}
+				
 				if (arg[3].isGeoBoolean()) {
 					cumulative = ((GeoBoolean)arg[3]).getBoolean();
 				} else
@@ -6543,6 +6572,10 @@ class CmdLogistic extends CommandProcessor {
 			boolean cumulative = false; // default for n=3
 			switch (n) {
 			case 4:
+				if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+					throw argErr(app, c.getName(), arg[2]);
+				}
+				
 				if (arg[3].isGeoBoolean()) {
 					cumulative = ((GeoBoolean)arg[3]).getBoolean();
 				} else
@@ -6658,6 +6691,10 @@ class CmdGamma extends CommandProcessor {
 		boolean cumulative = false; // default for n=3
 		switch (n) {
 		case 4:
+			if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[2]);
+			}
+			
 			if (arg[3].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[3]).getBoolean();
 			} else
@@ -6773,6 +6810,10 @@ class CmdCauchy extends CommandProcessor {
 		boolean cumulative = false; // default for n=3
 		switch (n) {
 		case 4:
+			if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[2]);
+			}
+			
 			if (arg[3].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[3]).getBoolean();
 			} else
@@ -7324,6 +7365,10 @@ class CmdWeibull extends CommandProcessor {
 		boolean cumulative = false; // default for n=3
 		switch (n) {
 		case 4:
+			if (!arg[2].isGeoFunction() || !((GeoFunction)arg[2]).toString().equals("x")) {
+				throw argErr(app, c.getName(), arg[2]);
+			}
+			
 			if (arg[3].isGeoBoolean()) {
 				cumulative = ((GeoBoolean)arg[3]).getBoolean();
 			} else
