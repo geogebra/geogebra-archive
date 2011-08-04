@@ -190,7 +190,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		int n=b.getDegX();
 		
 		//setting up reduced sylvester-matrix
-		/*PolynomialFunction[][] mat=new PolynomialFunction[n][n];
+		PolynomialFunction[][] mat=new PolynomialFunction[n][n];
 		for (int i=0;i<n;i++){
 			for (int j=0;j<n;j++){
 				mat[i][j]=new PolynomialFunction(new double[]{0});
@@ -203,37 +203,17 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 					mat[i][j]=mat[i][j].subtract(p.multiply(new PolynomialFunction(b.getCoeff()[m+i-k-j])));
 				}
 			}
-		}*/
-		
-		//TODO: use the memory more compactly
-		PolynomialFunction[][] mat=new PolynomialFunction[m+n][m+n];
-		for (int i = 0; i<n; ++i) {
-			for (int j = 0; j<i; ++j)
-				mat[i][j] = new PolynomialFunction(new double[]{0});
-			for (int j = i; j<= i+m; ++j)
-				mat[i][j] = new PolynomialFunction(a.getCoeff()[j-i]);
-			for (int j = i+m+1; j<n+m; ++j)
-				mat[i][j] = new PolynomialFunction(new double[]{0});
 		}
-		for (int i = n; i<m+n; ++i) {
-			for (int j = 0; j<i-n; ++j)
-				mat[i][j] = new PolynomialFunction(new double[]{0});
-			for (int j = i-n; j<= i; ++j)
-				mat[i][j] = new PolynomialFunction(b.getCoeff()[j-i+n]);
-			for (int j = i+1; j<n+m; ++j)
-				mat[i][j] = new PolynomialFunction(new double[]{0});
-		}
-		
 //		Application.debug(Arrays.deepToString(mat));
 		
 		//Gauß-Bareiss for calculating the determinant
 		
 		PolynomialFunction c=new PolynomialFunction(new double[]{1});
 		PolynomialFunction det=null;
-		for (int k=0;k<m+n-1;k++){
+		for (int k=0;k<n-1;k++){
 			int r=0;
 			double glc=0; //greatest leading coefficient
-			for (int i=k;i<m+n;i++){
+			for (int i=k;i<n;i++){
 				double lc=getLeadingCoeff(mat[i][k]);
 				if (!Kernel.isZero(lc)){
 					if (Math.abs(lc)>Math.abs(glc)){
@@ -246,15 +226,15 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 				det=new PolynomialFunction(new double[]{0});
 				break;
 			}else if (r>k){
-				for (int j=k;j<m+n;j++){
+				for (int j=k;j<n;j++){
 					//exchange functions
 					PolynomialFunction temp=mat[r][j];
 					mat[r][j]=mat[k][j];
 					mat[k][j]=temp;
 				}
 			}
-			for (int i=k+1;i<m+n;i++){
-				for (int j=k+1;j<m+n;j++){
+			for (int i=k+1;i<n;i++){
+				for (int j=k+1;j<n;j++){
 					PolynomialFunction t1=mat[i][j].multiply(mat[k][k]);
 					PolynomialFunction t2=mat[i][k].multiply(mat[k][j]);
 					PolynomialFunction t=t1.subtract(t2);
@@ -264,7 +244,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 			c=mat[k][k];
 		}
 		if (det==null)
-			det=mat[m+n-1][m+n-1];
+			det=mat[n-1][n-1];
 //		Application.debug("resultante = "+det);
 		univarType=PolyY;
 		double roots[]=det.getCoefficients();
