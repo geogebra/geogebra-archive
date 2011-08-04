@@ -1,20 +1,11 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.main.Application;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.text.NumberFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JTable;
-import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 
 public class MultiVarStatPanel extends BasicStatTable {
 
@@ -64,12 +55,16 @@ public class MultiVarStatPanel extends BasicStatTable {
 		
 		for(int row = 0; row < titles.length; row++ ){
 			// get the geoLabel for the current row list
-			dataLabel = dataList.get(row).getLabel();
+			//dataLabel = dataList.get(row).getLabel();
 			// get the stats for this list
 			for(int col = 0; col < cmdMap.length; col++){
-				expr = cmdMap[col][1] + "[" + dataLabel + "]";
-				value = evaluateExpression(expr);
-				model.setValueAt(statDialog.format(value), row, col);
+				//expr = cmdMap[col][1] + "[" + dataLabel + "]";
+				//value = evaluateExpression(expr);
+				AlgoElement algo = getStatMapAlgo(cmdMap[row][1], (GeoList)dataList.get(row), null);
+
+				app.getKernel().getConstruction().removeFromConstructionList(algo);
+				
+				model.setValueAt(statDialog.format(((GeoNumeric)algo.getGeoElements()[0]).getDouble()), row, col);
 			}
 		}
 		statTable.repaint();

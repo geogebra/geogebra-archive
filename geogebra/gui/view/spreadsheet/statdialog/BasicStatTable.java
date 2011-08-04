@@ -206,7 +206,7 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 	}
 
 
-	private AlgoElement getStatMapAlgo(String algoName, GeoList dataList,
+	protected AlgoElement getStatMapAlgo(String algoName, GeoList dataList,
 			GeoElement geoRegression) {
 		AlgoElement ret = null;
 		Construction cons = kernel.getConstruction();
