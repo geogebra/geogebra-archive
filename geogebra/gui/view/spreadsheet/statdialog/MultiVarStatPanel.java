@@ -60,7 +60,7 @@ public class MultiVarStatPanel extends BasicStatTable {
 			for(int col = 0; col < cmdMap.length; col++){
 				//expr = cmdMap[col][1] + "[" + dataLabel + "]";
 				//value = evaluateExpression(expr);
-				AlgoElement algo = getStatMapAlgo(cmdMap[row][1], (GeoList)dataList.get(row), null);
+				AlgoElement algo = getStatMapAlgo(cmdMap[col][1], (GeoList)dataList.get(row), null);
 
 				app.getKernel().getConstruction().removeFromConstructionList(algo);
 				
