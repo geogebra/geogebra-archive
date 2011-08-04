@@ -139,11 +139,26 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		//btnHelp.setToolTipText(app.getPlainTooltip("FastHelp"));
 		btnHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.getGuiManager().openHelp("Construction_Protocol");
+					}
+				};
+				runner.start();
+			}
+		});
+		add(btnHelp);
+	
+		//Help button
+		JButton btnHelp2 = new JButton(app.getImageIcon("help.png"));
+		//btnHelp.setToolTipText(app.getPlainTooltip("FastHelp"));
+		btnHelp2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				app.showHelp("ConstructionProtocolHelp");
 				//requestFocus();
 			}
 		});
-		add(btnHelp);
+		add(btnHelp2);
 		
 		setLabels();
 	}
@@ -158,6 +173,8 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		btnExport.setToolTipText(app.getPlainTooltip("ExportAsWebpage"));
 		btnPrint.setToolTipText(app.getMenuTooltip("Print"));
 		btnHelp.setToolTipText(app.getMenuTooltip("FastHelp"));
+		miShowOnlyBreakpoints.setText(app.getPlain("ShowOnlyBreakpoints"));
+		miColorfulConstructionProtocol.setText(app.getPlain("ColorfulConstructionProtocol"));
 	}
 
 	/**

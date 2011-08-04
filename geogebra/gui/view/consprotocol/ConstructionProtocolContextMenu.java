@@ -1,29 +1,20 @@
 package geogebra.gui.view.consprotocol;
 
-import geogebra.gui.TitlePanel;
 import geogebra.gui.view.consprotocol.ConstructionProtocolView.ColumnKeeper;
-import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Color;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.print.PrinterException;
-import java.text.MessageFormat;
-
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
 public class ConstructionProtocolContextMenu extends JPopupMenu {

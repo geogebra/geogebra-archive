@@ -1,13 +1,9 @@
 package geogebra.gui.layout.panels;
 
-import java.awt.Color;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-
 import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
+
+import javax.swing.JComponent;
 
 public class ConstructionProtocolDockPanel extends DockPanel {
 
@@ -24,7 +20,8 @@ public class ConstructionProtocolDockPanel extends DockPanel {
 			'L' // ctrl-shift-L
 		);
 		
-		this.app = app; 
+		this.app = app;
+		this.setShowStyleBar(true);
 	}
 
 	protected JComponent loadComponent() {
