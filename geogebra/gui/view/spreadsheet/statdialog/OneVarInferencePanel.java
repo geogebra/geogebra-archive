@@ -536,10 +536,6 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 
 	}
 
-	private double getCmdResult(String cmd, String label){
-		return evaluateExpression(cmd + "[" + label + "]");
-	}
-
 
 	private double adjustedPValue(double p, double testStatistic, String tail){
 
