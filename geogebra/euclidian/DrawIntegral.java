@@ -78,7 +78,7 @@ public class DrawIntegral extends Drawable {
 		else
 			gp.reset(); 				
 		gp.moveTo(ax, y0); 
-		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, false);
+		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, DrawParametricCurve.GAP_LINE_TO);
 		gp.lineTo(bx, y0);
 		gp.lineTo(ax, y0);			
 		

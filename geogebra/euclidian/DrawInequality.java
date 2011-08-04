@@ -7,7 +7,6 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
-import geogebra.kernel.roots.RealRootUtil;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -367,26 +366,24 @@ public class DrawInequality extends Drawable {
 			border.setLineThickness(geo.lineThickness);
 			updateStrokes(border);
 			if (ineq.getType() == Inequality.INEQUALITY_PARAMETRIC_X) {
-				double ax = view.toRealWorldCoordY(-10);
-				double bx = view.toRealWorldCoordY(view.height + 10);
-				double[] intervalX = RealRootUtil.getDefinedInterval(border
-						.getFunction(), ax, bx);
-				ax = intervalX[0];
-				bx = intervalX[1];
+				double bx = view.toRealWorldCoordY(-10);
+				double ax = view.toRealWorldCoordY(view.height + 10);				
 				double axEv = view.toScreenCoordYd(ax);
 				double bxEv = view.toScreenCoordYd(bx);
 				if (ineq.isAboveBorder()) {
+					Application.debug("above"+ax+":"+bx);
 					gp.moveTo(view.width + 10, axEv);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, false);
-					gp.lineTo(view.width + 10, bxEv);
+							false, DrawParametricCurve.GAP_RESET_XMAX);
+					gp.lineTo(view.width + 10, gp.getCurrentPoint().getY());
 					gp.lineTo(view.width + 10, axEv);
 					gp.closePath();
 				} else {
+					Application.debug("below");
 					gp.moveTo(-10, axEv);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, false);
-					gp.lineTo(-10, bxEv);
+							false, DrawParametricCurve.GAP_RESET_XMIN);
+					gp.lineTo(-10, gp.getCurrentPoint().getY());
 					gp.lineTo(-10, axEv);
 					gp.closePath();
 				}
@@ -398,25 +395,20 @@ public class DrawInequality extends Drawable {
 				}
 			} else {
 				double ax = view.toRealWorldCoordX(-10);
-				double bx = view.toRealWorldCoordX(view.width + 10);
-				double[] intervalX = RealRootUtil.getDefinedInterval(border
-						.getFunction(), ax, bx);
-				ax = intervalX[0];
-				bx = intervalX[1];
-				double axEv = view.toScreenCoordXd(ax);
-				double bxEv = view.toScreenCoordXd(bx);
+				double bx = view.toRealWorldCoordX(view.width + 10);				
+				double axEv = view.toScreenCoordXd(ax);				
 				if (ineq.isAboveBorder()) {
 					gp.moveTo(axEv, -10);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, false);
-					gp.lineTo(bxEv, -10);
+							false, DrawParametricCurve.GAP_RESET_YMIN);
+					gp.lineTo(gp.getCurrentPoint().getX(), -10);
 					gp.lineTo(axEv, -10);
 					gp.closePath();
 				} else {
 					gp.moveTo(axEv, view.height + 10);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, false);
-					gp.lineTo(bxEv, view.height + 10);
+							false, DrawParametricCurve.GAP_RESET_YMAX);
+					gp.lineTo(gp.getCurrentPoint().getX(), view.height + 10);
 					gp.lineTo(axEv, view.height + 10);
 					gp.closePath();
 				}

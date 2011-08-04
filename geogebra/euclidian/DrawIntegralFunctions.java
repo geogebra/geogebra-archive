@@ -81,8 +81,8 @@ public class DrawIntegralFunctions extends Drawable {
 			gp = new GeneralPathClipped(view); 
 		gp.reset();
 		gp.moveTo(ax, ay);
-		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, false);		
-		DrawParametricCurve.plotCurve(g, bRW, aRW, view, gp, false, false);
+		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, DrawParametricCurve.GAP_LINE_TO);		
+		DrawParametricCurve.plotCurve(g, bRW, aRW, view, gp, false, DrawParametricCurve.GAP_LINE_TO);
 		gp.closePath();		
 		
 //		 gp on screen?		

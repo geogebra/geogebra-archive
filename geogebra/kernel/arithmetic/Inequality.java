@@ -122,6 +122,7 @@ public class Inequality {
 					ExpressionNode.PLUS, fv[1]);
 			m.simplifyLeafs();
 			fun = new Function(m, fv[0]);
+			Application.debug("par y");
 			type = INEQUALITY_PARAMETRIC_Y;
 		} else if (coefX != null && !Kernel.isZero(coefX)
 				&& !Double.isNaN(coefX)) {
@@ -150,16 +151,17 @@ public class Inequality {
 		else {						
 			GeoElement newBorder = kernel.getAlgebraProcessor()
 					.evaluateToGeoElement(normal.toValueString() + "=0", false);
-			if (newBorder == null)
+			if (newBorder == null || newBorder.isGeoImplicitPoly())
 				return;
-			if (newBorder.isGeoImplicitPoly()) {
+			/* TODO: return this once filling works for implicit polynomials
+			 * if (newBorder.isGeoImplicitPoly()) {
 				type = INEQUALITY_IMPLICIT;
 				if (impBorder == null)
 					impBorder = (GeoImplicitPoly) newBorder;
 				else
 					impBorder.set(newBorder);
 				border = impBorder;
-			}
+			}*/
 			if (newBorder.isGeoConic()) {
 				type = INEQUALITY_CONIC;
 				if (conicBorder == null)
@@ -174,14 +176,14 @@ public class Inequality {
 			if (newBorder.isGeoLine()) {
 				type = INEQUALITY_CONIC;
 				if (conicBorder == null)
-					conicBorder = new GeoConic(kernel.getConstruction());
-				((GeoLine)newBorder).toGeoConic(conicBorder);
+					conicBorder = new GeoConic(kernel.getConstruction());				
 				border = conicBorder;
 			}
 		}
 		if (type == INEQUALITY_PARAMETRIC_X || type == INEQUALITY_PARAMETRIC_Y) {
 			funBorder = new GeoFunction(kernel.getConstruction());
 			funBorder.setFunction(fun);
+			Application.debug(funBorder);
 			if (type == INEQUALITY_PARAMETRIC_X) {
 				funBorder.swapEval();
 			}

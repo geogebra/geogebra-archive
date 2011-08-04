@@ -48,6 +48,13 @@ public class DrawParametricCurve extends Drawable {
 	// the curve is sampled at least at this many positions to plot it
 	private static final int MIN_SAMPLE_POINTS = 80;
 	
+	public static final int GAP_LINE_TO = 0;
+	public static final int GAP_MOVE_TO = 1;
+	public static final int GAP_RESET_XMIN = 2;
+	public static final int GAP_RESET_YMIN = 3;
+	public static final int GAP_RESET_XMAX = 4;
+	public static final int GAP_RESET_YMAX = 5;
+	
 
 //	low quality settings
 //	// maximum and minimum distance between two plot points in pixels
@@ -123,7 +130,7 @@ public class DrawParametricCurve extends Drawable {
 					min,
 					max,
 					view, gp,
-					labelVisible, !fillCurve); 
+					labelVisible, fillCurve?0:1); 
 		}
 
 		// gp on screen?		
@@ -199,7 +206,7 @@ public class DrawParametricCurve extends Drawable {
 			double t1, double t2, EuclidianView view, 
 			GeneralPathClipped gp,
 			boolean calcLabelPos, 
-			boolean moveToAllowed) 
+			int moveToAllowed) 
     {     		
 
     	countPoints = 0; 
@@ -251,7 +258,7 @@ public class DrawParametricCurve extends Drawable {
 								EuclidianView view, 
 								GeneralPathClipped gp,
 								boolean calcLabelPos, 
-								boolean moveToAllowed) 
+								int moveToAllowed) 
 	 {		
 		// plot interval for t in [t1, t2]
 		// If we run into a problem, i.e. an undefined point f(t), we bisect
@@ -296,12 +303,46 @@ public class DrawParametricCurve extends Drawable {
 		// FIRST POINT
 		// c(t1) and c(t2) are defined, lets go ahead and move to our first point (x0, y0) 
 		// note: lineTo will automatically do a moveTo if this is the first gp point
-		if (moveToAllowed) {	
+		if (moveToAllowed == GAP_MOVE_TO) {	
 			moveTo(gp, x0, y0);
-		} else {
+		} else if (moveToAllowed == GAP_LINE_TO){
 			lineTo(gp, x0, y0);
-		}			
-	
+		}else if (moveToAllowed == GAP_RESET_XMIN){
+			double d = gp.getCurrentPoint().getY();
+			if(!Kernel.isEqual(d, y0)){
+				lineTo(gp, -10,d);
+				lineTo(gp, -10,y0);
+			}
+			lineTo(gp, x0, y0);
+
+		}
+		else if (moveToAllowed == GAP_RESET_XMAX){
+			double d = gp.getCurrentPoint().getY();
+			if(!Kernel.isEqual(d, y0)){
+				lineTo(gp, view.width+10,d);
+				lineTo(gp, view.width+10,y0);
+			}
+			lineTo(gp, x0, y0);
+			
+		}
+		else if (moveToAllowed == GAP_RESET_YMIN){
+			double d = gp.getCurrentPoint().getX();
+			if(!Kernel.isEqual(d, x0)){
+				lineTo(gp, d,-10);
+				lineTo(gp, x0,-10);
+			}
+				lineTo(gp, x0, y0);
+		}
+		else if (moveToAllowed == GAP_RESET_YMAX){
+			double d = gp.getCurrentPoint().getX();
+			if(!Kernel.isEqual(d, x0)){
+			lineTo(gp, gp.getCurrentPoint().getX(),view.height+10);
+			lineTo(gp, x0,view.height+10);
+			}
+			lineTo(gp, x0, y0);
+		}
+
+		//TODO	
 		// INIT plotting algorithm
 		int LENGTH = MAX_DEFINED_BISECTIONS + 1;
 		int dyadicStack[]=new int[LENGTH];
@@ -408,7 +449,8 @@ public class DrawParametricCurve extends Drawable {
 			
 			// add point to general path: lineTo or moveTo?
 			boolean lineTo = true;
-			if (moveToAllowed) {
+			//TODO
+			if (moveToAllowed == GAP_MOVE_TO) {
 				if (segOffScreen) {
 					// don't draw segments that are off screen
 					lineTo = false;
@@ -641,7 +683,7 @@ public class DrawParametricCurve extends Drawable {
 				EuclidianView view, 
 				GeneralPathClipped gp,
 				boolean calcLabelPos, 
-				boolean moveToAllowed, Point labelPoint) 
+				int moveToAllowed, Point labelPoint) 
 	 {
 		// stop recursion for too many intervals
 		if (intervalDepth > MAX_PROBLEM_BISECTIONS || t1 == t2) {	

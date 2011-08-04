@@ -799,20 +799,20 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 	public boolean initIneqs(ExpressionNode fe, FunctionalNVar functional) {
 		if (ineqs == null || fe == getExpression())
 			ineqs = new IneqTree();
-		boolean b = initIneqs(fe, functional, ineqs);
+		boolean b = initIneqs(fe, functional, ineqs,false);
 		ineqs.recomputeSize();
 		return b;
 	}
 
 	private boolean initIneqs(ExpressionNode fe, FunctionalNVar functional,
-			IneqTree tree) {
+			IneqTree tree, boolean negate) {
 		int op = fe.getOperation();
 		ExpressionNode leftTree = fe.getLeftTree();
 		ExpressionNode rightTree = fe.getRightTree();
 		if (op == ExpressionNode.GREATER || op == ExpressionNode.GREATER_EQUAL
 				|| op == ExpressionNode.LESS || op == ExpressionNode.LESS_EQUAL) {
 			Inequality newIneq = new Inequality(kernel, leftTree, rightTree,
-					op, getFunction().getFunctionVariables(), functional);
+					adjustOp(op,negate), getFunction().getFunctionVariables(), functional);
 			if (newIneq.getType() != Inequality.INEQUALITY_INVALID) {
 				if (newIneq.getType() != Inequality.INEQUALITY_1VAR_X
 						&& newIneq.getType() != Inequality.INEQUALITY_1VAR_Y)
@@ -823,18 +823,32 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 		} else if (op == ExpressionNode.AND || op == ExpressionNode.OR
 				|| op == ExpressionNode.EQUAL_BOOLEAN
 				|| op == ExpressionNode.NOT_EQUAL) {
-			tree.operation = op;
+			tree.operation = adjustOp(op,negate);
 			tree.left = new IneqTree();
 			tree.right = new IneqTree();
-			return initIneqs(leftTree, functional, tree.left)
-					&& initIneqs(rightTree, functional, tree.right);
+			return initIneqs(leftTree, functional, tree.left,negate)
+					&& initIneqs(rightTree, functional, tree.right,negate);
 		} else if (op == ExpressionNode.NOT) {
-			tree.operation = op;
-			tree.left = new IneqTree();
-			return initIneqs(leftTree, functional, tree.left);
+			return initIneqs(leftTree, functional, tree,!negate);
 		} else
 			return false;
 
+	}
+
+	private int adjustOp(int op, boolean negate) {
+		if(negate==false)
+			return op;
+		switch(op){
+			case ExpressionNode.AND: return ExpressionNode.OR;
+			case ExpressionNode.OR: return ExpressionNode.AND;
+			case ExpressionNode.GREATER_EQUAL: return ExpressionNode.LESS;
+			case ExpressionNode.GREATER: return ExpressionNode.LESS_EQUAL;
+			case ExpressionNode.LESS_EQUAL: return ExpressionNode.GREATER;
+			case ExpressionNode.LESS: return ExpressionNode.GREATER_EQUAL;
+			case ExpressionNode.EQUAL_BOOLEAN: return ExpressionNode.NOT_EQUAL;
+			case ExpressionNode.NOT_EQUAL: return ExpressionNode.EQUAL_BOOLEAN;
+		}
+		return -1;
 	}
 
 	/**
