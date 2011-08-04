@@ -22,7 +22,7 @@ public class AlgoLengthFunction extends AlgoElementCAS {
         length.setLabel(label); 	
     }
 		
-	AlgoLengthFunction(Construction cons, GeoFunction f, GeoNumeric A, GeoNumeric B) {
+	public AlgoLengthFunction(Construction cons, GeoFunction f, GeoNumeric A, GeoNumeric B) {
         super(cons);
         this.A = A;
         this.B = B;

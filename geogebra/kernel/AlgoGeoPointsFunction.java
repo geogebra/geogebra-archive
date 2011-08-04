@@ -43,7 +43,7 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
 
     private String[] labels;
     private boolean initLabels;
-	protected boolean setLabels;
+	protected boolean setLabels = false;
 	
     //remove? double[] 		curXValues = new double[30]; // current x-values
     int 			numberOfXValues;
@@ -57,24 +57,39 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
      * Computes all roots of f
      */
     public AlgoGeoPointsFunction(
-        Construction cons,
-        String[] labels,
-        boolean setLabels,
-        GeoFunction f) {
-    	super(cons);
-    	this.labels=labels;
-    	this.setLabels=setLabels;			//In subclass: !cons.isSuppressLabelsActive();
-    	this.f=f;
-    	
-    	tempPoint = new GeoPoint(cons);
-        
-        //  make sure root points is not null
-        int number = labels == null ? 1 : Math.max(1, labels.length);
-        points = new GeoPoint[0];
-        initPoints(number);
-        initLabels = true;  
-        // setInputOutput, compute(), show at least one point: must be done in subclass.
-    }//Constructor
+            Construction cons,
+            String[] labels,
+            boolean setLabels,
+            GeoFunction f) {
+        	super(cons);
+        	this.labels=labels;
+        	this.setLabels=setLabels;			//In subclass: !cons.isSuppressLabelsActive();
+        	this.f=f;
+        	
+        	tempPoint = new GeoPoint(cons);
+            
+            //  make sure root points is not null
+            int number = labels == null ? 1 : Math.max(1, labels.length);
+            points = new GeoPoint[0];
+            initPoints(number);
+            initLabels = true;  
+            // setInputOutput, compute(), show at least one point: must be done in subclass.
+        }//Constructor
+
+    public AlgoGeoPointsFunction(
+            Construction cons,
+            GeoFunction f) {
+        	super(cons);
+        	this.f=f;
+        	
+        	tempPoint = new GeoPoint(cons);
+            
+            //  make sure root points is not null
+            int number = 1;
+            points = new GeoPoint[0];
+            initPoints(number);
+            // setInputOutput, compute(), show at least one point: must be done in subclass.
+        }//Constructor
 
 
     /**

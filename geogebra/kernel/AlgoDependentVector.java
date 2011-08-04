@@ -39,6 +39,11 @@ public class AlgoDependentVector extends AlgoElement {
         
     /** Creates new AlgoDependentVector */
     public AlgoDependentVector(Construction cons, String label, ExpressionNode root) {
+    	this(cons, root);     
+        v.setLabel(label);
+    }   
+    
+    public AlgoDependentVector(Construction cons, ExpressionNode root) {
     	super(cons);
         this.root = root;        
         
@@ -48,7 +53,6 @@ public class AlgoDependentVector extends AlgoElement {
         // compute value of dependent number
         v.z = 0.0d;  
         compute();      
-        v.setLabel(label);
     }   
     
 	public String getClassName() {

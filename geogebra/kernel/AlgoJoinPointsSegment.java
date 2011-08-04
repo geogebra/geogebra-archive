@@ -44,7 +44,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         s.setLabel(label);
     }
 
-    AlgoJoinPointsSegment(
+    public AlgoJoinPointsSegment(
         Construction cons,        
         GeoPoint P,
         GeoPoint Q,

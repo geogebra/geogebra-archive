@@ -38,6 +38,11 @@ public class AlgoJoinPoints extends AlgoElement {
         
     /** Creates new AlgoJoinPoints */
     AlgoJoinPoints(Construction cons, String label, GeoPoint P, GeoPoint Q) {
+        this(cons, P, Q);
+        g.setLabel(label);
+    }   
+    
+    public AlgoJoinPoints(Construction cons, GeoPoint P, GeoPoint Q) {
         super(cons);
         this.P = P;
         this.Q = Q;                
@@ -49,7 +54,6 @@ public class AlgoJoinPoints extends AlgoElement {
         // compute line through P, Q
         compute();      
         addIncidence();
-        g.setLabel(label);
     }   
     
     private void addIncidence() {

@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.main.Application;
 
 /**
  *
@@ -43,9 +44,13 @@ public class AlgoDependentPoint extends AlgoElement {
      * @param root expression defining the result
      * @param complex true if result is complex number*/
     public AlgoDependentPoint(Construction cons, String label, ExpressionNode root, boolean complex) {
+    	this(cons, root, complex);
+    	P.setLabel(label);
+    }   
+    
+    public AlgoDependentPoint(Construction cons, ExpressionNode root, boolean complex) {
     	super(cons);
         this.root = root;        
-        
         P = new GeoPoint(cons); 
         
         
@@ -56,9 +61,7 @@ public class AlgoDependentPoint extends AlgoElement {
 
     	// compute value of dependent number
         compute();      
-        
 
-    	P.setLabel(label);
     }   
     
 	public String getClassName() {

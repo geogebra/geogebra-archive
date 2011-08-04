@@ -36,11 +36,11 @@ public class AlgoCasDerivative extends AlgoCasBase {
         g.toGeoElement().setLabel(label);
     }
     
-    AlgoCasDerivative(Construction cons,  CasEvaluableFunction f) {
+    public AlgoCasDerivative(Construction cons,  CasEvaluableFunction f) {
         this(cons, f, null, null);      
     }
     
-    AlgoCasDerivative(Construction cons,  CasEvaluableFunction f, GeoNumeric var, NumberValue order) {
+    public AlgoCasDerivative(Construction cons,  CasEvaluableFunction f, GeoNumeric var, NumberValue order) {
             super(cons, f);
             this.var = var;
             this.order = order;

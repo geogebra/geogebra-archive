@@ -94,6 +94,21 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     	
     }//Constructor TYPE_ROOTS
     
+    public AlgoRoots(Construction cons, GeoFunction function,NumberValue left,NumberValue right) {
+    	super(cons,function);			//Ancestor gets first function for points!
+    	this.f=function;
+    	this.left=left;
+    	this.geoleft=left.toGeoElement();
+    	this.right=right;
+    	this.georight=right.toGeoElement();
+    	
+    	type=TYPE_ROOTS;
+    	    	
+    	setInputOutput();
+    	
+    	compute();
+    }//Constructor TYPE_ROOTS
+    
     /** 
      * Computes "all" Roots of f in <l,r>
      * TYPE_INTERSECTIONS

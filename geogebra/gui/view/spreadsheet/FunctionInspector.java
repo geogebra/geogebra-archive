@@ -18,14 +18,26 @@ import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.kernel.AlgoCasDerivative;
+import geogebra.kernel.AlgoDependentNumber;
+import geogebra.kernel.AlgoDependentPoint;
+import geogebra.kernel.AlgoIntegralDefinite;
+import geogebra.kernel.AlgoJoinPointsSegment;
+import geogebra.kernel.AlgoLengthFunction;
+import geogebra.kernel.AlgoRoots;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
@@ -128,7 +140,8 @@ KeyListener, ActionListener{
 
 	// Geos
 	private GeoElement selectedGeo, tangentLine, oscCircle, xSegment, ySegment;
-	private GeoElement functionInterval, derivative, derivative2;
+	private GeoElement functionInterval;
+	private GeoFunction derivative, derivative2;
 	private GeoPoint testPoint, lowPoint, highPoint;
 	private GeoList pts;
 	private ArrayList<GeoElement> geoList;
@@ -498,7 +511,7 @@ KeyListener, ActionListener{
 		isChangingValue = true;
 
 		boolean isFunction = selectedGeo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTION;
-		String lbl = selectedGeo.getLabel();
+		//String lbl = selectedGeo.getLabel();
 		ArrayList<String> property = new ArrayList<String>();
 		ArrayList<String> value = new ArrayList<String>();
 
@@ -507,23 +520,47 @@ KeyListener, ActionListener{
 		xMin = coords[0];
 		highPoint.getCoords(coords);
 		xMax = coords[0];
+		ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
+		ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
 
-		double integral = evaluateExpression("Integral[" + lbl + "," + xMin + "," + xMax + "]");
-		double mean = integral/(xMax - xMin);
-		double length = evaluateExpression("Length[" + lbl + "," + xMin + "," + xMax + "]");
+		AlgoDependentNumber xLow = new AlgoDependentNumber(cons, low, false);
+		cons.removeFromConstructionList(xLow);
 
+		AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
+		cons.removeFromConstructionList(xHigh);
+
+		//double integral = evaluateExpression("Integral[" + lbl + "," + xMin + "," + xMax + "]");
+		
 		GeoFunction f = (GeoFunction) selectedGeo;
+
+		AlgoIntegralDefinite inte = new AlgoIntegralDefinite(cons, f, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0], null);
+		cons.removeFromConstructionList(inte);
+		
+		double integral = ((GeoNumeric)inte.getGeoElements()[0]).getDouble();
+		
+		double mean = integral/(xMax - xMin);
+		//double length = evaluateExpression("Length[" + lbl + "," + xMin + "," + xMax + "]");
+
+		AlgoLengthFunction len = new AlgoLengthFunction(cons, f, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
+		cons.removeFromConstructionList(len);
+		
+		double length = ((GeoNumeric)len.getGeoElements()[0]).getDouble();
+		
 		ExtremumFinder ef=new ExtremumFinder();
 		RealRootFunction fun=f.getRealRootFunctionY();    
 
 
-		double yMin = evaluateExpression(lbl + "(" + xMin + ")");
-		double yMax = evaluateExpression(lbl + "(" + xMax + ")");
-
+		//double yMin = evaluateExpression(lbl + "(" + xMin + ")");
+		//double yMax = evaluateExpression(lbl + "(" + xMax + ")");
+		double yMin = f.evaluate(xMin);
+		double yMax = f.evaluate(xMax);
+		
 		double xMinInt = ef.findMinimum(xMin,xMax,fun,5.0E-8);
 		double xMaxInt = ef.findMaximum(xMin,xMax,fun,5.0E-8);
-		double yMinInt = evaluateExpression(lbl + "(" + xMinInt + ")");
-		double yMaxInt = evaluateExpression(lbl + "(" + xMaxInt + ")");
+		//double yMinInt = evaluateExpression(lbl + "(" + xMinInt + ")");
+		//double yMaxInt = evaluateExpression(lbl + "(" + xMaxInt + ")");
+		double yMinInt = f.evaluate(xMinInt);
+		double yMaxInt = f.evaluate(xMaxInt);
 
 		if(yMin < yMinInt){
 			yMinInt = yMin;
@@ -547,11 +584,16 @@ KeyListener, ActionListener{
 		value.add(null );
 
 		property.add(app.getCommand("Root"));
-		GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionsOrErrors(" + Roots[" + lbl + "," + xMin + "," + xMax + "]", false);
+		//GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionsOrErrors(" + Roots[" + lbl + "," + xMin + "," + xMax + "]", false);
 		
-		for (int i = 0 ; i < geos.length ; i++) {
-			geos[i].remove();
-		}
+		AlgoRoots root = new AlgoRoots(cons, f, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
+		cons.removeFromConstructionList(len);
+		
+		GeoElement geos[] = root.getGeoElements();
+
+		//for (int i = 0 ; i < geos.length ; i++) {
+		//	geos[i].remove();
+		//}
 		
 		switch (geos.length) {
 		case 0: value.add(app.getPlain("fncInspector.NoRoots"));
@@ -599,22 +641,15 @@ KeyListener, ActionListener{
 
 		isChangingValue = true;
 
-		String lbl = selectedGeo.getLabel();
-
-		ArrayList<String> property2 = new ArrayList<String>();
-		ArrayList<String> value2 = new ArrayList<String>();
-
-		boolean isFunction = selectedGeo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTION;
-
-		//columnCount = isFunction ?  2 + extraColumnList.size() : 2;
-
+		//String lbl = selectedGeo.getLabel();
+		GeoFunction f = (GeoFunction) selectedGeo;
 
 		if(btnTable.isSelected())
 		{
 			double x = start - step*(pointCount-1)/2;
 			double y;
 			for(int i=0; i < modelXY.getRowCount(); i++){
-				y = evaluateExpression(lbl + "(" + x + ")");
+				y = f.evaluate(x); //evaluateExpression(lbl + "(" + x + ")");
 				modelXY.setValueAt(nf.format(x),i,0);
 				modelXY.setValueAt(nf.format(y),i,1);
 				((GeoPoint) pts.get(i)).setCoords(x, y, 1);
@@ -625,7 +660,7 @@ KeyListener, ActionListener{
 		}
 		else{
 			double x = start;
-			double y = evaluateExpression(lbl + "(" + x + ")");
+			double y = f.evaluate(x); //evaluateExpression(lbl + "(" + x + ")");
 			modelXY.setValueAt(nf.format(x),0,0);
 			modelXY.setValueAt(nf.format(y),0,1);
 
@@ -682,7 +717,7 @@ KeyListener, ActionListener{
 
 				for(int row=0; row < modelXY.getRowCount(); row++){
 					double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
-					double d = evaluateExpression(derivative.getLabel() + "(" + x + ")");
+					double d = derivative.evaluate(x);// evaluateExpression(derivative.getLabel() + "(" + x + ")");
 					modelXY.setValueAt(nf.format(d),row,column);
 				}	
 				break;
@@ -691,7 +726,7 @@ KeyListener, ActionListener{
 
 				for(int row=0; row < modelXY.getRowCount(); row++){
 					double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
-					double d2 = evaluateExpression(derivative2.getLabel() + "(" + x + ")");
+					double d2 = derivative2.evaluate(x);//evaluateExpression(derivative2.getLabel() + "(" + x + ")");
 					modelXY.setValueAt(nf.format(d2),row,column);
 				}	
 				break;
@@ -994,6 +1029,8 @@ KeyListener, ActionListener{
 	private void defineDisplayGeos(){
 
 		String fcn = selectedGeo.getLabel();
+		
+		GeoFunction f = (GeoFunction)selectedGeo;
 
 		// test point
 		if(testPoint != null) 
@@ -1007,28 +1044,65 @@ KeyListener, ActionListener{
 		// X segment
 		if(xSegment != null) 
 			xSegment.remove();
+		
+		ExpressionNode xcoord = new ExpressionNode(kernel, testPoint, ExpressionNode.XCOORD, null);
+		
+		MyVecNode vec = new MyVecNode( kernel, xcoord, new MyDouble(kernel, 0.0));
+		
+		ExpressionNode point = new ExpressionNode(kernel, vec, ExpressionNode.NO_OPERATION, null);
+		point.setForcePoint();
+		
+		AlgoDependentPoint pointAlgo = new AlgoDependentPoint(cons, point, false);
+		cons.removeFromConstructionList(pointAlgo);
+		
 
-		expr = "Segment[" + testPoint.getLabel() + ", (x(" + testPoint.getLabel() + "),0) ]";
+		AlgoJoinPointsSegment seg1 = new AlgoJoinPointsSegment(cons, testPoint, (GeoPoint)pointAlgo.getGeoElements()[0], null);
+		cons.removeFromConstructionList(seg1);
+		
+		xSegment = (GeoSegment)seg1.getGeoElements()[0];
+		// as it has no label, need to add it the the view
+		app.getEuclidianView().add(xSegment);
+
+		//expr = "Segment[" + testPoint.getLabel() + ", (x(" + testPoint.getLabel() + "),0) ]";
 		//Application.debug(expr);
-		xSegment = createGeoFromString(expr, null, true);
-		xSegment.setEuclidianVisible(true);
+		//xSegment = createGeoFromString(expr, null, true);
 		xSegment.setObjColor(DISPLAY_GEO_COLOR);
 		xSegment.setLineThickness(3);
 		xSegment.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-		xSegment.setLabel("fiXSegment");
+		xSegment.setEuclidianVisible(true);
+		xSegment.setFixed(true);
+
 
 		// Y segment
 		if(ySegment != null) 
 			ySegment.remove();
 
-		expr = "Segment[" + testPoint.getLabel() + ", (0, y(" + testPoint.getLabel() + ")) ]";
+		ExpressionNode ycoord = new ExpressionNode(kernel, testPoint, ExpressionNode.YCOORD, null);
+		
+		MyVecNode vecy = new MyVecNode( kernel, new MyDouble(kernel, 0.0), ycoord);
+		
+		ExpressionNode pointy = new ExpressionNode(kernel, vecy, ExpressionNode.NO_OPERATION, null);
+		pointy.setForcePoint();
+		
+		AlgoDependentPoint pointAlgoy = new AlgoDependentPoint(cons, pointy, false);
+		cons.removeFromConstructionList(pointAlgoy);	
+
+		AlgoJoinPointsSegment seg2 = new AlgoJoinPointsSegment(cons, testPoint, (GeoPoint)pointAlgoy.getGeoElements()[0], null);
+		cons.removeFromConstructionList(seg2);
+		
+		ySegment = (GeoSegment)seg2.getGeoElements()[0];
+		// as it has no label, need to add it the the view
+		app.getEuclidianView().add(ySegment);
+
+		//expr = "Segment[" + testPoint.getLabel() + ", (0, y(" + testPoint.getLabel() + ")) ]";
 		//Application.debug(expr);
-		ySegment = createGeoFromString(expr, null, true);
+		//ySegment = createGeoFromString(expr, null, true);
 		ySegment.setObjColor(DISPLAY_GEO_COLOR);
 		ySegment.setLineThickness(3);
 		ySegment.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		ySegment.setEuclidianVisible(true);
-		ySegment.setLabel("fiYSegment");
+		ySegment.setFixed(true);
+		//ySegment.setLabel("fiYSegment");
 
 
 		// tangent line
@@ -1059,21 +1133,30 @@ KeyListener, ActionListener{
 		if( derivative != null) 
 			derivative.remove();
 
-		expr = "Derivative[" + fcn + "]";
+		AlgoCasDerivative deriv = new AlgoCasDerivative(cons, f);
+		cons.removeFromConstructionList(deriv);
+		
+		derivative = (GeoFunction)deriv.getGeoElements()[0];
+		
+		//expr = "Derivative[" + fcn + "]";
 		//Application.debug(expr);
-		derivative = createGeoFromString(expr, null, true);
+		//derivative = createGeoFromString(expr, null, true);
 		derivative.setEuclidianVisible(false);
-		derivative.setLabel("fiDerivative");
+		//derivative.setLabel("fiDerivative");
 
 		// 2nd derivative
 		if( derivative2 != null) 
 			derivative2.remove();
 
-		expr = "Derivative[" + fcn + " , 2 ]";
+		AlgoCasDerivative deriv2 = new AlgoCasDerivative(cons, f, null, new MyDouble(kernel, 2.0));
+		cons.removeFromConstructionList(deriv2);
+		
+		derivative2 = (GeoFunction)deriv2.getGeoElements()[0];
+		//expr = "Derivative[" + fcn + " , 2 ]";
 		//Application.debug(expr);
-		derivative2 = createGeoFromString(expr, null, true);
+		//derivative2 = createGeoFromString(expr, null, true);
 		derivative2.setEuclidianVisible(false);
-		derivative2.setLabel("fiDerivative2");
+		//derivative2.setLabel("fiDerivative2");
 
 
 		// point list
