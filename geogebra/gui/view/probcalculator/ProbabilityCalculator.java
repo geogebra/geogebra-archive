@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.statistics.AlgoBinomialDist;
+import geogebra.kernel.statistics.AlgoHyperGeometric;
 import geogebra.kernel.statistics.AlgoInversePascal;
 import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.kernel.statistics.AlgoPoisson;
@@ -1498,6 +1499,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 
+		ExpressionNode nPlusOne;
+		AlgoDependentNumber plusOneAlgo;
 		switch(selectedDist){
 
 		case ProbabilityManager.DIST_BINOMIAL:	
@@ -1519,6 +1522,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			GeoNumeric k = new GeoNumeric(cons);
 			GeoNumeric k2 = new GeoNumeric(cons);
 			GeoNumeric nGeo = new GeoNumeric(cons,parameters[0]);
+			GeoNumeric nPlusOneGeo = new GeoNumeric(cons,parameters[0] + 1);
 			GeoNumeric pGeo = new GeoNumeric(cons,parameters[1]);	
 			
 			AlgoSequence algoSeq = new AlgoSequence(cons, k2, k2, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
@@ -1530,21 +1534,11 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			AlgoBinomialDist algo2 = new AlgoBinomialDist(cons, (NumberValue)nGeo, pGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(algo2);
 			
-			ExpressionNode nPlusOne = new ExpressionNode(kernel, nGeo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
-			AlgoDependentNumber plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
-			cons.removeFromConstructionList(plusOneAlgo);
-			
-			AlgoSequence algoSeq2 = new AlgoSequence(cons, algo2.getGeoElements()[0], k, new MyDouble(kernel, 1.0), (NumberValue)plusOneAlgo.getGeoElements()[0], null);
+			AlgoSequence algoSeq2 = new AlgoSequence(cons, algo2.getGeoElements()[0], k, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
 			cons.removeFromConstructionList(algoSeq2);
 
 			discreteProbList = (GeoList)algoSeq2.getGeoElements()[0];
-			
-			plotGeoList.add(discreteProbList);
-			discreteProbList.setEuclidianVisible(true);	
-			discreteProbList.setAuxiliaryObject(true);
-			discreteProbList.setLabelVisible(false);
-			discreteProbList.setFixed(true);
-			
+						
 			break;
 
 		case ProbabilityManager.DIST_PASCAL:	
@@ -1592,8 +1586,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
 			
 			break;
-		
-
+			
 		case ProbabilityManager.DIST_POISSON:
 /*
 			mean = "" + parameters[0];
@@ -1612,6 +1605,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			
 			GeoNumeric meanGeo = new GeoNumeric(cons,parameters[0]);
 			nGeo = new GeoNumeric(cons,(parameters[0] + 6*Math.sqrt(parameters[0])));	
+			nPlusOneGeo = new GeoNumeric(cons,(parameters[0] + 6*Math.sqrt(parameters[0])) + 1);	
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
 			
@@ -1625,11 +1619,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			AlgoPoisson poisson = new AlgoPoisson(cons, meanGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(poisson);
 			
-			nPlusOne = new ExpressionNode(kernel, nGeo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
-			plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
-			cons.removeFromConstructionList(plusOneAlgo);
-
-			algoSeq2 = new AlgoSequence(cons, poisson.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)plusOneAlgo.getGeoElements()[0], null);
+			algoSeq2 = new AlgoSequence(cons, poisson.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
 			cons.removeFromConstructionList(algoSeq2);
 
 			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
@@ -1638,6 +1628,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 		case ProbabilityManager.DIST_HYPERGEOMETRIC:	
+			/*
 			p = "" + parameters[0];  // population size
 			n = "" + parameters[1];  // n
 			s = "" + parameters[2];  // sample size
@@ -1650,12 +1641,41 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			expr +=	"],k,1," + n + "+ 1 ]";
 
 			//System.out.println(expr);
-			discreteProbList = (GeoList) createGeoFromString(expr);
+			discreteProbList = (GeoList) createGeoFromString(expr);*/
+			
+			pGeo = new GeoNumeric(cons,parameters[0]);	
+			nGeo = new GeoNumeric(cons,parameters[1]);	
+			nPlusOneGeo = new GeoNumeric(cons,parameters[1] + 1);	
+			GeoNumeric sGeo = new GeoNumeric(cons,parameters[2]);	
+			k = new GeoNumeric(cons);
+			k2 = new GeoNumeric(cons);
+			
+			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
+			cons.removeFromAlgorithmList(algoSeq);
+			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
+
+			algo = new AlgoListElement(cons, discreteValueList, k2);
+			cons.removeFromConstructionList(algo);
+			
+			AlgoHyperGeometric hyperGeometric = new AlgoHyperGeometric(cons, pGeo, nGeo, sGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
+			cons.removeFromConstructionList(hyperGeometric);
+			
+			algoSeq2 = new AlgoSequence(cons, hyperGeometric.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
+			cons.removeFromConstructionList(algoSeq2);
+
+			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
 
 			break;
 
 
 		}
+		
+		plotGeoList.add(discreteProbList);
+		discreteProbList.setEuclidianVisible(true);	
+		discreteProbList.setAuxiliaryObject(true);
+		discreteProbList.setLabelVisible(false);
+		discreteProbList.setFixed(true);
+
 
 		return expr;
 	}

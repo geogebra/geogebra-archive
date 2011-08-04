@@ -111,6 +111,12 @@ public abstract class AlgoDistribution extends AlgoElement {
 	
 	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d,
 			GeoBoolean isCumulative) {
+		this(cons, a, b, c, d, isCumulative);
+		num.setLabel(label);
+	}
+	
+	public AlgoDistribution(Construction cons, NumberValue a, NumberValue b, NumberValue c, NumberValue d,
+			GeoBoolean isCumulative) {
 		super(cons);
 		this.a = a;
 		this.b = b;
@@ -122,7 +128,6 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 		setInputOutput();
 		compute();
-		num.setLabel(label);
 	}
 	
 	

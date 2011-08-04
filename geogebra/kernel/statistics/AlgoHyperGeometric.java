@@ -32,6 +32,11 @@ public class AlgoHyperGeometric extends AlgoDistribution {
         super(cons, label, a, b, c, d, isCumulative);
     }
 
+    public AlgoHyperGeometric(Construction cons, NumberValue a,NumberValue b, NumberValue c, NumberValue d,
+    		GeoBoolean isCumulative) {
+        super(cons, a, b, c, d, isCumulative);
+    }
+
     public String getClassName() {
         return "AlgoHyperGeometric";
     }
