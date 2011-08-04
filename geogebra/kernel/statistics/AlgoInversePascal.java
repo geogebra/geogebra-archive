@@ -30,6 +30,10 @@ public class AlgoInversePascal extends AlgoDistribution {
         super(cons, label, a, b, c, null);
     }
 
+    public AlgoInversePascal(Construction cons, NumberValue a,NumberValue b, NumberValue c) {
+        super(cons, a, b, c, null);
+    }
+
     public String getClassName() {
         return "AlgoInversePascal";
     }

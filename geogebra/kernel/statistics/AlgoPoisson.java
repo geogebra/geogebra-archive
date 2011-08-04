@@ -35,6 +35,10 @@ public class AlgoPoisson extends AlgoDistribution {
 		super(cons, label, a, b, null, isCumulative); 
 	}
 
+	public AlgoPoisson(Construction cons, NumberValue a,NumberValue b, GeoBoolean isCumulative) {
+		super(cons, a, b, null, isCumulative); 
+	}
+
 	public String getClassName() {
 		return "AlgoPoisson";
 	}

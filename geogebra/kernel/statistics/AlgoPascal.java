@@ -31,6 +31,10 @@ public class AlgoPascal extends AlgoDistribution {
         super(cons, label, a, b, c, isCumulative);
     }
 
+    public AlgoPascal(Construction cons, NumberValue a,NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+        super(cons, a, b, c, isCumulative);
+    }
+
     public String getClassName() {
         return "AlgoPascal";
     }
