@@ -2,18 +2,25 @@
 
 <!-- README: Building GeoGebra 
 
-This script builds unsigned GeoGebra jar files for testing purposes.
-This Ant script must be run using JDK 1.5 (NOT 1.6 or later).
-Note that GeoGebra itself needs to be compiled using Java 1.5 
+This script builds several kinds of GeoGebra *.jar files,
+primarily for creating an official build for GeoGebra.
+It must be run using JDK 1.5 (NOT 1.6 or later).
+Note that GeoGebra itself needs to be compiled using Java 1.5
 
-If you want to include GeoGebra with e.g. Linux distributions or 
-other software, please see the license conditions below and contact 
+To learn more on building GeoGebra by using this script, please
+read the following web pages:
+
+  http://www.geogebra.org/trac/wiki/SetUpCommandLine
+  http://www.geogebra.org/trac/wiki/BuildingProcess
+
+If you want to include GeoGebra with e.g. Linux distributions or
+other software, please see the license conditions below and contact
 us at office@geogebra.org. We will try our best to provide installers
 for various platforms. However, we cannot provide our signature files
-to create signed jar files.
+to create signed *.jar files.
 
 LICENSE
-Please note that GeoGebra's source code is licensed under GNU GPL but 
+Please note that GeoGebra's source code is licensed under GNU GPL but
 all GeoGebra language files (geogebra/properties) bundled in the file
 geogebra_properties.jar are subject to a Creative Commons Attribution-
 Share Alike license (see LICENSE.txt).
@@ -23,66 +30,13 @@ know. Your help is always welcome!
 
 The GeoGebra Team
 office@geogebra.org 
-
--->
-
-<!-- Additional notes for compiling GeoGebra from command line
-(typically under Linux for automated builds)
-
-Edited by Zoltan Kovacs <zoltan@geogebra.org>
-
-Prerequisities:
-
-* Sun Java 1.5 (see http://packages.ubuntu.com/jaunty-updates/sun-java5-jdk for details)
-
-  The easiest way to install it under Ubuntu/Debian systems is to add
-  the following lines to /etc/apt/sources.list and then enter 'apt-get
-  update; apt-get install sun-java5-jdk':
-
-  deb http://hu.archive.ubuntu.com/ubuntu/ jaunty multiverse
-  deb-src http://hu.archive.ubuntu.com/ubuntu/ jaunty multiverse
-  deb http://hu.archive.ubuntu.com/ubuntu/ jaunty-updates multiverse
-  deb-src http://hu.archive.ubuntu.com/ubuntu/ jaunty-updates multiverse
-  
-  You may also try Sun Java 1.6, but some features may not work in the
-  autobuild process.
-  
-* ant
-
-  Install it by entering 'apt-get install ant'.
-  
-* Setup [build-local.properties]
-
-  Create a copy of [build-local.properties.template] and go from there...
-
-Compilation and packaging:
-
-To start the compilation process, first make sure you are using the
-correct Java version. Ensure it by typing 'export
-JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun'. Then enter 'export
-ANT_OPTS='-Xmx1024m' and 'ant geogebra-cl'.
-
-The resulted .jar files will be put into the build/ directory.
-
-Testing:
-
-To run the compiled packages you need Sun Java. OpenJDK Java will not
-work due to some missing libraries:
-
-Exception in thread "main" java.lang.UnsatisfiedLinkError:
-Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
-
-In the build/debug directory now you could enter 'java -jar
-geogebra.jar' to start GeoGebra from command line.
-
-For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandLine.
-
 -->
 
 <!--
    GeoGebra build script
    @author Markus Hohenwarter
 -->
+
 <project default="geogebra">
 
 	<!-- GENERAL properties (equal for all os, platforms, users, ...) -->
