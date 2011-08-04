@@ -583,6 +583,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if(isEqualsRequired && !text.startsWith("="))
 			return null;
 		
+		 //    start autocompletion only for words with at least two characters                 
+		if (curWord.length() < 2) { 
+			completions = null; 
+			return null;                     
+		} 
+		
 		cmdPrefix = curWord.toString();
 
 		if (app.getLocale().getLanguage().equals("ko")) 
