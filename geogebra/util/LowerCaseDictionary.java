@@ -87,7 +87,7 @@ public class LowerCaseDictionary extends Hashtable<String, String> implements Au
    * none exists
    *
    * @param curr The string to use as the base for the lookup
-   * @return an Iterable of strings containing all completions or null
+   * @return a list of strings containing all completions or null
    * 		 if none exists
    */
   public List<String> getCompletions(String curr) {  	
