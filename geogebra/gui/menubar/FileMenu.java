@@ -298,10 +298,7 @@ class FileMenu extends BaseMenu {
 					public void run() {
 						app.setWaitCursor();
 						// copy drawing pad to the system clipboard
-						Image img = ((EuclidianView)app.getGuiManager().getActiveEuclidianView()).getExportImage(1d);
-						ImageSelection imgSel = new ImageSelection(img);
-						Toolkit.getDefaultToolkit().getSystemClipboard()
-								.setContents(imgSel, null);
+						app.copyGraphicsViewToClipboard();	
 						app.setDefaultCursor();
 					}
 				};
