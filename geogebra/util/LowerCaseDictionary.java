@@ -91,32 +91,52 @@ public class LowerCaseDictionary extends Hashtable<String, String> implements Au
    * 		 if none exists
    */
   public List<String> getCompletions(String curr) {  	
-    if(curr == null || "".equals(curr))
-		return null;
-    
-    String currLowerCase = curr.toLowerCase();
-    try {
-      SortedSet<String> tailSet = treeSet.tailSet(currLowerCase);
-      if(tailSet != null) {
+	    if(curr == null || "".equals(curr))
+			return null;
+	    
+	    String currLowerCase = curr.toLowerCase();
+	    try {
+	      SortedSet<String> tailSet = treeSet.tailSet(currLowerCase);
+	      if(tailSet != null) {
+	    	ArrayList<String> completions = new ArrayList<String>();
+	    	Iterator<String> compIter = tailSet.iterator();
+	    	while (compIter.hasNext()) {
+	    		String comp = compIter.next();
+	    		if (!comp.startsWith(currLowerCase)) {
+	    			break;
+	    		}
+	    		completions.add(get(comp));
+	    	}
+	    	if (completions.isEmpty()) {
+	    		return null;
+	    	}
+	    	return completions;
+	      }
+	    }
+	    catch (Exception e) {
+	      return null;
+	    }
+	    return null;
+	  }
+	 
+  public List<String> getCompletionsKorean(String curr) {  	
+	    if(curr == null || "".equals(curr))
+			return null;
+	    
     	ArrayList<String> completions = new ArrayList<String>();
-    	Iterator<String> compIter = tailSet.iterator();
-    	while (compIter.hasNext()) {
-    		String comp = compIter.next();
-    		if (!comp.startsWith(currLowerCase)) {
-    			break;
-    		}
-    		completions.add(get(comp));
-    	}
-    	if (completions.isEmpty()) {
-    		return null;
-    	}
-    	return completions;
-      }
-    }
-    catch (Exception e) {
-      return null;
-    }
-    return null;
+
+    	completions = new ArrayList<String>();
+    	curr = Korean.flattenKorean(curr);
+		Iterator<String> it = getIterator();
+		while (it.hasNext()) {
+			String str = it.next();
+			
+			if (Korean.flattenKorean(str).startsWith(curr)){
+				completions.add(str);
+			}
+		}
+		
+		return completions.isEmpty() ? null : completions;
   }
- 
+	 
 } 

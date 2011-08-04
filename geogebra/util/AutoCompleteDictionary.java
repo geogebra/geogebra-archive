@@ -51,4 +51,6 @@ public interface AutoCompleteDictionary {
    *         otherwise null.
    */
   public List<String> getCompletions(String s);
+
+public List<String> getCompletionsKorean(String cmdPrefix);
 }

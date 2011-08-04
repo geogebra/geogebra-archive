@@ -55,8 +55,6 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 */
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		
-		AutoCompleteTextField.setVirtualKeyboardInUse(false);
-	
 		// ignore key events coming from text components (i.e. text fields and text areas)
 		// or key events coming from popups (source class = JRootPane)
 		if (event.isConsumed() || event.getSource() instanceof JTextComponent || event.getSource() instanceof JRootPane) {			

@@ -635,8 +635,6 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	 */
 	private void insertText(String addchar) {
 		
-		AutoCompleteTextField.setVirtualKeyboardInUse(true);
-
 		if (addchar.length() == 1) 
 			switch (addchar.charAt(0)) {
 			case '\u00b4' : // acute
