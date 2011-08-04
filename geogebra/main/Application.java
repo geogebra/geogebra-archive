@@ -4801,6 +4801,11 @@ public class Application implements KeyEventDispatcher {
 	
 	public void copyGraphicsViewToClipboard() {
 		
+		copyGraphicsViewToClipboard((EuclidianView)getGuiManager().getActiveEuclidianView());
+	}
+	
+	public void copyGraphicsViewToClipboard(final EuclidianView ev) {
+		
 		clearSelectedGeos();
 		
 		Thread runner = new Thread() {
@@ -4808,7 +4813,7 @@ public class Application implements KeyEventDispatcher {
 				setWaitCursor();
 				
 				//copy the active euclidian view to the system clipboard
-				Image img=((EuclidianView)getGuiManager().getActiveEuclidianView()).getExportImage(2d);
+				Image img=ev.getExportImage(2d);
 				ImageSelection imgSel = new ImageSelection(img);
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);	
 

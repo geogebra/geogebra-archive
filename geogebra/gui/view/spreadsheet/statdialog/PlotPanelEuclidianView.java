@@ -415,11 +415,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 			Thread runner = new Thread() {
 				public void run() {
 					app.setWaitCursor();
-					// copy drawing pad to the system clipboard
-					Image img = plotPanelEV.getExportImage(1d);
-					ImageSelection imgSel = new ImageSelection(img);
-					Toolkit.getDefaultToolkit().getSystemClipboard()
-					.setContents(imgSel, null);
+					app.copyGraphicsViewToClipboard(plotPanelEV);
 					app.setDefaultCursor();
 				}
 			};
