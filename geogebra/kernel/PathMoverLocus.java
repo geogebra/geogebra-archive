@@ -202,10 +202,10 @@ public class PathMoverLocus extends PathMoverGeneric {
 			maxBorderSet = true;
 			return max_param;
 		} else {
-			for (int i = paramindex - 1; i >= 0; i--) {
+			for (int i = paramindex - 1; i >= 1; i--) {
 				// lineTo at i == paramindex cannot happen
 				if (((MyPoint) myPointList.get(i)).lineTo == true)
-					return i;
+					return i-1;
 			}
 			minBorderSet = true;
 			return min_param;
