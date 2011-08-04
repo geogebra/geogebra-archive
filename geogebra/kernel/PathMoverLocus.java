@@ -30,7 +30,7 @@ public class PathMoverLocus extends PathMoverGeneric {
 		super(locus);
 		myPointList = locus.getMyPointList();
 	}
-	
+
 	public void init(GeoPoint p) {
 		if (p.getPath() instanceof GeoLocus) {
 			myPointList = ((GeoLocus)p.getPath()).getMyPointList();
@@ -38,8 +38,14 @@ public class PathMoverLocus extends PathMoverGeneric {
 		lastNoLineToSet = noLineToSet = false;
 		super.init(p);
 	}
-	
+
+	public void resetStartParameter() {
+		super.resetStartParameter();
+		noLineToSet = lastNoLineToSet = false;
+	}
+
 	protected void calcPoint(GeoPoint p) {
+		// curr_param is between 0 and myPointList.size()-1 now
 		double param = curr_param;		
 		PathParameter pp = p.getPathParameter();
 		pp.t = param;
@@ -91,9 +97,9 @@ public class PathMoverLocus extends PathMoverGeneric {
 			double new_param = curr_param + step_width;				
 			
 			// new_param too big
-			if (new_param >= max_param || noLineTo(new_param)) {
+			if (new_param >= max_param) {
 				// slow down by making smaller steps
-				while ((new_param >= max_param || noLineTo(new_param)) && smallerStep()) {				
+				while ((new_param >= max_param || noLineTo(new_param)) && smallerStep()) {
 					 new_param = curr_param + step_width;	
 				} 
 					
@@ -108,7 +114,7 @@ public class PathMoverLocus extends PathMoverGeneric {
 			} 	
 			
 			// new_param too small
-			else if (new_param <= min_param || noLineTo(new_param)) {
+			else if (new_param <= min_param) {
 				// slow down by making smaller steps
 				while ((new_param <= min_param || noLineTo(new_param)) && smallerStep()) {
 					 new_param = curr_param + step_width;						
@@ -122,7 +128,17 @@ public class PathMoverLocus extends PathMoverGeneric {
 					new_param = borderParam(new_param);
 					noLineToSet = true;
 				}		
-			}		
+			}
+			else if (noLineTo(new_param)) {
+				while (noLineTo(new_param) && smallerStep()) {
+					 new_param = curr_param + step_width;						
+				}
+
+				if (noLineTo(new_param)) {
+					new_param = borderParam(new_param);
+					noLineToSet = true;
+				}
+			}
 			
 			// set parameter
 			curr_param = new_param;	
@@ -141,6 +157,10 @@ public class PathMoverLocus extends PathMoverGeneric {
 
 	protected boolean noLineTo(double new_param) {
 
+		if (new_param >= max_param || new_param <= min_param) {
+			// not right use case
+			return false;
+		}
 		if (curr_param < new_param) {
 			int leftIndexCurr = (int) Math.max(0, Math.floor(curr_param));
 			int rightIndexNew = (int) Math.min(myPointList.size()-1, Math.ceil(new_param));
