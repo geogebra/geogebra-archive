@@ -594,7 +594,10 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		
 		if(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_LATEX)
 			sbBuildValueString.append("\\left\\");
-		sbBuildValueString.append(STR_OPEN);		
+		if (kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_MPREDUCE)
+			sbBuildValueString.append("list(");
+		else
+			sbBuildValueString.append(STR_OPEN);		
 		// first (n-1) elements
 		int lastIndex = geoList.size() - 1;
 		if (lastIndex > -1) {
@@ -611,7 +614,10 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		}
 		if(kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_LATEX)
 			sbBuildValueString.append("\\right\\");
-		sbBuildValueString.append(STR_CLOSE);		
+		if (kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_MPREDUCE)
+			sbBuildValueString.append(")");
+		else
+			sbBuildValueString.append(STR_CLOSE);		
 		return sbBuildValueString;
 	}
 

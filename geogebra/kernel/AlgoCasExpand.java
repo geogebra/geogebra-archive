@@ -32,7 +32,7 @@ public class AlgoCasExpand extends AlgoCasBase {
 	@Override
 	protected void applyCasCommand() {
 		// symbolic expand of f
-		g.setUsingCasCommand("Expand(%)", f, false);		
+		g.setUsingCasCommand("Numeric(Expand(%))", f, false);		
 	}
 	
 //    final public String toString() {  

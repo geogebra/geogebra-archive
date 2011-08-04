@@ -55,7 +55,7 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
-		sb.append("<<numeric!!:=0$ precision 16$ print\\_precision 16$ off complex, rounded, numval, factor, div$ on pri$ ");
+		sb.append("<<numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div$ on pri$ ");
 		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
 		sb.append(">>");
 
@@ -289,9 +289,20 @@ public class CASmpreduce extends CASgeneric {
 		// mpreduce.evaluate("operator log!-temp");
 		// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
 
+		
+		mpreduce.evaluate("procedure myatan2(y,x);" +
+				" if numberp(y) and numberp(x) then" +
+				"   if x>0 then atan(y/x)" +
+				"   else if x<0 and y>=0 then atan(y/x)+pi" +
+				"   else if x<0 and y<0 then atan(y/x)-pi" +
+				"   else if x=0 and y>0 then pi/2" +
+				"   else if x=0 and y<0 then -pi/2" +
+				"   else if x=0 and y=0 then 0" +
+				"   else '?" +
+				" else" +
+				"   '?;");
+		
 		// access functions for elements of a vector
-		
-		
 		mpreduce.evaluate("procedure ggbcasvarx(a); if arglength(a)>-1 and part(a,0)='list then first(a) else ggbcasvarx*a;");
 		mpreduce.evaluate("procedure ggbcasvary(a); if arglength(a)>-1 and part(a,0)='list then second(a) else ggbcasvary*a;");
 		mpreduce.evaluate("procedure ggbcasvarz(a); if arglength(a)>-1 and part(a,0)='list then third(a) else ggbcasvarz*a;");
@@ -301,7 +312,7 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure myround(x);" 
 				+ "floor(x+0.5);");
 		
-		mpreduce.evaluate("symbolic procedure isbound!! x; if get(x, 'avalue) then 1 else 0;");
+		mpreduce.evaluate("symbolic procedure isbound!! x; if get(x, 'avalue) then 1 else 0;");	
 		
 		mpreduce.evaluate("procedure mysolve(eqn, var);"
 				+ " begin scalar solutions!!, bool!!;"
@@ -412,8 +423,25 @@ public class CASmpreduce extends CASgeneric {
 				+ "  else"
 				+ "    if arglength(b)>-1 and part(b,0)='list then" 
 				+ "      map(a*~w!!,b)"
-				+ "    else" 
-				+ "      a*b;");
+				+ "    else"
+				+ "		 if a=infinity then"
+				+ "		   if (numberp(b) and b>0) or b=infinity then infinity"
+				+ "		   else if (numberp(b) and b<0) or b=-infinity then -infinity"
+				+ "		   else '?"
+				+ "		 else if a=-infinity then"
+				+ "		   if (numberp(b) and b>0) or b=infinity then -infinity"
+				+ "		   else if (numberp(b) and b<0) or b=-infinity then infinity"
+				+ "		   else '?"
+				+ "		 else if b=infinity then"
+				+ "		   if (numberp(a) and a>0) or a=infinity then infinity"
+				+ "		   else if (numberp(a) and a<0) or a=-infinity then -infinity"
+				+ "		   else '?"
+				+ "		 else if b=-infinity then"
+				+ "		   if (numberp(a) and a>0) or a=infinity then -infinity"
+				+ "		   else if (numberp(a) and a<0) or a=infinity then infinity"
+				+ "		   else '?"
+				+ "		 else"
+				+ "        a*b;");
 		
 		mpreduce.evaluate("operator multiplication;");
 
@@ -446,8 +474,9 @@ public class CASmpreduce extends CASgeneric {
 		// this is a numeric approximation according to Abramowitz & Stegun
 		// 7.1.26.
 		mpreduce.evaluate("procedure erf(x); "
-				+ "begin "
+				+ "begin scalar a1!!, a2!!, a3!!, a4!!, a5!!, p!!, x!!, t!!, y!!, sign!!, result!!;"
 				+ "     on rounded;"
+				+ "		if numberp(x) then 1 else return !*hold(erf(x));"
 				+ "     a1!! :=  0.254829592; "
 				+ "     a2!! := -0.284496736; "
 				+ "     a3!! :=  1.421413741; "
@@ -459,7 +488,10 @@ public class CASmpreduce extends CASgeneric {
 				+ "     x!! := Abs(x); "
 				+ "     t!! := 1.0/(1.0 + p!!*x!!); "
 				+ "     y!! := 1.0 - (((((a5!!*t!! + a4!!)*t!!) + a3!!)*t!! + a2!!)*t!! + a1!!)*t!!*Exp(-x!!*x!!); "
-				+ "     return sign!!*y!! " + "end;");
+				+ "     result!! := sign!!*y!!;"
+				+ "     if numeric!!=1 then off rounded;"
+				+ "     return result!! " 
+				+ "end;");
 
 		mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
 		mpreduce.evaluate("procedure uigamma(n,m); gamma(n)-igamma(n,m);");

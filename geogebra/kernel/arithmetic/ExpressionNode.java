@@ -2570,7 +2570,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		case ARCCOS:
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
-				sb.append("\\arccos \\left( ");
+				sb.append("acos \\left( ");
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
@@ -2591,7 +2591,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		case ARCSIN:
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
-				sb.append("\\arcsin \\left( ");
+				sb.append("asin \\left( ");
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
@@ -2612,7 +2612,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		case ARCTAN:
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
-				sb.append("\\arctan \\left( ");
+				sb.append("atan \\left( ");
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
@@ -2633,7 +2633,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		case ARCTAN2:
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
-				sb.append("\\arctan2 \\left( ");
+				sb.append("atan2 \\left( ");
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
@@ -2642,6 +2642,10 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 			case STRING_TYPE_PSTRICKS:
 				sb.append("ATAN2(");
+				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("myatan2(");
 				break;
 
 			default:

@@ -977,11 +977,19 @@ GeoPointND, Animatable, Transformable  {
 				return sbBuildValueString;
 				
 			case ExpressionNode.STRING_TYPE_MPREDUCE:
-				sbBuildValueString.append("list(");
-				sbBuildValueString.append(getInhomX());
-				sbBuildValueString.append(",");
-				sbBuildValueString.append(getInhomY());
-				sbBuildValueString.append(")");
+				if (toStringMode==Kernel.COORD_COMPLEX){
+					sbBuildValueString.append("(");
+					sbBuildValueString.append(getInhomX());
+					sbBuildValueString.append("+i*");
+					sbBuildValueString.append(getInhomY());
+					sbBuildValueString.append(")");
+				} else {
+					sbBuildValueString.append("list(");
+					sbBuildValueString.append(getInhomX());
+					sbBuildValueString.append(",");
+					sbBuildValueString.append(getInhomY());
+					sbBuildValueString.append(")");
+				}
 				return sbBuildValueString;
 				
 			default: // continue below

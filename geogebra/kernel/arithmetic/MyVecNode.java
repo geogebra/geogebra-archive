@@ -135,7 +135,6 @@ public class MyVecNode extends ValidExpression implements VectorValue, Replaceab
         
     	switch (kernel.getCASPrintForm()) {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
-			case ExpressionNode.STRING_TYPE_MPREDUCE:
 				coords = getCoords();
 				sb.append("{");
 				sb.append(coords[0]);
@@ -151,6 +150,15 @@ public class MyVecNode extends ValidExpression implements VectorValue, Replaceab
 				sb.append(", ");
 				sb.append(coords[1]);
 				sb.append("]");
+				break;
+				
+			case ExpressionNode.STRING_TYPE_MPREDUCE:
+				coords = getCoords();
+				sb.append("list(");
+				sb.append(coords[0]);
+				sb.append(", ");
+				sb.append(coords[1]);
+				sb.append(")");
 				break;
 								
 			default: // continue below
