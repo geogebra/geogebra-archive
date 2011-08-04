@@ -7,7 +7,9 @@ import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoIntegralDefinite;
+import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.AlgoPointOnPath;
+import geogebra.kernel.AlgoSequence;
 import geogebra.kernel.AlgoTake;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAxis;
@@ -23,6 +25,7 @@ import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.statistics.AlgoBinomialDist;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -900,6 +903,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			String inputText = source.getText().trim();
 			//Double value = Double.parseDouble(source.getText());
 
+			// allow input such as sqrt(2)
 			NumberValue nv;
 			nv = kernel.getAlgebraProcessor().evaluateToNumeric(inputText, false);		
 			double value = nv.getDouble();
@@ -1495,9 +1499,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 		case ProbabilityManager.DIST_BINOMIAL:	
 
-	
-			n = "" + parameters[0];
-			p = "" + parameters[1];
+			/*n = "Element[" + parmList.getLabel() + ",1]";
+			p = "Element[" + parmList.getLabel() + ",2]";
 
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
@@ -1507,8 +1510,37 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			expr +=	"],k,1," + n + "+ 1 ]";
 
 			//System.out.println(expr);
-			discreteProbList = (GeoList) createGeoFromString(expr);
+			discreteProbList = (GeoList) createGeoFromString(expr);*/
+			
+			
+			GeoNumeric k = new GeoNumeric(cons);
+			GeoNumeric k2 = new GeoNumeric(cons);
+			GeoNumeric nGeo = new GeoNumeric(cons,parameters[0]);
+			GeoNumeric pGeo = new GeoNumeric(cons,parameters[1]);	
+			
+			AlgoSequence algoSeq = new AlgoSequence(cons, k2, k2, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
+			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
+			
+			AlgoListElement algo = new AlgoListElement(cons, discreteValueList, k);
+			cons.removeFromConstructionList(algo);
+			
+			AlgoBinomialDist algo2 = new AlgoBinomialDist(cons, (NumberValue)nGeo, pGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
+			cons.removeFromConstructionList(algo2);
+			
+			ExpressionNode nPlusOne = new ExpressionNode(kernel, nGeo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
+			AlgoDependentNumber plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
+			
+			AlgoSequence algoSeq2 = new AlgoSequence(cons, algo2.getGeoElements()[0], k, new MyDouble(kernel, 1.0), (NumberValue)plusOneAlgo.getGeoElements()[0], null);
+			cons.removeFromConstructionList(algoSeq2);
 
+			discreteProbList = (GeoList)algoSeq2.getGeoElements()[0];
+			
+			plotGeoList.add(discreteProbList);
+			discreteProbList.setEuclidianVisible(true);	
+			discreteProbList.setAuxiliaryObject(true);
+			discreteProbList.setLabelVisible(false);
+			discreteProbList.setFixed(true);
+			
 			break;
 
 		case ProbabilityManager.DIST_PASCAL:	

@@ -35,6 +35,10 @@ public class AlgoBinomialDist extends AlgoDistribution {
 		super(cons, label, a, b, c, isCumulative); 
 	}
 
+	public AlgoBinomialDist(Construction cons, NumberValue a,NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+		super(cons, a, b, c, isCumulative); 
+	}
+
 	public String getClassName() {
 		return "AlgoBinomialDist";
 	}

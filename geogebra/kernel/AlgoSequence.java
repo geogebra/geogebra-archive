@@ -73,7 +73,7 @@ public class AlgoSequence extends AlgoElement {
      * @param var_to
      * @param var_step
      */
-    AlgoSequence(Construction cons, GeoElement expression, GeoNumeric var, 
+    public AlgoSequence(Construction cons, GeoElement expression, GeoNumeric var, 
     		NumberValue var_from, NumberValue var_to, NumberValue var_step) {
         super(cons);
                 

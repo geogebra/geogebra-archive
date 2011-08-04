@@ -90,6 +90,12 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, 
 			GeoBoolean isCumulative) {
+		this(cons, a, b, c, isCumulative);
+		num.setLabel(label);
+	}
+	
+	public AlgoDistribution(Construction cons, NumberValue a, NumberValue b, NumberValue c, 
+			GeoBoolean isCumulative) {
 		super(cons);
 		this.a = a;
 		this.b = b;
@@ -99,8 +105,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		num = new GeoNumeric(cons);
 
 		setInputOutput();
-		compute();
-		num.setLabel(label);
+		compute();		
 	}
 	
 	
