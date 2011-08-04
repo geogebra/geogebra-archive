@@ -486,9 +486,6 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * @return points of this polygon.
 	 */
 	public GeoPoint [] getPoints() {
-		for(int i=0;i<points.length;i++)
-		Application.debug(points[i].getClass());
-		//Application.debug(points[2].getClass());
 		return (GeoPoint[]) points;
 	}
 	
