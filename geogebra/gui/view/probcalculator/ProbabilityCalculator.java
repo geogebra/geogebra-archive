@@ -23,9 +23,12 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.statistics.AlgoBinomialDist;
+import geogebra.kernel.statistics.AlgoInversePascal;
+import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -1529,6 +1532,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			
 			ExpressionNode nPlusOne = new ExpressionNode(kernel, nGeo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
 			AlgoDependentNumber plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
+			cons.removeFromConstructionList(plusOneAlgo);
 			
 			AlgoSequence algoSeq2 = new AlgoSequence(cons, algo2.getGeoElements()[0], k, new MyDouble(kernel, 1.0), (NumberValue)plusOneAlgo.getGeoElements()[0], null);
 			cons.removeFromConstructionList(algoSeq2);
@@ -1544,6 +1548,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			break;
 
 		case ProbabilityManager.DIST_PASCAL:	
+			/*
 			n = "" + parameters[0];
 			p = "" + parameters[1];
 
@@ -1557,7 +1562,35 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
+			*/
+			nGeo = new GeoNumeric(cons,parameters[0]);
+			pGeo = new GeoNumeric(cons,parameters[1]);	
+			k = new GeoNumeric(cons);
+			k2 = new GeoNumeric(cons);
+			
+			AlgoInversePascal n2 = new AlgoInversePascal(cons, nGeo, pGeo, new MyDouble(kernel, 0.999));
+			cons.removeFromConstructionList(n2);
+			GeoElement n2Geo = n2.getGeoElements()[0];
+			
+			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)n2Geo, null);
+			cons.removeFromAlgorithmList(algoSeq);
+			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
+			
+			algo = new AlgoListElement(cons, discreteValueList, k2);
+			cons.removeFromConstructionList(algo);
+			
+			AlgoPascal pascal = new AlgoPascal(cons, nGeo, pGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
+			cons.removeFromConstructionList(pascal);
+			
+			nPlusOne = new ExpressionNode(kernel, n2Geo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
+			plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
+			cons.removeFromConstructionList(plusOneAlgo);
 
+			algoSeq2 = new AlgoSequence(cons, pascal.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)plusOneAlgo.getGeoElements()[0], null);
+			cons.removeFromConstructionList(algoSeq2);
+
+			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
+			
 			break;
 		
 
