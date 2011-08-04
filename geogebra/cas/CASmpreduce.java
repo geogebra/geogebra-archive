@@ -401,6 +401,37 @@ public class CASmpreduce extends CASgeneric {
 				+ "    '? " 
 				+ "  >> " 
 				+ "end;");
+		
+		mpreduce.evaluate("procedure cross(atmp,btmp); " +
+				"begin;" +
+				"  a:=atmp; b:= btmp;" +
+				"  if arglength(a)=-1 or (length(a) neq 3 and length(a) neq {1,3} and length(a) neq {3,1}) then return '?;" +
+				"  if arglength(b)=-1 or (length(b) neq 3 and length(b) neq {1,3} and length(b) neq {3,1}) then return '?;" +
+				"  if length(a)={1,3} then a:=tp(a);" +
+				"  if length(b)={1,3} then b:=tp(b);" +
+				"  return" +
+				"  if arglength(a)>-1 and part(a,0)='mat then <<" +
+				"    if arglength(b)>-1 and part(b,0)='mat then <<" +
+				"      mat((a(2,1)*b(3,1)-a(3,1)*b(2,1))," +
+				"      (a(3,1)*b(1,1)-a(1,1)*b(3,1))," +
+				"      (a(1,1)*b(2,1)-a(2,1)*b(1,1)))" +
+				"    >> else if arglength(b)>-1 and part(b,0)='list then <<" +
+				"      list(a(2,1)*part(b,3)-a(3,1)*part(b,2)," +
+				"      a(3,1)*part(b,1)-a(1,1)*part(b,3)," +
+				"      a(1,1)*part(b,2)-a(2,1)*part(b,1))" +
+				"    >> else << '? >>" +
+				"  >> else if arglength(a)>-1 and part(a,0)='list then <<" +
+				"    if arglength(b)>-1 and part(b,0)='mat then <<" +
+				"      list(part(a,2)*b(3,1)-part(a,3)*b(2,1)," +
+				"      part(a,3)*b(1,1)-part(a,1)*b(3,1)," +
+				"      part(a,1)*b(2,1)-part(a,2)*b(1,1))" +
+				"    >> else if arglength(b)>-1 and part(b,0)='list then <<" +
+				"      list(part(a,2)*part(b,3)-part(a,3)*part(b,2)," +
+				"      part(a,3)*part(b,1)-part(a,1)*part(b,3)," +
+				"      part(a,1)*part(b,2)-part(a,2)*part(b,1))" +
+				"    >> else << '? >>" +
+				"  >> else << '? >> " +
+				"end;");
 
 		mpreduce.evaluate("procedure mattoscalar(m);"
 				+ " if length(m)={1,1} then trace(m) else m;");
