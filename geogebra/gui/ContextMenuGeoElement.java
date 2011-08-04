@@ -448,32 +448,33 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	private void addUserInputItem(){
 		if (geo instanceof GeoUserInputElement){
 			final GeoUserInputElement inputElement=(GeoUserInputElement)geo;
-			AbstractAction action;
-			if (inputElement.isInputForm()){
-				action=new AbstractAction(app.getPlain("ExtendedForm")) {
-					
-					private static final long serialVersionUID = 1L;
-
-					public void actionPerformed(ActionEvent e) {
-						inputElement.setExtendedForm();
-						inputElement.updateRepaint();
-						app.storeUndoInfo();
-					}
-				};
-			}else{
-				action=new AbstractAction(app.getPlain("InputForm")) {
-					
-					private static final long serialVersionUID = 1L;
-
-					public void actionPerformed(ActionEvent e) {
-						inputElement.setInputForm();
-						inputElement.updateRepaint();
-						app.storeUndoInfo();
-					}
-				};
-				action.setEnabled(inputElement.isValidInputForm());
+			if (inputElement.isValidInputForm()){
+				AbstractAction action;
+				if (inputElement.isInputForm()){
+					action=new AbstractAction(app.getPlain("ExtendedForm")) {
+						
+						private static final long serialVersionUID = 1L;
+	
+						public void actionPerformed(ActionEvent e) {
+							inputElement.setExtendedForm();
+							inputElement.updateRepaint();
+							app.storeUndoInfo();
+						}
+					};
+				}else{
+					action=new AbstractAction(app.getPlain("InputForm")) {
+						
+						private static final long serialVersionUID = 1L;
+	
+						public void actionPerformed(ActionEvent e) {
+							inputElement.setInputForm();
+							inputElement.updateRepaint();
+							app.storeUndoInfo();
+						}
+					};
+				}
+				addAction(action);
 			}
-			addAction(action);
 		}
 	}
 

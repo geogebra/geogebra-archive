@@ -239,8 +239,11 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		public void setLabels(String[] labels){
 			this.labels=labels;
 			setLabels=true;
-			if (labels != null)
-	            adjustOutputSize(labels.length);
+			if (labels != null){
+				if (labels.length==1)
+					setIndexLabels(labels[0]);
+				adjustOutputSize(labels.length);
+			}
 			else
 				updateLabels();
 		}

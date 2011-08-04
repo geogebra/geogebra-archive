@@ -1379,7 +1379,9 @@ Dilateable, Transformable, EuclidianViewCE {
 //			float pathX=(float)view.toScreenCoordXd(x);
 //			float pathY=(float)view.toScreenCoordYd(y);
 //			gp.moveTo(pathX,pathY);
-			locus.insertPoint(x, y, false);
+			ArrayList<MyPoint> firstDirPoints=new ArrayList<MyPoint>();
+			firstDirPoints.add(new MyPoint(x,y,true));
+//			locus.insertPoint(x, y, false);
 			int s=0;
 			int lastW=w;
 			int lastH=h;
@@ -1400,15 +1402,14 @@ Dilateable, Transformable, EuclidianViewCE {
 				if (!Double.isNaN(lx)&&!Double.isNaN(ly)){
 					if ((scaledNormSquared(startX-sx, startY-sy)<MAX_STEP_SIZE*MAX_STEP_SIZE)
 						&& (scaledNormSquared(startX-sx,startY-sy)<scaledNormSquared(startX-lx,startY-ly))){
-						
-//						pathX=(float)view.toScreenCoordXd(x);
-//						pathY=(float)view.toScreenCoordYd(y);
-//						gp.lineTo(pathX,pathY);
+						/* loop found */
+						if (firstDirPoints!=null){
+							MyPoint firstPoint=firstDirPoints.get(0);
+							firstPoint.lineTo=false;
+							locus.getPoints().addAll(firstDirPoints);
+						}
 						locus.insertPoint(x, y, true);
-//						singularitiesCollection.add(new Double[]{x,y});
-//						Application.debug("reached start; s="+s+"; stepcount="+stepCount);
 						return;
-//						return gp;
 					}
 				}
 				while (sx<grid[w][h].x){
@@ -1585,18 +1586,13 @@ Dilateable, Transformable, EuclidianViewCE {
 					}
 				}
 				if (!reachedEnd||reachedSingularity){
-//					float newPathX=(float)view.toScreenCoordXd(sx);
-//					float newPathY=(float)view.toScreenCoordYd(sy);
 					if (reachedSingularity||((lx-sx)*(lx-sx)+(ly-sy)*(ly-sy)>minGap*minGap)){//(newPathX-pathX)*(newPathX-pathX)+(newPathY-pathY)*(newPathY-pathY)>MIN_PATH_GAP*MIN_PATH_GAP){
-//						gp.lineTo(newPathX, newPathY);
-						locus.insertPoint(sx, sy, true);
-//						if (pointNearRDCornerY+pointNearRDCornerX<(int)pathY+(int)pathX){
-//							pointNearRDCornerX=(int)pathX;
-//							pointNearRDCornerY=(int)pathY;
-//						}
+						if (firstDirPoints!=null){
+							firstDirPoints.add(new MyPoint(sx,sy,true));
+						}else{
+							locus.insertPoint(sx, sy, true);
+						}
 						stepCount++;
-//						pathX=newPathX;
-//						pathY=newPathY;
 					}
 				}
 				if (reachedEnd){
@@ -1606,10 +1602,18 @@ Dilateable, Transformable, EuclidianViewCE {
 					}
 					lastGradX=Double.POSITIVE_INFINITY;
 					lastGradY=Double.POSITIVE_INFINITY;
-//					pathX=(float)view.toScreenCoordXd(startX);
-//					pathY=(float)view.toScreenCoordYd(startY);
-//					gp.moveTo(pathX,pathY);
-					locus.insertPoint(startX, startY, false);
+
+					/* we reached end for the first time and now save the points into the locus */
+					ArrayList<MyPoint> pointList=locus.getMyPointList();
+					if (firstDirPoints.size()>0){
+						MyPoint lastPoint=firstDirPoints.get(firstDirPoints.size()-1);
+						lastPoint.lineTo=false;
+						pointList.ensureCapacity(pointList.size()+firstDirPoints.size());
+						for (int i=firstDirPoints.size()-1;i>=0;i--){
+							pointList.add(firstDirPoints.get(i));
+						}
+					}
+					firstDirPoints=null;
 					sx=startX;
 					sy=startY;
 					lx=Double.NaN;
