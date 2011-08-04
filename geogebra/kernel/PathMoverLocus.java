@@ -182,11 +182,9 @@ public class PathMoverLocus extends PathMoverGeneric {
 	protected double borderParam(double param) {
 
 		if (curr_param < param) {
-			int rightIndexCurr = (int) Math.min(myPointList.size()-1, Math.ceil(curr_param));
-			return rightIndexCurr;
+			return Math.min(myPointList.size()-1, Math.ceil(curr_param));
 		} else if (curr_param > param) {
-			int leftIndexCurr = (int) Math.max(0, Math.floor(curr_param));
-			return leftIndexCurr;
+			return Math.max(0, Math.floor(curr_param));
 		}
 
 		// from this, suppose param is already an index
@@ -205,7 +203,7 @@ public class PathMoverLocus extends PathMoverGeneric {
 			for (int i = paramindex - 1; i >= 1; i--) {
 				// lineTo at i == paramindex cannot happen
 				if (((MyPoint) myPointList.get(i)).lineTo == true)
-					return i-1;
+					return i;
 			}
 			minBorderSet = true;
 			return min_param;
