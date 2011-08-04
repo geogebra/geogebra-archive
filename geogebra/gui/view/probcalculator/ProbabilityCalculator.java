@@ -23,12 +23,12 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.statistics.AlgoBinomialDist;
 import geogebra.kernel.statistics.AlgoInversePascal;
 import geogebra.kernel.statistics.AlgoPascal;
+import geogebra.kernel.statistics.AlgoPoisson;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -1595,7 +1595,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		
 
 		case ProbabilityManager.DIST_POISSON:
-
+/*
 			mean = "" + parameters[0];
 			n = "" + (parameters[0] + 6*Math.sqrt(parameters[0]));
 
@@ -1608,6 +1608,31 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
+			*/
+			
+			GeoNumeric meanGeo = new GeoNumeric(cons,parameters[0]);
+			nGeo = new GeoNumeric(cons,(parameters[0] + 6*Math.sqrt(parameters[0])));	
+			k = new GeoNumeric(cons);
+			k2 = new GeoNumeric(cons);
+			
+			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
+			cons.removeFromAlgorithmList(algoSeq);
+			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
+
+			algo = new AlgoListElement(cons, discreteValueList, k2);
+			cons.removeFromConstructionList(algo);
+			
+			AlgoPoisson poisson = new AlgoPoisson(cons, meanGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
+			cons.removeFromConstructionList(poisson);
+			
+			nPlusOne = new ExpressionNode(kernel, nGeo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
+			plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
+			cons.removeFromConstructionList(plusOneAlgo);
+
+			algoSeq2 = new AlgoSequence(cons, poisson.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)plusOneAlgo.getGeoElements()[0], null);
+			cons.removeFromConstructionList(algoSeq2);
+
+			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
 
 			break;
 
