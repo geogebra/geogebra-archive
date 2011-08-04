@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComboBox;
@@ -66,7 +67,8 @@ import javax.swing.event.ChangeListener;
  * @author G. Sturr
  * 
  */
-public class ProbabilityCalculator extends JPanel implements View, ActionListener, FocusListener, ChangeListener   {
+public class ProbabilityCalculator extends JPanel 
+implements View, ActionListener, FocusListener, ChangeListener   {
 
 	// enable/disable integral ---- use for testing
 	private boolean hasIntegral = true; 
@@ -311,6 +313,8 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 			plotPanel.setBorder(BorderFactory.createEmptyBorder());
 
+			addPlotPanelExportMenu(plotPanel);
+
 
 			// table panel
 			//======================================================
@@ -510,7 +514,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	//       Plotting
 	//=================================================
 
-	
+
 	/**
 	 * Creates the required GeoElements for the currently selected distribution
 	 * type and parameters. 
@@ -520,7 +524,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		this.removeGeos();
 
 		String expr;
-	
+
 		//create low point
 
 		GeoAxis path = (GeoAxis)kernel.lookupLabel(app.getPlain("xAxis"));
@@ -535,7 +539,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		lowPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
 		plotGeoList.add(lowPoint);
 
-		
+
 		// create high point
 
 		AlgoPointOnPath algoHigh = new AlgoPointOnPath(cons, (Path)path, 0d, 0d);
@@ -741,7 +745,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		plotPanel.repaint();
 		GeoElement.updateCascade(pointList, getTempSet());
 		tempSet.clear();
-		
+
 		if(probManager.isDiscrete(selectedDist))
 			table.setSelectionByRowValue((int)low, (int)high);
 
@@ -758,7 +762,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	}
 
 
-	
+
 
 
 	/**
@@ -779,7 +783,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 * @param prob 
 	 */
 	private double inverseProbability(double prob){
-		
+
 		return probManager.inverseProbability(selectedDist, prob, parameters);
 	}
 
@@ -793,7 +797,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		if (xHigh < xLow) return false;
 
 		boolean isValid = true;
-		
+
 
 		switch (selectedDist){
 
@@ -805,19 +809,19 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			isValid = xLow >= 0;   // 0 <= x 
 			break;
 
-			
+
 		case ProbabilityManager.DIST_POISSON: 
 		case ProbabilityManager.DIST_CHISQUARE:
 		case ProbabilityManager.DIST_EXPONENTIAL:
 			if(probMode != PROB_LEFT)
 				isValid = xLow >= 0;   // 0 <= x 
-			break;
-			
-			
+				break;
+
+
 		case ProbabilityManager.DIST_F:	
 			if(probMode != PROB_LEFT)
 				isValid = xLow > 0;   // 0 <= x 
-			break;
+				break;
 
 		case ProbabilityManager.DIST_HYPERGEOMETRIC: 
 			isValid = xLow >= 0 && xHigh<= parameters[2];  // 0 <= x <= sample size
@@ -878,7 +882,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 					this.setProbabilityCalculator(selectedDist, parameters, isCumulative);
 				}
 			comboDistribution.addActionListener(this);
-			
+
 			this.requestFocus();
 		}
 
@@ -1053,7 +1057,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			this.integral.updateCascade();
 	}
 
-	
+
 	private void updateProbabilityType(){
 
 		if(isIniting) return;	
@@ -1140,7 +1144,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		 * creating new ones, is there a better way?
 		 */
 
-		
+
 		createGeoElements();
 		//setSliderDefaults();
 
@@ -1411,7 +1415,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 
 
 	private void clearPlotGeoList(){
-		
+
 		for(GeoElement geo : plotGeoList){
 			if(geo != null){
 				geo.setFixed(false);
@@ -1455,7 +1459,7 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 	 */
 	private String buildDensityCurveExpression(int type){
 		String expr = "";
-		
+
 		// build geogebra string for creating a density curve with list values as parameters
 		// e.g." Normal[0,1,x] "
 
@@ -1485,9 +1489,13 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		String expr = "";
 		String n, p, s, mean;
 
+
+
 		switch(selectedDist){
 
 		case ProbabilityManager.DIST_BINOMIAL:	
+
+	
 			n = "" + parameters[0];
 			p = "" + parameters[1];
 
@@ -1519,10 +1527,10 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 			discreteProbList = (GeoList) createGeoFromString(expr);
 
 			break;
-
+		
 
 		case ProbabilityManager.DIST_POISSON:
-			
+
 			mean = "" + parameters[0];
 			n = "" + (parameters[0] + 6*Math.sqrt(parameters[0]));
 
@@ -1719,6 +1727,93 @@ public class ProbabilityCalculator extends JPanel implements View, ActionListene
 		sb.append("/>\n");
 		sb.append("</probabilityCalculator>\n");
 	}
+
+
+
+
+	//============================================================
+	//           Export
+	//============================================================
+
+
+	private void addPlotPanelExportMenu(PlotPanelEuclidianView plotPanel){
+
+		AbstractAction exportToEVAction = new AbstractAction(app
+				.getMenu("CopyToGraphics"), app
+				.getImageIcon("edit-copy.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				doGraphicsCopy();	
+			}
+		};
+
+		plotPanel.appendActionList(exportToEVAction);
+	}
+
+	private void doGraphicsCopy(){
+		
+		app.setWaitCursor();
+			
+		try {
+			if(probManager.isDiscrete(selectedDist)){
+
+				
+				
+				
+				
+				
+				
+			}
+			else{
+				
+				
+				GeoElement densityCurveCopy = densityCurve.copyInternal(cons);
+				densityCurveCopy.setLabel(null);
+				densityCurveCopy.setVisualStyle(densityCurve);
+				densityCurveCopy.setAuxiliaryObject(false);
+			
+				//create low point
+				String expr = "Point[" + app.getPlain("xAxis") + "]";
+				GeoPoint lowPointCopy = (GeoPoint) createGeoFromString(expr);
+				lowPointCopy.setVisualStyle(lowPoint);
+				lowPointCopy.setLabelVisible(false);
+				lowPointCopy.setAuxiliaryObject(false);
+				lowPointCopy.setCoords(low, 0, 1);
+				lowPointCopy.setLabel(null);
+
+				//create high point
+				GeoPoint highPointCopy = (GeoPoint) createGeoFromString(expr);
+				highPointCopy.setVisualStyle(lowPoint);
+				highPointCopy.setLabelVisible(false);
+				highPointCopy.setAuxiliaryObject(false);
+				highPointCopy.setCoords(high, 0, 1);
+				highPointCopy.setLabel(null);
+
+				// create integral
+				expr = "Integral[" + densityCurveCopy.getLabel() + ", x(" + lowPointCopy.getLabel() 
+				+ "), x(" + highPointCopy.getLabel() + ") , true ]";
+				GeoElement integralCopy  = createGeoFromString(expr);
+				integralCopy.setVisualStyle(integral);
+				integralCopy.setAuxiliaryObject(false);
+				integralCopy.setLabel(null);
+				
+				app.getEuclidianView().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
+						plotSettings.yMin, plotSettings.yMax);
+
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			app.setDefaultCursor();
+		}
+		
+		app.setDefaultCursor();
+	}
+
+
+
+
 
 
 }

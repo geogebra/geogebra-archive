@@ -2,18 +2,22 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.util.ImageSelection;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
-import javax.swing.JMenuItem;
+import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.JPopupMenu;
 
 /**
@@ -28,6 +32,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 
 
 	private EuclidianController ec;
+	PlotPanelEuclidianView thisEV;
 
 	private static boolean[] showAxes = { true, true };
 	private static boolean showGrid = false;
@@ -56,6 +61,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 	public PlotPanelEuclidianView(Kernel kernel) {
 		super(new PlotPanelEuclidianController(kernel), showAxes, showGrid);
 
+		thisEV = this;
 		this.ec = this.getEuclidianController();
 
 		setMouseEnabled(false);
@@ -79,7 +85,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 	}
 
 	public void setMouseEnabled(boolean enableMouse){
-		
+
 		removeMouseListener(ec);
 		if(enableMouse)
 			addMouseListener(ec);
@@ -108,7 +114,7 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 	}
 
 
-	
+
 
 	/**
 	 * Override UpdateSize() so that our plots stay centered and scaled in a
@@ -261,44 +267,112 @@ public class PlotPanelEuclidianView extends EuclidianView implements ComponentLi
 
 	}
 
-	
+
+
+
 	//=============================================
 	//      Context Menu
 	//=============================================
 
 	private class ContextMenu extends JPopupMenu{
 
-		JMenuItem menuItem;
-
 		public  ContextMenu(){
 			this.setOpaque(true);
-			setBackground(bgColor);	
+			//setBackground(bgColor);	
 			setFont(app.getPlainFont());
 
-			menuItem = new JMenuItem(app.getMenu("CopyToGraphics") + "...", app.getImageIcon("edit-copy.png"));
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					
-					
-					
-				}
-			});
-			add(menuItem);
-			menuItem.setBackground(bgColor);
-
-			menuItem = new JMenuItem(app.getPlain("ExportAsPicture") + "...");
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-
-				}
-			});
-			add(menuItem);
-			menuItem.setBackground(bgColor);
-			
-		
+			for(AbstractAction action : getActionList())
+				add(action);
 		}
 	}
 
 
+	ArrayList<AbstractAction> actionList;
 	
+	public ArrayList<AbstractAction> getActionList() {
+		if(actionList == null){
+			actionList = new ArrayList<AbstractAction>();
+			//actionList.add(exportToEVAction);
+			actionList.add(drawingPadToClipboardAction);
+			actionList.add(exportGraphicAction);
+		}
+		return actionList;
+	}
+	
+	public void setActionList(ArrayList<AbstractAction> actionList) {
+		this.actionList = actionList;
+	}
+
+	public void appendActionList(AbstractAction action) {
+		getActionList().add(action);
+	}
+	
+	
+
+	AbstractAction exportGraphicAction = new AbstractAction(app.getPlain("ExportAsPicture") + "...", app
+			.getImageIcon("image-x-generic.png")) {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				Thread runner = new Thread() {
+					public void run() {
+						app.setWaitCursor();
+						try {
+							app.clearSelectedGeos();
+
+							// use reflection for
+							JDialog d = new geogebra.export.GraphicExportDialog(app);
+							d.setVisible(true);
+
+						} catch (Exception e) {
+							Application
+							.debug("GraphicExportDialog not available");
+						}
+						app.setDefaultCursor();
+					}
+				};
+				runner.start();
+			}
+
+			catch (java.lang.NoClassDefFoundError ee) {
+				app.showError("ExportJarMissing");
+				ee.printStackTrace();
+			}
+		}
+	};
+
+	AbstractAction drawingPadToClipboardAction = new AbstractAction(app
+			.getMenu("CopyToClipboard"), app
+			.getImageIcon("edit-copy.png")) {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			app.clearSelectedGeos();
+
+			Thread runner = new Thread() {
+				public void run() {
+					app.setWaitCursor();
+					// copy drawing pad to the system clipboard
+					Image img = thisEV.getExportImage(1d);
+					ImageSelection imgSel = new ImageSelection(img);
+					Toolkit.getDefaultToolkit().getSystemClipboard()
+					.setContents(imgSel, null);
+					app.setDefaultCursor();
+				}
+			};
+			runner.start();
+		}
+	};
+
+
+	
+
+
+
+
+
+
+
+
 }
