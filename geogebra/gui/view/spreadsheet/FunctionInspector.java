@@ -19,12 +19,17 @@ import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoCasDerivative;
+import geogebra.kernel.AlgoCurvature;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoDependentPoint;
+import geogebra.kernel.AlgoFunctionInterval;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.AlgoLengthFunction;
+import geogebra.kernel.AlgoOsculatingCircle;
+import geogebra.kernel.AlgoPointOnPath;
 import geogebra.kernel.AlgoRoots;
+import geogebra.kernel.AlgoTangentFunctionPoint;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -32,8 +37,8 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
-import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
@@ -139,9 +144,9 @@ KeyListener, ActionListener{
 	private PopupMenuButton btnAddColumn;
 
 	// Geos
-	private GeoElement selectedGeo, tangentLine, oscCircle, xSegment, ySegment;
+	private GeoElement tangentLine, oscCircle, xSegment, ySegment;
 	private GeoElement functionInterval;
-	private GeoFunction derivative, derivative2;
+	private GeoFunction derivative, derivative2, selectedGeo;
 	private GeoPoint testPoint, lowPoint, highPoint;
 	private GeoList pts;
 	private ArrayList<GeoElement> geoList;
@@ -156,7 +161,7 @@ KeyListener, ActionListener{
 
 
 	/** Constructor */
-	public FunctionInspector(Application app, GeoElement selectedGeo) {
+	public FunctionInspector(Application app, GeoFunction selectedGeo) {
 
 		super(app.getFrame(), false);
 		this.app = app;	
@@ -531,9 +536,7 @@ KeyListener, ActionListener{
 
 		//double integral = evaluateExpression("Integral[" + lbl + "," + xMin + "," + xMax + "]");
 		
-		GeoFunction f = (GeoFunction) selectedGeo;
-
-		AlgoIntegralDefinite inte = new AlgoIntegralDefinite(cons, f, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0], null);
+		AlgoIntegralDefinite inte = new AlgoIntegralDefinite(cons, selectedGeo, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0], null);
 		cons.removeFromConstructionList(inte);
 		
 		double integral = ((GeoNumeric)inte.getGeoElements()[0]).getDouble();
@@ -541,26 +544,26 @@ KeyListener, ActionListener{
 		double mean = integral/(xMax - xMin);
 		//double length = evaluateExpression("Length[" + lbl + "," + xMin + "," + xMax + "]");
 
-		AlgoLengthFunction len = new AlgoLengthFunction(cons, f, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
+		AlgoLengthFunction len = new AlgoLengthFunction(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(len);
 		
 		double length = ((GeoNumeric)len.getGeoElements()[0]).getDouble();
 		
-		ExtremumFinder ef=new ExtremumFinder();
-		RealRootFunction fun=f.getRealRootFunctionY();    
+		ExtremumFinder ef = new ExtremumFinder();
+		RealRootFunction fun = selectedGeo.getRealRootFunctionY();    
 
 
 		//double yMin = evaluateExpression(lbl + "(" + xMin + ")");
 		//double yMax = evaluateExpression(lbl + "(" + xMax + ")");
-		double yMin = f.evaluate(xMin);
-		double yMax = f.evaluate(xMax);
+		double yMin = selectedGeo.evaluate(xMin);
+		double yMax = selectedGeo.evaluate(xMax);
 		
 		double xMinInt = ef.findMinimum(xMin,xMax,fun,5.0E-8);
 		double xMaxInt = ef.findMaximum(xMin,xMax,fun,5.0E-8);
 		//double yMinInt = evaluateExpression(lbl + "(" + xMinInt + ")");
 		//double yMaxInt = evaluateExpression(lbl + "(" + xMaxInt + ")");
-		double yMinInt = f.evaluate(xMinInt);
-		double yMaxInt = f.evaluate(xMaxInt);
+		double yMinInt = selectedGeo.evaluate(xMinInt);
+		double yMaxInt = selectedGeo.evaluate(xMaxInt);
 
 		if(yMin < yMinInt){
 			yMinInt = yMin;
@@ -586,7 +589,7 @@ KeyListener, ActionListener{
 		property.add(app.getCommand("Root"));
 		//GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionsOrErrors(" + Roots[" + lbl + "," + xMin + "," + xMax + "]", false);
 		
-		AlgoRoots root = new AlgoRoots(cons, f, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
+		AlgoRoots root = new AlgoRoots(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(len);
 		
 		GeoElement geos[] = root.getGeoElements();
@@ -600,7 +603,7 @@ KeyListener, ActionListener{
 		break;
 		case 1: 
 			if (geos[0].isDefined())
-				value.add(geos[0].toValueString());
+				value.add(kernel.format(((GeoPoint)geos[0]).inhomX));
 			else
 				value.add(app.getPlain("fncInspector.NoRoots"));
 		break;
@@ -706,8 +709,6 @@ KeyListener, ActionListener{
 
 		if(extraColumnList.size()==0) return;
 
-		String expr;
-
 		for(int column = 2; column < extraColumnList.size() + 2; column ++ ){
 
 			int columnType = extraColumnList.get(column-2);
@@ -736,8 +737,22 @@ KeyListener, ActionListener{
 				for(int row=0; row < modelXY.getRowCount(); row++){
 					double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
 					double y = Double.parseDouble((String) modelXY.getValueAt(row, 1));
-					double c = evaluateExpression(
-							"Curvature[ (" + x + "," + y  + ")," + selectedGeo.getLabel() + "]");
+					
+					MyVecNode vec = new MyVecNode( kernel, new MyDouble(kernel, x), new MyDouble(kernel, y));
+					
+					ExpressionNode point = new ExpressionNode(kernel, vec, ExpressionNode.NO_OPERATION, null);
+					point.setForcePoint();
+					
+					AlgoDependentPoint pointAlgo = new AlgoDependentPoint(cons, point, false);
+					cons.removeFromConstructionList(pointAlgo);
+					
+					AlgoCurvature curvature = new AlgoCurvature(cons, (GeoPoint) pointAlgo.getGeoElements()[0], selectedGeo);
+					cons.removeFromConstructionList(curvature);
+					
+					double c = ((GeoNumeric)curvature.getGeoElements()[0]).getDouble();
+					
+					//double c = evaluateExpression(
+					//		"Curvature[ (" + x + "," + y  + ")," + selectedGeo.getLabel() + "]");
 					modelXY.setValueAt(nf.format(c),row,column);
 				}	
 				break;
@@ -821,7 +836,7 @@ KeyListener, ActionListener{
 				}	
 				else if (source == fldLow){ 
 					isChangingValue = true;
-					double y = evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
+					double y = selectedGeo.evaluate(value);//evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
 					lowPoint.setCoords(value, y, 1);
 					lowPoint.updateCascade();
 					lowPoint.updateRepaint();
@@ -830,7 +845,7 @@ KeyListener, ActionListener{
 				}	
 				else if (source == fldHigh){ 
 					isChangingValue = true;
-					double y = evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
+					double y = selectedGeo.evaluate(value);//evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
 					highPoint.setCoords(value, y, 1);
 					highPoint.updateCascade();
 					highPoint.updateRepaint();
@@ -932,7 +947,6 @@ KeyListener, ActionListener{
 	}
 	public void insertGeoElement(GeoElement geo) {
 		if(geo == null) return;
-		selectedGeo = geo;
 		lblGeoName.setText(getTitleString());
 
 		initialX = 0.5* (kernel.getApplication().getEuclidianView().getXmin()-
@@ -940,6 +954,7 @@ KeyListener, ActionListener{
 
 		if(selectedGeo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTION){
 
+			selectedGeo = (GeoFunction)geo;
 			start = initialX;
 			step = 0.25 * kernel.getApplication().getEuclidianView().getGridDistances()[0];
 			//	fldStart.removeActionListener(this);
@@ -952,11 +967,11 @@ KeyListener, ActionListener{
 			defineDisplayGeos();
 
 			double x = initialX - 4*step; 
-			double y = evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
+			double y = ((GeoFunction)selectedGeo).evaluate(x); //evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
 			lowPoint.setCoords(x, y, 1);
 
 			x = initialX + 4*step; 
-			y = evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
+			y = ((GeoFunction)selectedGeo).evaluate(x); //evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
 			highPoint.setCoords(x, y, 1);
 			
 			lowPoint.updateCascade();
@@ -1029,17 +1044,27 @@ KeyListener, ActionListener{
 	private void defineDisplayGeos(){
 
 		String fcn = selectedGeo.getLabel();
+		String expr;
+		
+		EuclidianView ev = (EuclidianView) app.getActiveEuclidianView();
 		
 		GeoFunction f = (GeoFunction)selectedGeo;
 
 		// test point
 		if(testPoint != null) 
 			testPoint.remove();
-		String expr = "Point[" + fcn + "]";
-		testPoint = (GeoPoint) createGeoFromString(expr, null, true);
+		
+		AlgoPointOnPath pAlgo = new AlgoPointOnPath(cons, (Path)f, (ev.getXmin() + ev.getXmax()) / 2, 0);
+		cons.removeFromConstructionList(pAlgo);
+		testPoint = (GeoPoint) pAlgo.getGeoElements()[0];
+		
+		ev.add(testPoint);
+		
+		//String expr = "Point[" + fcn + "]";
+		//testPoint = (GeoPoint) createGeoFromString(expr, null, true);
 		testPoint.setObjColor(DISPLAY_GEO_COLOR);
 		testPoint.setPointSize(4);
-		testPoint.setLabel("fiTestPoint");
+		//testPoint.setLabel("fiTestPoint");
 
 		// X segment
 		if(xSegment != null) 
@@ -1061,7 +1086,7 @@ KeyListener, ActionListener{
 		
 		xSegment = (GeoSegment)seg1.getGeoElements()[0];
 		// as it has no label, need to add it the the view
-		app.getEuclidianView().add(xSegment);
+		ev.add(xSegment);
 
 		//expr = "Segment[" + testPoint.getLabel() + ", (x(" + testPoint.getLabel() + "),0) ]";
 		//Application.debug(expr);
@@ -1092,7 +1117,7 @@ KeyListener, ActionListener{
 		
 		ySegment = (GeoSegment)seg2.getGeoElements()[0];
 		// as it has no label, need to add it the the view
-		app.getEuclidianView().add(ySegment);
+		ev.add(ySegment);
 
 		//expr = "Segment[" + testPoint.getLabel() + ", (0, y(" + testPoint.getLabel() + ")) ]";
 		//Application.debug(expr);
@@ -1108,25 +1133,39 @@ KeyListener, ActionListener{
 		// tangent line
 		if(tangentLine != null) 
 			tangentLine.remove();
+		
+		AlgoTangentFunctionPoint tangent = new AlgoTangentFunctionPoint(cons, testPoint, f);
+		cons.removeFromConstructionList(tangent);
 
-		expr = "Tangent[" + fcn + "," + testPoint.getLabel() + "]";
+		tangentLine = tangent.getGeoElements()[0];
+		
+		ev.add(tangentLine);
+		
+		//expr = "Tangent[" + fcn + "," + testPoint.getLabel() + "]";
 		//Application.debug(expr);
-		tangentLine = createGeoFromString(expr, null, true);
+		//tangentLine = createGeoFromString(expr, null, true);
 		tangentLine.setObjColor(DISPLAY_GEO_COLOR);
 		tangentLine.setEuclidianVisible(false);
-		tangentLine.setLabel("fiTangentLine");
+		//tangentLine.setLabel("fiTangentLine");
 
 
 		// osculating circle
 		if( oscCircle != null) 
 			oscCircle.remove();
+		
+		AlgoOsculatingCircle oc = new AlgoOsculatingCircle(cons, testPoint, f);
+		cons.removeFromConstructionList(oc);
+		
+		oscCircle = oc.getGeoElements()[0];
+		
+		ev.add(oscCircle);
 
-		expr = "OsculatingCircle[" + testPoint.getLabel() + "," + fcn + "]";
+		//expr = "OsculatingCircle[" + testPoint.getLabel() + "," + fcn + "]";
 		//Application.debug(expr);
-		oscCircle = createGeoFromString(expr, null, true);
+		//oscCircle = createGeoFromString(expr, null, true);
 		oscCircle.setObjColor(DISPLAY_GEO_COLOR);
 		oscCircle.setEuclidianVisible(false);
-		oscCircle.setLabel("fiOscCircle");
+		//oscCircle.setLabel("fiOscCircle");
 
 
 		// derivative
@@ -1164,10 +1203,10 @@ KeyListener, ActionListener{
 			pts.remove();
 
 		//Application.debug(expr);
-		pts = (GeoList) createGeoFromString("{}", null, true);
+		pts = new GeoList(cons);
 		pts.setEuclidianVisible(true);
 		pts.setObjColor(new Color(125,125,255));
-		pts.setLabel("fiPointList");
+		//pts.setLabel("fiPointList");
 		for(int i = 0; i < pointCount; i++){
 			pts.add(new GeoPoint(cons));
 		}
@@ -1176,33 +1215,62 @@ KeyListener, ActionListener{
 		// interval points
 		if( lowPoint != null) 
 			lowPoint.remove();
+		if( highPoint != null) 
+			highPoint.remove();
+		
+		AlgoPointOnPath pxAlgo = new AlgoPointOnPath(cons, (Path)f, (2 * ev.getXmin() + ev.getXmax()) / 3, 0);
+		cons.removeFromConstructionList(pxAlgo);
+		lowPoint = (GeoPoint) pxAlgo.getGeoElements()[0];
+		
+		ev.add(lowPoint);
+		
+		AlgoPointOnPath pyAlgo = new AlgoPointOnPath(cons, (Path)f, (ev.getXmin() + 2 * ev.getXmax()) / 3, 0);
+		cons.removeFromConstructionList(pyAlgo);
+		highPoint = (GeoPoint) pyAlgo.getGeoElements()[0];
+		
+		ev.add(highPoint);
 
-		expr = "Point[" + fcn + "]";
+		
+		ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
+		ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
+
+		AlgoDependentNumber xLow = new AlgoDependentNumber(cons, low, false);
+		cons.removeFromConstructionList(xLow);
+		AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
+		cons.removeFromConstructionList(xHigh);
+
+
+		//expr = "Point[" + fcn + "]";
 		//Application.debug(expr);
-		lowPoint = (GeoPoint) createGeoFromString(expr, null, true);
+		//lowPoint = (GeoPoint) createGeoFromString(expr, null, true);
 		lowPoint.setEuclidianVisible(false);
 		lowPoint.setPointSize(4);
 		lowPoint.setObjColor(DISPLAY_GEO_COLOR);
-		lowPoint.setLabel("fiLowPoint");
+		//lowPoint.setLabel("fiLowPoint");
 
-		if( highPoint != null) 
-			highPoint.remove();
 
-		expr = "Point[" + fcn + "]";
+		//expr = "Point[" + fcn + "]";
 		//Application.debug(expr);
-		highPoint = (GeoPoint) createGeoFromString(expr, null, true);
+		//highPoint = (GeoPoint) createGeoFromString(expr, null, true);
 		highPoint.setEuclidianVisible(false);
 		highPoint.setPointSize(4);
 		highPoint.setObjColor(DISPLAY_GEO_COLOR);
-		highPoint.setLabel("fiHighPoint");
+		//highPoint.setLabel("fiHighPoint");
 
-		expr = "Function[" + fcn + ", x(" + lowPoint.getLabel() + ") , x(" + highPoint.getLabel() + ") ]";
+		AlgoFunctionInterval interval = new AlgoFunctionInterval(cons, f, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0]);
+		cons.removeFromConstructionList(interval);	
+		
+		functionInterval = interval.getGeoElements()[0];
+		
+		ev.add(functionInterval);
+		
+		//expr = "Function[" + fcn + ", x(" + lowPoint.getLabel() + ") , x(" + highPoint.getLabel() + ") ]";
 		//Application.debug(expr);
-		functionInterval = createGeoFromString(expr, null, true);
+		//functionInterval = createGeoFromString(expr, null, true);
 		functionInterval.setEuclidianVisible(false);
 		functionInterval.setLineThickness(selectedGeo.getLineThickness()+3);
 		functionInterval.setObjColor(DISPLAY_GEO_COLOR);
-		functionInterval.setLabel("fiFunctionInterval");
+		//functionInterval.setLabel("fiFunctionInterval");
 
 		// hide tooltips for these geos
 		for(int i=0; i<geoList.size(); i++){
@@ -1223,7 +1291,7 @@ KeyListener, ActionListener{
 		int row = tableXY.getSelectedRow();
 		if (row >= 0){
 			double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
-			double y = evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
+			double y = ((GeoFunction)selectedGeo).evaluate(x); //evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
 			//double y = Double.parseDouble((String) modelXY.getValueAt(row, 1));
 			testPoint.setCoords(x, y, 1);
 			testPoint.updateRepaint();	
@@ -1231,66 +1299,6 @@ KeyListener, ActionListener{
 		isChangingValue = false;
 
 	}
-
-
-
-
-
-	//  Geo Creation and Evaluation Methods
-	//=========================================
-
-	private double evaluateExpression(String expr){
-		NumberValue nv;
-		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);
-		double num = nv.getDouble();
-		nv.toGeoElement().remove();
-		return num;
-	}
-
-
-	private String evaluateToText(String expr, String ifUndefined){
-		GeoText text = kernel.getAlgebraProcessor().evaluateToText(expr, false);
-		String result = text.getTextString();
-		text.remove();
-		if (result.equals(app.getPlain("undefined")))
-			return ifUndefined;
-		return result;
-	}
-
-
-	public GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
-
-		try {
-
-			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
-
-			if(suppressLabelCreation)
-				cons.setSuppressLabelCreation(true);
-			//Application.debug(text);
-			GeoElement[] geos = kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptions(text, false);	
-
-			if(label != null)
-				geos[0].setLabel(label);
-
-			// set visibility
-			geos[0].setEuclidianVisible(true);	
-			geos[0].setAuxiliaryObject(true);
-			geos[0].setLabelVisible(false);
-
-			if(suppressLabelCreation)
-				cons.setSuppressLabelCreation(oldSuppressLabelMode);
-
-			geoList.add(geos[0]);
-			return geos[0];
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-
 
 	private void clearGeoList(){
 		for(GeoElement geo : geoList){

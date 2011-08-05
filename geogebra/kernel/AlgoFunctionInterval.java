@@ -31,6 +31,13 @@ public class AlgoFunctionInterval extends AlgoElement {
     public AlgoFunctionInterval(Construction cons, String label, 
     		GeoFunction f, NumberValue a, NumberValue b) 
     {
+        this(cons, f, a, b);
+        g.setLabel(label);
+    }
+    
+    public AlgoFunctionInterval(Construction cons, 
+    		GeoFunction f, NumberValue a, NumberValue b) 
+    {
         super(cons);
         this.f = f;
         this.a = a;
@@ -48,7 +55,6 @@ public class AlgoFunctionInterval extends AlgoElement {
         
         setInputOutput(); // for AlgoElement    
         compute();
-        g.setLabel(label);
     }
     
   

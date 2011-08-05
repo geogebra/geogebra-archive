@@ -27,7 +27,7 @@ public class AlgoCurvature extends AlgoElement {
     	}    	
     }
     
-    AlgoCurvature(Construction cons, GeoPoint A, GeoFunction f) {
+    public AlgoCurvature(Construction cons, GeoPoint A, GeoFunction f) {
         super(cons);
         this.f = f;
         this.A = A;

@@ -38,6 +38,7 @@ import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -96,7 +97,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
@@ -1374,7 +1374,7 @@ public class GuiManager {
 	 * Shows the function inspector dialog. If none exists, a new inspector is
 	 * created.
 	 */
-	public boolean showFunctionInspector(GeoElement function){
+	public boolean showFunctionInspector(GeoFunction function){
 		boolean success = true;
 
 		try {

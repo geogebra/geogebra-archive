@@ -26,6 +26,11 @@ public class AlgoOsculatingCircle extends AlgoElement {
     AlgoCurvatureVector cv;
     
     AlgoOsculatingCircle(Construction cons, String label, GeoPoint A, GeoFunction f) {
+        this(cons, A, f);
+        circle.setLabel(label);
+    }
+ 
+    public AlgoOsculatingCircle(Construction cons, GeoPoint A, GeoFunction f) {
         super(cons);
         this.A = A;
         this.f = f;
@@ -45,7 +50,6 @@ public class AlgoOsculatingCircle extends AlgoElement {
 		cons.removeFromAlgorithmList(cv);
 		setInputOutput();
         compute();
-        circle.setLabel(label);
     }
  
     public String getClassName() {
