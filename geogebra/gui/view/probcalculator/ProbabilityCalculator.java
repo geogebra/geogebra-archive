@@ -653,7 +653,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			densityCurve.setObjColor(COLOR_PDF);
 			densityCurve.setLineThickness(thicknessCurve);
 			densityCurve.setFixed(true);
-
+			densityCurve.setEuclidianVisible(true);
+			plotGeoList.add(densityCurve);
 
 
 			if(hasIntegral ){
@@ -1336,11 +1337,6 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	//       Create GeoElement
 	//=================================================
 
-
-	private GeoElement createGeoFromString(String text ){
-		return createGeoFromString(text, null, false);
-	}
-
 	private GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
 
 		try {
@@ -1360,29 +1356,9 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 			cons.setUndoEnabled(oldEnableUndo);
 
-
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(oldSuppressLabelMode);
 
-			// set the label
-			// ================================
-			if(label != null)
-				geos[0].setLabel(label);
-			else
-				setProbCalcGeoLabel(geos[0]);
-
-
-			// set visibility
-			// ================================
-			geos[0].setEuclidianVisible(true);	
-			geos[0].setAuxiliaryObject(true);
-			geos[0].setLabelVisible(false);
-
-
-			// put the geo in our list 
-			// ================================
-			plotGeoList.add(geos[0]);
-			//	System.out.println(geos[0].getLabel() + " : " + geos[0].getCommandDescription());
 			return geos[0];
 
 		} catch (Exception e) {
@@ -1390,23 +1366,6 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			return null;
 		}
 	}
-
-
-	/**
-	 * Sets the label of a geo created by ProbabilityCalculator
-	 * @param geo
-	 */
-	private void setProbCalcGeoLabel(GeoElement geo){
-		//geo.setLabel(labelPrefix + plotGeoList.size());
-		//int r = (int) (Math.random()*1e6);
-		//geo.setLabel("pc" + r);
-	}
-
-
-	private String getGeoString(GeoElement geo){
-		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
-	}
-
 
 
 
@@ -1693,21 +1652,6 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	}
 
 
-	/**
-	 * Redefines the density curve ... not currently used
-	 */
-	private void resetDensityCurve(){
-
-		densityCurve.remove();
-		densityCurve = createGeoFromString(buildDensityCurveExpression(selectedDist));
-
-		densityCurve.setObjColor(COLOR_PDF);
-		densityCurve.setLineThickness(3);
-		densityCurve.setFixed(true);
-		hideGeoFromViews(densityCurve);
-
-	}
-
 
 
 
@@ -1854,26 +1798,27 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				exportGeosToEV();	
+				exportGeosToEV(2);	
 			}
 		};
 
 		plotPanel.appendActionList(exportToEVAction);
 	}
 
-	public void exportGeosToEV(){
+	
+	
+	
+	public void exportGeosToEV(int evNo){
 		
 		app.setWaitCursor();
+		ArrayList<GeoElement> list = new ArrayList<GeoElement>();
 			
 		try {
 			if(probManager.isDiscrete(selectedDist)){
 
 				
 				
-				
-				
-				
-				
+			
 			}
 			else{
 				
@@ -1881,38 +1826,55 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				GeoElement densityCurveCopy = densityCurve.copyInternal(cons);
 				densityCurveCopy.setLabel(null);
 				densityCurveCopy.setVisualStyle(densityCurve);
-				densityCurveCopy.setAuxiliaryObject(false);
+				list.add(densityCurveCopy);
 			
 				//create low point
 				String expr = "Point[" + app.getPlain("xAxis") + "]";
-				GeoPoint lowPointCopy = (GeoPoint) createGeoFromString(expr);
+				GeoPoint lowPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
 				lowPointCopy.setVisualStyle(lowPoint);
 				lowPointCopy.setLabelVisible(false);
-				lowPointCopy.setAuxiliaryObject(false);
 				lowPointCopy.setCoords(low, 0, 1);
 				lowPointCopy.setLabel(null);
-
+				list.add(lowPointCopy);
+				
+				
 				//create high point
-				GeoPoint highPointCopy = (GeoPoint) createGeoFromString(expr);
+				GeoPoint highPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
 				highPointCopy.setVisualStyle(lowPoint);
 				highPointCopy.setLabelVisible(false);
-				highPointCopy.setAuxiliaryObject(false);
 				highPointCopy.setCoords(high, 0, 1);
 				highPointCopy.setLabel(null);
-
+				list.add(highPointCopy);
+				
+				
 				// create integral
 				expr = "Integral[" + densityCurveCopy.getLabel() + ", x(" + lowPointCopy.getLabel() 
 				+ "), x(" + highPointCopy.getLabel() + ") , true ]";
-				GeoElement integralCopy  = createGeoFromString(expr);
+				GeoElement integralCopy  = createGeoFromString(expr,null, false);
 				integralCopy.setVisualStyle(integral);
-				integralCopy.setAuxiliaryObject(false);
 				integralCopy.setLabel(null);
-				
+				list.add(integralCopy);
+			}
+			
+			
+			for(GeoElement geo: list){
+				geo.setAuxiliaryObject(false);
+				if(evNo == 2){
+					geo.addView(app.getEuclidianView2());
+					geo.removeView(app.getEuclidianView());
+					geo.update();
+				}
+			}
+			
+			if(evNo == 1)
 				app.getEuclidianView().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
 						plotSettings.yMin, plotSettings.yMax);
+			else
+				app.getEuclidianView2().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
+						plotSettings.yMin, plotSettings.yMax);
 
-
-			}
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			app.setDefaultCursor();

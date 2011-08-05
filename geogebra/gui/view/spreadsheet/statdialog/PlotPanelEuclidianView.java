@@ -283,7 +283,6 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 			Object ob = e.getSource();	
 			// right click shows context menu
 			if (Application.isRightClick(e)) {
-				System.out.println("popup time!");
 				e.consume();
 				//app.getGuiManager().showPopupMenu(temp, table, origin);
 			}
@@ -311,7 +310,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			overDragRegion = e.getPoint().y < 5;
+			overDragRegion = e.getPoint().y < 10;
 			//if(overDragRegion)
 				//plotPanelEV.setSelectionRectangle(new Rectangle(0, 0, plotPanelEV.getWidth(), plotPanelEV.getHeight()));
 			//else

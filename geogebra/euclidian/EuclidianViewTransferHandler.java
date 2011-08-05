@@ -22,7 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 /**
- * Transfer handler for Euclidian Views
+ * Transfer handler for EuclidianView 
  * @author G. Sturr
  *
  */
@@ -84,7 +84,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 				}
 			}
 		}
-		return true;  // allow all types for now (testing)
+		return false;  
 	}
 
 
@@ -94,6 +94,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 	 */
 	public boolean importData(JComponent comp, Transferable t) {
 
+		
 		// give the drop target (this EV) the view focus
 		requestViewFocus();
 
@@ -117,8 +118,11 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		
 		// first try to get an image
 		if (t.isDataFlavorSupported(PlotPanelEuclidianView.plotPanelFlavor)){
-			app.getGuiManager().getProbabilityCalculator().exportGeosToEV();
-		return true;
+			if(ev == app.getEuclidianView())
+				app.getGuiManager().getProbabilityCalculator().exportGeosToEV(1);
+			else if(ev == app.getEuclidianView2())
+				app.getGuiManager().getProbabilityCalculator().exportGeosToEV(2);
+			return true;
 		}
 		
 		// first try to get an image
