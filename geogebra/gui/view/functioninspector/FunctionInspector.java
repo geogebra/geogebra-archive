@@ -10,7 +10,7 @@ the Free Software Foundation.
 
  */
 
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui.view.functioninspector;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.InputDialog;
@@ -51,11 +51,9 @@ import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -65,11 +63,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -77,19 +73,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.JViewport;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 
 /**
@@ -170,6 +161,11 @@ KeyListener, ActionListener{
 		boolean showApply = false;
 		this.selectedGeo = selectedGeo;
 
+		// list to store column types of dynamically appended columns 
+		extraColumnList = new ArrayList<Integer>();
+		
+		
+		
 		// setup InputDialog GUI
 		isIniting = true;
 		String title = app.getMenu("FunctionInspector");
@@ -299,21 +295,21 @@ KeyListener, ActionListener{
 	private void createGUIElements(){
 
 		// create XY table
-		tableXY = new InspectorTable();
+		tableXY = new InspectorTable(app, this, minRows);
 		modelXY = new DefaultTableModel();
 		modelXY.addColumn("x");
 		modelXY.addColumn("y(x)");
 		modelXY.setRowCount(pointCount);
 		tableXY.setModel(modelXY);
-		setMyCellRenderer(tableXY);
+		tableXY.setMyCellRenderer();
 
 		tableXY.getSelectionModel().addListSelectionListener(this);
 		//tableXY.addKeyListener(this);
-		tableXY.getColumnModel().getColumn(0).setCellEditor(new MyEditor());
+		tableXY.setMyCellEditor(0);
 
 
 		// create interval table
-		tableInterval = new InspectorTable();
+		tableInterval = new InspectorTable(app, this, minRows);
 		modelInterval = new DefaultTableModel();
 		modelInterval.setColumnCount(2);
 		modelInterval.setRowCount(pointCount);
@@ -683,8 +679,8 @@ KeyListener, ActionListener{
 	private void addColumn(int columnType){
 		extraColumnList.add(columnType);
 		modelXY.addColumn(columnNames[columnType]);
-		setMyCellRenderer(tableXY);
-		tableXY.getColumnModel().getColumn(0).setCellEditor(new MyEditor());
+		tableXY.setMyCellRenderer();
+		tableXY.setMyCellEditor(0);
 
 		updateXYTable();
 	}
@@ -697,8 +693,8 @@ KeyListener, ActionListener{
 		//	int lastColumn = tableXY.getColumnCount()-1;
 		//	tableXY.removeColumn(tableXY.getColumnModel().getColumn(lastColumn));
 		modelXY.setColumnCount(modelXY.getColumnCount()-1);
-		setMyCellRenderer(tableXY);
-		tableXY.getColumnModel().getColumn(0).setCellEditor(new MyEditor());
+		tableXY.setMyCellRenderer();
+		tableXY.setMyCellEditor(0);
 
 		updateXYTable();
 
@@ -1351,232 +1347,6 @@ KeyListener, ActionListener{
 
 	}
 
-
-
-
-
-	//  InspectorTable 
-	// =====================================
-
-	private class InspectorTable extends JTable{
-
-		boolean doRedNegative = false;	
-		HashSet<Point> editableCell;
-
-		public InspectorTable(){
-			super(minRows,2);
-
-			this.setShowGrid(true);
-			this.setGridColor(TABLE_GRID_COLOR);
-			this.setSelectionBackground(GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR);
-
-
-			//table.setAutoCreateColumnsFromModel(false);
-			this.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-			this.setPreferredScrollableViewportSize(this.getPreferredSize());
-			this.setBorder(null);
-			//this.addKeyListener(this);
-
-			// list to store column types of dynamically appended columns 
-			extraColumnList = new ArrayList<Integer>();
-			editableCell = new HashSet<Point>();
-		}
-
-
-		public boolean isDoRedNegative() {
-			return doRedNegative;
-		}
-
-		public void setDoRedNegative(boolean doRedNegative) {
-			this.doRedNegative = doRedNegative;
-		}
-
-		public void setCellEditable(int rowIndex, int colIndex) {
-			if(rowIndex == -1 && colIndex == -1)
-				editableCell.clear();
-			else
-				editableCell.add(new Point(rowIndex, colIndex));
-
-		}
-
-		// control cell editing
-		@Override
-		public boolean isCellEditable(int rowIndex, int colIndex) {
-			return editableCell.contains(new Point(rowIndex, colIndex));   
-		}
-
-		// fill empty scroll pane space with table background color
-		@Override
-		protected void configureEnclosingScrollPane() {
-			super.configureEnclosingScrollPane();
-			Container p = getParent();
-			if (p instanceof JViewport) {
-				((JViewport) p).setBackground(getBackground());
-			}
-		}
-
-
-
-		public void setColumnWidths(){
-			setColumnWidths(this);
-		}
-		private void setColumnWidths(JTable table){
-
-			int w;
-			for (int i = 0; i < getColumnCount(); ++ i) {	
-				w = getMaxColumnWidth(table,i) + 5; 
-				table.getColumnModel().getColumn(i).setPreferredWidth(w);
-			}
-
-			int gap = table.getParent().getPreferredSize().width - table.getPreferredSize().width;
-			//System.out.println(table.getParent().getPreferredSize().width);
-			if(gap > 0){
-				w = table.getColumnCount() - 1;
-				int newWidth = gap + table.getColumnModel().getColumn(table.getColumnCount() - 1).getWidth() ;
-				table.getColumnModel().getColumn(w).setPreferredWidth(newWidth);
-			}
-		}
-
-
-		/**
-		 * Finds the maximum preferred width of a column.
-		 */
-		public int getMaxColumnWidth(JTable table, int column){
-
-			TableColumn tableColumn = table.getColumnModel().getColumn(column); 
-
-			// iterate through the rows and find the preferred width
-			int maxPrefWidth = tableColumn.getPreferredWidth();
-			int colPrefWidth = 0;
-			for (int row = 0; row < table.getRowCount(); row++) {
-				if(table.getValueAt(row, column)!=null){
-					colPrefWidth = (int) table.getCellRenderer(row, column)
-					.getTableCellRendererComponent(table,
-							table.getValueAt(row, column), false, false,
-							row, column).getPreferredSize().getWidth();
-					maxPrefWidth = Math.max(maxPrefWidth, colPrefWidth);
-				}
-			}
-
-			return maxPrefWidth + table.getIntercellSpacing().width;
-		}
-
-
-
-
-
-	}
-
-	private void setMyCellRenderer(InspectorTable table){
-		for (int i = 0; i < table.getColumnCount(); i++){ 
-			TableColumn col = table.getColumnModel().getColumn(i);
-			col.setCellRenderer(new MyCellRenderer(table));
-		}
-	}
-
-
-
-	public class MyCellRenderer extends DefaultTableCellRenderer  {
-
-		private JTextField tf;
-		private Border editCellBorder;
-		private JTable table;
-		private Border paddingBorder;
-		private boolean doRedNegative;
-
-
-		private MyCellRenderer(InspectorTable table){
-			this.table = table;
-			tf = new JTextField();
-			this.doRedNegative = table.isDoRedNegative();
-			paddingBorder = BorderFactory.createEmptyBorder(2,2,2,2);
-			editCellBorder = BorderFactory.createCompoundBorder(tf.getBorder(), paddingBorder);
-
-		}
-		public Component getTableCellRendererComponent(JTable table, Object value, 
-				boolean isSelected, boolean hasFocus, final int row, int column) {
-
-			setFont(app.getPlainFont());
-
-			if(table.isCellEditable(row, column))
-				setBorder(editCellBorder);
-			else
-				setBorder(paddingBorder);
-
-
-			if (isSelected && !table.isCellEditable(row, column)) {
-				setBackground(table.getSelectionBackground());
-				setForeground(table.getSelectionForeground());
-			} else {
-				setBackground(rowColor(row));
-				setForeground(getForeground());
-			}
-
-			setForeground(Color.black);
-
-			if(value != null){
-				try {
-					double val = Double.parseDouble((String) value);
-					if(val < 0 && doRedNegative)
-						setForeground(Color.red);
-				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-				}
-			}
-
-			setText((String) value);
-			return this;
-
-		}
-
-		// shade alternate rows
-		private Color rowColor(int row){
-			Color c;
-			//if (row % 2 == 0) 
-			//	c = EVEN_ROW_COLOR;
-			// else 
-			c = table.getBackground();
-			return c;
-		}
-
-	}
-
-
-	class MyEditor extends DefaultCellEditor {
-		public MyEditor() {
-			super(new MyTextField(app.getGuiManager()));
-			this.setClickCountToStart(1);
-
-		}
-
-		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
-				int row, int column) {
-			JTextField editor = (JTextField) super.getTableCellEditorComponent(table, value, isSelected,
-					row, column);
-			editor.setFont(app.getPlainFont());
-			return editor;
-		}
-
-
-		public boolean stopCellEditing() {
-			boolean isStopped = super.stopCellEditing();
-			//("-----------> STOPPED    !!!!!!!!!!!!");
-			//System.out.println("-----------> " + (String) this.getCellEditorValue());
-			try {
-				if(isStopped){
-
-					double val = Double.parseDouble((String) this.getCellEditorValue());
-					changeStart(val);
-				}
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-
-			return isStopped; 
-		}
-
-	}
 
 
 
