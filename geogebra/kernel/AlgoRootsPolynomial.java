@@ -132,7 +132,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
      */
     public void setLabels(String[] labels) {
         this.labels = labels;
-        setLabels = true;
+        setLabels = !cons.isSuppressLabelsActive();
 
         // make sure that there are at least as many
         // points as labels
@@ -458,7 +458,7 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     	} else {	    
 	        for (int i = 0; i < number; i++) {
 	            //  check labeling      
-	            if (!rootPoints[i].isLabelSet() && rootPoints[i].labelWanted) {
+	            if (!rootPoints[i].isLabelSet()) {
 	            	// use user specified label if we have one
 	            	String newLabel = (labels != null && i < labels.length) ? labels[i] : null;	            	
 	                rootPoints[i].setLabel(newLabel);	                
