@@ -25,6 +25,8 @@ import java.util.ListIterator;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
+import edu.uci.ics.jung.algorithms.scoring.DegreeScorer;
+
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 
@@ -160,8 +162,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 
 	@Override
 	protected void compute() {
-		
-		if (c1!=null){
+				if (c1!=null){
 			p2=new GeoImplicitPoly(c1);
 		}
 		
@@ -189,12 +190,9 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		int m=a.getDegX();
 		int n=b.getDegX();
 		
-		//calculate the reduced Sylvester matrix. Complexity will be O(mnpq + m^2nq^2)
+		//calculate the reduced Sylvester matrix. Complexity will be O(mnpq + m^2nq^2 + n^3pq)
 		//where p=a.getDegY(), q=b.getDegY() 
 		//we should minimize m^2 n q^2 by choosing to use polyX or polyY univarType.
-		//if we exchange X and Y, m^2 n q^2 becomes p^2 q n^2, so what we need to compare
-		// is m^2 q and p^2 n
-		// TODO: if m^2 q > p^2 n, "exchange X and Y". 
 		
 		int q = a.getDegY();
 		PolynomialFunction[][] mat=new PolynomialFunction[n][n];
@@ -213,6 +211,8 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		//this row to help eliminate aNew[leadIndex].
 		while (leadIndex>= 2*n) {
 			if ( !(aNew[leadIndex].degree() == 0  && aNew[leadIndex].getCoefficients()[0] == 0) ) {
+				for (int j = n-1; j<leadIndex-n; ++j)
+					aNew[j] = aNew[j].multiply(bPolys[n]);
 				for (int j = leadIndex-n; j<leadIndex; ++j)
 					aNew[j] = aNew[j].multiply(bPolys[n]).subtract(
 							bPolys[j-leadIndex+n].multiply(aNew[leadIndex]));
@@ -233,6 +233,35 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		}
 		
 
+		
+		//avoid too large coefficients
+		//test case: a: -5 x⁴+ x²+ y² = 0m, b: -20 x³+2 x²+2 x+2 y²+4 y = 0
+		//without reducing coefficients, we get three intersection points: 
+		// (0.00000185192649, -0.000000925965389), (0.475635148394481, 0.172245588226639), (2.338809137914722, -12.005665890026151)
+		//after reducing coefficients, we have one more: the tangent point (0.99999997592913, 1.999999891681086)
+		
+		for (int i=0; i<n; ++i) {
+			
+				double largestCoeff = 0;
+				double reduceFactor = 1;
+				for (int j=0; j<n; ++j) {
+					for (int k=0; k<mat[i][j].getCoefficients().length; ++k) {
+						largestCoeff = Math.max(Math.abs(mat[i][j].getCoefficients()[k]), largestCoeff);
+					}
+				}
+				while (largestCoeff >  10) {
+					reduceFactor *= 0.1;
+					largestCoeff *= 0.1;
+				}
+				
+				if (reduceFactor!=1) {
+					for (int j=0; j<n; ++j) {
+						mat[i][j] = mat[i][j].multiply(new PolynomialFunction(new double[] {reduceFactor}));
+					}
+				}
+		}
+	
+		
 		
 		
 		//Calculate Sylvester matrix by definition. Complexity will be O((m+n)^3 * pq)
@@ -255,8 +284,8 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 			for (int j = i+1; j<n+m; ++j)
 				mat[i][j] = new PolynomialFunction(new double[]{0});
 		}
-		*/
 		
+		*/
 		
 		//old code
 		/*PolynomialFunction[][] mat=new PolynomialFunction[n][n];
@@ -316,6 +345,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		if (det==null)
 			det=mat[n-1][n-1];
 //		Application.debug("resultante = "+det);
+		
 		univarType=PolyY;
 		double roots[]=det.getCoefficients();
 		int nrRealRoots=0;
