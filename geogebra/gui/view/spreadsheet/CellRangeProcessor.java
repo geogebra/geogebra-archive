@@ -560,12 +560,12 @@ public class CellRangeProcessor {
 	/** Creates a GeoList from the cells in an array of cellranges. Empty cells are ignored.
 	 * Uses these defaults: do not create undo point, do not sort, do not filter by geo type. */
 	public GeoElement createList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue) {
-		return  createList(rangeList,  scanByColumn, copyByValue, false, false, null) ;
+		return  createList(rangeList,  scanByColumn, copyByValue, false, false, null, true) ;
 	}
 
 	/** Creates a GeoList from the cells in an array of cellranges. Empty cells are ignored */
 	public GeoElement createList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue, 
-			boolean isSorted, boolean doStoreUndo, Integer geoTypeFilter) {
+			boolean isSorted, boolean doStoreUndo, Integer geoTypeFilter, boolean setLabel) {
 
 		GeoElement[] geos = null;
 		//StringBuilder listString = new StringBuilder();
@@ -593,7 +593,7 @@ public class CellRangeProcessor {
 			for(CellRange cr:rangeList){
 				cellList.addAll(cr.toCellList(scanByColumn));
 			}
-
+			
 			// iterate through the cells and add their contents to the expression string
 			for(Point cell: cellList){
 				if(!usedCells.contains(cell)){
@@ -625,7 +625,7 @@ public class CellRangeProcessor {
 				//listString.append("]");
 				AlgoSort algo = new AlgoSort(cons, geoList);
 				cons.removeFromConstructionList(algo);
-				return algo.getGeoElements()[0];
+				geoList = (GeoList)algo.getGeoElements()[0];
 			}
 
 
@@ -642,6 +642,9 @@ public class CellRangeProcessor {
 
 		if(doStoreUndo)
 			app.storeUndoInfo();
+		
+		if (setLabel)
+			geoList.setLabel(null);
 
 		if(geoList != null)
 			return geoList;
@@ -659,7 +662,7 @@ public class CellRangeProcessor {
 		cr.setActualRange();
 		rangeList.add(cr);
 
-		return  createList(rangeList,  true, copyByValue, isSorted, storeUndoInfo, geoTypeFilter) ;
+		return  createList(rangeList,  true, copyByValue, isSorted, storeUndoInfo, geoTypeFilter, true) ;
 	}
 
 	/** Returns true if all cell ranges in the list are columns */

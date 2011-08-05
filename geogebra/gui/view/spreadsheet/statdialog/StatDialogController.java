@@ -182,7 +182,7 @@ public class StatDialogController {
 						copyByValue, 
 						isSorted, 
 						doStoreUndo, 
-						GeoElement.GEO_CLASS_NUMERIC);
+						GeoElement.GEO_CLASS_NUMERIC, false);
 
 				break;
 
