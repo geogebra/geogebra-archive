@@ -53,7 +53,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * Pattern to find an argument description as found in the syntax information
 	 * of a command.
 	 */
-	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *<[ \\-\\w]*> *(?=[,\\]])");
+	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *(?:<[ \\-\\w]*>|\\.\\.\\.) *(?=[,\\]])");
 
 	/**
 	 * Constructs a new AutoCompleteTextField that uses the dictionary of the
