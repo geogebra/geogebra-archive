@@ -632,8 +632,9 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 					//if(isTextMode)
 					//	app.setMode(EuclidianConstants.MODE_TEXT);
-				} 
-
+				}
+				if (finished)
+					app.setMode(EuclidianConstants.MODE_MOVE);
 			} 
 
 			else if (source == btCancel) {
