@@ -111,7 +111,7 @@ public class Parser {
         myReInit( parseString ); 
         ExternalCASParsing = true;
         MPReduceParsing = true;                     
-        return buildMathPiperExpression();     
+        return buildMPReduceExpression();     
     }
 
     /**
@@ -320,7 +320,8 @@ TOKEN : {
 TOKEN: {
     < X_FUNC:  "x(" | "xcoord(" >
 |	< Y_FUNC:  "y(" | "ycoord("  > 
-|	< Z_FUNC:  "z(" | "zcoord("  > 
+|	< Z_FUNC:  "z(" | "zcoord("  >
+|	< MAT_FUNC:  "mat("  > // may be returned by MPReduce
 |	< COS_FUNC: ( "cos(" | "Cos(" ) > 
 |	< COSN_FUNC: ( "cos" | "Cos" ) ( < POWERN > ) + "(" > 
 |	< SIN_FUNC: ( "sin(" | "Sin(" ) > 
@@ -552,6 +553,27 @@ ValidExpression buildMathPiperExpression() :
 {         
     (     
 		// try to parse MathPiper string as standard GeoGebra expression 
+    	ve = buildCASExpression()     	     	   
+	)                     
+    ( <EOL> | <EOF> )     
+    {       	                         
+        return ve;
+    }    
+}
+
+/**
+ * convert MPReduce String to GeoGebra string
+ */
+ValidExpression buildMPReduceExpression() : 
+{
+    ValidExpression ve;
+    ExpressionNode lhs, rhs;
+    Token l = new Token();
+    Vector labels = new Vector();
+} 
+{         
+    (     
+		// try to parse MPReduce string as standard GeoGebra expression 
     	ve = buildCASExpression()     	     	   
 	)                     
     ( <EOL> | <EOF> )     
@@ -1524,9 +1546,61 @@ ExpressionValue list():
         )*
     "}"
     {  return myList;  }
-   )          
-    
+   )
+|
+	// matrix from MPReduce,e.g. mat((1,2),(3,4))
+    ev = matrixReduce()
+    {
+        return ev;
+    }   
 }
+
+// mat((1,2),(3,4)) from MPReduce
+ExpressionValue matrixReduce():
+{
+    MyList matrixList, rowList;
+    ExpressionValue row;
+}
+{
+    // matrix from MPReduce
+    < MAT_FUNC >
+      // first row
+      row = matrixRowReduce()
+      	{
+      	  	matrixList = new MyList(kernel);
+      	  	matrixList.addListElement(row);
+      	 }  	     
+     ( <COMMA> row = matrixRowReduce()  
+   	  	{
+   			matrixList.addListElement(row); 
+   	  	} 
+      )*	     
+    ")" // end of mat(...)
+    {  return matrixList;  }             
+}
+
+// (a,b,c)
+ExpressionValue matrixRowReduce():
+{
+    MyList  rowList;
+    ExpressionValue ev;
+}
+{
+      // row like (1,2,3)
+      "("
+	      ev = cmdexpression()     
+	       {   
+	            rowList = new MyList(kernel);         
+	            rowList.addListElement(ev);
+	        }
+	       ( <COMMA> ev = cmdexpression()  
+	       	 {
+	       		rowList.addListElement(ev); 
+	       	 } 
+	        )*
+	   ")"
+	    {  return rowList;  }  	            
+}  
 
 ExpressionValue numVecVariable():
 {
@@ -1951,7 +2025,7 @@ ExpressionNode numberFunction():
       	// e.g. arbcomplex(2) from MPreduce becomes next free index label, e.g. z_5
       	conslabel = kernel.getConstruction().getIndexLabel("z", en.toString());
         return new ExpressionNode(kernel, new Variable(kernel, conslabel) );
-    }            
+    }        
 | 
   <RANDOM_FUNC>
       {  
