@@ -1,5 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.kernel.AlgoDependentList;
 import geogebra.kernel.AlgoSort;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -569,8 +570,12 @@ public class CellRangeProcessor {
 
 		GeoElement[] geos = null;
 		//StringBuilder listString = new StringBuilder();
-		GeoList geoList = new GeoList(cons);
-		ArrayList<String> list = new ArrayList<String>();
+		
+		GeoList geoList = null;
+		ArrayList<GeoElement> list = null;
+		if (copyByValue) geoList = new GeoList(cons);
+		else list = new ArrayList<GeoElement>();
+		
 		ArrayList<Point> cellList = new ArrayList<Point>();
 
 		// temporary fix for catching duplicate cells caused by ctrl-seelct
@@ -604,7 +609,7 @@ public class CellRangeProcessor {
 							geoList.add(geo.copy());
 						else
 							//listString.append(geo.getLabel());
-							geoList.add(geo);
+							list.add(geo);
 
 						//listString.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, copyByValue));
 						//listString.append(",");
@@ -619,6 +624,11 @@ public class CellRangeProcessor {
 			//	listString.deleteCharAt(listString.length()-1);
 
 			//listString.append("}");
+			
+			if (!copyByValue) {
+				AlgoDependentList algo = new AlgoDependentList(cons, list, false);
+				geoList = (GeoList) algo.getGeoElements()[0];
+			}
 
 			if(isSorted){
 				//listString.insert(0, "Sort[" );

@@ -46,7 +46,7 @@ public class AlgoDependentList extends AlgoElement {
      * @param listItems list of GeoElement objects
      * @param isCellRange
      */
-    AlgoDependentList(Construction cons, ArrayList<GeoElement> listItems, boolean isCellRange) {
+    public AlgoDependentList(Construction cons, ArrayList<GeoElement> listItems, boolean isCellRange) {
     	super(cons);
     	this.listItems = listItems;
     	       
