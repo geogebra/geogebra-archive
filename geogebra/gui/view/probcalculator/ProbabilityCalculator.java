@@ -586,6 +586,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			discreteGraph.setAlphaValue(opacityDiscrete);
 			discreteGraph.setLineThickness(thicknessBarChart);
 			discreteGraph.setFixed(true);
+			discreteGraph.setEuclidianVisible(true);
 			plotGeoList.add(discreteGraph);
 
 
@@ -643,6 +644,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			discreteIntervalGraph.setObjColor(COLOR_PDF_FILL);
 			discreteIntervalGraph.setAlphaValue(opacityDiscreteInterval);
 			discreteIntervalGraph.setLineThickness(thicknessBarChart);
+			discreteIntervalGraph.setEuclidianVisible(true);
 			discreteIntervalGraph.updateCascade();
 			plotGeoList.add(discreteIntervalGraph);
 
