@@ -1445,12 +1445,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	 * the probabilities and values of the currently selected discrete
 	 * distribution.
 	 */
-	private String createDiscreteLists(){
-
-		String expr = "";
-		String n, p, s, mean;
-
-
+	private void createDiscreteLists(){
 
 		ExpressionNode nPlusOne;
 		AlgoDependentNumber plusOneAlgo;
@@ -1596,20 +1591,30 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);*/
 
+			double p = parameters[0];  // population size
+			double n = parameters[1];  // n
+			double s = parameters[2];  // sample size
+			
 			// ================================================
 			// interval bounds:
 			//    [ max(0, n + s - p) ,  min(n, s) ] 
 			//=================================================
 			
-			double lowBound = Math.max( 0, parameters[2] + parameters[1] - parameters[0]);
-			double highBound = Math.min(parameters[1], parameters[2]);		
+			double lowBound = Math.max(0, n + s - p);
+			double highBound = Math.min(n, s);	
+			
+			if (n + s > p) {
+				lowBound--;
+				highBound--;
+			}
+			
 			GeoNumeric lowGeo = new GeoNumeric(cons,lowBound);
 			GeoNumeric highGeo = new GeoNumeric(cons,highBound);
 			GeoNumeric lengthGeo = new GeoNumeric(cons, highBound - lowBound + 1);
 			
-			pGeo = new GeoNumeric(cons,parameters[0]);	
-			nGeo = new GeoNumeric(cons,parameters[1]);				
-			GeoNumeric sGeo = new GeoNumeric(cons,parameters[2]);	
+			pGeo = new GeoNumeric(cons,p);	
+			nGeo = new GeoNumeric(cons,n);				
+			GeoNumeric sGeo = new GeoNumeric(cons,s);	
 
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
@@ -1641,7 +1646,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		discreteProbList.setFixed(true);
 
 
-		return expr;
+		return;
 	}
 
 
