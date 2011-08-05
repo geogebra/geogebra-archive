@@ -6,6 +6,7 @@ import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoDependentNumber;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.AlgoPointOnPath;
@@ -594,8 +595,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			//expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
 			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
 			//intervalProbList  = (GeoList) createGeoFromString(expr);
-			
-			
+
+
 			// Use Take[] to create a subset of the full discrete graph:
 			//     Take[discreteList, x(lowPoint) + offset, x(highPoint) + offset] 
 			//
@@ -1605,20 +1606,20 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			double p = parameters[0];  // population size
 			double n = parameters[1];  // n
 			double s = parameters[2];  // sample size
-			
+
 			// ================================================
 			// interval bounds:
 			//    [ max(0, n + s - p) ,  min(n, s) ] 
 			//=================================================
-			
+
 			double lowBound = Math.max(0, n + s - p);
 			double highBound = Math.min(n, s);	
 			double length = highBound - lowBound + 1;
-			
+
 			GeoNumeric lowGeo = new GeoNumeric(cons,lowBound);
 			GeoNumeric highGeo = new GeoNumeric(cons,highBound);
 			GeoNumeric lengthGeo = new GeoNumeric(cons, length);
-			
+
 			pGeo = new GeoNumeric(cons,p);	
 			nGeo = new GeoNumeric(cons,n);				
 			GeoNumeric sGeo = new GeoNumeric(cons,s);	
@@ -1626,14 +1627,14 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
 
-		
+
 			algoSeq = new AlgoSequence(cons, k, k, (NumberValue)lowGeo, (NumberValue)highGeo, null);
 			cons.removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
 			algo = new AlgoListElement(cons, discreteValueList, k2);
 			cons.removeFromConstructionList(algo);
-			
+
 			AlgoHyperGeometric hyperGeometric = new AlgoHyperGeometric(cons, pGeo, nGeo, sGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(hyperGeometric);
 
@@ -1842,53 +1843,92 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	public void exportGeosToEV(int evNo){
 
 		app.setWaitCursor();
-		ArrayList<GeoElement> list = new ArrayList<GeoElement>();
+		ArrayList<GeoElement> newGeoList = new ArrayList<GeoElement>();
+		String expr;
 
 		try {
+			app.storeUndoInfo();
+			
+			//create low point
+			expr = "Point[" + app.getPlain("xAxis") + "]";
+			GeoPoint lowPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
+			lowPointCopy.setVisualStyle(lowPoint);
+			lowPointCopy.setLabelVisible(false);
+			lowPointCopy.setCoords(low, 0, 1);
+			lowPointCopy.setLabel(null);
+			newGeoList.add(lowPointCopy);
+
+			//create high point
+			GeoPoint highPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
+			highPointCopy.setVisualStyle(lowPoint);
+			highPointCopy.setLabelVisible(false);
+			highPointCopy.setCoords(high, 0, 1);
+			highPointCopy.setLabel(null);
+			newGeoList.add(highPointCopy);
+
+
+			// create discrete bar charts and associated lists
 			if(probManager.isDiscrete(selectedDist)){
 
+				// create full bar chart
+				// ============================
+				GeoElement discreteProbListCopy = discreteProbList.copy();
+				newGeoList.add(discreteProbListCopy);
+
+				GeoElement discreteValueListCopy = discreteValueList.copy();
+				newGeoList.add(discreteValueList);
+
+				expr = "BarChart[" + discreteValueListCopy.getLabel() + "," + discreteProbListCopy.getLabel() + "]";
+				GeoElement discreteGraphCopy = createGeoFromString(expr,null,false);
+				discreteGraphCopy.setLabel(null);
+				discreteGraphCopy.setVisualStyle(discreteGraph);
+				newGeoList.add(discreteGraphCopy);
 
 
+
+				// create interval bar chart
+				// ============================
+				double offset = 1 - ((GeoNumeric)discreteValueList.get(0)).getDouble();  
+				expr = "Take[" + discreteProbListCopy.getLabel()  + ", x(" 
+				+ lowPointCopy.getLabel() + ")+" + offset + ", x(" + highPointCopy.getLabel() +")+" + offset +"]";
+				GeoElement intervalProbList  = (GeoList) createGeoFromString(expr, null, false);
+				newGeoList.add(intervalProbList);
+
+				expr = "Take[" + discreteValueListCopy.getLabel()  + ", x(" 
+				+ lowPointCopy.getLabel() + ")+" + offset + ", x(" + highPointCopy.getLabel() +")+" + offset +"]";
+				GeoElement intervalValueList  = (GeoList) createGeoFromString(expr, null, false);
+				newGeoList.add(intervalValueList);
+
+				expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
+				GeoElement discreteIntervalGraphCopy  = createGeoFromString(expr, null, false);
+				discreteIntervalGraphCopy.setLabel(null);
+				discreteIntervalGraphCopy.setVisualStyle(discreteIntervalGraph);
+				newGeoList.add(discreteIntervalGraphCopy);
 
 			}
+
+
+			// create density curve and integral
 			else{
 
-
+				//density curve
 				GeoElement densityCurveCopy = densityCurve.copyInternal(cons);
 				densityCurveCopy.setLabel(null);
 				densityCurveCopy.setVisualStyle(densityCurve);
-				list.add(densityCurveCopy);
+				newGeoList.add(densityCurveCopy);
 
-				//create low point
-				String expr = "Point[" + app.getPlain("xAxis") + "]";
-				GeoPoint lowPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
-				lowPointCopy.setVisualStyle(lowPoint);
-				lowPointCopy.setLabelVisible(false);
-				lowPointCopy.setCoords(low, 0, 1);
-				lowPointCopy.setLabel(null);
-				list.add(lowPointCopy);
-
-
-				//create high point
-				GeoPoint highPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
-				highPointCopy.setVisualStyle(lowPoint);
-				highPointCopy.setLabelVisible(false);
-				highPointCopy.setCoords(high, 0, 1);
-				highPointCopy.setLabel(null);
-				list.add(highPointCopy);
-
-
-				// create integral
+				//integral
 				expr = "Integral[" + densityCurveCopy.getLabel() + ", x(" + lowPointCopy.getLabel() 
 				+ "), x(" + highPointCopy.getLabel() + ") , true ]";
 				GeoElement integralCopy  = createGeoFromString(expr,null, false);
 				integralCopy.setVisualStyle(integral);
 				integralCopy.setLabel(null);
-				list.add(integralCopy);
+				newGeoList.add(integralCopy);
 			}
 
 
-			for(GeoElement geo: list){
+			// set the EV location and auxiliary = false for all of the new geos
+			for(GeoElement geo: newGeoList){
 				geo.setAuxiliaryObject(false);
 				if(evNo == 2){
 					geo.addView(app.getEuclidianView2());
@@ -1897,6 +1937,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				}
 			}
 
+			// set the window dimensions of the target EV to match the prob calc dimensions
 			if(evNo == 1)
 				app.getEuclidianView().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
 						plotSettings.yMin, plotSettings.yMax);
@@ -1904,6 +1945,9 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				app.getEuclidianView2().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
 						plotSettings.yMin, plotSettings.yMax);
 
+
+			// remove the new geos from our temporary list
+			newGeoList.clear();
 
 
 		} catch (Exception e) {
