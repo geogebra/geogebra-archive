@@ -1596,34 +1596,37 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);*/
 
-			pGeo = new GeoNumeric(cons,parameters[0]);	
-			nGeo = new GeoNumeric(cons,parameters[1]);	
-			nPlusOneGeo = new GeoNumeric(cons,parameters[1] + 1);	
-			GeoNumeric sGeo = new GeoNumeric(cons,parameters[2]);	
-			k = new GeoNumeric(cons);
-			k2 = new GeoNumeric(cons);
-
 			// ================================================
 			// interval bounds:
 			//    [ max(0, n + s - p) ,  min(n, s) ] 
 			//=================================================
-			if(parameters[1] < parameters[2])
-				algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
-			else
-				algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)sGeo, null);
+			
+			double lowBound = Math.max( 0, parameters[2] + parameters[1] - parameters[0]);
+			double highBound = Math.min(parameters[1], parameters[2]);		
+			GeoNumeric lowGeo = new GeoNumeric(cons,lowBound);
+			GeoNumeric highGeo = new GeoNumeric(cons,highBound);
+			GeoNumeric lengthGeo = new GeoNumeric(cons, highBound - lowBound + 1);
+			
+			pGeo = new GeoNumeric(cons,parameters[0]);	
+			nGeo = new GeoNumeric(cons,parameters[1]);				
+			GeoNumeric sGeo = new GeoNumeric(cons,parameters[2]);	
 
+			k = new GeoNumeric(cons);
+			k2 = new GeoNumeric(cons);
+
+		
+			algoSeq = new AlgoSequence(cons, k, k, (NumberValue)lowGeo, (NumberValue)highGeo, null);
 			cons.removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
 			algo = new AlgoListElement(cons, discreteValueList, k2);
 			cons.removeFromConstructionList(algo);
-
+			
 			AlgoHyperGeometric hyperGeometric = new AlgoHyperGeometric(cons, pGeo, nGeo, sGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(hyperGeometric);
 
-			algoSeq2 = new AlgoSequence(cons, hyperGeometric.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
+			algoSeq2 = new AlgoSequence(cons, hyperGeometric.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)lengthGeo, null);
 			cons.removeFromConstructionList(algoSeq2);
-
 			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
 
 			break;
