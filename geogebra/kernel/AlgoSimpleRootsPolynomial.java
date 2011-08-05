@@ -65,6 +65,10 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	public void setRootsPolynomial(PolynomialFunction pf){
 		doCalc(pf);
 	}
+	
+	public void setRootsPolynomialWithinRange(PolynomialFunction pf, double min, double max) {
+		doCalc(pf, min , max );
+	}
 
 	@Override
 	protected
@@ -122,6 +126,20 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 		int nrRealRoots=0;
 		if (roots.length>1)
 			nrRealRoots=getRoots(roots,eqnSolver);
+		makePoints(roots,nrRealRoots);
+	}
+	
+	protected void doCalc(PolynomialFunction rootsPoly, double min, double max) {
+		double roots[]=rootsPoly.getCoefficients();
+		int nrRealRoots=0;
+		if (roots.length>1)
+			nrRealRoots=getRoots(roots,eqnSolver);
+		
+		for (int i=0; i<roots.length; ++i) {
+			if (Kernel.isGreater(roots[i], max,kernel.getEpsilon()) || 
+					Kernel.isGreater(min, roots[i], kernel.getEpsilon()))
+				roots[i] = Double.NaN;
+		}
 		makePoints(roots,nrRealRoots);
 	}
 	

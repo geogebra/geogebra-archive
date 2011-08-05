@@ -75,12 +75,17 @@ public class AlgoIntersectImplicitpolyParametric extends
 		if (p==null||!p.isDefined()){
 			return;
 		}
+		
+		double maxT=Double.POSITIVE_INFINITY;
+		double minT=Double.NEGATIVE_INFINITY;
 		if (f!=null){
 			if (!f.isPolynomialFunction(false)||!f.isDefined){
 				return;
 			}
 			tx=new PolynomialFunction(new double[]{0,1}); //x=t
 			ty=new PolynomialFunction(f.fun.getNumericPolynomialDerivative(0).getCoeffs()); //y=f(t)
+			maxT = f.getMaxParameter();
+			minT = f.getMinParameter();
 		}else if (l!=null){
 			if (!l.isDefined()){
 				return;
@@ -90,6 +95,8 @@ public class AlgoIntersectImplicitpolyParametric extends
 			l.getInhomPointOnLine(startP);
 			tx=new PolynomialFunction(new double[]{startP[0],l.getY()}); //x=p1+t*r1
 			ty=new PolynomialFunction(new double[]{startP[1],-l.getX()}); //x=p1+t*r1
+			maxT = l.getMaxParameter();
+			minT = l.getMinParameter();
 		}else{
 			return;
 		}
@@ -108,7 +115,9 @@ public class AlgoIntersectImplicitpolyParametric extends
 				else
 					sum=sum.multiply(tx).add(zs);//sum*x+zs;
 			}
-		setRootsPolynomial(sum);
+		
+		setRootsPolynomialWithinRange(sum,minT,maxT);
+		
 	}
 	
 	public String getClassName() {
