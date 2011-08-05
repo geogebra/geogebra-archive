@@ -19,9 +19,7 @@ package geogebra.gui.app;
 
 import geogebra.CommandLineArguments;
 import geogebra.euclidian.Drawable;
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.FileDropTargetListener;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
@@ -50,9 +48,6 @@ import javax.swing.UIManager;
 public class GeoGebraFrame extends JFrame implements WindowFocusListener
 {
 	
-	private static final int DEFAULT_WIDTH = 900;
-	private static final int DEFAULT_HEIGHT = 650;
-
 	private static final long serialVersionUID = 1L;
 
 	private static ArrayList<GeoGebraFrame> instances = new ArrayList<GeoGebraFrame>();
@@ -169,7 +164,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		Dimension size = app.getPreferredSize();
 		
 		// check if frame fits on screen
-		Rectangle screenSize = app.getScreenSize();
+		Rectangle screenSize = Application.getScreenSize();
 
 		if (size.width > screenSize.width || 
 				size.height > screenSize.height) {
@@ -183,7 +178,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 
 	/** 
 	 * Main method to create inital GeoGebra window.
-	 * @param args: file name parameter
+	 * @param args file name parameter
 	 */
 	public static synchronized void main(CommandLineArguments args) {		
 
@@ -215,13 +210,16 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		} catch (Exception e) {
 			Application.debug(e+"");
 		}
-
+		if(args.containsArg("resetSettings")){			
+			GeoGebraPreferences.getPref().clearPreferences();
+		}
 		// Set GeoGebraPreferences mode (system properties or property file)
 		// before it is called for the first time
 		String settingsFile = args.getStringValue("settingsfile");
 		if(settingsFile.length() > 0) {
 			GeoGebraPreferences.setPropertyFileName(settingsFile);
 		}
+		
     	
 		// load list of previously used files
 		GeoGebraPreferences.getPref().loadFileList();	
@@ -232,6 +230,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	
 	/**
 	 * Returns the active GeoGebra window.
+	 * @return the active GeoGebra window.
 	 */
 	public static synchronized GeoGebraFrame getActiveInstance() {
 		return activeInstance;
@@ -262,6 +261,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	/**
 	 * Creates new GeoGebra window
 	 * @param args Command line arguments
+	 * @param wnd 
 	 * @return the new window
 	 */
 	//public abstract GeoGebra buildGeoGebra();
@@ -289,6 +289,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	 * Creates new GeoGebra window
 	 * @param args Command line arguments
 	 * @param macro Macro to open (or null for file edit mode)
+	 * @param wnd 
 	 * @return the new window
 	 */
 	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,Macro macro,GeoGebraFrame wnd) {				
@@ -422,7 +423,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	
 	/**
 	 * Returns the dropTarget listener for this frame.
-	 * @return
+	 * @return the dropTarget listener for this frame.
 	 */
 	public FileDropTargetListener getDropTargetListener() {
 		return dropTargetListener;

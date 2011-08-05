@@ -3,6 +3,7 @@ package geogebra;
 import geogebra.main.Application;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Class to parse command line arguments. A list of possible arguments
@@ -43,11 +44,11 @@ public class CommandLineArguments {
 				
 				if(equalSignIndex != -1) {
 					args.put(
-						cmdArgs[i].substring(2, equalSignIndex),
+						cmdArgs[i].substring(2, equalSignIndex).toLowerCase(Locale.US),
 						cmdArgs[i].substring(equalSignIndex+1)
 					);
 				} else {
-					args.put(cmdArgs[i].substring(2), "");
+					args.put(cmdArgs[i].substring(2).toLowerCase(Locale.US), "");
 				}
 			} else if(!cmdArgs[i].startsWith("-")) { // make sure we don't process -open from eg
 				// javaws -open "file1.ggb,file2.ggb" http://www.geogebra.org/webstart/4.0/geogebra-40.jnlp
@@ -98,8 +99,8 @@ public class CommandLineArguments {
 	 * @param name
 	 * @return The string value of the specified argument (or empty string)
 	 */
-	public String getStringValue(String name) {
-		String strValue = args.get(name);
+	public String getStringValue(String name) {		
+		String strValue = args.get(name.toLowerCase(Locale.US));
 		return (strValue == null ? "" : strValue);
 	}
 	
@@ -112,7 +113,7 @@ public class CommandLineArguments {
 	 * 		is missing or has an invalid format. 
 	 */
 	public boolean getBooleanValue(String name, boolean defaultValue) {
-		String strValue = args.get(name);
+		String strValue = args.get(name.toLowerCase(Locale.US));
 		
 		if(strValue == null || !isBoolean(name)) {
 			return defaultValue;
@@ -126,7 +127,7 @@ public class CommandLineArguments {
 	 * "true" or "false" (lettercase ignored).
 	 * 
 	 * @param name
-	 * @return
+	 * @return true for valid booleans
 	 */
 	public boolean isBoolean(String name) {
 		String strValue = args.get(name);
@@ -140,6 +141,6 @@ public class CommandLineArguments {
 	}
 	
 	public boolean containsArg(String name) {
-		return args.containsKey(name);
+		return args.containsKey(name.toLowerCase(Locale.US));
 	}
 }
