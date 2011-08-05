@@ -572,7 +572,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	}
 	
 	public void calcArea() {
-		//TODO
+		
+		//TODO: non-simple case
+		area = Math.abs(calcAreaWithSign(points2D));
 	}
 	
 }
