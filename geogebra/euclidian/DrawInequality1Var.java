@@ -126,7 +126,11 @@ public class DrawInequality1Var extends Drawable {
 								.toRealWorldCoordY(view.height + 10))
 					x[numOfX++] = view.toScreenCoordY(roots[i].x);
 			x[numOfX++] = -10;
-
+			if(numOfX > 2 && x[numOfX-2]>0 && x[numOfX-2]<view.height)
+				yLabel = (int) x[numOfX-2] - 5;
+			else
+				yLabel = 10;
+			xLabel = (int) view.xZero + 6;
 			if (gp == null)
 				gp = new GeneralPathClipped[numOfX / 2];
 			int j = ineq.getFunBorder().evaluate(
@@ -154,6 +158,12 @@ public class DrawInequality1Var extends Drawable {
 					x[numOfX++] = view.toScreenCoordX(roots[i].x);
 			x[numOfX++] = view.width + 10;
 
+			if(numOfX > 2 && x[numOfX-2]>0 && x[numOfX-2]<view.height)
+				xLabel = (int) x[numOfX-2] - 10;
+			else
+				xLabel = 10;
+			yLabel = (int) view.yZero + 15;
+			
 			if (gp == null)
 				gp = new GeneralPathClipped[numOfX / 2];
 

@@ -10,6 +10,7 @@ import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.util.TreeSet;
@@ -71,10 +72,10 @@ public class DrawInequality extends Drawable {
 		if (!isVisible)
 			return;
 		labelVisible = geo.isLabelVisible();
-		// updateStrokes(n);
-
+		
 		// init gp
 		updateRecursive(function.getIneqs());
+		labelDesc = geo.getLabel();
 		if ((geo instanceof GeoFunction) && ((GeoFunction) geo).showOnAxis()
 				&& !"y".equals(((GeoFunction) geo).getVarString())) {
 			TreeSet<Double> zeros = new TreeSet<Double>();
@@ -113,6 +114,10 @@ public class DrawInequality extends Drawable {
 		updateTrees(it);
 		operation = it.getOperation();
 		updateShape();
+		if(left!=null){
+			yLabel = left.yLabel;
+			xLabel = left.xLabel;
+		}
 
 		if (ineq != it.getIneq())
 			ineq = it.getIneq();
@@ -126,6 +131,8 @@ public class DrawInequality extends Drawable {
 			}
 			drawable.update();
 			setShape(drawable.getShape());
+			xLabel = drawable.xLabel;
+			yLabel = drawable.yLabel;
 		}
 		if (geo.isInverseFill() && !isForceNoFill()) {
 			Area b = new Area(view.getBoundingPath());
@@ -164,7 +171,7 @@ public class DrawInequality extends Drawable {
 	}
 
 	private void updateShape() {
-		if (operation == ExpressionNode.AND) {
+		if (operation == ExpressionNode.AND) {			
 			setShape(left.getShape());
 			getShape().intersect(right.getShape());
 		} else if (operation == ExpressionNode.OR) {
@@ -180,8 +187,7 @@ public class DrawInequality extends Drawable {
 		} else if (operation == ExpressionNode.NOT) {
 			setShape(new Area(view.getBoundingPath()));
 			getShape().subtract(left.getShape());
-		}
-
+		}		
 	}
 
 	private void updateTrees(IneqTree it) {
@@ -246,6 +252,12 @@ public class DrawInequality extends Drawable {
 			} else
 				fill(g2, getShape(), true);
 		}
+		Application.debug("dl"+xLabel+","+yLabel);
+		if (labelVisible) {
+			g2.setFont(view.fontConic);
+			g2.setPaint(geo.getLabelColor());			
+			drawLabel(g2);
+		}
 	}
 
 	@Override
@@ -307,7 +319,7 @@ public class DrawInequality extends Drawable {
 		}
 
 		@Override
-		public void draw(Graphics2D g2) {
+		public void draw(Graphics2D g2) {			
 			if (geo.doHighlighting()) {
 				g2.setPaint(geo.getSelColor());
 				g2.setStroke(selStroke);
@@ -324,11 +336,6 @@ public class DrawInequality extends Drawable {
 				Drawable.drawWithValueStrokePure(gp, g2);
 			}
 
-			if (labelVisible) {
-				g2.setFont(view.fontConic);
-				g2.setPaint(geo.getLabelColor());
-				drawLabel(g2);
-			}
 
 		}
 
@@ -365,60 +372,52 @@ public class DrawInequality extends Drawable {
 			GeoFunction border = ineq.getFunBorder();
 			border.setLineThickness(geo.lineThickness);
 			updateStrokes(border);
+			Point labelPos;
 			if (ineq.getType() == Inequality.INEQUALITY_PARAMETRIC_X) {
 				double bx = view.toRealWorldCoordY(-10);
 				double ax = view.toRealWorldCoordY(view.height + 10);				
-				double axEv = view.toScreenCoordYd(ax);
-				double bxEv = view.toScreenCoordYd(bx);
-				if (ineq.isAboveBorder()) {
-					Application.debug("above"+ax+":"+bx);
+				double axEv = view.toScreenCoordYd(ax);				
+				if (ineq.isAboveBorder()) {					
 					gp.moveTo(view.width + 10, axEv);
-					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, DrawParametricCurve.GAP_RESET_XMAX);
+					labelPos = DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
+							true, DrawParametricCurve.GAP_RESET_XMAX);
 					gp.lineTo(view.width + 10, gp.getCurrentPoint().getY());
 					gp.lineTo(view.width + 10, axEv);
 					gp.closePath();
-				} else {
-					Application.debug("below");
+				} else {					
 					gp.moveTo(-10, axEv);
-					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, DrawParametricCurve.GAP_RESET_XMIN);
+					labelPos = DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
+							true, DrawParametricCurve.GAP_RESET_XMIN);
 					gp.lineTo(-10, gp.getCurrentPoint().getY());
 					gp.lineTo(-10, axEv);
 					gp.closePath();
-				}
-				if (labelVisible) {
-					xLabel = (int) Math.round((ax + bx) / 2) - 6;
-					yLabel = (int) view.yZero - view.fontSize;
-					labelDesc = geo.getLabelDescription();
-					addLabelOffset();
-				}
+				}				
 			} else {
 				double ax = view.toRealWorldCoordX(-10);
 				double bx = view.toRealWorldCoordX(view.width + 10);				
 				double axEv = view.toScreenCoordXd(ax);				
 				if (ineq.isAboveBorder()) {
 					gp.moveTo(axEv, -10);
-					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, DrawParametricCurve.GAP_RESET_YMIN);
+					labelPos = DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
+							true, DrawParametricCurve.GAP_RESET_YMIN);
 					gp.lineTo(gp.getCurrentPoint().getX(), -10);
 					gp.lineTo(axEv, -10);
 					gp.closePath();
 				} else {
 					gp.moveTo(axEv, view.height + 10);
-					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
-							false, DrawParametricCurve.GAP_RESET_YMAX);
+					labelPos = DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
+							true, DrawParametricCurve.GAP_RESET_YMAX);					
 					gp.lineTo(gp.getCurrentPoint().getX(), view.height + 10);
 					gp.lineTo(axEv, view.height + 10);
 					gp.closePath();
 				}
 				border.evaluateCurve(ax);
-				if (labelVisible) {
-					yLabel = (int) Math.round((ax + bx) / 2) - 6;
-					xLabel = (int) view.xZero;
-					labelDesc = geo.getLabelDescription();
-					addLabelOffset();
-				}
+				
+			}
+			if (labelVisible) {
+				xLabel = (int)labelPos.getX();
+				yLabel = (int)labelPos.getY();				
+				addLabelOffset();
 			}
 
 		}

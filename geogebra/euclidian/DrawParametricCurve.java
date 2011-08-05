@@ -250,7 +250,7 @@ public class DrawParametricCurve extends Drawable {
      * @param calcLabelPos whether label position should be calculated and returned
      * @param moveToAllowed whether moveTo() may be used for gp
      * @return label position as Point
-     * @author Markus Hohenwarter, based on an algorithm by John Gillam     
+     * @author Markus Hohenwarter, based on an algori5thm by John Gillam     
      */
 	 private static Point plotInterval(ParametricCurve curve,
 								double t1, double t2, int intervalDepth,
@@ -489,7 +489,7 @@ public class DrawParametricCurve extends Drawable {
 			if (needLabelPos && onScreen) {
 				double xLabel = x + 10;
 				if (xLabel < 20) xLabel = 5;					
-			
+				if (xLabel > view.width - 30) xLabel = view.width-15;
 				double yLabel = y + 15;		
 				if (yLabel < 40) 
 					yLabel = 15;

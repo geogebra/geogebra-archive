@@ -22,7 +22,6 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipShape;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
-import geogebra.kernel.AlgoIncircle; // dsun48 [6/26/2011]
 import geogebra.kernel.AlgoCircleTwoPoints;
 import geogebra.kernel.AlgoEllipseFociPoint;
 import geogebra.kernel.AlgoHyperbolaFociPoint;
@@ -424,6 +423,7 @@ final public class DrawConic extends Drawable implements Previewable {
     	
 	}
 	final private void updateCircle() {
+		setShape(null);
         // calc screen pixel of radius                        
         radius =  halfAxes[0] * view.xscale;
         yradius =  halfAxes[1] * view.yscale; // radius scaled in y direction
@@ -642,6 +642,7 @@ final public class DrawConic extends Drawable implements Previewable {
     }        
     
     final private void updateEllipse() {
+    	setShape(null);
 		// check for huge pixel radius
 		double xradius = halfAxes[0] * view.xscale;
 		double yradius = halfAxes[1] * view.yscale;
@@ -686,14 +687,14 @@ final public class DrawConic extends Drawable implements Previewable {
 		} else {
 			// clip big arc at screen
 	        shape = ClipShape.clipToRect(ellipse, transform, new Rectangle(-1,-1,view.width+2, view.height+2));
-		}
-
+	        
+		}		
         // set label coords
         labelCoords[0] = -halfAxes[0] / 2.0d;
         labelCoords[1] = halfAxes[1] * 0.85d - 20.0/view.yscale;                                
         transform.transform(labelCoords, 0, labelCoords, 0, 1);
         xLabel = (int) labelCoords[0];
-        yLabel = (int) labelCoords[1];   
+        yLabel = (int) labelCoords[1];        
     }
     
     final private void updateHyperbola() {  
