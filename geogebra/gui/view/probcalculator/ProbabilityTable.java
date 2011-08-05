@@ -90,7 +90,8 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 		}
 
 		updateFonts(app.getPlainFont());
-
+		setLabels();
+		
 		// need to get focus so that the table will finish resizing columns (not sure why)
 		statTable.getTable().requestFocus();
 		isIniting = false;
