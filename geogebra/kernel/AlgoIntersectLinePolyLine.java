@@ -22,7 +22,7 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.kernel.kernelND.GeoSegmentND;
+
 
 import java.util.TreeMap;
 
@@ -142,7 +142,6 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
     		Coords segEnd = p.getPoint(i+1).getCoords();
     		
     		Coords coords = segStart.crossProduct(segEnd).crossProduct(gCoords);
-    		GeoSegment seg;
     		
     		if (Kernel.isZero(coords.getLast())){
     			if (((GeoLine) g).isOnPath(segStart, Kernel.EPSILON) &&
@@ -153,7 +152,7 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
     		} else if ( GeoSegment.checkOnPath(segStart,segEnd,coords,false,Kernel.EPSILON) ) {
        			double t = ((GeoLine) g).getPossibleParameter(coords);
     			//Application.debug("parameter("+i+") : "+t);
-       			if (t>=min && t<=max)//TODO optimize that
+       			if (t>=min && t<=max)
        				newCoords.put(t, coords);
     		}
         }
@@ -168,9 +167,10 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
     	intersectionsCoords(g, p, newCoords);
     	
     	//update and/or create points
-    	int index = 0;   	
+    	outputPoints.adjustOutputSize(newCoords.size() > 0 ? newCoords.size() : 1);
+    	
     	//affect new computed points
-    	outputPoints.adjustOutputSize(newCoords.size());
+    	int index = 0;
     	for (Coords coords : newCoords.values()){
     		GeoPointND point = (GeoPointND) outputPoints.getElement(index);
     		point.setCoords(coords,false);
