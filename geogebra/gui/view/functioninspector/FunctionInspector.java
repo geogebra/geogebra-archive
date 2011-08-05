@@ -140,10 +140,14 @@ KeyListener, ActionListener{
 	private GeoFunction derivative, derivative2, selectedGeo;
 	private GeoPoint testPoint, lowPoint, highPoint;
 	private GeoList pts;
-	private ArrayList<GeoElement> geoList;
+	private ArrayList<GeoElement> displayGeoList, hiddenGeoList;
+	
+	
 	private JTabbedPane tabPanel;
 	private JPanel intervalTabPanel;
 	private JPanel pointTabPanel;
+	
+	
 	private boolean isIniting;
 	private double initialX;
 
@@ -179,8 +183,9 @@ KeyListener, ActionListener{
 		nf.setGroupingUsed(false);
 
 
-		// list of all geos we create
-		geoList = new ArrayList<GeoElement>();
+		// lists of all geos we create
+		displayGeoList = new ArrayList<GeoElement>();
+		hiddenGeoList = new ArrayList<GeoElement>();
 
 		// create the GUI components
 		createGUIElements();
@@ -1039,72 +1044,45 @@ KeyListener, ActionListener{
 
 	private void defineDisplayGeos(){
 
-		String fcn = selectedGeo.getLabel();
-		String expr;
+		// remove all geos
+		clearGeoList();
 		
-		EuclidianView ev = (EuclidianView) app.getActiveEuclidianView();
-		
+		EuclidianView ev = (EuclidianView) app.getActiveEuclidianView();		
 		GeoFunction f = (GeoFunction)selectedGeo;
 
 		// test point
-		if(testPoint != null) 
-			testPoint.remove();
-		
 		AlgoPointOnPath pAlgo = new AlgoPointOnPath(cons, (Path)f, (ev.getXmin() + ev.getXmax()) / 2, 0);
 		cons.removeFromConstructionList(pAlgo);
 		testPoint = (GeoPoint) pAlgo.getGeoElements()[0];
-		
-		ev.add(testPoint);
-		
-		//String expr = "Point[" + fcn + "]";
-		//testPoint = (GeoPoint) createGeoFromString(expr, null, true);
 		testPoint.setObjColor(DISPLAY_GEO_COLOR);
 		testPoint.setPointSize(4);
-		//testPoint.setLabel("fiTestPoint");
+		displayGeoList.add(testPoint);
+		
 
 		// X segment
-		if(xSegment != null) 
-			xSegment.remove();
-		
 		ExpressionNode xcoord = new ExpressionNode(kernel, testPoint, ExpressionNode.XCOORD, null);
-		
 		MyVecNode vec = new MyVecNode( kernel, xcoord, new MyDouble(kernel, 0.0));
-		
 		ExpressionNode point = new ExpressionNode(kernel, vec, ExpressionNode.NO_OPERATION, null);
 		point.setForcePoint();
-		
 		AlgoDependentPoint pointAlgo = new AlgoDependentPoint(cons, point, false);
 		cons.removeFromConstructionList(pointAlgo);
 		
-
 		AlgoJoinPointsSegment seg1 = new AlgoJoinPointsSegment(cons, testPoint, (GeoPoint)pointAlgo.getGeoElements()[0], null);
-		cons.removeFromConstructionList(seg1);
-		
+		cons.removeFromConstructionList(seg1);	
 		xSegment = (GeoSegment)seg1.getGeoElements()[0];
-		// as it has no label, need to add it the the view
-		ev.add(xSegment);
-
-		//expr = "Segment[" + testPoint.getLabel() + ", (x(" + testPoint.getLabel() + "),0) ]";
-		//Application.debug(expr);
-		//xSegment = createGeoFromString(expr, null, true);
 		xSegment.setObjColor(DISPLAY_GEO_COLOR);
 		xSegment.setLineThickness(3);
 		xSegment.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		xSegment.setEuclidianVisible(true);
 		xSegment.setFixed(true);
-
-
+		displayGeoList.add(xSegment);
+	
+		
 		// Y segment
-		if(ySegment != null) 
-			ySegment.remove();
-
 		ExpressionNode ycoord = new ExpressionNode(kernel, testPoint, ExpressionNode.YCOORD, null);
-		
 		MyVecNode vecy = new MyVecNode( kernel, new MyDouble(kernel, 0.0), ycoord);
-		
 		ExpressionNode pointy = new ExpressionNode(kernel, vecy, ExpressionNode.NO_OPERATION, null);
 		pointy.setForcePoint();
-		
 		AlgoDependentPoint pointAlgoy = new AlgoDependentPoint(cons, pointy, false);
 		cons.removeFromConstructionList(pointAlgoy);	
 
@@ -1112,169 +1090,106 @@ KeyListener, ActionListener{
 		cons.removeFromConstructionList(seg2);
 		
 		ySegment = (GeoSegment)seg2.getGeoElements()[0];
-		// as it has no label, need to add it the the view
-		ev.add(ySegment);
-
-		//expr = "Segment[" + testPoint.getLabel() + ", (0, y(" + testPoint.getLabel() + ")) ]";
-		//Application.debug(expr);
-		//ySegment = createGeoFromString(expr, null, true);
 		ySegment.setObjColor(DISPLAY_GEO_COLOR);
 		ySegment.setLineThickness(3);
 		ySegment.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		ySegment.setEuclidianVisible(true);
 		ySegment.setFixed(true);
-		//ySegment.setLabel("fiYSegment");
-
-
-		// tangent line
-		if(tangentLine != null) 
-			tangentLine.remove();
+		displayGeoList.add(ySegment);
 		
+
+		// tangent line		
 		AlgoTangentFunctionPoint tangent = new AlgoTangentFunctionPoint(cons, testPoint, f);
 		cons.removeFromConstructionList(tangent);
-
 		tangentLine = tangent.getGeoElements()[0];
-		
-		ev.add(tangentLine);
-		
-		//expr = "Tangent[" + fcn + "," + testPoint.getLabel() + "]";
-		//Application.debug(expr);
-		//tangentLine = createGeoFromString(expr, null, true);
 		tangentLine.setObjColor(DISPLAY_GEO_COLOR);
 		tangentLine.setEuclidianVisible(false);
-		//tangentLine.setLabel("fiTangentLine");
+		displayGeoList.add(tangentLine);
 
 
 		// osculating circle
-		if( oscCircle != null) 
-			oscCircle.remove();
-		
 		AlgoOsculatingCircle oc = new AlgoOsculatingCircle(cons, testPoint, f);
 		cons.removeFromConstructionList(oc);
-		
 		oscCircle = oc.getGeoElements()[0];
-		
-		ev.add(oscCircle);
-
-		//expr = "OsculatingCircle[" + testPoint.getLabel() + "," + fcn + "]";
-		//Application.debug(expr);
-		//oscCircle = createGeoFromString(expr, null, true);
 		oscCircle.setObjColor(DISPLAY_GEO_COLOR);
 		oscCircle.setEuclidianVisible(false);
-		//oscCircle.setLabel("fiOscCircle");
+		displayGeoList.add(oscCircle);
 
 
 		// derivative
-		if( derivative != null) 
-			derivative.remove();
-
 		AlgoCasDerivative deriv = new AlgoCasDerivative(cons, f);
 		cons.removeFromConstructionList(deriv);
-		
 		derivative = (GeoFunction)deriv.getGeoElements()[0];
-		
-		//expr = "Derivative[" + fcn + "]";
-		//Application.debug(expr);
-		//derivative = createGeoFromString(expr, null, true);
 		derivative.setEuclidianVisible(false);
-		//derivative.setLabel("fiDerivative");
+		hiddenGeoList.add(derivative);
 
 		// 2nd derivative
-		if( derivative2 != null) 
-			derivative2.remove();
-
 		AlgoCasDerivative deriv2 = new AlgoCasDerivative(cons, f, null, new MyDouble(kernel, 2.0));
 		cons.removeFromConstructionList(deriv2);
-		
 		derivative2 = (GeoFunction)deriv2.getGeoElements()[0];
-		//expr = "Derivative[" + fcn + " , 2 ]";
-		//Application.debug(expr);
-		//derivative2 = createGeoFromString(expr, null, true);
 		derivative2.setEuclidianVisible(false);
-		//derivative2.setLabel("fiDerivative2");
+		hiddenGeoList.add(derivative2);
 
 
 		// point list
-		if( pts != null) 
-			pts.remove();
-
-		//Application.debug(expr);
 		pts = new GeoList(cons);
 		pts.setEuclidianVisible(true);
 		pts.setObjColor(new Color(125,125,255));
-		//pts.setLabel("fiPointList");
 		for(int i = 0; i < pointCount; i++){
 			pts.add(new GeoPoint(cons));
 		}
+		displayGeoList.add(pts);
 
-
-		// interval points
-		if( lowPoint != null) 
-			lowPoint.remove();
-		if( highPoint != null) 
-			highPoint.remove();
 		
+		// interval points
 		AlgoPointOnPath pxAlgo = new AlgoPointOnPath(cons, (Path)f, (2 * ev.getXmin() + ev.getXmax()) / 3, 0);
 		cons.removeFromConstructionList(pxAlgo);
 		lowPoint = (GeoPoint) pxAlgo.getGeoElements()[0];
+		lowPoint.setEuclidianVisible(false);
+		lowPoint.setPointSize(4);
+		lowPoint.setObjColor(DISPLAY_GEO_COLOR);
+		displayGeoList.add(lowPoint);
 		
-		ev.add(lowPoint);
 		
 		AlgoPointOnPath pyAlgo = new AlgoPointOnPath(cons, (Path)f, (ev.getXmin() + 2 * ev.getXmax()) / 3, 0);
 		cons.removeFromConstructionList(pyAlgo);
 		highPoint = (GeoPoint) pyAlgo.getGeoElements()[0];
-		
-		ev.add(highPoint);
+		highPoint.setEuclidianVisible(false);
+		highPoint.setPointSize(4);
+		highPoint.setObjColor(DISPLAY_GEO_COLOR);
+		displayGeoList.add(highPoint);
 
 		
 		ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
 		ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
-
 		AlgoDependentNumber xLow = new AlgoDependentNumber(cons, low, false);
 		cons.removeFromConstructionList(xLow);
 		AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
 		cons.removeFromConstructionList(xHigh);
 
-
-		//expr = "Point[" + fcn + "]";
-		//Application.debug(expr);
-		//lowPoint = (GeoPoint) createGeoFromString(expr, null, true);
-		lowPoint.setEuclidianVisible(false);
-		lowPoint.setPointSize(4);
-		lowPoint.setObjColor(DISPLAY_GEO_COLOR);
-		//lowPoint.setLabel("fiLowPoint");
-
-
-		//expr = "Point[" + fcn + "]";
-		//Application.debug(expr);
-		//highPoint = (GeoPoint) createGeoFromString(expr, null, true);
-		highPoint.setEuclidianVisible(false);
-		highPoint.setPointSize(4);
-		highPoint.setObjColor(DISPLAY_GEO_COLOR);
-		//highPoint.setLabel("fiHighPoint");
-
 		AlgoFunctionInterval interval = new AlgoFunctionInterval(cons, f, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(interval);	
 		
 		functionInterval = interval.getGeoElements()[0];
-		
-		ev.add(functionInterval);
-		
-		//expr = "Function[" + fcn + ", x(" + lowPoint.getLabel() + ") , x(" + highPoint.getLabel() + ") ]";
-		//Application.debug(expr);
-		//functionInterval = createGeoFromString(expr, null, true);
 		functionInterval.setEuclidianVisible(false);
 		functionInterval.setLineThickness(selectedGeo.getLineThickness()+3);
 		functionInterval.setObjColor(DISPLAY_GEO_COLOR);
-		//functionInterval.setLabel("fiFunctionInterval");
+		displayGeoList.add(functionInterval);
 
-		// hide tooltips for these geos
-		for(int i=0; i<geoList.size(); i++){
-			geoList.get(i).setTooltipMode(GeoElement.TOOLTIP_OFF);
+		
+		// add the dsiplay geos to the current Ev and hide the tooltips 
+		for(int i=0; i< displayGeoList.size(); i++){
+			ev.add(displayGeoList.get(i));
+			displayGeoList.get(i).setTooltipMode(GeoElement.TOOLTIP_OFF);
 		}	
-
+		
 		updateTestPoint();
 
+		
+		// as it has no label, need to add it the the view
+		ev.add(xSegment);
+		
+		
 	}
 
 
@@ -1297,12 +1212,19 @@ KeyListener, ActionListener{
 	}
 
 	private void clearGeoList(){
-		for(GeoElement geo : geoList){
+		for(GeoElement geo : displayGeoList){
 			if(geo != null){
 				geo.remove();
 			}
 		}
-		geoList.clear();
+		displayGeoList.clear();
+		
+		for(GeoElement geo : hiddenGeoList){
+			if(geo != null){
+				geo.remove();
+			}
+		}
+		hiddenGeoList.clear();
 	}
 
 	public void updateFonts(){
