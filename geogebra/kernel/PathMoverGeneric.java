@@ -24,7 +24,7 @@ public class PathMoverGeneric implements PathMover {
 	private static final int BOUNDS_INFINITE_FIXED = 4;
 	
 	protected Path path;
-	protected double start_param, start_paramUP;
+	protected double start_param, start_paramUP, start_paramDOWN;
 	protected double curr_param, last_param, param_extent, min_param, max_param,
 					max_step_width, step_width, offset;
 	protected int  mode;	
@@ -100,6 +100,7 @@ public class PathMoverGeneric implements PathMover {
 						
 		param_extent = max_param - min_param;		
 		start_paramUP = start_param + param_extent;
+		start_paramDOWN = start_param - param_extent;
 
 		max_step_width = param_extent / MIN_STEPS;		
 		posOrientation = true; 						
@@ -226,7 +227,7 @@ public class PathMoverGeneric implements PathMover {
 				|| curr_param < start_paramUP && next_param >= start_paramUP);
 		} else {
 			hasNext = !(curr_param > start_param && next_param <= start_param
-				|| curr_param > start_paramUP && next_param <= start_paramUP);
+				|| curr_param > start_paramDOWN && next_param <= start_paramDOWN);
 		}
 							
 		return hasNext;
