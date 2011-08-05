@@ -238,7 +238,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		 */
 		public void setLabels(String[] labels){
 			this.labels=labels;
-			setLabels=true;
+			//setLabels=true;
+			setLabels = !cons.isSuppressLabelsActive();
 			if (labels != null){
 				if (labels.length==1)
 					setIndexLabels(labels[0]);
@@ -254,7 +255,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		 */
 		public void setIndexLabels(String label){
 			this.indexLabel=label;
-			setLabels=true;
+			//setLabels=true;
+			setLabels = !cons.isSuppressLabelsActive();
 			updateLabels();
 		}	
 		
