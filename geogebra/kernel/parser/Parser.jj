@@ -342,7 +342,7 @@ TOKEN: {
 |	< ACOS_FUNC: ( "acos(" | "arccos("| "arcos(" | "ArcCos(" )> 
 |	< ASIN_FUNC: ( "asin(" | "arcsin(" | "ArcSin(" ) > 
 |	< ATAN_FUNC: ( "atan(" | "arctan(" | "ArcTan(" )> 
-|	< ATAN2_FUNC: ( "atan2(" | "arctan2(" | "ArcTan2(" )> 
+|	< ATAN2_FUNC: ( "atan2(" | "arctan2(" | "ArcTan2(" | "myatan2("  )> 
 |	< ERF_FUNC: ( "erf(" )> 
 |	< COSH_FUNC: ( "cosh(" | "Cosh(" ) > 
 |	< COSHN_FUNC: ( "cosh" | "Cosh" ) (< POWERN > ) + "(" > 
@@ -374,6 +374,7 @@ TOKEN: {
 |	< DERIV_MP:  "Deriv()"  >  // may be returned by MathPiper
 |	< ARBCONST:  "arbconst("  >  // arbitrary constant by MPreduce
 |	< ARBINT:  "arbint("  >  // may be returned by MPreduce
+|	< ARBCOMPLEX:  "arbcomplex("  >  // may be returned by MPreduce
 | 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 
@@ -1712,6 +1713,7 @@ ExpressionNode numberFunction():
     ExpressionValue ev;
     MyList myList;
     Token c;
+    String conslabel;
 }
 {           
     c = <X_FUNC> en = expressionOrEquation() ")"
@@ -1928,17 +1930,26 @@ ExpressionNode numberFunction():
     <ROUND_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ROUND, null); }               
 |
-    <ARBCONST> c = <INTEGER> ")" 
+    <ARBCONST> en = expressionOrEquation() ")" 
     {
-      	// e.g. arbconst(3) from MPreduce becomes c_{3}
-        return new ExpressionNode(kernel, new Variable(kernel, "c_{" + c.image + "}") );
+      	// e.g. arbconst(3) from MPreduce becomes next free index label, e.g. c_4
+      	conslabel = kernel.getConstruction().getIndexLabel("c", en.toString());
+        return new ExpressionNode(kernel, new Variable(kernel, conslabel) );
     }
 |
-    <ARBINT> c = <INTEGER> ")"
+    <ARBINT> en = expressionOrEquation() ")"
     {
-      // e.g. arbint(2) from MPreduce becomes k_{2}
-        return new ExpressionNode(kernel, new Variable(kernel, "k_{" + c.image + "}") );
-    }          
+      	// e.g. arbint(2) from MPreduce becomes next free index label, e.g. k_3
+      	conslabel = kernel.getConstruction().getIndexLabel("k", en.toString());
+        return new ExpressionNode(kernel, new Variable(kernel, conslabel) );
+    }
+|
+    <ARBCOMPLEX> en = expressionOrEquation() ")"
+    {
+      	// e.g. arbcomplex(2) from MPreduce becomes next free index label, e.g. z_5
+      	conslabel = kernel.getConstruction().getIndexLabel("z", en.toString());
+        return new ExpressionNode(kernel, new Variable(kernel, conslabel) );
+    }            
 | 
   <RANDOM_FUNC>
       {  

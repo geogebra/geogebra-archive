@@ -2804,36 +2804,16 @@ public abstract class GeoElement
 		return sbDefaultLabel.toString();
 	}
 
+	/**
+	 * Returns the next free indexed label using the given prefix.
+	 * @param prefix, e.g. "c"
+	 * @return indexed label, e.g. "c_2"
+	 */
 	public String getIndexLabel(String prefix) {
 		if (prefix == null)
 			return getFreeLabel(null) + "_1";
-
-		// start numbering with indices using suggestedLabel
-		// as prefix
-		String pref;
-		int pos = prefix.indexOf('_');
-		if (pos == -1)
-			pref = prefix;
 		else
-			pref = prefix.substring(0, pos);
-
-		StringBuilder sbIndexLabel = new StringBuilder();
-		int n = 0; // index
-		do {
-			sbIndexLabel.setLength(0);
-			sbIndexLabel.append(pref);
-			// n as index
-			n++;
-			if (n < 10) {
-				sbIndexLabel.append('_');
-				sbIndexLabel.append(n);
-			} else {
-				sbIndexLabel.append("_{");
-				sbIndexLabel.append(n);
-				sbIndexLabel.append('}');
-			}
-		} while (!cons.isFreeLabel(sbIndexLabel.toString()));
-		return sbIndexLabel.toString();
+			return cons.getIndexLabel(prefix);
 	}
 
 	/**

@@ -1346,7 +1346,60 @@ public class Construction {
 			return !geoTable.containsKey(label) && !isDependentLabel(label);
 	}
 	
-	
+	/**
+	 * Returns the next free indexed label using the given prefix.
+	 * @param prefix e.g. "c"
+	 * @return indexed label, e.g. "c_2"
+	 */
+	public String getIndexLabel(String prefix) {	
+		return getIndexLabel(prefix, null);
+	}
+
+	/**
+	 * Returns the next free indexed label using the given prefix
+	 * starting with the given index number.
+	 * @param prefix e.g. "c"
+	 * @param startIndex e.g. "2"
+	 * @return indexed label, e.g. "c_2"
+	 */
+	public String getIndexLabel(String prefix, String startIndex) {
+		// start numbering with indices using suggestedLabel
+		// as prefix
+		String pref;
+		int pos = prefix.indexOf('_');
+		if (pos == -1)
+			pref = prefix;
+		else
+			pref = prefix.substring(0, pos);
+
+		StringBuilder sbIndexLabel = new StringBuilder();				
+		
+		int n = 1; // start index
+		if (startIndex != null) {
+	      	try {      	  
+	      		n = Integer.parseInt(startIndex);
+	      	} catch (NumberFormatException e) {
+	      		n = 1;
+	      	}			
+		}
+				
+		do {
+			sbIndexLabel.setLength(0);
+			sbIndexLabel.append(pref);
+			// n as index
+			
+			if (n < 10) {
+				sbIndexLabel.append('_');
+				sbIndexLabel.append(n);
+			} else {
+				sbIndexLabel.append("_{");
+				sbIndexLabel.append(n);
+				sbIndexLabel.append('}');
+			}
+			n++;
+		} while (!isFreeLabel(sbIndexLabel.toString()));
+		return sbIndexLabel.toString();
+	}
 	
 	///////////////////////////////////////////////
 	// LABELS DEPENDING ON ALGOS
