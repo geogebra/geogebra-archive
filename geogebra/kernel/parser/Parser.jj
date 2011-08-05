@@ -375,6 +375,7 @@ TOKEN: {
 |	< ARBCONST:  "arbconst("  >  // arbitrary constant by MPreduce
 |	< ARBINT:  "arbint("  >  // may be returned by MPreduce
 |	< ARBCOMPLEX:  "arbcomplex("  >  // may be returned by MPreduce
+|   < COMPLEXPOLAR: "complexpolar(" > // may be returned by MPreduce
 | 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 
@@ -2093,13 +2094,15 @@ VectorValue polarvector():
 }
 {   
     (  
-       "(" r = expression() ";"  phi = expression() ")"   
+      ( "(" r = expression() ";"  phi = expression() ")" )
+    | 
+      ( <COMPLEXPOLAR> r = expression() <COMMA> phi = expression() ")" )
+    )   
         {                            
              v = new MyVecNode(kernel);                         
              v.setPolarCoords(r, phi);     
              return v;
-        }  
-    )         
+        }          
 }
 
 /**
