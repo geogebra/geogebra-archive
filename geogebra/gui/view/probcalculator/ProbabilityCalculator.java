@@ -1604,8 +1604,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			double highBound = Math.min(n, s);	
 			
 			if (n + s > p) {
-				lowBound--;
-				highBound--;
+				lowBound -= (n + s - p);
+				highBound -= (n + s - p);
 			}
 			
 			GeoNumeric lowGeo = new GeoNumeric(cons,lowBound);
