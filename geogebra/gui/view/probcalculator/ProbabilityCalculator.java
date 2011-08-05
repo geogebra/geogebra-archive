@@ -796,46 +796,37 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	}
 
 
-	/**
-	 * TODO: get this to work!
-	 * @return
-	 */
+
 	private boolean isValidInterval(double xLow, double xHigh){
 
 		if (xHigh < xLow) return false;
 
 		boolean isValid = true;
-
-
 		switch (selectedDist){
 
 		case ProbabilityManager.DIST_BINOMIAL:
-			isValid = xLow >= 0 && xHigh<= parameters[0];  // 0 <= x <= n
+		case ProbabilityManager.DIST_HYPERGEOMETRIC: 
+			isValid = xLow >= getDiscreteXMin() && xHigh <= getDiscreteXMax();
 			break;
-
-		case ProbabilityManager.DIST_PASCAL: 
-			isValid = xLow >= 0;   // 0 <= x 
-			break;
-
 
 		case ProbabilityManager.DIST_POISSON: 
+		case ProbabilityManager.DIST_PASCAL: 
+			isValid = xLow >= getDiscreteXMin();   
+			break;
+
+
 		case ProbabilityManager.DIST_CHISQUARE:
 		case ProbabilityManager.DIST_EXPONENTIAL:
 			if(probMode != PROB_LEFT)
-				isValid = xLow >= 0;   // 0 <= x 
+				isValid = xLow >= 0;   
 				break;
-
 
 		case ProbabilityManager.DIST_F:	
 			if(probMode != PROB_LEFT)
-				isValid = xLow > 0;   // 0 <= x 
+				isValid = xLow > 0;   
 				break;
 
-		case ProbabilityManager.DIST_HYPERGEOMETRIC: 
-			isValid = xLow >= 0 && xHigh<= parameters[2];  // 0 <= x <= sample size
-			break;
 		}
-
 
 		return isValid;	
 
@@ -1369,6 +1360,9 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 
+
+
+
 	//=================================================
 	//       Geo Handlers
 	//=================================================
@@ -1476,28 +1470,28 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);*/
-			
-			
+
+
 			GeoNumeric k = new GeoNumeric(cons);
 			GeoNumeric k2 = new GeoNumeric(cons);
 			GeoNumeric nGeo = new GeoNumeric(cons,parameters[0]);
 			GeoNumeric nPlusOneGeo = new GeoNumeric(cons,parameters[0] + 1);
 			GeoNumeric pGeo = new GeoNumeric(cons,parameters[1]);	
-			
+
 			AlgoSequence algoSeq = new AlgoSequence(cons, k2, k2, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
-			
+
 			AlgoListElement algo = new AlgoListElement(cons, discreteValueList, k);
 			cons.removeFromConstructionList(algo);
-			
+
 			AlgoBinomialDist algo2 = new AlgoBinomialDist(cons, (NumberValue)nGeo, pGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(algo2);
-			
+
 			AlgoSequence algoSeq2 = new AlgoSequence(cons, algo2.getGeoElements()[0], k, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
 			cons.removeFromConstructionList(algoSeq2);
 
 			discreteProbList = (GeoList)algoSeq2.getGeoElements()[0];
-						
+
 			break;
 
 		case ProbabilityManager.DIST_PASCAL:	
@@ -1515,26 +1509,26 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
-			*/
+			 */
 			nGeo = new GeoNumeric(cons,parameters[0]);
 			pGeo = new GeoNumeric(cons,parameters[1]);	
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
-			
+
 			AlgoInversePascal n2 = new AlgoInversePascal(cons, nGeo, pGeo, new MyDouble(kernel, 0.999));
 			cons.removeFromConstructionList(n2);
 			GeoElement n2Geo = n2.getGeoElements()[0];
-			
+
 			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)n2Geo, null);
 			cons.removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
-			
+
 			algo = new AlgoListElement(cons, discreteValueList, k2);
 			cons.removeFromConstructionList(algo);
-			
+
 			AlgoPascal pascal = new AlgoPascal(cons, nGeo, pGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(pascal);
-			
+
 			nPlusOne = new ExpressionNode(kernel, n2Geo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
 			plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
 			cons.removeFromConstructionList(plusOneAlgo);
@@ -1543,11 +1537,11 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			cons.removeFromConstructionList(algoSeq2);
 
 			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
-			
+
 			break;
-			
+
 		case ProbabilityManager.DIST_POISSON:
-/*
+			/*
 			mean = "" + parameters[0];
 			n = "" + (parameters[0] + 6*Math.sqrt(parameters[0]));
 
@@ -1560,24 +1554,24 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
-			*/
-			
+			 */
+
 			GeoNumeric meanGeo = new GeoNumeric(cons,parameters[0]);
 			nGeo = new GeoNumeric(cons,(parameters[0] + 6*Math.sqrt(parameters[0])));	
 			nPlusOneGeo = new GeoNumeric(cons,(parameters[0] + 6*Math.sqrt(parameters[0])) + 1);	
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
-			
+
 			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
 			cons.removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
 			algo = new AlgoListElement(cons, discreteValueList, k2);
 			cons.removeFromConstructionList(algo);
-			
+
 			AlgoPoisson poisson = new AlgoPoisson(cons, meanGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(poisson);
-			
+
 			algoSeq2 = new AlgoSequence(cons, poisson.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
 			cons.removeFromConstructionList(algoSeq2);
 
@@ -1601,24 +1595,32 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);*/
-			
+
 			pGeo = new GeoNumeric(cons,parameters[0]);	
 			nGeo = new GeoNumeric(cons,parameters[1]);	
 			nPlusOneGeo = new GeoNumeric(cons,parameters[1] + 1);	
 			GeoNumeric sGeo = new GeoNumeric(cons,parameters[2]);	
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
-			
-			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
+
+			// ================================================
+			// interval bounds:
+			//    [ max(0, n + s - p) ,  min(n, s) ] 
+			//=================================================
+			if(parameters[1] < parameters[2])
+				algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
+			else
+				algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)sGeo, null);
+
 			cons.removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
 			algo = new AlgoListElement(cons, discreteValueList, k2);
 			cons.removeFromConstructionList(algo);
-			
+
 			AlgoHyperGeometric hyperGeometric = new AlgoHyperGeometric(cons, pGeo, nGeo, sGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(hyperGeometric);
-			
+
 			algoSeq2 = new AlgoSequence(cons, hyperGeometric.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
 			cons.removeFromConstructionList(algoSeq2);
 
@@ -1628,7 +1630,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 		}
-		
+
 		plotGeoList.add(discreteProbList);
 		discreteProbList.setEuclidianVisible(true);	
 		discreteProbList.setAuxiliaryObject(true);
@@ -1652,7 +1654,21 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	}
 
 
+	public int getDiscreteXMax(){
+		if(discreteValueList != null){
+			GeoNumeric geo = (GeoNumeric) discreteValueList.get(discreteValueList.size()-1);
+			return (int) geo.getDouble();
+		}
+		return -1;
+	}
 
+	public int getDiscreteXMin(){
+		if(discreteValueList != null){
+			GeoNumeric geo = (GeoNumeric) discreteValueList.get(0);
+			return (int) geo.getDouble();
+		}
+		return -1;
+	}
 
 
 	//============================================================
@@ -1805,29 +1821,29 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		plotPanel.appendActionList(exportToEVAction);
 	}
 
-	
-	
-	
+
+
+
 	public void exportGeosToEV(int evNo){
-		
+
 		app.setWaitCursor();
 		ArrayList<GeoElement> list = new ArrayList<GeoElement>();
-			
+
 		try {
 			if(probManager.isDiscrete(selectedDist)){
 
-				
-				
-			
+
+
+
 			}
 			else{
-				
-				
+
+
 				GeoElement densityCurveCopy = densityCurve.copyInternal(cons);
 				densityCurveCopy.setLabel(null);
 				densityCurveCopy.setVisualStyle(densityCurve);
 				list.add(densityCurveCopy);
-			
+
 				//create low point
 				String expr = "Point[" + app.getPlain("xAxis") + "]";
 				GeoPoint lowPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
@@ -1836,8 +1852,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				lowPointCopy.setCoords(low, 0, 1);
 				lowPointCopy.setLabel(null);
 				list.add(lowPointCopy);
-				
-				
+
+
 				//create high point
 				GeoPoint highPointCopy = (GeoPoint) createGeoFromString(expr,null,false);
 				highPointCopy.setVisualStyle(lowPoint);
@@ -1845,8 +1861,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				highPointCopy.setCoords(high, 0, 1);
 				highPointCopy.setLabel(null);
 				list.add(highPointCopy);
-				
-				
+
+
 				// create integral
 				expr = "Integral[" + densityCurveCopy.getLabel() + ", x(" + lowPointCopy.getLabel() 
 				+ "), x(" + highPointCopy.getLabel() + ") , true ]";
@@ -1855,8 +1871,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				integralCopy.setLabel(null);
 				list.add(integralCopy);
 			}
-			
-			
+
+
 			for(GeoElement geo: list){
 				geo.setAuxiliaryObject(false);
 				if(evNo == 2){
@@ -1865,7 +1881,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 					geo.update();
 				}
 			}
-			
+
 			if(evNo == 1)
 				app.getEuclidianView().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
 						plotSettings.yMin, plotSettings.yMax);
@@ -1873,13 +1889,13 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				app.getEuclidianView2().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
 						plotSettings.yMin, plotSettings.yMax);
 
-			
-			
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			app.setDefaultCursor();
 		}
-		
+
 		app.setDefaultCursor();
 	}
 

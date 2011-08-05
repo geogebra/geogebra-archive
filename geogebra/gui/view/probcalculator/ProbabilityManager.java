@@ -433,45 +433,25 @@ public class ProbabilityManager {
 			break;
 
 
-		case DIST_BINOMIAL:
-			n = parms[0];
-			p = parms[1];
-			xMin = -1;
-			xMax = n + 1;
-			yMin = 0;	
-			yMax = 1.2* getDiscreteMax(selectedDist, parms, 0, (int) n);
-			break;
-
-
 		case DIST_PASCAL:
-			n = parms[0];
-			p = parms[1];
-			mean = p*n/(1-p);
-			mode = p*(n-1)/(1-p);
-			sd = Math.sqrt(n*p)/(1-p);
-			xMin = -1;
-			xMax = mean + 4*sd;
-			yMin = 0;	
-			yMax = 1.2* getDiscreteMax(selectedDist, parms, 0, (int) n);
-			break;
-
 		case DIST_POISSON:
-			mean = parms[0];
-			xMin = -1;
-			xMax = mean + 6*Math.sqrt(mean) ;
+			xMin = probCalc.getDiscreteXMin();
+			xMax = probCalc.getDiscreteXMax();
 			yMin = 0;	
-			yMax = 1.2* getDiscreteMax(selectedDist, parms, 0, (int) xMax);
+			yMax = 1.2* getDiscreteYMax(selectedDist, parms, (int)xMin, (int)xMax);
+			xMin -= 1;
+			
 			break;
-
+			
+			
+		case DIST_BINOMIAL:
 		case DIST_HYPERGEOMETRIC:
-			pop = parms[0];
-			n = parms[1];
-			sample = parms[2];
-
-			xMin = -1;
-			xMax = n + 1;
+			xMin = probCalc.getDiscreteXMin();
+			xMax = probCalc.getDiscreteXMax();
 			yMin = 0;	
-			yMax = 1.2* getDiscreteMax(selectedDist, parms, 0, (int) n);
+			yMax = 1.2* getDiscreteYMax(selectedDist, parms,(int)xMin, (int)xMax);
+			xMin -= 1;
+			xMax +=1;
 			break;
 
 		}
@@ -495,7 +475,7 @@ public class ProbabilityManager {
 	 * @param high
 	 * @return
 	 */
-	private double getDiscreteMax(int distType, double[] parms, int low, int high){
+	private double getDiscreteYMax(int distType, double[] parms, int low, int high){
 
 		double max = 0;
 
