@@ -43,6 +43,9 @@ public class InspectorTable extends JTable{
 		this.setBorder(null);
 		//this.addKeyListener(this);
 
+
+		
+		setDefaultRenderer(Object.class, new MyCellRenderer(this));
 		
 		editableCell = new HashSet<Point>();
 	}
@@ -130,14 +133,18 @@ public class InspectorTable extends JTable{
 
 
 
-
-	public void setMyCellRenderer(){
+/*
+	private void setMyCellRenderer(){
+		Application.debug("====>" + getColumnCount());
 		for (int i = 0; i < getColumnCount(); i++){ 
 			TableColumn col = getColumnModel().getColumn(i);
 			col.setCellRenderer(new MyCellRenderer(this));
 		}
 	}
-
+*/
+	
+	
+	
 	public void setMyCellEditor(int colIndex){
 		getColumnModel().getColumn(colIndex).setCellEditor(new MyEditor());
 	}
@@ -146,7 +153,7 @@ public class InspectorTable extends JTable{
 	
 	
 
-	public class MyCellRenderer extends DefaultTableCellRenderer  {
+	private class MyCellRenderer extends DefaultTableCellRenderer  {
 
 		private JTextField tf;
 		private Border editCellBorder;
@@ -160,6 +167,7 @@ public class InspectorTable extends JTable{
 			tf = new JTextField();
 			this.doRedNegative = table.isDoRedNegative();
 			paddingBorder = BorderFactory.createEmptyBorder(2,2,2,2);
+			//paddingBorder = BorderFactory.createMatteBorder(3,3,3,3,Color.RED);
 			editCellBorder = BorderFactory.createCompoundBorder(tf.getBorder(), paddingBorder);
 
 		}

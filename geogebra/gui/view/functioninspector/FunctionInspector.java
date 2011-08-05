@@ -301,7 +301,7 @@ KeyListener, ActionListener{
 		modelXY.addColumn("y(x)");
 		modelXY.setRowCount(pointCount);
 		tableXY.setModel(modelXY);
-		tableXY.setMyCellRenderer();
+	//	tableXY.setMyCellRenderer();
 
 		tableXY.getSelectionModel().addListSelectionListener(this);
 		//tableXY.addKeyListener(this);
@@ -314,7 +314,7 @@ KeyListener, ActionListener{
 		modelInterval.setColumnCount(2);
 		modelInterval.setRowCount(pointCount);
 		tableInterval.setModel(modelInterval);
-
+	//	tableInterval.setMyCellRenderer();
 
 		lblGeoName = new JLabel(getTitleString());
 		lblGeoName.setFont(app.getBoldFont());
@@ -379,7 +379,7 @@ KeyListener, ActionListener{
 		modelInterval.setColumnIdentifiers(intervalColumnNames);
 
 		lblStep.setText(app.getMenu("Step") + ":");		
-		lblInterval.setText(app.getMenu(" < x < " ) );	
+		lblInterval.setText(" \u2264 x \u2264 " );	// <= x <=
 
 		btnRemoveColumn.setText("\u2718");
 		//btnAddColumn.setText("\u271A");
@@ -549,15 +549,10 @@ KeyListener, ActionListener{
 		RealRootFunction fun = selectedGeo.getRealRootFunctionY();    
 
 
-		//double yMin = evaluateExpression(lbl + "(" + xMin + ")");
-		//double yMax = evaluateExpression(lbl + "(" + xMax + ")");
 		double yMin = selectedGeo.evaluate(xMin);
 		double yMax = selectedGeo.evaluate(xMax);
-		
 		double xMinInt = ef.findMinimum(xMin,xMax,fun,5.0E-8);
 		double xMaxInt = ef.findMaximum(xMin,xMax,fun,5.0E-8);
-		//double yMinInt = evaluateExpression(lbl + "(" + xMinInt + ")");
-		//double yMaxInt = evaluateExpression(lbl + "(" + xMaxInt + ")");
 		double yMinInt = selectedGeo.evaluate(xMinInt);
 		double yMaxInt = selectedGeo.evaluate(xMaxInt);
 
@@ -572,19 +567,21 @@ KeyListener, ActionListener{
 		}
 
 
+		// get property/value pairs for the table
+		//=================================================
+		
 		property.add(app.getCommand("Min"));
-		value.add(nf.format(xMinInt) + "," + nf.format(yMinInt) );
+		value.add("(" + nf.format(xMinInt) + " , " + nf.format(yMinInt) + ")" );
 
 		property.add(app.getCommand("Max"));
-		value.add(nf.format(xMaxInt) + "," + nf.format(yMaxInt) );
+		value.add("(" + nf.format(xMaxInt) + " , " + nf.format(yMaxInt) + ")" );
 
 
 		property.add(null);
 		value.add(null );
 
-		property.add(app.getCommand("Root"));
-		//GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionsOrErrors(" + Roots[" + lbl + "," + xMin + "," + xMax + "]", false);
 		
+		// calculate roots
 		AlgoRoots root = new AlgoRoots(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(len);
 		
@@ -605,13 +602,12 @@ KeyListener, ActionListener{
 		break;
 		default: value.add(app.getPlain("fncInspector.MultipleRoots"));
 		}
-		
-		//Application.debug(geos.length);
-		//value.add(evaluateToText("\"\" + Root[" + lbl + "," + xMin + "," + xMax + "]",app.getPlain("fncInspector.MultipleRoots")));
-
+			
+		property.add(app.getCommand("Root"));
 		property.add(null);
 		value.add(null );
 
+		
 		property.add(app.getCommand("Area"));
 		value.add(nf.format(integral));
 
@@ -622,6 +618,9 @@ KeyListener, ActionListener{
 		value.add(nf.format(length));
 
 
+		
+		// load the model
+		//=================================================
 		int rowCount = Math.max(minRows, property.size());
 		modelInterval.setRowCount(property.size());
 
@@ -630,6 +629,7 @@ KeyListener, ActionListener{
 			modelInterval.setValueAt(value.get(i),i,1);
 		}
 
+		
 		//tableInterval.setColumnWidths();
 		isChangingValue = false;
 	}
@@ -679,7 +679,7 @@ KeyListener, ActionListener{
 	private void addColumn(int columnType){
 		extraColumnList.add(columnType);
 		modelXY.addColumn(columnNames[columnType]);
-		tableXY.setMyCellRenderer();
+	//	tableXY.setMyCellRenderer();
 		tableXY.setMyCellEditor(0);
 
 		updateXYTable();
@@ -693,7 +693,7 @@ KeyListener, ActionListener{
 		//	int lastColumn = tableXY.getColumnCount()-1;
 		//	tableXY.removeColumn(tableXY.getColumnModel().getColumn(lastColumn));
 		modelXY.setColumnCount(modelXY.getColumnCount()-1);
-		tableXY.setMyCellRenderer();
+	//	tableXY.setMyCellRenderer();
 		tableXY.setMyCellEditor(0);
 
 		updateXYTable();
