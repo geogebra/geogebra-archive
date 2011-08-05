@@ -55,7 +55,7 @@ public class GeoGebra extends Object {
     		showSplash = false;
     	}
     	
-    	if(args.getStringValue("help").length() > 0) {
+    	if(args.containsArg("help")||args.containsArg("v")) {
     		showSplash = false;
     	}
     	
