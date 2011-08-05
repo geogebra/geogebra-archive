@@ -593,17 +593,26 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			//expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
 			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
 			//intervalProbList  = (GeoList) createGeoFromString(expr);
+			
+			
+			// Use Take[] to create a subset of the full discrete graph:
+			//     Take[discreteList, x(lowPoint) + offset, x(highPoint) + offset] 
+			//
+			// The offset accounts for Sequence[] starting its count at 1 and 
+			// the starting value of the discrete x list. Thus,
+			//     offset = 1 - lowest discrete x value 
 
-			MyDouble one = new MyDouble(kernel, 1d);
+			double  firstX = ((GeoNumeric)discreteValueList.get(0)).getDouble();
+			MyDouble offset = new MyDouble(kernel, 1d - firstX);
 
 			ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
 			ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
-			ExpressionNode lowPlusOne = new ExpressionNode(kernel, low, ExpressionNode.PLUS, one);
-			ExpressionNode highPlusOne = new ExpressionNode(kernel, high, ExpressionNode.PLUS, one);				
+			ExpressionNode lowPlusOffset = new ExpressionNode(kernel, low, ExpressionNode.PLUS, offset);
+			ExpressionNode highPlusOffset = new ExpressionNode(kernel, high, ExpressionNode.PLUS, offset);				
 
-			AlgoDependentNumber xLow = new AlgoDependentNumber(cons, lowPlusOne, false);
+			AlgoDependentNumber xLow = new AlgoDependentNumber(cons, lowPlusOffset, false);
 			cons.removeFromConstructionList(xLow);
-			AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, highPlusOne, false);
+			AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, highPlusOffset, false);
 			cons.removeFromConstructionList(xHigh);
 
 			AlgoTake take2 = new AlgoTake(cons, (GeoList)discreteProbList, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
@@ -1602,15 +1611,11 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			
 			double lowBound = Math.max(0, n + s - p);
 			double highBound = Math.min(n, s);	
-			
-			if (n + s > p) {
-				lowBound -= (n + s - p);
-				highBound -= (n + s - p);
-			}
+			double length = highBound - lowBound + 1;
 			
 			GeoNumeric lowGeo = new GeoNumeric(cons,lowBound);
 			GeoNumeric highGeo = new GeoNumeric(cons,highBound);
-			GeoNumeric lengthGeo = new GeoNumeric(cons, highBound - lowBound + 1);
+			GeoNumeric lengthGeo = new GeoNumeric(cons, length);
 			
 			pGeo = new GeoNumeric(cons,p);	
 			nGeo = new GeoNumeric(cons,n);				
