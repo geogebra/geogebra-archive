@@ -32,20 +32,22 @@ public class InspectorTable extends JTable{
 
 		this.app = app;
 		this.inspector = inspector;
-		this.setShowGrid(true);
-		this.setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
-		this.setSelectionBackground(GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR);
+		
+		// set visual appearance
+		setShowGrid(true);
+		setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
+		setSelectionBackground(GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR);
+		setBorder(BorderFactory.createEmptyBorder());
 
-
-		//table.setAutoCreateColumnsFromModel(false);
-		this.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-		this.setPreferredScrollableViewportSize(this.getPreferredSize());
-		this.setBorder(null);
+		// set resizing fields
+		setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		setPreferredScrollableViewportSize(this.getPreferredSize());
+		
 		//this.addKeyListener(this);
 
-
-		
+		// set renderer and editor
 		setDefaultRenderer(Object.class, new MyCellRenderer(this));
+		setDefaultEditor(Object.class, new MyEditor());
 		
 		editableCell = new HashSet<Point>();
 	}
@@ -129,20 +131,6 @@ public class InspectorTable extends JTable{
 		return maxPrefWidth + table.getIntercellSpacing().width;
 	}
 
-
-
-
-
-/*
-	private void setMyCellRenderer(){
-		Application.debug("====>" + getColumnCount());
-		for (int i = 0; i < getColumnCount(); i++){ 
-			TableColumn col = getColumnModel().getColumn(i);
-			col.setCellRenderer(new MyCellRenderer(this));
-		}
-	}
-*/
-	
 	
 	
 	public void setMyCellEditor(int colIndex){
@@ -151,7 +139,9 @@ public class InspectorTable extends JTable{
 	
 	
 	
-	
+	// ====================================================
+	//     Cell Renderer
+	// ====================================================
 
 	private class MyCellRenderer extends DefaultTableCellRenderer  {
 
@@ -220,8 +210,12 @@ public class InspectorTable extends JTable{
 
 	}
 
+	
+	// ====================================================
+	//     Cell Editor
+	// ====================================================
 
-	class MyEditor extends DefaultCellEditor {
+	private class MyEditor extends DefaultCellEditor {
 		public MyEditor() {
 			super(new MyTextField(app.getGuiManager()));
 			this.setClickCountToStart(1);
@@ -239,12 +233,11 @@ public class InspectorTable extends JTable{
 
 		public boolean stopCellEditing() {
 			boolean isStopped = super.stopCellEditing();
-			//("-----------> STOPPED    !!!!!!!!!!!!");
-			//System.out.println("-----------> " + (String) this.getCellEditorValue());
+			
 			try {
 				if(isStopped){
-
 					double val = Double.parseDouble((String) this.getCellEditorValue());
+					// change
 					inspector.changeStart(val);
 				}
 			} catch (NumberFormatException e) {

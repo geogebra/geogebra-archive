@@ -94,11 +94,10 @@ public class FunctionInspector extends InputDialog
 implements View, MouseListener, ListSelectionListener, 
 KeyListener, ActionListener{
 
-	private static final Color DISPLAY_GEO_COLOR = Color.BLUE;
+	private static final Color DISPLAY_GEO_COLOR = Color.RED;
 	private static final Color DISPLAY_GEO2_COLOR = Color.RED;
 
 	private static final Color EVEN_ROW_COLOR = new Color(241, 245, 250);
-	//	private static final Color TABLE_GRID_COLOR = new Color(0xd9d9d9);
 	private static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
 
 	private static final int minRows = 12;
@@ -141,13 +140,13 @@ KeyListener, ActionListener{
 	private GeoPoint testPoint, lowPoint, highPoint;
 	private GeoList pts;
 	private ArrayList<GeoElement> displayGeoList, hiddenGeoList;
-	
-	
+
+
 	private JTabbedPane tabPanel;
 	private JPanel intervalTabPanel;
 	private JPanel pointTabPanel;
-	
-	
+
+
 	private boolean isIniting;
 	private double initialX;
 
@@ -167,9 +166,8 @@ KeyListener, ActionListener{
 
 		// list to store column types of dynamically appended columns 
 		extraColumnList = new ArrayList<Integer>();
-		
-		
-		
+
+
 		// setup InputDialog GUI
 		isIniting = true;
 		String title = app.getMenu("FunctionInspector");
@@ -306,7 +304,7 @@ KeyListener, ActionListener{
 		modelXY.addColumn("y(x)");
 		modelXY.setRowCount(pointCount);
 		tableXY.setModel(modelXY);
-	//	tableXY.setMyCellRenderer();
+
 
 		tableXY.getSelectionModel().addListSelectionListener(this);
 		//tableXY.addKeyListener(this);
@@ -319,7 +317,6 @@ KeyListener, ActionListener{
 		modelInterval.setColumnCount(2);
 		modelInterval.setRowCount(pointCount);
 		tableInterval.setModel(modelInterval);
-	//	tableInterval.setMyCellRenderer();
 
 		lblGeoName = new JLabel(getTitleString());
 		lblGeoName.setFont(app.getBoldFont());
@@ -410,13 +407,19 @@ KeyListener, ActionListener{
 	}
 
 
+	private String getTitleString(){
+	
+		if(selectedGeo == null)
+			return app.getMenu("SelectObject");
+		else
+			return selectedGeo.getNameDescriptionHTML(false, true);          
+	}
 
+	
+	
 	//  GUI update
 	// =====================================
 	private void updateGUI(){
-
-		System.out.println("updateGUI  fi");
-
 
 		if(tabPanel.getSelectedComponent()==intervalTabPanel){
 
@@ -472,7 +475,7 @@ KeyListener, ActionListener{
 		highPoint.update();
 		functionInterval.setEuclidianVisible(isInterval);
 		functionInterval.update();
-		
+
 		testPoint.setEuclidianVisible(!isInterval);	
 		testPoint.update();
 		pts.setEuclidianVisible(!isInterval);	
@@ -485,8 +488,8 @@ KeyListener, ActionListener{
 		xSegment.update();
 		ySegment.setEuclidianVisible(!isInterval);
 		ySegment.updateRepaint();
-		
-		
+
+
 		updateGUI();
 
 	}
@@ -502,30 +505,35 @@ KeyListener, ActionListener{
 			fldLow.setText(nf.format(coords[0]));
 			highPoint.getCoords(coords);
 			fldHigh.setText(nf.format(coords[0]));
-			
+
 			updateIntervalTable();
 		}
 	}
 
 
 
-	//     Table Update
-	// =====================================
 
+	/**
+	 * Updates the interval table. The max, min, roots, area etc. for
+	 * the current interval are calculated and put into the IntervalTable model.
+	 */
 	private void updateIntervalTable(){
-		
+
 		isChangingValue = true;
 
-		boolean isFunction = selectedGeo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTION;
-		//String lbl = selectedGeo.getLabel();
 		ArrayList<String> property = new ArrayList<String>();
 		ArrayList<String> value = new ArrayList<String>();
+
+
+		// prepare algos and other objects needed for the calcs
+		//=======================================================
 
 		double[] coords = new double[3];
 		lowPoint.getCoords(coords);
 		xMin = coords[0];
 		highPoint.getCoords(coords);
 		xMax = coords[0];
+
 		ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
 		ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
 
@@ -535,24 +543,19 @@ KeyListener, ActionListener{
 		AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
 		cons.removeFromConstructionList(xHigh);
 
-		//double integral = evaluateExpression("Integral[" + lbl + "," + xMin + "," + xMax + "]");
-		
 		AlgoIntegralDefinite inte = new AlgoIntegralDefinite(cons, selectedGeo, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0], null);
 		cons.removeFromConstructionList(inte);
-		
-		double integral = ((GeoNumeric)inte.getGeoElements()[0]).getDouble();
-		
-		double mean = integral/(xMax - xMin);
-		//double length = evaluateExpression("Length[" + lbl + "," + xMin + "," + xMax + "]");
 
 		AlgoLengthFunction len = new AlgoLengthFunction(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(len);
-		
-		double length = ((GeoNumeric)len.getGeoElements()[0]).getDouble();
-		
+
 		ExtremumFinder ef = new ExtremumFinder();
 		RealRootFunction fun = selectedGeo.getRealRootFunctionY();    
 
+		// get the table
+		double integral = ((GeoNumeric)inte.getGeoElements()[0]).getDouble();
+		double mean = integral/(xMax - xMin);
+		double length = ((GeoNumeric)len.getGeoElements()[0]).getDouble();
 
 		double yMin = selectedGeo.evaluate(xMin);
 		double yMax = selectedGeo.evaluate(xMax);
@@ -572,30 +575,24 @@ KeyListener, ActionListener{
 		}
 
 
-		// get property/value pairs for the table
+		// set the property/value pairs 
 		//=================================================
-		
+
 		property.add(app.getCommand("Min"));
 		value.add("(" + nf.format(xMinInt) + " , " + nf.format(yMinInt) + ")" );
 
 		property.add(app.getCommand("Max"));
 		value.add("(" + nf.format(xMaxInt) + " , " + nf.format(yMaxInt) + ")" );
 
-
 		property.add(null);
 		value.add(null );
 
-		
+
 		// calculate roots
 		AlgoRoots root = new AlgoRoots(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
-		cons.removeFromConstructionList(len);
-		
+		cons.removeFromConstructionList(len);		
 		GeoElement geos[] = root.getGeoElements();
 
-		//for (int i = 0 ; i < geos.length ; i++) {
-		//	geos[i].remove();
-		//}
-		
 		switch (geos.length) {
 		case 0: value.add(app.getPlain("fncInspector.NoRoots"));
 		break;
@@ -604,15 +601,15 @@ KeyListener, ActionListener{
 				value.add(kernel.format(((GeoPoint)geos[0]).inhomX));
 			else
 				value.add(app.getPlain("fncInspector.NoRoots"));
-		break;
+			break;
 		default: value.add(app.getPlain("fncInspector.MultipleRoots"));
 		}
-			
+
 		property.add(app.getCommand("Root"));
 		property.add(null);
 		value.add(null );
 
-		
+
 		property.add(app.getCommand("Area"));
 		value.add(nf.format(integral));
 
@@ -623,8 +620,8 @@ KeyListener, ActionListener{
 		value.add(nf.format(length));
 
 
-		
-		// load the model
+
+		// load the model with these pairs
 		//=================================================
 		int rowCount = Math.max(minRows, property.size());
 		modelInterval.setRowCount(property.size());
@@ -634,13 +631,17 @@ KeyListener, ActionListener{
 			modelInterval.setValueAt(value.get(i),i,1);
 		}
 
-		
+
 		//tableInterval.setColumnWidths();
 		isChangingValue = false;
 	}
 
 
 
+	/**
+	 * Updates the XYTable with the coordinates of the current sample points and
+	 * any related values (e.g. derivative, difference)
+	 */
 	private void updateXYTable(){
 
 		isChangingValue = true;
@@ -648,12 +649,11 @@ KeyListener, ActionListener{
 		//String lbl = selectedGeo.getLabel();
 		GeoFunction f = (GeoFunction) selectedGeo;
 
-		if(btnTable.isSelected())
-		{
+		if(btnTable.isSelected()){
 			double x = start - step*(pointCount-1)/2;
 			double y;
 			for(int i=0; i < modelXY.getRowCount(); i++){
-				y = f.evaluate(x); //evaluateExpression(lbl + "(" + x + ")");
+				y = f.evaluate(x); 
 				modelXY.setValueAt(nf.format(x),i,0);
 				modelXY.setValueAt(nf.format(y),i,1);
 				((GeoPoint) pts.get(i)).setCoords(x, y, 1);
@@ -664,48 +664,21 @@ KeyListener, ActionListener{
 		}
 		else{
 			double x = start;
-			double y = f.evaluate(x); //evaluateExpression(lbl + "(" + x + ")");
+			double y = f.evaluate(x); 
 			modelXY.setValueAt(nf.format(x),0,0);
 			modelXY.setValueAt(nf.format(y),0,1);
-
 		}
 
+		// update any extra columns added by the user (these will show derivatives, differences etc.) 
 		updateExtraColumns();
-		//	updatePointList();
 
-		//tableXY.setColumnWidths();
 
 		isChangingValue = false;
 	}
 
-
-
-
-	private void addColumn(int columnType){
-		extraColumnList.add(columnType);
-		modelXY.addColumn(columnNames[columnType]);
-	//	tableXY.setMyCellRenderer();
-		tableXY.setMyCellEditor(0);
-
-		updateXYTable();
-	}
-
-	private void removeColumn(){
-		int count = tableXY.getColumnCount();
-		if(count <= 2) return;
-
-		extraColumnList.remove(extraColumnList.size()-1);
-		//	int lastColumn = tableXY.getColumnCount()-1;
-		//	tableXY.removeColumn(tableXY.getColumnModel().getColumn(lastColumn));
-		modelXY.setColumnCount(modelXY.getColumnCount()-1);
-	//	tableXY.setMyCellRenderer();
-		tableXY.setMyCellEditor(0);
-
-		updateXYTable();
-
-	}
-
-
+	/**
+	 * Updates any extra columns added by the user to the XYTable.
+	 */
 	private void updateExtraColumns(){
 
 		if(extraColumnList.size()==0) return;
@@ -738,20 +711,20 @@ KeyListener, ActionListener{
 				for(int row=0; row < modelXY.getRowCount(); row++){
 					double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
 					double y = Double.parseDouble((String) modelXY.getValueAt(row, 1));
-					
+
 					MyVecNode vec = new MyVecNode( kernel, new MyDouble(kernel, x), new MyDouble(kernel, y));
-					
+
 					ExpressionNode point = new ExpressionNode(kernel, vec, ExpressionNode.NO_OPERATION, null);
 					point.setForcePoint();
-					
+
 					AlgoDependentPoint pointAlgo = new AlgoDependentPoint(cons, point, false);
 					cons.removeFromConstructionList(pointAlgo);
-					
+
 					AlgoCurvature curvature = new AlgoCurvature(cons, (GeoPoint) pointAlgo.getGeoElements()[0], selectedGeo);
 					cons.removeFromConstructionList(curvature);
-					
+
 					double c = ((GeoNumeric)curvature.getGeoElements()[0]).getDouble();
-					
+
 					//double c = evaluateExpression(
 					//		"Curvature[ (" + x + "," + y  + ")," + selectedGeo.getLabel() + "]");
 					modelXY.setValueAt(nf.format(c),row,column);
@@ -772,27 +745,31 @@ KeyListener, ActionListener{
 				break;
 
 			}
-
 		}
-
 	}
 
 
 
-	private String getTitleString(){
-
-		String title;
-
-		if(selectedGeo == null){
-			title = app.getMenu("SelectObject");
-
-		}else{
-			//	title = selectedGeo.getLongDescriptionHTML(false, true);
-			//	if (title.length() > 80)
-			title = selectedGeo.getNameDescriptionHTML(false, true);          
-		}
-		return title;
+	private void addColumn(int columnType){
+		extraColumnList.add(columnType);
+		modelXY.addColumn(columnNames[columnType]);
+		tableXY.setMyCellEditor(0);
+		updateXYTable();
 	}
+
+	private void removeColumn(){
+		int count = tableXY.getColumnCount();
+		if(count <= 2) return;
+
+		extraColumnList.remove(extraColumnList.size()-1);
+		modelXY.setColumnCount(modelXY.getColumnCount()-1);
+		tableXY.setMyCellEditor(0);
+		updateXYTable();
+
+	}
+
+	
+
 
 
 
@@ -807,7 +784,6 @@ KeyListener, ActionListener{
 		}
 		else if (source == btnAddColumn) {
 			addColumn(btnAddColumn.getSelectedIndex());
-			//System.out.println("======================> add colun");
 		}	
 
 		else if (source == btnRemoveColumn) {
@@ -826,36 +802,36 @@ KeyListener, ActionListener{
 
 	private void doTextFieldActionPerformed(JTextField source) {
 		try {
-				
+
 			Double value = Double.parseDouble( source.getText().trim());
 			if (value == null) return;
-			
-			
-				if (source == fldStep){ 
-					step = value;	
-					updateXYTable();		
-				}	
-				else if (source == fldLow){ 
-					isChangingValue = true;
-					double y = selectedGeo.evaluate(value);//evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
-					lowPoint.setCoords(value, y, 1);
-					lowPoint.updateCascade();
-					lowPoint.updateRepaint();
-					isChangingValue = false;
-					updateIntervalTable();	
-				}	
-				else if (source == fldHigh){ 
-					isChangingValue = true;
-					double y = selectedGeo.evaluate(value);//evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
-					highPoint.setCoords(value, y, 1);
-					highPoint.updateCascade();
-					highPoint.updateRepaint();
-					isChangingValue = false;
-					updateIntervalTable();	
-				}	
-			
-			
-			
+
+
+			if (source == fldStep){ 
+				step = value;	
+				updateXYTable();		
+			}	
+			else if (source == fldLow){ 
+				isChangingValue = true;
+				double y = selectedGeo.evaluate(value);
+				lowPoint.setCoords(value, y, 1);
+				lowPoint.updateCascade();
+				lowPoint.updateRepaint();
+				isChangingValue = false;
+				updateIntervalTable();	
+			}	
+			else if (source == fldHigh){ 
+				isChangingValue = true;
+				double y = selectedGeo.evaluate(value);
+				highPoint.setCoords(value, y, 1);
+				highPoint.updateCascade();
+				highPoint.updateRepaint();
+				isChangingValue = false;
+				updateIntervalTable();	
+			}	
+
+
+
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
@@ -876,9 +852,12 @@ KeyListener, ActionListener{
 	}
 
 
-
-	//     View Implementation
-	// =====================================
+	
+	
+	
+	// ====================================================
+	//          View Implementation
+	// ====================================================
 
 	public void update(GeoElement geo) {
 
@@ -921,9 +900,11 @@ KeyListener, ActionListener{
 	public void setMode(int mode) {}
 
 
-
-	//  Table Selection Listener
-	// =====================================
+	
+	
+	// ====================================================
+	//         Table Selection Listener
+	// ====================================================
 
 	public void valueChanged(ListSelectionEvent e) {
 
@@ -937,10 +918,12 @@ KeyListener, ActionListener{
 		tableXY.getSelectionModel().addListSelectionListener(this);
 	}
 
+	
+	
 
-
+	// ====================================================
 	//    Geo Selection Listener
-	// =====================================
+	// ====================================================
 
 	public void geoElementSelected(GeoElement geo, boolean addToSelection) {
 		// TODO: not working directly yet, currently the listener
@@ -957,40 +940,36 @@ KeyListener, ActionListener{
 
 			selectedGeo = (GeoFunction)geo;
 			start = initialX;
+			
+			// initial step = EV grid step 
 			step = 0.25 * kernel.getApplication().getEuclidianView().getGridDistances()[0];
-			//	fldStart.removeActionListener(this);
 			fldStep.removeActionListener(this);
-			//	fldStart.setText("" + start);
 			fldStep.setText("" + step);
-			//	fldStart.addActionListener(this);
 			fldStep.addActionListener(this);
 
 			defineDisplayGeos();
 
 			double x = initialX - 4*step; 
-			double y = ((GeoFunction)selectedGeo).evaluate(x); //evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
+			double y = ((GeoFunction)selectedGeo).evaluate(x); 
 			lowPoint.setCoords(x, y, 1);
 
 			x = initialX + 4*step; 
-			y = ((GeoFunction)selectedGeo).evaluate(x); //evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
+			y = ((GeoFunction)selectedGeo).evaluate(x); 
 			highPoint.setCoords(x, y, 1);
-			
+
 			lowPoint.updateCascade();
 			highPoint.updateCascade();
 
 			updateGUI();
 		}
-		//this.pack();
-		//table.changeSelection(0,0, false, false);
-
-
+		
 	}
 
 
 
-
+	// ====================================================
 	//      Key Listeners
-	//=========================================
+	// ====================================================
 
 	public void keyPressed(KeyEvent e) {
 
@@ -1038,15 +1017,15 @@ KeyListener, ActionListener{
 
 
 
-
+	// ====================================================
 	//  Update/Create Display Geos
-	//=========================================
+	// ====================================================
 
 	private void defineDisplayGeos(){
 
 		// remove all geos
 		clearGeoList();
-		
+
 		EuclidianView ev = (EuclidianView) app.getActiveEuclidianView();		
 		GeoFunction f = (GeoFunction)selectedGeo;
 
@@ -1057,7 +1036,7 @@ KeyListener, ActionListener{
 		testPoint.setObjColor(DISPLAY_GEO_COLOR);
 		testPoint.setPointSize(4);
 		displayGeoList.add(testPoint);
-		
+
 
 		// X segment
 		ExpressionNode xcoord = new ExpressionNode(kernel, testPoint, ExpressionNode.XCOORD, null);
@@ -1066,7 +1045,7 @@ KeyListener, ActionListener{
 		point.setForcePoint();
 		AlgoDependentPoint pointAlgo = new AlgoDependentPoint(cons, point, false);
 		cons.removeFromConstructionList(pointAlgo);
-		
+
 		AlgoJoinPointsSegment seg1 = new AlgoJoinPointsSegment(cons, testPoint, (GeoPoint)pointAlgo.getGeoElements()[0], null);
 		cons.removeFromConstructionList(seg1);	
 		xSegment = (GeoSegment)seg1.getGeoElements()[0];
@@ -1076,8 +1055,8 @@ KeyListener, ActionListener{
 		xSegment.setEuclidianVisible(true);
 		xSegment.setFixed(true);
 		displayGeoList.add(xSegment);
-	
-		
+
+
 		// Y segment
 		ExpressionNode ycoord = new ExpressionNode(kernel, testPoint, ExpressionNode.YCOORD, null);
 		MyVecNode vecy = new MyVecNode( kernel, new MyDouble(kernel, 0.0), ycoord);
@@ -1088,7 +1067,7 @@ KeyListener, ActionListener{
 
 		AlgoJoinPointsSegment seg2 = new AlgoJoinPointsSegment(cons, testPoint, (GeoPoint)pointAlgoy.getGeoElements()[0], null);
 		cons.removeFromConstructionList(seg2);
-		
+
 		ySegment = (GeoSegment)seg2.getGeoElements()[0];
 		ySegment.setObjColor(DISPLAY_GEO_COLOR);
 		ySegment.setLineThickness(3);
@@ -1096,7 +1075,7 @@ KeyListener, ActionListener{
 		ySegment.setEuclidianVisible(true);
 		ySegment.setFixed(true);
 		displayGeoList.add(ySegment);
-		
+
 
 		// tangent line		
 		AlgoTangentFunctionPoint tangent = new AlgoTangentFunctionPoint(cons, testPoint, f);
@@ -1140,7 +1119,7 @@ KeyListener, ActionListener{
 		}
 		displayGeoList.add(pts);
 
-		
+
 		// interval points
 		AlgoPointOnPath pxAlgo = new AlgoPointOnPath(cons, (Path)f, (2 * ev.getXmin() + ev.getXmax()) / 3, 0);
 		cons.removeFromConstructionList(pxAlgo);
@@ -1149,8 +1128,8 @@ KeyListener, ActionListener{
 		lowPoint.setPointSize(4);
 		lowPoint.setObjColor(DISPLAY_GEO_COLOR);
 		displayGeoList.add(lowPoint);
-		
-		
+
+
 		AlgoPointOnPath pyAlgo = new AlgoPointOnPath(cons, (Path)f, (ev.getXmin() + 2 * ev.getXmax()) / 3, 0);
 		cons.removeFromConstructionList(pyAlgo);
 		highPoint = (GeoPoint) pyAlgo.getGeoElements()[0];
@@ -1159,7 +1138,7 @@ KeyListener, ActionListener{
 		highPoint.setObjColor(DISPLAY_GEO_COLOR);
 		displayGeoList.add(highPoint);
 
-		
+
 		ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
 		ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
 		AlgoDependentNumber xLow = new AlgoDependentNumber(cons, low, false);
@@ -1169,27 +1148,27 @@ KeyListener, ActionListener{
 
 		AlgoFunctionInterval interval = new AlgoFunctionInterval(cons, f, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(interval);	
-		
+
 		functionInterval = interval.getGeoElements()[0];
 		functionInterval.setEuclidianVisible(false);
 		functionInterval.setLineThickness(selectedGeo.getLineThickness()+3);
 		functionInterval.setObjColor(DISPLAY_GEO_COLOR);
 		displayGeoList.add(functionInterval);
 
-		
+
 		// add the dsiplay geos to the current Ev and hide the tooltips 
 		for(int i=0; i< displayGeoList.size(); i++){
 			ev.add(displayGeoList.get(i));
 			displayGeoList.get(i).setTooltipMode(GeoElement.TOOLTIP_OFF);
 		}	
-		
+
 		updateTestPoint();
 
-		
+
 		// as it has no label, need to add it the the view
 		ev.add(xSegment);
-		
-		
+
+
 	}
 
 
@@ -1218,7 +1197,7 @@ KeyListener, ActionListener{
 			}
 		}
 		displayGeoList.clear();
-		
+
 		for(GeoElement geo : hiddenGeoList){
 			if(geo != null){
 				geo.remove();
@@ -1254,21 +1233,16 @@ KeyListener, ActionListener{
 		try {
 			start = x;
 			//Application.debug("" + start);
-			//modelXY.removeTableModelListener(this);
 			updateXYTable();
 			updateTestPoint();
-			//modelXY.addTableModelListener(this);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 		tableXY.getSelectionModel().addListSelectionListener(this);
 	}
 
-	public void updateSelectionRectangle(EuclidianView view){
-		//System.out.println(view.getSelectionRectangle().toString());
-
-	}
-
+	
+	
 
 
 
