@@ -80,8 +80,16 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             		return myVec;
             	}
 
-	        }
-        	else if (operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
+	        } else if (operation == VECTORPRODUCT && rt.isListValue()) {
+	        	
+	        	MyList listL = ((ListValue)lt.evaluate()).getMyList();
+	        	MyList listR = ((ListValue)rt.evaluate()).getMyList();
+	        	if ((listL.size() == 3 && listR.size() == 3) || (listL.size() == 2 && listR.size() == 2)) {
+		        	listL.vectorProduct(listR);
+		        	return listL;
+	        	}
+	        	
+	        } else if (operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
 	            	&& operation != NOT_EQUAL // ditto	
 	            	&& operation != IS_SUBSET_OF // ditto	
 	            	&& operation != IS_SUBSET_OF_STRICT // ditto		            	

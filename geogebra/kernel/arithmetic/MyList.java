@@ -867,5 +867,46 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
         return this;
     }
 
+	public void vectorProduct(MyList list) {
+    	// tempX/Y needed because a and c can be the same variable
+		ExpressionValue ax = getListElement(0);
+		ExpressionValue ay = getListElement(1);
+		ExpressionValue bx = list.getListElement(0);
+		ExpressionValue by = list.getListElement(1);
+		
+		ExpressionNode en = new ExpressionNode(kernel, ax, ExpressionNode.MULTIPLY, by);
+		ExpressionNode en2 = new ExpressionNode(kernel, ay, ExpressionNode.MULTIPLY, bx);
+		ExpressionNode x, y, z;
+		if (list.size() == 2 || size() == 2) {
+			listElements.add(2, new ExpressionNode(kernel, en, ExpressionNode.MINUS, en2));
+			listElements.set(0, new ExpressionNode(kernel, new MyDouble(kernel, 0.0), ExpressionNode.NO_OPERATION, null));
+			listElements.set(1, new ExpressionNode(kernel, new MyDouble(kernel, 0.0), ExpressionNode.NO_OPERATION, null));
+			return;
+		} else { // size 3
+		
+			z = new ExpressionNode(kernel, en, ExpressionNode.MINUS, en2);
+			ExpressionValue az = getListElement(2);
+			ExpressionValue bz = list.getListElement(2);
+			 en = new ExpressionNode(kernel, ay, ExpressionNode.MULTIPLY, bz);
+			en2 = new ExpressionNode(kernel, az, ExpressionNode.MULTIPLY, by);
+			x = new ExpressionNode(kernel, en, ExpressionNode.MINUS, en2);
+			
+			en = new ExpressionNode(kernel, az, ExpressionNode.MULTIPLY, bx);
+			en2 = new ExpressionNode(kernel, ax, ExpressionNode.MULTIPLY, bz);
+			y =  new ExpressionNode(kernel, en, ExpressionNode.MINUS, en2);
+		}
+		
+			listElements.set(0, x);
+			listElements.set(1, y);
+			listElements.set(2, z);
+    	//double tempX = a.y * b.z - a.z * b.y;
+    	//double tempY = - a.x * b.z + a.z * b.x;
+    	//c.z = a.x * b.y - a.y * b.x;
+        //c.x = tempX;
+        //c.y = tempY;
+		
+	}
+
+
 
 }
