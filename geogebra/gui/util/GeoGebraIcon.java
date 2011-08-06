@@ -1,10 +1,10 @@
 package geogebra.gui.util;
 
 
+import geogebra.euclidian.DrawText;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
-import geogebra.euclidian.FormulaDimension;
-import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 import geogebra.util.ImageManager;
@@ -17,6 +17,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -940,7 +941,15 @@ public class GeoGebraIcon {
 	public static final void drawLatexImageIcon(Application app, ImageIcon latexIcon, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
 
 		// Create image with dummy size, then draw into it to get the correct size
-		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		GeoText geo = new GeoText(app.getKernel().getConstruction(), latex);
+		DrawText draw = new DrawText(app.getEuclidianView(), geo);		
+		draw.drawMultilineLaTeX(app.getEuclidianView().getTempGraphics2D(font), font, bgColor, bgColor);
+		Rectangle d = draw.getBounds();
+		
+		// Now use this size and draw again to get the final image
+		if(d.width == -1 || d.height == -1)
+			return;
+		BufferedImage image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2image = image.createGraphics();
 		g2image.setBackground(bgColor);
 		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
@@ -948,24 +957,7 @@ public class GeoGebraIcon {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-
-		FormulaDimension d = new FormulaDimension();
-		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
-				bgColor);
-
-		// Now use this size and draw again to get the final image
-		if(d.width == -1 || d.height == -1)
-			return;
-		image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
-		g2image = image.createGraphics();
-		g2image.setBackground(bgColor);
-		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
-		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
-				bgColor);
+		draw.drawMultilineLaTeX(g2image, font, bgColor, bgColor);
 
 		latexIcon.setImage(image);
 

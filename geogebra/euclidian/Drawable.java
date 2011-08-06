@@ -344,7 +344,7 @@ public abstract class Drawable extends DrawableND {
 	 * @param fgColor
 	 * @param bgColor
 	 */
-	final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
+	public final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
 		int fontSize = g2.getFont().getSize();
 		int lineSpread = (int)(fontSize * 1.0f);
 		int lineSpace = (int)(fontSize * 0.5f);
