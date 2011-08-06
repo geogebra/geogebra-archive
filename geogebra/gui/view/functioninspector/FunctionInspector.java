@@ -298,7 +298,7 @@ KeyListener, ActionListener{
 	private void createGUIElements(){
 
 		// create XY table
-		tableXY = new InspectorTable(app, this, minRows);
+		tableXY = new InspectorTable(app, this, minRows, InspectorTable.TYPE_XY);
 		modelXY = new DefaultTableModel();
 		modelXY.addColumn("x");
 		modelXY.addColumn("y(x)");
@@ -312,7 +312,7 @@ KeyListener, ActionListener{
 
 
 		// create interval table
-		tableInterval = new InspectorTable(app, this, minRows);
+		tableInterval = new InspectorTable(app, this, minRows, InspectorTable.TYPE_INTERVAL);
 		modelInterval = new DefaultTableModel();
 		modelInterval.setColumnCount(2);
 		modelInterval.setRowCount(pointCount);

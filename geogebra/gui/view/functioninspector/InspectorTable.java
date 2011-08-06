@@ -1,6 +1,11 @@
 package geogebra.gui.view.functioninspector;
 
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -8,10 +13,16 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
@@ -23,16 +34,21 @@ public class InspectorTable extends JTable{
 
 	Application app;
 	FunctionInspector inspector;
-	
+
 	boolean doRedNegative = false;	
 	HashSet<Point> editableCell;
 
-	public InspectorTable(Application app, FunctionInspector inspector, int minRows){
+	public static final int TYPE_INTERVAL = 0;
+	public static final int TYPE_XY = 1;
+	int tableType;
+
+	public InspectorTable(Application app, FunctionInspector inspector, int minRows, int tableType){
 		super(minRows,2);
 
 		this.app = app;
 		this.inspector = inspector;
-		
+		this.tableType = tableType;
+
 		// set visual appearance
 		setShowGrid(true);
 		setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
@@ -42,14 +58,26 @@ public class InspectorTable extends JTable{
 		// set resizing fields
 		setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		setPreferredScrollableViewportSize(this.getPreferredSize());
-		
+
 		//this.addKeyListener(this);
 
 		// set renderer and editor
 		setDefaultRenderer(Object.class, new MyCellRenderer(this));
 		setDefaultEditor(Object.class, new MyEditor());
-		
+
 		editableCell = new HashSet<Point>();
+
+
+		addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+
+				if (Application.isRightClick(e) || e.isMetaDown()) {
+					ContextMenu contextMenu = new ContextMenu();
+					contextMenu.show(e.getComponent(), e.getX(),e.getY());
+				}
+			}	
+		});
+
 	}
 
 
@@ -131,14 +159,14 @@ public class InspectorTable extends JTable{
 		return maxPrefWidth + table.getIntercellSpacing().width;
 	}
 
-	
-	
+
+
 	public void setMyCellEditor(int colIndex){
 		getColumnModel().getColumn(colIndex).setCellEditor(new MyEditor());
 	}
-	
-	
-	
+
+
+
 	// ====================================================
 	//     Cell Renderer
 	// ====================================================
@@ -210,7 +238,7 @@ public class InspectorTable extends JTable{
 
 	}
 
-	
+
 	// ====================================================
 	//     Cell Editor
 	// ====================================================
@@ -233,7 +261,7 @@ public class InspectorTable extends JTable{
 
 		public boolean stopCellEditing() {
 			boolean isStopped = super.stopCellEditing();
-			
+
 			try {
 				if(isStopped){
 					double val = Double.parseDouble((String) this.getCellEditorValue());
@@ -248,5 +276,74 @@ public class InspectorTable extends JTable{
 		}
 
 	}
+
+
+	//=============================================
+	//      Context Menu
+	//=============================================
+
+	private class ContextMenu extends JPopupMenu{
+
+		public  ContextMenu(){
+			this.setOpaque(true);
+			setFont(app.getPlainFont());
+			JMenuItem mi = new JMenuItem(app.getMenu("CopyToSpreadsheet"));
+			mi.addActionListener(new ActionListener(){
+
+				public void actionPerformed(ActionEvent e) {
+					doCopyToSpreadsheet();
+				}
+
+			});
+			add(mi);
+			mi.setEnabled(app.getGuiManager().hasSpreadsheetView());
+		}
+	}
+
+	private void doCopyToSpreadsheet(){
+
+		SpreadsheetView sp = (SpreadsheetView) app.getGuiManager().getSpreadsheetView();
+		if(sp == null) return;
+
+		Construction cons = app.getKernel().getConstruction();
+		GeoElement geo;
+		String value;
+		int targetColumn = sp.getHighestUsedColumn() + 1;
+
+		// copy first column
+		for(int row = 0; row < this.getRowCount(); row++){
+			value = (String) getModel().getValueAt(row, 0);
+			if(value != null){
+				if(tableType == TYPE_INTERVAL)
+					geo = new GeoText(cons,value);
+				else
+					geo = new GeoNumeric(cons, Double.parseDouble(value));
+				geo.setLabel(GeoElement.getSpreadsheetCellName(targetColumn, row));
+				geo.setEuclidianVisible(false);
+				geo.setAuxiliaryObject(true);
+				geo.update();
+			}
+		}
+		// copy remaining columns
+		for(int c = 1; c < getColumnCount(); c++ ){
+			targetColumn ++;
+			for(int row = 0; row < this.getRowCount(); row++){
+				value = (String) getModel().getValueAt(row, c);
+				if(value != null){
+					//geo = new GeoNumeric(cons, Double.parseDouble(value));
+					geo = new GeoText(cons, value);
+					geo.setLabel(GeoElement.getSpreadsheetCellName(targetColumn, row));
+					geo.setEuclidianVisible(false);
+					geo.setAuxiliaryObject(true);
+					geo.update();
+				}
+
+			}
+		}
+
+
+	}
+
+
 
 }
