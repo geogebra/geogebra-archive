@@ -4654,7 +4654,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					return
 						kernel.IntersectPolynomialConic(null, fun[0], conic[0]);
 			}else{
-				return null;
+				
+				//TODO this returns null until Intersect implicit function / implicit polynomial is implemented
+				return kernel.IntersectImplicitpolyPolynomial(null, new GeoImplicitPoly(conic[0]), fun[0]);
+				
 			}
 		}else if (selImplicitpoly() >= 1){
 			if (selFunctions() >=1 ){
