@@ -247,7 +247,12 @@ public class GeoGebraCAS {
 			// "3*a*x^2 + b" in form "{ b, 0, 3*a }" 
 			String tmp = evaluateMPReduce(sbPolyCoeffs.toString());
 		
-			if ("{}".equals(tmp) || "".equals(tmp) || tmp == null)  // no result
+			// no result
+			if ("{}".equals(tmp) || "".equals(tmp) || tmp == null)  
+				return null;
+			
+			// not a polynomial: result still includes the variable, e.g. "x"
+			if (tmp.indexOf(variable) >= 0) 
 				return null;
 			
 			// get names of escaped global variables right

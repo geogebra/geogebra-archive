@@ -647,6 +647,19 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return derivative
      */
     final public Function getDerivative(int n) {
+    	return getDerivative(n, true);
+    }
+    
+    /**
+     * Returns n-th derivative of this function where fractions are not kept (faster).
+     * @param n order
+     * @return derivative
+     */
+    final public Function getDerivativeNoFractions(int n) {
+    	return getDerivative(n, false);
+    }
+    	
+    final Function getDerivative(int n, boolean keepFractions) {
 		// get variable string with tmp prefix, 
 		// e.g. "x" becomes "ggbtmpvarx" here
 		boolean isUseTempVariablePrefix = kernel.isUseTempVariablePrefix();
@@ -655,7 +668,13 @@ implements ExpressionValue, RealRootFunction, Functional {
 		kernel.setUseTempVariablePrefix(isUseTempVariablePrefix);
     	
     	StringBuilder sb = new StringBuilder();
-    	sb.append("Derivative(%,");
+    	sb.append("Derivative(");
+    	if (!keepFractions)
+    		sb.append("Numeric(");
+    	sb.append("%");
+    	if (!keepFractions)
+    		sb.append(")");
+    	sb.append(",");
     	sb.append(varStr);
     	sb.append(",");
     	sb.append(n);
@@ -756,7 +775,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return real root function
      */
     final public RealRootDerivFunction getRealRootDerivFunction() {
-        Function deriv = getDerivative(1);
+        Function deriv = getDerivativeNoFractions(1);
         if (deriv == null) 
             return null;
         else 
