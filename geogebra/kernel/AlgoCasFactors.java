@@ -66,7 +66,7 @@ public class AlgoCasFactors extends AlgoElement {
 			String [] funVarStr = f.getTempVarCASString(false);
 		
 		    sb.setLength(0);
-		    sb.append("Numeric(Factor(");
+		    sb.append("Numeric(Factors(");
 		    sb.append(funVarStr[0]); // function expression
 		    sb.append("))");
 	        // cached evaluation of MPReduce as we are only using variable values
