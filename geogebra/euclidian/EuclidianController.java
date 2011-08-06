@@ -1091,7 +1091,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	protected void createNewPointForModePoint(Hits hits, boolean complex){
 		if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_COMPLEX_NUMBER){//remove polygons : point inside a polygon is created free, as in v3.2
-			//Application.debug("avant:"+hits);
+			Application.debug("complex"+complex);
 			hits.removeAllPolygons();
 			//Application.debug("après:"+hits);
 			createNewPoint(hits, true, false, true, true, complex);
@@ -3391,7 +3391,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected void processModeLock(Path path){
-		GeoPoint p = kernel.Point(null, path, xRW, yRW, false);
+		GeoPoint p = kernel.Point(null, path, xRW, yRW, false, false);
 		p.update();
 		xRW = p.inhomX;
 		yRW = p.inhomY;	
@@ -4203,10 +4203,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					point = createNewPoint(forPreviewable, complex);
 					view.setShowMouseCoords(true);
 				} else {
-					point = createNewPoint(forPreviewable, path);
+					point = createNewPoint(forPreviewable, path, complex);
 				}
 			} else {
-				point = createNewPoint(forPreviewable, region);
+				point = createNewPoint(forPreviewable, region, complex);
 			}
 		}
 
@@ -4229,42 +4229,42 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return ret;
 	}
 
-	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
-		return createNewPoint(forPreviewable, path, kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), 0);
+	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, boolean complex){
+		return createNewPoint(forPreviewable, path, kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), 0, complex);
 	}
 	
-	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, double x, double y, double z){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, double x, double y, double z, boolean complex){
 		
 		if (((GeoElement) path).isGeoElement3D()) //check if the path is not a 3D element
 			return (GeoPointND) kernel.getManager3D().Point3D(null, path, x, y, z,!forPreviewable);
 		else
-			return createNewPoint2D(forPreviewable, path, x, y);
+			return createNewPoint2D(forPreviewable, path, x, y, complex);
 
 	}
 	
-	protected GeoPointND createNewPoint2D(boolean forPreviewable, Path path, double x, double y){
-		return kernel.Point(null, path, x, y, !forPreviewable);
+	protected GeoPointND createNewPoint2D(boolean forPreviewable, Path path, double x, double y, boolean complex){
+		return kernel.Point(null, path, x, y, !forPreviewable, complex);
 	}
 	
 	
 	
-	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
-		return createNewPoint(forPreviewable, region, kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), 0);
+	protected GeoPointND createNewPoint(boolean forPreviewable, Region region, boolean complex){
+		return createNewPoint(forPreviewable, region, kernel.checkDecimalFraction(xRW), kernel.checkDecimalFraction(yRW), 0, complex);
 	}
 	
 
-	protected GeoPointND createNewPoint(boolean forPreviewable, Region region, double x, double y, double z){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Region region, double x, double y, double z, boolean complex){
 		
 		if (((GeoElement) region).isGeoElement3D()) //check if the path is not a 3D element
 			return (GeoPointND) kernel.getManager3D().Point3DIn(null, region, x, y, z);
 		else
-			return createNewPoint2D(forPreviewable, region, x, y);
+			return createNewPoint2D(forPreviewable, region, x, y, complex);
 
 	}
 	
 
-	protected GeoPointND createNewPoint2D(boolean forPreviewable, Region region, double x, double y){
-		GeoPointND ret = kernel.PointIn(null, region, x, y, true);
+	protected GeoPointND createNewPoint2D(boolean forPreviewable, Region region, double x, double y, boolean complex){
+		GeoPointND ret = kernel.PointIn(null, region, x, y, true, complex);
 		return ret;
 	}
 	
@@ -6130,7 +6130,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						Construction cons = kernel.getConstruction();
 						boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
 						cons.setSuppressLabelCreation(true);
-						GeoPoint newPoint = kernel.Point(null, paths[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
+						GeoPoint newPoint = kernel.Point(null, paths[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
 						cons.setSuppressLabelCreation(oldLabelCreationFlag);
 						kernel.getConstruction().replace(points[0], newPoint);
 					} catch (Exception e1) {
@@ -6150,7 +6150,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						Construction cons = kernel.getConstruction();
 						boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
 						cons.setSuppressLabelCreation(true);
-						GeoPoint newPoint = kernel.PointIn(null, regions[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
+						GeoPoint newPoint = kernel.PointIn(null, regions[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
 						cons.setSuppressLabelCreation(oldLabelCreationFlag);
 						kernel.getConstruction().replace(points[0], newPoint);
 					} catch (Exception e1) {

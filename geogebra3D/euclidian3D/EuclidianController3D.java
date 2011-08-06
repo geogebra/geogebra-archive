@@ -488,7 +488,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					
 				}else{
 					Coords coords = point.getCoordsInD(2);
-					return super.createNewPoint2D(false, path, coords.getX(), coords.getY()); 
+					return super.createNewPoint2D(false, path, coords.getX(), coords.getY(), false); 
 				}
 	
 			}else
@@ -507,7 +507,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					ret = point3D;
 				}else{
 					Coords coords = point.getCoordsInD(2);
-					return super.createNewPoint2D(false, region, coords.getX(), coords.getY()); 
+					return super.createNewPoint2D(false, region, coords.getX(), coords.getY(), false); 
 				}
 			}else
 				return null;

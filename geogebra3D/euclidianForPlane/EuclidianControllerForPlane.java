@@ -59,12 +59,12 @@ public class EuclidianControllerForPlane extends EuclidianController {
 	
 	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
 		Coords coords = getCoordsFromView(xRW,yRW);
-		return createNewPoint(forPreviewable, path, coords.getX(), coords.getY(), coords.getZ());
+		return createNewPoint(forPreviewable, path, coords.getX(), coords.getY(), coords.getZ(), false);
 	}
 	
 	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
 		Coords coords = getCoordsFromView(xRW,yRW);
-		return createNewPoint(forPreviewable, region, coords.getX(), coords.getY(), coords.getZ());
+		return createNewPoint(forPreviewable, region, coords.getX(), coords.getY(), coords.getZ(), false);
 	}
 	
 

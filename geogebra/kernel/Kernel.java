@@ -2739,7 +2739,7 @@ public class Kernel {
 	}
 	
 	/** Point on path with cartesian coordinates (x,y)   */
-	final public GeoPoint Point(String label, Path path, double x, double y, boolean addToConstruction) {
+	final public GeoPoint Point(String label, Path path, double x, double y, boolean addToConstruction, boolean complex) {
 		boolean oldMacroMode = false;
 		if (!addToConstruction) {
 			oldMacroMode = cons.isSuppressLabelsActive();
@@ -2748,6 +2748,9 @@ public class Kernel {
 		}
 		AlgoPointOnPath algo = new AlgoPointOnPath(cons, label, path, x, y);
 		GeoPoint p = algo.getP();        
+		if (complex) {
+			p.setMode(COORD_COMPLEX);
+		}
 		if (!addToConstruction) {
 			cons.setSuppressLabelCreation(oldMacroMode);
 		}
@@ -2792,7 +2795,7 @@ public class Kernel {
 	
 	
 	/** Point in region with cartesian coordinates (x,y)   */
-	final public GeoPoint PointIn(String label, Region region, double x, double y, boolean addToConstruction) {
+	final public GeoPoint PointIn(String label, Region region, double x, double y, boolean addToConstruction, boolean complex) {
 		boolean oldMacroMode = false;
 		if (!addToConstruction) {
 			oldMacroMode = cons.isSuppressLabelsActive();
@@ -2802,6 +2805,9 @@ public class Kernel {
 		AlgoPointInRegion algo = new AlgoPointInRegion(cons, label, region, x, y);
 		//Application.debug("PointIn - \n x="+x+"\n y="+y);
 		GeoPoint p = algo.getP();    
+		if (complex) {
+			p.setMode(COORD_COMPLEX);
+		}
 		if (!addToConstruction) {
 			cons.setSuppressLabelCreation(oldMacroMode);
 		}
@@ -2810,7 +2816,7 @@ public class Kernel {
 	
 	/** Point in region */
 	final public GeoPoint PointIn(String label, Region region) {  
-		return PointIn(label,region,0,0, true); //TODO do as for paths
+		return PointIn(label,region,0,0, true, false); //TODO do as for paths
 	}	
 	
 	/** Point P + v   */
@@ -5424,7 +5430,7 @@ public class Kernel {
     	GeoConic circle = Circle(null, points[0], new MyDouble(this, points[0].distance(points[1])));
 		cons.setSuppressLabelCreation(oldMacroMode);
 		
-    	GeoPoint p = Point(null, (Path)circle, points[1].inhomX, points[1].inhomY, true);
+    	GeoPoint p = Point(null, (Path)circle, points[1].inhomX, points[1].inhomY, true, false);
 	try {
 		cons.replace(points[1], p);
 		points[1] = p;

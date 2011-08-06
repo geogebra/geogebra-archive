@@ -52,7 +52,7 @@ public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
 			double y, NumberValue param) {
     	super(cons);
         this.path = path;
-        
+        Application.printStacktrace("");
         // create point on path and compute current location
         P = new GeoPoint(cons);
         P.setPath(path);
