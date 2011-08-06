@@ -41,6 +41,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -63,6 +64,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
@@ -84,7 +87,7 @@ import javax.swing.table.DefaultTableModel;
 
 
 /**
- * View for inspecting selected GeoElements
+ * View for inspecting selected GeoFunctions
  * 
  * @author G. Sturr, 2011-2-12
  * 
@@ -95,7 +98,7 @@ implements View, MouseListener, ListSelectionListener,
 KeyListener, ActionListener{
 
 	private static final Color DISPLAY_GEO_COLOR = Color.BLUE;
-	private static final Color DISPLAY_GEO2_COLOR = Color.RED;
+	private static final Color DISPLAY_GEO2_COLOR = Color.BLUE;
 
 	private static final Color EVEN_ROW_COLOR = new Color(241, 245, 250);
 	private static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
@@ -112,7 +115,8 @@ KeyListener, ActionListener{
 	// ggb fields
 	private Kernel kernel;
 	private Construction cons;
-
+	private EuclidianView activeEV;
+	
 	// table fields
 	private InspectorTable tableXY, tableInterval;
 	private DefaultTableModel modelXY, modelInterval;
@@ -122,41 +126,36 @@ KeyListener, ActionListener{
 	private ArrayList<Integer> extraColumnList;
 
 
-	private double xMin, xMax, start =-1, step = 0.1;
-	private boolean isChangingValue;
-	private int pointCount = 9;
-
 	// GUI 
 	private JLabel lblGeoName, lblStep, lblInterval;
 	private MyTextField fldStep, fldLow, fldHigh;
 	private JButton btnRemoveColumn;
 	private JToggleButton btnOscCircle, btnTangent, btnXYSegments, btnTable;
 	private PopupMenuButton btnAddColumn;
+	private JTabbedPane tabPanel;
+	private JPanel intervalTabPanel, pointTabPanel, headerPanel, helpPanel;
 
+	
 	// Geos
 	private GeoElement tangentLine, oscCircle, xSegment, ySegment;
 	private GeoElement functionInterval, integralGeo, lengthGeo;
 	private GeoFunction derivative, derivative2, selectedGeo;
-	private GeoPoint testPoint, lowPoint, highPoint;
+	private GeoPoint testPoint, lowPoint, highPoint, minPoint, maxPoint;
 	private GeoList pts;
+	
 	private ArrayList<GeoElement> intervalTabGeoList, pointTabGeoList, hiddenGeoList;
+	private GeoElement[] rootGeos;
 
-
-	private JTabbedPane tabPanel;
-	private JPanel intervalTabPanel;
-	private JPanel pointTabPanel;
-
-
+	
+	
 	private boolean isIniting;
+	private double xMin, xMax, start =-1, step = 0.1;
 	private double initialX;
+	
+	private boolean isChangingValue;
+	private int pointCount = 9;
 
 	private NumberFormat nf;
-
-	private EuclidianView activeEV;
-	private GeoElement[] rootGeos;
-	private GeoPoint minPoint;
-	private GeoPoint maxPoint;
-
 
 
 
@@ -170,7 +169,6 @@ KeyListener, ActionListener{
 		boolean showApply = false;
 		this.selectedGeo = selectedGeo;
 		activeEV = (EuclidianView) app.getActiveEuclidianView();	
-
 
 		extraColumnList = new ArrayList<Integer>();
 
@@ -197,62 +195,74 @@ KeyListener, ActionListener{
 		createGUIElements();
 
 
-		// Header panel 
-		//================================================
+		// build dialog content pane
+		createHeaderPanel();
+		createTabPanel();
+		
+		getContentPane().add(headerPanel,BorderLayout.NORTH);
+		getContentPane().add(tabPanel,BorderLayout.CENTER);
+		
+		centerOnScreen();
+		setResizable(true);
 
-		JPanel headerPanel = new JPanel(new BorderLayout());
-		headerPanel.add(lblGeoName, BorderLayout.CENTER);		
+
+		// attach this view to the kernel
+		app.getKernel().attach(this);
+
+
+		// update and load selected function 
+		updateFonts();
+		setLabels();
+		insertGeoElement(selectedGeo);
+		handleTabChange();
+		
+		//addHelpButton(Application.WIKI_MANUAL);
+		
+		pack();
+
+		isIniting = false;
+
+	}
+
+
+	private void createTabPanel(){
+
+		createTabPointPanel();
+		createTabIntervalPanel();
+
+		// build tab panel
+		tabPanel = new JTabbedPane();		
+		tabPanel.addTab("Interval", intervalTabPanel);
+		tabPanel.addTab("Point", pointTabPanel);
+
+		tabPanel.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent evt) {
+				handleTabChange();
+			}
+
+		});
+	}
+
+	private void createHeaderPanel(){
+
+		createHelpPanel();
+		
+		headerPanel = new JPanel(new BorderLayout());
+		headerPanel.add(lblGeoName, BorderLayout.CENTER);	
+	//	headerPanel.add(helpPanel,BorderLayout.EAST);
 		headerPanel.setBorder(BorderFactory.createEmptyBorder(2,5,2,2));
+	}
 
 
+	private void createHelpPanel(){
 
-		// Point tab panel 
-		//================================================
-
-		JToolBar tb1 = new JToolBar();   
-		tb1.setFloatable(false);
-		//	tb1.add(ckFullTable);
-		//cp1.add(fldStart);
-		tb1.add(lblStep);
-		tb1.add(fldStep);
-
-		JToolBar tb2 = new JToolBar();
-		tb2.setFloatable(false);
-		tb2.add(btnAddColumn);
-		tb2.add(btnRemoveColumn);
-
-		//JPanel hideShowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JPanel hideShowPanel = new JPanel(new BorderLayout());
-		FlowLayout flow = new FlowLayout(FlowLayout.CENTER); 
-		flow.setHgap(10);              
-		JPanel tb3 = new JPanel(flow);
-		//tb3.setFloatable(false);
-		tb3.add(btnTable);
-		tb3.add(btnXYSegments);
-		tb3.add(btnTangent);
-		tb3.add(btnOscCircle);
-		hideShowPanel.add(tb3, BorderLayout.CENTER);
-
-		JPanel tableControlPanel = new JPanel(new BorderLayout());
-		tableControlPanel.add(tb1,BorderLayout.WEST);
-		tableControlPanel.add(tb2,BorderLayout.EAST);
-
-		JPanel southPanel = new JPanel(new BorderLayout());
-		//southPanel.add(tableControlPanel,BorderLayout.NORTH);
-		southPanel.add(hideShowPanel,BorderLayout.CENTER);
-
-		JScrollPane scroller = new JScrollPane(tableXY);
-		//scroller.setPreferredSize(tableXY.getPreferredSize());
-
-		pointTabPanel = new JPanel(new BorderLayout(2,2));
-		pointTabPanel.add(tableControlPanel,BorderLayout.NORTH);
-		pointTabPanel.add(scroller,BorderLayout.CENTER);
-		pointTabPanel.add(southPanel,BorderLayout.SOUTH);
+		helpPanel = new JPanel(new FlowLayout());
+		JButton helpButton = new JButton(app.getImageIcon("help.png"));
+		helpPanel.add(helpButton);
+	}
 
 
-		// Interval tab panel 
-		//================================================
-
+	private void createTabIntervalPanel(){
 		JToolBar intervalTB = new JToolBar();   //JPanel(new FlowLayout(FlowLayout.LEFT));
 		intervalTB.setFloatable(false);
 		intervalTB.add(fldLow);
@@ -263,42 +273,58 @@ KeyListener, ActionListener{
 		intervalTabPanel.add(new JScrollPane(tableInterval), BorderLayout.CENTER);
 		intervalTabPanel.add(intervalTB, BorderLayout.SOUTH);
 
+	}
 
-		// build tab panel
-		//================================================
-
-		tabPanel = new JTabbedPane();		
-		tabPanel.addTab("Interval", intervalTabPanel);
-		tabPanel.addTab("Point", pointTabPanel);
-		
-		tabPanel.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent evt) {
-				handleTabChange();
-			}
-
-		});
+	private void createTabPointPanel(){
 
 
+		// create step toolbar
+		JToolBar tb1 = new JToolBar();   
+		tb1.setFloatable(false);
+		tb1.add(lblStep);
+		tb1.add(fldStep);
 
-		// build dialog content pane
-		//================================================
-		getContentPane().add(headerPanel,BorderLayout.NORTH);
-		getContentPane().add(tabPanel,BorderLayout.CENTER);
-
-		setLabels();
-		centerOnScreen();
-		setResizable(true);
-		app.getKernel().attach(this);
+		// create add/remove column toolbar
+		JToolBar tb2 = new JToolBar();
+		tb2.setFloatable(false);
+		tb2.add(btnAddColumn);
+		tb2.add(btnRemoveColumn);
 
 
-		insertGeoElement(selectedGeo);
-		updateGUI();
-		updateFonts();
-		isIniting = false;
-		handleTabChange();
-		pack();
+		// create toggle graphics panel
+
+		FlowLayout flow = new FlowLayout(FlowLayout.CENTER); 
+		flow.setHgap(10);              
+		JPanel tb3 = new JPanel(flow);
+		//JToolBar tb3 = new JToolBar();
+		//tb3.setFloatable(false);
+		tb3.add(btnTable);
+		tb3.add(btnXYSegments);
+		tb3.add(btnTangent);
+		tb3.add(btnOscCircle);
+		JPanel toggleGraphicsPanel = new JPanel(new BorderLayout());
+		toggleGraphicsPanel.add(tb3, BorderLayout.CENTER);
+
+
+
+		// create the panel
+		JPanel northPanel = new JPanel(new BorderLayout());
+		northPanel.add(tb1,BorderLayout.WEST);
+		northPanel.add(tb2,BorderLayout.EAST);
+
+		JPanel southPanel = new JPanel(new BorderLayout());
+		southPanel.add(toggleGraphicsPanel,BorderLayout.CENTER);
+
+		JScrollPane scroller = new JScrollPane(tableXY);
+
+		pointTabPanel = new JPanel(new BorderLayout(2,2));
+		pointTabPanel.add(northPanel,BorderLayout.NORTH);
+		pointTabPanel.add(scroller,BorderLayout.CENTER);
+		pointTabPanel.add(southPanel,BorderLayout.SOUTH);
 
 	}
+
+
 
 
 
@@ -327,6 +353,12 @@ KeyListener, ActionListener{
 		modelInterval.setColumnCount(2);
 		modelInterval.setRowCount(pointCount);
 		tableInterval.setModel(modelInterval);
+		tableInterval.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+			public void valueChanged(ListSelectionEvent e) {  
+				updateIntervalGeoVisiblity();
+			}
+		});
+
 
 		lblGeoName = new JLabel(getTitleString());
 		lblGeoName.setFont(app.getBoldFont());
@@ -348,6 +380,8 @@ KeyListener, ActionListener{
 		btnTangent = new JToggleButton(app.getImageIcon("tangent_line.png"));
 		btnXYSegments = new JToggleButton(app.getImageIcon("xy_segments.png"));
 		btnTable = new JToggleButton(app.getImageIcon("xy_table.png"));
+		//btnTable.setSelectedIcon(app.getImageIcon("xy_table.png", Color.black));
+
 		btnOscCircle.addActionListener(this);
 		btnTangent.addActionListener(this);
 		btnXYSegments.addActionListener(this);
@@ -434,6 +468,7 @@ KeyListener, ActionListener{
 		if(tabPanel.getSelectedComponent()==intervalTabPanel){
 
 			updateIntervalTable();
+			updateIntervalGeoVisiblity();
 
 		}else{
 
@@ -479,6 +514,7 @@ KeyListener, ActionListener{
 
 		boolean isInterval = tabPanel.getSelectedComponent()==intervalTabPanel;
 
+		updateIntervalFields();
 
 		for(GeoElement geo: intervalTabGeoList){
 			geo.setEuclidianVisible(isInterval);
@@ -490,7 +526,6 @@ KeyListener, ActionListener{
 		}	
 
 		activeEV.repaint();
-
 		updateGUI();
 
 	}
@@ -562,9 +597,14 @@ KeyListener, ActionListener{
 		}
 
 		minPoint.setCoords(xMinInt, yMinInt, 1.0);
+		//minPoint.setEuclidianVisible(!(minPoint.isEqual(lowPoint) || minPoint.isEqual(highPoint)));
 		minPoint.update();
 		maxPoint.setCoords(xMaxInt, yMaxInt, 1.0);
+		//maxPoint.setEuclidianVisible(!(maxPoint.isEqual(lowPoint) || maxPoint.isEqual(highPoint)));
 		maxPoint.update();
+
+
+
 
 		// set the property/value pairs 
 		//=================================================
@@ -586,11 +626,11 @@ KeyListener, ActionListener{
 		cons.removeFromConstructionList(xLow);
 		AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
 		cons.removeFromConstructionList(xHigh);
-		
+
 		AlgoRoots root = new AlgoRoots(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(root);		
 		rootGeos = root.getGeoElements();
-		
+
 
 		switch (rootGeos.length) {
 		case 0: value.add(app.getPlain("fncInspector.NoRoots"));
@@ -884,6 +924,17 @@ KeyListener, ActionListener{
 
 		else if(tabPanel.getSelectedComponent() == intervalTabPanel 
 				&& (lowPoint.equals(geo) || highPoint.equals(geo)) ){
+
+
+			if(lowPoint.x > highPoint.x){
+				if(lowPoint.equals(geo))
+					doTextFieldActionPerformed(fldLow);
+				else
+					doTextFieldActionPerformed(fldHigh);
+
+			}
+
+
 			updateIntervalFields();
 			return;
 		}
@@ -1156,7 +1207,7 @@ KeyListener, ActionListener{
 		AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
 		cons.removeFromConstructionList(xHigh);
 
-		
+
 		AlgoFunctionInterval interval = new AlgoFunctionInterval(cons, f, (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(interval);	
 
@@ -1179,27 +1230,29 @@ KeyListener, ActionListener{
 		cons.removeFromConstructionList(len);
 		lengthGeo = len.getGeoElements()[0];
 		hiddenGeoList.add(lengthGeo);
-		
+
 		minPoint = new GeoPoint(cons);
 		minPoint.setEuclidianVisible(false);
 		minPoint.setPointSize(4);
-		minPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
-		minPoint.setObjColor(DISPLAY_GEO_COLOR);
-		minPoint.setLayer(f.getLayer());
+		minPoint.setPointStyle(EuclidianView.POINT_STYLE_FILLED_DIAMOND);
+		minPoint.setObjColor(DISPLAY_GEO_COLOR.darker());
+		minPoint.setLayer(f.getLayer()+1);
 		minPoint.setFixed(true);
 		intervalTabGeoList.add(minPoint);
 
 		maxPoint = new GeoPoint(cons);
 		maxPoint.setEuclidianVisible(false);
 		maxPoint.setPointSize(4);
-		maxPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_SOUTH);
-		maxPoint.setObjColor(DISPLAY_GEO_COLOR);
-		maxPoint.setLayer(f.getLayer());
+		maxPoint.setPointStyle(EuclidianView.POINT_STYLE_FILLED_DIAMOND);
+		maxPoint.setObjColor(DISPLAY_GEO_COLOR.darker());
+		maxPoint.setLayer(f.getLayer()+1);
 		maxPoint.setFixed(true);
 		intervalTabGeoList.add(maxPoint);
-		
 
-		// clean up the geos
+
+
+
+		// process the geos
 		// ==================================================
 
 		// add the display geos to the active EV and hide the tooltips 
@@ -1207,7 +1260,7 @@ KeyListener, ActionListener{
 			activeEV.add(geo);
 			geo.setTooltipMode(GeoElement.TOOLTIP_OFF);
 			geo.update();
-			
+
 		}	
 		for(GeoElement geo:pointTabGeoList){
 			activeEV.add(geo);
@@ -1261,7 +1314,7 @@ KeyListener, ActionListener{
 			}
 		}
 		hiddenGeoList.clear();
-		
+
 		rootGeos = null;
 	}
 
@@ -1300,6 +1353,26 @@ KeyListener, ActionListener{
 		tableXY.getSelectionModel().addListSelectionListener(this);
 	}
 
+
+
+	private void updateIntervalGeoVisiblity(){
+
+	//	minPoint.setEuclidianVisible(tableInterval.isRowSelected(0));
+		minPoint.setEuclidianVisible(false);
+		minPoint.update();
+	//	maxPoint.setEuclidianVisible(tableInterval.isRowSelected(1));
+		maxPoint.setEuclidianVisible(false);
+		maxPoint.update();
+		
+		
+		
+		
+	//	integralGeo.setEuclidianVisible(tableInterval.isRowSelected(5));
+		integralGeo.setEuclidianVisible(true);
+		integralGeo.update();
+
+		activeEV.repaint();
+	}
 
 
 
