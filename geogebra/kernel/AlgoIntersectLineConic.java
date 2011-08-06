@@ -543,6 +543,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         //      u = v.S.v           (S is upper left submatrix of A)
         //      d = p.S.v + a.v
         //      w = evaluate(p)
+        // 		dis = d^2 - uw, err(dis) = 2d err(d) - u err(w) - w err(u)
+        //		for simplicity, suppose err(d), err(w), err(u) <= epsilon, then delta = err(dis) <= (|2d|+|u|+|w|)epsilon
         
         // precalc S.v for u and d
         double SvX = A[0] * g.y - A[3] * g.x;
@@ -550,6 +552,10 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         double u = g.y * SvX - g.x * SvY;
         double d = px * SvX + py * SvY + A[4] * g.y - A[5] * g.x;
         double w = c.evaluate(px, py);
+        
+        //estimate err for delta; also avoid this too be too large
+        double delta = Math.min(Kernel.MIN_PRECISION,Math.max(1,Math.abs(2*d)+Math.abs(u)+Math.abs(w))*Kernel.EPSILON);
+        
         
         Kernel kernel = g.kernel;
         // Erzeugende, Asymptote oder Treffgerade
@@ -587,7 +593,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             double dis = d * d - u * w;
             // Tangente
             
-            if (Kernel.isZero(dis)) {
+            //if (Kernel.isZero(dis)) {
+            if (Kernel.isEqual(dis, 0, delta)) {
                 double t1 = -d / u;
                 sol[0].setCoords(px + t1 * g.y,  py - t1 * g.x, 1.0);
                 sol[1].setCoords(sol[0]);
