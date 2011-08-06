@@ -48,6 +48,7 @@ office@geogebra.org
 	<property name="propertiestemp.dir" location="${build.dir}/tempproperties"/>
 	<property name="temp.dir" location="${build.dir}/temp"/>
 	<property name="workspace.dir" location="../"/>
+	<property environment="env"/>
 	
 	<!-- USER-SPECIFIC properties -->
 	<!-- Include properties set in [build-local.properties] -->
@@ -473,6 +474,8 @@ office@geogebra.org
 
 	<!-- Define pack200 task -->
 	<!-- bug in Java 6, see http://www.geogebra.org/forum/viewtopic.php?f=8&t=3972&st=0&sk=t&sd=a&start=15 -->
+	<!-- This is not used currently, because p200ant cannot handle segment.limit through a config file.
+	     Instead, we have to call p200ant via command line. -->
 	<taskdef name="p200ant"
 	    classname="de.matthiasmann.p200ant.P200AntTask"
 	    classpath="tools_p200ant_java5only.jar"/>
@@ -515,8 +518,9 @@ office@geogebra.org
 		<antcall target="doSign"/>
 
 		<!-- repack and sign jars second time -->
-		<antcall target="repack"/>
-		<antcall target="doSign"/>
+		<!-- Not needed currently. --->
+		<!--antcall target="repack"/-->
+		<!--antcall target="doSign"/-->
 	</target>
 
 	<!-- sign jars -->
@@ -554,14 +558,16 @@ office@geogebra.org
 
 	<!-- repack jars -->
 	<target name="repack" if="keystore.present" description="repack jar files in preparation for signing">
-		<fileset id="jars2pack" dir="${build.dir}">
-			<include name="*.jar"/>
-		</fileset>
-		<p200ant repack="true"  configFile="tools_p200.config">
-			<fileset refid="jars2pack"/>
-		</p200ant>
+		<apply executable="${env.JAVA_HOME}/bin/java">
+		    <arg value="-jar" />
+		    <arg value="p200ant.jar" />
+		    <arg value="--segment-limit" />
+		    <arg value="-1" />
+		    <arg value="--repack" />
+		    <srcfile/>
+		    <fileset id="jars2pack" dir="${build.dir}" includes="*.jar" />
+		</apply>
 	</target>
-
 
 	<!-- pack jars -->
 	<!-- This should prevent running the pack target on Java 1.6
@@ -575,24 +581,43 @@ office@geogebra.org
       	</target>
 
 	<target name="pack" description="pack jar files" depends="get-jvm" unless="jvm.buggy">
-		<fileset id="unsignedJars" dir="${build.dir}/unsigned/unpacked">
-			<include name="*.jar"/>
-		</fileset>
-		<p200ant destdir="${build.dir}/unsigned/packed"  configFile="tools_p200.config">
-			<fileset refid="unsignedJars"/>
-		</p200ant>
+		<apply executable="${env.JAVA_HOME}/bin/java">
+		    <arg value="-jar" />
+		    <arg value="p200ant.jar" />
+		    <arg value="--segment-limit" />
+		    <arg value="-1" />
+		    <srcfile/>
+		    <fileset id="unsignedJars" dir="${build.dir}/unsigned/unpacked" includes="*.jar"/>
+		</apply>
+
+		<move todir="${build.dir}/unsigned/packed">
+			<fileset dir="${build.dir}/unsigned/unpacked">
+				<include name="*.jar.pack.gz" />
+			</fileset>
+		</move>
 
 		<move todir="${build.dir}/unpacked">
 			<fileset dir="${build.dir}">
 				<include name="*.jar" />
 			</fileset>
 		</move>
-		<fileset id="signedJars" dir="${build.dir}/unpacked">
-			<include name="*.jar"/>
-		</fileset>
-		<p200ant destdir="${build.dir}/packed"  configFile="tools_p200.config">
-			<fileset refid="signedJars"/>
-		</p200ant>
+
+		<apply executable="${env.JAVA_HOME}/bin/java">
+		    <arg value="-jar" />
+		    <arg value="p200ant.jar" />
+		    <arg value="--segment-limit" />
+		    <arg value="-1" />
+		    <srcfile/>
+		    <fileset id="unsignedJars" dir="${build.dir}/unpacked" includes="*.jar"/>
+		</apply>
+
+		<move todir="${build.dir}/packed">
+			<fileset dir="${build.dir}/unpacked">
+				<include name="*.jar.pack.gz" />
+			</fileset>
+		</move>
+
+
 	</target>
 
 	<!-- reads the version/build number from geogebra.GeoGebra.java -->
