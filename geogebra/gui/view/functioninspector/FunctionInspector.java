@@ -895,7 +895,9 @@ KeyListener, ActionListener{
 	public void rename(GeoElement geo) {}
 	public void updateAuxiliaryObject(GeoElement geo) {}
 	public void repaintView() {}
-	public void reset() {}
+	public void reset() {
+		setVisible(false);
+	}
 	public void clearView() {}
 	public void setMode(int mode) {}
 
