@@ -518,7 +518,7 @@ office@geogebra.org
 		<antcall target="doSign"/>
 
 		<!-- repack and sign jars second time -->
-		<!-- Not needed currently. --->
+		<!-- Not needed currently. -->
 		<!--antcall target="repack"/-->
 		<!--antcall target="doSign"/-->
 	</target>
