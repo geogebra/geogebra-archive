@@ -558,7 +558,7 @@ office@geogebra.org
 
 	<!-- repack jars -->
 	<target name="repack" if="keystore.present" description="repack jar files in preparation for signing">
-		<apply executable="${env.JAVA_HOME}/bin/java">
+		<apply executable="${env.JAVACMD}">
 		    <arg value="-jar" />
 		    <arg value="p200ant.jar" />
 		    <arg value="--segment-limit" />
@@ -581,7 +581,7 @@ office@geogebra.org
       	</target>
 
 	<target name="pack" description="pack jar files" depends="get-jvm" unless="jvm.buggy">
-		<apply executable="${env.JAVA_HOME}/bin/java">
+		<apply executable="${env.JAVACMD}">
 		    <arg value="-jar" />
 		    <arg value="p200ant.jar" />
 		    <arg value="--segment-limit" />
@@ -602,7 +602,7 @@ office@geogebra.org
 			</fileset>
 		</move>
 
-		<apply executable="${env.JAVA_HOME}/bin/java">
+		<apply executable="${env.JAVACMD}">
 		    <arg value="-jar" />
 		    <arg value="p200ant.jar" />
 		    <arg value="--segment-limit" />
