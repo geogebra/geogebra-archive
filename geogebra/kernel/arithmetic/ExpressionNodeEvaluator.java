@@ -1779,12 +1779,21 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             		return lt;
             	}
             	else if (funN.getVarNumber() == 2 && list.size()==1) {
-            		ExpressionValue ev = list.getMyList().getListElement(0).evaluate();            		
+            		ExpressionValue ev = list.getMyList().getListElement(0).evaluate();       
             		if(ev instanceof GeoPoint){
             			GeoPoint pt = (GeoPoint)ev;
             			if(funN.isBooleanFunction())            				
             				return new MyBoolean(funN.evaluateBoolean(pt));
             			return new MyDouble(kernel, funN.evaluate(pt));
+            		} else if (ev instanceof GeoList) { // f(x,y) called with list of points
+            			GeoList l = (GeoList)ev;
+            			MyList ret = new MyList(kernel);
+            			for (int i = 0 ; i < l.size() ; i++) {
+                			MyList lArg = new MyList(kernel); // need to wrap arguments to f(x,y) in MyList
+                			lArg.addListElement(l.get(i));
+                			ret.addListElement(new ExpressionNode(kernel, funN, FUNCTION_NVAR, lArg));           				
+            			}
+            			return ret;
             		}
             	}
             		//let's assume that we called this as f(x,y) and we actually want the function
