@@ -136,7 +136,7 @@ public final class DrawPoint extends Drawable {
 			diameter = 2 * pointSize;
 			HIGHLIGHT_OFFSET = pointSize / 2 + 1;
 			//HIGHLIGHT_OFFSET = pointSize / 2 + 1;
-			hightlightDiameter =  diameter + 2 * HIGHLIGHT_OFFSET ;	
+			hightlightDiameter =  diameter + 2 * HIGHLIGHT_OFFSET + 1 ;	
 			
 			selDiameter = hightlightDiameter;
 			
