@@ -996,7 +996,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private boolean checkGeoText(Object[] geos){
 		boolean geosOK = (geos.length > 0);
 		for (int i = 0; i < geos.length; i++) {
-			if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText()) 
+			if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog() instanceof TextProperties) 
 					 ) {
 				geosOK = false;
 				break;
@@ -1113,7 +1113,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 				if(geosOK){
 					GeoElement geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog();
-					setSelectedIndex(((GeoText)geo).getFontSize() / 2 + 2); // font size ranges from -4 to 4, transform this to 0,1,..,4
+					setSelectedIndex(GeoText.getFontSizeIndex(((TextProperties)geo).getFontSize())); // font size ranges from -4 to 4, transform this to 0,1,..,4
 				}
 			}		  
 		};	
@@ -1611,7 +1611,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	private void applyTextSize(ArrayList<GeoElement> geos) {
 
-		int fontSize = btnTextSize.getSelectedIndex() * 2 - 4; // transform indices to the range -4, .. , 4
+		int fontSize = GeoText.getRelativeFontSize(btnTextSize.getSelectedIndex()); // transform indices to the range -4, .. , 4
 
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);

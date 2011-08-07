@@ -101,9 +101,6 @@ public abstract class GeoElement
 		this.clickJavaScript = clickJavaScript;
 	}
 
-	public static final int MAX_FONTSIZE = 6;
-	//public static final int MIN_FONTSIZE = -6;
-
 	/** min decimals or significant figures to use in editing string */
 	public static final int MIN_EDITING_PRINT_PRECISION = 5;
 

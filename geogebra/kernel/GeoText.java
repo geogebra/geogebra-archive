@@ -27,10 +27,18 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	// font options
 	private boolean serifFont;
 	private int fontStyle;
-	private int fontSize; // size relative to default font size
+	private int fontSize = getRelativeFontSize(FONTSIZE_MEDIUM); // size relative to default font size
 	private int printDecimals = -1;
 	private int printFigures = -1;
 	private boolean useSignificantFigures = false;
+	
+	final public static int FONTSIZE_EXTRA_SMALL = 0;
+	final public static int FONTSIZE_VERY_SMALL = 1;
+	final public static int FONTSIZE_SMALL = 2;
+	final public static int FONTSIZE_MEDIUM = 3;
+	final public static int FONTSIZE_LARGE = 4;
+	final public static int FONTSIZE_VERY_LARGE = 5;
+	final public static int FONTSIZE_EXTRA_LARGE = 6;
 	
 	// for absolute screen location
 	private boolean hasAbsoluteScreenLocation = false;
@@ -592,9 +600,51 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	public int getFontSize() {
 		return fontSize;
 	}
+	
+	public static int getRelativeFontSize(int index) {
+		switch (index) {
+		case FONTSIZE_EXTRA_SMALL: // extra small
+			return -12;
+		case FONTSIZE_VERY_SMALL: // very small
+			return -6;
+		case FONTSIZE_SMALL: // small
+			return 0;
+		default:
+		case FONTSIZE_MEDIUM: // medium
+			return 16;
+		case FONTSIZE_LARGE: // large
+			return 32;
+		case FONTSIZE_VERY_LARGE: // very large
+			return 64;
+		case FONTSIZE_EXTRA_LARGE: // extra large
+			return 128;
+		}
+	}
+	
+	public static int getFontSizeIndex(int relativeFontSize) {
+		switch (relativeFontSize) {
+		case -12: // extra small
+			return FONTSIZE_EXTRA_SMALL;
+		case -8: // old files
+		case -6: // very small
+			return FONTSIZE_VERY_SMALL;
+		case 0: // small
+		case -2: // old files
+		case -4: // old files
+			return FONTSIZE_SMALL;
+		default: // old files (2,4,6,8)
+		case 16: // medium
+			return FONTSIZE_MEDIUM;
+		case 32: // large
+			return FONTSIZE_LARGE;
+		case 64: // very large
+			return FONTSIZE_VERY_LARGE;
+		case 128: // extra large
+			return FONTSIZE_EXTRA_LARGE;
+		}
+	}
+	
 	public void setFontSize(int size) {
-		if (size < -MAX_FONTSIZE) size = -MAX_FONTSIZE;
-		else if (size > MAX_FONTSIZE) size = MAX_FONTSIZE;
 		fontSize = size;
 	}
 	public int getFontStyle() {
