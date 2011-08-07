@@ -526,8 +526,11 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 
 	public String toLaTeXString(boolean symbolic) {
 		StringBuilder toLaTeXString = new StringBuilder();
-		if (size() == 0)
-			return "\\emptyset";
+		if (size() == 0) {
+			// in schools the emptyset symbol is typically not used, see #
+			//return "\\emptyset";
+			return "\\{\\}";
+		}
 		else if (isMatrix()) {
 			toLaTeXString.append("\\left(\\begin{array}{ll}");
 
