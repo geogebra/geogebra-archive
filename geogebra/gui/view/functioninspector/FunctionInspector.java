@@ -97,8 +97,8 @@ public class FunctionInspector extends InputDialog
 implements View, MouseListener, ListSelectionListener, 
 KeyListener, ActionListener, SpecialNumberFormatInterface {
 
-	private static final Color DISPLAY_GEO_COLOR = Color.BLUE;
-	private static final Color DISPLAY_GEO2_COLOR = Color.BLUE;
+	private Color DISPLAY_GEO_COLOR = Color.RED;
+	private static final Color DISPLAY_GEO2_COLOR = Color.RED;
 
 	private static final Color EVEN_ROW_COLOR = new Color(241, 245, 250);
 	private static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
@@ -411,9 +411,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		});	
 		btnHelp.setFocusable(false);
 
-			
+
 		createBtnAddColumn();
-		
+
 	}
 
 
@@ -470,9 +470,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		createBtnAddColumn();		
 		c.add(btnAddColumn);
 		c.add(btnRemoveColumn);
-		
+
 		createOptionsButton();
-		
+
 	}
 
 
@@ -687,7 +687,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		default: 
 			value.add(app.getPlain("fncInspector.MultipleRoots"));
 			value2.add(null);
-			
+
 		}
 
 
@@ -1016,6 +1016,14 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 			testPoint.getCoords(coords);
 			this.start = coords[0];
 			updateXYTable();
+			tableXY.getSelectionModel().removeListSelectionListener(this);
+			
+			if(btnTable.isSelected() && tableXY.getSelectedRow() != 4)
+				tableXY.changeSelection(4, 0, false, false);
+			else if( !btnTable.isSelected() && tableXY.getSelectedRow() != 0)
+				tableXY.changeSelection(0, 0, false, false);
+			
+			tableXY.getSelectionModel().addListSelectionListener(this);
 			return;
 		}
 
@@ -1187,6 +1195,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		testPoint = (GeoPoint) pAlgo.getGeoElements()[0];
 		testPoint.setObjColor(DISPLAY_GEO_COLOR);
 		testPoint.setPointSize(4);
+		testPoint.setLayer(f.getLayer()+1);
 		pointTabGeoList.add(testPoint);
 
 
@@ -1265,7 +1274,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		// point list
 		pts = new GeoList(cons);
 		pts.setEuclidianVisible(true);
-		pts.setObjColor(new Color(125,125,255));
+		pts.setObjColor(GeoGebraColorConstants.DARKGRAY);
+		pts.setPointSize(3);
+		pts.setLayer(f.getLayer()+1);
 		for(int i = 0; i < pointCount; i++){
 			pts.add(new GeoPoint(cons));
 		}
@@ -1381,8 +1392,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		int row = tableXY.getSelectedRow();
 		if (row >= 0){
 			double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
-			double y = ((GeoFunction)selectedGeo).evaluate(x); //evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
-			//double y = Double.parseDouble((String) modelXY.getValueAt(row, 1));
+			double y = ((GeoFunction)selectedGeo).evaluate(x); 
 			testPoint.setCoords(x, y, 1);
 			testPoint.updateRepaint();	
 		}
@@ -1422,11 +1432,11 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		MyTextField dummyField = new MyTextField(app.getGuiManager());
 		tableXY.setRowHeight(dummyField.getPreferredSize().height);
 		tableInterval.setRowHeight(dummyField.getPreferredSize().height);
-		
+
 		setFontRecursive(this, app.getPlainFont());
 	}
 
-	
+
 	public void setFontRecursive(Container c, Font font) {
 		Component[] components = c.getComponents();
 		for(Component com : components) {
@@ -1435,9 +1445,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 				setFontRecursive((Container) com, font);
 		}
 	}
-	
-	
-	
+
+
+
 
 	public void windowGainedFocus(WindowEvent arg0) {
 		if (!isModal()) {
@@ -1511,7 +1521,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		}
 
 		btnOptions.removeAllMenuItems();
-		
+
 		btnOptions.setToolTipText(app.getMenu("Options"));
 
 

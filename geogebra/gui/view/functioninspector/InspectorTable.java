@@ -52,7 +52,8 @@ public class InspectorTable extends JTable{
 		// set visual appearance
 		setShowGrid(true);
 		setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
-		setSelectionBackground(GeoGebraColorConstants.TABLE_SELECTED_BACKGROUND_COLOR);
+		//setSelectionBackground(new Color(255, 130, 171));
+		setSelectionBackground(GeoGebraColorConstants.PINK);
 		setBorder(BorderFactory.createEmptyBorder());
 
 		// set resizing fields
@@ -175,6 +176,7 @@ public class InspectorTable extends JTable{
 			paddingBorder = BorderFactory.createEmptyBorder(2,2,2,2);
 			//paddingBorder = BorderFactory.createMatteBorder(3,3,3,3,Color.RED);
 			editCellBorder = BorderFactory.createCompoundBorder(tf.getBorder(), paddingBorder);
+			
 
 		}
 		public Component getTableCellRendererComponent(JTable table, Object value, 
@@ -190,7 +192,8 @@ public class InspectorTable extends JTable{
 
 			if (isSelected && !table.isCellEditable(row, column)) {
 				setBackground(table.getSelectionBackground());
-				setForeground(table.getSelectionForeground());
+				//setForeground(table.getSelectionForeground());
+				setForeground(Color.RED);
 			} else {
 				setBackground(rowColor(row));
 				setForeground(getForeground());
@@ -235,6 +238,7 @@ public class InspectorTable extends JTable{
 		public MyEditor() {
 			super(new MyTextField(app.getGuiManager()));
 			this.setClickCountToStart(1);
+			
 
 		}
 
@@ -242,6 +246,7 @@ public class InspectorTable extends JTable{
 				int row, int column) {
 			JTextField editor = (JTextField) super.getTableCellEditorComponent(table, value, isSelected,
 					row, column);
+			editor.setForeground(Color.RED);
 			editor.setFont(app.getPlainFont());
 			return editor;
 		}
