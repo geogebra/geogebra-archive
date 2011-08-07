@@ -1643,7 +1643,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// when two objects are selected at once then only one single
 		// intersection point should be created	
 		
-		//not working
 		boolean singlePointWanted = selGeos() == 0;
 		
 		// check how many interesting hits we have

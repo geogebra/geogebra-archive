@@ -53,7 +53,7 @@ public class EuclidianControllerForPlane extends EuclidianController {
 	
 		Coords coords = getCoordsFromView(xRW,yRW);
 		
-		GeoPointND ret = kernel.getManager3D().Point3DIn(null, ((EuclidianView) view).getPlaneContaining(), coords.getX(), coords.getY(), coords.getZ());
+		GeoPointND ret = kernel.getManager3D().Point3DIn(null, ((EuclidianView) view).getPlaneContaining(), coords.getX(), coords.getY(), coords.getZ(), !forPreviewable);
 		return ret;
 	}
 	

@@ -104,10 +104,21 @@ public class Manager3D implements Manager3DInterface {
 
 
 	/** Point in region with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3DIn(String label, Region region, double x, double y, double z) {
+	final public GeoPoint3D Point3DIn(String label, Region region, double x, double y, double z, boolean addToConstruction) {
+		boolean oldMacroMode = false;
+		
+		if (!addToConstruction) {
+			oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);		
+
+		}
 		//Application.debug("Point3DIn - \n x="+x+"\n y="+y+"\n z="+z);
 		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, label, region, x, y, z);
 		GeoPoint3D p = algo.getP();    
+		
+		if (!addToConstruction) {
+			cons.setSuppressLabelCreation(oldMacroMode);
+		}
 		return p;
 	}
 	
@@ -121,7 +132,7 @@ public class Manager3D implements Manager3DInterface {
 
 	/** Point in region */
 	final public GeoPoint3D Point3DIn(String label, Region region) {  
-		return Point3DIn(label,region,0,0,0); //TODO do as for paths
+		return Point3DIn(label,region,0,0,0, true); 
 	}	
 
 
