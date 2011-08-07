@@ -901,11 +901,6 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 	public void actionPerformed(ActionEvent e) {	
 		Object source = e.getSource();
 
-		if(e.getActionCommand().equals("numberFormatChange")){
-			System.out.println("number format changes!!!!!!!!");
-		}
-
-
 		if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
 		}
@@ -923,10 +918,6 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 				|| source == btnXYSegments) {
 			updateGUI();
 		}
-
-		else if (source == nf) {
-			System.out.println("NFNFN number format changes!!!!!!!!");
-		}	
 
 
 	}	
@@ -1321,7 +1312,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 		functionInterval = interval.getGeoElements()[0];
 		functionInterval.setEuclidianVisible(false);
-		functionInterval.setLineThickness(selectedGeo.getLineThickness()+3);
+		functionInterval.setLineThickness(selectedGeo.getLineThickness()+5);
 		functionInterval.setObjColor(DISPLAY_GEO_COLOR);
 		functionInterval.setLayer(f.getLayer()+1);
 		intervalTabGeoList.add(functionInterval);
