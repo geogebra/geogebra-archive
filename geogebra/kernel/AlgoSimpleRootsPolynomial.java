@@ -135,7 +135,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 		if (roots.length>1)
 			nrRealRoots=getRoots(roots,eqnSolver);
 		
-		for (int i=0; i<roots.length; ++i) {
+		for (int i=0; i<nrRealRoots; ++i) {
 			if (Kernel.isGreater(roots[i], max,kernel.getEpsilon()) || 
 					Kernel.isGreater(min, roots[i], kernel.getEpsilon()))
 				roots[i] = Double.NaN;
