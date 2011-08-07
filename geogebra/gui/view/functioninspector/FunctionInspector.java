@@ -665,6 +665,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		cons.removeFromConstructionList(root);		
 		rootGeos = root.getGeoElements();
 
+		boolean useArea = false;
 
 		property.add(app.getCommand("Root"));
 
@@ -672,6 +673,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		case 0: 
 			value.add(app.getPlain("fncInspector.NoRoots"));
 			value2.add(null);
+			useArea = true;
 			break;
 		case 1: 
 			if (rootGeos[0].isDefined()){
@@ -682,6 +684,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 			else{
 				value.add(app.getPlain("fncInspector.NoRoots"));
 				value2.add(null);
+				useArea = true;
 			}
 			break;
 		default: 
@@ -695,8 +698,8 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		value.add(null );
 		value2.add(null);
 
-		property.add(app.getCommand("Area"));
-		value.add(nf.format(integral));
+		property.add(useArea ? app.getCommand("Area") : app.getCommand("Integral"));
+		value.add(useArea ? nf.format(Math.abs(integral)) : nf.format(integral));
 		Double[] a = {integral};
 		value2.add(a);
 
@@ -719,6 +722,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 		for(int i=0; i < property.size(); i++){
 			modelInterval.setValueAt(property.get(i),i,0);
+			Application.debug(property.get(i));
 			modelInterval.setValueAt(value.get(i),i,1);
 		}
 
