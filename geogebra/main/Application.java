@@ -273,6 +273,9 @@ public class Application implements KeyEventDispatcher {
 	// currently used application fonts
 	private int appFontSize;
 
+	// gui / menu fontsize (-1 = use appFontSize)
+	private int guiFontSize = -1;
+
 	// maximum number of files to (save &) show in File -> Recent submenu
 	public static final int MAX_RECENT_FILES = 8;
 
@@ -828,7 +831,7 @@ public class Application implements KeyEventDispatcher {
 		addMacroCommands();
 		cp.removeAll();
 		cp.add(buildApplicationPanel());
-		fontManager.setFontSize(appFontSize);
+		fontManager.setFontSize(getGUIFontSize());
 		
 		// update sizes		
 		euclidianView.updateSize();
@@ -2832,7 +2835,7 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	public void resetFonts() {
-		fontManager.setFontSize(appFontSize);
+		fontManager.setFontSize(getGUIFontSize());
 		updateFonts();
 	}
 
@@ -2851,6 +2854,25 @@ public class Application implements KeyEventDispatcher {
 
 	public int getFontSize() {
 		return appFontSize;
+	}
+	
+	public int getGUIFontSize() {
+		return guiFontSize == -1 ? appFontSize : guiFontSize;
+	}
+
+	public void setGUIFontSize(int size) {
+		guiFontSize = size;
+		updateFonts();
+		isSaved = false;
+		
+		resetFonts();
+
+		if (!initing) {
+			if (appletImpl != null)
+				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
+			if (frame != null)
+				SwingUtilities.updateComponentTreeUI(frame);
+		}
 	}
 
 	private void setLabels() {

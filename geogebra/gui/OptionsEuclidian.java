@@ -390,7 +390,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		//line style
 		DashListRenderer renderer = new DashListRenderer();
 		renderer.setPreferredSize(
-			new Dimension(130, app.getFontSize() + 6));
+			new Dimension(130, app.getGUIFontSize() + 6));
 		cbGridStyle = new JComboBox(EuclidianView.getLineTypes());
 		cbGridStyle.setRenderer(renderer);
 		cbGridStyle.addActionListener(this);

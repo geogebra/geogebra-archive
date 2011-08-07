@@ -970,7 +970,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	protected void resizeFont(StringBuilder sb){
 		
 		// Number of units that represents the font size:
-		int ggbSize=app.getFontSize();
+		int ggbSize=app.getGUIFontSize();
 		double ggbYUnit=euclidianView.getYscale();
 		double fontUnits=ggbSize/ggbYUnit;
 		System.out.println("ggbSize "+ggbSize+" ggbYUnit "+ggbYUnit);

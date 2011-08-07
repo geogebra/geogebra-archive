@@ -90,7 +90,7 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 		// line style combobox (dashing)		
 		DashListRenderer renderer = new DashListRenderer();
 		renderer.setPreferredSize(
-			new Dimension(130, app.getFontSize() + 6));
+			new Dimension(130, app.getGUIFontSize() + 6));
 		dashCB = new JComboBox(EuclidianView.getLineTypes());
 		dashCB.setRenderer(renderer);
 		dashCB.addActionListener(this);
@@ -177,7 +177,7 @@ public class PropertiesPanelMini extends JFrame implements ActionListener, Chang
 		
 	    public PreviewPanel() {
 	    	addMouseListener(this);
-	        setPreferredSize(new Dimension(100,app.getFontSize() + 8));
+	        setPreferredSize(new Dimension(100,app.getGUIFontSize() + 8));
 	        setBorder(BorderFactory.createRaisedBevelBorder());
 			 
 	        

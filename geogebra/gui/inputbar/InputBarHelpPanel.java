@@ -346,7 +346,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		
 		// set the height of the syntax panel
 		Dimension d = syntaxHelpPanel.getMinimumSize();
-		d.height = 12*app.getFontSize();
+		d.height = 12*app.getGUIFontSize();
 		syntaxHelpPanel.setMinimumSize(d);
 		
 		// set the minimum width of the help panel (see Application.setShowInputHelpPanel)

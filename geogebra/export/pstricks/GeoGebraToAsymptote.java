@@ -862,7 +862,7 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
         }
         Color geocolor = geo.getObjectColor();
         int style = geo.getFontStyle();
-        int size = geo.getFontSize()+app.getFontSize();
+        int size = geo.getFontSize()+app.getGUIFontSize();
         GeoPoint gp;
         double x,y;
           // compute location of text       

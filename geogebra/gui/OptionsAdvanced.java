@@ -49,13 +49,13 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private Application app;
 
 	/** */
-	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel, angleUnitPanel, continuityPanel, pointStylePanel, checkboxSizePanel, rightAnglePanel, coordinatesPanel;
+	private JPanel virtualKeyboardPanel, guiFontsizePanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel, angleUnitPanel, continuityPanel, pointStylePanel, checkboxSizePanel, rightAnglePanel, coordinatesPanel;
 	
 	/**	*/
-	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, opacityLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
+	private JLabel keyboardLanguageLabel, guiFontSizeLabel, widthLabel, heightLabel, opacityLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
 	
 	/** */
-	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout;
+	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout, cbGUIFont;
 	
 	/**	 */
 	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts, cbReverseMouseWheel;
@@ -89,6 +89,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		"-"
 	};
 
+	final public static int[] fontSizes = {12, 14, 16, 18, 20, 24, 28, 32};
+
 	/**
 	 * Construct advanced option panel.
 	 * 
@@ -111,6 +113,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 */
 	private void initGUI() {
 		initVirtualKeyboardPanel();
+		initGUIFontSizePanel();
 		initTooltipPanel();
 		initLanguagePanel();
 		initPerspectivesPanel();
@@ -125,6 +128,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		JPanel panel = new JPanel();
 		panel.setLayout(new FullWidthLayout());
 		panel.add(virtualKeyboardPanel);
+		panel.add(guiFontsizePanel);
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
 		panel.add(perspectivesPanel);
@@ -199,6 +203,27 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		opacityLabel.setLabelFor(slOpacity);
 		
 		virtualKeyboardPanel.add(panel, BorderLayout.CENTER);
+	}	
+	
+	/**
+	 * Initialize the GUI fontsize panel
+	 */
+	private void initGUIFontSizePanel() {
+		guiFontsizePanel = new JPanel();
+		guiFontsizePanel.setLayout(new BoxLayout(guiFontsizePanel, BoxLayout.Y_AXIS));
+		
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		guiFontSizeLabel = new JLabel();
+		panel.add(guiFontSizeLabel);
+		
+		cbGUIFont = new JComboBox();
+		// listener to this combo box is added in setLabels()
+		panel.add(cbGUIFont);
+		
+		guiFontsizePanel.add(panel, BorderLayout.NORTH);
+		
+		
 	}
 	
 	/**
@@ -552,7 +577,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 * Values changed.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == cbTooltipTimeout) {
+		
+		Object source = e.getSource();
+		
+		if (source == cbTooltipTimeout) {
 			int index = cbTooltipTimeout.getSelectedIndex();
 			int delay = Integer.MAX_VALUE;
 			if (index < tooltipTimeouts.length - 1) {
@@ -561,17 +589,17 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			ToolTipManager.sharedInstance().setDismissDelay(delay);
 			Application.debug(delay);
 
-		} else if (e.getSource() == cbTooltipLanguage) {
+		} else if (source == cbTooltipLanguage) {
 			int index = cbTooltipLanguage.getSelectedIndex() - 1;
 			if (index == -1) app.setTooltipLanguage(null);
 			else app.setTooltipLanguage(Application.supportedLocales.get(index));
-		} else if(e.getSource() == cbUseJavaFonts) {
+		} else if(source == cbUseJavaFonts) {
 			Drawable.setUseJavaFontsForLaTeX(app, cbUseJavaFonts.isSelected());
-		} else if(e.getSource() == cbReverseMouseWheel) {
+		} else if(source == cbReverseMouseWheel) {
 			app.reverseMouseWheel(cbReverseMouseWheel.isSelected());
-		} else if(e.getSource() == cbUseLocalDigits) {
+		} else if(source == cbUseLocalDigits) {
 			app.setUseLocalizedDigits(cbUseLocalDigits.isSelected());
-		} else if(e.getSource() == cbReturnAngleInverseTrig) {
+		} else if(source == cbReturnAngleInverseTrig) {
 			app.getKernel().setInverseTrigReturnsAngle(cbReturnAngleInverseTrig.isSelected());
 			
 			// make sure all calculations fully updated
@@ -579,83 +607,87 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			app.getKernel().storeUndoInfo();
 			app.getKernel().undo();
 		
-		} else if(e.getSource() == cbUseLocalLabels) {
+		} else if(source == cbUseLocalLabels) {
 			app.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
-		} else if(e.getSource() == cbShowTitleBar) {
+		} else if(source == cbShowTitleBar) {
 			app.getGuiManager().getLayout().setTitlebarVisible(cbShowTitleBar.isSelected());
-		} else if(e.getSource() == cbIgnoreDocumentLayout) {
+		} else if(source == cbIgnoreDocumentLayout) {
 			app.getGuiManager().getLayout().setIgnoreDocument(cbIgnoreDocumentLayout.isSelected());
-		} else if(e.getSource() == managePerspectivesButton) {
+		} else if(source == managePerspectivesButton) {
 			app.getGuiManager().getLayout().showManageDialog();
-		} else if (e.getSource() == angleUnitRadioDegree) {
+		} else if (source == angleUnitRadioDegree) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
 			app.getKernel().updateConstruction();
 			app.setUnsaved();
-		} else if (e.getSource() == angleUnitRadioRadian) {
+		} else if (source == angleUnitRadioRadian) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_RADIANT);
 			app.getKernel().updateConstruction();
 			app.setUnsaved();
-		} else if (e.getSource() == continuityRadioOn) {
+		} else if (source == continuityRadioOn) {
 			app.getKernel().setContinuous(true);
 			app.getKernel().updateConstruction();
 			app.setUnsaved();
-		} else if (e.getSource() == continuityRadioOff) {
+		} else if (source == continuityRadioOff) {
 			app.getKernel().setContinuous(false);
 			app.getKernel().updateConstruction();
 			app.setUnsaved();
-		} else if (e.getSource() == pointStyleRadio0) {
+		} else if (source == pointStyleRadio0) {
 			app.getEuclidianView().setPointStyle(0);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(0);
-		} else if (e.getSource() == pointStyleRadio1) {
+		} else if (source == pointStyleRadio1) {
 			app.getEuclidianView().setPointStyle(1);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(1);
-		} else if (e.getSource() == pointStyleRadio2) {
+		} else if (source == pointStyleRadio2) {
 			app.getEuclidianView().setPointStyle(2);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(2);
-		} else if (e.getSource() == pointStyleRadio3) {
+		} else if (source == pointStyleRadio3) {
 			app.getEuclidianView().setPointStyle(3);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(3);
-		} else if (e.getSource() == pointStyleRadio4) {
+		} else if (source == pointStyleRadio4) {
 			app.getEuclidianView().setPointStyle(4);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(4);
-		} else if (e.getSource() == pointStyleRadio6) {
+		} else if (source == pointStyleRadio6) {
 			app.getEuclidianView().setPointStyle(6);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(6);
-		} else if (e.getSource() == pointStyleRadio7) {
+		} else if (source == pointStyleRadio7) {
 			app.getEuclidianView().setPointStyle(7);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(7);
-		} else if (e.getSource() == checkboxSizeRadioRegular) {
+		} else if (source == checkboxSizeRadioRegular) {
 			app.getEuclidianView().setBooleanSize(13);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setBooleanSize(13);
-		} else if (e.getSource() == checkboxSizeRadioLarge) {
+		} else if (source == checkboxSizeRadioLarge) {
 			app.getEuclidianView().setBooleanSize(26);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setBooleanSize(26);
-		} else if (e.getSource() == rightAngleRadio1) {
+		} else if (source == rightAngleRadio1) {
 			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_NONE);
-		} else if (e.getSource() == rightAngleRadio2) {
+		} else if (source == rightAngleRadio2) {
 			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE);
-		} else if (e.getSource() == rightAngleRadio3) {
+		} else if (source == rightAngleRadio3) {
 			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_DOT);
-		} else if (e.getSource() == rightAngleRadio4) {
+		} else if (source == rightAngleRadio4) {
 			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_L);
-		} else if (e.getSource() == coordinatesRadio1) {
+		} else if (source == coordinatesRadio1) {
 			app.getKernel().setCoordStyle(0);
 			app.getKernel().updateConstruction();
-		} else if (e.getSource() == coordinatesRadio2) {
+		} else if (source == coordinatesRadio2) {
 			app.getKernel().setCoordStyle(1);
 			app.getKernel().updateConstruction();
-		} else if (e.getSource() == coordinatesRadio3) {
+		} else if (source == coordinatesRadio3) {
 			app.getKernel().setCoordStyle(2);
 			app.getKernel().updateConstruction();
+		} else if (source == cbGUIFont) {
+			int index = cbGUIFont.getSelectedIndex();
+			if (index == 0) app.setGUIFontSize(-1); // default
+			else app.setGUIFontSize(fontSizes[index - 1]);
 		}
 	}
 
@@ -708,6 +740,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		heightLabel.setText(app.getPlain("Height")+":");
 		cbKeyboardShowAutomatic.setText(app.getPlain("ShowAutomatically"));
 		opacityLabel.setText(app.getMenu("Opacity")+":");
+
+		guiFontsizePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("FontSize")));	
+		guiFontSizeLabel.setText(app.getMenu("GUIFontSize")+":");
 
 		tooltipPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Tooltips")));
 		tooltipLanguageLabel.setText(app.getPlain("TooltipLanguage")+":");
@@ -766,6 +801,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbReturnAngleInverseTrig.setSelected(app.getKernel().getInverseTrigReturnsAngle());
 		
 		setLabelsKeyboardLanguage();
+		setLabelsGUIFontsize();
 		setLabelsTooltipLanguages();
 		setLabelsTooltipTimeouts();
 	}
@@ -798,6 +834,27 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbKeyboardLanguage.setModel(new DefaultComboBoxModel(languages));
 		cbKeyboardLanguage.setSelectedIndex(selectedIndex);
 		cbKeyboardLanguage.addActionListener(this);
+	}
+	
+	private void setLabelsGUIFontsize() {
+		
+		//String[] fsfi = { "12 pt", "14 pt", "16 pt", "18 pt", "20 pt", "24 pt",
+		//		"28 pt", "32 pt" };
+		
+		String[] fontSizesStr = new String[fontSizes.length + 1];
+		fontSizesStr[0] = app.getPlain("Default");
+		
+		for (int i = 0 ; i < fontSizes.length ; i++) {
+			fontSizesStr[i + 1] = app.getPlain("Apt",fontSizes[i]+""); // eg "12 pt"
+		}
+				
+		int selectedIndex = cbGUIFont.getSelectedIndex();
+		
+		// take care that this doesn't fire events by accident 
+		cbGUIFont.removeActionListener(this);
+		cbGUIFont.setModel(new DefaultComboBoxModel(fontSizesStr));
+		cbGUIFont.setSelectedIndex(selectedIndex);
+		cbGUIFont.addActionListener(this);
 	}
 	
 	/**

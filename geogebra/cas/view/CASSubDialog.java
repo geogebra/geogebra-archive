@@ -127,7 +127,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		replaceTable=new JTable(data,header);
 		replaceTable.setDefaultEditor(Object.class,new MathTextCellEditor(app.getGuiManager()));
 		replaceTable.getTableHeader().setReorderingAllowed(false);
-		double fontFactor=Math.max(1,app.getFontSize()/DEFAULT_FONT_SIZE);
+		double fontFactor=Math.max(1,app.getGUIFontSize()/DEFAULT_FONT_SIZE);
 		replaceTable.setRowHeight((int) (DEFAULT_TABLE_CELL_HEIGHT*fontFactor));
 		
 		replaceTable.setPreferredScrollableViewportSize(

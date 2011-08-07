@@ -1066,7 +1066,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		private class PreviewPanel extends JPanel {
 		    public PreviewPanel() {
-		        setPreferredSize(new Dimension(100,app.getFontSize() + 8));
+		        setPreferredSize(new Dimension(100,app.getGUIFontSize() + 8));
 		        setBorder(BorderFactory.createRaisedBevelBorder());
 		      }
 		      public void paintComponent(Graphics g) {
@@ -4498,7 +4498,7 @@ public	class PropertiesPanel extends JPanel {
 			// line style combobox (dashing)		
 			DashListRenderer renderer = new DashListRenderer();
 			renderer.setPreferredSize(
-				new Dimension(130, app.getFontSize() + 6));
+				new Dimension(130, app.getGUIFontSize() + 6));
 			dashCB = new JComboBox(EuclidianView.getLineTypes());
 			dashCB.setRenderer(renderer);
 			dashCB.addActionListener(this);
@@ -4937,7 +4937,7 @@ public	class PropertiesPanel extends JPanel {
 			super(new FlowLayout(FlowLayout.LEFT));
 			// deco combobox 		
 			DecorationListRenderer renderer = new DecorationListRenderer();
-			renderer.setPreferredSize(new Dimension(130, app.getFontSize() + 6));
+			renderer.setPreferredSize(new Dimension(130, app.getGUIFontSize() + 6));
 			decoCombo = new JComboBox(GeoSegment.getDecoTypes());
 			decoCombo.setRenderer(renderer);
 			decoCombo.addActionListener(this);

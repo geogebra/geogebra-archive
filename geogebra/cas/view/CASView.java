@@ -192,7 +192,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	}
 
 	public void updateFonts() {
-		if (app.getFontSize() == getFont().getSize())
+		if (app.getGUIFontSize() == getFont().getSize())
 			return;
 
 		setFont(app.getPlainFont());

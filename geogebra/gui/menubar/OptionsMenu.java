@@ -1,5 +1,6 @@
 package geogebra.gui.menubar;
 
+import geogebra.gui.OptionsAdvanced;
 import geogebra.gui.layout.Layout;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -129,17 +130,19 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		// Font size
 		submenu = new JMenu(app.getMenu("FontSize"));
 		submenu.setIcon(app.getImageIcon("font.png"));
-		String[] fsfi = { "12 pt", "14 pt", "16 pt", "18 pt", "20 pt", "24 pt",
-				"28 pt", "32 pt" };
+		
+		//String[] fsfi = { "12 pt", "14 pt", "16 pt", "18 pt", "20 pt", "24 pt",
+		//		"28 pt", "32 pt" };
+		String[] fsfi = new String[OptionsAdvanced.fontSizes.length];
 
 		// find current pos
-		String strFS = app.getFontSize() + " pt";
+		int fontSize = app.getFontSize();
 		pos = 0;
-		for (int i = 0; i < fsfi.length; i++) {
-			if (strFS.equals(fsfi[i])) {
+		for (int i = 0; i < OptionsAdvanced.fontSizes.length; i++) {
+			if (fontSize == OptionsAdvanced.fontSizes[i]) {
 				pos = i;
-				break;
 			}
+			fsfi[i] = app.getPlain("Apt",OptionsAdvanced.fontSizes[i]+"");
 		}
 
 		addRadioButtonMenuItems(submenu, (ActionListener) this, fsfi, fsfi, pos);
@@ -165,7 +168,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 		addSeparator();
 
-		// drawing pad properteis	
+		// drawing pad properties	
 		add(showOptionsAction);
 	}
 
