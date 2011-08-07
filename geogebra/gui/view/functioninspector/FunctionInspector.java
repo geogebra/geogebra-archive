@@ -19,6 +19,7 @@ import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.SpecialNumberFormat;
 import geogebra.gui.util.SpecialNumberFormatInterface;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoCasDerivative;
 import geogebra.kernel.AlgoCurvature;
@@ -39,11 +40,11 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -64,16 +65,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -149,7 +144,8 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 	private ArrayList<GeoElement> intervalTabGeoList, pointTabGeoList, hiddenGeoList;
 	private GeoElement[] rootGeos;
 
-
+	// stores lists of column data from the point panel table
+	private ArrayList<Double[]> xyTableCopyList = new ArrayList<Double[]>();
 
 	private boolean isIniting;
 	private double xMin, xMax, start =-1, step = 0.1;
@@ -412,7 +408,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 			}
 		});	
 		btnHelp.setFocusable(false);
-		
+
 		createBtnAddColumn();
 
 	}
@@ -437,19 +433,19 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 	public void setLabels() {
 
-	
+
 		lblStep.setText(app.getMenu("Step") + ":");		
 		lblInterval.setText(" \u2264 x \u2264 " );	// <= x <=
 
 		// header text
 		String[] intervalColumnNames = {app.getPlain("fncInspector.Property"), app.getPlain("fncInspector.Value")};
 		modelInterval.setColumnIdentifiers(intervalColumnNames);
-		
+
 		tabPanel.setTitleAt(1, app.getPlain("fncInspector.Points"));
 		tabPanel.setTitleAt(0, app.getPlain("fncInspector.Interval"));
 		lblGeoName.setText(getTitleString());
-		
-		
+
+
 		//tool tips
 		btnHelp.setToolTipText(app.getPlain("ShowOnlineHelp"));
 		btnOscCircle.setToolTipText(app.getPlainTooltip("fncInspector.showOscCircle"));
@@ -460,12 +456,12 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		btnRemoveColumn.setToolTipText(app.getPlainTooltip("fncInspector.removeColumn"));
 		fldStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));
 		lblStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));	
-		
-		
+
+
 		// add/remove extra column buttons
 		btnRemoveColumn.setText("\u2718");
 		//btnAddColumn.setText("\u271A");
-		
+
 		Container c = btnAddColumn.getParent();
 		c.removeAll();
 		createBtnAddColumn();		
@@ -509,8 +505,10 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 			pts.updateRepaint();
 
 			tableXY.getSelectionModel().removeListSelectionListener(this);
+
 			// reset table model and update the XYtable
 			tableXY.setCellEditable(-1, -1);
+
 			if(btnTable.isSelected()){
 				modelXY.setRowCount(pointCount);
 				tableXY.setCellEditable((pointCount -1)/2,0);
@@ -569,6 +567,10 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 	}
 
 
+	private ArrayList<String> property = new ArrayList<String>();
+	private ArrayList<String> value = new ArrayList<String>();
+	// store number values for copy 
+	private ArrayList<Double[]> value2 = new ArrayList<Double[]>();
 
 
 	/**
@@ -579,9 +581,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 		isChangingValue = true;
 
-		ArrayList<String> property = new ArrayList<String>();
-		ArrayList<String> value = new ArrayList<String>();
-
+		property.clear();
+		value.clear();
+		value2.clear();
 
 		// prepare algos and other objects needed for the calcs
 		//=======================================================
@@ -633,13 +635,17 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 		property.add(app.getCommand("Min"));
 		value.add("(" + nf.format(xMinInt) + " , " + nf.format(yMinInt) + ")" );
+		Double[] min = {xMinInt, yMinInt};
+		value2.add(min);
 
 		property.add(app.getCommand("Max"));
 		value.add("(" + nf.format(xMaxInt) + " , " + nf.format(yMaxInt) + ")" );
+		Double[] max = {xMaxInt, yMaxInt};
+		value2.add(max);
 
 		property.add(null);
 		value.add(null );
-
+		value2.add(null );
 
 		// calculate roots
 		ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
@@ -654,31 +660,49 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		rootGeos = root.getGeoElements();
 
 
+		property.add(app.getCommand("Root"));
+
 		switch (rootGeos.length) {
-		case 0: value.add(app.getPlain("fncInspector.NoRoots"));
-		break;
-		case 1: 
-			if (rootGeos[0].isDefined())
-				value.add(kernel.format(((GeoPoint)rootGeos[0]).inhomX));
-			else
-				value.add(app.getPlain("fncInspector.NoRoots"));
+		case 0: 
+			value.add(app.getPlain("fncInspector.NoRoots"));
+			value2.add(null);
 			break;
-		default: value.add(app.getPlain("fncInspector.MultipleRoots"));
+		case 1: 
+			if (rootGeos[0].isDefined()){
+				value.add(kernel.format(((GeoPoint)rootGeos[0]).inhomX));
+				Double[] r = {((GeoPoint)rootGeos[0]).inhomX};
+				value2.add(r);
+			}
+			else{
+				value.add(app.getPlain("fncInspector.NoRoots"));
+				value2.add(null);
+			}
+			break;
+		default: 
+			value.add(app.getPlain("fncInspector.MultipleRoots"));
+			value2.add(null);
+			
 		}
 
-		property.add(app.getCommand("Root"));
+
 		property.add(null);
 		value.add(null );
-
+		value2.add(null);
 
 		property.add(app.getCommand("Area"));
 		value.add(nf.format(integral));
+		Double[] a = {integral};
+		value2.add(a);
 
 		property.add(app.getCommand("Mean"));
 		value.add(nf.format(mean));
+		Double[] m= {mean};
+		value2.add(m);
 
 		property.add(app.getCommand("Length"));
 		value.add(nf.format(length));
+		Double[] l= {length};
+		value2.add(l);
 
 
 
@@ -700,6 +724,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 
 
+
 	/**
 	 * Updates the XYTable with the coordinates of the current sample points and
 	 * any related values (e.g. derivative, difference)
@@ -711,6 +736,11 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		//String lbl = selectedGeo.getLabel();
 		GeoFunction f = (GeoFunction) selectedGeo;
 
+		// init the copy array 
+		xyTableCopyList.clear();
+		Double[] xArray = new Double[modelXY.getRowCount()];
+		Double[] yArray = new Double[modelXY.getRowCount()];
+
 		if(btnTable.isSelected()){
 			double x = start - step*(pointCount-1)/2;
 			double y;
@@ -719,6 +749,11 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 				modelXY.setValueAt(nf.format(x),i,0);
 				modelXY.setValueAt(nf.format(y),i,1);
 				((GeoPoint) pts.get(i)).setCoords(x, y, 1);
+
+				// collect x, y points into the copy arrays
+				xArray[i] = x;
+				yArray[i] = y;
+
 				x = x + step;
 			}
 
@@ -729,7 +764,15 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 			double y = f.evaluate(x); 
 			modelXY.setValueAt(nf.format(x),0,0);
 			modelXY.setValueAt(nf.format(y),0,1);
+
+			// collect x, y points into the copy arrays
+			xArray[0] = x;
+			yArray[0] = y;
+
 		}
+
+		xyTableCopyList.add(xArray);
+		xyTableCopyList.add(yArray);
 
 		// update any extra columns added by the user (these will show derivatives, differences etc.) 
 		updateExtraColumns();
@@ -747,6 +790,8 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 		for(int column = 2; column < extraColumnList.size() + 2; column ++ ){
 
+			Double[] copyArray = new Double[modelXY.getRowCount()];
+
 			int columnType = extraColumnList.get(column-2);
 			switch (columnType){
 
@@ -756,6 +801,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 					double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
 					double d = derivative.evaluate(x);// evaluateExpression(derivative.getLabel() + "(" + x + ")");
 					modelXY.setValueAt(nf.format(d),row,column);
+					copyArray[row] = d; 
 				}	
 				break;
 
@@ -765,6 +811,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 					double x = Double.parseDouble((String) modelXY.getValueAt(row, 0));
 					double d2 = derivative2.evaluate(x);//evaluateExpression(derivative2.getLabel() + "(" + x + ")");
 					modelXY.setValueAt(nf.format(d2),row,column);
+					copyArray[row] = d2; 
 				}	
 				break;
 
@@ -790,6 +837,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 					//double c = evaluateExpression(
 					//		"Curvature[ (" + x + "," + y  + ")," + selectedGeo.getLabel() + "]");
 					modelXY.setValueAt(nf.format(c),row,column);
+					copyArray[row] = c; 
 				}	
 				break;
 
@@ -800,13 +848,19 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 						double prev = Double.parseDouble((String) modelXY.getValueAt(row-1, column -1));
 						double x = Double.parseDouble((String) modelXY.getValueAt(row, column-1));
 						modelXY.setValueAt(nf.format(x - prev),row,column);
+						copyArray[row] = x-prev; 
 					}else{
 						modelXY.setValueAt(null,row,column);
+						copyArray[row] = null; 
 					}
+
 				}	
 				break;
 
 			}
+
+			xyTableCopyList.add(copyArray);
+
 		}
 	}
 
@@ -1445,7 +1499,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		mi.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
-				//doCopyToSpreadsheet();
+				doCopyToSpreadsheet();
 			}
 		});
 		mi.setEnabled(app.getGuiManager().hasSpreadsheetView());
@@ -1455,24 +1509,76 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		// rounding
 		btnOptions.addPopupMenuItem(getMyNumberFormat().createMenuDecimalPlaces());
 
-
-		// help 
-		mi = new JMenuItem(app.getMenu("Help") + "...", app.getImageIcon("help.png"));
-		mi.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e) {
-				//doCopyToSpreadsheet();
-			}
-		});
-		//btnOptions.addPopupMenuItem(mi);
-
 	}
 
 
 
 
-}
+	private void doCopyToSpreadsheet(){
 
+		SpreadsheetView sp = (SpreadsheetView) app.getGuiManager().getSpreadsheetView();
+		if(sp == null) return;
+
+		Construction cons = app.getKernel().getConstruction();
+		GeoElement geo = null;
+		String str;
+		Double number;
+		int targetColumn = sp.getHighestUsedColumn();
+
+		if(tabPanel.getSelectedComponent() == pointTabPanel){
+
+			for(int c = 0; c < tableXY.getColumnCount(); c++ ){
+				targetColumn ++;
+				for(int row = 0; row < tableXY.getRowCount() + 1; row++){
+					// copy table header
+					if(row == 0){
+						geo = new GeoText(cons, tableXY.getColumnName(c));
+						processCellGeo(geo,targetColumn, row);
+					}
+					// copy column data value
+					else if(xyTableCopyList.get(c)[row-1] != null){
+						geo = new GeoNumeric(cons, xyTableCopyList.get(c)[row-1]);
+						processCellGeo(geo,targetColumn, row);
+					}
+				}
+			}
+		}
+
+		else{
+			for(int c = 0; c < tableInterval.getColumnCount(); c++ ){
+				targetColumn ++;
+				for(int row = 0; row < tableInterval.getRowCount(); row++){
+
+					// first column has property names
+					if(c == 0 && property.get(row) != null){
+						geo = new GeoText(cons, property.get(row));	
+						processCellGeo(geo,targetColumn, row);
+					}
+
+					// remaining columns have data
+					else if(value2.get(row) != null){
+
+						for(int k = 0; k < value2.get(row).length; k++)
+							if(value2.get(row)[k] != null){	
+								geo = new GeoNumeric(cons, value2.get(row)[k]);
+								processCellGeo(geo,targetColumn + k, row);
+							}
+					}
+				}
+			}
+		}
+
+	}
+
+	private void processCellGeo(GeoElement geo, int column, int row){
+		geo.setLabel(GeoElement.getSpreadsheetCellName(column, row));
+		geo.setEuclidianVisible(false);
+		geo.setAuxiliaryObject(true);
+		geo.update();
+	}
+
+
+}
 
 
 

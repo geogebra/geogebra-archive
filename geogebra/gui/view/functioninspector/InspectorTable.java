@@ -66,18 +66,6 @@ public class InspectorTable extends JTable{
 		setDefaultEditor(Object.class, new MyEditor());
 
 		editableCell = new HashSet<Point>();
-
-
-		addMouseListener(new MouseAdapter(){
-			public void mouseClicked(MouseEvent e) {
-
-				if (Application.isRightClick(e) || e.isMetaDown()) {
-					ContextMenu contextMenu = new ContextMenu();
-					contextMenu.show(e.getComponent(), e.getX(),e.getY());
-				}
-			}	
-		});
-
 	}
 
 
@@ -278,72 +266,7 @@ public class InspectorTable extends JTable{
 	}
 
 
-	//=============================================
-	//      Context Menu
-	//=============================================
-
-	private class ContextMenu extends JPopupMenu{
-
-		public  ContextMenu(){
-			this.setOpaque(true);
-			setFont(app.getPlainFont());
-			JMenuItem mi = new JMenuItem(app.getMenu("CopyToSpreadsheet"));
-			mi.addActionListener(new ActionListener(){
-
-				public void actionPerformed(ActionEvent e) {
-					doCopyToSpreadsheet();
-				}
-
-			});
-			add(mi);
-			mi.setEnabled(app.getGuiManager().hasSpreadsheetView());
-		}
-	}
-
-	private void doCopyToSpreadsheet(){
-
-		SpreadsheetView sp = (SpreadsheetView) app.getGuiManager().getSpreadsheetView();
-		if(sp == null) return;
-
-		Construction cons = app.getKernel().getConstruction();
-		GeoElement geo;
-		String value;
-		int targetColumn = sp.getHighestUsedColumn() + 1;
-
-		// copy first column
-		for(int row = 0; row < this.getRowCount(); row++){
-			value = (String) getModel().getValueAt(row, 0);
-			if(value != null){
-				if(tableType == TYPE_INTERVAL)
-					geo = new GeoText(cons,value);
-				else
-					geo = new GeoNumeric(cons, Double.parseDouble(value));
-				geo.setLabel(GeoElement.getSpreadsheetCellName(targetColumn, row));
-				geo.setEuclidianVisible(false);
-				geo.setAuxiliaryObject(true);
-				geo.update();
-			}
-		}
-		// copy remaining columns
-		for(int c = 1; c < getColumnCount(); c++ ){
-			targetColumn ++;
-			for(int row = 0; row < this.getRowCount(); row++){
-				value = (String) getModel().getValueAt(row, c);
-				if(value != null){
-					//geo = new GeoNumeric(cons, Double.parseDouble(value));
-					geo = new GeoText(cons, value);
-					geo.setLabel(GeoElement.getSpreadsheetCellName(targetColumn, row));
-					geo.setEuclidianVisible(false);
-					geo.setAuxiliaryObject(true);
-					geo.update();
-				}
-
-			}
-		}
-
-
-	}
-
+	
 
 
 }
