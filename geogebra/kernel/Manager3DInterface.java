@@ -59,7 +59,7 @@ public interface Manager3DInterface {
 
 
 			/** Point in region with cartesian coordinates (x,y,z)   */
-			 public GeoPointND Point3DIn(String label, Region region, double x, double y, double z);
+			 public GeoPointND Point3DIn(String label, Region region, double x, double y, double z, boolean addToConstruction);
 		
 			 public GeoPointND Point3DIn(Region region, double x, double y, double z);
 
