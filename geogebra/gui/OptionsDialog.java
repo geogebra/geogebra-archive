@@ -115,6 +115,11 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * The button which closes the window and stores all changes. 
 	 */
 	private JButton closeButton;
+	
+	/**
+	 * Button to restore the preferences.
+	 */
+	private JButton restoreDefaultsButton;
 
 	/**
 	 * Initialize the GUI and logics.
@@ -200,10 +205,30 @@ public class OptionsDialog extends JDialog implements WindowListener {
 
 		add(tabbedPane, BorderLayout.CENTER);
 
-		// init close button
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		// panel with buttons at the bottom
+		JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlDkShadow));
-		buttonPanel.setBackground(Color.white);
+		buttonPanel.setBackground(Color.white);		
+		
+		// (restore defaults on the left side)
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		panel.setBackground(Color.white);
+		
+		restoreDefaultsButton = new JButton();
+		restoreDefaultsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GeoGebraPreferences.getPref().clearPreferences();
+				updateGUI(); // update GUI to reflect possible changes in preferences
+			}
+		});
+		
+		panel.add(restoreDefaultsButton);
+		
+		buttonPanel.add(panel, BorderLayout.WEST);
+		
+		// (save and close on the right side)
+		panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		panel.setBackground(Color.white);
 		
 		saveButton = new JButton();
 		saveButton.addActionListener(new ActionListener() {
@@ -211,15 +236,16 @@ public class OptionsDialog extends JDialog implements WindowListener {
 				GeoGebraPreferences.getPref().saveXMLPreferences(app);
 			}
 		});
-		buttonPanel.add(saveButton);
+		panel.add(saveButton);
 		closeButton = new JButton();
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeDialog();
 			}
 		});
-		buttonPanel.add(closeButton);
-
+		panel.add(closeButton);
+		buttonPanel.add(panel, BorderLayout.EAST);		
+		
 		add(buttonPanel, BorderLayout.SOUTH);
 
 		setLabels(); // update all labels
@@ -238,6 +264,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 
 		closeButton.setText(app.getMenu("Close"));
 		saveButton.setText(app.getMenu("Settings.Save"));
+		restoreDefaultsButton.setText(app.getMenu("Settings.ResetDefault"));
 
 		tabbedPane.setTitleAt(TAB_DEFAULTS, app.getPlain("Defaults"));
 		tabbedPane.setTitleAt(TAB_EUCLIDIAN, app.getPlain("DrawingPad"));

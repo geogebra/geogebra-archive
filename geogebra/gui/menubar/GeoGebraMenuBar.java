@@ -124,6 +124,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 		viewMenu.update();
 		optionsMenu.update();
 		toolsMenu.update();
+		perspectivesMenu.update();
 		
 		if(!app.isApplet())
 			windowMenu.update();

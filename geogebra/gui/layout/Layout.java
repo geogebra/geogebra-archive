@@ -643,6 +643,8 @@ public class Layout {
 				if(index != -1) { // -1 = no entry selected
 					listModel.remove(index);
 					layout.removePerspective(index);
+					GeoGebraPreferences.getPref().saveXMLPreferences(app);
+					
 					app.updateMenubar();
 					updateRemoveButton();
 				}

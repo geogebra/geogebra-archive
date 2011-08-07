@@ -23,8 +23,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	private Kernel kernel;
 	private AbstractAction
 		//drawingPadPropAction,
-		savePreferencesAction,
-		clearPreferencesAction,
 		showOptionsAction
 	;
 	
@@ -169,13 +167,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 		// drawing pad properteis	
 		add(showOptionsAction);
-		
-		if(!app.isApplet() && Application.hasFullPermissions()) {
-			// submenu = new JMenu(app.getMenu("Settings"));
-			add(savePreferencesAction);
-			add(clearPreferencesAction);
-			// add(submenu);
-		}
 	}
 
 	/**
@@ -274,35 +265,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showOptionsDialog(-1);
-			}
-		};
-
-		/*
-		drawingPadPropAction = new AbstractAction(app.getPlain("DrawingPad")
-				+ " ...", app.getImageIcon("document-properties.png")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_EUCLIDIAN);
-			}
-		};*/
-
-		savePreferencesAction = new AbstractAction(
-				app.getMenu("Settings.Save"), app
-						.getImageIcon("document-save.png")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.getPref().saveXMLPreferences(app);
-			}
-		};
-
-		clearPreferencesAction = new AbstractAction(app
-				.getMenu("Settings.ResetDefault"), app.getEmptyIcon()) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.getPref().clearPreferences();
 			}
 		};
 	}
