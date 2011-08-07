@@ -55,9 +55,11 @@ import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -409,8 +411,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		});	
 		btnHelp.setFocusable(false);
 
+			
 		createBtnAddColumn();
-
+		
 	}
 
 
@@ -467,6 +470,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		createBtnAddColumn();		
 		c.add(btnAddColumn);
 		c.add(btnRemoveColumn);
+		
+		createOptionsButton();
+		
 	}
 
 
@@ -1416,8 +1422,22 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		MyTextField dummyField = new MyTextField(app.getGuiManager());
 		tableXY.setRowHeight(dummyField.getPreferredSize().height);
 		tableInterval.setRowHeight(dummyField.getPreferredSize().height);
+		
+		setFontRecursive(this, app.getPlainFont());
 	}
 
+	
+	public void setFontRecursive(Container c, Font font) {
+		Component[] components = c.getComponents();
+		for(Component com : components) {
+			com.setFont(font);
+			if(com instanceof Container) 
+				setFontRecursive((Container) com, font);
+		}
+	}
+	
+	
+	
 
 	public void windowGainedFocus(WindowEvent arg0) {
 		if (!isModal()) {
@@ -1490,8 +1510,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 			btnOptions.setDownwardPopup(true);
 		}
 
+		btnOptions.removeAllMenuItems();
+		
 		btnOptions.setToolTipText(app.getMenu("Options"));
-
 
 
 		// copy to spreadsheet
