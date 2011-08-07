@@ -3,7 +3,6 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
@@ -26,11 +25,9 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.Drawable3DLists.Drawable3DList;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.AlgoIntersectCS1D2D;
 import geogebra3D.kernel3D.AlgoIntersectCS2D2D;
-import geogebra3D.kernel3D.AlgoIntersectPlaneQuadric;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -43,9 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
@@ -607,7 +602,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			else
 				point3D = (GeoPoint3D) kernel.getManager3D().Point3D(null, 0,0,0);
 		}else{
-			point3D = (GeoPoint3D) createNewPoint(true, (Region) view3D.getxOyPlane());
+			point3D = (GeoPoint3D) createNewPoint(true, (Region) view3D.getxOyPlane(), complex);
 			if (point3D==null)
 				return null;
 			point3D.setPath(null);
@@ -627,7 +622,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * create a new path point
 	 * or update the preview point
 	 */	
-	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, boolean complex){
 			
 		GeoPoint3D point3D;
 		
@@ -654,7 +649,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * create a new region point
 	 * or update the preview point
 	 */	
-	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Region region, boolean complex){
 		
 		GeoPoint3D point3D;
 		
