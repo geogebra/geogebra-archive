@@ -601,12 +601,15 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
     		switch (kernel.getCASPrintForm()){
     			case ExpressionNode.STRING_TYPE_MPREDUCE:
     				return "i";
-    			case ExpressionNode.STRING_TYPE_GEOGEBRA:
-    			case ExpressionNode.STRING_TYPE_LATEX:
-    				return Unicode.IMAGINARY;
+    				
     			default:
+//    			case ExpressionNode.STRING_TYPE_GEOGEBRA:
+//    			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
+//    			case ExpressionNode.STRING_TYPE_LATEX:
+    				return Unicode.IMAGINARY;
     		}
     	}
+    	
 		sbToString.setLength(0);
 		sbToString.append('(');
 		sbToString.append(kernel.format(x));
