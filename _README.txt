@@ -17,6 +17,7 @@ Libraries used by GeoGebra:
 * JUNG, http://jung.sourceforge.net (BSD)
 * Tango Icon Gallery, http://tango.freedesktop.org (Public Domain)
 * Maxima, http://maxima.sourceforge.net/ (GPL)
+* JSXGraph, http://jsxgraph.org/ (LGPL)
 
 For other tools used for running or building GeoGebra please see
 http://www.geogebra.org/trac/wiki/SourcesForUsedLibraries
