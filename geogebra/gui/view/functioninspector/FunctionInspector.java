@@ -17,6 +17,8 @@ import geogebra.gui.InputDialog;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
+import geogebra.gui.util.SpecialNumberFormat;
+import geogebra.gui.util.SpecialNumberFormatInterface;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoCasDerivative;
 import geogebra.kernel.AlgoCurvature;
@@ -73,6 +75,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -95,7 +98,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class FunctionInspector extends InputDialog 
 implements View, MouseListener, ListSelectionListener, 
-KeyListener, ActionListener{
+KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 	private static final Color DISPLAY_GEO_COLOR = Color.BLUE;
 	private static final Color DISPLAY_GEO2_COLOR = Color.BLUE;
@@ -116,7 +119,7 @@ KeyListener, ActionListener{
 	private Kernel kernel;
 	private Construction cons;
 	private EuclidianView activeEV;
-	
+
 	// table fields
 	private InspectorTable tableXY, tableInterval;
 	private DefaultTableModel modelXY, modelInterval;
@@ -131,32 +134,33 @@ KeyListener, ActionListener{
 	private MyTextField fldStep, fldLow, fldHigh;
 	private JButton btnRemoveColumn;
 	private JToggleButton btnOscCircle, btnTangent, btnXYSegments, btnTable;
-	private PopupMenuButton btnAddColumn;
+	private PopupMenuButton btnAddColumn, btnOptions;
 	private JTabbedPane tabPanel;
 	private JPanel intervalTabPanel, pointTabPanel, headerPanel, helpPanel;
 
-	
+
 	// Geos
 	private GeoElement tangentLine, oscCircle, xSegment, ySegment;
 	private GeoElement functionInterval, integralGeo, lengthGeo;
 	private GeoFunction derivative, derivative2, selectedGeo;
 	private GeoPoint testPoint, lowPoint, highPoint, minPoint, maxPoint;
 	private GeoList pts;
-	
+
 	private ArrayList<GeoElement> intervalTabGeoList, pointTabGeoList, hiddenGeoList;
 	private GeoElement[] rootGeos;
 
-	
-	
+
+
 	private boolean isIniting;
 	private double xMin, xMax, start =-1, step = 0.1;
 	private double initialX;
-	
+
 	private boolean isChangingValue;
 	private int pointCount = 9;
 
-	private NumberFormat nf;
 
+	private SpecialNumberFormat nf;
+	private JButton btnHelp;
 
 
 	/** Constructor */
@@ -166,6 +170,9 @@ KeyListener, ActionListener{
 		this.app = app;	
 		kernel = app.getKernel();
 		cons = kernel.getConstruction();
+
+		nf = new SpecialNumberFormat(app, this);
+
 		boolean showApply = false;
 		this.selectedGeo = selectedGeo;
 		activeEV = (EuclidianView) app.getActiveEuclidianView();	
@@ -181,11 +188,6 @@ KeyListener, ActionListener{
 		this.btCancel.setVisible(false);
 
 
-		nf = NumberFormat.getInstance(Locale.ENGLISH);
-		nf.setMaximumFractionDigits(4);
-		nf.setGroupingUsed(false);
-
-
 		// lists of all geos we create
 		intervalTabGeoList = new ArrayList<GeoElement>();
 		pointTabGeoList = new ArrayList<GeoElement>();
@@ -198,10 +200,10 @@ KeyListener, ActionListener{
 		// build dialog content pane
 		createHeaderPanel();
 		createTabPanel();
-		
+
 		getContentPane().add(headerPanel,BorderLayout.NORTH);
 		getContentPane().add(tabPanel,BorderLayout.CENTER);
-		
+
 		centerOnScreen();
 		setResizable(true);
 
@@ -215,9 +217,9 @@ KeyListener, ActionListener{
 		setLabels();
 		insertGeoElement(selectedGeo);
 		handleTabChange();
-		
+
 		//addHelpButton(Application.WIKI_MANUAL);
-		
+
 		pack();
 
 		isIniting = false;
@@ -246,19 +248,20 @@ KeyListener, ActionListener{
 	private void createHeaderPanel(){
 
 		createHelpPanel();
-		
+
 		headerPanel = new JPanel(new BorderLayout());
 		headerPanel.add(lblGeoName, BorderLayout.CENTER);	
-	//	headerPanel.add(helpPanel,BorderLayout.EAST);
+		headerPanel.add(helpPanel,BorderLayout.EAST);
 		headerPanel.setBorder(BorderFactory.createEmptyBorder(2,5,2,2));
 	}
 
 
 	private void createHelpPanel(){
 
+		createOptionsButton();
 		helpPanel = new JPanel(new FlowLayout());
-		JButton helpButton = new JButton(app.getImageIcon("help.png"));
-		helpPanel.add(helpButton);
+		helpPanel.add(btnHelp);
+		helpPanel.add(btnOptions);
 	}
 
 
@@ -397,12 +400,25 @@ KeyListener, ActionListener{
 		btnRemoveColumn = new JButton();
 		btnRemoveColumn.addActionListener(this);
 
-		makeBtnAddColumn();
+		btnHelp = new JButton(app.getImageIcon("help.png"));
+		btnHelp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.getGuiManager().openHelp("Function_Inspector_Tool");
+					}
+				};
+				runner.start();
+			}
+		});	
+		btnHelp.setFocusable(false);
+		
+		createBtnAddColumn();
 
 	}
 
 
-	private void makeBtnAddColumn() {
+	private void createBtnAddColumn() {
 		columnNames = new String[4];
 		columnNames[COL_DERIVATIVE] =	app.getPlain("fncInspector.Derivative");
 		columnNames[COL_DERIVATIVE2] =	app.getPlain("fncInspector.Derivative2");
@@ -421,19 +437,21 @@ KeyListener, ActionListener{
 
 	public void setLabels() {
 
-		String[] intervalColumnNames = {app.getPlain("fncInspector.Property"), app.getPlain("fncInspector.Value")};
-		modelInterval.setColumnIdentifiers(intervalColumnNames);
-
+	
 		lblStep.setText(app.getMenu("Step") + ":");		
 		lblInterval.setText(" \u2264 x \u2264 " );	// <= x <=
 
-		btnRemoveColumn.setText("\u2718");
-		//btnAddColumn.setText("\u271A");
-
+		// header text
+		String[] intervalColumnNames = {app.getPlain("fncInspector.Property"), app.getPlain("fncInspector.Value")};
+		modelInterval.setColumnIdentifiers(intervalColumnNames);
+		
 		tabPanel.setTitleAt(1, app.getPlain("fncInspector.Points"));
 		tabPanel.setTitleAt(0, app.getPlain("fncInspector.Interval"));
-
+		lblGeoName.setText(getTitleString());
+		
+		
 		//tool tips
+		btnHelp.setToolTipText(app.getPlain("ShowOnlineHelp"));
 		btnOscCircle.setToolTipText(app.getPlainTooltip("fncInspector.showOscCircle"));
 		btnXYSegments.setToolTipText(app.getPlainTooltip("fncInspector.showXYLines"));
 		btnTable.setToolTipText(app.getPlainTooltip("fncInspector.showTable"));
@@ -441,11 +459,16 @@ KeyListener, ActionListener{
 		btnAddColumn.setToolTipText(app.getPlainTooltip("fncInspector.addColumn"));
 		btnRemoveColumn.setToolTipText(app.getPlainTooltip("fncInspector.removeColumn"));
 		fldStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));
-		lblStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));		
-		lblGeoName.setText(getTitleString());
+		lblStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));	
+		
+		
+		// add/remove extra column buttons
+		btnRemoveColumn.setText("\u2718");
+		//btnAddColumn.setText("\u271A");
+		
 		Container c = btnAddColumn.getParent();
 		c.removeAll();
-		makeBtnAddColumn();		
+		createBtnAddColumn();		
 		c.add(btnAddColumn);
 		c.add(btnRemoveColumn);
 	}
@@ -541,7 +564,6 @@ KeyListener, ActionListener{
 			fldLow.setText(nf.format(coords[0]));
 			highPoint.getCoords(coords);
 			fldHigh.setText(nf.format(coords[0]));
-
 			updateIntervalTable();
 		}
 	}
@@ -819,6 +841,11 @@ KeyListener, ActionListener{
 	public void actionPerformed(ActionEvent e) {	
 		Object source = e.getSource();
 
+		if(e.getActionCommand().equals("numberFormatChange")){
+			System.out.println("number format changes!!!!!!!!");
+		}
+
+
 		if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
 		}
@@ -837,14 +864,24 @@ KeyListener, ActionListener{
 			updateGUI();
 		}
 
+		else if (source == nf) {
+			System.out.println("NFNFN number format changes!!!!!!!!");
+		}	
+
 
 	}	
 
 	private void doTextFieldActionPerformed(JTextField source) {
 		try {
 
-			Double value = Double.parseDouble( source.getText().trim());
-			if (value == null) return;
+			String inputText = source.getText().trim();
+			if (inputText == null) return;
+
+			// allow input such as sqrt(2)
+			NumberValue nv;
+			nv = kernel.getAlgebraProcessor().evaluateToNumeric(inputText, false);		
+			double value = nv.getDouble();
+
 
 
 			if (source == fldStep){ 
@@ -1357,23 +1394,79 @@ KeyListener, ActionListener{
 
 	private void updateIntervalGeoVisiblity(){
 
-	//	minPoint.setEuclidianVisible(tableInterval.isRowSelected(0));
+		//	minPoint.setEuclidianVisible(tableInterval.isRowSelected(0));
 		minPoint.setEuclidianVisible(false);
 		minPoint.update();
-	//	maxPoint.setEuclidianVisible(tableInterval.isRowSelected(1));
+		//	maxPoint.setEuclidianVisible(tableInterval.isRowSelected(1));
 		maxPoint.setEuclidianVisible(false);
 		maxPoint.update();
-		
-		
-		
-		
-	//	integralGeo.setEuclidianVisible(tableInterval.isRowSelected(5));
+
+
+
+
+		//	integralGeo.setEuclidianVisible(tableInterval.isRowSelected(5));
 		integralGeo.setEuclidianVisible(true);
 		integralGeo.update();
 
 		activeEV.repaint();
 	}
 
+
+
+	public SpecialNumberFormat getMyNumberFormat() {
+		return nf;
+	}
+
+
+	public void changedNumberFormat() {
+		this.updateGUI();
+		this.updateIntervalFields();
+		this.updateTestPoint();
+
+	}
+
+
+	private void createOptionsButton(){
+
+		if(btnOptions == null){
+			btnOptions = new PopupMenuButton();
+			btnOptions.setKeepVisible(true);
+			btnOptions.setStandardButton(true);
+			btnOptions.setFixedIcon(app.getImageIcon("tool.png"));
+			btnOptions.setDownwardPopup(true);
+		}
+
+		btnOptions.setToolTipText(app.getMenu("Options"));
+
+
+
+		// copy to spreadsheet
+		JMenuItem mi = new JMenuItem(app.getMenu("CopyToSpreadsheet"));
+		mi.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				//doCopyToSpreadsheet();
+			}
+		});
+		mi.setEnabled(app.getGuiManager().hasSpreadsheetView());
+		btnOptions.addPopupMenuItem(mi);
+
+
+		// rounding
+		btnOptions.addPopupMenuItem(getMyNumberFormat().createMenuDecimalPlaces());
+
+
+		// help 
+		mi = new JMenuItem(app.getMenu("Help") + "...", app.getImageIcon("help.png"));
+		mi.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				//doCopyToSpreadsheet();
+			}
+		});
+		//btnOptions.addPopupMenuItem(mi);
+
+	}
 
 
 
