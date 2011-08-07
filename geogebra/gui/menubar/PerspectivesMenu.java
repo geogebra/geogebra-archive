@@ -71,6 +71,9 @@ class PerspectivesMenu extends BaseMenu {
 			}
 			addSeparator();
 		}
+		
+		// diable menu item to manage perspectives if there is no user perspective
+		managePerspectivesAction.setEnabled(perspectives.length != 0);
 
 		add(managePerspectivesAction);
 		add(savePerspectiveAction);
