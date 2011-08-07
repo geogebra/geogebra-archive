@@ -3432,7 +3432,9 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				case $VAR_ROW:
 				case $VAR_COL:
 				case $VAR_ROW_COL:
+					sb.append(leftBracket(STRING_TYPE));
 					sb.append(leftStr);
+					sb.append(rightBracket(STRING_TYPE));
 					break;
 
 				default:
