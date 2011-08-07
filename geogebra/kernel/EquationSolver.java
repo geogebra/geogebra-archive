@@ -344,7 +344,9 @@ public class EquationSolver {
     		res[roots++] = norm * Math.cos ((theta - 2.0 * Math.PI) / 3) - a / 3;
 
     		// GeoGebra addition
-    		fixRoots(res, eqn); 
+    		//TODO: find a better way to deal with this
+    		if (res!=eqn) //if res has the same reference as eqn, it's not possible to fix roots
+    			fixRoots(res, eqn); 
 
     		return 3;
     	}
