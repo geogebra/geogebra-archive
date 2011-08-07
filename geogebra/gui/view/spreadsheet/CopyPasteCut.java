@@ -129,10 +129,18 @@ public class CopyPasteCut {
 	public boolean paste(CellRange cr) {
 		return paste(cr.getMinColumn(),cr.getMinRow(),cr.getMaxColumn(),cr.getMaxRow());
 	}
-
+	
 	public boolean paste(int column1, int row1, int column2, int row2) {
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		Transferable contents = clipboard.getContents(null);
+		return paste( column1,  row1,  column2,  row2,  null);
+	}
+
+	public boolean paste(int column1, int row1, int column2, int row2, Transferable contents) {
+
+		if(contents == null){
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			contents = clipboard.getContents(null);
+		}
+
 		String buf = null;
 		boolean succ = false;
 
@@ -148,9 +156,9 @@ public class CopyPasteCut {
 
 		try {
 			DataFlavor HTMLflavor = new	DataFlavor("text/html;class=java.lang.String");
-			
+
 			//System.out.println("is HTML? " + contents.isDataFlavorSupported(HTMLflavor));
-			
+
 			if(contents.isDataFlavorSupported(HTMLflavor)){
 				buf = convertHTMLTableToCSV((String) contents.getTransferData(HTMLflavor));
 			}
@@ -822,7 +830,7 @@ public class CopyPasteCut {
 	private static Comparator comparator;
 
 
-	
+
 	public void deleteAll() {
 
 		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
@@ -843,7 +851,7 @@ public class CopyPasteCut {
 
 		// read file 
 		StringBuilder contents = new StringBuilder();
-		
+
 		try {				
 			InputStream is = url.openStream();
 			BufferedReader input = new BufferedReader(new InputStreamReader(is));
@@ -875,13 +883,13 @@ public class CopyPasteCut {
 		if(clearSpreadsheet){
 			deleteAll();
 		}
-		
+
 		boolean oldEqualsSetting = view.isEqualsRequired();
 		view.setEqualsRequired(true);
 		boolean succ = paste(targetRange);
 		clipboard.setContents(oldContent, null);
 		view.setEqualsRequired(oldEqualsSetting);
-		
+
 		return succ;
 
 

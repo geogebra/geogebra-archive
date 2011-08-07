@@ -51,6 +51,7 @@ public class MyTable extends JTable implements FocusListener
 
 	public static final int TABLE_MODE_STANDARD = 0;
 	public static final int TABLE_MODE_AUTOFUNCTION = 1;	
+	public static final int TABLE_MODE_DROP = 2;	
 	private int tableMode = TABLE_MODE_STANDARD;
 
 	public static final int MAX_CELL_EDIT_STRING_LENGTH = 10;
@@ -140,6 +141,11 @@ public class MyTable extends JTable implements FocusListener
 	protected int maxRow2 = -1;
 
 	protected boolean isOverDnDRegion = false;
+
+	public boolean isOverDnDRegion() {
+		return isOverDnDRegion;
+	}
+
 
 	// Keep track of ctrl-down. This is needed in some
 	// selection methods that do not receive key events.
@@ -1150,6 +1156,17 @@ public class MyTable extends JTable implements FocusListener
 
 
 	private Rectangle targetcellFrame;
+	
+	
+	public Rectangle getTargetcellFrame() {
+		return targetcellFrame;
+	}
+
+	public void setTargetcellFrame(Rectangle targetcellFrame) {
+		this.targetcellFrame = targetcellFrame;
+	}
+
+
 	final static float dash1[] = { 2.0f };
 	final static BasicStroke dashed = new BasicStroke(3.0f,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
@@ -1160,16 +1177,7 @@ public class MyTable extends JTable implements FocusListener
 
 		Graphics2D g2 = (Graphics2D)graphics;
 
-		//	drawGridLine(g2,1,2,5,2);
-
 		drawFormatBorders(g2);
-
-
-		if(!view.hasViewFocus()){
-			if(!isSelectNone)
-				setSelectNone(true);
-			return;
-		}
 
 
 		if(targetcellFrame != null){
@@ -1178,6 +1186,16 @@ public class MyTable extends JTable implements FocusListener
 
 			g2.draw(targetcellFrame);
 		}
+		
+		
+		if(!view.hasViewFocus()){
+			if(!isSelectNone)
+				setSelectNone(true);
+			return;
+		}
+
+
+		
 
 		/*
 		for(GeoElement geo: view.getTraceManager().getTraceGeoList()){
@@ -1797,18 +1815,22 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 	/**
-	 * Sets the table mode (currently the only modes are Standard and AutoFunction)
+	 * Sets the table mode 
 	 * @param tableMode
 	 */
 	public void setTableMode(int tableMode) { 
 
 		if(tableMode == TABLE_MODE_AUTOFUNCTION){
 
-			if(!initAutoFunction()) 
-				return;
-
-		}else{
-
+			if(!initAutoFunction())  return;
+		}
+		
+		else if(tableMode == TABLE_MODE_DROP){
+		  // nothing to do (yet)
+		}
+		
+		else
+		{
 			// Clear the targetcellFrame and ensure the selection rectangle color is standard 
 			targetcellFrame = null;
 			this.setSelectionRectangleColor(Color.BLUE);

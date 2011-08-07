@@ -93,7 +93,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	private StatDialog twoVarStatDialog;
 	private StatDialog multiVarStatDialog;
 
-	
+
 	// file browser defaults
 	public static final String DEFAULT_URL = "http://www.geogebra.org/static/data/data.xml";
 	private String defaultFile; 
@@ -115,7 +115,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	private JPanel spreadsheetPanel;
 
 
-
+	private SpreadsheetViewDnD dndHandler;
 
 	/**
 	 * Construct spreadsheet view as a split panel. 
@@ -138,7 +138,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		splitPane = new JSplitPane();
 		splitPane.setRightComponent(spreadsheetPanel);	
 		splitPane.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		// Set the browser as the left component or to null if showBrowserPanel == false
 		setShowFileBrowser(showBrowserPanel);  
 
@@ -167,7 +167,8 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			initialFilePath = defaultFile;
 		}
 
-
+		dndHandler = new SpreadsheetViewDnD(app, this);
+		
 	}
 
 
@@ -694,7 +695,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 		// layout
 		sb.append("\t<layout ");
-		
+
 		sb.append(" showFormulaBar=\"");
 		sb.append(showFormulaBar  ? "true" : "false" );
 		sb.append("\"");
@@ -802,7 +803,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			twoVarStatDialog.setLabels();
 		if(multiVarStatDialog !=null)
 			multiVarStatDialog.setLabels();
-		
+
 		if (table !=null)
 			table.setLabels();
 		if(formulaBar != null){
@@ -832,7 +833,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		table.headerRenderer.setPreferredSize(new Dimension(w, h));
 
 		table.setFont(app.getPlainFont());
-		
+
 		table.headerRenderer.setFont(font);
 
 		// Adjust row heights for tall LaTeX images

@@ -408,9 +408,12 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 	public void mouseDragged(MouseEvent e) {
 
-		if(table.getTableMode() == table.TABLE_MODE_AUTOFUNCTION){
+		if(table.getTableMode() == table.TABLE_MODE_AUTOFUNCTION
+				|| table.getTableMode() == table.TABLE_MODE_DROP){
+			System.out.println("drop is dragging ");
 			return;
 		}
+		
 		
 		// handle editing mode drag 
 		if (editor.isEditing()) {
@@ -605,16 +608,11 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 	 */
 	private void setTableCursor(){ 
 
-		if(table.isOverDot){
-			if(table.isDragingDot)
-				//table.setCursor(table.largeCrossCursor);
+		if(table.isOverDot)
 				table.setCursor(table.crossHairCursor);
-			else
-				//table.setCursor(table.largeCrossCursor);
-				table.setCursor(table.crossHairCursor);
-		}
-		//else if(table.isOverDnDRegion)
-		//table.setCursor(table.grabCursor);
+		
+	//	else if(table.isOverDnDRegion)
+	//		table.setCursor(table.grabCursor);
 
 		else
 			table.setCursor(table.defaultCursor);
