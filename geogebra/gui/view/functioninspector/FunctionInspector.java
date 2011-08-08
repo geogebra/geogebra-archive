@@ -26,6 +26,7 @@ import geogebra.kernel.AlgoCurvature;
 import geogebra.kernel.AlgoDependentFunction;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoDependentPoint;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionInterval;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoJoinPointsSegment;
@@ -33,6 +34,7 @@ import geogebra.kernel.AlgoLengthFunction;
 import geogebra.kernel.AlgoOsculatingCircle;
 import geogebra.kernel.AlgoPointOnPath;
 import geogebra.kernel.AlgoRoots;
+import geogebra.kernel.AlgoRootsPolynomial;
 import geogebra.kernel.AlgoTangentFunctionPoint;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -664,27 +666,44 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, high, false);
 		cons.removeFromConstructionList(xHigh);
 
-		AlgoRoots root = new AlgoRoots(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
-		cons.removeFromConstructionList(root);		
-		rootGeos = root.getGeoElements();
+		AlgoElement roots;
+		
+		if (selectedGeo.isPolynomialFunction(false)) {
+			roots = new AlgoRootsPolynomial(cons, selectedGeo);
+		} else {
+			roots = new AlgoRoots(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);			
+		}
+		
+		cons.removeFromConstructionList(roots);		
+		rootGeos = roots.getGeoElements();
 
 		property.add(app.getCommand("Root"));
+		
+		int count = 0;
+		double x = Double.NaN;
+		double root = Double.NaN;
+		
+		// count how many roots in range
+		for (int i = 0 ; i < rootGeos.length ; i++) {
+			GeoPoint p = ((GeoPoint)rootGeos[i]);
+			if (p.isDefined()) {
+				double rt = p.inhomX;
+				if (rt > xMin && rt < xMax) {
+					root = rt;
+					count ++;
+				}
+			}
+		}
 
-		switch (rootGeos.length) {
+		switch (count) {
 		case 0: 
 			value.add(app.getPlain("fncInspector.NoRoots"));
 			value2.add(null);
 			break;
 		case 1: 
-			if (rootGeos[0].isDefined()){
-				value.add(kernel.format(((GeoPoint)rootGeos[0]).inhomX));
-				Double[] r = {((GeoPoint)rootGeos[0]).inhomX};
-				value2.add(r);
-			}
-			else{
-				value.add(app.getPlain("fncInspector.NoRoots"));
-				value2.add(null);
-			}
+			value.add(kernel.format(root));
+			Double[] r = {root};
+			value2.add(r);
 			break;
 		default: 
 			value.add(app.getPlain("fncInspector.MultipleRoots"));
