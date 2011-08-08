@@ -1242,7 +1242,7 @@ public class Application implements KeyEventDispatcher {
 					} else {
 						File f = new File(fileArgument);
 						f = f.getCanonicalFile();
-						success = getGuiManager().loadFile(f, isMacroFile);
+						success = loadFile(f, isMacroFile);
 
 					}
 					
@@ -3152,10 +3152,10 @@ public class Application implements KeyEventDispatcher {
 	public void setShowAuxiliaryObjects(boolean flag) {
 		showAuxiliaryObjects = flag;
 
-		if (getGuiManager() != null)
+		if (getGuiManager() != null) {
 			getGuiManager().setShowAuxiliaryObjects(flag);
-		
-		updateMenubar();
+			updateMenubar();
+		}
 	}
 
 	public void setShowMenuBar(boolean flag) {
@@ -3444,6 +3444,44 @@ public class Application implements KeyEventDispatcher {
 	 * SAVE / LOAD methodes
 	 **************************************************************************/
 
+	/**
+	 * Load file
+	 */
+	public boolean loadFile(File file, boolean isMacroFile) {
+		// show file not found message
+			if (!file.exists()) {
+				/*
+				 * First parameter can not be the main component of the
+				 * application, otherwise that component would be validated
+				 * too early if a missing file was loaded through 
+				 * the command line, which causes some nasty rendering
+				 * problems.
+				 */
+				JOptionPane.showConfirmDialog(null,
+						getError("FileNotFound") + ":\n" + file.getAbsolutePath(),
+						getError("Error"), JOptionPane.DEFAULT_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+				return false;
+			}										     
+	        
+	 	   setWaitCursor();  
+		   if (!isMacroFile) {
+				// hide navigation bar for construction steps if visible
+				setShowConstructionProtocolNavigation(false);
+			}
+
+			boolean success = loadXML(file, isMacroFile);
+			
+			try {
+				createRegressionFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return success;
+	}
+	
 	/**
 	 * Loads construction file
 	 * 

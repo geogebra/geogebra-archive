@@ -2283,42 +2283,12 @@ public class GuiManager {
 	
 	
 	public boolean loadFile(final File file, final boolean isMacroFile) {
-		// show file not found message
-		if (!file.exists()) {
-			/*
-			 * First parameter can not be the main component of the
-			 * application, otherwise that component would be validated
-			 * too early if a missing file was loaded through 
-			 * the command line, which causes some nasty rendering
-			 * problems.
-			 */
-			JOptionPane.showConfirmDialog(null,
-					app.getError("FileNotFound") + ":\n" + file.getAbsolutePath(),
-					app.getError("Error"), JOptionPane.DEFAULT_OPTION,
-					JOptionPane.WARNING_MESSAGE);
-			return false;
-		}										     
-        
- 	   app.setWaitCursor();  
-	   if (!isMacroFile) {
-			// hide navigation bar for construction steps if visible
-			app.setShowConstructionProtocolNavigation(false);
-		}
-
-		boolean success = app.loadXML(file, isMacroFile);
+		boolean success = app.loadFile(file, isMacroFile);
 		
-		try {
-			app.createRegressionFile();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-        updateGUIafterLoadFile(success, isMacroFile);
-        app.setDefaultCursor();
-        return success;
-        
-    }
+      updateGUIafterLoadFile(success, isMacroFile);
+      app.setDefaultCursor();
+      return success;
+   }
 	
 	
 	public boolean loadURL(String urlString) {
