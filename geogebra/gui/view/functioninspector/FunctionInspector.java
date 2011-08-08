@@ -23,6 +23,7 @@ import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoCasDerivative;
 import geogebra.kernel.AlgoCurvature;
+import geogebra.kernel.AlgoDependentFunction;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoDependentPoint;
 import geogebra.kernel.AlgoFunctionInterval;
@@ -45,6 +46,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -138,7 +140,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 	// Geos
 	private GeoElement tangentLine, oscCircle, xSegment, ySegment;
-	private GeoElement functionInterval, integralGeo, lengthGeo;
+	private GeoElement functionInterval, integralGeo, lengthGeo, areaGeo;
 	private GeoFunction derivative, derivative2, selectedGeo;
 	private GeoPoint testPoint, lowPoint, highPoint, minPoint, maxPoint;
 	private GeoList pts;
@@ -606,6 +608,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 		// get the table
 		double integral = ((GeoNumeric) integralGeo).getDouble();
+		double area = ((GeoNumeric) areaGeo).getDouble();
 		double mean = integral/(xMax - xMin);
 		double length = ((GeoNumeric) lengthGeo).getDouble();
 
@@ -665,15 +668,12 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		cons.removeFromConstructionList(root);		
 		rootGeos = root.getGeoElements();
 
-		boolean useArea = false;
-
 		property.add(app.getCommand("Root"));
 
 		switch (rootGeos.length) {
 		case 0: 
 			value.add(app.getPlain("fncInspector.NoRoots"));
 			value2.add(null);
-			useArea = true;
 			break;
 		case 1: 
 			if (rootGeos[0].isDefined()){
@@ -684,7 +684,6 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 			else{
 				value.add(app.getPlain("fncInspector.NoRoots"));
 				value2.add(null);
-				useArea = true;
 			}
 			break;
 		default: 
@@ -698,9 +697,14 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		value.add(null );
 		value2.add(null);
 
-		property.add(useArea ? app.getCommand("Area") : app.getCommand("Integral"));
-		value.add(useArea ? nf.format(Math.abs(integral)) : nf.format(integral));
-		Double[] a = {integral};
+		property.add(app.getCommand("Integral"));
+		value.add(nf.format(integral));
+		Double[] in = {integral};
+		value2.add(in);
+		
+		property.add(app.getCommand("Area"));
+		value.add(nf.format(area));
+		Double[] a = {area};
 		value2.add(a);
 
 		property.add(app.getCommand("Mean"));
@@ -722,7 +726,6 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 		for(int i=0; i < property.size(); i++){
 			modelInterval.setValueAt(property.get(i),i,0);
-			Application.debug(property.get(i));
 			modelInterval.setValueAt(value.get(i),i,1);
 		}
 
@@ -1328,6 +1331,16 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		integralGeo.setEuclidianVisible(false);
 		integralGeo.setObjColor(DISPLAY_GEO_COLOR);
 		intervalTabGeoList.add(integralGeo);
+		
+		ExpressionNode en = new ExpressionNode(kernel, selectedGeo, ExpressionNode.ABS, null);
+		AlgoDependentFunction funAlgo = new AlgoDependentFunction(cons, (Function) en.evaluate());
+		cons.removeFromConstructionList(funAlgo);
+		AlgoIntegralDefinite area = new AlgoIntegralDefinite(cons, (GeoFunction)funAlgo.getGeoElements()[0], (NumberValue)xLow.getGeoElements()[0], (NumberValue)xHigh.getGeoElements()[0], null);
+		cons.removeFromConstructionList(area);
+		areaGeo = area.getGeoElements()[0];
+		areaGeo.setEuclidianVisible(false);
+		intervalTabGeoList.add(areaGeo);
+		
 
 		AlgoLengthFunction len = new AlgoLengthFunction(cons, selectedGeo, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
 		cons.removeFromConstructionList(len);
@@ -1484,6 +1497,8 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 
 		//	integralGeo.setEuclidianVisible(tableInterval.isRowSelected(5));
+		areaGeo.setEuclidianVisible(false);
+		areaGeo.update();
 		integralGeo.setEuclidianVisible(true);
 		integralGeo.update();
 
