@@ -3770,9 +3770,9 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		// save AlgebraView settings
-		if (getGuiManager().hasAlgebraView()){
-			getGuiManager().getAlgebraViewXML(sb);
-		}
+		//if (getGuiManager().hasAlgebraView()){
+		//	getGuiManager().getAlgebraViewXML(sb);
+		//}
 		
 		// save ProbabilityCalculator settings
 		if (getGuiManager().hasProbabilityCalculator()){

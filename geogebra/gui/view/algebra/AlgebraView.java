@@ -129,7 +129,7 @@ public class AlgebraView extends JTree implements View{
 	/**
 	 * Flag for LaTeX rendering
 	 */
-	private boolean renderLaTeX = true;
+	final private static boolean renderLaTeX = true;
 
 
 	
@@ -745,24 +745,12 @@ public class AlgebraView extends JTree implements View{
 
 
 	/**
-	 * Returns true of rendering is done with LaTeX
+	 * Returns true if rendering is done with LaTeX
 	 * @return
 	 */
 	public boolean isRenderLaTeX() {
 		return renderLaTeX;
 	}
-
-	/**
-	 * Sets LaTeX rendering on (true) or off (false)
-	 * @param renderLaTeX
-	 */
-	public void setRenderLaTeX(boolean renderLaTeX) {
-		this.renderLaTeX = renderLaTeX;
-		// toggle fixed row height to reset heights and widths 
-		setRowHeight(1); 
-		setRowHeight(-1); 
-	}
-	
 	
 	/**
 	 * inner class MyEditor handles editing of tree nodes
@@ -864,7 +852,7 @@ public class AlgebraView extends JTree implements View{
 	
 	/**
 	 * returns settings in XML format
-	 */
+	 *
 	public void getXML(StringBuilder sb) {
 		
 		sb.append("<algebraView>\n");
@@ -874,18 +862,6 @@ public class AlgebraView extends JTree implements View{
 			sb.append("\"");
 			sb.append("/>\n");
 		sb.append("</algebraView>\n");
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}*/
 
 } // AlgebraView

@@ -842,7 +842,7 @@ public class MyXMLio {
 		app.getGuiManager().getSpreadsheetViewXML(sb);
 		
 		// save algebraView settings
-		app.getGuiManager().getAlgebraViewXML(sb);
+		//app.getGuiManager().getAlgebraViewXML(sb);
 		
 		//save euclidian view 2 settings
 		if(app.getGuiManager().hasEuclidianView2()){

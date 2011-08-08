@@ -817,35 +817,18 @@ public class MyXMLHandler implements DocHandler {
 		boolean ok = true;
 
 		switch (eName.charAt(0)) {
-		
+		/*
 		case 'u':
 		if (eName.equals("useLaTeX")) {
 			ok = handleAlgebraLaTeX(app.getGuiManager().getAlgebraView(), attrs);
 			break;
-		}
+		}*/
 		default:
 			System.err.println("unknown tag in <algebraView>: " + eName);
 		}
 
 		if (!ok)
 			System.err.println("error in <algebraView>: " + eName);
-	}
-
-	private boolean handleAlgebraLaTeX(AlgebraView av,
-			LinkedHashMap<String, String> attrs) {
-			try {
-				// axes attribute was removed with V3.0, see handleAxis()
-				// this code is for downward compatibility
-				String b = (String) attrs.get("value");
-				if (b != null) {
-					boolean useLaTeX = parseBoolean(b);
-					av.setRenderLaTeX(useLaTeX);
-				}
-				
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
 	}
 
 	// ====================================
