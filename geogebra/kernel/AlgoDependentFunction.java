@@ -103,7 +103,7 @@ public class AlgoDependentFunction extends AlgoElement {
             }
         }
         f.setDefined(isDefined);
-        
+               
         if (isDefined && expContainsFunctions) {
             // expand the functions and derivatives in expression tree
             ExpressionValue ev = null;
@@ -137,7 +137,7 @@ public class AlgoDependentFunction extends AlgoElement {
             f.setFunction(expandedFun);
             f.resetIneqs();
         }
-        else f.getFunction().updateIneqs();
+        else f.getFunction().updateIneqs();        
     }
     
     /**
@@ -185,6 +185,12 @@ public class AlgoDependentFunction extends AlgoElement {
                     	return ((Functional) leftValue).getGeoDerivative(order);	
                     }
                 
+                // remove spreadsheet $ references, i.e. $A1 -> A1 
+                case ExpressionNode.$VAR_ROW:
+				case ExpressionNode.$VAR_COL:
+				case ExpressionNode.$VAR_ROW_COL:				
+					return leftValue;
+                    
                 default: // recursive calls
                     node.setLeft(expandFunctionDerivativeNodes(leftValue));
                     node.setRight(expandFunctionDerivativeNodes(node.getRight()));
