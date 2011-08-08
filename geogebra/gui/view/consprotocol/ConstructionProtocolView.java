@@ -729,6 +729,13 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 	class ConstructionTableCellEditor extends AbstractCellEditor implements TableCellEditor {
 
 		InputPanel inputPanel;
+		GeoElement geo;
+		
+		public boolean stopCellEditing(){
+			super.stopCellEditing();
+			//data.updateAll();
+			return true;
+		}
 		
 		public Object getCellEditorValue() {
 			return inputPanel.getText();
@@ -736,9 +743,11 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 
 		public Component getTableCellEditorComponent(JTable table, Object value,
 				boolean isSelected, int rowIndex, int columnIndex) {
-
+			
+			geo = data.getGeoElement(rowIndex);
+			String val = geo.getCaptionDescription();		
 			inputPanel = new InputPanel("", app, 20,false);				
-			inputPanel.setText((String)value);
+			inputPanel.setText(val);
 			inputPanel.setEnabled(true);
 			inputPanel.setVisible(true);
 			return inputPanel;
@@ -880,7 +889,8 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 		public void updateAlgebraAndName() {
 			if (geo instanceof GeoText)
 				algebra = "\""+geo.toValueString()+"\"";
-			else algebra = geo.getAlgebraDescriptionTextOrHTML();
+			else
+				algebra = geo.getAlgebraDescriptionTextOrHTML();
 			// name description changes if type changes, e.g. ellipse becomes
 			// hyperbola
 			name = geo.getNameDescriptionTextOrHTML();
@@ -888,7 +898,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 		}
 
 		public void updateCaption(){
-			caption = geo.getCaptionText();
+			caption = geo.getCaptionDescriptionTextOrHTML();
 		}
 		
 		public void updateAll() {
@@ -932,7 +942,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			else algebra = geo.getAlgebraDescriptionTextOrHTML();
 			definition = geo.getDefinitionDescriptionHTML(true);
 			command = geo.getCommandDescriptionHTML(true);
-			caption = geo.getCaptionText();
+			caption = geo.getCaptionDescriptionTextOrHTML();
 			consProtocolVisible = new Boolean(geo.isConsProtocolBreakpoint());
 
 			// does this line include an index?
@@ -1313,7 +1323,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			/*TODO			
 			case 6:
 				return ((RowData) rowList.get(nRow)).geo
-						.getCaptionDesctiprionHTML();			
+						.getCaptionDescriptionHTML();			
 			*/
 			}
 			

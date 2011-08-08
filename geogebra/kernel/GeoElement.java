@@ -2233,7 +2233,7 @@ public abstract class GeoElement
 			return caption;
 	}
 
-	public String getCaptionText() {
+	public String getCaptionDescription() {
 		if (caption == null)
 			return "";
 		else
@@ -3438,6 +3438,22 @@ public abstract class GeoElement
 		return convertIndicesToHTML(ret);
 	}
 
+	final public String getCaptionDescriptionTextOrHTML() {
+		//TODO: Temporarly the caption in the the Construction protocol strored in html.
+		// If there is no index in the caption the html-form is redundant
+		// We need a function (which is similar to hasIndexLabel() ) to determine this
+		// hasIndexLabel() don't checks the caption's index
+		
+		//if (hasIndexLabel())			
+			return getCaptionDescriptionHTML();
+		//else
+			//return getCaptionDescription();
+	}
+	
+	final public String getCaptionDescriptionHTML() {
+		return indicesToHTML(getCaptionDescription(), true);
+	}
+	
 	/**
 	 * Returns type string of GeoElement. Note: this is
 	 * equal to getClassName().substring(3), but faster
