@@ -710,23 +710,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// i.e. hits has to include two intersectable objects.
 	protected GeoPointND getSingleIntersectionPoint(Hits hits) {
 		//Application.debug(hits);
-		
-		if (highlightedGeos.isEmpty() || highlightedGeos.size() != 2)
+
+		if (hits.isEmpty() || hits.size() < 2)
 			return null;
 
-		GeoElement a = (GeoElement) highlightedGeos.get(0);
-		GeoElement b = (GeoElement) highlightedGeos.get(1);
+		GeoElement a = (GeoElement) hits.get(0);
+		GeoElement b = (GeoElement) hits.get(1);
 		GeoPoint3D point = null;
 
-		
-		
-		//Application.debug(""+hits);
 
 		kernel.setSilentMode(true);
 		
 		//line/line or line/plane  (only one intersection point)
-    	if ( (a instanceof GeoCoordSys1D || a instanceof GeoCoordSys2D) && (b instanceof GeoCoordSys1D)
-    			||(a instanceof GeoCoordSys1D && b instanceof GeoCoordSys2D) ){
+    	if ( (a.isGeoLine() || a instanceof GeoCoordSys2D) && (b.isGeoLine())
+    			||(a.isGeoLine() && b instanceof GeoCoordSys2D) ){
     			point = (GeoPoint3D) getKernel().getManager3D().Intersect(null,  a,  b);
     	} else if ( a.isGeoLine() ) {
     		if (b.isGeoConic()) {
@@ -761,11 +758,21 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
     	//Application.debug("point is defined : "+point.isDefined());
     	
-    	
     	if (point==null)
     		return null;
     	
-
+    	
+    	//if the resulting point is defined, but is not around the mouse, discard it. (2011/8/8 Tam)
+    	Coords picked = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+    	Coords toScreenCoords = view3D.getToScreenMatrix().mul(point.getCoords().getCoordsLast1()).getInhomCoords();
+    	Application.debug("X: "+Math.abs(picked.getX() - toScreenCoords.getX()) + "\n" +
+    			"Y: "+Math.abs(picked.getY() - toScreenCoords.getY()));
+    	if ( 	Math.abs(picked.getX() - toScreenCoords.getX()) > 6 ||
+    			Math.abs(picked.getY() - toScreenCoords.getY()) > 6 ) {
+    		return null;
+    	}
+    	
+    	
     	
     	if (point.isDefined()){
     		view3D.setCursor3DIntersectionOf(a, b);
@@ -1512,7 +1519,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// MOUSE PRESSED
 	
 	protected void createNewPointForModePoint(Hits hits, boolean complex){
-		createNewPoint(hits, true, true, true, true, false);
+		super.createNewPointForModePoint(hits, false);
+		//createNewPoint(hits, true, true, true, true, false);
 	}
 	
 	protected void createNewPointForModeOther(Hits hits){
@@ -2502,6 +2510,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//modes where point can be created on path/region
 			
 			case EuclidianView.MODE_POINT:
+				if (cursorType==EuclidianView3D.PREVIEW_POINT_REGION) //to be consistent with point tool in 2D
+					view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_FREE);
+					//return false;
 			case EuclidianView.MODE_POINT_ON_OBJECT:
 				
 			case EuclidianView.MODE_JOIN:

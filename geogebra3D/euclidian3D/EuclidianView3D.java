@@ -2236,7 +2236,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param hits 
 	 */
 	public void updateCursor3D(Hits hits){
-
 		if (hasMouse){
 			getEuclidianController().updateNewPoint(true, 
 				hits, 
