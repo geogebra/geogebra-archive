@@ -991,8 +991,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         if (!isPrintedInXML) return; 
         
         // turn off eg Arabic digits
-        boolean oldDigitsSetting = Kernel.internationalizeDigits;
-        Kernel.internationalizeDigits = false;
+        boolean oldDigitsSetting = kernel.internationalizeDigits;
+        kernel.internationalizeDigits = false;
         
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isPrintLocalizedCommandNames();
@@ -1015,7 +1015,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         
         kernel.setPrintLocalizedCommandNames(oldValue);      
         
-        Kernel.internationalizeDigits = oldDigitsSetting;
+        kernel.internationalizeDigits = oldDigitsSetting;
 
     }
     

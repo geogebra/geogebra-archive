@@ -8217,7 +8217,7 @@ public class Kernel {
 	}
 	
 	// needed so that can be turned off 
-	public static boolean internationalizeDigits = true;
+	public boolean internationalizeDigits = true;
 	
 	/*
 	 * swaps the digits in num to the current locale's

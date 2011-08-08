@@ -3998,8 +3998,8 @@ public abstract class GeoElement
 		kernel.setPrintLocalizedCommandNames(false);
 
 		// make sure numbers are not put in XML in eg Arabic
-		boolean oldI8NValue = Kernel.internationalizeDigits;
-		Kernel.internationalizeDigits = false;
+		boolean oldI8NValue = kernel.internationalizeDigits;
+		kernel.internationalizeDigits = false;
 
 		String type = getXMLtypeString();
 
@@ -4016,7 +4016,7 @@ public abstract class GeoElement
 		sb.append("</element>\n");
 
 		kernel.setPrintLocalizedCommandNames(oldValue);
-		Kernel.internationalizeDigits = oldI8NValue;
+		kernel.internationalizeDigits = oldI8NValue;
 	}
 
 	public void getScriptTags(StringBuilder sb) {
