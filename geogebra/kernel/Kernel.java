@@ -167,7 +167,7 @@ public class Kernel {
 	
 	private int casPrintForm;		
 	private String casPrintFormPI; // for pi
-	private boolean useTempVariablePrefix;
+	private static boolean useTempVariablePrefix;
 	
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
@@ -8217,7 +8217,7 @@ public class Kernel {
 	}
 	
 	// needed so that can be turned off 
-	public boolean internationalizeDigits = true;
+	public static boolean internationalizeDigits = true;
 	
 	/*
 	 * swaps the digits in num to the current locale's

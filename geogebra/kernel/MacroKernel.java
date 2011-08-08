@@ -50,6 +50,15 @@ public class MacroKernel extends Kernel  {
 		return parentKernel;
 	}		
 	
+//	public boolean isUseTempVariablePrefix() {		
+//		return super.isUseTempVariablePrefix();
+//	}
+//	
+//	public void setUseTempVariablePrefix(boolean flag) {
+//		useTempVariablePrefix = flag;
+//		super.setUseTempVariablePrefix(flag);
+//	}
+	
 	public void addReservedLabel(String label) {
 		macroCons.addReservedLabel(label);
 	}
