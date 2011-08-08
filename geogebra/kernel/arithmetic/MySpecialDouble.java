@@ -27,10 +27,10 @@ import java.math.BigDecimal;
  */
 public class MySpecialDouble extends MyDouble {
 	
-	private String strToString;
+	protected String strToString;
 	private int precision; // number of significant digits
 	private boolean isLetterConstant; // for Pi, Euler, or Degree constant
-	
+
 	private static MySpecialDouble eulerConstant;
 	
 	public MySpecialDouble(Kernel kernel, double val, String strToString) {
@@ -65,7 +65,7 @@ public class MySpecialDouble extends MyDouble {
 		
 		this.strToString = strToString;
 	}
-	
+
 	public static MySpecialDouble getEulerConstant(Kernel kernel) {
 		if (eulerConstant == null) {
 			eulerConstant = new MySpecialDouble(kernel, Math.E, Unicode.EULER_STRING);
@@ -77,8 +77,11 @@ public class MySpecialDouble extends MyDouble {
 		return getDouble() == Math.E;
 	}
 	
+	
 	public String toString() {
-		switch (kernel.getCASPrintForm()) {
+		int printForm = kernel.getCASPrintForm();				
+		
+		switch (printForm) {
 			//case ExpressionNode.STRING_TYPE_JASYMCA:
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 				char ch = strToString.charAt(0);
@@ -97,7 +100,7 @@ public class MySpecialDouble extends MyDouble {
 				} 	
 			break;
 			
-			case ExpressionNode.STRING_TYPE_MPREDUCE:
+			case ExpressionNode.STRING_TYPE_MPREDUCE:								
 				ch = strToString.charAt(0);
 				switch (ch) {
 					case Unicode.piChar:	return "pi";
@@ -117,12 +120,14 @@ public class MySpecialDouble extends MyDouble {
 				
 			//default:
 			//	return strToString;		
-		}
+		}				
 		
 		if (isLetterConstant || precision > 16)		
 			return strToString;
 		else 
 			return super.toString();	
 	}
+	
+	
 
 }

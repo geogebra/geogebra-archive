@@ -1352,17 +1352,17 @@ public class Construction {
 	 * @return indexed label, e.g. "c_2"
 	 */
 	public String getIndexLabel(String prefix) {	
-		return getIndexLabel(prefix, null);
+		return getIndexLabel(prefix, 1);
 	}
 
 	/**
 	 * Returns the next free indexed label using the given prefix
 	 * starting with the given index number.
 	 * @param prefix e.g. "c"
-	 * @param startIndex e.g. "2"
+	 * @param startIndex e.g. 2
 	 * @return indexed label, e.g. "c_2"
 	 */
-	public String getIndexLabel(String prefix, String startIndex) {
+	public String getIndexLabel(String prefix, int startIndex) {
 		// start numbering with indices using suggestedLabel
 		// as prefix
 		String pref;
@@ -1373,15 +1373,16 @@ public class Construction {
 			pref = prefix.substring(0, pos);
 
 		StringBuilder sbIndexLabel = new StringBuilder();				
-		
-		int n = 1; // start index
-		if (startIndex != null) {
-	      	try {      	  
-	      		n = Integer.parseInt(startIndex);
-	      	} catch (NumberFormatException e) {
-	      		n = 1;
-	      	}			
-		}
+	
+		int n = startIndex;
+//		int n = 1; // start index
+//		if (startIndex != null) {
+//	      	try {      	  
+//	      		n = Integer.parseInt(startIndex);
+//	      	} catch (NumberFormatException e) {
+//	      		n = 1;
+//	      	}			
+//		}
 				
 		do {
 			sbIndexLabel.setLength(0);

@@ -10216,12 +10216,12 @@ class CmdSolveODE extends CommandProcessor {
 		arg = resArgs(c);
 
 		switch (n) {
-		case 1:
-			if ((arg[0].isCasEvaluableObject())) {
-				GeoElement[] ret = { kernel.SolveODE(c.getLabel(),
-						(CasEvaluableFunction) arg[0]) };
-				return ret;
-			}
+//		case 1:
+//			if ((arg[0] instanceof GeoFunctionable)) {
+//				GeoElement[] ret = { kernel.SolveODE(c.getLabel(),
+//						((GeoFunctionable) arg[0]).getGeoFunction()) };
+//				return ret;
+//			}
 		case 5:
 			if ((ok[0] = arg[0] instanceof FunctionalNVar)
 					&& (ok[1] = arg[1].isGeoNumeric())
