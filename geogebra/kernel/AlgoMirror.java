@@ -306,7 +306,8 @@ public class AlgoMirror extends AlgoTransformation {
 			//Application.debug("end"+transformedPoint);			
 			double e = pt.getP().getPathParameter().getT();
 			Application.debug(d+","+e);
-			arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,true);
+			arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,false);
+			
 			setTransformedObject(a,b);
 			//TODO transform for conic part
 		}
