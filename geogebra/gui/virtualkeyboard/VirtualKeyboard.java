@@ -870,37 +870,40 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 			Buttons[i][j].addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-
-					// don't insert if timer running
-					// (done in timer on auto-repeat)
-					if (timer == null || !timer.isRunning())
-						insertKeyText(getKey(i, j));
-
-					boolean doUpdateButtons = false;
-
-
-					// reset buttons on a keypress (one-shot mode)
-					if (getCapsLockButton().isSelected()) {
-						getCapsLockButton().setSelected(false);
-						doUpdateButtons = true;
-					}
-
-					if (getAltGrButton().isSelected()) {
-						getAltGrButton().setSelected(false);
-						doUpdateButtons = true;
-					}
-
-					if (getCtrlButton().isSelected()) {
-						getCtrlButton().setSelected(false);
-						doUpdateButtons = true;
-					}
-
-					if (doUpdateButtons) updateButtons();
-
+					buttonPressed(i, j);
 				}
 			});
 		}
 		return Buttons[i][j];
+	}
+	
+	private void buttonPressed(int i, int j) {
+		// don't insert if timer running
+		// (done in timer on auto-repeat)
+		if (timer == null || !timer.isRunning())
+			insertKeyText(getKey(i, j));
+
+		boolean doUpdateButtons = false;
+
+
+		// reset buttons on a keypress (one-shot mode)
+		if (getCapsLockButton().isSelected()) {
+			getCapsLockButton().setSelected(false);
+			doUpdateButtons = true;
+		}
+
+		if (getAltGrButton().isSelected()) {
+			getAltGrButton().setSelected(false);
+			doUpdateButtons = true;
+		}
+
+		if (getCtrlButton().isSelected()) {
+			getCtrlButton().setSelected(false);
+			doUpdateButtons = true;
+		}
+
+		if (doUpdateButtons) updateButtons();
+		
 	}
 
 	private String processSpecialKeys(String text) {
