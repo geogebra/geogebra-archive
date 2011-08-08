@@ -1778,28 +1778,47 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             		//let's assume that we called this as f(x,y) and we actually want the function
             		return lt;
             	}
-            	else if (funN.getVarNumber() == 2 && list.size()==1) {
-            		ExpressionValue ev = list.getMyList().getListElement(0).evaluate();       
-            		if(ev instanceof GeoPoint){
+            	else if (list.size()==1) {
+            		ExpressionValue ev = list.getMyList().getListElement(0).evaluate();
+            		Application.debug(ev.getClass());
+            		if(funN.getVarNumber() == 2 && ev instanceof GeoPoint){            			
             			GeoPoint pt = (GeoPoint)ev;
             			if(funN.isBooleanFunction())            				
             				return new MyBoolean(funN.evaluateBoolean(pt));
             			return new MyDouble(kernel, funN.evaluate(pt));
-            		} else if (ev instanceof GeoList) { // f(x,y) called with list of points
-            			GeoList l = (GeoList)ev;
+            		}
+            		else if(funN.getVarNumber() == 2 && ev instanceof MyVecNode){            			
+            			MyVecNode pt = (MyVecNode)ev;
+            			double[] vals = new double[]{
+            					((NumberValue)pt.getX().evaluate()).getDouble(),
+            					((NumberValue)pt.getY().evaluate()).getDouble()};
+            			if(funN.isBooleanFunction())            				
+            				return new MyBoolean(funN.evaluateBoolean(vals));
+            			return new MyDouble(kernel, funN.evaluate(vals));
+            		}
+            		else if(ev instanceof ListValue &&  ((ListValue)ev).getMyList().getListElement(0).evaluate().isNumberValue()){
+            			double[] vals = ((ListValue)ev).toDouble();
+            			if(vals!=null){
+            			if(funN.isBooleanFunction())
+            				return new MyBoolean(funN.evaluateBoolean(vals));
+            			return new MyDouble(kernel, funN.evaluate(vals));
+            			}
+            		}
+            		else if (ev instanceof ListValue) { // f(x,y) called with list of points
+            			MyList l = ((ListValue)ev).getMyList();
             			MyList ret = new MyList(kernel);
             			for (int i = 0 ; i < l.size() ; i++) {
                 			MyList lArg = new MyList(kernel); // need to wrap arguments to f(x,y) in MyList
-                			lArg.addListElement(l.get(i));
+                			lArg.addListElement(l.getListElement(i));
                 			ret.addListElement(new ExpressionNode(kernel, funN, FUNCTION_NVAR, lArg));           				
             			}
             			return ret;
             		}
-            	}
+            	
             		//let's assume that we called this as f(x,y) and we actually want the function
             		return lt;
             	}
-             
+            }
         	//Application.debug("FUNCTION lt: " + lt + ", " + lt.getClass() + " rt: " + rt + ", " + rt.getClass());
             String [] str3 = { "IllegalArgument", rt.toString() };
             throw new MyError(app, str3);
