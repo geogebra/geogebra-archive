@@ -1120,6 +1120,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_POINT_ON_OBJECT:				
 			view.setHits(mouseLoc);
 			hits = view.getHits();
+			Application.debug(hits);
 			// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
 			createNewPointForModePoint(hits, false); 
 			break;
@@ -4154,12 +4155,23 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						if (((GeoElement) region).isGeoPolygon()){
 							GeoSegmentND [] sides = ((GeoPolygon) region).getSegments();
 							boolean sideInHits = false;
-							for (int k=0; k < sides.length; k++) 
-								sideInHits = sideInHits || hits.remove(sides[k]);
-							if (!sideInHits)
+							for (int k=0; k < sides.length; k++) {
+								//sideInHits = sideInHits || hits.remove(sides[k]); //not removing sides, just test
+								if (hits.contains(sides[k])) {
+									sideInHits = true;
+									break;
+								}
+							}
+							
+							
+							if (!sideInHits) {
 								createPoint = true;	
-							else{
-								createPoint = false;	
+								hits.remove(region); // if a polygon is a region, don't need it as a path
+								
+							} else {
+								createPoint = false;
+								hits.remove(region); // (OPTIONAL) if side is in hits, still don't need the polygon as a path
+								// if one wants a point on boundary of a polygon poly1, can input Point[poly1]
 								region = null;
 							}
 						}
@@ -4184,8 +4196,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						path = (Path) pathHits.get(0);
 					createPoint = path != null;
 				} else {
-					createPoint = true; // create as free point if onPathPossible=false
-					//Application.printStacktrace("");
+					createPoint = true; 
 				}
 			}
 
@@ -4197,16 +4208,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (createPoint) {
 			transformCoords(); // use point capturing if on
-			//branches reordered to prefer region if possible (Z.Konecny, 2010-07-30)
-			if (region == null || !inRegionPossible) {
-				if (path == null){
-					point = createNewPoint(forPreviewable, complex);
-					view.setShowMouseCoords(true);
-				} else {
-					point = createNewPoint(forPreviewable, path, complex);
-				}
-			} else {
+			//branches reordered to prefer path, and then region
+			if (path != null && onPathPossible) {
+				point = createNewPoint(forPreviewable, path, complex);
+			} else if (region != null && inRegionPossible) {
 				point = createNewPoint(forPreviewable, region, complex);
+			} else {
+				point = createNewPoint(forPreviewable, complex);
+				view.setShowMouseCoords(true);
 			}
 		}
 
