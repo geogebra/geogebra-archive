@@ -1328,8 +1328,8 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				yval = new double[3];
 				
 				boolean cumulative = ((GeoBoolean)isCumulative).getBoolean();
-				yval[0] = p;
-				yval[1] = cumulative ? 1:1-p;				
+				yval[0] = 1-p;
+				yval[1] = cumulative ? 1:p;				
 				leftBorder[0] = - 0.5;
 				leftBorder[1] = 0.5;
 				leftBorder[2] = 1.5;
