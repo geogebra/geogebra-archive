@@ -41,21 +41,30 @@ public class CopyPasteCut {
 	protected DefaultTableModel tableModel;
 	protected SpreadsheetView view;
 
+	
 	/**
-	 * Stores cell geo values as a tab-delimited string.
+	 * Stores copied cell geo values as a tab-delimited string.
 	 */
-	protected String externalBuf;
+	protected String cellBufferStr;
+
+	
+	/**
+	 * Stores copied cell geos as GeoElement[columns][rows]
+	 */
+	protected GeoElement[][] cellBufferGeo;
+
 
 	/**
-	 * Stores cell geos as GeoElement[columns][rows]
+	 * Records the first row and first column of the current cell range copy source
 	 */
-	protected GeoElement[][] internalBuf;
+	protected int sourceColumn1, sourceRow1;
 
 
-	protected int bufColumn;
-	protected int bufRow;
 
-
+	/**
+	 * Stores construction index values while performing a paste
+	 */
+	private Object [] constructionIndexes;
 
 
 
@@ -63,6 +72,7 @@ public class CopyPasteCut {
 	 * Constructor
 	 */
 	public CopyPasteCut(JTable table0, Kernel kernel0) {
+		
 		table = (MyTable)table0;
 		tableModel = (DefaultTableModel) table.getModel();
 		kernel = kernel0;	
@@ -74,53 +84,81 @@ public class CopyPasteCut {
 
 
 	/**
-	 * Copies a block of cell geos to the external buffer and to the clipboard. 
-	 * If skipInternalCopy = false, the geos are also copied to the internal buffer 
+	 * Combines the GeoElement.toValueStrings from a given block of cell geos
+	 * into a single tab-delimited string. This string is stored in (1) the
+	 * global String field cellBufferStr and (2) the system clipboard.
+	 * 
+	 * If skipGeoCopy = false, the geos are also stored in the global
+	 * GeoElement[][] field cellBufferGeo
+	 * 
+	 * The cell block is defined by upper-left corner (column1, row1) 
+	 * and lower left corner (column2, row2)
+	 * 
+	 * @param column1
+	 * @param row1
+	 * @param column2
+	 * @param row2
+	 * @param skipGeoCopy
 	 */
-	public void copy(int column1, int row1, int column2, int row2, boolean skipInternalCopy) {
+	public void copy(int column1, int row1, int column2, int row2, boolean skipGeoCopy) {
 
 		// copy tab-delimited geo values into the external buffer 
-		externalBuf = "";
+		cellBufferStr = "";
 		for (int row = row1; row <= row2; ++ row) {
 			for (int column = column1; column <= column2; ++ column) {
 				GeoElement value = RelativeCopy.getValue(table, column, row);
 				if (value != null) {
-					externalBuf += value.toValueString();
+					cellBufferStr += value.toValueString();
 				}
 				if (column != column2) {
-					externalBuf += "\t";
+					cellBufferStr += "\t";
 				}
 			}
 			if (row != row2) {
-				externalBuf += "\n";
+				cellBufferStr += "\n";
 			}
 		}
 
-		// store the tab-delimited values into the clipboard
+		// store the tab-delimited values in the clipboard
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Clipboard clipboard = toolkit.getSystemClipboard();
-		StringSelection stringSelection = new StringSelection(externalBuf);
+		StringSelection stringSelection = new StringSelection(cellBufferStr);
 		clipboard.setContents(stringSelection, null);
 
 
 		// store copies of the actual geos in the internal buffer
-		if (skipInternalCopy) {
-			internalBuf = null;
+		if (skipGeoCopy) {
+			cellBufferGeo = null;
 		}
 		else
 		{
-			bufColumn = column1;
-			bufRow = row1;
-			internalBuf = RelativeCopy.getValues(table, column1, row1, column2, row2);
+			sourceColumn1 = column1;
+			sourceRow1 = row1;
+			cellBufferGeo = RelativeCopy.getValues(table, column1, row1, column2, row2);
 		}
 	}
 
 
-
+	/**
+	 * Copies the contents of the cell block defined by upper-left corner
+	 * (column1, row1) and lower left corner (column2, row2) into the system
+	 * clipboard and then deletes these geos.
+	 * 
+	 * TODO: The external buffer is nulled out so that a followup paste will
+	 * not perform a relative copy. This needs to be fixed, relative copy is
+	 * expected by the user.
+	 * 
+	 * @param column1
+	 * @param row1
+	 * @param column2
+	 * @param row2
+	 * @return
+	 */
 	public boolean cut(int column1, int row1, int column2, int row2) {
 
 		copy(column1, row1, column2, row2, false);
-		externalBuf = null;
+		// null out the external buffer so that paste will not do a relative copy
+		cellBufferStr = null;
 		return delete(column1, row1, column2, row2);	
 	}
 
@@ -129,74 +167,42 @@ public class CopyPasteCut {
 	public boolean paste(CellRange cr) {
 		return paste(cr.getMinColumn(),cr.getMinRow(),cr.getMaxColumn(),cr.getMaxRow());
 	}
-	
+
 	public boolean paste(int column1, int row1, int column2, int row2) {
 		return paste( column1,  row1,  column2,  row2,  null);
 	}
 
 	public boolean paste(int column1, int row1, int column2, int row2, Transferable contents) {
 
+		boolean succ = false;
+		
+		// get the Transferable data from the clipboard if nothing was given
 		if(contents == null){
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			contents = clipboard.getContents(null);
 		}
+		
+		// extract a String from the Transferable 
+		String transferString = getTransferString(contents); 
+		
+		
+		// test if the transfer string is the same as the internal cell copy string,
+		// if true, then we have a tab-delimited list of cell geos and can paste them with relative cell references
+		boolean doInternalPaste = transferString != null && cellBufferStr != null && transferString.equals(cellBufferStr);
 
-		String buf = null;
-		boolean succ = false;
-
-		/*
-		// print available data formats on clipboard
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < contents.getTransferDataFlavors().length; i++) {
-			sb.append(contents.getTransferDataFlavors()[i]);
-			sb.append("\n");
-		}
-		Application.debug(sb.toString());
-		 */
-
-		try {
-			DataFlavor HTMLflavor = new	DataFlavor("text/html;class=java.lang.String");
-
-			//System.out.println("is HTML? " + contents.isDataFlavorSupported(HTMLflavor));
-
-			if(contents.isDataFlavorSupported(HTMLflavor)){
-				buf = convertHTMLTableToCSV((String) contents.getTransferData(HTMLflavor));
-			}
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedFlavorException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		//Application.debug("paste: "+row1+" "+row2+" "+column1+" "+column2);
-
-
-
-
-
-		// no HTML found, try plain text
-		if ( buf == null && (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-			try {
-				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
-				//Application.debug("pasting from String: "+buf);
-			} catch (Exception ex) {
-				Application.debug("clipboard: no String");
-				//ex.printStackTrace();
-				//app.showError(ex.getMessage());
-				// Util.handleException(table, ex);
-			}
-		}
-
-		if (buf != null && externalBuf != null && buf.equals(externalBuf) && internalBuf != null) {
+		
+		
+		// create new geos from cellBufferStr and then paste them into the 
+		// target cells with relative cell references
+		// ========================================================
+		
+		if (doInternalPaste  && cellBufferGeo != null) {
 			Construction cons = kernel.getConstruction();
 			kernel.getApplication().setWaitCursor();
 			try {
 				succ = true;
-				int columnStep = internalBuf.length;
-				int rowStep = internalBuf[0].length;
+				int columnStep = cellBufferGeo.length;
+				int rowStep = cellBufferGeo[0].length;
 
 				int maxColumn = column2;
 				int maxRow = row2;
@@ -224,31 +230,96 @@ public class CopyPasteCut {
 				ex.printStackTrace(System.out);
 				app.showError(ex.getMessage());
 
-				//for (int c = column1 ; c <= column2 ; c++)
-				//for (int r = row1 ; r <= row2 ; r++)
-				//	pasteExternal(buf, c, r);
-
+				//======================================	
+				// TODO: Why is this call here ????
 				// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
-				succ = pasteExternalMultiple(buf, column1, row1, column2, row2);
+				//succ = pasteExternalMultiple(buf, column1, row1, column2, row2);
+				//==========================================
 
-				// Util.handleException(table, ex);
 			} finally {
 				cons.stopCollectingRedefineCalls();
 				kernel.getApplication().setDefaultCursor();
 			}
 		}
-		else if (buf != null) {
+
+		
+		
+		// Use the transferString data to create and paste new geos 
+		// into the target cells without relative cell references
+		// ========================================================
+		
+		else if (transferString != null) {
 			//Application.debug("newline index "+buf.indexOf("\n"));
 			//Application.debug("length "+buf.length());
 
 			// paste data multiple times to fill in the selection rectangle (and maybe overflow a bit)
-			succ = pasteExternalMultiple(buf, column1, row1, column2, row2);
+			succ = pasteExternalMultiple(transferString, column1, row1, column2, row2);
 		}
 
 		return succ;
 	}
 
+	
+	
+	/**
+	 * Returns a string object extracted from the given Transferable. If the
+	 * DataFlavor is "text/html;class=java.lang.String" an attempt is made to
+	 * convert the transferable object into a CSV string (e.g. data transferred
+	 * from Excel)
+	 * 
+	 * @param contents
+	 * @return
+	 */
+	private String getTransferString(Transferable contents){
+		
+	
+		// exit if no content
+		if(contents == null) return null;
+	
 
+		// print available data formats in Transferable contents 
+		//Application.debug(Arrays.toString(contents.getTransferDataFlavors()));
+		 
+				
+		// now try to extract a string from the Transferable
+		
+		String buf = null;
+		try {
+			DataFlavor HTMLflavor = new	DataFlavor("text/html;class=java.lang.String");
+
+			//System.out.println("is HTML? " + contents.isDataFlavorSupported(HTMLflavor));
+
+			if(contents.isDataFlavorSupported(HTMLflavor)){
+				buf = convertHTMLTableToCSV((String) contents.getTransferData(HTMLflavor));
+			}
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedFlavorException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+		// no HTML found, try plain text
+		if (buf == null && (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			try {
+				buf = (String)contents.getTransferData(DataFlavor.stringFlavor);
+				//Application.debug("pasting from String: "+buf);
+			} catch (Exception ex) {
+				Application.debug("transferable has no String");
+				//ex.printStackTrace();
+				//app.showError(ex.getMessage());
+			}
+		}
+
+		return buf;
+		
+	}
+	
+	
+	
 	/** 
 	 * Converts HTML table into CSV
 	 */
@@ -353,27 +424,35 @@ public class CopyPasteCut {
 
 
 
-
-
-
-
-	Object [] constructionIndexes;
-
-
+	/**
+	 * Creates copies of the geos stored in cellBufferGeo, naming them to correspond with the 
+	 * given target cell range and the original source cells.
+	 * Relative cell references are applied to the new geos.
+	 * 
+	 * The target cell range is defined by upper left corner (column1, row1) 
+	 * and lower right corner (maxColumn, maxRow).
+	 * 
+	 * @param column1
+	 * @param row1
+	 * @param maxColumn
+	 * @param maxRow
+	 * @return
+	 * @throws Exception
+	 */
 	public boolean pasteInternal(int column1, int row1, int maxColumn, int maxRow) throws Exception {		
-		int width = internalBuf.length;
+		int width = cellBufferGeo.length;
 		if (width == 0) return false;
-		int height = internalBuf[0].length;
+		int height = cellBufferGeo[0].length;
 		if (height == 0) return false;
 
 		app.setWaitCursor();
 		boolean succ = false; 
 
 		//Application.debug("height = " + height+" width = "+width);
-		int x1 = bufColumn;
-		int y1 = bufRow;
-		int x2 = bufColumn + width - 1;
-		int y2 = bufRow + height - 1;
+		int x1 = sourceColumn1;
+		int y1 = sourceRow1;
+		int x2 = sourceColumn1 + width - 1;
+		int y2 = sourceRow1 + height - 1;
 		int x3 = column1;
 		int y3 = row1;
 		int x4 = column1 + width - 1;
@@ -397,6 +476,7 @@ public class CopyPasteCut {
 		int count = 0;
 
 
+		// ensure the table is large enough to contain the new data
 		DefaultTableModel model = (DefaultTableModel)table.getModel();
 		if (model.getRowCount() < y4 + 1) {
 			model.setRowCount(y4 + 1);
@@ -404,7 +484,10 @@ public class CopyPasteCut {
 		if (model.getColumnCount() < x4 + 1) {
 			table.setMyColumnCount(x4 + 1);
 		}
-		GeoElement[][] values1 = internalBuf;//RelativeCopy.getValues(table, x1, y1, x2, y2);
+
+
+
+		GeoElement[][] values1 = cellBufferGeo;//RelativeCopy.getValues(table, x1, y1, x2, y2);
 		try {
 			for (int x = x1; x <= x2; ++ x) {
 				int ix = x - x1;
@@ -420,6 +503,7 @@ public class CopyPasteCut {
 
 					//Application.debug("x1="+x1+" x2="+x2+" x3="+x3+" x4="+x4+" x="+x+" ix="+ix);
 					//Application.debug("y1="+y1+" y2="+y2+" y3="+y3+" y4="+y4+" y="+y+" iy="+iy);
+
 					if (ix+column1 <= maxColumn && iy+row1 <= maxRow//) { // check not outside selection rectangle
 							&& (!inSource) ) { // check we're not pasting over what we're copying
 
@@ -461,6 +545,11 @@ public class CopyPasteCut {
 
 		return succ;
 	}
+
+
+
+
+
 
 	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^,\\t\\\"]+)");
 	//protected static Pattern pattern = Pattern.compile("\\s*(\\\"([^\\\"]+)\\\")|([^\\t\\\"]+)");
@@ -533,6 +622,7 @@ public class CopyPasteCut {
 		return data;		
 	}
 
+	
 	/*
 	 * change 3,4 to 3.4
 	 * leave {3,4,5} alone
@@ -545,6 +635,8 @@ public class CopyPasteCut {
 		return str;
 	}
 
+	
+	
 	private boolean pasteExternalMultiple(String buf,int column1, int row1, int column2, int row2) {
 		/*
 		int newlineIndex = buf.indexOf("\n");
@@ -560,7 +652,11 @@ public class CopyPasteCut {
 		    }
 		}*/
 		boolean succ = true;
+
+		// convert the input String buf into a 2D array defined by tab delimiters
 		String[][] data = parseData(buf);
+
+
 		int rowStep = data.length;
 		int columnStep = data[0].length;
 
@@ -568,6 +664,7 @@ public class CopyPasteCut {
 
 		int maxColumn = column2;
 		int maxRow = row2;
+
 		// paste all data if just one cell selected
 		// ie overflow selection rectangle 
 		if (row2 == row1 && column2 == column1)
@@ -585,6 +682,19 @@ public class CopyPasteCut {
 
 	}
 
+	/**
+	 * Creates new cell geos using the string values stored in the given String[][].
+	 * Cells are named to correspond with the target cell range defined by upper
+	 * left corner (column1, row1) and lower right corner (maxColumn, maxRow).
+	 * Does not apply relative cell references.
+	 * 
+	 * @param data
+	 * @param column1
+	 * @param row1
+	 * @param maxColumn
+	 * @param maxRow
+	 * @return
+	 */
 	public boolean pasteExternal(String[][] data, int column1, int row1, int maxColumn, int maxRow) {
 		app.setWaitCursor();
 		boolean succ = false;			
@@ -680,101 +790,19 @@ public class CopyPasteCut {
 		return succ;
 	}
 
-	public void createPointsAndAList2(GeoElement[][] values) throws Exception {
-		LinkedList list = new LinkedList();
 
-		/* 
-		 * Markus Hohenwarter, 2008-08-24, I think this is not needed...
-		 * 
-		if (values.length == 2) {
-	   	 	for (int i = 0; i < values[0].length && i < values[1].length; ++ i) {
-	   	 		GeoElement v1 = values[0][i];
-	   	 		GeoElement v2 = values[1][i];
-	   	 		if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {
-	   	 			String text = "(" + v1.getLabel() + "," + v2.getLabel() + ")";
-	   	 			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+	public void deleteAll() {
 
-	   	 			// set label P_1, P_2, etc.
-	   	 		    String pointName = geos[0].getIndexLabel("P");
-	   	 		    geos[0].setLabel(pointName);
+		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
 
-	   	 			list.addLast(pointName);
-	   	 		}
-	   	 	}
-	   	 }
-		 */
-
-		// create points
-		if (values.length > 0) {
-			for (int i = 0; i < values.length; ++ i) {
-				if (values[i].length != 2) continue;
-				GeoElement v1 = values[i][0];
-				GeoElement v2 = values[i][1];
-				if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	   	 			
-					String text = "(" + v1.getLabel() + "," + v2.getLabel() + ")";
-					GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
-
-					// set label P_1, P_2, etc.
-					String pointName = geos[0].getIndexLabel("P");
-					geos[0].setLabel(pointName);
-
-					list.addLast(geos[0].getLabel());
-				}
-			}
-		}
-
-		// create list of points
-		if (list.size() > 0) {
-			String[] points = (String[])list.toArray(new String[0]);	   		
-			String text = "{";
-			for (int i = 0; i < points.length; ++ i) {
-				text += points[i];
-				if (i != points.length - 1) text += ",";
-			}
-			text += "}";
-
-			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
-
-			// set list name
-			String listName = geos[0].getIndexLabel("L");
-			geos[0].setLabel(listName);
-		}
 	}
-
-	public void createPointsAndAList1(GeoElement[][] values) throws Exception {
-		LinkedList list = new LinkedList();
-		if (values.length == 1 && values[0].length > 0) {
-			for (int i = 0; i < values[0].length; ++ i) {
-				GeoElement v1 = values[0][i];
-				if (v1 != null && v1.isGeoPoint()) {
-					list.addLast(v1.getLabel());
-				}
-			}
-		}
-		if (values.length > 0 && values[0].length == 1) {
-			for (int i = 0; i < values.length; ++ i) {
-				GeoElement v1 = values[i][0];
-				if (v1 != null && v1.isGeoPoint()) {
-					list.addLast(v1.getLabel());
-				}
-			}
-		}
-
-		if (list.size() > 0) {
-			String[] points = (String[])list.toArray(new String[0]);	   		 
-			String text = "={";
-			for (int i = 0; i < points.length; ++ i) {
-				text += points[i];
-				if (i != points.length - 1) text += ",";
-			}
-			text += "}";
-			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
-
-			// set list name
-			String listName = geos[0].getIndexLabel("L");
-			geos[0].setLabel(listName);
-		}
-	}
+	
+	
+	
+	
+	
+	
+	
 	class Record {
 		int id, x1, y1, x2, y2;
 		public Record(int id, int x1, int y1, int x2, int y2){
@@ -829,15 +857,15 @@ public class CopyPasteCut {
 	}
 	private static Comparator comparator;
 
+	
+	
 
 
-	public void deleteAll() {
+	//====================================================
+	//   File and URL 
+	//====================================================
 
-		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
-
-	}
-
-
+	
 	// default pasteFromFile: clear spreadsheet and then paste from upper left corner
 	public boolean pasteFromURL(URL url) {
 
@@ -892,11 +920,7 @@ public class CopyPasteCut {
 
 		return succ;
 
-
-
 	}
 
-	//END GSTURR
-
-
+	
 }
