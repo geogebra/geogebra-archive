@@ -79,53 +79,78 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
     }
 
     private AlgoRootsPolynomial(
-        Construction cons,
-        String[] labels,
-        boolean setLabels,
-        GeoFunction f,
-        GeoFunction g,
-        GeoLine l) {
-        super(cons);
-        this.f = f;
-        this.g = g;
-        line = l;
+            Construction cons,
+            String[] labels,
+            boolean setLabels,
+            GeoFunction f,
+            GeoFunction g,
+            GeoLine l) {
+            super(cons);
+            this.f = f;
+            this.g = g;
+            line = l;
 
-        tempPoint = new GeoPoint(cons);
-        
-        // set mode
-        if (g != null)
-            mode = INTERSECT_POLYNOMIALS;
-        else if (l != null)   {
-            mode = INTERSECT_POLY_LINE;           
-        } else
+            tempPoint = new GeoPoint(cons);
+            
+            // set mode
+            if (g != null)
+                mode = INTERSECT_POLYNOMIALS;
+            else if (l != null)   {
+                mode = INTERSECT_POLY_LINE;           
+            } else
+                mode = ROOTS;
+
+            if (mode != ROOTS) { // for intersection of f and g resp. line
+                diffFunction = new Function(kernel);
+            }
+            this.labels = labels;
+            this.setLabels = setLabels; // should lables be used?
+
+            eqnSolver = cons.getEquationSolver();
+
+            //  make sure root points is not null
+            int number = labels == null ? 1 : Math.max(1, labels.length);
+            rootPoints = new GeoPoint[0];
+            initRootPoints(number);
+            initLabels = true;  
+                    
+            setInputOutput(); // for AlgoElement    
+            compute();        
+            
+            // show at least one root point in algebra view
+            // this is enforced here:
+            if (!rootPoints[0].isDefined()) {
+            	rootPoints[0].setCoords(0,0,1);
+            	rootPoints[0].update();
+            	rootPoints[0].setUndefined();
+            	rootPoints[0].update();
+            }
+        }
+
+    public AlgoRootsPolynomial(
+            Construction cons,
+            GeoFunction f) {
+            super(cons);
+            this.f = f;
+
+            tempPoint = new GeoPoint(cons);
+            
+            // set mode
             mode = ROOTS;
 
-        if (mode != ROOTS) { // for intersection of f and g resp. line
-            diffFunction = new Function(kernel);
-        }
-        this.labels = labels;
-        this.setLabels = setLabels; // should lables be used?
+            eqnSolver = cons.getEquationSolver();
 
-        eqnSolver = cons.getEquationSolver();
+            //  make sure root points is not null
+            int number = 1;
+            rootPoints = new GeoPoint[0];
+            initRootPoints(number);
+            initLabels = true;  
+                    
+            setInputOutput(); // for AlgoElement    
+            compute();        
+            
 
-        //  make sure root points is not null
-        int number = labels == null ? 1 : Math.max(1, labels.length);
-        rootPoints = new GeoPoint[0];
-        initRootPoints(number);
-        initLabels = true;  
-                
-        setInputOutput(); // for AlgoElement    
-        compute();        
-        
-        // show at least one root point in algebra view
-        // this is enforced here:
-        if (!rootPoints[0].isDefined()) {
-        	rootPoints[0].setCoords(0,0,1);
-        	rootPoints[0].update();
-        	rootPoints[0].setUndefined();
-        	rootPoints[0].update();
         }
-    }
 
     /**
      * The given labels will be used for the resulting points.   
