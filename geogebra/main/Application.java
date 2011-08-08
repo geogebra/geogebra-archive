@@ -3152,7 +3152,7 @@ public class Application implements KeyEventDispatcher {
 	public void setShowAuxiliaryObjects(boolean flag) {
 		showAuxiliaryObjects = flag;
 
-		if (useFullGui())
+		if (getGuiManager() != null)
 			getGuiManager().setShowAuxiliaryObjects(flag);
 		
 		updateMenubar();
