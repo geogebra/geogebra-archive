@@ -82,7 +82,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 
 	protected void enableDnD(){
 		ds = new DragSource();
-		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(view, DnDConstants.ACTION_COPY, this);
+		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(view, DnDConstants.ACTION_COPY_OR_MOVE, this);
 	}
 
 
