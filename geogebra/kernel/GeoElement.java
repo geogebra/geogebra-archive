@@ -393,7 +393,7 @@ public abstract class GeoElement
 	public String label; // should only be used directly in subclasses
 	private String realLabel; //for macro constructions, see setRealLabel() for details
 	private String oldLabel; // see doRenameLabel
-	private String caption; // only used by GeoBoolean for check boxes at the moment
+	private String caption;
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
 	private boolean euclidianVisible = true;
 	private boolean forceEuclidianVisible = false;
@@ -483,13 +483,14 @@ public abstract class GeoElement
 	protected boolean highlighted = false;
 	private boolean selected = false;
 	private String strAlgebraDescription, strAlgebraDescTextOrHTML, strAlgebraDescriptionHTML,
-		strLabelTextOrHTML;
+		strLabelTextOrHTML, strCaptionDescriptionHTML;
 
 	protected String strLaTeX;
 	private boolean strAlgebraDescriptionNeedsUpdate = true;
 	private boolean strAlgebraDescTextOrHTMLneedsUpdate = true;
 	private boolean strAlgebraDescriptionHTMLneedsUpdate = true;
 	private boolean strLabelTextOrHTMLUpdate = true;
+	private boolean strCaptionDescriptionHTMLneedsUpdate = true;
 	protected boolean strLaTeXneedsUpdate = true;
 
 	// line thickness and line type: s
@@ -1199,6 +1200,7 @@ public abstract class GeoElement
 		labelOffsetX = geo.labelOffsetX;
 		labelOffsetY = geo.labelOffsetY;
 		caption = geo.caption;
+		strCaptionDescriptionHTMLneedsUpdate = true;
 		inverseFill = geo.inverseFill;
 		if (isTraceable() && geo.isTraceable()) {
 			((Traceable) this).setTrace(((Traceable) geo).getTrace());
@@ -2164,10 +2166,12 @@ public abstract class GeoElement
 
 		if (caption.trim().length() == 0) {
 			this.caption = null;
+			strCaptionDescriptionHTMLneedsUpdate = true;
 			return true;
 		}
 
 		this.caption = caption.trim();
+		strCaptionDescriptionHTMLneedsUpdate = true;
 		return true;
 	}
 
@@ -3450,8 +3454,14 @@ public abstract class GeoElement
 			//return getCaptionDescription();
 	}
 	
-	final public String getCaptionDescriptionHTML() {
-		return indicesToHTML(getCaptionDescription(), true);
+	final public String getCaptionDescriptionHTML() {	
+		if (strCaptionDescriptionHTMLneedsUpdate) {
+			strCaptionDescriptionHTML = indicesToHTML(getCaptionDescription(), true);
+
+			strCaptionDescriptionHTMLneedsUpdate = false;
+		}
+
+		return strCaptionDescriptionHTML;
 	}
 	
 	/**
