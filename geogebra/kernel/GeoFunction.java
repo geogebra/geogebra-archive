@@ -1163,8 +1163,16 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	        sb.append(')');
 
 			gradientStrMinus = kernel.evaluateCachedGeoGebraCAS(sb.toString());
+			Application.debug(sb.toString()+" = "+gradientStrMinus,1);
 			
-			if (!f.CASError(gradientStrMinus, false) && !gradientStrMinus.equals("0")) {
+			double grad;
+			try {
+				grad = Double.parseDouble(gradientStrMinus);
+			} catch (Exception e) {
+				grad = 0;
+			}
+			
+			if (!f.CASError(gradientStrMinus, false) && !Kernel.isZero(grad)) {
 				sb.setLength(0);
 		        sb.append("Limit(");
 		        sb.append(funVarStr[0]); // derivative function expression
@@ -1180,6 +1188,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		        sb.append(')');
 
 		        interceptStrMinus = kernel.evaluateCachedGeoGebraCAS(sb.toString());
+				Application.debug(sb.toString()+" = "+interceptStrMinus,1);
 				
 				if (!f.CASError(interceptStrMinus, false)) {
 					sb.setLength(0);
@@ -1191,7 +1200,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 					if (!SB.toString().endsWith(sb.toString())) { // not duplicated
 						if (SB.length() > 1) SB.append(',');
 						SB.append(sb);
-						//Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus);			
+						Application.debug("diagonal asymptote minus: y = "+gradientStrMinus+"x + "+interceptStrMinus,1);			
 					}
 					
 				}
@@ -1228,7 +1237,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
         try {
 			String limit = kernel.evaluateCachedGeoGebraCAS(sb.toString()).trim();
 			
-			//System.err.println(sb.toString()+" = "+limit);
+			Application.debug(sb.toString()+" = "+limit,1);
 			
 		    if (!f.CASError(limit, false)) {
 		    	   	
@@ -1276,7 +1285,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
         
         try {
 			String verticalAsymptotes = kernel.evaluateCachedGeoGebraCAS(sb.toString());
-			//Application.debug("solutions: "+verticalAsymptotes);			
+			Application.debug(sb.toString()+" = "+verticalAsymptotes,1);
 	    	
 	    	if (!f.CASError(verticalAsymptotes, false) && verticalAsymptotes.length() > 2) {
 		    	verticalAsymptotes = verticalAsymptotes.replace('{',' ');
@@ -1326,7 +1335,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	
 			            try {
 			     		String limit = kernel.evaluateCachedGeoGebraCAS(sb.toString());
-			            //Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit);
+			            Application.debug("checking for vertical asymptote: "+sb.toString()+" = "+limit,1);
 			            if (limit.equals("?") || !f.CASError(limit, true)) {
 			            	if (verticalSB.length() > 1) verticalSB.append(',');
 	           	
