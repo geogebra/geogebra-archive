@@ -7617,11 +7617,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			(app.isShiftDragZoomEnabled());			
 		if (!allowZoom)
 			return;
-
-		double px = mouseLoc.x;
-		double py = mouseLoc.y;
-		//double dx = view.getXZero() - px;
-		//double dy = view.getYZero() - py;
+		double px,py;
+		if(mouseLoc!=null){
+			px = mouseLoc.x;
+			py = mouseLoc.y;
+		}else{
+			px = view.getWidth()/2;
+			py = view.getHeight()/2;
+		}
 		
 		double factor = event.getKeyCode() == KeyEvent.VK_MINUS ? 1d / EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR
 				: EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR;
