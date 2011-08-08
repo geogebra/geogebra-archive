@@ -1040,7 +1040,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 					
 					setFgColor(geoColor);
-					setFontStyle(((GeoText)geo).getFontStyle());
+					setFontStyle(((TextProperties)geo).getFontStyle());
 				}
 			}
 
@@ -1066,7 +1066,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				setVisible(geosOK);
 				if(geosOK){
 					GeoElement geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog();
-					int style = ((GeoText)geo).getFontStyle();
+					int style = ((TextProperties)geo).getFontStyle();
 					btnBold.setSelected(style == Font.BOLD || style == (Font.BOLD + Font.ITALIC));		
 				}
 			}		  
@@ -1088,7 +1088,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				this.setVisible(geosOK);
 				if(geosOK){	
 					GeoElement geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog();
-					int style = ((GeoText)geo).getFontStyle();
+					int style = ((TextProperties)geo).getFontStyle();
 					btnItalic.setSelected(style == Font.ITALIC || style == (Font.BOLD + Font.ITALIC));
 				}
 			}	
