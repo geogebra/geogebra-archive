@@ -713,11 +713,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		if (hits.isEmpty() || hits.size() < 2)
 			return null;
+		
+		if(mouseLoc==null)
+			return null;
 
 		GeoElement a = (GeoElement) hits.get(0);
 		if (a.isGeoLine()) {
 			while (hits.size()>=2) {
-				if (hits.get(1) instanceof GeoCoordSys2D &&
+				if (((GeoElement)hits.get(1)).isGeoPlane() &&
 						AlgoIntersectCS1D2D.getConfigLinePlane(
 						(GeoLineND)a,
 						((GeoCoordSys2D)hits.get(1))
@@ -728,7 +731,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			}
 		} else if (a.isGeoConic()) {
 			while (hits.size()>=2) {
-				if (hits.get(1) instanceof GeoCoordSys2D &&
+				if (((GeoElement)hits.get(1)).isGeoPlane() &&
 						AlgoIntersectCS2D2D.getConfigPlanePlane(
 						(((GeoConicND)a).getCoordSys()),
 						(((GeoCoordSys2D)hits.get(1)).getCoordSys())
@@ -1325,6 +1328,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return previewDrawable;
 
 	}
+
+	public void clearSelections() {
+		clearSelection(selectedCS2D);
+		clearSelection(selectedCS1D);
+		clearSelection(selectedPolygons3D);
+		clearSelection(selectedQuadric);
+		super.clearSelections();
+	}
 	
 	//not only moveable hits are selected in move mode
 	protected boolean move(Hits hits) {	
@@ -1684,7 +1695,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			hits.clear();
 			return null;
 		}
-			
+		hits.removePolygonsIfSidePresent();
+		
 		if (goodHits == null)
 			goodHits = new Hits3D();
 		else
@@ -1743,7 +1755,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			GeoElement selected = selectedGeos.get(0);
 			if (selected.isGeoLine()) {
 				while (goodHits.size()>=1) {
-					if (goodHits.get(0) instanceof GeoCoordSys2D &&
+					if (((GeoElement)goodHits.get(0)).isGeoPlane() &&
 							AlgoIntersectCS1D2D.getConfigLinePlane(
 							(GeoLineND)selected,
 							((GeoCoordSys2D)goodHits.get(0))
@@ -1754,7 +1766,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				}
 			} else if (selected.isGeoConic()) {
 				while (goodHits.size()>=1) {
-					if (goodHits.get(0) instanceof GeoCoordSys2D &&
+					if (((GeoElement)goodHits.get(0)).isGeoPlane() &&
 							AlgoIntersectCS2D2D.getConfigPlanePlane(
 							(((GeoConicND)selected).getCoordSys()),
 							(((GeoCoordSys2D)goodHits.get(0)).getCoordSys())
@@ -1791,7 +1803,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		addSelectedLine(hits, 10, true);
 		addSelectedConic(hits, 10, true);
 		addSelectedCS2D(hits, 10, true);
-		addSelectedPolygon(hits, 1, true);
+		//addSelectedPolygon(hits, 1, true);
 		addSelectedQuadric(hits, 1, true);
 		
 
@@ -1859,16 +1871,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				ret[i] = (GeoElement) points[i];
 
 			return ret;
-		} else if (selCS2D()>=2 )  { // plane-polygon
+		} else if (selCS2D()>=2)  { // plane-polygon
 		
-			int n = selCS2D();
 			GeoCoordSys2D[] CS2Ds = getSelectedCS2D();
-			if(((GeoElement)CS2Ds[0]).isGeoPlane() && ((GeoElement)CS2Ds[1]).isGeoPolygon())
-				return getKernel().getManager3D().IntersectionPoint(null, 
-						(GeoPlane3D) CS2Ds[0], (GeoSurfaceFinite) CS2Ds[1]);
-			else if(((GeoElement)CS2Ds[1]).isGeoPlane() && ((GeoElement)CS2Ds[0]).isGeoPolygon())
-				return getKernel().getManager3D().IntersectionPoint(null, 
-						(GeoPlane3D) CS2Ds[1], (GeoSurfaceFinite) CS2Ds[0]);
+			if (CS2Ds[0] instanceof GeoPolygon && CS2Ds[1] instanceof GeoPlane3D)
+				return getKernel().getManager3D().IntersectionPoint(null, (GeoPlane3D)CS2Ds[1], (GeoPolygon)CS2Ds[0]);
+			else if (CS2Ds[1] instanceof GeoPolygon && CS2Ds[0] instanceof GeoPlane3D)
+				return getKernel().getManager3D().IntersectionPoint(null, (GeoPlane3D)CS2Ds[0], (GeoPolygon)CS2Ds[1]);
 		}
 		
 		return null;
