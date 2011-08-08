@@ -2871,12 +2871,19 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_MATH_PIPER:
-			case STRING_TYPE_MPREDUCE:
 				// user defined function
 				sb.append("logB(");
 				sb.append(leftStr);
 				sb.append(',');
 				sb.append(rightStr);
+				sb.append(')');
+				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("logb(");
+				sb.append(rightStr);
+				sb.append(',');
+				sb.append(leftStr);
 				sb.append(')');
 				break;
 
@@ -2972,6 +2979,12 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				sb.append(leftStr);
 				sb.append(')');
 				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("logb(");
+				sb.append(leftStr);
+				sb.append(",2)");
+				break;
 
 			default:
 				sb.append("ld(");
@@ -3037,6 +3050,12 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				sb.append(leftStr);
 				sb.append(')');
 				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("myabs(");
+				sb.append(leftStr);
+				sb.append(')');
+				break;
 
 			default:
 				sb.append("abs(");
@@ -3057,6 +3076,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append("sign(");
 				break;
 
@@ -3104,6 +3124,11 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				break;
 			case STRING_TYPE_MAXIMA:
 				sb.append("carg(");
+				sb.append(leftStr);
+				sb.append(')');
+				break;
+			case STRING_TYPE_MPREDUCE:
+				sb.append("myarg(");
 				sb.append(leftStr);
 				sb.append(')');
 				break;
@@ -3211,6 +3236,9 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			case STRING_TYPE_MAXIMA:
 				sb.append("gamma_incomplete(");
 				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("gamma2(");
 
 			default:
 				sb.append("gamma(");
@@ -3287,6 +3315,10 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			case STRING_TYPE_MAXIMA:
 				sb.append("beta_incomplete_regularized(");
 				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("beta3(");
+				break;
 
 			default:
 				sb.append("betaRegularized(");
@@ -3301,7 +3333,13 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			if (valueForm)
 				sb.append(leftStr);
 			else
-				sb.append("random()");
+				switch (STRING_TYPE) {
+				case STRING_TYPE_MPREDUCE:
+					sb.append("myrandom()");
+					break;
+				default:
+					sb.append("random()");
+				}
 			break;
 
 		case XCOORD:

@@ -160,6 +160,10 @@ public class CASmpreduce extends CASgeneric {
 			else if (s.startsWith("***")) { // MPReduce comment
 				Application.debug("MPReduce comment: " + s);
 				continue;
+			}
+			else if (s.startsWith("Unknown")){ 
+				Application.debug("Assumed "+s);
+				continue;
 			} else {
 				// look for any trailing $
 				int len = s.length();
@@ -180,7 +184,6 @@ public class CASmpreduce extends CASgeneric {
 		}
 
 		result = sb.toString();
-		result = result.replaceAll("\\*\\*", "^");
 
 		// TODO: remove
 		System.out.println("   result: " + result);
@@ -243,6 +246,14 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("off numval;");
 		mpreduce.evaluate("linelength 50000;");
 		mpreduce.evaluate("scientific_notation {16,5};");
+		mpreduce.evaluate("on fullroots;");
+		
+		mpreduce.evaluate("korder ggbcasvarx, ggbcasvary, ggbcasvarz, ggbcasvara, " +
+				"ggbcasvarb, ggbcasvarc, ggbcasvard, ggbcasvare, ggbcasvarf, " +
+				"ggbcasvarg, ggbcasvarh, ggbcasvari, ggbcasvarj, ggbcasvark, " +
+				"ggbcasvarl, ggbcasvarm, ggbcasvarn, ggbcasvaro, ggbcasvarp, " +
+				"ggbcasvarq, ggbcasvarr, ggbcasvars, ggbcasvart, ggbcasvaru, " +
+				"ggbcasvarv, ggbcasvarw;");
 		
 		mpreduce.evaluate("let {" +
 				"int(~w/~x,~x) => w*log(abs(x)) when freeof(w,x)," +
@@ -265,10 +276,15 @@ public class CASmpreduce extends CASgeneric {
 				"int(csc(~x),~x) => log(abs(tan(x / 2)))," +
 				"int(~w*csc(~x),~x) => w*log(abs(tan(x / 2))) when freeof(w,x)," +
 				"int(~w+csc(~x),~x) => int(w,x)+log(abs(tan(x / 2)))," +
-				"int(~a+~w*csc(~x),~x) => int(a,x)+w*log(abs(tan(x / 2))) when freeof(w,x)};"
+				"int(~a+~w*csc(~x),~x) => int(a,x)+w*log(abs(tan(x / 2))) when freeof(w,x)" +
+				"};"
 				);
 		
 		mpreduce.evaluate("let {impart(arbint(~w)) => 0, arbint(~w)*i =>  0};");
+		
+		mpreduce.evaluate("solverules:={" +
+				"tan(~x) => sin(x)/cos(x)" +
+				"};");
 		
 		// bugfix for reduce, will be removed when the bug is fixed in reduce ( :rd: - problem)
 //		mpreduce.evaluate("symbolic procedure xprint(u,flg);"
@@ -291,16 +307,21 @@ public class CASmpreduce extends CASgeneric {
 
 		
 		mpreduce.evaluate("procedure myatan2(y,x);" +
+				" begin scalar xinput, yinput;" +
+				" xinput:=x; yinput:=y;" +
+				" on rounded, roundall, numval;" +
+				" x:=x+0; y:=y+0;" +
+				" return " +
 				" if numberp(y) and numberp(x) then" +
-				"   if x>0 then atan(y/x)" +
-				"   else if x<0 and y>=0 then atan(y/x)+pi" +
-				"   else if x<0 and y<0 then atan(y/x)-pi" +
-				"   else if x=0 and y>0 then pi/2" +
-				"   else if x=0 and y<0 then -pi/2" +
-				"   else if x=0 and y=0 then 0" +
+				"   if x>0 then <<if numeric!!=0 then off rounded, roundall, numval; atan(yinput/xinput)>>" +
+				"   else if x<0 and y>=0 then <<if numeric!!=0 then off rounded, roundall, numval; atan(yinput/xinput)+pi>>" +
+				"   else if x<0 and y<0 then <<if numeric!!=0 then off rounded, roundall, numval; atan(yinput/xinput)-pi>>" +
+				"   else if x=0 and y>0 then <<if numeric!!=0 then off rounded, roundall, numval; pi/2>>" +
+				"   else if x=0 and y<0 then <<if numeric!!=0 then off rounded, roundall, numval; -pi/2>>" +
+				"   else if x=0 and y=0 then <<if numeric!!=0 then off rounded, roundall, numval; 0>>" +
 				"   else '?" +
 				" else" +
-				"   '?;");
+				"   '? end;");
 		
 		// access functions for elements of a vector
 		mpreduce.evaluate("procedure ggbcasvarx(a); if arglength(a)>-1 and part(a,0)='list then first(a) else ggbcasvarx*a;");
@@ -312,10 +333,45 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure myround(x);" 
 				+ "floor(x+0.5);");
 		
-		mpreduce.evaluate("symbolic procedure isbound!! x; if get(x, 'avalue) then 1 else 0;");	
 		
-		mpreduce.evaluate("procedure mysolve(eqn, var);"
+		mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
+		mpreduce.evaluate("procedure uigamma(n,m); gamma(n)-igamma(n,m);");
+		mpreduce.evaluate("procedure beta!Regularized(a,b,x); ibeta(a,b,x);");
+		mpreduce.evaluate("procedure myarg(x);" +
+				" if arglength(x)>-1 and part(x,0)='list then myatan2(part(x,2), part(x,1)) " +
+				" else if arglength(x)>-1 and part(x,0)='mat then <<" +
+				"   clear x!!;" +
+				"   x!!:=x;" +
+				"   if row_dim(x!!)=1 then myatan2(x!!(1,2),x!!(1,1))" +
+				"   else if column_dim(x!!)=1 then myatan2(x!!(2,1),x!!(2,1))" +
+				"   else arg(x!!) >>" +
+				" else myatan2(impart(x),repart(x));");
+		mpreduce.evaluate("procedure complexpolar(r,phi); r*(cos(phi)+i*sin(phi));");
+		mpreduce.evaluate("procedure mypolar(r,phi); list(r*cos(phi),r*sin(phi));");
+		mpreduce.evaluate("procedure complexexponential(r,phi); r*(cos(phi)+i*sin(phi));");
+		mpreduce.evaluate("procedure conjugate(x); conj(x);");
+		mpreduce.evaluate("procedure myrandom(); <<on rounded; random(100000001)/(random(100000000)+1)>>;");
+		mpreduce.evaluate("procedure gamma!Regularized(a,x); igamma(a,x);");
+		mpreduce.evaluate("procedure gamma2(a,x); gamma(a)*igamma(a,x);");
+		mpreduce.evaluate("procedure beta3(a,b,x); beta(a,b)*ibeta(a,b,x);");
+		mpreduce.evaluate("symbolic procedure isbound!! x; if get(x, 'avalue) then 1 else 0;");	
+		mpreduce.evaluate("procedure myabs(x);" +
+				" if arglength(x!!)>-1 and part(x,0)='list then sqrt(for each elem!! in x sum elem!!^2)" +
+				" else if arglength(x)>-1 and part(x,0)='mat then <<" +
+				"   clear x!!;" +
+				"   x!!:=x;" +
+				"   if row_dim(x!!)=1 then sqrt(for i:=1:column_dim(x!!) sum x!!(1,i)^2)" +
+				"   else if column_dim(x!!)=1 then sqrt(for i:=1:row_dim(x!!) sum x!!(i,1)^2)" +
+				"   else abs(x!!) >>" +
+				" else if freeof(x,i) then abs(x)" +
+				" else sqrt(repart(x)^2+impart(x)^2);");
+
+		mpreduce.evaluate("procedure flattenlist(a);" +
+				"if 1=for each elem!! in a product length(elem!!) then for each elem!! in a join elem!! else a;");
+		
+		mpreduce.evaluate("procedure mysolve2(eqn, var);"
 				+ " begin scalar solutions!!, bool!!;"
+				+ "  let solverules;"
 				+ "  if arglength(eqn)>-1 and part(eqn,0)='list then"
 				+ "    eqn:=for each x in eqn collect"
 				+ "      if freeof(x,=) then x else lhs(x)-rhs(x)"
@@ -339,12 +395,14 @@ public class CASmpreduce extends CASgeneric {
 				+ "	   else if bool!!>1 then " 
 				+ "  	 {{var='?}}" 
 				+ "    else "
-				+ "		 {} >>;" 
+				+ "		 {} >>;"
+				+ "  clearrules solverules;"
 				+ "  return mkset(solutions!!);" 
 				+ " end;");
 		
-		mpreduce.evaluate("procedure mycsolve(eqn, var);" +
-				"  begin scalar solutions!!, bool!!;" +
+		mpreduce.evaluate("procedure mycsolve2(eqn, var);" +
+				" begin scalar solutions!!, bool!!;" +
+				"  let solvrules;" +
 				"  if arglength(eqn)>-1 and part(eqn,0)='list then" +
 				"    eqn:=for each x in eqn collect" +
 				"      if freeof(x,=) then x else lhs(x)-rhs(x)" +
@@ -362,8 +420,64 @@ public class CASmpreduce extends CASgeneric {
 				"      else if bool!!=0 then" +
 				"        {{var='?}}" +
 				"      >>;" +
-				"      return mkset(solutions!!);" +
-				"  end;");
+				"  clearrules solverules;" +
+				"  return mkset(solutions!!);" +
+				" end;");
+		
+		mpreduce.evaluate("procedure mysolve1(eqn);"
+				+ " begin scalar solutions!!, bool!!;"
+				+ "  let solverules;"
+				+ "  if arglength(eqn)>-1 and part(eqn,0)='list then"
+				+ "    eqn:=for each x in eqn collect"
+				+ "      if freeof(x,=) then x else lhs(x)-rhs(x)"
+				+ "  else if freeof(eqn,=) then 1 else eqn:=lhs(eqn)-rhs(eqn);"
+				+ "  solutions!!:=solve(eqn);"
+				+ "	 if depth(solutions!!)<2 then"
+				+ "		solutions!!:=for each x in solutions!! collect {x};"
+				+ "	 solutions!!:=for each sol in solutions!! join <<"
+				+ "    bool!!:=1;"
+				+ "    for each solution!! in sol do"
+				+ "      if freeof(solution!!,'root_of) then <<"
+				+ "		   on rounded, roundall, numval, complex;"
+				+ "		   if freeof(solution!!,'i) or aeval(impart(rhs(solution!!)))=0 then 1 else bool!!:=0;"
+				+ "		   off complex;"
+				+ "		   if numeric!!=0 then off rounded, roundall, numval"
+				+ "      >>" 
+				+ "      else" 
+				+ "	       bool!!:=2*bool!!;"
+				+ "    if bool!!=1 then" 
+				+ "  	 {sol}"
+				+ "	   else if bool!!>1 then " 
+				+ "  	 {{'?}}" 
+				+ "    else "
+				+ "		 {} >>;" 
+				+ "  clearrules solverules;"
+				+ "  return mkset(solutions!!);" 
+				+ " end;");
+		
+		mpreduce.evaluate("procedure mycsolve(eqn);" +
+				" begin scalar solutions!!, bool!!;" +
+				"  let solverules;" +
+				"  if arglength(eqn)>-1 and part(eqn,0)='list then" +
+				"    eqn:=for each x in eqn collect" +
+				"      if freeof(x,=) then x else lhs(x)-rhs(x)" +
+				"  else if freeof(eqn,=) then 1 else eqn:=lhs(eqn)-rhs(eqn);" +
+				"    solutions!!:=solve(eqn);" +
+				"    if depth(solutions!!)<2 then" +
+				"      solutions!!:=for each x in solutions!! collect {x};" +
+				"    solutions!!:= for each sol in solutions!! join <<" +
+				"      bool!!:=1;" +
+				"      for each solution!! in sol do" +
+				"        if freeof(solution!!,'root_of) then 1 else" +
+				"      		bool!!:=0;" +
+				"      if bool!!=1 then" +
+				"        {sol}" +
+				"      else if bool!!=0 then" +
+				"        {{var='?}}" +
+				"      >>;" +
+				"  clearrules solverules;" +
+				"  return mkset(solutions!!);" +
+				" end;");
 		
 		mpreduce.evaluate("procedure dot(vec1,vec2); "
 				+ "	begin scalar tmplength; "
@@ -405,30 +519,54 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure cross(atmp,btmp); " +
 				"begin;" +
 				"  a:=atmp; b:= btmp;" +
-				"  if arglength(a)=-1 or (length(a) neq 3 and length(a) neq {1,3} and length(a) neq {3,1}) then return '?;" +
-				"  if arglength(b)=-1 or (length(b) neq 3 and length(b) neq {1,3} and length(b) neq {3,1}) then return '?;" +
-				"  if length(a)={1,3} then a:=tp(a);" +
-				"  if length(b)={1,3} then b:=tp(b);" +
+				"  if arglength(a)=-1 or (length(a) neq 3 and length(a) neq 2 and length(a) neq {1,3} and length(a) neq {3,1} and length(a) neq {1,2} and length(a) neq {2,1}) then return '?;" +
+				"  if arglength(b)=-1 or (length(b) neq 3 and length(b) neq 2 and length(b) neq {1,3} and length(b) neq {3,1} and length(b) neq {1,2} and length(b) neq {2,1}) then return '?;" +
+				"  if length(a)={1,3} or length(b)={1,2} then a:=tp(a);" +
+				"  if length(b)={1,3} or length(b)={1,2} then b:=tp(b);" +
 				"  return" +
 				"  if arglength(a)>-1 and part(a,0)='mat then <<" +
 				"    if arglength(b)>-1 and part(b,0)='mat then <<" +
-				"      mat((a(2,1)*b(3,1)-a(3,1)*b(2,1))," +
-				"      (a(3,1)*b(1,1)-a(1,1)*b(3,1))," +
-				"      (a(1,1)*b(2,1)-a(2,1)*b(1,1)))" +
+				"      if length(a)={3,1} and length(b)={3,1} then" +
+				"        mat((a(2,1)*b(3,1)-a(3,1)*b(2,1))," +
+				"        (a(3,1)*b(1,1)-a(1,1)*b(3,1))," +
+				"        (a(1,1)*b(2,1)-a(2,1)*b(1,1)))" +
+				"      else if length(a)={2,1} and length(b)={2,1} then" +
+				"        mat((0)," +
+				"        (0)," +
+				"        (a(1,1)*b(2,1)-a(2,1)*b(1,1)))" +
+				"      else '?" +
 				"    >> else if arglength(b)>-1 and part(b,0)='list then <<" +
-				"      list(a(2,1)*part(b,3)-a(3,1)*part(b,2)," +
-				"      a(3,1)*part(b,1)-a(1,1)*part(b,3)," +
-				"      a(1,1)*part(b,2)-a(2,1)*part(b,1))" +
+				"      if length(a)={3,1} and length(b)=3 then" +
+				"        list(a(2,1)*part(b,3)-a(3,1)*part(b,2)," +
+				"        a(3,1)*part(b,1)-a(1,1)*part(b,3)," +
+				"        a(1,1)*part(b,2)-a(2,1)*part(b,1))" +
+				"      else if length(a)={2,1} and length(b)=2 then" +
+				"        list(0," +
+				"        0," +
+				"        a(1,1)*part(b,2)-a(2,1)*part(b,1))" +
+				"      else '?" +
 				"    >> else << '? >>" +
 				"  >> else if arglength(a)>-1 and part(a,0)='list then <<" +
 				"    if arglength(b)>-1 and part(b,0)='mat then <<" +
-				"      list(part(a,2)*b(3,1)-part(a,3)*b(2,1)," +
-				"      part(a,3)*b(1,1)-part(a,1)*b(3,1)," +
-				"      part(a,1)*b(2,1)-part(a,2)*b(1,1))" +
+				"      if length(a)=3 and length(b)={3,1} then" +
+				"        list(part(a,2)*b(3,1)-part(a,3)*b(2,1)," +
+				"        part(a,3)*b(1,1)-part(a,1)*b(3,1)," +
+				"        part(a,1)*b(2,1)-part(a,2)*b(1,1))" +
+				"      else if length(a)=2 and length(b)={2,1} then" +
+				"        list(0," +
+				"        0," +
+				"        part(a,1)*b(2,1)-part(a,2)*b(1,1))" +
+				"      else '?" +
 				"    >> else if arglength(b)>-1 and part(b,0)='list then <<" +
-				"      list(part(a,2)*part(b,3)-part(a,3)*part(b,2)," +
-				"      part(a,3)*part(b,1)-part(a,1)*part(b,3)," +
-				"      part(a,1)*part(b,2)-part(a,2)*part(b,1))" +
+				"      if length(a)=3 and length(b)=3 then" +
+				"        list(part(a,2)*part(b,3)-part(a,3)*part(b,2)," +
+				"        part(a,3)*part(b,1)-part(a,1)*part(b,3)," +
+				"        part(a,1)*part(b,2)-part(a,2)*part(b,1))" +
+				"      else if length(a)=2 and length(b)=2 then" +
+				"        list(0," +
+				"        0," +
+				"        part(a,1)*part(b,2)-part(a,2)*part(b,1))" +
+				"      else '?" +
 				"    >> else << '? >>" +
 				"  >> else << '? >> " +
 				"end;");
@@ -477,7 +615,7 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("operator multiplication;");
 
 		mpreduce.evaluate("procedure addition(a,b);"
-				+ "  if arglength(a)>-1 and a='list and arglength(b)>-1 and part(b,0)='list then"
+				+ "  if arglength(a)>-1 and part(a,0)='list and arglength(b)>-1 and part(b,0)='list then"
 				+ "    for i:=1:length(a) collect part(a,i)+part(b,i)"
 				+ "  else if arglength(a)>-1 and part(a,0)='list then" 
 				+ "    map(~w!!+b,a)"
@@ -524,12 +662,7 @@ public class CASmpreduce extends CASgeneric {
 				+ "     return result!! " 
 				+ "end;");
 
-		mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
-		mpreduce.evaluate("procedure uigamma(n,m); gamma(n)-igamma(n,m);");
-		mpreduce.evaluate("procedure beta!Regularized(a,b,x); ibeta(a,b,x);");
-		mpreduce.evaluate("procedure arg(z); atan2(repart(z),impart(z));");
-		mpreduce.evaluate("procedure complexpolar(r,phi); r*(cos(phi)+i*sin(phi));");
-		mpreduce.evaluate("procedure complexexponential(r,phi); r*(cos(phi)+i*sin(phi));");
+
 		
 		mpreduce.evaluate("procedure mkdepthone(liste);" +
 				"	for each x in liste join " +
