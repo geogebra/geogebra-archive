@@ -29,9 +29,11 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
+import geogebra.gui.util.FullWidthLayout;
 import geogebra.gui.util.ImageSelection;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.io.MyXMLio;
+import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.ConstructionDefaults;
@@ -115,7 +117,9 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.activity.InvalidActivityException;
 import javax.imageio.ImageIO;
+import javax.naming.OperationNotSupportedException;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
@@ -490,38 +494,15 @@ public class Application implements KeyEventDispatcher {
 		// init kernel
 		initKernel();
 		kernel.setPrintDecimals(Kernel.STANDARD_PRINT_DECIMALS);
-	
-		// init xml io for construction loading
-		myXMLio = new MyXMLio(kernel, kernel.getConstruction());
-	
-		// load the gui manager if necessary
-		if(hasFullGui()) {
-			initGuiManager();
-		}
 
 		// init euclidian view
 		initEuclidianViews();
-	
-		// set frame
-		if (!isApplet && frame != null) {
-			setFrame(frame);
-		}
 
 		// load file on startup and set fonts
 		// set flag to avoid multiple calls of setLabels() and
 		// updateContentPane()
 		initing = true;
 		setFontSize(12);
-		
-		// initialize layout
-		if(hasFullGui()) {
-			getGuiManager().initialize();
-		}
-		
-		if(!isApplet) {
-			// init preferences
-			GeoGebraPreferences.getPref().initDefaultXML(this); 
-		}
 
 		// This is needed because otherwise Exception might come and
 		// GeoGebra may exit. (dockPanel not entirely defined)
@@ -531,13 +512,34 @@ public class Application implements KeyEventDispatcher {
 		if(ggtloading) {
 			if (!isApplet)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
-			if (hasFullGui()) 
-				getGuiManager().getLayout().setPerspectives(tmpPerspectives);	
 		}
+		
+		if(!isApplet) {
+			// init preferences
+			// TODO use default prefernces file instead
+			GeoGebraPreferences.getPref().initDefaultXML(this); 
+		}
+	
+		// init xml io for construction loading
+		myXMLio = new MyXMLio(kernel, kernel.getConstruction());
 
 		// open file given by startup parameter
 		handleOptionArgsEarly(args); // for --regressionFile=...
 		boolean fileLoaded = handleFileArg(args);
+		
+		// initialize GUI
+		if(useFullGui()) {
+			initGuiManager();
+			
+			// set frame
+			if (!isApplet && frame != null) {
+				setFrame(frame);
+			}
+			
+			if(tmpPerspectives != null) {
+				getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+			}
+		}
 
 		if (!isApplet) {			
 			// load XML preferences
@@ -549,7 +551,7 @@ public class Application implements KeyEventDispatcher {
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
 		}
 
-		if(hasFullGui() && !fileLoaded && !ggtloading) {			
+		if(useFullGui() && !fileLoaded && !ggtloading) {			
 			getGuiManager().getLayout().setPerspectives(tmpPerspectives);	
 		}
 
@@ -639,7 +641,7 @@ public class Application implements KeyEventDispatcher {
 	 * @return True if the whole GUI is available, false if
 	 * 		just the euclidian view is displayed.
 	 */
-	final public synchronized boolean hasFullGui() {
+	final public synchronized boolean useFullGui() {
 		return hasGui;
 	}
 	
@@ -650,6 +652,7 @@ public class Application implements KeyEventDispatcher {
 	protected void initGuiManager() {
 		setWaitCursor();
 		guiManager = new GuiManager(Application.this);
+		guiManager.initialize();
 		setDefaultCursor();
 	}
 	
@@ -747,13 +750,13 @@ public class Application implements KeyEventDispatcher {
 		clearConstruction();
 		
 		// clear input bar
-		if (hasFullGui() && showAlgebraInput()) {
+		if (useFullGui() && showAlgebraInput()) {
 			AlgebraInput ai = (AlgebraInput)(getGuiManager().getAlgebraInput());
 			ai.clear();
 		}
 		
 		// reset spreadsheet columns, reset trace columns
-		if (hasFullGui()) {
+		if (useFullGui()) {
 			getGuiManager().resetSpreadsheet();
 		}
 		
@@ -869,64 +872,76 @@ public class Application implements KeyEventDispatcher {
 	public JPanel buildApplicationPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 
-		// CENTER: Algebra View, Euclidian View
-		// euclidian panel with view and status bar
-		if (centerPanel != null) centerPanel.removeAll();			
-		centerPanel = new JPanel(new BorderLayout());
+		// remove existing elements
+		if (centerPanel != null) {
+			centerPanel.removeAll();
+		} else {
+			centerPanel = new JPanel(new BorderLayout());
+		}
 		centerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow));
 		updateCenterPanel(true);
 
-		JPanel topPanel = new JPanel(new BorderLayout());
-		JPanel bottomPanel = new JPanel(new BorderLayout());
-
-		if(showAlgebraInput) {
-			if(showInputTop) {
-				topPanel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
+		// full GUI => use layout manager, add other GUI elements as requested 
+		if(useFullGui()) {
+			JPanel topPanel = new JPanel(new BorderLayout());
+			JPanel bottomPanel = new JPanel(new BorderLayout());
+	
+			if(showAlgebraInput) {
+				if(showInputTop) {
+					topPanel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
+				} else {
+					bottomPanel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
+				}
+			}
+			
+			// initialize toolbar panel even if it's not used (hack)
+			getGuiManager().getToolbarPanel();
+			
+			if(showToolBar) {
+				if(showToolBarTop) {
+					topPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+				} else {
+					bottomPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+				}
+			}
+			
+			//==================
+			// G.Sturr 2010-11-14
+			// Create a help panel for the input bar and a JSplitPane to contain it.
+			// The splitPane defaults with the application on the left and null on the right. 
+			// Our help panel will be added/removed as needed by the input bar.
+			inputHelpPanel = new InputBarHelpPanel(this);
+			applicationSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, null);
+			applicationSplitPane.setBorder(BorderFactory.createEmptyBorder());
+			// help panel is on the right, so set all resize weight to the left pane
+			applicationSplitPane.setResizeWeight(1.0);
+			applicationSplitPane.setDividerSize(0);
+			
+			
+			panel.add(topPanel, BorderLayout.NORTH);
+			panel.add(applicationSplitPane, BorderLayout.CENTER);
+			panel.add(bottomPanel, BorderLayout.SOUTH);
+			
+			// init labels
+			setLabels();
+			
+			// Menubar; if the main component is a JPanel, we need to add the 
+			// menubar manually to the north
+			if (showMenuBar() && mainComp instanceof JPanel) {
+				JPanel menuBarPanel = new JPanel(new BorderLayout());
+				menuBarPanel.add(getGuiManager().getMenuBar(), BorderLayout.NORTH);
+				menuBarPanel.add(panel, BorderLayout.CENTER);
+				return menuBarPanel;
 			} else {
-				bottomPanel.add(getGuiManager().getAlgebraInput(), BorderLayout.SOUTH);
+				// standard case: return 
+				return panel;
 			}
 		}
 		
-		// initialize toolbar panel even if it's not used (hack)
-		getGuiManager().getToolbarPanel();
-		
-		if(showToolBar) {
-			if(showToolBarTop) {
-				topPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
-			} else {
-				bottomPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
-			}
-		}
-		
-		//==================
-		// G.Sturr 2010-11-14
-		// Create a help panel for the input bar and a JSplitPane to contain it.
-		// The splitPane defaults with the application on the left and null on the right. 
-		// Our help panel will be added/removed as needed by the input bar.
-		inputHelpPanel = new InputBarHelpPanel(this);
-		applicationSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, null);
-		applicationSplitPane.setBorder(BorderFactory.createEmptyBorder());
-		// help panel is on the right, so set all resize weight to the left pane
-		applicationSplitPane.setResizeWeight(1.0);
-		applicationSplitPane.setDividerSize(0);
-		
-		
-		panel.add(topPanel, BorderLayout.NORTH);
-		panel.add(applicationSplitPane, BorderLayout.CENTER);
-		panel.add(bottomPanel, BorderLayout.SOUTH);
-		
-		// init labels
-		setLabels();
-		
-		// Menubar; if the main component is a JPanel, we need to add the 
-		// menubar manually to the north
-		if (showMenuBar() && mainComp instanceof JPanel) {
-			JPanel menuBarPanel = new JPanel(new BorderLayout());
-			menuBarPanel.add(getGuiManager().getMenuBar(), BorderLayout.NORTH);
-			menuBarPanel.add(panel, BorderLayout.CENTER);
-			return menuBarPanel;
-		} else {
-			// standard case: return 
+		// minimal applet => just display EV
+		else {
+			panel.add(euclidianView, BorderLayout.CENTER);
+			centerPanel.add(panel, BorderLayout.CENTER);
 			return panel;
 		}
 	}
@@ -1022,7 +1037,7 @@ public class Application implements KeyEventDispatcher {
 		
 		centerPanel.removeAll();
 		
-		if(hasFullGui()) {
+		if(useFullGui()) {
 			centerPanel.add(getGuiManager().getLayout().getRootComponent(), BorderLayout.CENTER);
 		} else {
 			centerPanel.add(getEuclidianView(), BorderLayout.CENTER);
@@ -1204,10 +1219,12 @@ public class Application implements KeyEventDispatcher {
 						URL url = new URL(fileArgument2);
 						success = loadXML(url, isMacroFile);
 						
-						if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
-							getGuiManager().getLayout().setPerspectives(tmpPerspectives);
-						} else {
-							updateContentPane(true);
+						if(success && !isMacroFile) {
+							if(!useFullGui()) {
+								if(!isJustEuclidianVisible()) {
+									hasGui = true;
+								}
+							}
 						}
 					} else if (lowerCase.startsWith("base64://")) {
 						
@@ -1215,10 +1232,12 @@ public class Application implements KeyEventDispatcher {
 						byte [] zipFile = geogebra.util.Base64.decode(fileArgument.substring(9));
 						success = loadXML(zipFile);
 						
-						if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
-							getGuiManager().getLayout().setPerspectives(tmpPerspectives);
-						} else {
-							updateContentPane(true);
+						if(success && !isMacroFile) {
+							if(!useFullGui()) {
+								if(!isJustEuclidianVisible()) {
+									hasGui = true;
+								}
+							}
 						}
 					} else {
 						File f = new File(fileArgument);
@@ -1352,6 +1371,44 @@ public class Application implements KeyEventDispatcher {
 	public ArrayList<Perspective> getTmpPerspectives() {
 		return tmpPerspectives;
 	}
+	
+	/**
+	 * Check if just the euclidian view is visible in the document just loaded.
+	 * 
+	 * @return
+	 * @throws OperationNotSupportedException 
+	 */
+	private boolean isJustEuclidianVisible() throws OperationNotSupportedException {
+		if(tmpPerspectives == null) {
+			throw new OperationNotSupportedException();
+		}
+		
+		Perspective docPerspective = null;
+		
+		for(Perspective perspective : tmpPerspectives) {
+			if(perspective.getId().equals("tmp")) {
+				docPerspective = perspective;
+			}
+		}
+		
+		if(docPerspective == null) {
+			throw new OperationNotSupportedException();
+		}
+		
+		boolean justEuclidianVisible = false;
+		
+		for(DockPanelXml panel : docPerspective.getDockPanelInfo()) {
+			if(panel.getViewId() == Application.VIEW_EUCLIDIAN && panel.isVisible()) {
+				justEuclidianVisible = true;
+			}
+			else if(panel.isVisible()) {
+				justEuclidianVisible = false;
+				break;
+			}
+		}
+		
+		return justEuclidianVisible;
+	}
 
 	public EuclidianView getEuclidianView() {
 		return euclidianView;
@@ -1362,11 +1419,11 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	public boolean hasEuclidianView2() {
-		return getGuiManager().hasEuclidianView2();
+		return guiManager != null && getGuiManager().hasEuclidianView2();
 	}
 	
 	public boolean isShowingEuclidianView2() {
-		return getGuiManager().hasEuclidianView2() && 
+		return guiManager != null && getGuiManager().hasEuclidianView2() && 
 			getGuiManager().getEuclidianView2().isShowing();
 	}
 	
@@ -2780,9 +2837,11 @@ public class Application implements KeyEventDispatcher {
 			currentPath = currentFile.getParentFile();
 			addToFileList(currentFile);
 		} 	
-
-		updateTitle();
-		updateMenubar();	
+		
+		if(!isIniting()) {
+			updateTitle();
+			updateMenubar();	
+		}
 	}
 
 	public static void addToFileList(File file) {
@@ -3010,7 +3069,7 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	public boolean onlyGraphicsViewShowing() {
-		if(!hasFullGui()) {
+		if(!useFullGui()) {
 			return true;
 		}
 		
@@ -3093,7 +3152,7 @@ public class Application implements KeyEventDispatcher {
 	public void setShowAuxiliaryObjects(boolean flag) {
 		showAuxiliaryObjects = flag;
 
-		if (hasFullGui())
+		if (useFullGui())
 			getGuiManager().setShowAuxiliaryObjects(flag);
 		
 		updateMenubar();
@@ -3229,7 +3288,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void updateMenubar() {
-		if (!showMenuBar || !hasFullGui())
+		if (!showMenuBar || !useFullGui())
 			return;
 
 		getGuiManager().updateMenubar();
@@ -3238,7 +3297,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void updateSelection() {
-		if (!showMenuBar || !hasFullGui())
+		if (!showMenuBar || !useFullGui())
 			return;
 		
 		// put in to check possible bottleneck
@@ -3255,18 +3314,21 @@ public class Application implements KeyEventDispatcher {
 		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {			
 				updateStyleBars();		
 		}
-			
 	}
 	
 	
 	public void updateStyleBars(){
+		if(!useFullGui()) {
+			return;
+		}
+		
 		getEuclidianView().getStyleBar().updateStyleBar();	
 		if (getGuiManager().hasEuclidianView2())
 			getGuiManager().getEuclidianView2().getStyleBar().updateStyleBar();
 	}
 
 	public void updateMenuWindow() {
-		if (!showMenuBar || !hasFullGui())
+		if (!showMenuBar || !useFullGui())
 			return;
 
 		getGuiManager().updateMenuWindow();

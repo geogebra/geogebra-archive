@@ -2631,10 +2631,10 @@ public class MyXMLHandler implements DocHandler {
 			
 			// will create EV2 if it's there, so care needed
 			if ((EVs & 2) == 2) { // bit 1
-				geo.addView(app.getGuiManager().getEuclidianView2());		
+				geo.addView(app.getEuclidianView2());		
 			} else { 				
 				// don't want to create EV2 unnecessarily
-				if (app.getGuiManager().hasEuclidianView2())
+				if (app.hasEuclidianView2())
 						geo.removeView(app.getGuiManager().getEuclidianView2());
 			}
 			return true;

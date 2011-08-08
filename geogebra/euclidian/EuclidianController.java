@@ -2016,7 +2016,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_SELECTION_LISTENER:
 			GeoElementSelectionListener sel = app.getCurrentSelectionListener();
 			if (sel == null) return false;
-			if (app.hasFullGui()) {
+			if (app.useFullGui()) {
 				return !app.getGuiManager().isInputFieldSelectionListener();
 			}
 			else
@@ -2228,7 +2228,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// outdated - we want to leave the point selected after drag now
 		//if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 
-		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
+		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET && app.useFullGui())
+			getMovedGeoPoint().resetTraceColumns();
 
 	}
 	
@@ -2642,7 +2643,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_SELECTION_LISTENER:
 			// tell properties dialog
 			if (hits.size() > 0 &&
-					app.hasFullGui() &&
+					app.useFullGui() &&
 					app.getGuiManager().isPropertiesDialogSelectionListener()) 
 			{
 				GeoElement geo = (GeoElement) hits.get(0);
@@ -2703,7 +2704,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			app.setSelectedGeos(hits);
 
 			// if alt pressed, create list of objects as string and copy to input bar
-			if (hits != null && hits.size() > 0 && e != null && e.isAltDown() && app.hasFullGui() && app.showAlgebraInput()) {
+			if (hits != null && hits.size() > 0 && e != null && e.isAltDown() && app.useFullGui() && app.showAlgebraInput()) {
 
 				JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
 
@@ -3337,7 +3338,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	{
 		justCreatedGeos.clear();
 		app.updateStyleBars();
-		app.getGuiManager().updateMenubarSelection();
+		
+		if(app.useFullGui()) {
+			app.getGuiManager().updateMenubarSelection();
+		}
 	}
 
 	public ArrayList<GeoElement> getJustCreatedGeos()
@@ -7777,14 +7781,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	
 	private void openMiniPropertiesPanel() {
-		if (!app.hasFullGui()) return;
+		if (!app.useFullGui()) return;
 		if (app.isMiniPropertiesActive())
 			app.getGuiManager().toggleMiniProperties(true);
 
 	}
 
 	private void closeMiniPropertiesPanel() {
-		if (!app.hasFullGui()) return;
+		if (!app.useFullGui()) return;
 		app.getGuiManager().toggleMiniProperties(false);
 
 	}

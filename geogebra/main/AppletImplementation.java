@@ -360,19 +360,15 @@ public class AppletImplementation implements AppletImplementationInterface {
 	}
 	
 	/**
-	 * @return Whether this applet just needs the euclidian view
-	 * 	or a part of the real GUI. In the first case many unnecessary
-	 *  elements (jar packages and classes) are not loaded.
+	 * @return If the applet parameters indicate that the GUI is necessary. 
 	 */
 	public boolean needsGui() {
-		return true;
-		/*return showOpenButton
+		return showOpenButton
 			|| showAlgebraInput
 			|| showToolBar
 			|| showMenuBar
 			|| enableRightClick
-			|| showFrame 
-			|| showOpenButton;*/
+			|| showFrame;
 	}
 
 	public void initGUI() {		
@@ -561,7 +557,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 
 		// just update layout if the layout was already visible
 		// (which isn't the case in button-only mode), see ticket #217
-		if(app.hasFullGui() && !showOpenButton)
+		if(app.useFullGui() && !showOpenButton)
 			app.getGuiManager().updateLayout();
 
 		app.updateContentPane();
@@ -596,7 +592,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 
 		app.setApplet(this);
 
-		if(app.hasFullGui())
+		if(app.useFullGui())
 			app.getGuiManager().updateLayout();
 		
 		initGUI();

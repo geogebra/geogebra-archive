@@ -735,7 +735,7 @@ public class MyXMLio {
 		cons.getConstructionXML(sb);
 		
 		// save cas session
-		if (app.hasFullGui() && app.getGuiManager().hasCasView()) {
+		if (app.useFullGui() && app.getGuiManager().hasCasView()) {
 			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
 		
@@ -834,7 +834,7 @@ public class MyXMLio {
 		c.getConstructionXML(sb);
 
 		// save cas session
-		if (app.hasFullGui() && app.getGuiManager().hasCasView()) {
+		if (app.useFullGui() && app.getGuiManager().hasCasView()) {
 			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
 		

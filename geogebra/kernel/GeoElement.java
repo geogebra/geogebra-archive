@@ -1543,7 +1543,7 @@ public abstract class GeoElement
 		switch (tooltipMode) {
 		default:
 		//case TOOLTIP_ALGEBRAVIEW_SHOWING:
-			if (!(app.hasFullGui() && app.getGuiManager().showView(Application.VIEW_ALGEBRA))) {
+			if (!(app.useFullGui() && app.getGuiManager().showView(Application.VIEW_ALGEBRA))) {
 				return false;
 			} else
 				return isAlgebraVisible(); // old behaviour
@@ -1562,7 +1562,7 @@ public abstract class GeoElement
 		switch (tooltipMode) {
 		default:
 		case TOOLTIP_ALGEBRAVIEW_SHOWING:
-			if (!(app.hasFullGui() && app.getGuiManager().showView(Application.VIEW_ALGEBRA))) {
+			if (!(app.useFullGui() && app.getGuiManager().showView(Application.VIEW_ALGEBRA))) {
 				return "";
 			}
 			// else fall through:
@@ -4187,7 +4187,7 @@ public abstract class GeoElement
 			sb.append("\"");
 
 
-			if (app.hasFullGui() && app.getGuiManager().hasEuclidianView2()) {
+			if (app.useFullGui() && app.getGuiManager().hasEuclidianView2()) {
 
 				int EVs = 0;
 				if (!isVisibleInView(app.getEuclidianView())) {
