@@ -299,7 +299,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		// create toggle graphics panel
 
 		FlowLayout flow = new FlowLayout(FlowLayout.CENTER); 
-		flow.setHgap(10);              
+		flow.setHgap(4);              
 		JPanel tb3 = new JPanel(flow);
 		//JToolBar tb3 = new JToolBar();
 		//tb3.setFloatable(false);
@@ -313,6 +313,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 
 		// create the panel
+		
 		JPanel northPanel = new JPanel(new BorderLayout());
 		northPanel.add(tb1,BorderLayout.WEST);
 		northPanel.add(tb2,BorderLayout.EAST);
@@ -385,17 +386,16 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		btnTangent = new JToggleButton(app.getImageIcon("tangent_line.png"));
 		btnXYSegments = new JToggleButton(app.getImageIcon("xy_segments.png"));
 		btnTable = new JToggleButton(app.getImageIcon("xy_table.png"));
-		//btnTable.setSelectedIcon(app.getImageIcon("xy_table.png", Color.black));
-
+		
 		btnOscCircle.addActionListener(this);
 		btnTangent.addActionListener(this);
 		btnXYSegments.addActionListener(this);
 		btnTable.addActionListener(this);
 
-		btnOscCircle.setPreferredSize(new Dimension(24,24));
-		btnTangent.setPreferredSize(new Dimension(24,24));
-		btnXYSegments.setPreferredSize(new Dimension(24,24));
-		btnTable.setPreferredSize(new Dimension(24,24));
+		//btnOscCircle.setPreferredSize(new Dimension(24,24));
+		//btnTangent.setPreferredSize(new Dimension(24,24));
+		//btnXYSegments.setPreferredSize(new Dimension(24,24));
+		//btnTable.setPreferredSize(new Dimension(24,24));
 
 		btnXYSegments.setSelected(true);
 
@@ -485,7 +485,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		if(selectedGeo == null)
 			return app.getMenu("SelectObject");
 		else
-			return selectedGeo.getNameDescriptionHTML(false, true);          
+			return selectedGeo.getAlgebraDescription();          
 	}
 
 
