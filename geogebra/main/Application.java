@@ -509,10 +509,9 @@ public class Application implements KeyEventDispatcher {
 			if (!isApplet)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
 		}
-		
+
+		// init default preferences if necessary
 		if(!isApplet) {
-			// init preferences
-			// TODO use default prefernces file instead
 			GeoGebraPreferences.getPref().initDefaultXML(this); 
 		}
 	

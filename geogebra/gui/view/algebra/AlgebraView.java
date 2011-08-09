@@ -313,7 +313,9 @@ public class AlgebraView extends JTree implements View{
 			// auxiliary nodes might be scattered across the whole tree,
 			// therefore we just rebuild the tree
 			if(getTreeMode() == MODE_DEPENDENCY) {
-				model.removeNodeFromParent(auxiliaryNode);
+				if(auxiliaryNode.getParent() != null) {
+					model.removeNodeFromParent(auxiliaryNode);
+				}
 			} else {
 				clearView();
 				kernel.notifyAddAll(this);

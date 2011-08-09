@@ -359,7 +359,7 @@ public class CASTable extends JTable {
 			// start editing
 			setRowSelectionInterval(editRow, editRow);	
 	        scrollRectToVisible(getCellRect( editRow, COL_CAS_CELLS, true ) );	
-			editCellAt(editRow, COL_CAS_CELLS);			
+			editCellAt(editRow, COL_CAS_CELLS);
 		}
 	}
 	

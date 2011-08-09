@@ -51,7 +51,7 @@ public class Toolbar extends JToolBar {
 	/**
 	 * The mode selected at the moment.
 	 */
-	private int selectedMode;
+	private int mode;
 
 	private ArrayList<ModeToggleMenu> modeToggleMenus;
 	private ModeToggleMenu temporaryModes;
@@ -84,7 +84,7 @@ public class Toolbar extends JToolBar {
 	 * Creates a toolbar using the current strToolBarDefinition.
 	 */
 	public void buildGui() {
-		selectedMode = -1;
+		mode = -1;
 
 		ModeToggleButtonGroup bg = new ModeToggleButtonGroup();
 		modeToggleMenus = new ArrayList<ModeToggleMenu>();
@@ -103,7 +103,7 @@ public class Toolbar extends JToolBar {
 		modeToggleMenus.add(temporaryModes);
 		add(temporaryModes);
 
-		setMode(app.getMode(), true);
+		setMode(app.getMode(), false);
 	}
 
 	/**
@@ -140,9 +140,9 @@ public class Toolbar extends JToolBar {
 				}
 			}
 
-			if (success) {
-				this.selectedMode = mode;
-			} else {
+			this.mode = mode;
+			
+			if (!success) {
 				if(createTemporaryMode) {
 					// don't display move mode icon in other views, this is a bit irritating
 					if (dockPanel == null || mode != EuclidianView.MODE_MOVE) {
@@ -161,7 +161,7 @@ public class Toolbar extends JToolBar {
 	}
 
 	public int getSelectedMode() {
-		return selectedMode;
+		return mode;
 	}
 
 	public int getFirstMode() {

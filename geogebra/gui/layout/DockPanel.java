@@ -615,7 +615,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	}
 	
 	/**
-	 * Change the toolbar mode.
+	 * Change the toolbar mode for panels open in a separate frame.
 	 * 
 	 * @param mode
 	 */

@@ -197,11 +197,12 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
-
+		
 		app = view.getApplication();
 		kernel = app.getKernel();
 		this.tableModel = tableModel;
 		this.view = view;
+		
 		table = this;
 		grabCursor = createCursor(app.getImageIcon("cursor_grab.gif").getImage(), true);
 		grabbingCursor = createCursor(app.getImageIcon("cursor_grabbing.gif").getImage(), true);

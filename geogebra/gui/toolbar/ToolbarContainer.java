@@ -216,6 +216,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		
 		activeToolbar = id;
 		toolbarPanel.show(Integer.toString(id));
+		app.setMode(getToolbar(id).getSelectedMode());
 	}
 
 	/**
@@ -258,6 +259,22 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		if(getViewId(toolbar) == activeToolbar) {
 			activeToolbar = -1;
 		}
+	}
+	
+	/**
+	 * Get toolbar associated to passed view ID.
+
+	 * @param viewId
+	 * @return
+	 */
+	public Toolbar getToolbar(int viewId) {
+		for(Toolbar toolbar : toolbars) {
+			if(getViewId(toolbar) == viewId) {
+				return toolbar;
+			}
+		} 
+		
+		return null;
 	}
 
 	/**
