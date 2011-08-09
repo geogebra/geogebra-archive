@@ -148,17 +148,6 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 			}
 		});
 		add(btnHelp);
-	
-		//Help button
-		JButton btnHelp2 = new JButton(app.getImageIcon("help.png"));
-		//btnHelp.setToolTipText(app.getPlainTooltip("FastHelp"));
-		btnHelp2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				app.showHelp("ConstructionProtocolHelp");
-				//requestFocus();
-			}
-		});
-		add(btnHelp2);
 		
 		setLabels();
 	}
