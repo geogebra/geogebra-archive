@@ -1428,6 +1428,7 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	public EuclidianViewInterface getActiveEuclidianView() {
+		if (getGuiManager() == null) return getEuclidianView();
 		return getGuiManager().getActiveEuclidianView();
 	}
 	
