@@ -1231,9 +1231,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				tracegeo = hits.getFirstHit(GeoList.class);
 			if (tracegeo != null)
 			{
-				if (!((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(tracegeo))
-					app.getGuiManager().addSpreadsheetTrace(tracegeo);
-				recordObject = tracegeo;
+				if (recordObject == null)
+				{
+					if (!((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(tracegeo))
+						app.getGuiManager().addSpreadsheetTrace(tracegeo);
+					recordObject = tracegeo;
+				}
 				handleMousePressedForMoveMode(e, false);
 				tracegeo.updateRepaint();
 			}
@@ -2494,9 +2497,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 		if (mode == EuclidianView.MODE_RECORD_TO_SPREADSHEET && recordObject != null) {
-			if (((SpreadsheetView)app.getGuiManager().getSpreadsheetView()).getTraceManager().isTraceGeo(recordObject))
-				app.getGuiManager().removeSpreadsheetTrace(recordObject);
-			recordObject = null;
 			clearSelections();
 		} else {
 			// this is in the else branch to avoid running it twice
