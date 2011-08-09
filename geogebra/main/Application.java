@@ -19,8 +19,6 @@ package geogebra.main;
 
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
-import geogebra.cas.maxima.jacomax.JacomaxAutoConfigurator;
-import geogebra.cas.maxima.jacomax.MaximaConfiguration;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
@@ -29,9 +27,7 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
-import geogebra.gui.util.FullWidthLayout;
 import geogebra.gui.util.ImageSelection;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.Perspective;
@@ -54,6 +50,7 @@ import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
+
 import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -117,7 +114,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import javax.activity.InvalidActivityException;
 import javax.imageio.ImageIO;
 import javax.naming.OperationNotSupportedException;
 import javax.swing.BorderFactory;
@@ -1099,6 +1095,7 @@ public class Application implements KeyEventDispatcher {
 			getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
 		}
 		
+		/*
 		String cas = args.getStringValue("CAS");
 		if (cas.toLowerCase(Locale.US).equals("maxima")) {
 			setDefaultCAS(CAS_MAXIMA);
@@ -1112,7 +1109,7 @@ public class Application implements KeyEventDispatcher {
 		}
 		else if (cas.toLowerCase(Locale.US).equals("mathpiper")) {
 			setDefaultCAS(CAS_MATHPIPER);
-		}
+		}*/
 		
 		String fontSize = args.getStringValue("fontSize");
 		if(fontSize.length() > 0) {
@@ -5091,7 +5088,7 @@ public class Application implements KeyEventDispatcher {
 	final public static int CAS_MPREDUCE = ExpressionNode.STRING_TYPE_MPREDUCE;
 		
 
-	
+	/*
 	public void setDefaultCAS(int CAS) {
 		boolean success = false;
 		if (CAS == CAS_MAXIMA) {
@@ -5115,21 +5112,21 @@ public class Application implements KeyEventDispatcher {
 			kernel.setDefaultCAS(CAS_MATHPIPER);	
 		}
 		
-	}
+	}*/
 	
-	public MaximaConfiguration maximaConfiguration = null;
+	//public MaximaConfiguration maximaConfiguration = null;
 
 	/* eg --maximaPath=
-	 */
+	 *
 	private void setMaximaPath(String optionValue) {
 		maximaConfiguration = new MaximaConfiguration();
 		maximaConfiguration.setMaximaExecutablePath(optionValue);
 		kernel.setDefaultCAS(CAS_MAXIMA);				
-	}
+	}*/
 
 	
 	/* eg --CAS=maxima
-	 */
+	 *
 	private boolean setMaximaCAS(){
 		
 		maximaConfiguration = JacomaxAutoConfigurator.guessMaximaConfiguration();
@@ -5140,7 +5137,7 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		return false;
-	}
+	}*/
 	
 	/*
 	 * stops eg TAB automatically transferring focus between panes

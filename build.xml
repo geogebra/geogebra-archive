@@ -422,7 +422,10 @@ office@geogebra.org
 					org/apache/log4j/**,
 					org/mathpiper/mpreduce/**,
 					default.img"
-			excludes="**/*.java" 
+			excludes="**/*.java,
+			geogebra/cas/maxima/**,
+			geogebra/cas/jacomax/**,
+			geogebra/cas/mathpiper/**" 
 		/>
 	</target>
 

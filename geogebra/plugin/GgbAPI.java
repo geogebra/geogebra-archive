@@ -311,7 +311,7 @@ public class GgbAPI {
 	 * @author Ulven
 	 * @version 2010-03-10	
 	 * @deprecated since GeoGebra 4.0, use evalGeoGebraCAS() instead 
-	 */
+	 *
 	public synchronized String evalMaxima(String cmdString) {
 		
 		String ret = kernel.evaluateMaxima(cmdString);
@@ -322,7 +322,7 @@ public class GgbAPI {
 		
 		return ret;
 
-	}//evalMaxima(String cmdString)
+	}//evalMaxima(String cmdString)*/
 	
 	/* Not needed, see next command:
 	public synchronized geogebra.cas.GeoGebraCAS getCurrentCAS(){

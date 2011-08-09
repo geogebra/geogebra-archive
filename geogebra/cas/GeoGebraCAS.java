@@ -1,20 +1,14 @@
 package geogebra.cas;
 
-import geogebra.cas.maxima.CASmaxima;
-import geogebra.cas.maxima.MaximaVersionUnsupportedExecption;
 import geogebra.cas.mpreduce.CASmpreduce;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.util.MaxSizeHashMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -69,11 +63,12 @@ public class GeoGebraCAS {
 	public void setCurrentCAS(int CAS) {
 		try {
 			switch (CAS) {
+			/*
 				case Application.CAS_MAXIMA:
 					cas = getMaxima();
 					((CASmaxima) cas).initialize();
 					currentCAS = CAS;
-					break;
+					break;*/
 					
 				default:
 					cas = getMPReduce();
@@ -86,9 +81,10 @@ public class GeoGebraCAS {
 					break;
 					*/
 			}
+			/*
 		}catch (MaximaVersionUnsupportedExecption e){
 			app.showError("CAS.MaximaVersionUnsupported");
-			setCurrentCAS(Application.CAS_MPREDUCE);
+			setCurrentCAS(Application.CAS_MPREDUCE);*/
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,12 +105,13 @@ public class GeoGebraCAS {
 			return new CASmathpiper(casParser, new CasParserToolsImpl('e'));
 	}*/
 	
+	/*
 	private CASmaxima getMaxima() {
 		if (currentCAS == Application.CAS_MAXIMA)
 			return (CASmaxima) cas;
 		else
 			return new CASmaxima(casParser, new CasParserToolsImpl('b'));
-	}
+	}*/
 	
 	private CASmpreduce getMPReduce() {
 		if (currentCAS == Application.CAS_MPREDUCE)
@@ -207,10 +204,10 @@ public class GeoGebraCAS {
 	/** 
 	 * Evaluates an expression in Maxima syntax.
      * @return result string (null possible)
-     */
+     *
 	final public String evaluateMaxima(String exp) {
 		return getMaxima().evaluateMaxima(exp);
-	}
+	}*/
 	
 	final public String evaluateMPReduce(String exp)
 	{

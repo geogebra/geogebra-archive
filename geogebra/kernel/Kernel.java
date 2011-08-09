@@ -502,14 +502,14 @@ public class Kernel {
      * @return result string (null possible)
 	 * @throws Throwable 
 	 * @deprecated since GeoGebra 4.0, use evaluateGeoGebraCAS() instead
-     */
+     *
 	final public String evaluateMaxima(String exp) {
 		if (ggbCAS == null) {
 			getGeoGebraCAS();		
 		}
 		
 		return ggbCAS.evaluateMaxima(exp);
-	}	
+	}*/	
 			
 	final public boolean isGeoGebraCASready() {
 		return ggbCAS != null;
