@@ -237,6 +237,7 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("load_package taylor;");
 		mpreduce.evaluate("load_package assist;");
 		mpreduce.evaluate("load_package groebner;");		
+		mpreduce.evaluate("load_package trigsimp;");		
 		
 	}
 
