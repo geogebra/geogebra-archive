@@ -2,6 +2,8 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 
+import java.util.ArrayList;
+
 
 /**
  * Single intersection point 
@@ -168,9 +170,11 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 			point.addIncidence(parentOutput[index]);
 		} else {
 			point.setUndefined();
-			for (int i = 0; i < parentOutput.length; ++i) {
-				point.getIncidenceList().remove(parentOutput[i]);
-			}
+			ArrayList<GeoElement> al = point.getIncidenceList();
+			if (al != null)
+				for (int i = 0; i < parentOutput.length; ++i) {
+					al.remove(parentOutput[i]);
+				}
 		}
 	}   
 	
