@@ -3630,7 +3630,7 @@ public	class PropertiesPanel extends JPanel {
 		}
 		
 		public void setLabels() {
-			String[] fontSizes = app.getGuiManager().getFontSizeStrings();
+			String[] fontSizes = app.getFontSizeStrings();
 			
 			int selectedIndex = cbSize.getSelectedIndex();
 			cbSize.removeActionListener(this);

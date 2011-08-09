@@ -86,7 +86,7 @@ implements EuclidianViewCE {
 				corner.setUndefined();
 				return;
 			}
-			else ev = cons.getApplication().getGuiManager().getEuclidianView2();
+			else ev = cons.getApplication().getEuclidianView2();
 		}
 		
 		double width=ev.toRealWorldCoordX((double)(ev.getWidth())+1);

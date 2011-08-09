@@ -1100,7 +1100,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//========================================
 		// text size button
 
-		String[] textSizeArray = app.getGuiManager().getFontSizeStrings();
+		String[] textSizeArray = app.getFontSizeStrings();
 		
 		btnTextSize = new PopupMenuButton(app, textSizeArray, -1, 1, 
 				new Dimension(-1, iconHeight), SelectionTable.MODE_TEXT){

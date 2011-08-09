@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
@@ -1290,8 +1291,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	 * remove all outputs from algebra view
 	 */
 	public void removeOutputFromAlgebraView(){
-		for (int i=0; i<getOutputLength();i++)
-			app.getGuiManager().getAlgebraView().remove(getOutput(i));
+		AlgebraView av = app.getAlgebraView();
+		if (av != null)
+			for (int i=0; i<getOutputLength();i++)
+				av.remove(getOutput(i));
 	}	
 	
 	/**

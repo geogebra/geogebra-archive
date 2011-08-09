@@ -3313,15 +3313,6 @@ public class GuiManager {
 			return recentSymbolList;
 		}
 		
-		String [] fontSizeStrings = null;
-
-		public String[] getFontSizeStrings() {
-			if (fontSizeStrings == null)
-				fontSizeStrings = new String[] { app.getPlain("ExtraSmall"), app.getPlain("VerySmall"), app.getPlain("Small"), app.getPlain("Medium"), app.getPlain("Large"), app.getPlain("VeryLarge"), app.getPlain("ExtraLarge") };
-			
-			return fontSizeStrings;
-		}
-		
 		public static void setFontRecursive(Container c, Font font) {
 			Component[] components = c.getComponents();
 			for(Component com : components) {

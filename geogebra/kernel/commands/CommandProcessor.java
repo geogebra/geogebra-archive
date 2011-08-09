@@ -8698,7 +8698,7 @@ class CmdSetVisibleInView extends CommandProcessor {
 					break;
 				case 2:
 					if (!app.hasEuclidianView2()) break;
-					ev = app.getGuiManager().getEuclidianView2();
+					ev = app.getEuclidianView2();
 					break;
 				default:
 					// do nothing

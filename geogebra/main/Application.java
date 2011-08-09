@@ -28,6 +28,7 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
 import geogebra.gui.util.ImageSelection;
+import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.Perspective;
@@ -1408,6 +1409,11 @@ public class Application implements KeyEventDispatcher {
 
 	public EuclidianView getEuclidianView() {
 		return euclidianView;
+	}
+	
+	public AlgebraView getAlgebraView() {
+		if (guiManager == null) return null;
+		return guiManager.getAlgebraView();
 	}
 	
 	public EuclidianView getEuclidianView2() {
@@ -5652,6 +5658,15 @@ public class Application implements KeyEventDispatcher {
 			}
 		}
 	}
+	String [] fontSizeStrings = null;
+
+	public String[] getFontSizeStrings() {
+		if (fontSizeStrings == null)
+			fontSizeStrings = new String[] { getPlain("ExtraSmall"), getPlain("VerySmall"), getPlain("Small"), getPlain("Medium"), getPlain("Large"), getPlain("VeryLarge"), getPlain("ExtraLarge") };
+		
+		return fontSizeStrings;
+	}
+	
 
 		
 }
