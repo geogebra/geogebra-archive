@@ -2974,9 +2974,10 @@ public class GuiManager {
 	    		Application.printStacktrace("Bad getHelpURL call");
 	    	}
 			try {
+			//the server cannot handle %2F in URL, we have to leave / unencoded	
 			strURL = GeoGebra.GEOGEBRA_WEBSITE
 					+ "help/" + localeCode+"/" + typeStr + "/" +
-	        			java.net.URLEncoder.encode(strURL.replace(" ", "_"),"utf-8");
+	        			java.net.URLEncoder.encode(strURL.replace(" ", "_"),"utf-8").replace("%2F", "/");
 	        		Application.debug(strURL);
 	                URL url =   new URL(strURL);
                 	return url;
