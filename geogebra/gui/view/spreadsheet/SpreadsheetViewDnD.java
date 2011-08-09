@@ -218,7 +218,8 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 				
 				
 				
-				if(dte.getSourceActions() != DnDConstants.ACTION_COPY_OR_MOVE){
+			//	if(dte.getSourceActions() != DnDConstants.ACTION_COPY_OR_MOVE){
+					if(Application.getShiftDown()){
 					DialogCopyToSpreadsheet id = new DialogCopyToSpreadsheet(app,this);
 					id.setVisible(true);	
 				}
