@@ -881,6 +881,7 @@ public class GuiManager {
 		}
 		
 		if(optionsDialog != null) {
+			setFontRecursive(optionsDialog, app.getPlainFont());
 			SwingUtilities.updateComponentTreeUI(optionsDialog);
 		}
 
