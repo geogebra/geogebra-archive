@@ -435,7 +435,7 @@ public class GeoGebraCAS {
 			String input1normalized = casParser.toString(inputVE, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);			
 			
 			// new input
-			ValidExpression ve2 = casParser.parseGeoGebraCASInput(localizedInput);
+			ValidExpression ve2 = casParser.parseGeoGebraCASInputAndResolveDummyVars(localizedInput);
 			String input2normalized = casParser.toString(ve2, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 			
 			// compare if the parsed expressions are equal

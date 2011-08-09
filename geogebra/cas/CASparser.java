@@ -49,6 +49,26 @@ public class CASparser {
 	}
 	
 	/**
+	 * Parses the given expression and resolves variables as GeoDummy objects.
+	 * The result is returned as a ValidExpression.
+	 */
+	public ValidExpression parseGeoGebraCASInputAndResolveDummyVars(String inValue) {
+		try {
+			// parse input into valid expression
+			ValidExpression ve = parseGeoGebraCASInput(inValue);
+			
+			// resolve Variable objects in ValidExpression as GeoDummy objects
+			resolveVariablesForCAS(ve);
+			
+			return ve;
+		//}catch (MaximaVersionUnsupportedExecption e) {
+		//	throw e; // propagate exception
+		}catch (Throwable e) {
+			return null;
+		}
+	}
+	
+	/**
 	 * Resolves all variables in ValidExpression. Unknown variables are
 	 * kept as symbolic variables.
 	 */

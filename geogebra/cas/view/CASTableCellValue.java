@@ -199,23 +199,7 @@ public class CASTableCellValue {
 		localizedInput = localizeInput(input);
 	}
 	
-	private ValidExpression parseGeoGebraCASInputAndResolveDummyVars(String inValue) {
-		try {
-			// parse input into valid expression
-			ValidExpression ve = view.getCAS().getCASparser().parseGeoGebraCASInput(inValue);
-			
-			// resolve Variable objects in ValidExpression as GeoDummy objects
-			view.getCAS().getCASparser().resolveVariablesForCAS(ve);
-			
-			return ve;
-		//}catch (MaximaVersionUnsupportedExecption e) {
-		//	throw e; // propagate exception
-		}catch (Throwable e) {
-			return null;
-		}
-		
-		
-	}
+	
 	
 	/**
 	 * Sets how this row should be evaluated. Note that the input
@@ -259,6 +243,10 @@ public class CASTableCellValue {
 	 * Checks if newInput is structurally equal to the current input String.
 	 */
 	public boolean isStructurallyEqualToLocalizedInput(String newInput) {
+		// TODO add
+		if (localizedInput != null && localizedInput.equals(newInput)) 
+			return true;
+		
 		// check if the structure of inputVE and prefix + evalText + postfix is equal
 		// this is important to catch wrong selections, e.g.
 		// 2 + 2/3 is not equal to the selection (2+2)/3
@@ -267,6 +255,18 @@ public class CASTableCellValue {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Parses the given expression and resolves variables as GeoDummy objects.
+	 * The result is returned as a ValidExpression.
+	 */
+	private ValidExpression parseGeoGebraCASInputAndResolveDummyVars(String inValue) {
+		try {
+			return view.getCAS().getCASparser().parseGeoGebraCASInputAndResolveDummyVars(inValue);
+		}catch (Throwable e) {
+			return null;
+		}
 	}
 	
 	/**
