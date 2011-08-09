@@ -2574,7 +2574,16 @@ public class Application implements KeyEventDispatcher {
 		}
 		return null;
 	}
-	
+
+	final public boolean isCommand(String key) {
+		initTranslatedCommands();		
+		try{
+			return rbcommand.getString(key) != null;
+		} catch (Exception e) {
+			return false;
+		}
+	}	
+
 	final public String getCommand(String key) {
 		
 		if (tooltipFlag) return getCommandTooltip(key);

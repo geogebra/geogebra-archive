@@ -5,8 +5,10 @@ import geogebra.gui.autocompletion.CompletionsPopup;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
+import geogebra.kernel.commands.MyException;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
+import geogebra.main.MyError;
 import geogebra.util.AutoCompleteDictionary;
 import geogebra.util.Korean;
 
@@ -14,8 +16,6 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -766,6 +766,35 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		sb.append(syntax);
 		sb.append("</html>");
 		return sb.toString();
+	}
+
+	/*
+	 * attempt to give Syntax help for when eg "Radius[ <Conic> ]" is typed
+	 * see CommandProcessor.argErr() for similar error
+	 */
+	public void showError(Exception e) {
+		if (e instanceof MyException) {
+			updateCurrentWord();
+			int err = ((MyException) e).getErrorType();
+			if (err == MyException.INVALID_INPUT) {
+				if (app.isCommand(getCurrentWord())) {
+				
+					app.showErrorDialog(app.getError("InvalidInput")+"\n\n"+app.getPlain("Syntax")+":\n"+app.getCommandSyntax(getCurrentWord()));					
+					return;
+				}			
+			} 
+		}
+		// can't work out anything better, just show "Invalid Input"
+		app.showError(e.getLocalizedMessage());
+		
+	}
+
+	/*
+	 * just show syntax error (already correctly formulated by CommandProcessor.argErr())
+	 */
+	public void showError(MyError e) {
+		app.showError(e.getLocalizedMessage());
+		
 	}
 	
 

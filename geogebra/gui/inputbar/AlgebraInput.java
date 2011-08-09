@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.gui.inputbar;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.view.algebra.AlgebraInputDropTargetListener;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.CircularDefinitionException;
@@ -22,6 +21,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -279,9 +279,17 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			}
 
 			app.getGuiManager().setScrollToShow(true);
-
-			GeoElement[] geos = app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );
-
+			GeoElement[] geos;
+			try {
+				geos = app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling( input, true, false, true );
+			} catch (Exception ee) {
+				inputField.showError(ee);
+				return;
+			}
+		 catch (MyError ee) {
+			inputField.showError(ee);
+			return;
+		}
 			boolean success = null != geos;
 
 			// create texts in the middle of the visible view
