@@ -3,22 +3,16 @@ package geogebra.cas.maxima;
 
 import geogebra.cas.CASgeneric;
 import geogebra.cas.CASparser;
-import geogebra.cas.CasParserTools;
-import geogebra.cas.maxima.jacomax.JacomaxAutoConfigurator;
-import geogebra.cas.maxima.jacomax.MaximaConfiguration;
-import geogebra.cas.maxima.jacomax.MaximaInteractiveProcess;
-import geogebra.cas.maxima.jacomax.MaximaProcessLauncher;
-import geogebra.cas.maxima.jacomax.MaximaTimeoutException;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.main.Application;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class CASmaxima extends CASgeneric {
 
+	public CASmaxima(CASparser casParser, String translationResourcePath) {
+		super(casParser, translationResourcePath);
+		// TODO Auto-generated constructor stub
+	}
+/*
 	private final static String RB_GGB_TO_Maxima = "/geogebra/cas/maxima/ggb2maxima";
 	
 	// 5.22.0 needed by #295
@@ -48,12 +42,50 @@ public class CASmaxima extends CASgeneric {
 //		sb.append(");");
 //		return "true".equals(evaluateMaxima(sb.toString()).replaceAll(" ", ""));
 //	}
+
+	@Override
+	protected String evaluateGeoGebraCAS(ValidExpression casInput)
+			throws Throwable {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String evaluateRaw(String exp) throws Throwable {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEvaluateGeoGebraCASerror() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void unbindVariable(String var) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String translateFunctionDeclaration(String label, String parameters,
+			String body) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	/**
 	 * Unbinds (deletes) var in Maxima.
 	 * @param var
 	 * @param isFunction
-	 */
+	 *
 	public void unbindVariable(String var) {		
 		StringBuilder sb = new StringBuilder();
 		
@@ -71,7 +103,7 @@ public class CASmaxima extends CASgeneric {
 	 * @param useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
 	 * @return evaluation result
 	 * @throws Throwable
-	 */
+	 *
 	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to Maxima string
 		String MaximaString = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MAXIMA);
@@ -107,7 +139,7 @@ public class CASmaxima extends CASgeneric {
 	 * 
      * @return result string (null possible)
 	 * @throws Throwable 
-     */
+     *
 	public String evaluateRaw(String exp) throws Throwable {
 		return evaluateMaxima(exp);
 	}
@@ -119,7 +151,7 @@ public class CASmaxima extends CASgeneric {
 	
 	/**
 	 * Tries to parse a given Maxima string and returns a String in GeoGebra syntax.
-	 */
+	 *
 	public synchronized String toGeoGebraString(String maximaString) throws Throwable {
 		ValidExpression ve = casParser.parseMaxima(maximaString);
 		return casParser.toGeoGebraString(ve);
@@ -135,7 +167,7 @@ public class CASmaxima extends CASgeneric {
 	 * e.g. evaluateMaxima("integrate (sin(x)^3, x);") returns "cos(x)^3/3-cos(x)".
 	 * 
 	 * @return result string (null possible)
-	 */
+	 *
 	final synchronized public String evaluateMaxima(String exp) {
 		try {
 			String result;
@@ -221,7 +253,7 @@ public class CASmaxima extends CASgeneric {
 	
 	/**
 	 * Initializes Maxima.
-	 */
+	 *
 	synchronized public void initialize()
 	{
 		if (ggbMaxima != null) // this should never happen :)
@@ -265,7 +297,7 @@ public class CASmaxima extends CASgeneric {
 	
 	/**
 	 * Resets the cas and unbinds all variable and function definitions.
-	 */
+	 *
 	public synchronized void reset() {
 
 		try {
@@ -373,7 +405,7 @@ public class CASmaxima extends CASgeneric {
 	    		" for i : 1 thru length (%rnum\\_list) do " +
 	    		"s : subst (simplode([t, i]), %rnum\\_list[i], s)," +
 	    		" return (if (length(s) = 1) then flatten(s) else (s)))$");
-	    /* This function takes an expression ex and returns a list of coefficients of v */
+	    /* This function takes an expression ex and returns a list of coefficients of v *
 	    ggbMaxima.executeCall("coefflist(ex,v):= block([deg,kloop,cl]," +
 	    		"cl:[]," +
 	      "ex:ev(expand(ex),simp)," +
@@ -386,7 +418,7 @@ public class CASmaxima extends CASgeneric {
 	    /*
 	     * Tests if a given symbol is a function-symbol (function name)
 	     * Implemented as LISP-function as you cannot do this with maxima-functions
-	     */
+	     *
 	    ggbMaxima.executeCall(":lisp (defun $myfun (sym) " +
 	    		"(cond ((fboundp sym)) ((get sym 'mprops) t) (t nil)))");
 	    
@@ -396,7 +428,7 @@ public class CASmaxima extends CASgeneric {
 	     *  Note: weird formal parameter name as due to maxima's dynamic scoping rules
 	     *        using a "normal" formal parameter just doesn't work.
 	     *        (just try changing "ggbnsrphdbgse5tfd" and then call "issymbolbound('x)")
-	     */
+	     *
 	    ggbMaxima.executeCall("issymbolbound(ggbnsrphdbgse5tfd):= " +
 	    		"myfun(ggbnsrphdbgse5tfd) " +
 	    		"or ?boundp(ggbnsrphdbgse5tfd);");
@@ -407,7 +439,7 @@ public class CASmaxima extends CASgeneric {
 	     * but we get:
 	     * if equal(n+1,0) then log(abs(x)) else x^(n+1)/(n+1)
 	     * TODO: change to ggb syntax
-	     */
+	     *
 	    ggbMaxima.executeCall("load(\"noninteractive\");");
 	    
 	    // define Degree
@@ -517,7 +549,7 @@ public class CASmaxima extends CASgeneric {
 	 * Determines the version of the underlying maxima version.
 	 * @return An array of 3 elements, containing, major, minor and build version number, respectively.
 	 * @throws MaximaTimeoutException
-	 */
+	 *
 	private int[] determineMaximaVersion() throws MaximaTimeoutException
 	{
 		String buildinfo = ggbMaxima.executeCall("build_info();");
@@ -535,4 +567,5 @@ public class CASmaxima extends CASgeneric {
 		}
 		return retval;	
 	}
+	*/
 }
