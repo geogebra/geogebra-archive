@@ -457,7 +457,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_PLUS:
 			case KeyEvent.VK_MINUS:
 			case KeyEvent.VK_EQUALS:				
-				((EuclidianView)app.getGuiManager().getActiveEuclidianView()).getEuclidianController().zoomInOut(event);
+				((EuclidianView)app.getActiveEuclidianView()).getEuclidianController().zoomInOut(event);
 				app.setUnsaved();
 				consumed = true;					
 				break;
@@ -516,7 +516,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			}
 			
 		// Get the EuclidianView which has the focus
-			EuclidianViewInterface ev=app.getGuiManager().getActiveEuclidianView();
+			EuclidianViewInterface ev=app.getActiveEuclidianView();
 			int width = ev.getWidth();
 			int height = ev.getHeight();
 			if (ev.hasFocus())

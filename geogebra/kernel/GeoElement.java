@@ -1056,7 +1056,7 @@ public abstract class GeoElement
 		else if (layer < 0) layer = 0;
 		GuiManager guiManager = app.getGuiManager();
 		if (guiManager!=null){
-			EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();//app.getEuclidianView();
+			EuclidianViewInterface ev = app.getActiveEuclidianView();//app.getEuclidianView();
 			if (ev != null)
 				ev.changeLayer(this,this.layer,layer);
 		}
@@ -5780,7 +5780,7 @@ public abstract class GeoElement
 	public double getXmin(){
 
 		if(viewSet.isEmpty())
-			return app.getGuiManager().getActiveEuclidianView().getXmin();
+			return app.getActiveEuclidianView().getXmin();
 
 		double xmin = Double.POSITIVE_INFINITY;
 		for(Object view : viewSet)
@@ -5807,7 +5807,7 @@ public abstract class GeoElement
 	public double getXmax(){
 
 		if(viewSet.isEmpty())
-			return app.getGuiManager().getActiveEuclidianView().getXmax();
+			return app.getActiveEuclidianView().getXmax();
 
 		double xmax = Double.NEGATIVE_INFINITY;
 		for(Object view : viewSet)

@@ -158,7 +158,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 */
 	public void showTab(int index) {
 		if(index == TAB_EUCLIDIAN){
-			euclidianPanel.setView(app.getGuiManager().getActiveEuclidianView());
+			euclidianPanel.setView(app.getActiveEuclidianView());
 		}
 		tabbedPane.setSelectedIndex(index);
 	}

@@ -78,7 +78,7 @@ class ViewMenu extends BaseMenu {
 	 * these need changing each time before menu shown in case ActiveEuclidianView has changed
 	 */
 	void updateItems() {
-		EuclidianViewInterface ev = (EuclidianViewInterface) app.getGuiManager().getActiveEuclidianView();
+		EuclidianViewInterface ev = (EuclidianViewInterface) app.getActiveEuclidianView();
 		cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
 		cbShowGrid.setSelected(ev.getShowGrid());		
 	}

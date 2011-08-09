@@ -123,7 +123,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 		// check double click
 		int clicks = e.getClickCount();
 		//EuclidianView ev = app.getEuclidianView();
-		EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
+		EuclidianViewInterface ev = app.getActiveEuclidianView();
 		if (clicks == 2) {										
 			app.clearSelectedGeos();
 			ev.resetMode();
@@ -258,7 +258,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 
 			TreePath tp = view.getPathForLocation(e.getX(), e.getY());
 			GeoElement geo = AlgebraView.getGeoElementForPath(tp);	
-			EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
+			EuclidianViewInterface ev = app.getActiveEuclidianView();
 			int mode = ev.getMode();
 
 			if ( (mode == EuclidianView.MODE_MOVE || mode == EuclidianView.MODE_SELECTION_LISTENER)  && 
@@ -298,7 +298,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 
 		// tell EuclidianView to handle mouse over
 		//EuclidianView ev = app.getEuclidianView();
-		EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
+		EuclidianViewInterface ev = app.getActiveEuclidianView();
 		ev.mouseMovedOver(geo);								
 
 		if (geo != null) {

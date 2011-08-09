@@ -136,7 +136,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));		
 				
 		// scale 
-		EuclidianView ev=(EuclidianView)app.getGuiManager().getActiveEuclidianView();
+		EuclidianView ev=(EuclidianView)app.getActiveEuclidianView();
 
 		final PrintScalePanel psp = new PrintScalePanel(app, ev);		
 		psp.addActionListener(new ActionListener() {
@@ -407,7 +407,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
     }
 	
 	private void updateSizeLabel() {
-		EuclidianView ev=(EuclidianView)app.getGuiManager().getActiveEuclidianView();
+		EuclidianView ev=(EuclidianView)app.getActiveEuclidianView();
 		double printingScale = ev.getPrintingScale();
 		// takes dpi into account (note: eps has 72dpi)
 		exportScale = printingScale * getDPI() / 2.54 / ev.getXscale();
@@ -448,7 +448,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	 */
 	final private boolean exportEPS(boolean exportToClipboard) {
 		
-		EuclidianView ev=(EuclidianView)app.getGuiManager().getActiveEuclidianView();
+		EuclidianView ev=(EuclidianView)app.getActiveEuclidianView();
 		double printingScale = ev.getPrintingScale();
 		
 		// set dpi to 72
@@ -519,7 +519,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			if (useEMFplus) g = new EMFPlusGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 			else g = new EMFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 			g.startExport();	
-			((EuclidianView)app.getGuiManager().getActiveEuclidianView()).exportPaint(g, exportScale);
+			((EuclidianView)app.getActiveEuclidianView()).exportPaint(g, exportScale);
 
 			g.endExport();		
 			
@@ -571,7 +571,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 
 			VectorGraphics g = new PDFGraphics2D(file, new Dimension(pixelWidth, pixelHeight));
 		    g.startExport();			
-		    ((EuclidianView)app.getGuiManager().getActiveEuclidianView()).exportPaint(g, exportScale);
+		    ((EuclidianView)app.getActiveEuclidianView()).exportPaint(g, exportScale);
 			g.endExport();	
 			
 			if (exportToClipboard) sendToClipboard(file); //  Michael Borcherds 2008-03-02 END
@@ -595,7 +595,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	  */
 	final private boolean exportSVG(boolean exportToClipboard) {
 
-		EuclidianView ev=(EuclidianView)app.getGuiManager().getActiveEuclidianView();
+		EuclidianView ev=(EuclidianView)app.getActiveEuclidianView();
 		double printingScale = ev.getPrintingScale();
 		
 		// set dpi to 72
@@ -695,7 +695,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 
 		try {			
 			// draw graphics view into image
-			EuclidianView ev=(EuclidianView)app.getGuiManager().getActiveEuclidianView();
+			EuclidianView ev=(EuclidianView)app.getActiveEuclidianView();
 			BufferedImage img=ev.getExportImage(exportScale, transparent);
 			
 			// write image to file

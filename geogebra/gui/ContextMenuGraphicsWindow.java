@@ -72,7 +72,7 @@ implements ActionListener {
         this.px = px;
         this.py = py;
         
-        EuclidianView ev=((EuclidianView)app.getGuiManager().getActiveEuclidianView());
+        EuclidianView ev=((EuclidianView)app.getActiveEuclidianView());
         if(ev.getEuclidianViewNo()==2){
         	 setTitle("<html>" + app.getPlain("DrawingPad2") + "</html>");
         }
@@ -216,7 +216,7 @@ implements ActionListener {
         };  
   	    
         // get current axes ratio
-        double scaleRatio = ((EuclidianView)app.getGuiManager().getActiveEuclidianView()).getScaleRatio();        
+        double scaleRatio = ((EuclidianView)app.getActiveEuclidianView()).getScaleRatio();        
         
         JMenuItem mi;		
         //int perc;   	         
