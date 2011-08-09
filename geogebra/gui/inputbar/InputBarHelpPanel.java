@@ -324,9 +324,12 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		setCommands();
 		cmdTreeModel.setRoot(rootSubCommands);
 		cmdTreeModel.reload();
+		
 		titleLabel.setText(app.getMenu("InputHelp"));
 		syntaxLabel.setText(app.getPlain("Syntax"));
 		btnPaste.setText(app.getMenu("Paste"));
+		btnOnlineHelp.setText(app.getPlain("ShowOnlineHelp"));
+		
 		helpTextPane.setText(null);
 		functionTable.populateModel(TableSymbols.functions);
 		functionTitleNode.setUserObject(app.getMenu("MathematicalFunctions"));
