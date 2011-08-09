@@ -663,7 +663,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			// modified to use SpreadsheetTrace Dialog
 			
 			if (geo.isSpreadsheetTraceable() && app.getGuiManager().showView(Application.VIEW_SPREADSHEET)) {
-				cbItem = new JCheckBoxMenuItem(app.getPlain("TraceToSpreadsheet"));
+				cbItem = new JCheckBoxMenuItem(app.getMenu("RecordToSpreadsheet"));
 				cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
 				cbItem.setSelected(geo.getSpreadsheetTrace());
 
