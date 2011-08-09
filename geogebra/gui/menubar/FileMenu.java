@@ -103,16 +103,8 @@ class FileMenu extends BaseMenu {
 			mi = add(saveAsAction);
 			addSeparator();
 			
-			mi = add(printEuclidianViewAction);
-			mi.setText(app.getMenu("PrintPreview"));
-			mi.setIcon(app.getImageIcon("document-print-preview.png"));
-			setMenuShortCutAccelerator(mi, 'P');
-	
-			addSeparator();
-			
 			mi = add(shareAction);
-			
-			addSeparator();
+			mi.setIcon(app.getImageIcon("export_small.png"));
 			
 			// export
 			JMenu submenu = new JMenu(app.getMenu("Export"));
@@ -139,6 +131,13 @@ class FileMenu extends BaseMenu {
 
 			submenu.addSeparator();
 			mi = submenu.add(exportGeoGebraTubeAction);
+
+			addSeparator();
+			
+			mi = add(printEuclidianViewAction);
+			mi.setText(app.getMenu("PrintPreview"));
+			mi.setIcon(app.getImageIcon("document-print-preview.png"));
+			setMenuShortCutAccelerator(mi, 'P');
 		}
 		
 		// End Export SubMenu

@@ -281,7 +281,7 @@ public class WorksheetExportDialog extends JDialog {
 		modeSwitch = new IconTabbedPane();
 
 		modeSwitch.addTab(app.getMenu("UploadGeoGebraTube"),
-				app.getToolBarImage("mode_delete_32.gif", Color.RED), modeUploadPanel);
+				app.getImageIcon("export.png"), modeUploadPanel);
 		modeSwitch.addTab(app.getPlain("ExportAsWebpage"),
 				app.getToolBarImage("mode_delete_32.gif", Color.RED), modeHtmlPanel);
 		modeSwitch.setSelectedIndex(TAB_UPLOAD);
