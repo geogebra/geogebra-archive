@@ -73,10 +73,15 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 		if(a instanceof GeoConicPart){
 			double p = ((GeoConicPart)a).getParameterStart();
 			double q = ((GeoConicPart)a).getParameterEnd();
-			((GeoConicPart)b).setParameters(transformConicParam(p), transformConicParam(q), isInConstructionList());
+			((GeoConicPart)b).setParameters(transformConicParam(p), transformConicParam(q), 
+					swapOrientation(((GeoConicPart)a).positiveOrientation()));
 			//TODO transform for conic part
 		}
 	}
+	protected boolean swapOrientation(boolean positiveOrientation) {		
+		return positiveOrientation;
+	}
+
 	protected double transformConicParam(double d){
 		return d;
 	}
