@@ -18,7 +18,6 @@ public abstract class CASTableCell extends JPanel{
 	protected CASInputPanel inputPanel;
 	protected CASOutputPanel outputPanel;
 	protected MyTextField dummyField; // dummy label used to get preferred size;
-	private CASTable consoleTable;
 	protected Application app;
 	protected CASView view;
 	
@@ -26,8 +25,7 @@ public abstract class CASTableCell extends JPanel{
 	public CASTableCell(CASView view) {
 		this.view = view;
 		this.app = view.getApp();
-		this.consoleTable = view.getConsoleTable();
-			
+	
 		setLayout(new BorderLayout(5, 5));
 		setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));		
 		setBackground(Color.white);
@@ -100,7 +98,7 @@ public abstract class CASTableCell extends JPanel{
 	
 	public void setValue(CASTableCellValue cellValue) {
 		// set input panel
-		String input = cellValue.getTranslatedInput();
+		String input = cellValue.getInput();
 		inputPanel.setInput(input);
 		dummyField.setText(inputPanel.getInputArea().getText());
 		

@@ -24,14 +24,14 @@ public class CASTableCellRenderer extends CASTableCell implements
 			
 			CASTableCellValue tempV = (CASTableCellValue) value;	
 			
-			Kernel kernel = tempV.getKernel();
-			int oldCASPrintForm = kernel.getCASPrintForm();
-			kernel.setCASPrintForm(ExpressionNodeConstants.STRING_TYPE_LATEX);
+//			Kernel kernel = tempV.getKernel();
+//			int oldCASPrintForm = kernel.getCASPrintForm();
+//			kernel.setCASPrintForm(ExpressionNodeConstants.STRING_TYPE_LATEX);
 			
 			tempV.setRow(row);
 			setValue(tempV);
 
-			kernel.setCASPrintForm(oldCASPrintForm);
+//			kernel.setCASPrintForm(oldCASPrintForm);
 							
 			// update row height
 			updateTableRowHeight(table, row);	

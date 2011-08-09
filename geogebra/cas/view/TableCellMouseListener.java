@@ -54,7 +54,7 @@ public class TableCellMouseListener extends MouseAdapter {
 		// check if we clicked on input panel within tableCell
 		if (p.y <= tableCell.getInputPanelHeight() + 10) {
 			if (substituteDialogActive)
-				casView.getSubstituteDialog().insertText(clickedCellValue.getTranslatedInput());
+				casView.getSubstituteDialog().insertText(clickedCellValue.getInput());
 			else
 				table.startEditingRow(clickedRow);
 			return;

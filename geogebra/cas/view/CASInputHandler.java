@@ -815,7 +815,7 @@ public class CASInputHandler {
 	 */
 	public void updateReferencesAfterRowInsert(int insertedAfter, int currentRow) {	
 		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
-		String inputExp = v.getInternalInput();
+		String inputExp = v.getInput();
 		String evalText = v.getEvalText();
 		String evalComm = v.getEvalComment();
 		String [] toUpdate={inputExp,evalText,evalComm};
@@ -857,7 +857,7 @@ public class CASInputHandler {
 	public void updateReferencesAfterRowDelete(int deletedRow, int currentRow) {	
 
 		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
-		String inputExp = v.getInternalInput();
+		String inputExp = v.getInput();
 		String evalText = v.getEvalText();
 		String evalComm = v.getEvalComment();
 		String [] toUpdate={inputExp,evalText,evalComm};

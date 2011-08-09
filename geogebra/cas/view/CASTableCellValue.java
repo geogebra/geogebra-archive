@@ -2,6 +2,7 @@ package geogebra.cas.view;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -10,24 +11,25 @@ import geogebra.util.Util;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TreeSet;
 
 
 
 public class CASTableCellValue {
 
-	private String input, prefix, postfix, error, latex;
 	private ValidExpression inputVE, evalVE, outputVE;
-	private boolean allowLaTeX = true;
+	private String input, prefix, postfix, error, latex;
+	private String localizedInput;
+	private Locale currentLocale;
 	private boolean suppressOutput = false;
 	
 	// input and output variables of this cell expression
 	private TreeSet <String> invars;
+	// internal command names used in the input expression
+	private HashSet <String> cmdNames;
 	private String assignmentVar;
 	private boolean includesRowReferences;
-	
-	// command names used
-	private HashSet <String> cmdNames;
 		
 	private String evalCmd, evalComment;
 	private CASView view;
@@ -39,6 +41,7 @@ public class CASTableCellValue {
 		this.kernel = view.getApp().getKernel();
 		
 		input = "";
+		localizedInput = "";
 		inputVE = null;
 		outputVE = null;
 		prefix = "";
@@ -57,31 +60,22 @@ public class CASTableCellValue {
 	}
 
 	/** 
-	 * Returns the input of this row.
+	 * Returns the input of this row. Command names are localized when 
+	 * kernel.isPrintLocalizedCommandNames() is true, otherwise internal command 
+	 * names are used.
 	 */
-	public String getTranslatedInput() {
-		String translatedInput = input;
-		
-		// replace all internal command names in input by local command names
-		if (cmdNames != null) {
-			Iterator<String> it = cmdNames.iterator();
-			while (it.hasNext()) {
-				String cmd = it.next();
-				String localCmd = view.getApp().getCommand(cmd);
-			
-				// replace internal command name by local command name
-				translatedInput = translatedInput.replaceAll(cmd, localCmd);
+	public String getInput() {
+		if (kernel.isPrintLocalizedCommandNames()) {
+			// input with localized command names
+			if (currentLocale != view.getApp().getLocale()) {
+				updateLocalizedInput();
 			}
+			return localizedInput;
+		} 
+		else {
+			// input with internal command names
+			return input;
 		}
-		
-		return translatedInput;
-	}
-	
-	/** 
-	 * Returns the input of this row.
-	 */
-	public String getInternalInput() {
-		return input;
 	}
 
 	/** 
@@ -132,12 +126,12 @@ public class CASTableCellValue {
 		return postfix;
 	}
 	
-	public void setAllowLaTeX(boolean flag) {
-		allowLaTeX = flag;
-	}
+//	public void setAllowLaTeX(boolean flag) {
+//		allowLaTeX = flag;
+//	}
 	
 	public String getLaTeXOutput() {
-		if (!allowLaTeX || isError())
+		if (isError())
 			return null;
 		else if (latex == null) {
 			try {
@@ -177,14 +171,12 @@ public class CASTableCellValue {
 	 * @return success
 	 */
 	public void setInput(String inValue) {
-		if (input != null && input.equals(inValue)) return;
-		
-		input = inValue;
 		suppressOutput = inValue.endsWith(";");
 
 		// parse input into valid expression
 		inputVE = parseGeoGebraCASInputAndResolveDummyVars(inValue);
 		
+		input = inValue != null ? inValue : ""; // remember exact user input
 		prefix = "";
 		evalVE = inputVE;
 		postfix = "";
@@ -194,8 +186,17 @@ public class CASTableCellValue {
 		// update input and output variables
 		updateInOutVars(inputVE);
 		
-		// make sure input uses only internal command names
-		translateInput(inputVE);
+		// input should have internal command names
+		input = internalizeInput(input);
+		
+		// for efficiency: input with localized command names
+		updateLocalizedInput();
+	}
+	
+	private void updateLocalizedInput() {
+		// for efficiency: localized input with local command names
+		currentLocale = view.getApp().getLocale();
+		localizedInput = localizeInput(input);
 	}
 	
 	private ValidExpression parseGeoGebraCASInputAndResolveDummyVars(String inValue) {
@@ -261,40 +262,11 @@ public class CASTableCellValue {
 		// check if the structure of inputVE and prefix + evalText + postfix is equal
 		// this is important to catch wrong selections, e.g.
 		// 2 + 2/3 is not equal to the selection (2+2)/3
-		if (!view.getCAS().isStructurallyEqual(input, newInput)) {			
+		if (!view.getCAS().isStructurallyEqual(inputVE, newInput)) {			
 			setError("CAS.SelectionStructureError");
 			return false;
 		}
 		return true;
-	}
-	
-	/**
-	 * Sets input to use internal command names and translatedInput 
-	 * to use localized command names. As a side effect, all command
-	 * names are added as input variables as they could be function names.
-	 */
-	private void translateInput(ValidExpression ve) {	
-		if (ve == null) {
-			cmdNames = null;
-			return;
-		}
-		
-		// get all command names
-		cmdNames = new HashSet<String>();
-		ve.addCommandNames(cmdNames);
-		
-		// replace all local command names in input by internal command names
-		Iterator<String> it = cmdNames.iterator();
-		while (it.hasNext()) {
-			String cmd = it.next();
-			String localCmd = view.getApp().getCommand(cmd);
-		
-			// replace local command name by internal command in input
-			input = input.replaceAll(localCmd, cmd);
-		
-			// add command name as invar as it could be a function name
-			addInVar(cmd);
-		}
 	}
 	
 	/**
@@ -305,9 +277,19 @@ public class CASTableCellValue {
 	private void updateInOutVars(ValidExpression ve) {		
 		// clear var sets
 		clearInVars();
-		
+
 		if (ve == null) return;
 		
+		// get all command names
+		cmdNames = new HashSet<String>();
+		ve.addCommandNames(cmdNames);
+		if (cmdNames.isEmpty()) {
+			cmdNames = null;
+		} else {
+			getInVars().addAll(cmdNames);
+		}
+		
+		// get all used GeoElement variables
 		try {
 			// check for function
 			boolean isFunction = ve instanceof FunctionNVar;
@@ -333,6 +315,85 @@ public class CASTableCellValue {
 		} 
 		catch (Throwable th) {
 		}
+
+	}
+	
+	/**
+	 * Sets input to use internal command names and translatedInput 
+	 * to use localized command names. As a side effect, all command
+	 * names are added as input variables as they could be function names.
+	 */
+	private String internalizeInput(String input) {	
+		// local commands -> internal commands
+		return translate(input, false); 
+	}
+	
+	/** 
+	 * Returns the input using command names in the current language.
+	 */
+	private String localizeInput(String input) {
+		// replace all internal command names in input by local command names
+		if (kernel.isPrintLocalizedCommandNames()) {
+			// internal commands -> local commands
+			return translate(input, true); 
+		} else 
+			// keep internal commands
+			return input;
+	}
+	
+	/**
+	 * Translates given expression by replacing all command names
+	 * @param exp
+	 * @param toLocalCmd true: internalCmd -> localCmd, false: localCmd -> internalCmd
+	 * @return translated expression
+	 */
+	private String translate(String exp, boolean toLocalCmd) {
+		if (cmdNames == null) return exp;
+		
+		String translatedExp = exp;
+		Iterator<String> it = cmdNames.iterator();
+		while (it.hasNext()) {
+			String internalCmd = it.next();
+			String localCmd = view.getApp().getCommand(internalCmd);
+			
+			if (toLocalCmd) {
+				// internal command names -> local command names
+				translatedExp = replaceAllCommands(translatedExp, internalCmd, localCmd);
+			} else {
+				// local command names -> internal command names
+				translatedExp = replaceAllCommands(translatedExp, localCmd, internalCmd);
+			}
+		}
+		
+		return translatedExp;
+	}
+	
+	/**
+	 * Replaces oldCmd command names by newCmd command names in expression.
+	 */
+	private static String replaceAllCommands(String expression, String oldCmd, String newCmd) {
+		// build regex to find local command names
+		StringBuilder regexPrefix = new StringBuilder();	
+		regexPrefix.append("(?i)"); // ignore case
+		regexPrefix.append("\\b"); // match words for command only, not parts of a word
+		
+		// replace commands with [
+		StringBuilder regexSb = new StringBuilder(regexPrefix);
+		regexSb.append(oldCmd);
+		regexSb.append("[\\[]");
+		StringBuilder newCmdSb = new StringBuilder(newCmd);
+		newCmdSb.append("[");
+		expression = expression.replaceAll(regexSb.toString(), newCmdSb.toString());
+		
+		// replace commands with (
+		regexSb.setLength(0);
+		regexSb.append(regexPrefix);
+		regexSb.append(oldCmd);
+		regexSb.append("[\\(]");
+		newCmdSb.setLength(0);
+		newCmdSb.append(newCmd);
+		newCmdSb.append("(");
+		return expression.replaceAll(regexSb.toString(), newCmdSb.toString());
 	}
 	
 	/**
@@ -346,12 +407,15 @@ public class CASTableCellValue {
 	}
 	
 	private void addInVar(String var) {
-		if (invars == null)
-			invars = new TreeSet<String>();
 		invars.add(var);
-		
 		includesRowReferences = includesRowReferences || 
 			var.indexOf(CASInputHandler.ROW_REFERENCE_DYNAMIC) > -1;
+	}
+	
+	private TreeSet<String> getInVars() {
+		if (invars == null)
+			invars = new TreeSet<String>();
+		return invars;
 	}
 	
 	private void clearInVars() {
@@ -401,15 +465,18 @@ public class CASTableCellValue {
 	 * "y" is a function variable of "f(y) := 2y + b"
 	 */
 	final public boolean isFunctionVariable(String var) {
-		return inputVE instanceof Function && ((Function) inputVE).isFunctionVariable(var);
+		return inputVE instanceof Function && 
+			((Function) inputVE).isFunctionVariable(var);
 	}
 	
 	/**
-	 * Returns whether var is a function variable of this cell. For example,
-	 * "y" is a function variable of "f(y) := 2y + b"
+	 * Returns the function variable string if input is a function or null otherwise. 
+	 * For example, "m" is a function variable of "f(m) := 2m + b"
 	 */
 	final public String getFunctionVariable() {
-		return (inputVE instanceof Function) ? ((Function) inputVE).getFunctionVariable().getLabel() : null;
+		return (inputVE instanceof Function) ? 
+				((Function) inputVE).getFunctionVariable().getLabel() 
+				: null;
 	}
 	
 	/**
@@ -441,6 +508,7 @@ public class CASTableCellValue {
 	
 	final public void setEvalCommand(String cmd) {
 		evalCmd = cmd;
+		// TODO check setKeepInputUsed here
 		setKeepInputUsed(evalCmd != null && (evalCmd.equals("KeepInput") || evalCmd.equals("ProperFraction") || evalCmd.equals("Substitute") || evalCmd.equals("ToPolar")));
 	}
 	

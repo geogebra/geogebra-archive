@@ -214,7 +214,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 				// insert input of previous row
 				if (editingRow > 0 && text.length() == 0) {
 					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
-					inputArea.setText(selCellValue.getTranslatedInput());
+					inputArea.setText(selCellValue.getInput());
 					e.consume();
 				}
 				break;

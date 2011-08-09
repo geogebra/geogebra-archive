@@ -287,9 +287,12 @@ public class GeoGebraCAS {
 		if (ggbExp == null)
 			return null;
 		
+		// TODO Uncomment once support for latex line breaking is implemented.
+		// Kernel kernel = app.getKernel();
+		//boolean oldLineBreaks = kernel.isInsertLineBreaks();
+		//kernel.setInsertLineBreaks(true);
+		
 		try {
-			// TODO Uncomment once support for latex line breaking is implemented.
-			//app.getKernel().setInsertLineBreaks(true);
 			String latex = ggbExp.toAssignmentLaTeXString();
 			// render in latex if necessary
 			// eg if contains ^2 or \frac
@@ -297,7 +300,8 @@ public class GeoGebraCAS {
 			else return ggbExp.toString();
 		}
 		finally {
-			app.getKernel().setInsertLineBreaks(false);
+			// TODO Uncomment once support for latex line breaking is implemented.
+			//kernel.setInsertLineBreaks(oldLineBreaks);
 		}	
 	}
 	
@@ -425,20 +429,12 @@ public class GeoGebraCAS {
 	 * @param internalInput includes internal command names
 	 * @param localizedInput includes localized command names
 	 */
-	public boolean isStructurallyEqual(String internalInput, String localizedInput) {
-		if (internalInput.equals(localizedInput)) return true;
-		
-		try {								
-			// parse both input expressions
-			// make sure to leave internal command names untranslated here, 
-			// see Binomial problem at http://www.geogebra.org/trac/ticket/808
-			Kernel kernel = app.getKernel();
-			boolean oldValue = kernel.isUsingInternalCommandNames();
-			kernel.setUseInternalCommandNames(true);
-			ValidExpression ve1 = casParser.parseGeoGebraCASInput(internalInput);
-			kernel.setUseInternalCommandNames(oldValue);
-			String input1normalized = casParser.toString(ve1, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);			
+	public boolean isStructurallyEqual(ValidExpression inputVE, String localizedInput) {
+		try {
+			// current input
+			String input1normalized = casParser.toString(inputVE, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);			
 			
+			// new input
 			ValidExpression ve2 = casParser.parseGeoGebraCASInput(localizedInput);
 			String input2normalized = casParser.toString(ve2, ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
 			

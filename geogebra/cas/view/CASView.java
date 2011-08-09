@@ -301,7 +301,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * cell has no output string, the input string of this cell is returned.
 	 */
 	public String getRowInputValue(int n) {
-		return consoleTable.getCASTableCellValue(n).getTranslatedInput();
+		return consoleTable.getCASTableCellValue(n).getInput();
 	}
 
 	/**
