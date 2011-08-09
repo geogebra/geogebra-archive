@@ -235,6 +235,7 @@ public class Application3D extends Application{
 		setWaitCursor();
 		guiManager = new GuiManager3D(this);
 		setDefaultCursor();
+		guiManager.initialize();
 	}
 	
 	
