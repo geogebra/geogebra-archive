@@ -374,8 +374,9 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("procedure flattenlist(a);" +
 				"if 1=for each elem!! in a product length(elem!!) then for each elem!! in a join elem!! else a;");
 		
-		mpreduce.evaluate("procedure mysolve2(eqn, var);"
+		mpreduce.evaluate("procedure mysolve(eqn, var);"
 				+ " begin scalar solutions!!, bool!!;"
+				+ "  eqn:=mkdepthone({eqn});"
 				+ "  let solverules;"
 				+ "  if arglength(eqn)>-1 and part(eqn,0)='list then"
 				+ "    eqn:=for each x in eqn collect"
@@ -405,9 +406,10 @@ public class CASmpreduce extends CASgeneric {
 				+ "  return mkset(solutions!!);" 
 				+ " end;");
 		
-		mpreduce.evaluate("procedure mycsolve2(eqn, var);" +
+		mpreduce.evaluate("procedure mycsolve(eqn, var);" +
 				" begin scalar solutions!!, bool!!;" +
-				"  let solvrules;" +
+				"  eqn:=mkdepthone({eqn});" +
+				"  let solverules;" +
 				"  if arglength(eqn)>-1 and part(eqn,0)='list then" +
 				"    eqn:=for each x in eqn collect" +
 				"      if freeof(x,=) then x else lhs(x)-rhs(x)" +
@@ -431,6 +433,7 @@ public class CASmpreduce extends CASgeneric {
 		
 		mpreduce.evaluate("procedure mysolve1(eqn);"
 				+ " begin scalar solutions!!, bool!!;"
+				+ "  eqn:=mkdepthone({eqn});"
 				+ "  let solverules;"
 				+ "  if arglength(eqn)>-1 and part(eqn,0)='list then"
 				+ "    eqn:=for each x in eqn collect"
@@ -460,9 +463,10 @@ public class CASmpreduce extends CASgeneric {
 				+ "  return mkset(solutions!!);" 
 				+ " end;");
 		
-		mpreduce.evaluate("procedure mycsolve(eqn);" +
+		mpreduce.evaluate("procedure mycsolve1(eqn);" +
 				" begin scalar solutions!!, bool!!;" +
 				"  let solverules;" +
+				"  eqn:=mkdepthone({eqn});" +
 				"  if arglength(eqn)>-1 and part(eqn,0)='list then" +
 				"    eqn:=for each x in eqn collect" +
 				"      if freeof(x,=) then x else lhs(x)-rhs(x)" +

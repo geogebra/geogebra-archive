@@ -457,7 +457,9 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 				singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
 				//Application.debug("size"+((ListValue)singleValue).getMyList().size());
 				if ( singleValue.isListValue() ){
-					if (((ListValue)singleValue).getMyList().size()!=LHcols) isMatrix=false;				
+					MyList list=((ListValue)singleValue).getMyList();
+					if (list.size()!=LHcols) isMatrix=false;	
+					else if ((list.size()>0) && (list.getListElement(0) instanceof ExpressionNode) && (((ExpressionNode)list.getListElement(0)).getLeft() instanceof Equation)) isMatrix=false;
 				}
 				else isMatrix=false;
 			}
