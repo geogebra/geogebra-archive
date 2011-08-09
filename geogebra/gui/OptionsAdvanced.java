@@ -633,39 +633,39 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			app.setUnsaved();
 		} else if (source == pointStyleRadio0) {
 			app.getEuclidianView().setPointStyle(0);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(0);
 		} else if (source == pointStyleRadio1) {
 			app.getEuclidianView().setPointStyle(1);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(1);
 		} else if (source == pointStyleRadio2) {
 			app.getEuclidianView().setPointStyle(2);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(2);
 		} else if (source == pointStyleRadio3) {
 			app.getEuclidianView().setPointStyle(3);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(3);
 		} else if (source == pointStyleRadio4) {
 			app.getEuclidianView().setPointStyle(4);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(4);
 		} else if (source == pointStyleRadio6) {
 			app.getEuclidianView().setPointStyle(6);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(6);
 		} else if (source == pointStyleRadio7) {
 			app.getEuclidianView().setPointStyle(7);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setPointStyle(7);
 		} else if (source == checkboxSizeRadioRegular) {
 			app.getEuclidianView().setBooleanSize(13);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setBooleanSize(13);
 		} else if (source == checkboxSizeRadioLarge) {
 			app.getEuclidianView().setBooleanSize(26);
-			if (app.getGuiManager().hasEuclidianView2())
+			if (app.hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setBooleanSize(26);
 		} else if (source == rightAngleRadio1) {
 			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_NONE);

@@ -6504,7 +6504,7 @@ class GraphicsViewLocationPanel
 
 	private boolean checkGeos(Object[] geos) {
 		
-		if (!app.getGuiManager().hasEuclidianView2()) return false;
+		if (!app.hasEuclidianView2()) return false;
 		
 		/*
 		  for (int i=0; i < geos.length; i++) {

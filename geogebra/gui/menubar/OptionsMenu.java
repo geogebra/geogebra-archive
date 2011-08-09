@@ -435,7 +435,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		else if (cmd.endsWith("PointCapturing")) {
 			int mode = Integer.parseInt(cmd.substring(0, 1));
 			app.getEuclidianView().setPointCapturing(mode);
-			if (app.getGuiManager().hasEuclidianView2()) {
+			if (app.hasEuclidianView2()) {
 				app.getGuiManager().getEuclidianView2().setPointCapturing(mode);
 			}
 			app.setUnsaved();

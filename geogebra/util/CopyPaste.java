@@ -636,7 +636,7 @@ public class CopyPaste {
 			if (geo != null) {
 				if (app.getActiveEuclidianView() == app.getEuclidianView()) {
 					app.addToEuclidianView(geo);
-					if (app.getGuiManager().hasEuclidianView2()) {
+					if (app.hasEuclidianView2()) {
 						geo.removeView(app.getEuclidianView2());
 						app.getEuclidianView2().remove(geo);
 					}
