@@ -43,7 +43,7 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 	private DragSource ds;
 	private DropTarget dt;
 
-	private boolean isRowOrdered = true;
+	private boolean isRowOrdered = false;
 	public void setRowOrdered(boolean isRowOrdered) {
 		this.isRowOrdered = isRowOrdered;
 	}
