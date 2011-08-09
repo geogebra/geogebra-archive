@@ -136,7 +136,7 @@ public class Layout {
 		//defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", true, false, false, false, true, false);
 		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "0 | 40 | 1 | 19 | 15 | 2 | 10 | 3 | 4 | 5 | 16 64 70 | 51 | 17 | 36 | 30 | 32 ", true, false, false, false, false, false);
 		defaultPerspectives[1].setUnitAxesRatio(true);
-		// geometry - like basic geometry but with more toolbar entries
+		// geometry - like basic geometry but with less toolbar entries
 		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, "0 | 40 | 1", true, true, true, true, false, true);
 		
 		// table & graphics - just the euclidian view

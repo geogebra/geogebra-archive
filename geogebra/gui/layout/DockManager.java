@@ -181,6 +181,9 @@ public class DockManager implements AWTEventListener {
 				if(!dpInfo[i].isVisible())
 					continue;
 				
+				// attach view to kernel (being attached multiple times is ignored)
+				app.getGuiManager().attachView(panel.getViewId());
+				
 				if(dpInfo[i].isOpenInFrame()) {
 					show(panel);
 					continue;
@@ -209,7 +212,7 @@ public class DockManager implements AWTEventListener {
 				} else {
 					currentParent.setRightComponent(panel);
 				}
-
+				
 				panel.updatePanel();
 				
 				// move toolbar to main container
