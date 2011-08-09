@@ -680,6 +680,7 @@ public class GuiManager {
 	}
 	
 	public synchronized void reinitPropertiesDialog() {
+		if (propDialog != null && propDialog.isVisible()) propDialog.setVisible(false);
 		propDialog = null;
 		System.gc();
 		propDialog = new PropertiesDialog(app);
