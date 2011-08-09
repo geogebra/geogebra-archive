@@ -44,15 +44,11 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 	private DropTarget dt;
 
 	private boolean isRowOrdered = false;
-	public void setRowOrdered(boolean isRowOrdered) {
-		this.isRowOrdered = isRowOrdered;
-	}
-
-	public void setCopyByValue(boolean isCopyByValue) {
-		this.isCopyByValue = isCopyByValue;
-	}
-
 	private boolean isCopyByValue = true;
+	boolean allowDrop = true;
+	
+
+	
 
 
 	public SpreadsheetViewDnD(Application app, SpreadsheetView view){
@@ -67,11 +63,37 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 
 	}
 
-	boolean allowDrop = true;
+	
+	
+	
+	//=============================================
+	// Getters/setters
+	//=============================================
+	
 	public void setAllowDrop(boolean allowDrop) {
 		this.allowDrop = allowDrop;
 	}
 
+	public boolean isRowOrdered() {
+		return isRowOrdered;
+	}
+
+	public boolean isCopyByValue() {
+		return isCopyByValue;
+	}
+
+	public void setRowOrdered(boolean isRowOrdered) {
+		this.isRowOrdered = isRowOrdered;
+	}
+
+	public void setCopyByValue(boolean isCopyByValue) {
+		this.isCopyByValue = isCopyByValue;
+	}
+	
+	
+	
+	
+	
 	public void dragGestureRecognized(DragGestureEvent dge) {
 
 
@@ -219,7 +241,7 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 				
 				
 			//	if(dte.getSourceActions() != DnDConstants.ACTION_COPY_OR_MOVE){
-					if(Application.getShiftDown()){
+					if(Application.getShiftDown() || Application.getControlDown()){
 					DialogCopyToSpreadsheet id = new DialogCopyToSpreadsheet(app,this);
 					id.setVisible(true);	
 				}

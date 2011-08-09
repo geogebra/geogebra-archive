@@ -94,17 +94,20 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 
 		rbDependent = new JRadioButton();
 		rbFree = new JRadioButton();
-		rbFree.setSelected(true);
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(rbDependent);
 		bg.add(rbFree);
+		rbFree.setSelected(dndHandler.isCopyByValue());
+		rbDependent.setSelected(!dndHandler.isCopyByValue());
 
+		
 		rbOrderRow = new JRadioButton();
 		rbOrderCol = new JRadioButton();
-		rbOrderCol.setSelected(true);
 		ButtonGroup bg2 = new ButtonGroup();
 		bg2.add(rbOrderRow);
 		bg2.add(rbOrderCol);
+		rbOrderRow.setSelected(!dndHandler.isRowOrdered());
+		rbOrderCol.setSelected(dndHandler.isRowOrdered());
 
 
 	}
