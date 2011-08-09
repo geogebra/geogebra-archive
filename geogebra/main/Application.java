@@ -19,8 +19,8 @@ package geogebra.main;
 
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
-import geogebra.cas.jacomax.JacomaxAutoConfigurator;
-import geogebra.cas.jacomax.MaximaConfiguration;
+import geogebra.cas.maxima.jacomax.JacomaxAutoConfigurator;
+import geogebra.cas.maxima.jacomax.MaximaConfiguration;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;

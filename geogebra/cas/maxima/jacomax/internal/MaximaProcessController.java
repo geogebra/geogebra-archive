@@ -3,14 +3,14 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package geogebra.cas.jacomax.internal;
+package geogebra.cas.maxima.jacomax.internal;
 
-import geogebra.cas.jacomax.JacomaxLogicException;
-import geogebra.cas.jacomax.JacomaxRuntimeException;
-import geogebra.cas.jacomax.MaximaInteractiveProcess;
-import geogebra.cas.jacomax.MaximaProcessLauncher;
-import geogebra.cas.jacomax.MaximaProcessTerminatedException;
-import geogebra.cas.jacomax.MaximaTimeoutException;
+import geogebra.cas.maxima.jacomax.JacomaxLogicException;
+import geogebra.cas.maxima.jacomax.JacomaxRuntimeException;
+import geogebra.cas.maxima.jacomax.MaximaInteractiveProcess;
+import geogebra.cas.maxima.jacomax.MaximaProcessLauncher;
+import geogebra.cas.maxima.jacomax.MaximaProcessTerminatedException;
+import geogebra.cas.maxima.jacomax.MaximaTimeoutException;
 
 import java.io.IOException;
 import java.io.InputStream;

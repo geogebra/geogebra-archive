@@ -3,7 +3,7 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package geogebra.cas.jacomax.utilities;
+package geogebra.cas.maxima.jacomax.utilities;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

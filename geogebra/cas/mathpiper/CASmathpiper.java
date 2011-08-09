@@ -1,5 +1,9 @@
-package geogebra.cas;
-/*
+package geogebra.cas.mathpiper;
+
+import geogebra.cas.CASgeneric;
+import geogebra.cas.CASparser;
+import geogebra.cas.CasParserTools;
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
@@ -12,7 +16,7 @@ import org.mathpiper.interpreters.Interpreter;
 
 public class CASmathpiper extends CASgeneric {
 	
-	private final static String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
+	private final static String RB_GGB_TO_MathPiper = "/geogebra/cas/mathpiper/ggb2mathpiper";
 	private final CasParserTools parserTools;
 	
 	private Interpreter ggbMathPiper;
@@ -38,7 +42,7 @@ public class CASmathpiper extends CASgeneric {
 	
 	/**
 	 * Resets the cas and unbinds all variable and function definitions.
-	 *
+	 */
 	public void reset() {
 		ggbMathPiper = null;
 		getMathPiper();
@@ -57,7 +61,7 @@ public class CASmathpiper extends CASgeneric {
 	/**
 	 * Unbinds (deletes) var in MathPiper.
 	 * @param var
-	 *
+	 */
 	public void unbindVariable(String var) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -79,7 +83,7 @@ public class CASmathpiper extends CASgeneric {
 	 * @param casInput in GeoGebraCAS syntax
 	 * @return evaluation result
 	 * @throws Throwable
-	 *
+	 */
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		String MathPiperString = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MATH_PIPER);
@@ -103,7 +107,7 @@ public class CASmathpiper extends CASgeneric {
 	 * 
      * @return result string (null possible)
 	 * @throws Throwable 
-     *
+     */
 	public String evaluateRaw(String exp) throws Throwable {
 		return evaluateMathPiper(exp);
 	}
@@ -113,7 +117,7 @@ public class CASmathpiper extends CASgeneric {
 	 * @param MathPiperString String in MP syntax.
 	 * @return String in ggb syntax.
 	 * @throws Throwable 
-	 *
+	 */
 	public synchronized String toGeoGebraString(String MathPiperString) throws Throwable {
 		ValidExpression ve = casParser.parseMathPiper(MathPiperString);
 		return casParser.toGeoGebraString(ve);
@@ -125,7 +129,7 @@ public class CASmathpiper extends CASgeneric {
      * @param exp The expression.
 	 * 
 	 * @return result string (null possible)
-	 *
+	 */
 	final synchronized public String evaluateMathPiper(String exp) {
 		try {
 			String result;
@@ -197,7 +201,7 @@ public class CASmathpiper extends CASgeneric {
 	/**
 	 * Initialize special commands needed in our ggbMathPiper instance,e.g.
 	 * getPolynomialCoeffs(exp,x).
-	 *
+	 */
 	private synchronized boolean initMyMathPiperFunctions() {		
 // Expand expression and get polynomial coefficients using MathPiper:
 //		getPolynomialCoeffs(expr,x) :=
@@ -269,4 +273,4 @@ public class CASmathpiper extends CASgeneric {
 		
 		return true;
 	}
-}*/
+}

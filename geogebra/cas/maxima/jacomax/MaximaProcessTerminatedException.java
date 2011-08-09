@@ -3,7 +3,7 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package geogebra.cas.jacomax;
+package geogebra.cas.maxima.jacomax;
 
 /**
  * This (unchecked) Exception is thrown if you attempt to execute a Maxima call using

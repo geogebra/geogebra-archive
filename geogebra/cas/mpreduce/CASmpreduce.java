@@ -1,5 +1,9 @@
-package geogebra.cas;
+package geogebra.cas.mpreduce;
 
+import geogebra.cas.CASgeneric;
+import geogebra.cas.CASparser;
+import geogebra.cas.CasParserTools;
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -15,7 +19,7 @@ import org.mathpiper.mpreduce.Interpreter2;
 
 public class CASmpreduce extends CASgeneric {
 	
-	private final static String RB_GGB_TO_MPReduce = "/geogebra/cas/ggb2mpreduce";
+	private final static String RB_GGB_TO_MPReduce = "/geogebra/cas/mpreduce/ggb2mpreduce";
 	private Interpreter2 mpreduce;
 	private final CasParserTools parserTools;
 	

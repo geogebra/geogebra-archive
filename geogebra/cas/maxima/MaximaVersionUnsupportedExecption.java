@@ -1,4 +1,4 @@
-package geogebra.cas;
+package geogebra.cas.maxima;
 
 /**
  * This exception is thrown when the version of Maxima detected on the user's

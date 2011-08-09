@@ -1,5 +1,8 @@
 package geogebra.cas;
 
+import geogebra.cas.maxima.CASmaxima;
+import geogebra.cas.maxima.MaximaVersionUnsupportedExecption;
+import geogebra.cas.mpreduce.CASmpreduce;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;

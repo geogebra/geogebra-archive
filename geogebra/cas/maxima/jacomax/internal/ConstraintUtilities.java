@@ -3,7 +3,7 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package geogebra.cas.jacomax.internal;
+package geogebra.cas.maxima.jacomax.internal;
 
 /**
  * Simple utility methods for enforcing various types of data constraints.

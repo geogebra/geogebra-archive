@@ -1,6 +1,6 @@
-package geogebra.cas.jacomax.internal;
+package geogebra.cas.maxima.jacomax.internal;
 
-import geogebra.cas.jacomax.MaximaConfiguration;
+import geogebra.cas.maxima.jacomax.MaximaConfiguration;
 import geogebra.main.Application;
 
 import java.io.File;

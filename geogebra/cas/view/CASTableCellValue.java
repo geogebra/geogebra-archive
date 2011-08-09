@@ -1,6 +1,6 @@
 package geogebra.cas.view;
 
-import geogebra.cas.MaximaVersionUnsupportedExecption;
+import geogebra.cas.maxima.MaximaVersionUnsupportedExecption;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Function;

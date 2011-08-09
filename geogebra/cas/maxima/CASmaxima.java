@@ -1,31 +1,25 @@
-package geogebra.cas;
+package geogebra.cas.maxima;
 
 
-import geogebra.cas.jacomax.JacomaxAutoConfigurator;
-import geogebra.cas.jacomax.JacomaxSimpleConfigurator;
-import geogebra.cas.jacomax.MaximaConfiguration;
-import geogebra.cas.jacomax.MaximaInteractiveProcess;
-import geogebra.cas.jacomax.MaximaProcessLauncher;
-import geogebra.cas.jacomax.MaximaTimeoutException;
+import geogebra.cas.CASgeneric;
+import geogebra.cas.CASparser;
+import geogebra.cas.CasParserTools;
+import geogebra.cas.maxima.jacomax.JacomaxAutoConfigurator;
+import geogebra.cas.maxima.jacomax.MaximaConfiguration;
+import geogebra.cas.maxima.jacomax.MaximaInteractiveProcess;
+import geogebra.cas.maxima.jacomax.MaximaProcessLauncher;
+import geogebra.cas.maxima.jacomax.MaximaTimeoutException;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
-import geogebra.main.MyResourceBundle;
-import geogebra.util.Unicode;
 
-import java.util.Arrays;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class CASmaxima extends CASgeneric {
 
-	private final static String RB_GGB_TO_Maxima = "/geogebra/cas/ggb2maxima";
+	private final static String RB_GGB_TO_Maxima = "/geogebra/cas/maxima/ggb2maxima";
 	
 	// 5.22.0 needed by #295
 	// 5.23.0 needed by #314
@@ -287,7 +281,7 @@ public class CASmaxima extends CASgeneric {
 
 	}
 	
-	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
+	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.maxima.jacomax.MaximaTimeoutException {
 	
 		// turn auto-simplification off, so a+a gives a+a
 		// with this setting ev( a+a, simp ) is needed to get 2*a
@@ -507,7 +501,7 @@ public class CASmaxima extends CASgeneric {
 
 	}
 
-	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
+	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.maxima.jacomax.MaximaTimeoutException {
         char lastChar = maximaInput.charAt(maximaInput.length() - 1);
         if (lastChar != ';' && lastChar != '$' && !maximaInput.startsWith(":lisp")) {
         	maximaInput += ";";

@@ -27,7 +27,7 @@ public abstract class CASgeneric {
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
-	abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable;
+	protected abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable;
 	
 	/** 
 	 * Evaluates an expression in the syntax of the currently active CAS

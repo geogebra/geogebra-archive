@@ -1,6 +1,6 @@
 package geogebra.cas;
 
-interface CasParserTools {
+public interface CasParserTools {
 	
 	/**
 	 * Converts scientific number notations in input into GeoGebra notation.

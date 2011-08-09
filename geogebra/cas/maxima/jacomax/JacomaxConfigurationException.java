@@ -3,7 +3,7 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package geogebra.cas.jacomax;
+package geogebra.cas.maxima.jacomax;
 
 /**
  * Runtime Exception thrown to indicate a problem with the configuration of

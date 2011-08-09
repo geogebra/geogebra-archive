@@ -3,7 +3,7 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package geogebra.cas.jacomax;
+package geogebra.cas.maxima.jacomax;
 
 /**
  * Handle on an "interactive" Maxima process, as created using

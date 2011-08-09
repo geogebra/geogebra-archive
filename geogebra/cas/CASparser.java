@@ -36,7 +36,7 @@ public class CASparser {
 		this.kernel = kernel;
 	}
 	
-	Kernel getKernel() {
+	public Kernel getKernel() {
 		return kernel;
 	}
 	

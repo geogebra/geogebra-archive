@@ -3,9 +3,9 @@
  * Copyright (c) 2010, The University of Edinburgh.
  * All Rights Reserved
  */
-package geogebra.cas.jacomax;
+package geogebra.cas.maxima.jacomax;
 
-import geogebra.cas.jacomax.internal.DummyLogger;
+import geogebra.cas.maxima.jacomax.internal.DummyLogger;
 
 import java.util.Arrays;
 
