@@ -60,6 +60,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
+import geogebra.util.CopyPaste;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -266,7 +267,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected boolean highlightJustCreatedGeos = true;
 
-	protected ArrayList<GeoElement> pastePreviewSelected;
+	protected ArrayList<GeoElement> pastePreviewSelected = null;
 	protected ArrayList<GeoElement> pastePreviewSelectedAndDependent;
 
 	//protected MyPopupMenu popupMenu;
@@ -461,9 +462,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				pastePreviewSelected.remove(geo);
 				geo.remove();
 			}
+			pastePreviewSelected = null;
 		}
 		if (pastePreviewSelectedAndDependent != null) {
-			pastePreviewSelectedAndDependent = new ArrayList<GeoElement>();
+			pastePreviewSelectedAndDependent = null;//new ArrayList<GeoElement>();
 		}
 	}
 
@@ -2271,10 +2273,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			persistentStickyPointList = new ArrayList<GeoPointND>();
 
-			pastePreviewSelected.clear();
-			pastePreviewSelectedAndDependent.clear();
+			pastePreviewSelected = null;
+			pastePreviewSelectedAndDependent = null;
 			view.setPointCapturing(previousPointCapturing);
 			changedKernel0 = true;
+			app.getKernel().getConstruction().getUndoManager().storeUndoInfoAfterPasteOrAdd();
 		}
 
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
@@ -2420,7 +2423,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		// remember helper point, see createNewPoint()
-		if (changedKernel || changedKernel0)
+		if (changedKernel && !changedKernel0)
 			app.storeUndoInfo();
 
 		// make sure that when alt is pressed for creating a segment or line

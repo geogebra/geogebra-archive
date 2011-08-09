@@ -14,12 +14,15 @@ package geogebra.kernel;
 
 import geogebra.io.MyXMLio;
 import geogebra.main.Application;
+import geogebra.util.CopyPaste;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.InputStreamReader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.LinkedList;
@@ -97,6 +100,15 @@ public class UndoManager {
 		}		   
 	}           
 
+	/**
+	 * Get current undo info for later comparisons
+	 * @return Object (the file of last undo)
+	 */
+	final public synchronized Object getCurrentUndoInfo() {
+		Object ret = iterator.previous();
+		iterator.next();
+		return ret;
+	}
 
 	/**
 	 * Reloads construction state at current position of undo list
@@ -107,6 +119,25 @@ public class UndoManager {
 		iterator.next();   
 		updateUndoActions();
 	} 	
+
+	/**
+	 * Adds construction state to undo info list
+	 */
+	public void storeUndoInfoAfterPasteOrAdd() {
+
+		// this can cause a java.lang.OutOfMemoryError for very large constructions
+		final StringBuilder currentUndoXML = construction.getCurrentUndoXML();
+		
+		Thread undoSaverThread = new Thread() {
+			public void run() {
+				doStoreUndoInfo(currentUndoXML);
+				CopyPaste.pastePutDownCallback(app);
+				System.gc();
+			}
+		};
+		undoSaverThread.start();
+
+	}
 
 	/**
 	 * Adds construction state to undo info list.

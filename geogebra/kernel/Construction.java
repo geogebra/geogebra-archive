@@ -175,6 +175,14 @@ public class Construction {
 	}
 
 	/**
+	 * Returns the UndoManager (for Copy & Paste)
+	 * @return UndoManager 
+	 */
+	public UndoManager getUndoManager() {
+		return undoManager;
+	}
+	
+	/**
 	 * Returns the last GeoElement object in the construction list.
 	 * @return the last GeoElement object in the construction list.
 	 */

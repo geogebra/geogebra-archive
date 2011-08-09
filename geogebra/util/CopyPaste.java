@@ -25,6 +25,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.UndoManager;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class CopyPaste {
 	protected static StringBuilder copiedXMLforSameWindow;
 	protected static ArrayList<String> copiedXMLlabelsforSameWindow;
 	protected static EuclidianView copySource;
+	protected static Object copyObject, copyObject2;
 
 	/**
 	 * Returns whether the clipboard is empty
@@ -498,6 +500,7 @@ public class CopyPaste {
 		copiedXMLforSameWindow = new StringBuilder();
 		copiedXMLlabelsforSameWindow = new ArrayList<String>();
 		copySource = (EuclidianView)app.getActiveEuclidianView();
+		copyObject = app.getKernel().getConstruction().getUndoManager().getCurrentUndoInfo();
 
 		if (geos.isEmpty())
 			return;
@@ -613,6 +616,8 @@ public class CopyPaste {
 		copiedXMLforSameWindow = null;
 		copiedXMLlabelsforSameWindow = new ArrayList<String>();
 		copySource = null;
+		copyObject = null;
+		copyObject2 = null;
 	}
 
 	/**
@@ -649,6 +654,19 @@ public class CopyPaste {
 	}
 
 	/**
+	 * Checks whether the copyXMLforSameWindow may be used
+	 * @param app
+	 * @return boolean
+	 */
+	public static boolean pasteFast(Application app) {
+		if (app.getActiveEuclidianView() != copySource)
+			return false;
+		if (copyObject != copyObject2)
+			return false;
+		return true;
+	}
+	
+	/**
 	 * This method pastes the content of the clipboard from XML
 	 * into the construction
 	 * 
@@ -666,7 +684,9 @@ public class CopyPaste {
 		if (!app.getActiveEuclidianView().getEuclidianController().mayPaste())
 			return;
 
-		if (app.getActiveEuclidianView() == copySource) {
+		copyObject2 = app.getKernel().getConstruction().getUndoManager().getCurrentUndoInfo();
+
+		if (pasteFast(app)) {
 			if (copiedXMLforSameWindow == null)
 				return;
 
@@ -677,7 +697,7 @@ public class CopyPaste {
 		app.getActiveEuclidianView().getEuclidianController().clearSelections();
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
 
-		if (app.getActiveEuclidianView() == copySource) {
+		if (pasteFast(app)) {
 			app.getGgbApi().evalXML(copiedXMLforSameWindow.toString());
 			handleLabels(app, copiedXMLlabelsforSameWindow);
 		} else {
@@ -687,5 +707,18 @@ public class CopyPaste {
 
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
 		app.setMode(EuclidianView.MODE_MOVE);
+	}
+
+	/**
+	 * Currently, we call this only if the pasted object is put down,
+	 * but it would be better if this were called every time
+	 * when kernel.storeUndoInfo called and there wasn't anything
+	 * deleted
+	 */
+	public static void pastePutDownCallback(Application app) {
+		if (pasteFast(app)) {
+			copyObject = app.getKernel().getConstruction().getUndoManager().getCurrentUndoInfo();
+			copyObject2 = null;
+		}
 	}
 }
