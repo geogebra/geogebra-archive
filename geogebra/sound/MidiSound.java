@@ -217,9 +217,9 @@ public class MidiSound implements MetaEventListener  {
 	public void playSequenceNote(final int note, final double duration, final int instrument, final int velocity){
 
 		tickPosition = 0;
-		String str = "[" + note + "]d0/" + duration;
+		String str = "[" + note + "]/" + Double.toString(duration);
 		this.playSequenceFromJFugueString(str, instrument);
-		//System.out.println(str);
+		
 	}
 
 
