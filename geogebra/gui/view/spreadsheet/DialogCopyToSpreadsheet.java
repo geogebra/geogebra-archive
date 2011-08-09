@@ -101,7 +101,7 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 
 		rbOrderRow = new JRadioButton();
 		rbOrderCol = new JRadioButton();
-		rbOrderRow.setSelected(true);
+		rbOrderCol.setSelected(true);
 		ButtonGroup bg2 = new ButtonGroup();
 		bg2.add(rbOrderRow);
 		bg2.add(rbOrderCol);
