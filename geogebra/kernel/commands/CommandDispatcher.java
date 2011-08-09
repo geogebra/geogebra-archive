@@ -441,8 +441,8 @@ public class CommandDispatcher {
     	cmdTable.put("Classes", new CmdClasses(kernel));
 
     	cmdTable.put("Zip", new CmdZip(kernel));
-    	cmdTable.put("Intersect", new CmdIntersect(kernel));
-    	cmdTable.put("IterationList", new CmdIterationList(kernel));
+      	cmdTable.put("Intersection",new CmdIntersection(kernel));  	
+       	cmdTable.put("IterationList", new CmdIterationList(kernel));
     	cmdTable.put("RootList", new CmdRootList(kernel));   
     	cmdTable.put("PointList", new CmdPointList(kernel)); 
     	
@@ -758,7 +758,6 @@ public class CommandDispatcher {
     	cmdTable.put("FitLine",new CmdFitLineY(kernel));
     	cmdTable.put("BinomialCoefficient",new CmdBinomial(kernel));
     	cmdTable.put("RandomBetween",new CmdRandom(kernel));  
-    	cmdTable.put("Intersection",new CmdIntersection(kernel));  	
     	
     	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
     	cmdTable.clear();
