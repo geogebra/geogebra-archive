@@ -8,6 +8,7 @@ import geogebra.kernel.Macro;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
+import geogebra.util.Korean;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -583,15 +584,23 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if(isEqualsRequired && !text.startsWith("="))
 			return null;
 		
-		 //    start autocompletion only for words with at least two characters                 
-		if (curWord.length() < 2) { 
-			completions = null; 
-			return null;                     
-		} 
+		boolean korean = app.getLocale().getLanguage().equals("ko");
 		
+		 //    start autocompletion only for words with at least two characters                 
+		if (korean) {
+			if (Korean.flattenKorean(curWord.toString()).length() < 2) {
+				completions = null; 
+				return null;                     				
+			}
+		} else {
+			if (curWord.length() < 2) { 
+				completions = null; 
+				return null;                     
+			} 
+		}
 		cmdPrefix = curWord.toString();
 
-		if (app.getLocale().getLanguage().equals("ko")) 
+		if (korean) 
 			completions = dict.getCompletionsKorean(cmdPrefix);
 		else
 			completions = dict.getCompletions(cmdPrefix);
