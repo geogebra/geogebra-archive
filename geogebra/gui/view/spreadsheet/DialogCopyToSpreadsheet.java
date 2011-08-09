@@ -27,7 +27,7 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 	private SpreadsheetViewDnD dndHandler;
 	private Application app;
 
-	private JButton btnCancel, btnOK;
+	private JButton btnCancel, btnCopy;
 	private JRadioButton rbFree, rbDependent;
 	private JRadioButton rbOrderRow, rbOrderCol;
 
@@ -48,7 +48,7 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 		this.setResizable(false);
 		pack();
 		setLocationRelativeTo(app.getMainComponent());
-		btnOK.requestFocus();
+		btnCopy.requestFocus();
 
 		dndHandler.setAllowDrop(false);
 	}
@@ -67,8 +67,8 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 		orderTypePanel.add(rbOrderCol);
 
 		JPanel cancelOKPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		cancelOKPanel.add(btnCopy);
 		cancelOKPanel.add(btnCancel);
-		cancelOKPanel.add(btnOK);
 
 		Box vBox = Box.createVerticalBox();
 		vBox.add(copyTypePanel);
@@ -87,8 +87,8 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 
 	private void createGUIElements(){
 
-		btnOK = new JButton();
-		btnOK.addActionListener(this);
+		btnCopy = new JButton();
+		btnCopy.addActionListener(this);
 		btnCancel = new JButton();
 		btnCancel.addActionListener(this);
 
@@ -112,7 +112,7 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 
 	public void setLabels() {
 
-		btnOK.setText(app.getPlain("OK"));
+		btnCopy.setText(app.getMenu("Copy"));
 		btnCancel.setText(app.getMenu("Cancel"));
 
 		rbDependent.setText(app.getPlain("DependentObjects"));
@@ -134,7 +134,7 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 		if (source == btnCancel) 
 			setVisible(false);
 
-		else if (source == btnOK) {
+		else if (source == btnCopy) {
 			dndHandler.setCopyByValue(rbFree.isSelected());
 			dndHandler.setRowOrdered(rbOrderRow.isSelected());
 			dndHandler.setAllowDrop(true);
