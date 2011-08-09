@@ -157,7 +157,7 @@ public class Layout {
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, true, false, false, new Rectangle(100, 100, 600, 400), "3", 300);
 		
-		defaultPerspectives[4] = new Perspective("CasAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, false, true, false);
+		defaultPerspectives[4] = new Perspective("CASAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, false, true, false);
 
 	}
 	
