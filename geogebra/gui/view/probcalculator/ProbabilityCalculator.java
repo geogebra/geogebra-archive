@@ -1,12 +1,12 @@
 package geogebra.gui.view.probcalculator;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoDependentNumber;
-import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.AlgoPointOnPath;
@@ -37,7 +37,6 @@ import geogebra.main.GeoGebraColorConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -853,23 +852,13 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	public void updateFonts() {
 		Font font = app.getPlainFont();
 		setFont(font);
-		setFontRecursive(this,font);
+		GuiManager.setFontRecursive(this,font);
 		lblDist.setFont(app.getItalicFont());
 		lblProb.setFont(app.getItalicFont());
 		plotPanel.updateFonts();
 		table.updateFonts(font);
 
 	}
-
-	public void setFontRecursive(Container c, Font font) {
-		Component[] components = c.getComponents();
-		for(Component com : components) {
-			com.setFont(font);
-			if(com instanceof Container) 
-				setFontRecursive((Container) com, font);
-		}
-	}
-
 
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;

@@ -57,7 +57,9 @@ import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -3318,5 +3320,16 @@ public class GuiManager {
 			return fontSizeStrings;
 		}
 		
+		public static void setFontRecursive(Container c, Font font) {
+			Component[] components = c.getComponents();
+			for(Component com : components) {
+				com.setFont(font);
+				if(com instanceof Container) 
+					setFontRecursive((Container) com, font);
+			}
+		}
+
+
+
 
 }
