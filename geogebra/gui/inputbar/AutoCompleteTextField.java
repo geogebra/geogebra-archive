@@ -52,7 +52,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private CompletionsPopup completionsPopup;
 
 	private HistoryPopup historyPopup;
-	
+
 
 	/**
 	 * Flag to determine if text must start with "=" to activate autoComplete;
@@ -110,15 +110,15 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 
 	public void addHistoryPopup(){
-		
+
 		if(historyPopup == null)
 			historyPopup = new HistoryPopup(this);
-		
+
 		ActionListener al = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String cmd = e.getActionCommand();
 				if(cmd.equals(1 + BorderButton.cmdSuffix)){
-					
+
 					// TODO: determine if the input bar is top or bottom
 					historyPopup.showPopup(false);
 				}			
@@ -297,8 +297,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			if (!handleEscapeKey) {
 				break;
 			}
-			String text = getPreviousInput();
-			if (text != null) setText(text);
+			if(historyPopup == null){
+				String text = getPreviousInput();
+				if (text != null) setText(text);
+			}else{
+				historyPopup.showPopup(false);
+			}
+
 			break;
 
 		case KeyEvent.VK_DOWN:
@@ -403,7 +408,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		// handle alt-p etc
 		super.keyReleased(e);
-		
+
 		mergeKoreanDoubles();
 
 		if (getAutoComplete()) {
