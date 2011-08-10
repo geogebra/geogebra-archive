@@ -31,7 +31,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -531,23 +530,11 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
 		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
 		
-		boolean keyboardInitialized = app.getGuiManager().hasVirtualKeyboard();
-		final VirtualKeyboard virtualKeyboard = app.getGuiManager().getVirtualKeyboard();
-		
-		// fix for #664: If the keyboard is not made visible it uses the CPU all
-		// the time - for whatever task. Wierd.
-		if(!keyboardInitialized) {
-			virtualKeyboard.setVisible(true);
-			SwingUtilities.invokeLater( new Runnable(){ public void
-				run() { virtualKeyboard.setVisible(false);} });
-			
-		}
-		
-		tfKeyboardWidth.setText(Integer.toString(virtualKeyboard.getWidth()));
-		tfKeyboardHeight.setText(Integer.toString(virtualKeyboard.getHeight()));
+		tfKeyboardWidth.setText(Integer.toString(app.getKeyboardWidth()));
+		tfKeyboardHeight.setText(Integer.toString(app.getKeyboardHeight()));
 		
 		slOpacity.removeChangeListener(this);
-		slOpacity.setValue((int)(virtualKeyboard.getOpacity() * 100));
+		slOpacity.setValue((int)(app.getKeyboardOpacity() * 100));
 		slOpacity.addChangeListener(this);
 		
 		// tooltip timeout
@@ -696,7 +683,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if(e.getSource() == slOpacity) {
-			app.getGuiManager().getVirtualKeyboard().setOpacity(slOpacity.getValue() / 100.0f);
+			app.setKeyboardOpacity(slOpacity.getValue() / 100.0f);
 		}
 	}
 
@@ -708,24 +695,23 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	/**
 	 * Apply textfield changes.
 	 */
-	public void focusLost(FocusEvent e) {
-		VirtualKeyboard virtualKeyboard = app.getGuiManager().getVirtualKeyboard();
+	public void focusLost(FocusEvent e) {		
 		
 		if(e.getSource() == tfKeyboardHeight) {
 			try {
 				int windowHeight = Integer.parseInt(tfKeyboardHeight.getText());
-				virtualKeyboard.setWindowHeight(windowHeight);
+				app.setKeyboardHeight(windowHeight);
 			} catch(NumberFormatException ex) {
 				app.showError("InvalidInput", tfKeyboardHeight.getText());
-				tfKeyboardHeight.setText(Integer.toString(virtualKeyboard.getHeight()));
+				tfKeyboardHeight.setText(Integer.toString(app.getKeyboardHeight()));
 			}
 		} else if(e.getSource() == tfKeyboardWidth) {
 			try {
 				int windowWidth = Integer.parseInt(tfKeyboardWidth.getText());
-				virtualKeyboard.setWindowWidth(windowWidth);
+				app.setKeyboardWidth(windowWidth);
 			} catch(NumberFormatException ex) {
 				app.showError("InvalidInput", tfKeyboardWidth.getText());
-				tfKeyboardWidth.setText(Integer.toString(virtualKeyboard.getWidth()));
+				tfKeyboardWidth.setText(Integer.toString(app.getKeyboardWidth()));
 			}
 		}
 	}

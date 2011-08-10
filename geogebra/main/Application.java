@@ -29,6 +29,7 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
 import geogebra.gui.util.ImageSelection;
 import geogebra.gui.view.algebra.AlgebraView;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.Perspective;
@@ -426,6 +427,9 @@ public class Application implements KeyEventDispatcher {
 	private PluginManager pluginmanager = null;
 	private ScriptManager scriptManager = null;
 
+	private float keyboardOpacity = 0.7f;
+	private int keyboardWidth = 400;
+	private int keyboardHeight = 235;
 	
 	// GUI elements to support a sidebar help panel for the input bar.
 	// The help panel slides open on a button press from the input bar.
@@ -3833,7 +3837,7 @@ public class Application implements KeyEventDispatcher {
 		if (getGuiManager().hasProbabilityCalculator()){
 			getGuiManager().getProbabilityCalculatorXML(sb);
 		}
-		
+		getKeyboardXML(sb);
 		// coord style, decimal places settings etc
 		kernel.getKernelXML(sb);
 		getScriptingXML(sb);
@@ -5672,6 +5676,51 @@ public class Application implements KeyEventDispatcher {
 		return fontSizeStrings;
 	}
 	
+	public float getKeyboardOpacity() {
+		if (guiManager!= null && guiManager.hasVirtualKeyboard())
+			keyboardOpacity = guiManager.getVirtualKeyboard().getOpacity();
+		return keyboardOpacity;
+	}
+
+	public int getKeyboardWidth() {			
+		if (guiManager!= null && guiManager.hasVirtualKeyboard())
+			keyboardWidth = guiManager.getVirtualKeyboard().getWidth();
+		return keyboardWidth;
+	}
+
+	public int getKeyboardHeight() {
+		if (guiManager!= null && guiManager.hasVirtualKeyboard())
+			keyboardOpacity = guiManager.getVirtualKeyboard().getHeight();
+		return keyboardHeight;
+	}
+
+	public void setKeyboardWidth(int windowWidth) {
+		if (guiManager!= null && guiManager.hasVirtualKeyboard())
+			guiManager.getVirtualKeyboard().setWindowWidth(windowWidth);
+		keyboardWidth = windowWidth;	
+	}
+	
+	public void setKeyboardHeight(int windowHeight) {
+		if (guiManager!= null && guiManager.hasVirtualKeyboard())
+			guiManager.getVirtualKeyboard().setWindowHeight(windowHeight);
+		keyboardHeight = windowHeight;
+	}
+	
+	public void setKeyboardOpacity(float opacity) {
+		if (guiManager!= null && guiManager.hasVirtualKeyboard())
+			guiManager.getVirtualKeyboard().setOpacity(opacity);	
+		keyboardOpacity = opacity;
+	}
+
+	public void getKeyboardXML(StringBuilder sb) {		
+		sb.append("<keyboard width=\"");
+		sb.append(keyboardWidth);
+		sb.append("\" height=\"");
+		sb.append(keyboardHeight);
+		sb.append("\" opacity=\"");
+		sb.append(keyboardOpacity);
+		sb.append("\"/>");
+	}
 
 		
 }

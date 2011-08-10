@@ -149,9 +149,7 @@ public class GuiManager {
 	private FunctionInspector functionInspector;
 	private TextInputDialog textInputDialog;
 	
-	private ProbabilityCalculator probCalculator;
-
-	
+	private ProbabilityCalculator probCalculator;	
 	
 
 	public static DataFlavor urlFlavor, uriListFlavor;
@@ -182,8 +180,9 @@ public class GuiManager {
 		
 		initAlgebraController(); // needed for keyboard input in EuclidianView
 		
-		//Zbynek Konecny, 2010-05-28 (see #126)
+		//this flag prevents closing opened webpage without save (see #126)
 		htmlLoaded = false;
+		
 	}
 	
 	protected void createLayout(){
@@ -3212,9 +3211,9 @@ public class GuiManager {
 		 * @return The virtual keyboard (initializes it if necessary)
 		 */
 		public VirtualKeyboard getVirtualKeyboard() {
-			if (virtualKeyboard == null) {
-				// TODO use config values
-				virtualKeyboard = new VirtualKeyboard(app, 400, 235, 0.7f);
+			if (virtualKeyboard == null) {				
+				virtualKeyboard = new VirtualKeyboard(app, app.getKeyboardWidth(), 
+						app.getKeyboardHeight(), app.getKeyboardOpacity());
 			}
 			
 			return virtualKeyboard;
@@ -3335,8 +3334,7 @@ public class GuiManager {
 
 		public GeoGebraFileChooser getFileChooser() {
 			return fileChooser;
-		}
-
+		}		
 
 
 

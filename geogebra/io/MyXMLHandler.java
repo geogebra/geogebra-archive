@@ -600,9 +600,30 @@ public class MyXMLHandler implements DocHandler {
 		} else if (eName.equals("construction")) {
 			mode = MODE_CONSTRUCTION;
 			handleConstruction(attrs);
-		} else {
+		}
+		else if (eName.equals("keyboard")) {
+			handleKeyboard(attrs);
+		}
+		else {
 			System.err.println("unknown tag in <geogebra>: " + eName);
 		}
+	}
+
+	private void handleKeyboard(LinkedHashMap<String, String> attrs) {
+		//TODO what if GuiManager is null?
+		try{			
+			int width = Integer.parseInt(attrs.get("width"));
+			Application.debug(width);
+			app.setKeyboardWidth(width);
+			int height = Integer.parseInt(attrs.get("height"));
+			Application.debug(height);
+			app.setKeyboardHeight(height);
+			float opacity = Float.parseFloat(attrs.get("opacity"));
+			app.setKeyboardOpacity(opacity);
+		}catch(Exception e){
+			System.err.println("error in element <keyboard>");
+		}
+		
 	}
 
 	private void startMacroElement(String eName, LinkedHashMap<String, String> attrs) {
@@ -852,8 +873,10 @@ public class MyXMLHandler implements DocHandler {
 //
 //	}
 
-	private HashMap<EuclidianView,String>xmin=new HashMap(),xmax=new HashMap(),
-		ymin=new HashMap(),ymax=new HashMap();
+	private HashMap<EuclidianView,String>xmin=new HashMap<EuclidianView,String>(),
+	    xmax=new HashMap<EuclidianView,String>(),
+		ymin=new HashMap<EuclidianView,String>(),
+		ymax=new HashMap<EuclidianView,String>();
 	private boolean handleCoordSystem(EuclidianView ev, LinkedHashMap<String, String> attrs) {
 		if(xmin.keySet().size()>1){
 		xmin.clear();
@@ -3751,8 +3774,7 @@ public class MyXMLHandler implements DocHandler {
 	
 	private void processAnimatingList() {
 		try {
-			Iterator<GeoElement> it = animatingList.iterator();
-			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
+			Iterator<GeoElement> it = animatingList.iterator();			
 
 			while (it.hasNext()) {
 				GeoElement geo = it.next();
