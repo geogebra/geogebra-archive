@@ -32,7 +32,27 @@ public class AlgoCasPartialFractions extends AlgoCasBase {
 
 	@Override
 	protected void applyCasCommand() {
-		g.setUsingCasCommand("PartialFractions(%)", f, false);		
+		
+		// f.getVarString() can return a number in wrong alphabet (need ASCII)
+		boolean internationalizeDigits = kernel.internationalizeDigits;
+		kernel.internationalizeDigits = false;
+		
+		// get variable string with tmp prefix, 
+		// e.g. "x" becomes "ggbtmpvarx" here
+		boolean isUseTempVariablePrefix = kernel.isUseTempVariablePrefix();
+		kernel.setUseTempVariablePrefix(true);
+		String varStr = f.getVarString();
+		kernel.setUseTempVariablePrefix(isUseTempVariablePrefix);
+
+		 kernel.internationalizeDigits = internationalizeDigits;
+		
+		 sb.setLength(0);
+		 sb.append("PartialFractions(%");
+		 sb.append(",");
+		 sb.append(varStr);		
+		 sb.append(")");
+		 		
+		g.setUsingCasCommand(sb.toString(), f, false);		
 	}
 
 }
