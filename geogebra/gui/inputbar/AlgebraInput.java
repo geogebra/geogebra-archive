@@ -55,7 +55,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	private AutoCompleteTextField inputField;
 
 	private JLabel inputLabel;
-	private JToggleButton btnToggleInputPanel;
+	private JToggleButton btnHelpToggle;
 	private InputPanel inputPanel;
 
 
@@ -83,6 +83,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.addKeyListener(this);
 		inputField.addFocusListener(this);
 		
+		// enable a history popup and embedded button 
 		inputField.addHistoryPopup();
 		
 		// enable drops
@@ -92,19 +93,15 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		
 		updateFonts();
 
-		// show the history popup
-		inputPanel.setShowHistoryButton(false);
-		
 
 		// create toggle button to hide/show the input help panel
-		btnToggleInputPanel = new JToggleButton();	
-		btnToggleInputPanel.setIcon(app.getImageIcon("29.07.2011_left_1.png"));
-		btnToggleInputPanel.setSelectedIcon(app.getImageIcon("29.07.2011_right_1.png"));
-		//btnToggleInputPanel.setPreferredSize(new Dimension(14,14));
-		btnToggleInputPanel.addActionListener(this);
-		btnToggleInputPanel.setFocusable(false);
-		btnToggleInputPanel.setContentAreaFilled(false);   
-		btnToggleInputPanel.setBorderPainted(false);
+		btnHelpToggle = new JToggleButton();	
+		btnHelpToggle.setIcon(app.getImageIcon("29.07.2011_left_1.png"));
+		btnHelpToggle.setSelectedIcon(app.getImageIcon("29.07.2011_right_1.png"));
+		btnHelpToggle.addActionListener(this);
+		btnHelpToggle.setFocusable(false);
+		btnHelpToggle.setContentAreaFilled(false);   
+		btnHelpToggle.setBorderPainted(false);
 
 
 		// create sub-panels				 		
@@ -114,7 +111,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 		JPanel eastPanel = new JPanel(new BorderLayout());
 		if (app.showCmdList()) {
-			eastPanel.add(btnToggleInputPanel, BorderLayout.WEST);
+			eastPanel.add(btnHelpToggle, BorderLayout.WEST);
 		}
 
 		setLayout(new GridBagLayout());
@@ -132,6 +129,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		c.ipady = 2; // adds extra height to the input field
 		this.add(inputPanel,c);
 
+		// add toggle button panel
 		if (app.showCmdList()){
 			c.ipady = 0; 
 			c.fill = GridBagConstraints.NONE;
@@ -139,9 +137,9 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			c.anchor = GridBagConstraints.LINE_END;
 			// add space on the right to set off the Mac's window grab icon
 			if(Application.MAC_OS)
-				c.insets = new Insets(2,5,2,20);
+				c.insets = new Insets(2,0,2,15);
 			else
-				c.insets = new Insets(2,5,2,5);
+				c.insets = new Insets(2,0,2,2);
 			this.add(eastPanel,c);
 		}
 
@@ -180,8 +178,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		// update the help panel
 		app.getInputHelpPanel().setLabels();
 		app.getInputHelpPanel().setCommands();
-		if(btnToggleInputPanel!=null)
-			btnToggleInputPanel.setToolTipText(app.getMenu("InputHelp"));
+		if(btnHelpToggle!=null)
+			btnHelpToggle.setToolTipText(app.getMenu("InputHelp"));
 	}	
 
 
@@ -253,8 +251,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 
-		if (source == btnToggleInputPanel) { 
-			if(btnToggleInputPanel.isSelected()){
+		if (source == btnHelpToggle) { 
+			if(btnHelpToggle.isSelected()){
 				app.getInputHelpPanel().updateFonts();
 				app.setShowInputHelpPanel(true);
 			}else{
@@ -322,7 +320,6 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 			if (success) {						   
 				inputField.addToHistory(input);
-				inputPanel.updateHistoryPopup(input);
 				inputField.setText(null);  							  			   
 			}			  
 		} else app.getGlobalKeyDispatcher().handleGeneralKeys(e); // handle eg ctrl-tab

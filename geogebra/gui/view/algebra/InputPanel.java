@@ -6,70 +6,38 @@ import geogebra.gui.DynamicTextInputPane;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.editor.GeoGebraEditorPane;
 import geogebra.gui.inputbar.AutoCompleteTextField;
-import geogebra.gui.util.GeoGebraIcon;
-import geogebra.gui.util.PopupMenuButton;
-import geogebra.gui.util.SelectionTable;
-import geogebra.gui.util.TableSymbols;
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
-import geogebra.util.Unicode;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JToolBar;
 import javax.swing.border.Border;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.JTextComponent;
 
 /**
  * @author Markus Hohenwarter
  */
-public class InputPanel extends JPanel implements FocusListener, VirtualKeyboardListener, ListSelectionListener {
+public class InputPanel extends JPanel implements FocusListener, VirtualKeyboardListener {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Application app;
-	
+	private Application app;	
 	private JTextComponent textComponent;	
 
-	
-	// history popup fields
-	private JButton historyButton;
-	private boolean showHistoryButton;
-	public void setShowHistoryButton(boolean showHistoryButton) {
-		historyButton.setVisible(showHistoryButton);
-	}
-	private JList historyList;
-	private JPopupMenu historyPopup;
-	
-	/** history list model; strings entered into the input bar are stored here */
-	private DefaultListModel historyListModel;
 	
 	/** panel to hold the text field; needs to be a global to set the popup width */
 	private JPanel tfPanel;  
@@ -152,24 +120,9 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		
 		else { // JTextField
 			setLayout(new BorderLayout(0,0));
-			
-			// put the textfield and history button together in a panel
-			// and adjust the borders to make the button appear to be 
-			// inside the field
-			tfPanel = new JPanel(new BorderLayout(0,0));
-			
+			tfPanel = new JPanel(new BorderLayout(0,0));		
 			tfPanel.add(textComponent, BorderLayout.CENTER);
-			if(textComponent instanceof AutoCompleteTextField) {
-				createHistoryPopupGUI();
-				JPanel hp = new JPanel(new BorderLayout(0,0));
-				hp.add(historyButton, BorderLayout.WEST);
-				//hp.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-				tfPanel.add(hp,BorderLayout.EAST);
-			}
-						
-			// put these sub-panels together to create the input panel
 			add(tfPanel, BorderLayout.CENTER);
-			//add(buttonPanel, BorderLayout.EAST);	
 		}		
 		
 	}
@@ -202,121 +155,9 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	
 	
 	
-	/**
-	 * Creates GUI elements for the history popup:
-	 * 1) a JPopupMenu to display the input history
-	 * 2) a Jlist container for the history strings 
-	 * 3) a JButton to hide/show the history popup 
-	 */
-	private void createHistoryPopupGUI(){
-		
-		//create JList to hold history strings
-		historyListModel = new DefaultListModel();
-		historyList = new JList(historyListModel);
-		historyList.setCellRenderer(new HistoryListCellRenderer());
-		historyList.setVisibleRowCount(5);
-		historyList.setBorder(BorderFactory.createEmptyBorder());
-		historyList.addListSelectionListener(this);
-		
-		// add mouse motion listener to repaint the list for rollover effect
-		historyList.addMouseMotionListener(new MouseMotionAdapter(){
-			public void mouseMoved(MouseEvent e){
-				historyList.repaint();
-			}
-		});
-		
-		// scrollpane for the list	
-		JScrollPane scroller = new JScrollPane(historyList);
-		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);		
-		scroller.setBorder(BorderFactory.createEmptyBorder());
-		
-		// history popup
-		historyPopup = new JPopupMenu();
-		historyPopup.add(scroller);
-		//historyPopup.setBorder(BorderFactory.createEmptyBorder());
-			
-		// hide/show button
-		historyButton = new JButton();	
-		historyButton.setIcon(GeoGebraIcon.createUpDownTriangleIcon(false, false));
-		historyButton.setRolloverIcon(GeoGebraIcon.createUpDownTriangleIcon(true, false));
-		historyButton.setPreferredSize(new Dimension(16,14));
-		historyButton.setBorderPainted(false);	
-		historyButton.setContentAreaFilled(false);
-		historyButton.setFocusable(false);
-		historyButton.setSelected(false);
-		historyButton.setOpaque(false);
-		historyButton.setEnabled(false);
-		historyButton.setVisible(false);
-		
-		
-		// add mouse listener to show/hide the popup
-		historyButton.addMouseListener(new MouseAdapter() {
-			
-			public void mouseEntered(MouseEvent e) {
-				if(!historyButton.isEnabled()) return;	
-				// reset the selection state if the popup has been hidden 
-				// (done here in mouseEntered so that mousePressed works correctly)
-				historyButton.setSelected(historyPopup.isShowing());
-			}
-			
-			public void mousePressed(MouseEvent e) {
-				if(!historyButton.isEnabled()) return;
-				
-				// the mousePressed event auto-hides an open popup, so we just need
-				// to set the selection state and exit
-				if(historyButton.isSelected()  && !historyPopup.isShowing()){
-					historyButton.setSelected(false);
-					return;
-				}
-				
-				// if we get here the popup is not visible and the button is not selected,
-				// so show the popup
-				
-				//update font
-				historyList.setFont(app.getPlainFont());
-				
-				// adjust the popup size and location to fit over the input field
-				historyPopup.setPopupSize(new Dimension(tfPanel.getWidth()-historyButton.getPreferredSize().width, 
-						historyList.getPreferredScrollableViewportSize().height)  );
-				historyPopup.show(textComponent, 0,-historyPopup.getPreferredSize().height-1 );
-				historyButton.setSelected(true);
-
-			}
-		});
-		
-	}
 	
 	
 	
-	/**
-	 * handles selection in the history popup; pastes the 
-	 * selected string into the input field and hides the popup
-	 */
-	public void valueChanged(ListSelectionEvent evt) { 
-		if (!evt.getValueIsAdjusting()) 
-		{ 
-			if(evt.getSource() == historyList){ 
-				this.setText((String) historyList.getSelectedValue());
-				historyPopup.setVisible(false);
-			}
-		} 
-	}  
-	
-	/**
-	 * updates the popup: 
-	 * 1) adds an input bar string to the history list model 
-	 * 2) enables the history button after the first entry
-	 */
-	public void updateHistoryPopup(String str){
-		if(str == "" || str == null) return;
-		historyListModel.addElement(str);
-		if(!historyButton.isEnabled()){
-			historyButton.setEnabled(true);
-			historyButton.setIcon(GeoGebraIcon.createUpDownTriangleIcon(false, true));
-			historyButton.setRolloverIcon(GeoGebraIcon.createUpDownTriangleIcon(true, true));
-		}
-		
-	}
 	
 	
 	

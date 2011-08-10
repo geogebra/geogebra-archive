@@ -40,7 +40,7 @@ implements MouseListener, MouseMotionListener{
 
 	public static final String cmdSuffix = "BorderButtonAction";
 	private ImageIcon[] icon;
-	private static final int hGap = 5;
+	private static final int hGap = 7;
 
 	private boolean[] isVisibleIcon;
 	private boolean[] isMouseOverIcon;
@@ -69,6 +69,7 @@ implements MouseListener, MouseMotionListener{
 			icon[i] = new ImageIcon();
 			iconRect[i] = new Rectangle();
 			isMouseOverIcon[i] = false;
+			// need default visibility = false so that focus lost/gained visibility works
 			isVisibleIcon[i] = false;
 		}
 	}
@@ -101,7 +102,6 @@ implements MouseListener, MouseMotionListener{
 	public void setBorderButton(int index, ImageIcon icon, ActionListener listener){
 		if(index < 0 || index > maxIconCount) return;
 		this.icon[index] = icon;
-		isVisibleIcon[index] = true;
 		al[index] = listener;
 	}
 
