@@ -2958,6 +2958,8 @@ public class Application implements KeyEventDispatcher {
 	private void setLabels() {
 		if (initing)
 			return;
+		
+		updateFontSizeStrings();
 
 		if (guiManager != null) {
 			getGuiManager().setLabels();
@@ -5670,10 +5672,13 @@ public class Application implements KeyEventDispatcher {
 	String [] fontSizeStrings = null;
 
 	public String[] getFontSizeStrings() {
-		if (fontSizeStrings == null)
-			fontSizeStrings = new String[] { getPlain("ExtraSmall"), getPlain("VerySmall"), getPlain("Small"), getPlain("Medium"), getPlain("Large"), getPlain("VeryLarge"), getPlain("ExtraLarge") };
+		if (fontSizeStrings == null) updateFontSizeStrings();
 		
 		return fontSizeStrings;
+	}
+	
+	private void updateFontSizeStrings() {
+		fontSizeStrings = new String[] { getPlain("ExtraSmall"), getPlain("VerySmall"), getPlain("Small"), getPlain("Medium"), getPlain("Large"), getPlain("VeryLarge"), getPlain("ExtraLarge") };		
 	}
 	
 	public float getKeyboardOpacity() {
