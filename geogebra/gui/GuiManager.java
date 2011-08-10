@@ -875,9 +875,9 @@ public class GuiManager {
 		if (algebraInput != null)
 			algebraInput.updateFonts();	
 
-		if (fileChooser != null) {
-			fileChooser.setFont(app.getPlainFont());
-			SwingUtilities.updateComponentTreeUI(fileChooser);
+		if (getFileChooser() != null) {
+			getFileChooser().setFont(app.getPlainFont());
+			SwingUtilities.updateComponentTreeUI(getFileChooser());
 		}
 		
 		if(optionsDialog != null) {
@@ -965,7 +965,7 @@ public class GuiManager {
 			constructionProtocolView.initGUI();
 		if (constProtocolNavigation != null)
 			constProtocolNavigation.setLabels();
-		if (fileChooser != null)
+		if (getFileChooser() != null)
 			updateJavaUILanguage();
 		if (optionsDialog != null)
 			optionsDialog.setLabels();
@@ -1584,11 +1584,11 @@ public class GuiManager {
 
 
 	public synchronized void initFileChooser() {
-		if (fileChooser == null) {
+		if (getFileChooser() == null) {
 			try {
-				fileChooser = new GeoGebraFileChooser(app, app.getCurrentImagePath()); // non-restricted
+				setFileChooser(new GeoGebraFileChooser(app, app.getCurrentImagePath())); // non-restricted
 				// Added for Intergeo File Format (Yves Kreis) -->
-				fileChooser.addPropertyChangeListener(
+				getFileChooser().addPropertyChangeListener(
 						JFileChooser.FILE_FILTER_CHANGED_PROPERTY,
 						new FileFilterChangedListener());
 				// <-- Added for Intergeo File Format (Yves Kreis)
@@ -1596,7 +1596,7 @@ public class GuiManager {
 				// fix for  java.io.IOException: Could not get shell folder ID list
 				// Java bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857
 				Application.debug("Error creating GeoGebraFileChooser - using fallback option");
-				fileChooser = new GeoGebraFileChooser(app, app.getCurrentImagePath(), true); // restricted version		
+				setFileChooser(new GeoGebraFileChooser(app, app.getCurrentImagePath(), true)); // restricted version		
 			} 
 
 			updateJavaUILanguage();
@@ -1636,16 +1636,16 @@ public class GuiManager {
 		}	
 		
 		// update file chooser
-		if (fileChooser != null) {
-			fileChooser.setLocale(currentLocale);
-			SwingUtilities.updateComponentTreeUI(fileChooser);
+		if (getFileChooser() != null) {
+			getFileChooser().setLocale(currentLocale);
+			SwingUtilities.updateComponentTreeUI(getFileChooser());
 			
 			// Unfortunately the preceding line removes the event listener from the
 			// internal JTextField inside the file chooser. This means that the 
 			// listener has to be registered again. (e.g. a simple call to 
 			// 'AutoCompletion.install(this);' inside the GeoGebraFileChooser 
 			// constructor is not sufficient)
-			AutoCompletion.install(fileChooser, true);
+			AutoCompletion.install(getFileChooser(), true);
 		}
 	}
 
@@ -1677,8 +1677,8 @@ public class GuiManager {
 			{
 				if( imageFile == null){
 					initFileChooser();
-					fileChooser.setMode(GeoGebraFileChooser.MODE_IMAGES);
-					fileChooser.setCurrentDirectory(app.getCurrentImagePath());
+					getFileChooser().setMode(GeoGebraFileChooser.MODE_IMAGES);
+					getFileChooser().setCurrentDirectory(app.getCurrentImagePath());
 
 					MyFileFilter fileFilter = new MyFileFilter();
 					fileFilter.addExtension("jpg");
@@ -1689,12 +1689,12 @@ public class GuiManager {
 					if (Util.getJavaVersion() >= 1.5)
 						fileFilter.addExtension("bmp");
 					fileFilter.setDescription(app.getPlain("Image"));
-					fileChooser.resetChoosableFileFilters();
-					fileChooser.setFileFilter(fileFilter);
+					getFileChooser().resetChoosableFileFilters();
+					getFileChooser().setFileFilter(fileFilter);
 
-					int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
+					int returnVal = getFileChooser().showOpenDialog(app.getMainComponent());
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
-						imageFile = fileChooser.getSelectedFile();
+						imageFile = getFileChooser().getSelectedFile();
 						if (imageFile != null) {
 							app.setCurrentImagePath(imageFile.getParentFile());
 							if (!app.isApplet()) {
@@ -1742,8 +1742,8 @@ public class GuiManager {
 		try {
 			app.setWaitCursor();
 			initFileChooser();
-			fileChooser.setMode(GeoGebraFileChooser.MODE_DATA);
-			fileChooser.setCurrentDirectory(app.getCurrentImagePath());
+			getFileChooser().setMode(GeoGebraFileChooser.MODE_DATA);
+			getFileChooser().setCurrentDirectory(app.getCurrentImagePath());
 
 			MyFileFilter fileFilter = new MyFileFilter();
 			fileFilter.addExtension("txt");
@@ -1751,12 +1751,12 @@ public class GuiManager {
 			fileFilter.addExtension("dat");
 
 			// fileFilter.setDescription(app.getPlain("Image"));
-			fileChooser.resetChoosableFileFilters();
-			fileChooser.setFileFilter(fileFilter);
+			getFileChooser().resetChoosableFileFilters();
+			getFileChooser().setFileFilter(fileFilter);
 
-			int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
+			int returnVal = getFileChooser().showOpenDialog(app.getMainComponent());
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				dataFile = fileChooser.getSelectedFile();
+				dataFile = getFileChooser().getSelectedFile();
 				if (dataFile != null) {
 					app.setCurrentImagePath(dataFile.getParentFile());
 					if (!app.isApplet()) {
@@ -1898,6 +1898,11 @@ public class GuiManager {
 
 	public File showSaveDialog(String fileExtension, File selectedFile,
 			String fileDescription, boolean promptOverwrite, boolean dirsOnly) {
+		
+		if (selectedFile == null) {
+			selectedFile = removeExtension(app.getCurrentFile());
+		}
+		
 		// Added for Intergeo File Format (Yves Kreis) -->
 		String[] fileExtensions = { fileExtension };
 		String[] fileDescriptions = { fileDescription };
@@ -1920,11 +1925,11 @@ public class GuiManager {
 		// <-- Added for Intergeo File Format (Yves Kreis)
 
 		initFileChooser();
-		fileChooser.setMode(GeoGebraFileChooser.MODE_GEOGEBRA_SAVE);
-		fileChooser.setCurrentDirectory(app.getCurrentPath());
+		getFileChooser().setMode(GeoGebraFileChooser.MODE_GEOGEBRA_SAVE);
+		getFileChooser().setCurrentDirectory(app.getCurrentPath());
 		
 		if (dirsOnly)
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			getFileChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		// set selected file
 		// Modified for Intergeo File Format (Yves Kreis) -->
@@ -1946,8 +1951,8 @@ public class GuiManager {
 			}
 			// <-- Added for Intergeo File Format (Yves Kreis)
 			selectedFile = addExtension(selectedFile, fileExtension);
-			fileChooser.setSelectedFile(selectedFile);
-		}
+			getFileChooser().setSelectedFile(selectedFile);
+		} else getFileChooser().setSelectedFile(null);
 
 		// Modified for Intergeo File Format (Yves Kreis) -->
 		/*
@@ -1957,30 +1962,30 @@ public class GuiManager {
 		 * fileChooser.resetChoosableFileFilters();
 		 * fileChooser.setFileFilter(fileFilter);
 		 */
-		fileChooser.resetChoosableFileFilters();
+		getFileChooser().resetChoosableFileFilters();
 		MyFileFilter fileFilter;
 		MyFileFilter mainFilter = null;
 		for (int i = 0; i < fileExtensions.length; i++) {
 			fileFilter = new MyFileFilter(fileExtensions[i]);
 			if (fileDescriptions.length >= i && fileDescriptions[i] != null)
 				fileFilter.setDescription(fileDescriptions[i]);
-			fileChooser.addChoosableFileFilter(fileFilter);
+			getFileChooser().addChoosableFileFilter(fileFilter);
 			if (fileExtension.equals(fileExtensions[i])) {
 				mainFilter = fileFilter;
 			}
 		}
-		fileChooser.setFileFilter(mainFilter);		
+		getFileChooser().setFileFilter(mainFilter);		
 		// <-- Modified for Intergeo File Format (Yves Kreis)
 
 		while (!done) {
 			// show save dialog
-			int returnVal = fileChooser.showSaveDialog(app.getMainComponent());
+			int returnVal = getFileChooser().showSaveDialog(app.getMainComponent());
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				file = fileChooser.getSelectedFile();
+				file = getFileChooser().getSelectedFile();
 
 				// Added for Intergeo File Format (Yves Kreis) -->
-				if (fileChooser.getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
-					fileFilter = (MyFileFilter) fileChooser.getFileFilter();
+				if (getFileChooser().getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
+					fileFilter = (MyFileFilter) getFileChooser().getFileFilter();
 					fileExtension = fileFilter.getExtension();
 				} else {
 					fileExtension = fileExtensions[0];
@@ -2000,7 +2005,7 @@ public class GuiManager {
 
 				// add file extension
 				file = addExtension(file, fileExtension);
-				fileChooser.setSelectedFile(file);
+				getFileChooser().setSelectedFile(file);
 
 				if (promptOverwrite && file.exists()) {
 					// ask overwrite question
@@ -2080,10 +2085,11 @@ public class GuiManager {
 			app.setCurrentFile(null);
 
 			initFileChooser();
-			fileChooser.setMode(GeoGebraFileChooser.MODE_GEOGEBRA);
-			fileChooser.setCurrentDirectory(app.getCurrentPath());
-			fileChooser.setMultiSelectionEnabled(true);
-				
+			getFileChooser().setMode(GeoGebraFileChooser.MODE_GEOGEBRA);
+			getFileChooser().setCurrentDirectory(app.getCurrentPath());
+			getFileChooser().setMultiSelectionEnabled(true);
+			getFileChooser().setSelectedFile(oldCurrentFile);
+			
 			// GeoGebra File Filter
 			MyFileFilter fileFilter = new MyFileFilter();
 			// This order seems to make sure that .ggb files come first
@@ -2095,10 +2101,10 @@ public class GuiManager {
 			fileFilter.addExtension(Application.FILE_EXT_HTM);
 			fileFilter.setDescription(app.getPlain("ApplicationName") + " "
 					+ app.getMenu("Files"));
-			fileChooser.resetChoosableFileFilters();
+			getFileChooser().resetChoosableFileFilters();
 			// Modified for Intergeo File Format (Yves Kreis & Ingo Schandeler)
 			// -->
-			fileChooser.addChoosableFileFilter(fileFilter);
+			getFileChooser().addChoosableFileFilter(fileFilter);
 			
 			// HTML File Filter (for ggbBase64 files)
 //			MyFileFilter fileFilterHTML = new MyFileFilter();
@@ -2114,7 +2120,7 @@ public class GuiManager {
 				i2gFileFilter.addExtension(Application.FILE_EXT_INTERGEO);
 				i2gFileFilter.setDescription("Intergeo " + app.getMenu("Files")
 						+ " [Version " + GeoGebra.I2G_FILE_FORMAT + "]");
-				fileChooser.addChoosableFileFilter(i2gFileFilter);
+				getFileChooser().addChoosableFileFilter(i2gFileFilter);
 			}
 			// fileChooser.setFileFilter(fileFilter);
 			if (GeoGebra.DISABLE_I2G
@@ -2123,22 +2129,22 @@ public class GuiManager {
 							Application.FILE_EXT_GEOGEBRA)
 					|| Application.getExtension(oldCurrentFile).equals(
 							Application.FILE_EXT_GEOGEBRA_TOOL)) {
-				fileChooser.setFileFilter(fileFilter);
+				getFileChooser().setFileFilter(fileFilter);
 			}
 			// <-- Modified for Intergeo File Format (Yves Kreis & Ingo
 			// Schandeler)
 
 			app.setDefaultCursor();
-			int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
+			int returnVal = getFileChooser().showOpenDialog(app.getMainComponent());
 
 			File[] files = null;
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				files = fileChooser.getSelectedFiles();
+				files = getFileChooser().getSelectedFiles();
 			}
 			
 			// Modified for Intergeo File Format (Yves Kreis) -->
-			if (fileChooser.getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
-				fileFilter = (MyFileFilter) fileChooser.getFileFilter();
+			if (getFileChooser().getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
+				fileFilter = (MyFileFilter) getFileChooser().getFileFilter();
 				doOpenFiles(files, true, fileFilter.getExtension());
 			} else {
 				// doOpenFiles(files, true);
@@ -2150,7 +2156,7 @@ public class GuiManager {
 			if (app.getCurrentFile() == null && !htmlLoaded) { //edited by Zbynek Konecny, 2010-05-28 (see #126)
 				app.setCurrentFile(oldCurrentFile);
 			}
-			fileChooser.setMultiSelectionEnabled(false);
+			getFileChooser().setMultiSelectionEnabled(false);
 		}
 	}
 
@@ -2544,10 +2550,10 @@ public class GuiManager {
 	 */
 	private class FileFilterChangedListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (fileChooser.getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
+			if (getFileChooser().getFileFilter() instanceof geogebra.gui.app.MyFileFilter) {
 				String fileName = null;
-				if (fileChooser.getSelectedFile() != null) {
-					fileName = fileChooser.getSelectedFile().getName();
+				if (getFileChooser().getSelectedFile() != null) {
+					fileName = getFileChooser().getSelectedFile().getName();
 				}
 				
 				//fileName = getFileName(fileName);
@@ -2555,9 +2561,10 @@ public class GuiManager {
 				if (fileName != null && fileName.indexOf(".") > -1) {
 					fileName = fileName.substring(0, fileName.lastIndexOf("."))
 							+ "."
-							+ ((MyFileFilter) fileChooser.getFileFilter())
+							+ ((MyFileFilter) getFileChooser().getFileFilter())
 									.getExtension();
-					fileChooser.setSelectedFile(new File(fileChooser
+					
+					getFileChooser().setSelectedFile(new File(getFileChooser()
 							.getCurrentDirectory(), fileName));
 				}
 			}
@@ -3320,6 +3327,14 @@ public class GuiManager {
 				if(com instanceof Container) 
 					setFontRecursive((Container) com, font);
 			}
+		}
+
+		public void setFileChooser(GeoGebraFileChooser fileChooser) {
+			this.fileChooser = fileChooser;
+		}
+
+		public GeoGebraFileChooser getFileChooser() {
+			return fileChooser;
 		}
 
 
