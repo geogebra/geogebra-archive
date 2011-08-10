@@ -428,10 +428,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	// END
 	
-	// static so that will be correct when EV2 created
-	static int pointStyle = POINT_STYLE_DOT;
-	static int booleanSize=13;
-
 	int mode = MODE_MOVE;
 
 	protected boolean[] showAxes = { true, true };
@@ -478,9 +474,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	protected DrawableList allDrawableList = new DrawableList();
 	
 	public static final int MAX_LAYERS = 9;
-	
-	// static so the same value is used across multiple EVs 
-	private static int MAX_LAYER_USED = 0;
 	
 	public DrawableList drawLayers[]; 
 
@@ -685,7 +678,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		allDrawableList.clear();
 		bgImageList.clear();
 		
-		for (int i=0 ; i<=MAX_LAYER_USED ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
+		for (int i=0 ; i<= app.MAX_LAYER_USED ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
 
 		setToolTipText(null);
 	}
@@ -773,13 +766,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void setBooleanSize(int size) {
 
 		// only 13 and 26 currently allowed
-		booleanSize = (size == 13) ? 13 : 26;
+		app.booleanSize = (size == 13) ? 13 : 26;
 		
 		updateAllDrawables(true);
 	}
 
 	final public int getBooleanSize() {
-		return booleanSize;
+		return app.booleanSize;
 	}
 	
 	/**
@@ -788,15 +781,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 */
 	public void setPointStyle(int style) {
 		if (style > 0 && style <= MAX_POINT_STYLE)
-			pointStyle = style;
+			app.pointStyle = style;
 		else
-			pointStyle = POINT_STYLE_DOT;
+			app.pointStyle = POINT_STYLE_DOT;
 		
 		updateAllDrawables(true);
 	}
 
 	final public int getPointStyle() {
-		return pointStyle;
+		return app.pointStyle;
 	}
 
 	// added by Loic BEGIN
@@ -2854,12 +2847,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void updateMaxLayerUsed(int layer)
 	{
 		if (layer > MAX_LAYERS) layer=MAX_LAYERS;
-		if (layer > MAX_LAYER_USED) MAX_LAYER_USED=layer;
+		if (layer > app.MAX_LAYER_USED) app.MAX_LAYER_USED=layer;
 	}
 
 	public int getMaxLayerUsed()
 	{
-		return MAX_LAYER_USED;
+		return app.MAX_LAYER_USED;
 	}
 	
 	// Michael Borcherds 2008-03-01
@@ -2894,7 +2887,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		//boolean isSVGExtensions=g2.getClass().getName().endsWith("SVGExtensions");
 		int layer;
 		
-		for (layer=0 ; layer<=MAX_LAYER_USED ; layer++) // only draw layers we need
+		for (layer=0 ; layer<=app.MAX_LAYER_USED ; layer++) // only draw layers we need
 		{
 			//if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
 			drawLayers[layer].drawAll(g2);
@@ -3933,7 +3926,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		sb.append(rightAngleStyle);
 		
 		sb.append("\" checkboxSize=\"");
-		sb.append(booleanSize); // Michael Borcherds 2008-05-12
+		sb.append(app.booleanSize); // Michael Borcherds 2008-05-12
 
 		sb.append("\" gridType=\"");
 		sb.append(getGridType()); //		 cartesian/isometric/polar
@@ -4909,8 +4902,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	public void resetMaxLayerUsed() {
-		MAX_LAYER_USED = 0;
-		
+		app.MAX_LAYER_USED = 0;		
 	}
 	
 	

@@ -155,7 +155,7 @@ public final class DrawPoint extends Drawable {
     	int pointStyle = P.getPointStyle();
     	
     	if(pointStyle == -1)
-    		pointStyle = view.pointStyle;
+    		pointStyle = view.getPointStyle();
     	
     	double root3over2;
     	
@@ -369,7 +369,7 @@ public final class DrawPoint extends Drawable {
         	int pointStyle = P.getPointStyle();
         	
         	if(pointStyle == -1)
-        		pointStyle = view.pointStyle;
+        		pointStyle = view.getPointStyle();
         	
             switch (pointStyle) {
         	case EuclidianView.POINT_STYLE_PLUS:            		                     

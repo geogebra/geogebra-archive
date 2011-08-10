@@ -396,6 +396,11 @@ public class Application implements KeyEventDispatcher {
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_POINTS_ONLY;
 	private boolean allowToolTips = true;
 
+	// moved to Application from EuclidianView as the same value is used across multiple EVs 
+	public int MAX_LAYER_USED = 0;
+	public int pointStyle = EuclidianView.POINT_STYLE_DOT;
+	public int booleanSize=13;
+
 
 	private boolean rightClickEnabled = true;
 	private boolean chooserPopupsEnabled = true;	
