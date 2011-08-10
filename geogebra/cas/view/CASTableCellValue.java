@@ -1,8 +1,8 @@
 package geogebra.cas.view;
 
+import geogebra.cas.CASparser;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -30,6 +30,7 @@ public class CASTableCellValue {
 	private HashSet <String> cmdNames;
 	private String assignmentVar;
 	private boolean includesRowReferences;
+	private boolean includesNumericCommand;
 		
 	private String evalCmd, evalComment;
 	private CASView view;
@@ -175,7 +176,7 @@ public class CASTableCellValue {
 
 		// parse input into valid expression
 		inputVE = parseGeoGebraCASInputAndResolveDummyVars(inValue);
-		
+				
 		input = inValue != null ? inValue : ""; // remember exact user input
 		prefix = "";
 		evalVE = inputVE;
@@ -190,7 +191,7 @@ public class CASTableCellValue {
 		input = internalizeInput(input);
 		
 		// for efficiency: input with localized command names
-		updateLocalizedInput();
+		updateLocalizedInput();					
 	}
 	
 	private void updateLocalizedInput() {
@@ -243,7 +244,6 @@ public class CASTableCellValue {
 	 * Checks if newInput is structurally equal to the current input String.
 	 */
 	public boolean isStructurallyEqualToLocalizedInput(String newInput) {
-		// TODO add
 		if (localizedInput != null && localizedInput.equals(newInput)) 
 			return true;
 		
@@ -262,11 +262,11 @@ public class CASTableCellValue {
 	 * The result is returned as a ValidExpression.
 	 */
 	private ValidExpression parseGeoGebraCASInputAndResolveDummyVars(String inValue) {
-		try {
+		try {			
 			return view.getCAS().getCASparser().parseGeoGebraCASInputAndResolveDummyVars(inValue);
 		}catch (Throwable e) {
 			return null;
-		}
+		} 
 	}
 	
 	/**
@@ -286,6 +286,7 @@ public class CASTableCellValue {
 		if (cmdNames.isEmpty()) {
 			cmdNames = null;
 		} else {
+			includesNumericCommand = cmdNames.contains("Numeric");
 			getInVars().addAll(cmdNames);
 		}
 		
@@ -421,6 +422,7 @@ public class CASTableCellValue {
 	private void clearInVars() {
 		if (invars != null) invars.clear();
 		includesRowReferences = false;
+		includesNumericCommand = false;
 	}
 	
 	/**
@@ -487,6 +489,13 @@ public class CASTableCellValue {
 	}
 	
 	/**
+	 * Returns whether this cell includes any Numeric[] commands.
+	 */
+	final public boolean includesNumericCommand() {
+		return includesNumericCommand;
+	}
+	
+	/**
 	 * Returns whether this cell has no inputVariables and no row references.
 	 */
 	final public boolean isIndependent() {
@@ -507,9 +516,11 @@ public class CASTableCellValue {
 	}
 	
 	final public void setEvalCommand(String cmd) {
-		evalCmd = cmd;
-		// TODO check setKeepInputUsed here
-		setKeepInputUsed(evalCmd != null && (evalCmd.equals("KeepInput") || evalCmd.equals("ProperFraction") || evalCmd.equals("Substitute") || evalCmd.equals("ToPolar")));
+		evalCmd = cmd;		
+
+		includesNumericCommand = includesNumericCommand || 
+			evalCmd != null && evalCmd.equals("Numeric");
+		setKeepInputUsed(evalCmd != null && evalCmd.equals("KeepInput"));
 	}
 	
 	public void setKeepInputUsed(boolean keepInputUsed) {
@@ -532,8 +543,17 @@ public class CASTableCellValue {
 		error = null;
 		latex = null;
 
+		CASparser parser = view.getCAS().getCASparser();
+		Kernel kernel = parser.getKernel();
+		boolean oldValue = kernel.isKeepCasNumbers();
+		
+		// make sure numbers and their precision are kept from Numeric[] commands
+		kernel.setKeepCasNumbers(includesNumericCommand);
+		
 		// parse output into valid expression
-		outputVE = parseGeoGebraCASInputAndResolveDummyVars(output);
+		outputVE = parseGeoGebraCASInputAndResolveDummyVars(output);	
+		
+		kernel.setKeepCasNumbers(oldValue);
 	}
 	
 	public void setError(String error) {

@@ -80,6 +80,12 @@ public class CASmaxima extends CASgeneric {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void setSignificantFiguresForNumeric(int significantNumbers) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/**
 	 * Unbinds (deletes) var in Maxima.

@@ -28,7 +28,8 @@ import java.math.BigDecimal;
 public class MySpecialDouble extends MyDouble {
 	
 	protected String strToString;
-	private int precision; // number of significant digits
+	private boolean keepOriginalString;
+//	private int precision;
 	private boolean isLetterConstant; // for Pi, Euler, or Degree constant
 
 	private static MySpecialDouble eulerConstant;
@@ -40,30 +41,21 @@ public class MySpecialDouble extends MyDouble {
 		char firstChar = strToString.charAt(0);
 		isLetterConstant = Character.isLetter(firstChar) || firstChar == Unicode.degreeChar;
 		
-		if (!isLetterConstant) {
-			// determine precision of strToString
-			if (strToString.indexOf('E') > -1) {
-				// convert scientific notation to plain decimal
-				// e.g. 8.571428571428571E-1 to 0.8571428571428571
-				BigDecimal bd = new BigDecimal(strToString);
-				precision = bd.precision();
-				strToString = bd.toPlainString();
-			} else {
-				precision = strToString.length(); 
-				if (strToString.indexOf('.') > -1) {
-					precision--; // don't count decimal point
-					if (strToString.startsWith("0.")) {
-						precision--; // don't count leading zero
-						int pos = 2; // don't count zeros after decimal point
-						while (pos < strToString.length() && strToString.charAt(pos++) == '0') {
-							precision--;
-						}
-					}
-				}
-			}
+		keepOriginalString = kernel.isKeepCasNumbers();
+		if (!isLetterConstant && keepOriginalString) {
+			// from GeoGebraCAS we get a String using 15 significant figures
+			// like 3.14160000000000
+			// let's remove trailing zeros
+			BigDecimal bd = new BigDecimal(strToString);
+			bd = bd.stripTrailingZeros();
+			strToString = bd.toString();
 		}
 		
 		this.strToString = strToString;
+	}
+	
+	public void setKeepOriginalString() {
+		keepOriginalString = true;
 	}
 
 	public static MySpecialDouble getEulerConstant(Kernel kernel) {
@@ -79,8 +71,17 @@ public class MySpecialDouble extends MyDouble {
 	
 	
 	public String toString() {
-		int printForm = kernel.getCASPrintForm();				
+		if (!isLetterConstant) {
+			if (keepOriginalString || strToString.length() > 16)
+				// keep original string
+				return strToString;		
+			else 
+				// format double value using kernel settings
+				return super.toString();	
+		}
 		
+		// letter constants for pi, e, or degree character
+		int printForm = kernel.getCASPrintForm();						
 		switch (printForm) {
 			//case ExpressionNode.STRING_TYPE_JASYMCA:
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
@@ -116,16 +117,10 @@ public class MySpecialDouble extends MyDouble {
 					case Unicode.degreeChar:	return "^{\\circ}";
 					case Unicode.eulerChar: return Unicode.EULER_STRING; // TODO: find better Latex rendering for "e"
 				}
-			break;
-				
-			//default:
-			//	return strToString;		
-		}				
+			break;				
+		}					
 		
-		if (isLetterConstant || precision > 16)		
-			return strToString;
-		else 
-			return super.toString();	
+		return strToString;	
 	}
 	
 	

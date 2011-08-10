@@ -168,7 +168,8 @@ public class Kernel {
 	private int casPrintForm;		
 	private String casPrintFormPI; // for pi
 	private static boolean useTempVariablePrefix;
-	
+	private boolean keepCasNumbers;
+		
 	// before May 23, 2005 the function acos(), asin() and atan()
 	// had an angle as result. Now the result is a number.
 	// this flag is used to distinguish the different behaviour
@@ -591,6 +592,22 @@ public class Kernel {
 	}
 	
 	/**
+	 * Returns whether MySpecialDouble objects should keep numbers literally or not. 
+	 * @param keepCasNumbers true = keep literal CAS numbers, false = use kernel number formatting
+	 */
+	public boolean isKeepCasNumbers() {
+		return keepCasNumbers;
+	}
+
+	/**
+	 * Tells MySpecialDouble objects to keep numbers literally. 
+	 * @param keepCasNumbers true = keep literal CAS numbers, false = use kernel number formatting
+	 */
+	public void setKeepCasNumbers(boolean keepCasNumbers) {
+		this.keepCasNumbers = keepCasNumbers;
+	}
+	
+	/**
 	 * Tells this kernel about the bounds and the scales for x-Axis and y-Axis used
 	 * in EudlidianView. The scale is the number of pixels per unit.
 	 * (useful for some algorithms like findminimum). All 
@@ -850,6 +867,12 @@ public class Kernel {
 			
 			PRINT_PRECISION = Math.pow(10, -decimals);
 			setEpsilonForPrintPrecision(PRINT_PRECISION);
+			
+			// tell CAS to use significant figures:
+			// sigFig = min(2*decimal places, 20)
+			if (ggbCAS != null) {
+				ggbCAS.setSignificantFiguresForNumeric(Math.min(20, 2*decimals));
+			}
 		}
 	}
 	
@@ -866,6 +889,11 @@ public class Kernel {
 			
 			PRINT_PRECISION = MAX_PRECISION;
 			setEpsilonForPrintPrecision(PRINT_PRECISION);
+			
+			// tell CAS to use significant figures for Numeric
+			if (ggbCAS != null) {
+				ggbCAS.setSignificantFiguresForNumeric(figures);
+			}
 		}
 	}
 	

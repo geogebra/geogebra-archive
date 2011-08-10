@@ -97,6 +97,16 @@ public class GeoGebraCAS {
 		cas.reset();
 	}
 	
+	/**
+	 * Sets the number of signficiant figures (digits) that should be used as print precision for the
+	 * output of Numeric[] commands.
+	 * 
+	 * @param significantNumbers
+	 */
+	public void setSignificantFiguresForNumeric(int significantNumbers) {
+		cas.setSignificantFiguresForNumeric(significantNumbers);
+	}
+	
 	/*
 	private CASmathpiper getMathPiper() {
 		if (currentCAS == Application.CAS_MATHPIPER)

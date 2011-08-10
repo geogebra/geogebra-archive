@@ -273,4 +273,10 @@ public class CASmathpiper extends CASgeneric {
 		
 		return true;
 	}
+
+	@Override
+	public void setSignificantFiguresForNumeric(int significantNumbers) {
+		// TODO Auto-generated method stub
+		
+	}
 }

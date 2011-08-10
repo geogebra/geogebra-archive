@@ -19,6 +19,7 @@ public abstract class CASgeneric {
 	public CASgeneric(CASparser casParser, String translationResourcePath) {
 		this.casParser = casParser;
 		this.translationResourcePath = translationResourcePath;
+		setSignificantFiguresForNumeric(5);
 	}
 
 	/**
@@ -150,6 +151,12 @@ public abstract class CASgeneric {
 	 */
 	public abstract String translateFunctionDeclaration(String label, String parameters, String body);
 	
-	public void setSignificantNumbersOfNumeric(int significantNumbers) throws Throwable{}
+	/**
+	 * Sets the number of signficiant figures (digits) that should be used as print precision for the
+	 * output of Numeric[] commands.
+	 * 
+	 * @param significantNumbers
+	 */
+	public abstract void setSignificantFiguresForNumeric(int significantNumbers);
 	
 }

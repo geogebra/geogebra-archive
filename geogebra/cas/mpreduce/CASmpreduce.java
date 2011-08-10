@@ -728,7 +728,17 @@ public class CASmpreduce extends CASgeneric {
 		}
 	}
 	
-	public void setSignificantNumbersOfNumeric(int significantNumbers) throws Throwable {
-		mpreduce.evaluate("printprecision!!:="+significantNumbers);
+	/**
+	 * Sets the number of signficiant figures (digits) that should be used as print precision for the
+	 * output of Numeric[] commands.
+	 * 
+	 * @param significantNumbers
+	 */
+	public void setSignificantFiguresForNumeric(int significantNumbers) {
+		try{
+			mpreduce.evaluate("printprecision!!:=" + significantNumbers);
+		} catch (Throwable th) {
+			th.printStackTrace();
+		}
 	}
 }
