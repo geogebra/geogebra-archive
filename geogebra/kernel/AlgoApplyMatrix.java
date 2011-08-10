@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 
 
@@ -165,5 +166,24 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 			return new GeoCurveCartesian(cons);
 		return super.getResultTemplate(geo);
 	}
+    
+    @Override 
+   protected boolean swapOrientation(boolean posOrientation){
+	   double a,b,c,d;
+	    a = ((NumberValue)(matrix.get(0,0))).getDouble();
+		b = ((NumberValue)(matrix.get(1,0))).getDouble();
+		c = ((NumberValue)(matrix.get(0,1))).getDouble();
+		d = ((NumberValue)(matrix.get(1,1))).getDouble();		
+	   return posOrientation ^ (a*d-b*c < 0);
+   }
+   
+   @Override
+   protected void transformLimitedPath(GeoElement a, GeoElement b){
+   	if(!(a instanceof GeoConicPart))
+   		super.transformLimitedPath(a, b);   	
+   	else
+   		super.transformLimitedConic(a, b);
+   
+  }
 
 }

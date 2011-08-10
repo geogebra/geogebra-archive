@@ -283,33 +283,8 @@ public class AlgoMirror extends AlgoTransformation {
 				arc.setParameters(d*Kernel.PI_2, e*Kernel.PI_2, false);
 			setTransformedObject(a,b);
 		}
-		if(a instanceof GeoConicPart){
-			if(pt==null){
-				pt = new AlgoClosestPoint(cons,arc,transformedPoint);
-				cons.removeFromConstructionList(pt);
-			}
-			transformedPoint.removePath();
-			setTransformedObject(
-					((GeoConicPart)a).getPointParam(0),transformedPoint
-			);
-			compute();
-			Application.debug("startbefore"+transformedPoint);						
-			transformedPoint.updateCascade();
-			Application.debug("start"+transformedPoint);
-			double d = pt.getP().getPathParameter().getT();
-			transformedPoint.removePath();
-			setTransformedObject(
-					((GeoConicPart)a).getPointParam(1),transformedPoint
-			);
-			compute();
-			transformedPoint.updateCascade();
-			//Application.debug("end"+transformedPoint);			
-			double e = pt.getP().getPathParameter().getT();
-			Application.debug(d+","+e);
-			arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,swapOrientation(((GeoConicPart)a).positiveOrientation()));
-			
-			setTransformedObject(a,b);
-			//TODO transform for conic part
+		if(a instanceof GeoConicPart){			
+			transformLimitedConic(a,b);
 		}
 	}
     protected boolean swapOrientation(boolean positiveOrientation) {		

@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 /**
  * Algorithms for transformations 
  */
@@ -73,16 +75,53 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 		if(a instanceof GeoConicPart){
 			double p = ((GeoConicPart)a).getParameterStart();
 			double q = ((GeoConicPart)a).getParameterEnd();
-			((GeoConicPart)b).setParameters(transformConicParam(p), transformConicParam(q), 
+			Application.debug(p+","+q);
+			((GeoConicPart)b).setParameters(p, q, 
 					swapOrientation(((GeoConicPart)a).positiveOrientation()));
 			//TODO transform for conic part
 		}
 	}
-	protected boolean swapOrientation(boolean positiveOrientation) {		
+	protected boolean swapOrientation(boolean positiveOrientation) {
+		Application.debug(positiveOrientation);
 		return positiveOrientation;
 	}
 
-	protected double transformConicParam(double d){
-		return d;
+	
+	
+	private AlgoClosestPoint pt;
+    private GeoPoint transformedPoint;
+    
+    protected void transformLimitedConic(GeoElement a, GeoElement b){
+    	
+    GeoConicPart arc = (GeoConicPart)b;
+    if(a instanceof GeoConicPart){
+    	((GeoConicPart)b).setParameters(0, Kernel.PI_2, true);
+		if(pt==null){
+			transformedPoint = new GeoPoint(cons);
+			pt = new AlgoClosestPoint(cons,arc,transformedPoint);
+			cons.removeFromConstructionList(pt);
+		}
+		transformedPoint.removePath();
+		setTransformedObject(
+				((GeoConicPart)a).getPointParam(0),transformedPoint
+		);
+		compute();								
+		transformedPoint.updateCascade();
+		Application.debug("start"+transformedPoint);
+		double d = pt.getP().getPathParameter().getT();
+		transformedPoint.removePath();
+		setTransformedObject(
+				((GeoConicPart)a).getPointParam(1),transformedPoint
+		);
+		compute();
+		transformedPoint.updateCascade();
+		Application.debug("end"+transformedPoint);			
+		double e = pt.getP().getPathParameter().getT();
+		Application.debug(d+","+e);
+		arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,swapOrientation(((GeoConicPart)a).positiveOrientation()));
+		
+		setTransformedObject(a,b);
+		//TODO transform for conic part
 	}
+   }
 }

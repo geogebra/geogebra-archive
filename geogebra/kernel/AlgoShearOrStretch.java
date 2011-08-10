@@ -165,6 +165,21 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 			return new GeoCurveCartesian(cons);
 		return super.getResultTemplate(geo);
 	}
+    
+    @Override
+    protected void transformLimitedPath(GeoElement a, GeoElement b){
+       	if(!(a instanceof GeoConicPart))
+       		super.transformLimitedPath(a, b);   	
+       	else
+       		super.transformLimitedConic(a, b);
+       
+    }
+    
+    protected boolean swapOrientation(boolean posOrientation){
+ 	   if(shear)
+ 		   return posOrientation;
+ 	   return posOrientation ^ (num.getDouble()<0);
+    }
 
 }
 
