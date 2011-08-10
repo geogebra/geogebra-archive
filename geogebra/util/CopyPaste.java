@@ -599,12 +599,15 @@ public class CopyPaste {
 		app.getActiveEuclidianView().setSelectionRectangle(null);
 		
 		// make sure the coord style is updated the right way
+		// remember we do this just because of this -
+		// in theory, there was no change in the copied objects,
+		// so they don't need update or repaint 
 		ConstructionElement ce;
 		Construction cons = app.getKernel().getConstruction();
 		for (int i = 0; i < cons.steps(); ++i) {
 			ce = cons.getConstructionElement(i);
 			if (geoslocal.contains(ce) && ce.isGeoElement())
-				((GeoElement)ce).updateRepaint();
+				((GeoElement)ce).update();
 		}
 		kernel.notifyRepaint();
 	}
