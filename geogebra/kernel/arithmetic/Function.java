@@ -131,7 +131,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @param x
      * @return f(x)
      */
-    final public double evaluate(double x) {
+    public double evaluate(double x) {
     	if (isBooleanFunction) {
     		// BooleanValue
     		return evaluateBoolean(x) ? 1 : 0;

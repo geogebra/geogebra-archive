@@ -17,8 +17,14 @@ the Free Software Foundation.
  */
 package geogebra.kernel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.main.Application;
+
+import geogebra.kernel.parser.ParseException;
+
+import geogebra.main.MyError;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
@@ -79,7 +85,46 @@ public class AlgoIntersectImplicitpolyParametric extends
 		double maxT=Double.POSITIVE_INFINITY;
 		double minT=Double.NEGATIVE_INFINITY;
 		if (f!=null){
-			if (!f.isPolynomialFunction(false)||!f.isDefined){
+			if (!f.isDefined){
+				return;
+			}
+			
+			if (!f.isPolynomialFunction(false)) {
+				
+				
+				Kernel ker = cons.getKernel();
+				GeoFunction substituteFunctionX = null;
+				
+				ker.setSilentMode(true);
+				try {
+					substituteFunctionX = (GeoFunction) ker.getAlgebraProcessor().processValidExpression(
+						ker.getParser().parseGeoGebraExpression("x"))[0];
+				} catch (MyError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				GeoFunction paramEquation = new GeoFunction(cons, p, substituteFunctionX, f);
+				
+				AlgoRoots algo = new AlgoRoots(cons, paramEquation, 
+						new GeoNumeric(cons, f.getMinParameter()),
+						new GeoNumeric(cons, f.getMaxParameter()));
+				
+				GeoPoint[] points = algo.getRootPoints();
+				List<double[]> valPairs=new ArrayList<double[]>();
+				for (int i=0;i<points.length;i++){
+					double t = points[i].getX();
+					valPairs.add(new double[]{t,f.evaluate(t)});
+				}
+				
+				ker.setSilentMode(false);
+				setPoints(valPairs);
 				return;
 			}
 			tx=new PolynomialFunction(new double[]{0,1}); //x=t

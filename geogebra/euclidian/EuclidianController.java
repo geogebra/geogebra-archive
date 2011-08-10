@@ -4660,7 +4660,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}else if (selFunctions() >= 1 && selConics() >= 1){
 			GeoConic[] conic = getSelectedConics();
 			GeoFunction[] fun = getSelectedFunctions();
-			if (fun[0].isPolynomialFunction(false)){
+			//if (fun[0].isPolynomialFunction(false)){
 				if (singlePointWanted)
 					return new GeoElement[] {
 						kernel.IntersectPolynomialConicSingle(null, fun[0], conic[0],
@@ -4669,17 +4669,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				else
 					return
 						kernel.IntersectPolynomialConic(null, fun[0], conic[0]);
-			}else{
-				
-				//TODO this returns null until Intersect implicit function / implicit polynomial is implemented
-				return kernel.IntersectImplicitpolyPolynomial(null, new GeoImplicitPoly(conic[0]), fun[0]);
-				
-			}
+			//}
 		}else if (selImplicitpoly() >= 1){
 			if (selFunctions() >=1 ){
 				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
 				GeoFunction fun=getSelectedFunctions()[0];
-				if (fun.isPolynomialFunction(false)){
+				//if (fun.isPolynomialFunction(false)){
 					if (singlePointWanted){
 						return new GeoElement[] {
 								kernel.IntersectImplicitpolyPolynomialSingle(null, p, fun, xRW, yRW)
@@ -4687,8 +4682,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					}else
 						return 
 							kernel.IntersectImplicitpolyPolynomial(null, p, fun);
-				}else
-					return null;
+				//}else
+				//	return null;
 			}else if (selLines() >= 1){
 				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
 				GeoLine l=getSelectedLines()[0];

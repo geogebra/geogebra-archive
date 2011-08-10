@@ -18,7 +18,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
@@ -26,7 +28,9 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.PolyFunction;
+import geogebra.kernel.parser.ParseException;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 
 public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 
@@ -34,8 +38,6 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 	private GeoFunction h;  // input
     private GeoConic c;
     private GeoPoint []  Q;     // points  
-    
-    private Function polyFunc;
     
    // private boolean isLimitedPathSituation;
 
@@ -69,6 +71,45 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 			r=r.add(y.multiply(y.multiply(new PolynomialFunction(new double[]{A[1]}))));
 			//Application.debug("r = "+r.toString());
 			setRootsPolynomial(r);
+		} else {
+			Kernel ker = cons.getKernel();
+			GeoFunction substituteFunctionX = null;
+			
+			ker.setSilentMode(true);
+			try {
+				substituteFunctionX = (GeoFunction) ker.getAlgebraProcessor().processValidExpression(
+					ker.getParser().parseGeoGebraExpression("x"))[0];
+			} catch (MyError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			GeoImplicitPoly iPoly = new GeoImplicitPoly(cons);
+			c.toGeoImplicitPoly(iPoly);
+			GeoFunction paramEquation = new GeoFunction(cons, iPoly, substituteFunctionX, h);
+			
+			AlgoRoots algo = new AlgoRoots(cons, paramEquation, 
+					new GeoNumeric(cons, h.getMinParameter()),
+					new GeoNumeric(cons, h.getMaxParameter()));
+			
+			GeoPoint[] points = algo.getRootPoints();
+			List<double[]> valPairs=new ArrayList<double[]>();
+			for (int i=0;i<points.length;i++){
+				double t = points[i].getX();
+				valPairs.add(new double[]{t,h.evaluate(t)});
+			}
+			
+			ker.setSilentMode(false);
+			
+			setPoints(valPairs);
+			return;
+
 		}
 
 	}
