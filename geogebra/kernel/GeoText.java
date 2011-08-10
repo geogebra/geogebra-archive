@@ -27,7 +27,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	// font options
 	private boolean serifFont;
 	private int fontStyle;
-	private int fontSize = getRelativeFontSize(FONTSIZE_MEDIUM); // size relative to default font size
+	private int fontSize = 0; // must be zero, as that is the value NOT saved to XML
 	private int printDecimals = -1;
 	private int printFigures = -1;
 	private boolean useSignificantFigures = false;
