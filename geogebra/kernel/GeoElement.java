@@ -427,17 +427,6 @@ public abstract class GeoElement
 	private int hatchingDistance = 10;
 	private boolean inverseFill = false;
 
-	// dontSaveScriptsToXML is introduced for Copy & Paste in new Window
-	protected static boolean dontSaveScriptsToXML = false;
-
-	public static boolean getWhetherNotSaveScriptsToXML() {
-		return dontSaveScriptsToXML;
-	}
-
-	public static void setWhetherNotSaveScriptsToXML(boolean cond) {
-		dontSaveScriptsToXML = cond;
-	}
-
 	//=================================
 	// G.Sturr new fill options
 	protected String imageFileName = "";
@@ -4244,7 +4233,7 @@ public abstract class GeoElement
 			sb.append(alphaValue);
 			sb.append("\"");
 
-			if (colFunction!=null && !dontSaveScriptsToXML)
+			if (colFunction!=null && kernel.getSaveScriptsToXML())
 			{
 				sb.append(" dynamicr=\"");
 				sb.append(Util.encodeXML(colFunction.get(0).getLabel()));
@@ -4421,7 +4410,7 @@ public abstract class GeoElement
 		getXMLfixedTag(sb);
 		getAuxiliaryXML(sb);
 		getBreakpointXML(sb);
-		if (!dontSaveScriptsToXML)
+		if (kernel.getSaveScriptsToXML())
 			getScriptTags(sb);
 	}
 
@@ -4506,7 +4495,7 @@ public abstract class GeoElement
 	}
 
 	private String getShowObjectConditionXML() {
-		if (condShowObject != null && !dontSaveScriptsToXML) {
+		if (condShowObject != null && kernel.getSaveScriptsToXML()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("\t<condition showObject=\"");
 			sb.append(Util.encodeXML(condShowObject.getLabel()));

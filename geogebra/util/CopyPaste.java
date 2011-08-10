@@ -521,7 +521,6 @@ public class CopyPaste {
 			return;
 		
 		addSubGeos(geoslocal);
-		//dropGeosDependentFromOutside(geoslocal);
 		
 		if (geoslocal.isEmpty())
 			return;
@@ -532,23 +531,19 @@ public class CopyPaste {
 		ArrayList<ConstructionElement> geoslocalsw = removeFreeNonselectedGeoNumerics(geoslocal, geos);
 		ArrayList<ConstructionElement> geostohidesw = removeFreeNonselectedGeoNumerics(geostohide, geos);
 
-		// store undo info
 		Kernel kernel = app.getKernel();
-		//kernel.setUndoActive(true);
-        //kernel.getConstruction().storeUndoInfo();
 
+		//// FIRST XML SAVE
+		beforeSavingToXML(geoslocal, geostohide, false);		
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
 		int oldPrintForm = kernel.getCASPrintForm();
         boolean oldValue = kernel.isPrintLocalizedCommandNames();
+		boolean saveScriptsToXML = kernel.getSaveScriptsToXML();
 		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);
 		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
         kernel.setPrintLocalizedCommandNames(false);
-
-		boolean dontSaveScriptsToXML = GeoElement.getWhetherNotSaveScriptsToXML();
-        
-		beforeSavingToXML(geoslocal, geostohide, false);
-		GeoElement.setWhetherNotSaveScriptsToXML(true);
+		kernel.setSaveScriptsToXML(false);
 		try {
 			// step 5
 			copiedXML = new StringBuilder();
@@ -565,12 +560,20 @@ public class CopyPaste {
 			e.printStackTrace();
 			copiedXML = new StringBuilder();
 		}
-		//kernel.restoreCurrentUndoInfo();
-		GeoElement.setWhetherNotSaveScriptsToXML(dontSaveScriptsToXML);
+		// restore kernel settings
+		kernel.setCoordStyle(oldCoordStlye);
+		kernel.setCASPrintForm(oldPrintForm);
+		kernel.setPrintLocalizedCommandNames(oldValue);
+		kernel.setSaveScriptsToXML(saveScriptsToXML);
 		afterSavingToXML(geoslocal, geostohide);
-
+		// FIRST XML SAVE END
+		
+		// SECOND XML SAVE
 		beforeSavingToXML(geoslocalsw, geostohidesw, true);
-		GeoElement.setWhetherNotSaveScriptsToXML(true);
+		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);
+		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+        kernel.setPrintLocalizedCommandNames(false);
+		kernel.setSaveScriptsToXML(false);
 		try {
 			// step 5
 			copiedXMLforSameWindow = new StringBuilder();
@@ -587,29 +590,20 @@ public class CopyPaste {
 			e.printStackTrace();
 			copiedXMLforSameWindow = new StringBuilder();
 		}
-		//kernel.restoreCurrentUndoInfo();
-		GeoElement.setWhetherNotSaveScriptsToXML(dontSaveScriptsToXML);
-		afterSavingToXML(geoslocalsw, geostohidesw);
-
 		// restore kernel settings
 		kernel.setCoordStyle(oldCoordStlye);
 		kernel.setCASPrintForm(oldPrintForm);
 		kernel.setPrintLocalizedCommandNames(oldValue);
+		kernel.setSaveScriptsToXML(saveScriptsToXML);
+		afterSavingToXML(geoslocalsw, geostohidesw);
+		// SECOND XML SAVE END
+
 		app.setMode(EuclidianView.MODE_MOVE);
 		app.getActiveEuclidianView().setSelectionRectangle(null);
-		
-		// make sure the coord style is updated the right way
-		// remember we do this just because of this -
-		// in theory, there was no change in the copied objects,
-		// so they don't need update or repaint 
-		ConstructionElement ce;
-		Construction cons = app.getKernel().getConstruction();
-		for (int i = 0; i < cons.steps(); ++i) {
-			ce = cons.getConstructionElement(i);
-			if (geoslocal.contains(ce) && ce.isGeoElement())
-				((GeoElement)ce).update();
-		}
-		kernel.notifyRepaint();
+
+
+		// I'm not sure this is necessary now...
+		kernel.getConstruction().updateConstruction();
 	}
 
 	/**

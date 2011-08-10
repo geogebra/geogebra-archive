@@ -184,6 +184,9 @@ public class Kernel {
 	private boolean viewReiniting = false;
 	private boolean allowVisibilitySideEffects = true;
 
+	// this flag was introduced for Copy & Paste
+	private boolean saveScriptsToXML = true; 
+
 	
 	
 	// silentMode is used to create helper objects without any side effects	
@@ -986,7 +989,15 @@ public class Kernel {
 	public void setCoordStyle(int coordStlye) {
 		coordStyle = coordStlye;		
 	}
-	
+
+	public void setSaveScriptsToXML(boolean flag) {
+		saveScriptsToXML = flag;
+	}
+
+	public boolean getSaveScriptsToXML() {
+		return saveScriptsToXML;
+	}
+
 	/*
 	 * GeoElement specific
 	 */
