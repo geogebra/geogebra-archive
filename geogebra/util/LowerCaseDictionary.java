@@ -1,5 +1,7 @@
 package geogebra.util;
 
+import geogebra.gui.util.Korean;
+
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;

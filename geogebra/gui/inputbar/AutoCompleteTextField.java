@@ -5,6 +5,7 @@ import geogebra.gui.autocompletion.CompletionsPopup;
 import geogebra.gui.util.BorderButton;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.HistoryPopup;
+import geogebra.gui.util.Korean;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
@@ -13,7 +14,6 @@ import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 import geogebra.main.MyError;
 import geogebra.util.AutoCompleteDictionary;
-import geogebra.util.Korean;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;

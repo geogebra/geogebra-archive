@@ -1,4 +1,4 @@
-package geogebra.util;
+package geogebra.gui.util;
 
 import geogebra.main.Application;
 
