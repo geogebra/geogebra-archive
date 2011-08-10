@@ -105,6 +105,38 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			setAlphaValue(ge.getAlphaValue());		
 		}
 	}
+
+	GeoImplicitPoly iPoly;
+	GeoFunction[] substituteFunctions;
+	static int FUNCTION_DIRECT = 1;
+	static int FUNCTION_COMPOSITE_IPOLY_FUNCS = 3;
+	int geoFunctionType = FUNCTION_DIRECT;
+	
+	//Currectly, the composite function is only for internal use
+	//The expression is not correct but it is not to be shown anyway.
+	public GeoFunction(Construction c, GeoImplicitPoly iPoly, GeoFunction f, GeoFunction g) { // composite iPoly(f(x), g(x))
+		this(c);
+		this.iPoly = iPoly;
+	
+		substituteFunctions = new GeoFunction[2];
+		substituteFunctions[0] = f;
+		substituteFunctions[1] = g;
+		setInterval(Math.max(f.intervalMin, g.intervalMin), Math.min(f.intervalMax, g.intervalMax));
+		
+		fun = new Function(c.getKernel()) {
+		    public double evaluate(double x) {
+	
+		    	return GeoFunction.this.iPoly.evalPolyAt(
+		    			substituteFunctions[0].getFunction().evaluate(x),
+		    			substituteFunctions[1].getFunction().evaluate(x));
+		    	
+		    }
+		};
+		fun.setExpression(f.getFunctionExpression()); //TODO: set the correct expression
+		
+		geoFunctionType = FUNCTION_COMPOSITE_IPOLY_FUNCS;
+	}
+	
 	
 	public void setVisualStyle(GeoElement g){
 		super.setVisualStyle(g);
@@ -265,8 +297,15 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public double evaluate(double x) {
 		if (fun == null)
 			return Double.NaN;
-		else
-			return fun.evaluate(x);
+		else {
+			/*if (geoFunctionType == FUNCTION_COMPOSITE_IPOLY_FUNCS) {
+				double evalX = substituteFunctions[0].evaluate(x);
+				double evalY = substituteFunctions[1].evaluate(x);
+				return iPoly.evalPolyAt(evalX, evalY);
+			}
+			else*/
+				return fun.evaluate(x);
+		}
 	}
 	
 	/**

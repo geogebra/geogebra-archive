@@ -6521,8 +6521,8 @@ public class Kernel {
 		String[] labels,
 		GeoImplicitPoly p,
 		GeoFunction f) {
-		if (!f.isPolynomialFunction(false))
-			return null;
+		//if (!f.isPolynomialFunction(false))
+			//return null;
 		AlgoIntersectImplicitpolyParametric algo = getIntersectionAlgorithm(p, f);
 		algo.setPrintedInXML(true);
 		GeoPoint[] points = algo.getIntersectionPoints();		
