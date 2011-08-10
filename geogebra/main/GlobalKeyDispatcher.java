@@ -318,10 +318,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 						// Copy selected geos
 						app.setWaitCursor();
-						boolean scriptsBlocked = app.isBlockUpdateScripts();
-						app.setBlockUpdateScripts(true);
 						CopyPaste.copyToXML(app, app.getSelectedGeos());
-						app.setBlockUpdateScripts(scriptsBlocked);
 						app.updateMenubar();
 						app.setDefaultCursor();
 						consumed = true;

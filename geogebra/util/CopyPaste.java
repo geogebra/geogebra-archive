@@ -497,6 +497,12 @@ public class CopyPaste {
 	 */
 	public static void copyToXML(Application app, ArrayList<GeoElement> geos) {
 
+		if (geos.isEmpty())
+			return;
+
+		boolean scriptsBlocked = app.isBlockUpdateScripts();
+		app.setBlockUpdateScripts(true);
+
 		copiedXML = new StringBuilder();
 		copiedXMLlabels = new ArrayList<String>();
 		copiedXMLforSameWindow = new StringBuilder();
@@ -504,26 +510,29 @@ public class CopyPaste {
 		copySource = (EuclidianView)app.getActiveEuclidianView();
 		copyObject = app.getKernel().getConstruction().getUndoManager().getCurrentUndoInfo();
 
-		if (geos.isEmpty())
-			return;
-		
 		// create geoslocal and geostohide
 		ArrayList<ConstructionElement> geoslocal = new ArrayList<ConstructionElement>();
 		geoslocal.addAll(geos);
 		removeFixedSliders(geoslocal);
 		
-		if (geoslocal.isEmpty())
+		if (geoslocal.isEmpty()) {
+			app.setBlockUpdateScripts(scriptsBlocked);
 			return;
+		}
 		
 		removeDependentFromAxes(geoslocal, app);
 		
-		if (geoslocal.isEmpty())
+		if (geoslocal.isEmpty()) {
+			app.setBlockUpdateScripts(scriptsBlocked);
 			return;
+		}
 		
 		addSubGeos(geoslocal);
 		
-		if (geoslocal.isEmpty())
+		if (geoslocal.isEmpty()) {
+			app.setBlockUpdateScripts(scriptsBlocked);
 			return;
+		}
 
 		ArrayList<ConstructionElement> geostohide = addPredecessorGeos(geoslocal);
 		geostohide.addAll(addAlgosDependentFromInside(geoslocal));
@@ -600,10 +609,8 @@ public class CopyPaste {
 
 		app.setMode(EuclidianView.MODE_MOVE);
 		app.getActiveEuclidianView().setSelectionRectangle(null);
-
-
-		// I'm not sure this is necessary now...
-		kernel.getConstruction().updateConstruction();
+		
+		app.setBlockUpdateScripts(scriptsBlocked);
 	}
 
 	/**
