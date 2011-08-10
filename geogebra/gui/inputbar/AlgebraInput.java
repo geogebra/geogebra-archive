@@ -84,7 +84,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.addFocusListener(this);
 		
 		// enable a history popup and embedded button 
-		inputField.addHistoryPopup();
+		inputField.addHistoryPopup(app.showInputTop());
 		
 		// enable drops
 		inputField.setDragEnabled(true);

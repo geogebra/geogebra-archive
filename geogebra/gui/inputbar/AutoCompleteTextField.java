@@ -109,18 +109,25 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		return history;
 	}
 
-	public void addHistoryPopup(){
+	/**
+	 * Add a history popup list and an embedded popup button.
+	 * See AlgebraInputBar
+	 */
+	public void addHistoryPopup(boolean isDownPopup){
 
 		if(historyPopup == null)
 			historyPopup = new HistoryPopup(this);
+		
+		historyPopup.setDownPopup(isDownPopup);
 
 		ActionListener al = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String cmd = e.getActionCommand();
 				if(cmd.equals(1 + BorderButton.cmdSuffix)){
 
-					// TODO: determine if the input bar is top or bottom
-					historyPopup.showPopup(false);
+					// TODO: should up/down orientation be tied to InputBar?
+					// show popup 
+					historyPopup.showPopup();
 				}			
 			}	
 		};
@@ -128,6 +135,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		this.setVisibleBorderButton(1, false);
 
 	}
+
 
 	public void showPopupSymbolButton(boolean showPopupSymbolButton){
 		((MyTextField)this).setShowSymbolTableIcon(showPopupSymbolButton);
@@ -300,17 +308,20 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			if(historyPopup == null){
 				String text = getPreviousInput();
 				if (text != null) setText(text);
-			}else{
-				historyPopup.showPopup(false);
 			}
-
+			else if(!historyPopup.isDownPopup()){
+				historyPopup.showPopup();
+			}
 			break;
 
 		case KeyEvent.VK_DOWN:
 			if (!handleEscapeKey) {
 				break;
 			}
-			setText(getNextInput());
+			if(historyPopup != null && historyPopup.isDownPopup())
+				historyPopup.showPopup();
+			else
+				setText(getNextInput());
 			break;
 
 		case KeyEvent.VK_F9: 
