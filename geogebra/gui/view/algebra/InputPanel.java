@@ -414,6 +414,7 @@ ActionListener, ListSelectionListener {
 		
 		// make sure autocomplete works for the Virtual Keyboard
 		if (textComponent instanceof AutoCompleteTextField) {
+			((AutoCompleteTextField)textComponent).mergeKoreanDoubles();
 			((AutoCompleteTextField)textComponent).updateCurrentWord();
 			((AutoCompleteTextField)textComponent).startAutoCompletion();
 		}

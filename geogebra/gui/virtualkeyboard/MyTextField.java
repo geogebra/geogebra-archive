@@ -165,6 +165,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 		//setCaretPosition(pos + text.length());
 		final int newPos = pos + text.length();
+		
 
 		// make sure AutoComplete works
 		if (this instanceof AutoCompleteTextField) {

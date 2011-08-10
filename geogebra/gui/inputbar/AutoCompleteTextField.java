@@ -366,6 +366,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		// handle alt-p etc
 		super.keyReleased(e);
+		
+		mergeKoreanDoubles();
 
 		if (getAutoComplete()) {
 			updateCurrentWord();
@@ -379,6 +381,20 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
         }*/	
 	}      
 		
+	public void mergeKoreanDoubles() {
+		// avoid shift on Korean keyboards
+		if (app.getLocale().getLanguage().equals("ko")) {
+			String text = getText();
+			int caretPos = getCaretPosition();
+			String mergeText = Korean.mergeDoubleCharacters(text);
+			int decrease = text.length() - mergeText.length();
+			if (decrease > 0) {
+				setText(mergeText);
+				setCaretPosition(caretPos - decrease);
+			}
+		}		
+	}
+
 	private void clearSelection() {
 		int start = getSelectionStart();
 		int end = getSelectionEnd();        

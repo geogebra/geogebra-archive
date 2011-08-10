@@ -1,10 +1,12 @@
 package geogebra.util;
 
+import geogebra.main.Application;
+
 import java.util.HashMap;
 
 public class Korean {
 
-	static StringBuilder koreanSB;
+	static StringBuilder sb;
 	static HashMap<Character, Character> koreanLeadToTail;
 
 	static void init() {
@@ -42,25 +44,25 @@ public class Korean {
 
 		init();
 
-		if (koreanSB == null) koreanSB = new StringBuilder();
-		else koreanSB.setLength(0);
+		if (sb == null) sb = new StringBuilder();
+		else sb.setLength(0);
 
 		boolean lastWasVowel = false;
 
 		for (int i = 0 ; i < s.length() ; i++) {
 			char c = s.charAt(i);
-			if (isKoreanMultiChar(c)) appendKoreanMultiChar(koreanSB, c);
+			if (isKoreanMultiChar(c)) appendKoreanMultiChar(sb, c);
 			else {
 				// if a "lead char" follows a vowel, turn into a "tail char"
 				if (lastWasVowel && isKoreanLeadChar(c))
-					koreanSB.append(koreanLeadToTail.get(new Character(c)).charValue());
+					sb.append(koreanLeadToTail.get(new Character(c)).charValue());
 				else
-					koreanSB.append(c);
+					sb.append(c);
 			}
-			lastWasVowel = isKoreanVowelChar(koreanSB.charAt(koreanSB.length() - 1));
+			lastWasVowel = isKoreanVowelChar(sb.charAt(sb.length() - 1));
 		}
 
-		return koreanSB.toString();
+		return sb.toString();
 	}
 
 	private static boolean isKoreanMultiChar(char c) {
@@ -98,6 +100,54 @@ public class Korean {
 		sb.append(lead);
 		sb.append(vowel);
 		sb.append(tail);
+	}
+	
+	/*
+	 * avoid having to press shift by merging eg \u1100\u1100 to \u1101 
+	 * http://www.kfunigraz.ac.at/~katzer/korean_hangul_unicode.html
+	 */
+	public static String mergeDoubleCharacters(String str) {
+		
+		if (str.length() < 2) return str;
+		
+		if (sb == null) sb = new StringBuilder();
+		else sb.setLength(0);
+		
+		char c;
+		
+		for (int i = 0 ; i < str.length() - 1 ; i++) {
+			int offset = 1;
+			switch (c = str.charAt(i)) {
+			case '\u1161' : // these character are "doubled" by adding 2 to their Unicode value
+			case '\u1162' :
+			case '\u1165' :
+			case '\u1166' :
+				offset++;
+				// fall through
+			case '\u1100' : // these character are "doubled" by adding 1 to their Unicode value
+			case '\u1103' : 
+			case '\u1107' :
+			case '\u1109' :
+			case '\u110c' :
+			case '\u11a8' :
+			case '\u11ba' :
+				if (str.charAt(i+1) == c) {
+					sb.append((char)(c+offset)); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			default:
+					sb.append(c);
+			}
+			if (i == str.length() - 2)
+				sb.append(str.charAt(str.length() - 1));
+			
+		}
+		
+
+		return sb.toString();
 	}
 
 
