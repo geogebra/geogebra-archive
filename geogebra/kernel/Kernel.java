@@ -8292,9 +8292,12 @@ public class Kernel {
 				if (Double.isNaN(x))
 					return " 1/0 ";	
 				else if (Double.isInfinite(x)) {
-					if (casPrintForm == ExpressionNode.STRING_TYPE_MAXIMA) return (x<0) ? "-inf" : "inf";
-					if (casPrintForm == ExpressionNode.STRING_TYPE_MPREDUCE) return (x<0) ? "-infinity" : "infinity";
-					return Double.toString(x); // "Infinity" or "-Infinity"
+					if (casPrintForm == ExpressionNode.STRING_TYPE_MPREDUCE) 
+						return (x<0) ? "-infinity" : "infinity";
+					else if (casPrintForm == ExpressionNode.STRING_TYPE_MAXIMA) 
+						return (x<0) ? "-inf" : "inf";					
+					else
+						return Double.toString(x); // "Infinity" or "-Infinity"
  				}
 				else if (isLongInteger)
 					return Long.toString(rounded);
@@ -8333,8 +8336,11 @@ public class Kernel {
 				else if (Double.isInfinite(x)) {
 					return (x > 0) ? "\u221e" : "-\u221e"; // infinity
 				}
-				else if (x == Math.PI)
-					return casPrintFormPI;
+				// don't convert 3.141592653589793 to pi here
+				// use formatPiERaw() instead
+				// see http://www.geogebra.org/trac/ticket/1169
+				// else if (x == Math.PI)
+				//	return casPrintFormPI;
 					
 					
 				// ROUNDING hack							
