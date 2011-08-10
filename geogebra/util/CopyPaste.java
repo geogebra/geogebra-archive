@@ -108,6 +108,40 @@ public class CopyPaste {
 		}
 	}
 
+	protected static void removeHavingMacroPredecessors(ArrayList<ConstructionElement> geos) {
+
+		GeoElement geo, geo2;
+		Iterator<GeoElement> it;
+		boolean found = false;
+		for (int i = geos.size() - 1; i >= 0; i--)
+		{
+			if (geos.get(i).isGeoElement()) {
+				geo = (GeoElement)geos.get(i);
+				found = false;
+				if (geo.getParentAlgorithm() != null) {
+					if (geo.getParentAlgorithm().getClassName().equals("AlgoMacro")) {
+						found = true;
+					}
+				}
+				if (!found) {
+					it = geo.getAllPredecessors().iterator();
+					while (it.hasNext()) {
+						geo2 = (GeoElement)it.next();
+						if (geo2.getParentAlgorithm() != null) {
+							if (geo2.getParentAlgorithm().getClassName().equals("AlgoMacro")) {
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+				if (found) {
+					geos.remove(i);
+				}
+			}
+		}
+	}
+
 	/**
 	 * copyToXML - Step 2
 	 * Add subgeos of geos like points of a segment or line or polygon
@@ -209,99 +243,6 @@ public class CopyPaste {
 	}
 
 	/**
-	 * copyToXML - Step 2.5
-	 * Drop the GeoElements in ArrayList which are depending from outside
-	 * Deprecated
-	 *  
-	 * @param geos input and output
-	 */
-	/*public static void dropGeosDependentFromOutside(ArrayList<ConstructionElement> geos) {
-		
-		ConstructionElement geo;
-		GeoElement geo2;
-		for (int i = geos.size() - 1; i >= 0; i--)
-		{
-			geo = (ConstructionElement) geos.get(i);
-			if (geo.isIndependent()) {
-				continue;
-			} else {
-				TreeSet ts = geo.getAllIndependentPredecessors();
-
-				// exclude from ts the numeric input of AlgoPolygonRegular or AlgoCirclePointRadius
-		    	Iterator it = ts.iterator();
-		    	while (it.hasNext()) {
-		    		geo2 = (GeoElement)it.next();
-		    		if (geo2.isGeoNumeric()) {
-		    			// check the case of input of AlgoPolygonRegular
-		    			ArrayList<ConstructionElement> geoal = geo2.getAlgorithmList();
-		    			if (geoal.size() == 0) {
-		    				// nothing special, GeoNumeric remains
-		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoPolygonRegular")) {
-		    				it.remove();
-		    			// or AlgoCirclePointRadius
-		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoCirclePointRadius")) {
-		    				it.remove();
-		    			// or single intersection point
-		    			} else if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoIntersectSingle")) {
-		    				if (((AlgoElement)geoal.get(0)).getInput()[2].isGeoNumeric()) {
-		    					it.remove();
-		    				}
-		    			} else if (((GeoElement)geo).isGeoList()) {
-		    				// GeoNumerics: from, to, step
-		    				if ((geoal.size() == 1) && ((AlgoElement)geoal.get(0)).getClassName().equals("AlgoSequence")) {
-		    					it.remove();
-		    				} else if (geoal.size() == 2) { // var
-		    					if (((AlgoElement)geoal.get(0)).getClassName().equals("AlgoSequence")) {
-		    						if (((AlgoElement)geoal.get(0)).getInput().length > 1) {
-			    						if (((AlgoElement)geoal.get(0)).getInput()[1] == geo2) {
-			    							it.remove();
-			    						}
-		    						}
-		    					} else if (((AlgoElement)geoal.get(1)).getClassName().equals("AlgoSequence")) {
-		    						if (((AlgoElement)geoal.get(1)).getInput().length > 1) {
-			    						if (((AlgoElement)geoal.get(1)).getInput()[1] == geo2) {
-			    							it.remove();
-			    						}
-		    						}
-		    					}
-		    				}
-		    			} else {
-		    				// angle of rotation and degree of enlarging may be used more times,
-		    				// but it should be removed for all times
-
-		    				boolean algorotatefound = true;
-		    				boolean algodilatefound = true;
-		    				for (int k = 0; k < geoal.size(); k++) {
-		    					if (!((AlgoElement)geoal.get(k)).getClassName().equals("AlgoRotate") &&
-	    							!((AlgoElement)geoal.get(k)).getClassName().equals("AlgoRotatePoint")) {
-		    						algorotatefound = false;
-		    					} else if (((AlgoElement)geoal.get(k)).getInput()[1] != geo2) {
-		    						algorotatefound = false;
-		    					}
-		    					if (!((AlgoElement)geoal.get(k)).getClassName().equals("AlgoDilate")) {
-		    						algodilatefound = false;
-		    					} else if (((AlgoElement)geoal.get(k)).getInput()[1] != geo2) {
-		    						algodilatefound = false;
-		    					}
-		    				}
-
-		    				if (algorotatefound || algodilatefound) {
-		    					it.remove();
-		    				}
-		    			} 
-		    		}
-		    	}
-
-				if (geos.containsAll(ts)) {
-					continue;
-				} else {
-					geos.remove(i);
-				}
-			}
-		}
-	}*/
-
-	/**
 	 * copyToXML - Step 3
 	 * Add geos which might be intermediates between our existent geos
 	 * And also add all predecessors of our geos except GeoAxis objects
@@ -357,16 +298,21 @@ public class CopyPaste {
 
 			for (int j = 0; j < geoal.size(); j++) {
 				ale = (AlgoElement) geoal.get(j);
-				ac = new ArrayList<ConstructionElement>();
-				ac.addAll(Arrays.asList(ale.getInput()));
-				if (conels.containsAll(ac) && !conels.contains((ConstructionElement) ale)) {
-					conels.add((ConstructionElement) ale);
-					geos = ale.getOutput();
-					for (int k = 0; k < geos.length; k++) {
-						if (!ret.contains(geos[k]) && !conels.contains(geos[k])) {
-					    	ret.add(geos[k]);
-					    }
+
+				if (!ale.getClassName().equals("AlgoMacro")) {
+				
+					ac = new ArrayList<ConstructionElement>();
+					ac.addAll(Arrays.asList(ale.getInput()));
+					if (conels.containsAll(ac) && !conels.contains((ConstructionElement) ale)) {
+						conels.add((ConstructionElement) ale);
+						geos = ale.getOutput();
+						for (int k = 0; k < geos.length; k++) {
+							if (!ret.contains(geos[k]) && !conels.contains(geos[k])) {
+								ret.add(geos[k]);
+							}
+						}
 					}
+
 				}
 			}
 		}
@@ -526,7 +472,14 @@ public class CopyPaste {
 			app.setBlockUpdateScripts(scriptsBlocked);
 			return;
 		}
-		
+
+		removeHavingMacroPredecessors(geoslocal);
+
+		if (geoslocal.isEmpty()) {
+			app.setBlockUpdateScripts(scriptsBlocked);
+			return;
+		}
+
 		addSubGeos(geoslocal);
 		
 		if (geoslocal.isEmpty()) {
