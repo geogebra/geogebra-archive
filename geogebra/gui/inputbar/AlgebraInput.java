@@ -83,6 +83,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.addKeyListener(this);
 		inputField.addFocusListener(this);
 		
+		inputField.addHistoryPopup();
+		
 		// enable drops
 		inputField.setDragEnabled(true);
 		inputField.setDropTarget(new DropTarget(this,
@@ -91,14 +93,14 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		updateFonts();
 
 		// show the history popup
-		inputPanel.setShowHistoryButton(true);
-		inputPanel.getSymbolButton().setDownwardPopup(false);
+		inputPanel.setShowHistoryButton(false);
+		
 
 		// create toggle button to hide/show the input help panel
 		btnToggleInputPanel = new JToggleButton();	
 		btnToggleInputPanel.setIcon(app.getImageIcon("29.07.2011_left_1.png"));
 		btnToggleInputPanel.setSelectedIcon(app.getImageIcon("29.07.2011_right_1.png"));
-		btnToggleInputPanel.setPreferredSize(new Dimension(14,14));
+		//btnToggleInputPanel.setPreferredSize(new Dimension(14,14));
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
 		btnToggleInputPanel.setContentAreaFilled(false);   

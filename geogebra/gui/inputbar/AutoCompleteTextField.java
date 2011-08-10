@@ -2,6 +2,9 @@ package geogebra.gui.inputbar;
 import geogebra.gui.MathTextField;
 import geogebra.gui.autocompletion.CommandCompletionListCellRenderer;
 import geogebra.gui.autocompletion.CompletionsPopup;
+import geogebra.gui.util.BorderButton;
+import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.HistoryPopup;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
@@ -13,6 +16,8 @@ import geogebra.util.AutoCompleteDictionary;
 import geogebra.util.Korean;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -23,6 +28,7 @@ import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicBorders.ButtonBorder;
 
 public class AutoCompleteTextField extends MathTextField implements 
 AutoComplete, KeyListener, GeoElementSelectionListener {
@@ -38,18 +44,22 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	protected boolean autoComplete;
 	private int historyIndex;
 	private ArrayList<String> history;  
+
 	private boolean handleEscapeKey = false;
-	
+
 	private List<String> completions;
 	private String cmdPrefix;
 	private CompletionsPopup completionsPopup;
+
+	private HistoryPopup historyPopup;
 	
+
 	/**
 	 * Flag to determine if text must start with "=" to activate autoComplete;
 	 * used with spreadsheet cells
 	 */
 	private boolean isEqualsRequired = false; 
-	
+
 	/**
 	 * Pattern to find an argument description as found in the syntax information
 	 * of a command.
@@ -79,25 +89,50 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		historyIndex = 0;
 		history = new ArrayList<String>(50);
-		
+
 		completions = null;
-		
+
 		CommandCompletionListCellRenderer cellRenderer = new CommandCompletionListCellRenderer();
 		completionsPopup = new CompletionsPopup(this, cellRenderer, 6);
 		//addKeyListener(this); now in MathTextField
 		setDictionary(dict);
+
 	}   
-	
+
 	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey){
 		this(columns, app, handleEscapeKey, app.getCommandDictionary());
 		// setDictionary(app.getAllCommandsDictionary());
 	}
 
-	
+
+	public ArrayList<String> getHistory() {
+		return history;
+	}
+
+	public void addHistoryPopup(){
+		
+		if(historyPopup == null)
+			historyPopup = new HistoryPopup(this);
+		
+		ActionListener al = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				String cmd = e.getActionCommand();
+				if(cmd.equals(1 + BorderButton.cmdSuffix)){
+					
+					// TODO: determine if the input bar is top or bottom
+					historyPopup.showPopup(false);
+				}			
+			}	
+		};
+		setBorderButton(1, GeoGebraIcon.createUpDownTriangleIcon(false, true), al);
+		this.setVisibleBorderButton(1, false);
+
+	}
+
 	public void showPopupSymbolButton(boolean showPopupSymbolButton){
 		((MyTextField)this).setShowSymbolTableIcon(showPopupSymbolButton);
 	}
-	
+
 	/**
 	 * Set whether this is a CAS Input field
 	 */
@@ -130,7 +165,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */
 	public void setAutoComplete(boolean val) {
 		autoComplete = val && app.isAutoCompletePossible();
-		
+
 		if (autoComplete) app.initTranslatedCommands();
 
 	}
@@ -138,7 +173,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public List<String> getCompletions() {
 		return completions;
 	}
-	
+
 	/**
 	 * Gets whether the component is currently performing autocomplete lookups as
 	 * keystrokes are performed.
@@ -152,7 +187,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public String getCurrentWord() {
 		return curWord.toString();
 	}  
-	
+
 	public int getCurrentWordStart() {
 		return curWordStart;
 	}
@@ -163,21 +198,21 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 	}
 
-	
+
 	/** returns if text must start with "=" to activate autocomplete */
 	public boolean isEqualsRequired() {
 		return isEqualsRequired;
 	}
-	
+
 	/** sets flag to require text starts with "=" to activate autocomplete */
 	public void setEqualsRequired(boolean isEqualsRequired) {
 		this.isEqualsRequired = isEqualsRequired;
 	}
-	
-	
 
 
-	
+
+
+
 
 	//----------------------------------------------------------------------------
 	// Protected methods
@@ -185,12 +220,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	boolean ctrlC = false;
 
-	
-	
+	private boolean isVisibleHistoryButton;
+
+
+
 
 	public void keyPressed(KeyEvent e) {        
 		int keyCode = e.getKeyCode(); 
-					
+
 		// we don't want to trap AltGr
 		// as it is used eg for entering {[}] is some locales
 		// NB e.isAltGraphDown() doesn't work
@@ -201,12 +238,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if (Application.MAC_OS && e.isControlDown())
 			e.consume();
 
-		
-		
+
+
 		ctrlC = false;
 
 		switch (keyCode) {
-		
+
 		case KeyEvent.VK_Z:
 		case KeyEvent.VK_Y:
 			if (Application.isControlDown(e)) {
@@ -229,7 +266,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
 
-		// process input
+			// process input
 		case KeyEvent.VK_C:
 			if (Application.isControlDown(e)) //workaround for MAC_OS
 			{
@@ -263,64 +300,64 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			String text = getPreviousInput();
 			if (text != null) setText(text);
 			break;
-	
+
 		case KeyEvent.VK_DOWN:
 			if (!handleEscapeKey) {
 				break;
 			}
 			setText(getNextInput());
 			break;
-        
+
 		case KeyEvent.VK_F9: 
 			// needed for applets
 			if (app.isApplet())
 				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
-		
+
 		case KeyEvent.VK_RIGHT:
 			if (moveToNextArgument(false)) {
 				e.consume();
 			}
 			break;
-			
+
 		case KeyEvent.VK_TAB:
 			if (moveToNextArgument(true)) {
 				e.consume();
 			}
 			break;
-		
-        case KeyEvent.VK_F1:
-            	
-            	if (autoComplete) {
-	    			if (getText().equals("")) {
-	    				
-	    				Object[] options = {app.getPlain("OK"), app.getPlain("ShowOnlineHelp")};
-	    				int n = JOptionPane.showOptionDialog(app.getMainComponent(),
-	    						app.getPlain("InputFieldHelp"),
-	    						app.getPlain("ApplicationName") + " - " + app.getMenu("Help"),
-	    						JOptionPane.YES_NO_OPTION,
-	    						JOptionPane.QUESTION_MESSAGE,
-	    						null,     //do not use a custom Icon
-	    						options,  //the titles of buttons
-	    						options[0]); //default button title
-	
-	    				if (n == 1) app.getGuiManager().openHelp(Application.WIKI_MANUAL);
-	
-	    			} else {
-	    				
-		                updateCurrentWord();
-		                String lowerCurWord = curWord.toString().toLowerCase();
-		                String closest = dict.lookup(lowerCurWord);
-		                if (closest != null && lowerCurWord.equals(closest.toLowerCase()))		                
-		                	showCommandHelp(true);
-		                else
-		                	app.getGuiManager().openHelp(Application.WIKI_MANUAL);
-		                	
-	    			}
-            	} else app.getGuiManager().openHelp(Application.WIKI_MANUAL);
-            	
-            	e.consume();
-                break;
+
+		case KeyEvent.VK_F1:
+
+			if (autoComplete) {
+				if (getText().equals("")) {
+
+					Object[] options = {app.getPlain("OK"), app.getPlain("ShowOnlineHelp")};
+					int n = JOptionPane.showOptionDialog(app.getMainComponent(),
+							app.getPlain("InputFieldHelp"),
+							app.getPlain("ApplicationName") + " - " + app.getMenu("Help"),
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE,
+							null,     //do not use a custom Icon
+							options,  //the titles of buttons
+							options[0]); //default button title
+
+					if (n == 1) app.getGuiManager().openHelp(Application.WIKI_MANUAL);
+
+				} else {
+
+					updateCurrentWord();
+					String lowerCurWord = curWord.toString().toLowerCase();
+					String closest = dict.lookup(lowerCurWord);
+					if (closest != null && lowerCurWord.equals(closest.toLowerCase()))		                
+						showCommandHelp(true);
+					else
+						app.getGuiManager().openHelp(Application.WIKI_MANUAL);
+
+				}
+			} else app.getGuiManager().openHelp(Application.WIKI_MANUAL);
+
+			e.consume();
+			break;
 		default:                                
 		}                                   
 	}
@@ -329,7 +366,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public void keyReleased(KeyEvent e) {
 
 		//Application.debug(e+"");
-		
+
 		/* test code to generate unicode strings for Virtual Keyboard
 		String text = getText();
 		String outStr = "";
@@ -349,7 +386,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// ctrl pressed on Mac
 		// or alt on Windows
 		boolean modifierKeyPressed = Application.MAC_OS ? e.isControlDown() : e.isAltDown();
-		
+
 		// we don't want to act when AltGr is down
 		// as it is used eg for entering {[}] is some locales
 		// NB e.isAltGraphDown() doesn't work
@@ -361,7 +398,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if ( (!isLetterOrDigit(charPressed) && !modifierKeyPressed) || 
 				(ctrlC && Application.MAC_OS) // don't want selection cleared
 		) return;        
-		
+
 		clearSelection();
 
 		// handle alt-p etc
@@ -380,7 +417,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
             setText(input.substring(0, input.length()));
         }*/	
 	}      
-		
+
 	public void mergeKoreanDoubles() {
 		// avoid shift on Korean keyboards
 		if (app.getLocale().getLanguage().equals("ko")) {
@@ -409,45 +446,45 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			if (pos < sb.length()) setCaretPosition(pos);
 		}
 	}
-	
+
 	/**
 	 * Automatically closes parentheses (, {, [ when next sign
 	 * is a space or end of input text.
 	 * and ignores ] }, ) if the brackets already match (simple check)
 	 */
 	public void keyTyped(KeyEvent e) {
-		
+
 		// only handle parentheses
 		char ch = e.getKeyChar();
 		int caretPos = getCaretPosition();
-		
+
 		String text = getText();
-		
+
 		if (ch == ',') {
-        	if (caretPos < text.length() && text.charAt(caretPos) == ',') {
-        		// User typed ',' just in ahead of an existing ',':
-        		// We may be in the position of filling in the next argument of an autocompleted command
-        		// Look for a pattern of the form ", < Argument Description > ," or ", < Argument Description > ]"
-        		// If found, select the argument description so that it can easily be typed over with the value
-        		// of the argument.
-        		if (moveToNextArgument(false)) {
-        			e.consume();
-        		}
-        		return;
-    		}
+			if (caretPos < text.length() && text.charAt(caretPos) == ',') {
+				// User typed ',' just in ahead of an existing ',':
+				// We may be in the position of filling in the next argument of an autocompleted command
+				// Look for a pattern of the form ", < Argument Description > ," or ", < Argument Description > ]"
+				// If found, select the argument description so that it can easily be typed over with the value
+				// of the argument.
+				if (moveToNextArgument(false)) {
+					e.consume();
+				}
+				return;
+			}
 		}
 
 		if (!(ch == '(' || ch == '{' || ch == '[' || ch == '}' || ch == ')' || ch == ']')) {
 			super.keyTyped(e);
 			return;
 		}
-		
+
 		clearSelection();
 		caretPos = getCaretPosition();
-		
-		
+
+
 		if (ch == '}' || ch == ')' || ch == ']') {
-			
+
 			// simple check if brackets match
 			if (text.length() > caretPos && text.charAt(caretPos)==ch) {
 				int count = 0;
@@ -460,36 +497,36 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 					else if (c == '[') count+=1E6;
 					else if (c == ']') count-=1E6;
 				}
-			
+
 				if (count == 0) { 
 					// if brackets match, just move the cursor forwards one
 					e.consume();
 					caretPos++;
 				} 
 			}
-			
+
 		}
-	
+
 		// auto-close parentheses
 		if (caretPos == text.length() || isCloseBracketOrWhitespace(text.charAt(caretPos))) {		
 			switch (ch){
-				case '(':
-					// opening parentheses: insert closing parenthesis automatically
-					insertString(")");
-					break;	
-					
-				case '{':
-					// opening braces: insert closing parenthesis automatically
-					insertString("}");
-					break;
-					
-				case '[':
-					// opening bracket: insert closing parenthesis automatically
-					insertString("]");
-					break;
+			case '(':
+				// opening parentheses: insert closing parenthesis automatically
+				insertString(")");
+				break;	
+
+			case '{':
+				// opening braces: insert closing parenthesis automatically
+				insertString("}");
+				break;
+
+			case '[':
+				// opening bracket: insert closing parenthesis automatically
+				insertString("]");
+				break;
 			}
 		}
-		
+
 		// make sure we keep the previous caret position
 		setCaretPosition(Math.min(text.length(), caretPos));
 	}
@@ -522,7 +559,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		curWord.setLength(0);
 		curWord.append(text.substring(curWordStart, curWordEnd));
-		
+
 		// remove '[' at end
 		if (curWord.toString().endsWith("["))
 			curWord.setLength(curWord.length() - 1);
@@ -557,7 +594,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			return Character.isLetterOrDigit(character);
 		}
 	}
-	
+
 	private static boolean isLetterOrDigitOrOpenBracket(char character) {
 		switch (character) {
 		case '[':  
@@ -568,14 +605,16 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			return Character.isLetterOrDigit(character);
 		}
 	}
-	
+
+
+
 	//static String lastTyped = null;
-	
+
 	/* -----------------------------------------
 	 * Autocompletion 
 	 * -----------------------------------------
 	 */
-	
+
 	private boolean moveToNextArgument(boolean find) {
 		String text = getText();
 		int caretPos = getCaretPosition();
@@ -592,17 +631,17 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			return false;
 		}
 	}
-	
+
 	private List<String> resetCompletions() {
 		String text = getText();
 		updateCurrentWord();
 		completions = null;
 		if(isEqualsRequired && !text.startsWith("="))
 			return null;
-		
+
 		boolean korean = app.getLocale().getLanguage().equals("ko");
-		
-		 //    start autocompletion only for words with at least two characters                 
+
+		//    start autocompletion only for words with at least two characters                 
 		if (korean) {
 			if (Korean.flattenKorean(curWord.toString()).length() < 2) {
 				completions = null; 
@@ -620,11 +659,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			completions = dict.getCompletionsKorean(cmdPrefix);
 		else
 			completions = dict.getCompletions(cmdPrefix);
-		
+
 		completions = getSyntaxes(completions);
 		return completions;
 	}
-	
+
 	/*
 	 * Take a list of commands and return all possible syntaxes
 	 * for these commands
@@ -635,9 +674,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 		ArrayList<String> syntaxes = new ArrayList<String>();
 		for (String cmd: commands) {
-			
+
 			cmd = app.getInternalCommand(cmd);
-			
+
 			String syntaxString;
 			if (isCASInput) {
 				syntaxString = app.getCommandSyntaxCAS(cmd);
@@ -654,12 +693,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 		return syntaxes;
 	}
-	
+
 	public void startAutoCompletion() {
 		resetCompletions();
 		completionsPopup.showCompletions();
 	}
-	
+
 	public void cancelAutoCompletion() {
 		completions = null;
 	}
@@ -680,7 +719,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		moveToNextArgument(false);
 		return true;
 	}
-	
+
 	/**
 	 * Adds string to input textfield's history
 	 * @param str
@@ -688,6 +727,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public void addToHistory(String str) {
 		history.add(str);
 		historyIndex = history.size();
+		if(historyPopup != null && !isVisibleBorderButton(1))
+			setVisibleBorderButton(1, true);
 	}
 
 	/**
@@ -730,7 +771,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				help = getCmdSyntax(cmd);             
 			}
 		}
-		
+
 		if (goToWebManual) {
 			app.getGuiManager().openCommandHelp(cmd); // TEST CODE
 			return;
@@ -794,7 +835,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			int err = ((MyException) e).getErrorType();
 			if (err == MyException.INVALID_INPUT) {
 				if (app.isCommand(getCurrentWord())) {
-				
+
 					app.showErrorDialog(app.getError("InvalidInput")+"\n\n"+app.getPlain("Syntax")+":\n"+app.getCommandSyntax(getCurrentWord()));					
 					return;
 				}			
@@ -802,7 +843,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 		// can't work out anything better, just show "Invalid Input"
 		app.showError(e.getLocalizedMessage());
-		
+
 	}
 
 	/*
@@ -810,8 +851,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */
 	public void showError(MyError e) {
 		app.showError(e.getLocalizedMessage());
-		
+
 	}
-	
+
 
 }
