@@ -1144,7 +1144,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
         	
         	// get function and function variable string using temp variable prefixes,
     		// e.g. f(x) = a x^2 returns {"ggbtmpvara ggbtmpvarx^2", "ggbtmpvarx"}
-    		String [] funVarStr = deriv.getTempVarCASString(false);
+    		String [] derivVarStr = deriv.getTempVarCASString(false);
+    		String [] funVarStr = f.getTempVarCASString(false);
     		
         	if (sb == null) sb = new StringBuilder();
         	else sb.setLength(0);    	
@@ -1154,9 +1155,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			
 			sb.setLength(0);
 	        sb.append("Limit(");
-	        sb.append(funVarStr[0]); // derivative expression		
+	        sb.append(derivVarStr[0]); // derivative expression		
 	        sb.append(',');
-	        sb.append(funVarStr[1]); // derivative function variable
+	        sb.append(derivVarStr[1]); // derivative function variable
 	        sb.append(',');
 	        if (!positiveInfinity) sb.append('-'); // -Infinity
 	        sb.append(Unicode.Infinity);
@@ -1175,13 +1176,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			if (!f.CASError(gradientStrMinus, false) && !Kernel.isZero(grad)) {
 				sb.setLength(0);
 		        sb.append("Limit(");
-		        sb.append(funVarStr[0]); // derivative function expression
+		        sb.append(funVarStr[0]); // function expression
 		        sb.append(" - ");
 		        sb.append(gradientStrMinus);
 		        sb.append(" * ");
-		        sb.append(funVarStr[1]); // derivative function variable
+		        sb.append(derivVarStr[1]); // derivative function variable
 		        sb.append(',');
-		        sb.append(funVarStr[1]); // derivative function variable
+		        sb.append(derivVarStr[1]); // derivative function variable
 		        sb.append(',');
 		        if (!positiveInfinity) sb.append('-'); // -Infinity
 		        sb.append(Unicode.Infinity);
