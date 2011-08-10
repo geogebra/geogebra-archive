@@ -568,6 +568,14 @@ public abstract class GeoElement
 	public String getLabelSimple() {
 		return label;
 	}
+	
+	/**
+	 * We may need a simple method to set the label, as in the CopyPaste class.
+	 * @param lab the label to set
+	 */
+	public void setLabelSimple(String lab) {
+		label = lab;
+	}
 
 	/**
 	 * Returns label of GeoElement. If the label is null then

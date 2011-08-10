@@ -424,7 +424,7 @@ public class CopyPaste {
 			{
 				label = ((GeoElement)geo).getLabelSimple();
 				if (label != null) {
-					((GeoElement)geo).setLabel(labelPrefix + label);
+					((GeoElement)geo).setLabelSimple(labelPrefix + label);
 					
 					if (samewindow)
 						copiedXMLlabelsforSameWindow.add(((GeoElement)geo).getLabelSimple());
@@ -471,7 +471,7 @@ public class CopyPaste {
 				label = ((GeoElement)geo).getLabelSimple();
 				if (label != null && label.length() >= labelPrefix.length()) {
 					try {
-						((GeoElement)geo).setLabel(label.substring(labelPrefix.length()));
+						((GeoElement)geo).setLabelSimple(label.substring(labelPrefix.length()));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -649,6 +649,14 @@ public class CopyPaste {
 				geo.setLabel(geo.getIndexLabel(geo.getLabelSimple().substring(labelPrefix.length())));
 				//geo.setLabel(geo.getDefaultLabel(false));
 				app.addSelectedGeo(geo);
+
+				if (geo.getParentAlgorithm().getClassName().equals("AlgoSequence")) {
+					// variable of AlgoSequence is not returned in lookupLabel!
+					// the old name of the variable may remain, as it is not part of the construction anyway 
+					GeoElement [] pgeos = geo.getParentAlgorithm().getInput();
+					if (pgeos.length > 1 && pgeos[1].getLabelSimple().length() > labelPrefix.length())
+						pgeos[1].setLabelSimple(pgeos[1].getLabelSimple().substring(labelPrefix.length()));
+				}
 			}
 		}
 	}
