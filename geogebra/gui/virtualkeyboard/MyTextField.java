@@ -3,6 +3,7 @@ package geogebra.gui.virtualkeyboard;
 import geogebra.gui.GuiManager;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.util.BorderButton;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SymbolTable;
 import geogebra.main.Application;
@@ -16,6 +17,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -30,6 +33,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
@@ -44,7 +48,7 @@ import javax.swing.text.DefaultCaret;
  *    is triggered by either a mouse click or ctrl-up
  * 
  */
-public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener, CaretListener {
+public class MyTextField extends JTextField implements ActionListener, FocusListener, VirtualKeyboardListener, CaretListener {
 
 	private GuiManager guiManager;
 
@@ -61,7 +65,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 	private ImageIcon icon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), false);
 	private ImageIcon rollOverIcon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), true);
-	private int iconOffset = 0;
+
 	private boolean showSymbolTableIcon = false;
 	private MyCaret myCaret;
 
@@ -69,6 +73,10 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private int bracket1pos;
 	private int bracket2pos;
 	private Color bracketColor;
+
+	private BorderButton borderBtn;
+
+	private Border defaultBorder;
 
 
 	public MyTextField(GuiManager guiManager) {
@@ -88,10 +96,36 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		myCaret = new MyCaret();
 		setCaret(myCaret);
 		addFocusListener(this);
-		addMouseMotionListener(new MyMouseMotionListener());
-		addMouseListener(new MyMouseListener());
 		setOpaque(true);
-		addCaretListener(this);	
+		addCaretListener(this);
+
+		JTextField dummy = new JTextField();		
+		defaultBorder = dummy.getBorder();
+		borderBtn = new BorderButton(this);
+		borderBtn.setBorderButton(0, icon, this);
+		setCustomBorder();
+	}
+
+
+	public BorderButton getBorderButton() {
+		return borderBtn;
+	}
+
+	private void setCustomBorder(){		
+		super.setBorder(BorderFactory.createCompoundBorder(defaultBorder, borderBtn));
+	}
+
+	protected void setBorderButton(int index, ImageIcon icon, ActionListener al){
+		borderBtn.setBorderButton(index, icon, al);
+		setCustomBorder();
+	}
+
+	protected void setVisibleBorderButton(int index, boolean isVisible){
+		borderBtn.setVisibleIcon(index, isVisible);
+		setCustomBorder();
+	}
+	protected boolean isVisibleBorderButton(int index){
+		return	borderBtn.isVisibleIcon(index);
 	}
 
 
@@ -104,24 +138,27 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 
 	public void focusGained(FocusEvent e) {
-		// adjust the icon offset if we are going to have an icon 
-		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
-		
+
 		//	TODO: can't remember why the caret position was reset like this,
 		// a trick to keep the Mac OS from selecting the field?
 		//
 		// now removed - stops the text being highlighted #709
 		//thisField.setCaretPosition(thisField.getCaretPosition());
-		
+
+		if(showSymbolTableIcon && hasFocus())
+			borderBtn.setVisibleIcon(0, true);
 		thisField.repaint();
+
 		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
 	}
 
 	public void focusLost(FocusEvent e) {
-		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
-		// adjust the icon offset if we are going to have an icon 
-		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
+
+		if(showSymbolTableIcon)
+			borderBtn.setVisibleIcon(0, false);
 		thisField.repaint();
+
+		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
 	}
 
 	/**
@@ -130,6 +167,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	 */
 	public void setShowSymbolTableIcon(boolean showSymbolTableIcon) {
 		this.showSymbolTableIcon = showSymbolTableIcon;
+
+
 	}
 
 
@@ -282,69 +321,25 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	}
 
 
+	public void setBorder(Border border){
+		//do nothing;
+	}
 
-	/**
-	 * Overrides processMouseEvent to handle a mousePressed event in the icon
-	 * region. Handling icon mousePressed is done here so that the mousePressed
-	 * event does not also reset the caret position to the end of the string.
-	 */
-	public void processMouseEvent(MouseEvent e) {
+	public void actionPerformed(ActionEvent e) {
 
-		if(rollOver && e.getID() == MouseEvent.MOUSE_PRESSED){
+		String cmd = e.getActionCommand();
+		if(cmd.equals(0 + BorderButton.cmdSuffix)){
+
 			if(popup == null)
 				createPopup();
 			symbolTable.updateFonts();
 			caretPosition = thisField.getCaretPosition();
 			Dimension d  = popup.getPreferredSize();
 			popup.show(thisField, thisField.getX() + thisField.getWidth() - d.width, - d.height);
-
-			return;
 		}
 
-		super.processMouseEvent(e);
-
 	}
 
-	/**
-	 * Sets the rollover flag when the mouse is over the icon region
-	 */
-	private class MyMouseMotionListener extends MouseMotionAdapter{
-
-		public void mouseMoved(MouseEvent e) {
-
-			Insets insets = thisField.getInsets();
-			int iconStart = thisField.getWidth() - insets.right;
-			Rectangle r = new Rectangle(iconStart,0,iconOffset,thisField.getHeight());
-			boolean isOverIcon  = r.contains(e.getPoint());
-			if(rollOver != isOverIcon){
-				rollOver = isOverIcon;
-				thisField.repaint();
-			}
-		}
-	}
-
-	/**
-	 * Sets the rollover flag when the mouse leaves the icon region
-	 */
-	private class MyMouseListener extends MouseAdapter{
-
-		public void mouseExited(MouseEvent e) {
-			rollOver = false;
-			thisField.repaint();
-		}
-	}
-
-
-	/**	 
-	 * Overrides getInsets so that an icon can be inserted on the far right.
-	 * (Note: setMargin() should really be used for this but it will not work
-	 * when custom borders are applied.)
-	 */
-	public Insets getInsets(){
-		Insets insets = super.getInsets();
-		insets.right = insets.right + iconOffset;
-		return insets;
-	}
 
 
 	/**
@@ -379,9 +374,6 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		// prepare for custom drawing
 		Graphics2D g2 = (Graphics2D)gr;
 		g2.setBackground(getBackground());
-		Insets insets = getInsets();
-		int height = getHeight();
-
 
 		// overwrite the caret brackets with colored text 
 		if(thisField.hasFocus()){
@@ -392,14 +384,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 				drawColoredChar(g2,bracket2pos, bracketColor);
 		}
 
-		// draw the icon
-		if(showSymbolTableIcon && thisField.hasFocus())
-			if(rollOver)
-				rollOverIcon.paintIcon(this, g2, getWidth() - insets.right + (iconOffset - icon.getIconWidth() ) /2, 
-						(height - icon.getIconHeight())/2);
-			else
-				icon.paintIcon(this, g2, getWidth() - insets.right + (iconOffset - icon.getIconWidth() ) /2, 
-						(height - icon.getIconHeight())/2);
+
 	}
 
 
@@ -555,6 +540,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		}
 
 	}
+
+
 
 
 }
