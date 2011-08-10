@@ -178,8 +178,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		cbLaTeX.addActionListener(this);
 
 		// create insertion buttons
-		btInsertUnicode = new PopupMenuButton();
-		btInsertLaTeX = new PopupMenuButton();
+		btInsertUnicode = new PopupMenuButton(app);
+		btInsertLaTeX = new PopupMenuButton(app);
 
 		buildInsertLaTeXButton();
 		buildInsertUnicodeButton();		
@@ -418,7 +418,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		});
 
 		// create a popup button and add the list to it
-		btInsertGeo = new PopupMenuButton(){
+		btInsertGeo = new PopupMenuButton(app){
 			// update the object list before opening the popup
 			public boolean prepareToShowPopup(){
 				geoList.setListData(getGeoObjectList());

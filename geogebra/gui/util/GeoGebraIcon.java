@@ -963,5 +963,35 @@ public class GeoGebraIcon {
 
 	}
 
+	
+	/**
+	 * Creates a new ImageIcon by joining them together (leftIcon to rightIcon).
+	 * 
+	 * @param leftIcon
+	 * @param rightIcon
+	 * @return
+	 */
+	public static final ImageIcon joinIcons(ImageIcon leftIcon, ImageIcon rightIcon){
+
+		int w1 = leftIcon.getIconWidth();
+		int w2 = rightIcon.getIconWidth();
+		int h1 = leftIcon.getIconHeight();
+		int h2 = rightIcon.getIconHeight();
+		int h = Math.max(h1, h2);
+		int mid = h/2;
+		BufferedImage image = new BufferedImage(w1+w2, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = (Graphics2D) image.getGraphics();
+		g2.drawImage(leftIcon.getImage(), 0, mid - h1/2, null);
+		g2.drawImage(rightIcon.getImage(), w1,  mid - h2/2, null);
+		g2.dispose(); 
+
+		ImageIcon ic = new ImageIcon(image);
+		return ic;
+	}
+
+	
+	
+	
+	
 
 }

@@ -326,25 +326,25 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		btnClose = new JButton();
 		btnClose.addActionListener(this);
 
-	//	btnPrint = new JButton();
-	//	btnPrint.addActionListener(this);
+		//	btnPrint = new JButton();
+		//	btnPrint.addActionListener(this);
 
 		createOptionsButton();
-		
-		
+
+
 		JPanel rightButtonPanel = new JPanel(new FlowLayout());
 		rightButtonPanel.add(btnOptions);
-	//	rightButtonPanel.add(btnPrint);
+		//	rightButtonPanel.add(btnPrint);
 		rightButtonPanel.add(btnClose);
 
 		JPanel centerButtonPanel = new JPanel(new FlowLayout());
 
 
 		JPanel leftButtonPanel = new JPanel(new FlowLayout());
-		
+
 		//leftButtonPanel.add(cbShowData);
 		//leftButtonPanel.add(cbShowCombo2);
-		
+
 
 		buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
@@ -465,7 +465,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		this.createOptionsButton();
 
 		btnClose.setText(app.getMenu("Close"));
-	//	btnPrint.setText(app.getMenu("Print"));	
+		//	btnPrint.setText(app.getMenu("Print"));	
 		//	btnOptions.setText(app.getMenu("Options"));
 
 		// call setLabels() for all child panels
@@ -512,13 +512,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private void createOptionsButton(){
 
 		if(btnOptions == null){
-			btnOptions = new PopupMenuButton();
+			btnOptions = new PopupMenuButton(app);
 			btnOptions.setKeepVisible(true);
 			btnOptions.setStandardButton(true);
 			btnOptions.setFixedIcon(GeoGebraIcon.createUpDownTriangleIcon(false,true));
 			btnOptions.setDownwardPopup(false);
 		}
-		
+
 		btnOptions.removeAllMenuItems();
 		btnOptions.setText(app.getMenu("Options"));
 
@@ -559,7 +559,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		});
 		btnOptions.addPopupMenuItem(menuItem);
 		menuItem.setEnabled(true);
-		
+
 		JMenuItem item = new JMenuItem(app.getMenu("Print")+ "...");
 		item.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -567,7 +567,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			}
 		});
 		btnOptions.addPopupMenuItem(item);
-		
+
 
 
 
@@ -654,7 +654,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		updateFonts();
 	}
 
-	
+
 	private void doPrint(){
 		new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
 	}
@@ -914,7 +914,9 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	}
 
 
-
+	//=========================================
+	// Number Format
+	//=========================================
 
 	/**
 	 * Update the menu with all decimal places.

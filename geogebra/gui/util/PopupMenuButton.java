@@ -35,26 +35,26 @@ import javax.swing.event.ChangeListener;
  * 
  */
 public class PopupMenuButton extends JButton implements ChangeListener{
-			
+
 	private int mode;
 	private int rows, columns;
 	private Object[] data;
 	private int size;
 	private Application app;
 	private PopupMenuButton thisButton;
-	
+
 	private JPopupMenu myPopup;
 	public JPopupMenu getMyPopup() {
 		return myPopup;
 	}
 
 	private JSlider mySlider;
-	
-	
+
+
 	private Color fgColor;
 	private int fontStyle = 0;
-	
-	
+
+
 	public void setFontStyle(int fontStyle) {
 		this.fontStyle = fontStyle;
 	}
@@ -64,7 +64,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		if(myTable != null)
 			myTable.setFgColor(fgColor);
 		updateGUI();
-		
+
 	}
 
 	private SelectionTable myTable;
@@ -73,72 +73,50 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 
 	private Dimension iconSize;
-	
+
 	public void setIconSize(Dimension iconSize) {
 		this.iconSize = iconSize;
 	}
 
 	private boolean hasTable, hasSlider;
-	
+
 	// flag to determine if the popup should persist after a mouse click
 	private boolean keepVisible = true;
-	
+
 	private boolean isDownwardPopup = true;
-	
+
 	public void setDownwardPopup(boolean isDownwardPopup) {
 		this.isDownwardPopup = isDownwardPopup;
 	}
 
-	
+
 	private boolean isStandardButton = false;
 	public void setStandardButton(boolean isStandardButton) {
 		this.isStandardButton = isStandardButton;
 	}
 
 	private boolean isFixedIcon = false;
-	
-	
+
+
 	private boolean isIniting = true;
 	private JMenuItem component;
 	protected boolean popupIsVisible;
-	
-	
-	
+
+
+
 	/*************************************
 	/** Button constructors */
-	
-	public PopupMenuButton(){
-		this( null, null, -1, -1, null, -1,  false,  false);
+
+	public PopupMenuButton(Application app){
+		this( app, null, -1, -1, null, -1,  false,  false);
 	}
-	
-	
-	
-	public PopupMenuButton(ImageIcon icon, JComponent component){
-		this( null, null, -1, -1, null, -1,  false,  false);
-		myPopup.add(component);
-		setIcon(icon);	
-	}
-	
-	public PopupMenuButton(String text, JComponent component){
-		this( null, null, -1, -1, null, -1,  false,  false);
-		myPopup.add(component);
-		setText(text);
-		setIcon(GeoGebraIcon.createEmptyIcon(1, 1));
-	}
-	
-	public PopupMenuButton(String text,ImageIcon icon,  JComponent component){
-		this( null, null, -1, -1, null, -1,  false,  false);
-		myPopup.add(component);
-		setText(text);
-		setIcon(icon);
-	}
-	
+
 	
 	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, Integer mode){
 		this( app, data, rows, columns, iconSize, mode,  true,  false);	
 	}
-	
-	
+
+
 	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, 
 			Integer mode, final boolean hasTable, boolean hasSlider){
 		super(); 
@@ -148,10 +126,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.mode = mode;
 		this.iconSize = iconSize;
 		this.thisButton = this;
-		
+
 		this.setFocusable(false);
-		
-		
+
+
 		// create the popup
 		myPopup = new JPopupMenu();
 		myPopup.setFocusable(false);
@@ -159,16 +137,16 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		myPopup.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),
 				BorderFactory.createEmptyBorder(3,3,3,3)));
 
-		
+
 
 		// add a mouse listener to our button that triggers the popup		
 		addMouseListener(new MouseAdapter() {
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				popupIsVisible = myPopup.isShowing();
 			}
-	
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 
@@ -177,9 +155,9 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 					popupIsVisible = false;
 					return;
 				}
-				
+
 				if(prepareToShowPopup() == false) return;
-				
+
 				Point locButton = getLocation();
 				int h = e.getX() - locButton.x;
 
@@ -198,16 +176,16 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 								locButton.x - myPopup.getPreferredSize().width + thisButton.getWidth(),
 								locButton.y - myPopup.getPreferredSize().height - 2);
 				}
-				
+
 				popupIsVisible = myPopup.isShowing();
 			}
 		});
-		
-		
+
+
 		// place text to the left of drop down icon
 		this.setHorizontalTextPosition(JButton.LEFT); 
 		this.setHorizontalAlignment(JButton.LEFT);
-		
+
 
 		// create selection table
 		if(hasTable){
@@ -226,7 +204,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				}
 			});
 
-	/*		
+			/*		
 			// if displaying text only, then adjust the width 
 			if(mode == SelectionTable.MODE_TEXT){
 				 Dimension d = this.getPreferredSize();
@@ -234,8 +212,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				 setMinimumSize(d); 
 				 setMaximumSize(d); 
 			 }
-		*/	
-			
+			 */	
+
 			myTable.setBackground(myPopup.getBackground());
 			myPopup.add(myTable);
 		}
@@ -244,17 +222,17 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		// create slider
 		if(hasSlider)
 			getMySlider();
-		
+
 		isIniting = false;
-		
-		
+
+
 		if(mode == SelectionTable.MODE_TEXT && iconSize.width == -1){
 			iconSize.width = myTable.getColumnWidth()-4;
 			iconSize.height = myTable.getRowHeight()-4;	
 		}
-				
+
 	}
-	
+
 	/**
 	 * Prepares the popup before it is shown. Override this if the popup needs
 	 * special handling before opening. 
@@ -262,20 +240,20 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	public boolean prepareToShowPopup(){
 		return true;
 	}
-	
-	
+
+
 	public void addPopupMenuItem(JComponent component){
 		myPopup.add(component);
 	}
-	
+
 	public void removePopupMenuItem(JComponent component){
 		myPopup.remove(component);
 	}
-	
+
 	public void removeAllMenuItems(){
 		myPopup.removeAll();
 	}
-	
+
 	/**
 	 * Override processMouseEvents to prevent firing a mouseReleased event and
 	 * the resulting ActionPerformed event when the mouse is clicked in the
@@ -285,7 +263,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	 */
 	@Override
 	protected void processMouseEvent(MouseEvent e){
-		
+
 		if(e.getID() == MouseEvent.MOUSE_RELEASED){
 			Point locButton = getLocation();
 			int h = e.getX() - locButton.x;
@@ -293,35 +271,35 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			if(isStandardButton || e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) 
 				return;
 		}
-		
+
 		super.processMouseEvent(e);
 	}
-	
-	
-	 public void update(Object[] geos) {
-		 
-	 }
-	
+
+
+	public void update(Object[] geos) {
+
+	}
+
 	//=============================================
 	//         GUI
 	//=============================================
 
-	
-	 private void updateGUI(){
 
-		 if(isIniting) return;
-		 
-		 setIcon(getButtonIcon());
-		 
-		 if(hasTable){
-			 myTable.repaint();
-		 }
-		 
-		 repaint();
-	 }
+	private void updateGUI(){
 
-	
-	
+		if(isIniting) return;
+
+		setIcon(getButtonIcon());
+
+		if(hasTable){
+			myTable.repaint();
+		}
+
+		repaint();
+	}
+
+
+
 	/** 
 	 * Create our JSlider 
 	 */  
@@ -332,7 +310,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		mySlider.setMinorTickSpacing(5);
 		mySlider.setPaintTicks(false);
 		mySlider.setPaintLabels(false);
-	//	mySlider.setSnapToTicks(true);
+		//	mySlider.setSnapToTicks(true);
 
 		mySlider.addChangeListener(this);
 
@@ -343,17 +321,17 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		else
 			d.width = 110;
 		mySlider.setPreferredSize(d);
-		
+
 		mySlider.setBackground(myPopup.getBackground());
 
 		myPopup.add(mySlider);
 	}
 
-	
-	 //==============================================
-	 //    Handlers and Listeners
-	 //==============================================
-	
+
+	//==============================================
+	//    Handlers and Listeners
+	//==============================================
+
 	/**
 	 * Pass a popup action event up to the button invoker. If the first button
 	 * click triggered our popup (the click was in the triangle region), then we
@@ -367,33 +345,33 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		if(!keepVisible)
 			myPopup.setVisible(false);
 	}
-	
-	
+
+
 	/**
 	 * Change listener for slider. Fires an action event up to the
 	 * button invoker.
 	 */
 	public void stateChanged(ChangeEvent e) {
-		
+
 		//if (mySlider.getValueIsAdjusting()) return;
-		
+
 		if(mySlider != null)
 			setSliderValue(mySlider.getValue());
 		//System.out.println(mySlider.getValue());
 		this.fireActionPerformed(new ActionEvent(this,
 				ActionEvent.ACTION_PERFORMED,getActionCommand())); 
-		
+
 		updateGUI();
 	}
 
 
-	
 
-	 //==============================================
-	 //    Getters/Setters
-	 //==============================================
 
-	
+	//==============================================
+	//    Getters/Setters
+	//==============================================
+
+
 	public int getSelectedIndex() {
 		return myTable.getSelectedIndex();
 	}
@@ -401,13 +379,13 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	public Object getSelectedValue() {
 		return myTable.getSelectedValue();
 	}
-	
-	
+
+
 	public void setSelectedIndex(Integer selectedIndex) {
-		
+
 		if(selectedIndex == null)
 			selectedIndex = -1;
-		
+
 		myTable.setSelectedIndex(selectedIndex);
 		updateGUI();
 	}
@@ -417,11 +395,11 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 
 	public void setSliderValue(int value) {
-		
+
 		mySlider.removeChangeListener(this);
 		mySlider.setValue(value);
 		mySlider.addChangeListener(this);
-		
+
 		if(hasTable)
 			myTable.setSliderValue(value);
 		updateGUI();
@@ -433,7 +411,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		return mySlider;
 	}
 
-	
+
 	public void setKeepVisible(boolean keepVisible) {
 		this.keepVisible = keepVisible;
 	}
@@ -448,22 +426,22 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 
 
-	 //==============================================
-	 //    Icon Handling
-	 //==============================================
+	//==============================================
+	//    Icon Handling
+	//==============================================
 
-	
+
 
 	public ImageIcon getButtonIcon(){
-		
+
 		ImageIcon icon = (ImageIcon) this.getIcon();
 		if(isFixedIcon) return icon;
-		
-		
+
+
 		// draw the icon for the current table selection
 		if(hasTable){
 			switch (mode){
-			
+
 			case SelectionTable.MODE_TEXT:
 				// Strings are converted to icons. We don't use setText so that the button size can be controlled
 				// regardless of the layout manager.
@@ -485,20 +463,20 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		return icon;
 	}
 
-	
-	
-	
+
+
+
 	/**
 	 * Append a downward triangle image to the right hand side of an input icon.
 	 */
 	@Override
 	public void setIcon(Icon icon) {
-		
+
 		if(isFixedIcon) {
 			super.setIcon(icon);
 			return;
 		}
-		
+
 		if(iconSize == null) 
 			if(icon != null)
 				iconSize = new Dimension(icon.getIconWidth(), icon.getIconHeight());
@@ -510,8 +488,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		}else{
 			icon = GeoGebraIcon.ensureIconSize((ImageIcon) icon, iconSize);
 		}
-		
-		
+
+
 		// get icon width and height		
 		int w = 0;
 		int h = 18;
@@ -520,40 +498,19 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			h = (icon.getIconHeight() > 0) ? icon.getIconHeight() : 18;
 		}
 
-		// create a new buffered image with the same height as the input icon, 
-		// but with 14 more pixels in width for the drop down triangle
-		BufferedImage image = new BufferedImage(w + 14, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = image.createGraphics();
-
-		// draw the input icon
+		// add a down_triangle image to the left of the icon
 		if(icon != null)
-			g2.drawImage(((ImageIcon) icon).getImage(), 0, 0, w, h, 0, 0, w, h, null);
-
-		// draw a downward triangle on the right hand side
-		g2.setColor(Color.BLACK);
-		int x = w + 5;
-		int y = h/2-1;
-		g2.drawLine(x, y, x+6, y);
-		g2.drawLine(x+1, y+1, x+5, y+1);
-		g2.drawLine(x+2, y+2, x+4, y+2);
-		g2.drawLine(x+3, y+3, x+3, y+3);
-		
-		super.setIcon(new ImageIcon(image));
+			super.setIcon(GeoGebraIcon.joinIcons((ImageIcon)icon, app.getImageIcon("triangle_down_13x16.png")));
+		else
+			super.setIcon(app.getImageIcon("triangle_down_13x16.png"));
 	}
 
-	
+
 	public void setFixedIcon(Icon icon){
 		isFixedIcon = true;
 		setIcon(icon);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
 }		
 

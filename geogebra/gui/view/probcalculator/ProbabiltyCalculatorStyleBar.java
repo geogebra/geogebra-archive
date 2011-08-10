@@ -46,7 +46,7 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 	 */
 	private void buildOptionsButton(){
 
-		btnOptions = new PopupMenuButton();
+		btnOptions = new PopupMenuButton(app);
 		btnOptions.setKeepVisible(true);
 		btnOptions.setStandardButton(true);
 		btnOptions.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(iconHeight));

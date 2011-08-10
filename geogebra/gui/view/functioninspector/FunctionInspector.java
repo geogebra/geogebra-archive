@@ -1530,7 +1530,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 	private void createOptionsButton(){
 
 		if(btnOptions == null){
-			btnOptions = new PopupMenuButton();
+			btnOptions = new PopupMenuButton(app);
 			btnOptions.setKeepVisible(true);
 			btnOptions.setStandardButton(true);
 			btnOptions.setFixedIcon(app.getImageIcon("tool.png"));

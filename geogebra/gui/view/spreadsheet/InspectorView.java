@@ -266,7 +266,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 	 */
 	private void buildShowButton(){
 
-		btnShow = new PopupMenuButton();
+		btnShow = new PopupMenuButton(app);
 		btnShow.setKeepVisible(true);
 		btnShow.setStandardButton(true);
 		btnShow.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));

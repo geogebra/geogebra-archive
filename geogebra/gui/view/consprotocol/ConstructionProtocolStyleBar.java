@@ -53,7 +53,7 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		
 		// "columns" button
 		
-		btnColumns = new PopupMenuButton(){
+		btnColumns = new PopupMenuButton(app){
 			public boolean prepareToShowPopup(){
 				JCheckBoxMenuItem item;
 				removeAllMenuItems();
@@ -83,7 +83,7 @@ public class ConstructionProtocolStyleBar extends JToolBar implements ActionList
 		//options button
 		// PopupMenuButton without selection table, add JMenuItems directly.
 		 
-		btnOptions = new PopupMenuButton(){
+		btnOptions = new PopupMenuButton(app){
 			public boolean prepareToShowPopup(){
 				miShowOnlyBreakpoints.setSelected(app.getKernel().showOnlyBreakpoints());
 				miColorfulConstructionProtocol.setSelected(cpView.getUseColors());
