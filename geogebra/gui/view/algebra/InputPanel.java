@@ -50,29 +50,15 @@ import javax.swing.text.JTextComponent;
 /**
  * @author Markus Hohenwarter
  */
-public class InputPanel extends JPanel implements FocusListener, VirtualKeyboardListener, 
-ActionListener, ListSelectionListener {
+public class InputPanel extends JPanel implements FocusListener, VirtualKeyboardListener, ListSelectionListener {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private Application app;
-
 	
 	private JTextComponent textComponent;	
 
-	private PopupMenuButton popupTableButton;
-	public PopupMenuButton getSymbolButton() {
-		return popupTableButton;
-	}
-
-
-	private JButton[] symbolButton;
-	private ArrayList<String> symbolList;
-	private int symbolButtonCount = 0;
-	public void setSymbolButtonCount(int symbolButtonCount) {
-		this.symbolButtonCount = symbolButtonCount;
-	}
-
+	
 	// history popup fields
 	private JButton historyButton;
 	private boolean showHistoryButton;
@@ -94,8 +80,6 @@ ActionListener, ListSelectionListener {
 	//=====================================
 	//Constructors
 	
-	
-
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
 		this(initText, app, 1, columns, true, true, null, false);
 		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
@@ -152,10 +136,6 @@ ActionListener, ListSelectionListener {
 		
 		if (initText != null) textComponent.setText(initText);		
 		
-
-		// make sure we use a font that can display special characters
-		//cbSpecialChars.setFont(app.getFontCanDisplay(Unicode.EULER_STRING));
-		
 		
 		// create the GUI
 		
@@ -186,16 +166,7 @@ ActionListener, ListSelectionListener {
 				//hp.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				tfPanel.add(hp,BorderLayout.EAST);
 			}
-			
-			//textComponent.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-			//tfPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-			//tfPanel.setBackground(Color.white);
-			
-			// create the symbol button panel
-			// TODO the input field now has an embedded popup ... so do we want these buttons anymore?
-			JPanel buttonPanel = new JPanel(new BorderLayout(0,0));
-			buttonPanel.add(createPopupButton(),BorderLayout.EAST);
-			
+						
 			// put these sub-panels together to create the input panel
 			add(tfPanel, BorderLayout.CENTER);
 			//add(buttonPanel, BorderLayout.EAST);	
@@ -204,8 +175,7 @@ ActionListener, ListSelectionListener {
 	}
 
 	
-	
-	
+
 	
 	public JTextComponent getTextComponent() {
 		return textComponent;
@@ -230,60 +200,6 @@ ActionListener, ListSelectionListener {
 	
 
 	
-	private JToolBar createPopupButton(){
-		
-		int buttonHeight = 18;
-		popupTableButton = new PopupMenuButton(app, TableSymbols.basicSymbols(app), -1,11,new Dimension(10,buttonHeight), SelectionTable.MODE_TEXT);
-		popupTableButton.setStandardButton(true);
-		popupTableButton.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(buttonHeight));
-		//popupTableButton.setBackground(Color.LIGHT_GRAY);
-		popupTableButton.setFocusable(false);
-		popupTableButton.setSelectedIndex(0);
-		popupTableButton.setKeepVisible(false);
-		popupTableButton.getMyTable().setShowGrid(true);
-		popupTableButton.getMyTable().setBorder(BorderFactory.createLineBorder(popupTableButton.getMyTable().getGridColor()));
-		popupTableButton.getMyPopup().setBorder(BorderFactory.createEmptyBorder());
-		popupTableButton.addActionListener(this);
-		popupTableButton.setSelected(true);
-		
-		JToolBar tb = new JToolBar();
-		tb.setFloatable(false);
-		
-		symbolList = new ArrayList<String>();
-		symbolList.add(Unicode.EULER_STRING);
-		symbolList.add(Unicode.PI_STRING);
-		symbolList.add("\u03b1");
-		symbolButton = new JButton[symbolButtonCount];
-		for(int i=0; i < symbolButton.length; i++){
-			symbolButton[i] = new JButton();
-			symbolButton[i].setFocusable(false);
-			symbolButton[i].addActionListener(this);
-			if(i==symbolButtonCount-1 && symbolButtonCount > 1)
-				tb.addSeparator();
-			tb.add(symbolButton[i]);
-		}
-	//	tb.add(popupTableButton);
-		setSymbolButtons();
-		
-		
-		JToolBar toolBar = new JToolBar();
-		toolBar.setFloatable(false);
-		toolBar.setOrientation(JToolBar.VERTICAL);
-		toolBar.add(tb);
-		
-	//	tb.setVisible(showSpecialChars);
-		
-		return toolBar;
-		
-	}
-	
-	private void setSymbolButtons(){
-		int h = popupTableButton.getPreferredSize().height;
-		for(int i = 0; i< symbolButton.length; i++){
-			symbolButton[i].setIcon(
-					GeoGebraIcon.createStringIcon(symbolList.get(i), app.getPlainFont(), new Dimension(18,18)));
-		}
-	}
 	
 	
 	/**
@@ -430,20 +346,7 @@ ActionListener, ListSelectionListener {
 		app.getGuiManager().setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == popupTableButton){
-			String s = (String) popupTableButton.getSelectedValue();
-			insertString(s);
-			symbolList.add(symbolButton.length-1, s);
-			setSymbolButtons();
-			
-		}
-		for(int i = 0; i<symbolButton.length; i++)
-			if(e.getSource() == symbolButton[i]){
-				insertString(symbolList.get(i));
-			}
-
-	}
+	
 
 	
 	
