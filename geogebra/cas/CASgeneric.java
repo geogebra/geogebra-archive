@@ -150,4 +150,6 @@ public abstract class CASgeneric {
 	 */
 	public abstract String translateFunctionDeclaration(String label, String parameters, String body);
 	
+	public void setSignificantNumbersOfNumeric(int significantNumbers) throws Throwable{}
+	
 }

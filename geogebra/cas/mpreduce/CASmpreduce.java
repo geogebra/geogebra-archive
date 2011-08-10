@@ -727,4 +727,8 @@ public class CASmpreduce extends CASgeneric {
 			return sb.toString();
 		}
 	}
+	
+	public void setSignificantNumbersOfNumeric(int significantNumbers) throws Throwable {
+		mpreduce.evaluate("printprecision!!:="+significantNumbers);
+	}
 }
