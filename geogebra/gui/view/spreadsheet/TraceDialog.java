@@ -215,7 +215,7 @@ implements
 		//TODO use a set labels method for language support
 		
 		try {
-			setTitle(app.getPlain("TraceToSpreadsheet"));			
+			setTitle(app.getMenu("RecordToSpreadsheet"));			
 			BorderLayout thisLayout = new BorderLayout();			
 			getContentPane().setLayout(thisLayout);
 						
@@ -408,7 +408,7 @@ implements
 
 	public void setLabels(){
 		
-		setTitle(app.getPlain("TraceToSpreadsheet"));
+		setTitle(app.getMenu("RecordToSpreadsheet"));
 		tabbedPane.setTitleAt(0, app.getMenu("Location"));
 		tabbedPane.setTitleAt(1, app.getMenu("Options"));
 		lblStartRow.setText(app.getMenu("StartRow") + ": ");
