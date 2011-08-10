@@ -717,9 +717,11 @@ public class CopyPaste {
 
 		if (pasteFast(app)) {
 			app.getGgbApi().evalXML(copiedXMLforSameWindow.toString());
+			app.getKernel().getConstruction().updateConstruction();
 			handleLabels(app, copiedXMLlabelsforSameWindow);
 		} else {
 			app.getGgbApi().evalXML(copiedXML.toString());
+			app.getKernel().getConstruction().updateConstruction();
 			handleLabels(app, copiedXMLlabels);
 		}
 
