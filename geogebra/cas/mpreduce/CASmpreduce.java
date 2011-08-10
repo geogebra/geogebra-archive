@@ -252,6 +252,7 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("linelength 50000;");
 		mpreduce.evaluate("scientific_notation {16,5};");
 		mpreduce.evaluate("on fullroots;");
+		mpreduce.evaluate("printprecision!!:=5");
 		
 		mpreduce.evaluate("korder ggbcasvarx, ggbcasvary, ggbcasvarz, ggbcasvara, " +
 				"ggbcasvarb, ggbcasvarc, ggbcasvard, ggbcasvare, ggbcasvarf, " +

@@ -2017,79 +2017,18 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			
 			case STRING_TYPE_MPREDUCE:
 				
-				/*if ((left instanceof GeoList) && (right instanceof GeoList)){
-					//Multiplication Matrix times Vector as List 
-					if (((GeoList)left).isMatrix() && !((GeoList)right).isMatrix()){
-						sb.append("(");
-						sb.append(leftStr);
-						sb.append(")*<<listtocolumnvector(");
-						sb.append(rightStr);
-						sb.append(")>>");
-						break;
-					}
-					else if (!((GeoList)left).isMatrix() && ((GeoList)right).isMatrix()){
-						sb.append("<<listtorowvector(");
-						sb.append(leftStr);
-						sb.append(")>>*(");
-						sb.append(rightStr);
-						sb.append(")");
-						break;
-					}
-					else if (!((GeoList)left).isMatrix() && !((GeoList)right).isMatrix()){
-						sb.append("dot(");
-						sb.append(leftStr);
-						sb.append(",");
-						sb.append(rightStr);
-						sb.append(")");
-						break;
-					}
-				} else if ((left instanceof GeoList) && ((right instanceof GeoVector) || (right instanceof GeoPoint))){
-					if (((GeoList)left).isMatrix()){
-						sb.append("(");
-						sb.append(leftStr);
-						sb.append(")*<<listtocolumnvector(");
-						sb.append(rightStr);
-						sb.append(")>>");
-						break;
-					} else {
-						sb.append("dot(");
-						sb.append(leftStr);
-						sb.append(",");
-						sb.append(rightStr);
-						sb.append(")");
-						break;
-					}
-				} else if (((left instanceof GeoVector) || (left instanceof GeoPoint)) && (right instanceof GeoList) ){
-					if (((GeoList)right).isMatrix()){
-						sb.append("<<listtorowvector(");
-						sb.append(leftStr);
-						sb.append(")>>*(");
-						sb.append(rightStr);
-						sb.append(")");
-						break;
-					} else {
-						sb.append("dot(");
-						sb.append(leftStr);
-						sb.append(",");
-						sb.append(rightStr);
-						sb.append(")");
-						break;
-					}
-				} else if (((left instanceof GeoVector) || (left instanceof GeoPoint)) && ((right instanceof GeoVector) || (right instanceof GeoPoint)) ){
-					sb.append("dot(");
+				if (isEqualString(left, -1, !valueForm)) {
+					sb.append("-(");
+					sb.append(rightStr);
+					sb.append(')');
+				} else {
+					sb.append("multiplication(");
 					sb.append(leftStr);
 					sb.append(",");
 					sb.append(rightStr);
 					sb.append(")");
 					break;
-				}*/
-				
-				sb.append("multiplication(");
-				sb.append(leftStr);
-				sb.append(",");
-				sb.append(rightStr);
-				sb.append(")");
-				break;
+				}
 			}		
 			break;
 
