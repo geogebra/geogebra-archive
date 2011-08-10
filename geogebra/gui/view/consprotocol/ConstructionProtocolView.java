@@ -72,6 +72,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.JTable.PrintMode;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -1552,8 +1553,19 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 	 * PRINTING *
 	 ************/
 
+	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+			throws PrinterException {
+		Drawable.exporting=true;
+		int r=table.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
+		Drawable.exporting=false;
+		return r;
+	}
+	
+	
+	/*
 	public int print(Graphics pg, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
+		Application.debug("CPView-print");
 		if (pageIndex >= maxNumPage)
 			return NO_SUCH_PAGE;
 
@@ -1669,6 +1681,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 		return PAGE_EXISTS;
 	}
 
+*/
 	/***************
 	 * HTML export *
 	 ***************/

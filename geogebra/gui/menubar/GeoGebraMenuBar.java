@@ -14,6 +14,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -181,6 +182,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 						// Constructor constructor =
 						// classObject.getDeclaredConstructor(types);
 						// constructor.newInstance(args);
+/* old code
 						boolean printCAS=false;
 						if (app.getGuiManager().hasCasView()){	
 							DockManager dm=app.getGuiManager().getLayout().getDockManager();
@@ -189,10 +191,31 @@ public class GeoGebraMenuBar extends JMenuBar {
 								new geogebra.export.PrintPreview(app, app.getGuiManager().getCasView(), PageFormat.LANDSCAPE);
 								printCAS=true;
 							}
-						}
+						}			
+						
 						if (!printCAS)
 							new geogebra.export.PrintPreview(app, app
 								.getEuclidianView(), PageFormat.LANDSCAPE);
+						
+						
+	*/					
+						
+						DockManager dm=app.getGuiManager().getLayout().getDockManager();
+						
+						if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_CAS))
+							new geogebra.export.PrintPreview(app, app.getGuiManager().getCasView(), PageFormat.LANDSCAPE);
+						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_CONSTRUCTION_PROTOCOL))
+							new geogebra.export.PrintPreview(app, app.getGuiManager().getConstructionProtocolView(), PageFormat.LANDSCAPE);
+						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_SPREADSHEET))
+							new geogebra.export.PrintPreview(app, (Printable) app.getGuiManager().getSpreadsheetView(), PageFormat.LANDSCAPE);
+						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_EUCLIDIAN2))
+							new geogebra.export.PrintPreview(app, app.getGuiManager().getEuclidianView2(), PageFormat.LANDSCAPE);
+						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_ALGEBRA))
+							new geogebra.export.PrintPreview(app, app.getGuiManager().getAlgebraView(), PageFormat.LANDSCAPE);
+						else //graphics view focused
+							new geogebra.export.PrintPreview(app, app.getEuclidianView(), PageFormat.LANDSCAPE);
+										
+						
 					} catch (Exception e) {
 						Application.debug("Print preview not available");
 					}

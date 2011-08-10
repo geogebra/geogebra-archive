@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.gui.view.algebra;
 
+import geogebra.euclidian.Drawable;
 import geogebra.gui.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -25,6 +26,10 @@ import geogebra.kernel.View;
 import geogebra.main.Application;
 
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -34,6 +39,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.JTable.PrintMode;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TreeSelectionEvent;
@@ -49,7 +55,7 @@ import javax.swing.tree.TreePath;
  * @author  Markus
  * @version 
  */
-public class AlgebraView extends JTree implements View{	
+public class AlgebraView extends JTree implements View, Printable{	
 		
 	private static final long serialVersionUID = 1L;
 	
@@ -851,6 +857,18 @@ public class AlgebraView extends JTree implements View{
 		}
 
 	}  // MyEditor
+
+	JTree tree=this;
+	
+	
+	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+			throws PrinterException {
+		Drawable.exporting=true;
+		tree.print(graphics);
+		Drawable.exporting=false;
+		int r=(pageIndex==0)? 0:1;
+		return r;
+	}
 	
 	/**
 	 * returns settings in XML format

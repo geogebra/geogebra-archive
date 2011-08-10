@@ -1,6 +1,7 @@
 
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.euclidian.Drawable;
 import geogebra.gui.view.spreadsheet.statdialog.StatDialog;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
@@ -21,6 +22,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -31,10 +35,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JViewport;
+import javax.swing.JTable.PrintMode;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class SpreadsheetView extends JPanel implements View, ComponentListener, FocusListener
+public class SpreadsheetView extends JPanel implements View, ComponentListener, FocusListener, Printable
 {
 
 	private static final long serialVersionUID = 1L;
@@ -1343,5 +1348,14 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	public void focusLost(FocusEvent arg0) {
 		getTable().repaint();
 
+	}
+
+
+	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+			throws PrinterException {
+		Drawable.exporting=true;
+		int r=table.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
+		Drawable.exporting=false;
+		return r;
 	}
 }
