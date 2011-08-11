@@ -1359,7 +1359,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	}
 
 	public synchronized void unregisterAddListener(String JSFunctionName) {
-		app.getScriptManager().registerAddListener(JSFunctionName);
+		app.getScriptManager().unregisterAddListener(JSFunctionName);
 	}
 
 	public synchronized void registerRemoveListener(String JSFunctionName) {
