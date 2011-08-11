@@ -117,7 +117,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		
 		labelPanel.setBorder(BorderFactory.createEmptyBorder(0,10, 0, 2));
 		eastPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
-		inputPanel.setBorder(BorderFactory.createEmptyBorder(3,0,3,0));
+		inputPanel.setBorder(BorderFactory.createEmptyBorder(2,0,2,0));
 		
 		setLayout(new BorderLayout(0,0));
 		add(labelPanel, BorderLayout.WEST);
