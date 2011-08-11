@@ -2799,7 +2799,7 @@ public	class PropertiesPanel extends JPanel {
 
 		private boolean checkGeos(Object[] geos) {
 			return geos.length == 1 && geos[0] instanceof GeoText
-			&& !((GeoText)geos[0]).isTextCommand();			
+			&& !((GeoText)geos[0]).isTextCommand() && !((GeoText)geos[0]).isFixed();	
 		}
 
 		/**
