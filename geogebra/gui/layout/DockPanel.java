@@ -336,7 +336,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		
 		// Show / hide styling bar if one exists
 		if(hasStyleBar) {
-			toggleStyleBarButton = new JButton(app.getImageIcon("view-showtoolbar.png"));
+			toggleStyleBarButton = new JButton(app.getImageIcon("triangle-down.png"));
 			toggleStyleBarButton.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
 			toggleStyleBarButton.addActionListener(this);
 			
@@ -759,13 +759,8 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	public void toggleStyleBar() {
 		if(!this.hasStyleBar) return;
 		
-		if(showStyleBar) {
-			styleBarPanel.setVisible(false);
-			showStyleBar = false;
-		} else {
-			styleBarPanel.setVisible(true);
-			showStyleBar = true;
-		}
+		styleBarPanel.setVisible(!showStyleBar);
+		setShowStyleBar(!showStyleBar);
 	}
 
 	/**
@@ -902,6 +897,14 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 */
 	public void setShowStyleBar(boolean showStyleBar) {
 		this.showStyleBar = showStyleBar;
+		
+		if(toggleStyleBarButton != null) {
+			if(showStyleBar) {
+				toggleStyleBarButton.setIcon(app.getImageIcon("triangle-up.png"));
+			} else {
+				toggleStyleBarButton.setIcon(app.getImageIcon("triangle-down.png"));
+			}
+		}
 	}
 	
 	public void setFrameBounds(Rectangle frameBounds) {
