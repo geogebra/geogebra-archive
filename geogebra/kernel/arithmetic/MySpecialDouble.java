@@ -39,23 +39,33 @@ public class MySpecialDouble extends MyDouble {
 		
 		// check if this is a letter constant, e.g. Pi or Euler number
 		char firstChar = strToString.charAt(0);
-		isLetterConstant = Character.isLetter(firstChar) || firstChar == Unicode.degreeChar;
-		
-		keepOriginalString = kernel.isKeepCasNumbers() 
+		isLetterConstant = Character.isLetter(firstChar) || firstChar == Unicode.degreeChar;	
+		scientificNotation = strToString.indexOf("E") > 0;
+		keepOriginalString = !isLetterConstant &&
+			(kernel.isKeepCasNumbers() 
+			|| scientificNotation
 			|| strToString.length() > 16
-			|| Double.isInfinite(val);
+			|| Double.isInfinite(val));
 			
-		if (!isLetterConstant && keepOriginalString) {
-			// from GeoGebraCAS we get a String using 15 significant figures
-			// like 3.14160000000000
-			// let's remove trailing zeros
+		if (keepOriginalString) {
 			BigDecimal bd = new BigDecimal(strToString);
-			bd = bd.stripTrailingZeros();
-			strToString = bd.toString();			
+			// avoid E notation for small values
+			if (val >= 10E-3 && val < 10E7) {
+				// from GeoGebraCAS we get a String using 15 significant figures
+				// like 3.14160000000000
+				// let's remove trailing zeros
+				bd = bd.stripTrailingZeros();
+				// no E notation
+				strToString = bd.toPlainString();
+			} 
+			else {
+				// use E notation if necessary
+				strToString = bd.toString();	
+				scientificNotation = strToString.indexOf("E") > 0;
+			}
 		}
 		
 		this.strToString = strToString;
-		scientificNotation = strToString.indexOf("E") > 0;
 	}
 	
 	public void setKeepOriginalString() {

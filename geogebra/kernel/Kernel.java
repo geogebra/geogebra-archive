@@ -8361,11 +8361,8 @@ public class Kernel {
 				else if (Double.isInfinite(x)) {
 					return (x > 0) ? "\u221e" : "-\u221e"; // infinity
 				}
-				// don't convert 3.141592653589793 to pi here
-				// use formatPiERaw() instead
-				// see http://www.geogebra.org/trac/ticket/1169
-				// else if (x == Math.PI)
-				//	return casPrintFormPI;
+				else if (x == Math.PI)
+					return casPrintFormPI;
 					
 					
 				// ROUNDING hack							
