@@ -152,7 +152,7 @@ public class PathMoverLocus extends PathMoverGeneric {
 
 	public void stepBack() {
 		super.stepBack();
-		lastNoLineToSet = noLineToSet;
+		noLineToSet = lastNoLineToSet;
 	}
 
 	protected boolean noLineTo(double new_param) {
