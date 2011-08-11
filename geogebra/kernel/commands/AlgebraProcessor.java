@@ -263,7 +263,7 @@ public class AlgebraProcessor {
 				app.showError(e);
 				e.printStackTrace();
 			}
-			else if (throwMyError) throw new MyError(app, e.getLocalizedMessage());
+			else if (throwMyError) throw new MyError(app, e.getLocalizedMessage(), e.getcommandName());
 
 			return null;
 		} catch (CircularDefinitionException e) {

@@ -852,7 +852,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			if (err == MyException.INVALID_INPUT) {
 				if (app.isCommand(getCurrentWord())) {
 
-					app.showErrorDialog(app.getError("InvalidInput")+"\n\n"+app.getPlain("Syntax")+":\n"+app.getCommandSyntax(getCurrentWord()));					
+					app.showError(new MyError(app, app.getError("InvalidInput")+"\n\n"+app.getPlain("Syntax")+":\n"+app.getCommandSyntax(getCurrentWord()),getCurrentWord()));					
 					return;
 				}			
 			} 
@@ -866,7 +866,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * just show syntax error (already correctly formulated by CommandProcessor.argErr())
 	 */
 	public void showError(MyError e) {
-		app.showError(e.getLocalizedMessage());
+		app.showError(e);
 
 	}
 
