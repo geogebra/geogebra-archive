@@ -250,7 +250,13 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	    		if (p.isLabelSet()) { //an existing intersection should be a labeled one
 	    			if (p.getIncidenceList()!=null && 
 	    				p.getIncidenceList().contains(g)) {
-	    				existingIntersection = p;
+	    				
+	    				//TODO: this is just a TEMPORARY FIX for #94.
+	    				if (g.isOnPath(p, Kernel.EPSILON) && c.isOnPath(p, Kernel.EPSILON))
+	    					existingIntersection = p;
+	    				
+	    					
+	    				//existingIntersection = p;
     					break;
     				} else if (p.addIncidenceWithProbabilisticChecking(g)) {
     					existingIntersection = p;
@@ -263,6 +269,10 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 		// if existingIntersection is still not found, find a point from line g on conic c
 		if (existingIntersection == null) {
 		  	ArrayList pointsOnLine = g.getPointsOnLine();
+		  	//for debug
+		  	int three = 1+1;
+		  	three = three+1;
+		  	
 	    	if (pointsOnLine != null) {
 	    		//get a point from pointsOnLine to see if it is on c.
 	    		for (int i=0; i < pointsOnLine.size(); ++i) {
@@ -270,7 +280,12 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	    			if (p.isLabelSet()) { //an existing intersection should be a labeled one
 	    				if (p.getIncidenceList()!=null && 
 	    					p.getIncidenceList().contains(c)) {
-	    					existingIntersection = p;
+	    					
+	    					//TODO: this is just a TEMPORARY FIX for #94.
+		    				if (g.isOnPath(p, Kernel.EPSILON) && c.isOnPath(p, Kernel.EPSILON)) 
+		    					existingIntersection = p;
+	    					
+	    					//existingIntersection = p;
 	    					break;
 	    				} else if (p.addIncidenceWithProbabilisticChecking(c)) {
 	    					existingIntersection = p;
