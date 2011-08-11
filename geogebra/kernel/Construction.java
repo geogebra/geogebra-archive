@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 
@@ -1351,7 +1350,7 @@ public class Construction {
 		if (label == null)
 			return false;
 		else
-			return !geoTable.containsKey(label) && !isDependentLabel(label);
+			return !geoTable.containsKey(label);
 	}
 	
 	/**
@@ -1415,65 +1414,12 @@ public class Construction {
 	///////////////////////////////////////////////
 	
 
-	/** tree for dependecies label--algo */
-    private TreeMap<String, AlgoElementWithResizeableOutput> labelDependsOn = new TreeMap<String, AlgoElementWithResizeableOutput>();
-    
-    /**
-     * set that the label depends on the algo.
-     * Used when loading file, algos implementing AlgoElementWithResizeableOutput
-     * tell that output labels depend on it (used with {@link #resolveLabelDependency(String, int)} when element
-     * is handled) 
-     * @param label
-     * @param algo
-     */
-    public void setLabelDependsOn(String label, AlgoElementWithResizeableOutput algo){
-    	//Application.debug(label);
-    	if (label!=null)
-    		labelDependsOn.put(label, algo);
-    }
-    
-    
-    
-    
-    /**
-     * when a new element is handled (on file loading), if the label
-     * depend on an AlgoElementWithResizeableOutput, the label will be set 
-     * on its output or the GeoElement will be created by the algo's output handlers
-     * @param label Label that depends on an AlgoElementWithResizeableOutput
-     * @param type 
-     * @return geo, possibly already computed by the algo
-     */
-    public GeoElement resolveLabelDependency(String label, int type){
-    	AlgoElementWithResizeableOutput algo = labelDependsOn.get(label);
-    	
-    	//Application.debug(label);
-    	
-    	GeoElement ret;
-    	if (algo!=null){
-    		//Application.debug(label+", type:"+type);
-
-    		labelDependsOn.remove(label);
-    		ret=algo.addLabelToOutput(label,type);
-    		//Application.debug("ret:"+ret.toString());
-    	}else
-    		ret=null;
-    	
-    	return ret;
-    }
-    
-    
-    /**
-     * says if the label depends on any algo
-     * @param label
-     * @return if the label depends on any algo
-     */
-    public boolean isDependentLabel(String label){
-    	
-    	//Application.debug("isDependentLabel("+label+")="+labelDependsOn.containsKey(label));
-    	
-    	return labelDependsOn.containsKey(label);
-    }
 	
+      
+    
+    
+    
+    
 	
 	
 	
@@ -2039,6 +1985,7 @@ public class Construction {
 	 * Returns this construction in regression file .out format. Markus
 	 * suggested to use the logic from getConstructionXML for this method. --
 	 * Zoltan, 2011-07-26
+	 * @param sb 
 	 */
 	public void getConstructionRegressionOut(StringBuilder sb) {
 		

@@ -1,22 +1,8 @@
 package geogebra3D.kernel3D;
 
 import geogebra.Matrix.Coords;
-import geogebra.kernel.AlgoElementWithResizeableOutput;
-import geogebra.kernel.AlgoSimpleRootsPolynomial;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.AlgoElement.OutputHandler;
-import geogebra.kernel.AlgoElement.elementFactory;
-import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
-
-import java.util.ArrayList;
 
 /**
  * @author ggb3D
@@ -29,7 +15,8 @@ public class AlgoPolyhedronPointsPyramid extends AlgoPolyhedronPoints{
 	
 	/** creates a pyramid regarding vertices and faces description
 	 * @param c construction 
-	 * @param a_points vertices
+	 * @param labels 
+	 * @param points vertices
 	 */
 	public AlgoPolyhedronPointsPyramid(Construction c, String[] labels, GeoPointND[] points) {
 		super(c,labels,points);

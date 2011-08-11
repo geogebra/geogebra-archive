@@ -19,28 +19,24 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
-
-import java.util.ArrayList;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 /**
  * 
- * @author Markus
+ * @author Zbynek
  * @version
  */
-public class AlgoVertexPolygon extends AlgoElement implements
-		AlgoElementWithResizeableOutput {
+public class AlgoVertexPolygon extends AlgoElement {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPolyLineInterface p; // input
-	private ArrayList<GeoPoint> pointsList; // output
-	private String singleLabel = null;
-	private int nbLabelSet = 0;
+	private GeoPolyLineInterface p; // input		
 	private NumberValue index;
 	private GeoPoint oneVertex;
-
+	protected OutputHandler<GeoElement> outputPoints;
 	/**
 	 * Creates new vertex algo
 	 * 
@@ -53,16 +49,29 @@ public class AlgoVertexPolygon extends AlgoElement implements
 
 		this(cons, p);
 		// if only one label (e.g. "A"), new labels will be A_1, A_2, ...
-		if (labels != null)
-			if (labels.length == 1)
-				if (labels[0] != null)
-					if (!labels[0].equals(""))
-						singleLabel = labels[0];
+		setLabels(labels);
+		 
+        update();
 
 		// set labels dependencies: will be used with
 		// Construction.resolveLabelDependency()
 
 	}
+	
+	protected void setLabels(String[] labels) {
+        //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
+        if (labels!=null &&
+        		labels.length==1 &&
+        		//outputPoints.size() > 1 &&
+        		labels[0]!=null &&
+        		!labels[0].equals("")) {
+        	outputPoints.setIndexLabels(labels[0]);
+        } else {
+        	
+        	outputPoints.setLabels(labels);
+        	outputPoints.setIndexLabels(outputPoints.getElement(0).getLabel());
+        }	
+    }
 
 	/**
 	 * @param cons
@@ -87,7 +96,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	AlgoVertexPolygon(Construction cons, GeoPolyLineInterface p) {
 		super(cons);
 		this.p = p;
-
+		outputPoints=createOutputPoints();
 		setInputOutput(); // for AlgoElement
 		compute();
 	}
@@ -118,15 +127,10 @@ public class AlgoVertexPolygon extends AlgoElement implements
 			setOutputLength(1);
 			setOutput(0,oneVertex);
 		}else{
-			input = new GeoElement[1];
-			if (pointsList == null)
-				pointsList = new ArrayList<GeoPoint>();
+			input = new GeoElement[1];			
 		}
 		input[0] = (GeoElement)p;
-		/*
-		 * setOutputLength(vertex.length); for(int i=0;i<vertex.length;i++){
-		 * setOutput(i,vertex[i]); }
-		 */
+		
 		
 		setDependencies(); // done by AlgoElement
 	}
@@ -140,30 +144,14 @@ public class AlgoVertexPolygon extends AlgoElement implements
 		return p;
 	}
 
-	private void initPoints(int number) {
-		// make sure that there are enough points
 
-		if (pointsList.size() < number) {
-
-			for (int i = pointsList.size(); i < number; i++) {
-				GeoPoint tmp = new GeoPoint(cons);
-				tmp.setCoords(0, 0, 1); // init as defined
-				tmp.showUndefinedInAlgebraView(false);
-				tmp.setParentAlgorithm(this);
-				tmp.setLabel(singleLabel);
-				cons.setLabelDependsOn(tmp.getLabel(), this);
-				pointsList.add(tmp);
-
-			}
-		}
-	}
 
 	public int getOutputLength() {
 		if(index!=null) return 1;
-		return pointsList.size();
+		return outputPoints.size();
 	}
 
-	protected final void compute() {
+	protected final void compute() {				
 		if(index != null){
 			int  i = (int)Math.floor(index.getDouble())-1;
 			if(i >= p.getPoints().length||i < 0)
@@ -174,15 +162,17 @@ public class AlgoVertexPolygon extends AlgoElement implements
 			return;
 		}
 		int length = p.getPoints().length;
-		for (int i = length; i < pointsList.size(); i++) {
-			pointsList.get(i).setUndefined();
-		}
-		initPoints(length);
-		for (int i = 0; i < length; i++) {
-			GeoPoint point = p.getPoint(i);
-			pointsList.get(i).set((GeoElement) point);
-			pointsList.get(i).update();
-		}
+		Application.debug(length);
+		outputPoints.adjustOutputSize(length >0?length : 1);
+		
+		
+		for (int i =0; i<length; i++){
+    		GeoPointND point = (GeoPointND) outputPoints.getElement(i);
+    		point.set(p.getPoint(i));    		
+    	}
+    	//other points are undefined
+    	for(int i = length;i<outputPoints.size();i++)
+    		outputPoints.getElement(i).setUndefined();
 	}
 
 	public final String toString() {
@@ -196,20 +186,12 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	 * @return list of the vertices
 	 */
 	public GeoElement[] getVertex() {
-		GeoElement[] output = new GeoElement[getOutputLength()];
-
-		int i = 0;
-		for (GeoElement geo : pointsList) {
-			output[i] = geo;
-			i++;
-		}
-
-		return output;
+		return getOutput();
 	}
 
 	public GeoElement getOutput(int i) {
 		if(index!=null)return oneVertex;
-		return pointsList.get(i);
+		return outputPoints.getElement(i);
 	}
 	
 	/**
@@ -218,22 +200,17 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	public GeoPoint getOneVertex(){
 		return oneVertex;
 	}
-
-	public GeoElement addLabelToOutput(String label, int type) {
-
-		GeoElement ret;
-		if (nbLabelSet < pointsList.size()) { // set geo equal to element of the
-												// list
-			ret = pointsList.get(nbLabelSet);
-			nbLabelSet++;
-		} else { // add this geo at the end of the list
-			GeoPoint geo = new GeoPoint(getConstruction());
-			pointsList.add((GeoPoint) geo);
-			ret = geo;
-			setOutputDependencies(geo);
-			nbLabelSet++;
-		}
-		return ret;
-	}
+	
+	
+	 protected OutputHandler<GeoElement> createOutputPoints(){
+	    	return new OutputHandler<GeoElement>(new elementFactory<GeoElement>() {
+				public GeoPoint newElement() {
+					GeoPoint p=new GeoPoint(cons);
+					p.setCoords(0, 0, 1);
+					p.setParentAlgorithm(AlgoVertexPolygon.this);
+					return p;
+				}
+			});
+	    }
 
 }

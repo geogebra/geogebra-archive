@@ -2333,7 +2333,7 @@ public class MyXMLHandler implements DocHandler {
 		if (geo == null) {
 			
 			//try to find an algo on which this label depends
-			geo = cons.resolveLabelDependency(label, kernel.getClassType(type));
+			//geo = cons.resolveLabelDependency(label, kernel.getClassType(type));
 			//if none, create new geo
 			if (geo==null){
 				geo = kernel.createGeoElement(cons, type);
@@ -4141,10 +4141,10 @@ public class MyXMLHandler implements DocHandler {
 				
 				//if the first label is a dependant label, then labels will be set by
 				//Construction.resolveLabelDependency
-				if (cons.isDependentLabel(label)){
+				//if (cons.isDependentLabel(label)){
 					//Application.debug("dependent label : "+label);
-					break;
-				}
+				//	break;
+				//}
 				//else
 				//	Application.debug("not dependent label : "+label);
 				
