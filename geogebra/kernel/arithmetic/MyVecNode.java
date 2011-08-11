@@ -153,13 +153,27 @@ public class MyVecNode extends ValidExpression implements VectorValue, Replaceab
 				break;
 				
 			case ExpressionNode.STRING_TYPE_MPREDUCE:
-				coords = getCoords();
+				/*coords = getCoords();
 				sb.append("list(");
 				sb.append(coords[0]);
 				sb.append(", ");
 				sb.append(coords[1]);
 				sb.append(")");
-				break;
+				break;*/
+			    if (mode==Kernel.COORD_POLAR) {
+			    	sb.append("polartopoint(");
+			    	sb.append(x.toString());
+			    	sb.append(", ");
+			    	sb.append(y.toString());
+			    	sb.append(')');
+			    } else {
+			    	sb.append("list(");
+			    	sb.append(x.toString());
+			    	sb.append(", ");
+			    	sb.append(y.toString());
+			    	sb.append(')');
+			    }
+			    break;
 								
 			default: // continue below
 			  sb.append('(');

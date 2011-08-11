@@ -59,7 +59,7 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
-		sb.append("<<numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div$ on pri$ ");
+		sb.append("<<numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ on pri, combinelogs$ ");
 		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
 		sb.append(">>");
 
@@ -286,31 +286,14 @@ public class CASmpreduce extends CASgeneric {
 				"};"
 				);
 		
+		mpreduce.evaluate("let {cos(~w)^2 => 1-sin(w)^2}");
+		
 		mpreduce.evaluate("let {impart(arbint(~w)) => 0, arbint(~w)*i =>  0};");
+		mpreduce.evaluate("let {atan(sin(~x)/cos(~x))=>x};");
 		
 		mpreduce.evaluate("solverules:={" +
 				"tan(~x) => sin(x)/cos(x)" +
 				"};");
-		
-		// bugfix for reduce, will be removed when the bug is fixed in reduce ( :rd: - problem)
-//		mpreduce.evaluate("symbolic procedure xprint(u,flg);"
-//				+ "   begin scalar v,w;"
-//				+ "      v := tc u;"
-//				+ "      u := tpow u;"
-//				+ "      if (w := kernlp v) and w neq 1"
-//				+ "        then <<v := quotf(v,w);"
-//				+ "               if minusf w"
-//				+ "                 then <<oprin 'minus; w := !:minus w; flg := nil>>>>;"
-//				+ "      if flg then oprin 'plus;"
-//				+ "      if w and w neq 1"
-//				+ "        then <<if domainp w then maprin w else prin2!* w; oprin 'times>>;"
-//				+ "      xprinp u;"
-//				+ "      if v neq 1 then <<oprin 'times; xprinf(v,red v,nil)>>"
-//				+ "   end;");
-		// make sure integral(1/x) gives ln(abs(x)) [TODO: NOT WORKING]
-		// mpreduce.evaluate("operator log!-temp");
-		// mpreduce.evaluate("sub(log!-temp = log, ( int(1/x,x) where {log(~xx) => abs(log!-temp(xx))}))");
-
 		
 		mpreduce.evaluate("procedure myatan2(y,x);" +
 				" begin scalar xinput, yinput;" +
@@ -352,8 +335,8 @@ public class CASmpreduce extends CASgeneric {
 				"   else if column_dim(x!!)=1 then myatan2(x!!(2,1),x!!(2,1))" +
 				"   else arg(x!!) >>" +
 				" else myatan2(impart(x),repart(x));");
-		mpreduce.evaluate("procedure complexpolar(r,phi); r*(cos(phi)+i*sin(phi));");
-		mpreduce.evaluate("procedure mypolar(r,phi); list(r*cos(phi),r*sin(phi));");
+		mpreduce.evaluate("procedure polartocomplex(r,phi); r*(cos(phi)+i*sin(phi));");
+		mpreduce.evaluate("procedure polartopoint(r,phi); list(r*cos(phi),r*sin(phi));");
 		mpreduce.evaluate("procedure complexexponential(r,phi); r*(cos(phi)+i*sin(phi));");
 		mpreduce.evaluate("procedure conjugate(x); conj(x);");
 		mpreduce.evaluate("procedure myrandom(); <<on rounded; random(100000001)/(random(100000000)+1)>>;");
@@ -372,6 +355,23 @@ public class CASmpreduce extends CASgeneric {
 				" else if freeof(x,i) then abs(x)" +
 				" else sqrt(repart(x)^2+impart(x)^2);");
 
+		mpreduce.evaluate("procedure mylog10 x;" +
+				"begin scalar x!!;" +
+				" x!!:=x;" +
+				" on rounded, roundall, numval;" +
+				" if numberp(x!!) then <<" +
+				"   x!!:=log10(x!!);" +
+				"   if floor(x!!)=x!! then <<" +
+				"     if numeric!!=0 then" +
+				"       off rounded, roundall, numval;" +
+				"     return x!!" +
+				"   >>" +
+				" >>;" +
+				" if numeric!!=0 then" +
+				"   off rounded, roundall, numval;" +
+				" return log10(x) " +
+				"end;");
+		
 		mpreduce.evaluate("procedure flattenlist(a);" +
 				"if 1=for each elem!! in a product length(elem!!) then for each elem!! in a join elem!! else a;");
 		
@@ -698,20 +698,25 @@ public class CASmpreduce extends CASgeneric {
 				+ "end;");
 
 		mpreduce.evaluate("procedure mod!!(a,b);" +
-				" if numberp(a) and numberp(b) then" +
-				"	 a-b*div(a,b)" +
-				" else" +
-				"	 part(divpol(a*b*a,b*a*b),2)/(a*b);");
+				" a-b*div(a,b)");
 		
 		mpreduce.evaluate("procedure div(a,b);" +
-				" if numberp(a) and numberp(b) then" +
-				"	if b>0 then " +
-				"	  floor(a/b)" +
-				"	else" +
-				"	  ceiling(a/b)" +
-				" else " +
-				"    part(divpol(a*b*a,b*a*b),1);");
-
+				" begin scalar a!!, b!!, result!!;" +
+				"  a!!:=a; b!!:=b;" +
+				"  on rounded, roundall, numval;" +
+				"  return " +
+				"  if numberp(a!!) and numberp(b!!) then <<" +
+				"    if numeric!!=0 then" +
+				"      off rounded, roundall, numval;" +
+				"    if b!!>0 then " +
+				"	   floor(a/b)" +
+				"    else" +
+				"      ceiling(a/b)" +
+				"  >> else << " +
+				"    if numeric!!=0 then" +
+				"      off rounded, roundall, numval;" +
+				"    part(divpol(a*b*a,b*a*b),1)>>" +
+				" end;");
 	}
 
 	private String getVersionString() {

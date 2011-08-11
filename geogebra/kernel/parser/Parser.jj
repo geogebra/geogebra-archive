@@ -376,8 +376,7 @@ TOKEN: {
 |	< ARBCONST:  "arbconst("  >  // arbitrary constant by MPreduce
 |	< ARBINT:  "arbint("  >  // may be returned by MPreduce
 |	< ARBCOMPLEX:  "arbcomplex("  >  // may be returned by MPreduce
-|   < POLAR: "mypolar(" > // may be returned by MPreduce
-|   < COMPLEXPOLAR: "complexpolar(" > // may be returned by MPreduce
+|   < POLAR: "polartopoint(" > // may be returned by MPreduce
 | 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 
@@ -2184,8 +2183,6 @@ VectorValue polarvector():
       ( "(" r = expression() ";"  phi = expression() ")" )
     |
       ( <POLAR> r = expression() <COMMA> phi = expression() ")" )
-	| 
-      ( <COMPLEXPOLAR> r = expression() <COMMA> phi = expression() ")" )
     )   
         {                            
              v = new MyVecNode(kernel);                         
