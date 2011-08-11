@@ -14,7 +14,6 @@ the Free Software Foundation.
 
 package geogebra.gui.virtualkeyboard;
 
-import geogebra.gui.inputfield.AutoCompleteTextField;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
@@ -25,7 +24,6 @@ import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -86,7 +84,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		supportedLocales.add(new Locale("sk")); // Slovakian
 	}
 
-	private Robot robot;
+	
 
 
 	//   private static Boolean Upper     = false;
@@ -156,6 +154,10 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	/**
 	 * This is the default constructor
+	 * @param app 
+	 * @param windowWidth 
+	 * @param windowHeight 
+	 * @param opacity 
 	 */
 	public VirtualKeyboard(final Application app, int windowWidth, int windowHeight, float opacity) {
 
@@ -285,9 +287,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * This method initializes this
-	 * 
-	 * @return void
+	 * This method initializes this keyboard
 	 */
 	private void initialize() {
 		setSize(windowWidth, windowHeight);
@@ -582,8 +582,6 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
-	 * @return javax.swing.JPanel
 	 */
 	private void populateContentPane() {
 
@@ -630,8 +628,6 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	/**
 	 * This method adds a char to the text-field
-	 *
-	 * @return void
 	 */
 	private void insertText(String addchar) {
 		
@@ -787,7 +783,6 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	/**
 	 * This method adds a char to the text-field
 	 *
-	 * @return void
 	 */
 	private void insertKeyText(keys Keys) {
 		if(Upper()) {
@@ -948,8 +943,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		if (i == 2 && j == 13 && KEYBOARD_MODE != KEYBOARD_MATH) height *= 2;
 
 		Buttons[i][j].setBounds(new Rectangle((int)(0.5 + buttonSizeX * (double)j), (int)(0.5 + buttonSizeY * (double)(ii - 1)), (int)buttonSizeX, height));
-
-		Dimension size = Buttons[i][j].getPreferredSize();
+		
 
 		String text = Buttons[i][j].getText();
 		int len = text.length();
@@ -1058,6 +1052,11 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	private Locale kbLocale = null;
 
+	public void setKbLocale(int index){		
+		readConf(app,index == 0 ? null : supportedLocales.get(index-1),false);
+		doSetLabels();
+	}
+	
 	private void readConf(Application app, Locale loc, boolean math) {
 
 		ResourceBundle rbKeyboard;
@@ -1065,7 +1064,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		Locale locale;
 
 		if (app != null)
-			locale = app.getLocale();
+			locale = app.getKbLocale() < 1 ? app.getLocale() : 
+				supportedLocales.get(app.getKbLocale()-1);
 		else
 			locale = getLocale();
 
@@ -1111,7 +1111,11 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		setTitle((app == null) ? "Virtual Keyboard" : app.getPlain("VirtualKeyboard"));
 
 		readConf(app, null, false);
+		doSetLabels();
 		
+	}
+
+	private void doSetLabels() {
 		if (kbLocale.getLanguage().equals("ml"))
 			wideChar = '\u0d4c'; // widest Malayalan char
 		else if (kbLocale.getLanguage().equals("ar"))
@@ -1139,7 +1143,9 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		getCapsLockButton().setSelected(false);
 		KEYBOARD_MODE = KEYBOARD_NORMAL;
 		updateButtons();
+		
 	}
+
 
 	private WindowsUnicodeKeyboard kb = null;
 

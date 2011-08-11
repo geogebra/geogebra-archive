@@ -675,6 +675,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			int index = cbGUIFont.getSelectedIndex();
 			if (index == 0) app.setGUIFontSize(-1); // default
 			else app.setGUIFontSize(fontSizes[index - 1]);
+		} else if (source == cbKeyboardLanguage){
+			app.setKbLocale(cbKeyboardLanguage.getSelectedIndex());
 		}
 	}
 

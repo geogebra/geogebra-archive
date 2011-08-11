@@ -430,6 +430,8 @@ public class Application implements KeyEventDispatcher {
 	private float keyboardOpacity = 0.7f;
 	private int keyboardWidth = 400;
 	private int keyboardHeight = 235;
+	private int keyboardLocale = -1;
+	private boolean showKeyboardOnStart = false;
 	
 	// GUI elements to support a sidebar help panel for the input bar.
 	// The help panel slides open on a button press from the input bar.
@@ -2958,8 +2960,6 @@ public class Application implements KeyEventDispatcher {
 	private void setLabels() {
 		if (initing)
 			return;
-		
-		updateFontSizeStrings();
 
 		if (guiManager != null) {
 			getGuiManager().setLabels();
@@ -3839,7 +3839,8 @@ public class Application implements KeyEventDispatcher {
 		if (getGuiManager().hasProbabilityCalculator()){
 			getGuiManager().getProbabilityCalculatorXML(sb);
 		}
-		getKeyboardXML(sb);
+		if(asPreference)
+			getKeyboardXML(sb);
 		// coord style, decimal places settings etc
 		kernel.getKernelXML(sb);
 		getScriptingXML(sb);
@@ -5672,13 +5673,10 @@ public class Application implements KeyEventDispatcher {
 	String [] fontSizeStrings = null;
 
 	public String[] getFontSizeStrings() {
-		if (fontSizeStrings == null) updateFontSizeStrings();
+		if (fontSizeStrings == null)
+			fontSizeStrings = new String[] { getPlain("ExtraSmall"), getPlain("VerySmall"), getPlain("Small"), getPlain("Medium"), getPlain("Large"), getPlain("VeryLarge"), getPlain("ExtraLarge") };
 		
 		return fontSizeStrings;
-	}
-	
-	private void updateFontSizeStrings() {
-		fontSizeStrings = new String[] { getPlain("ExtraSmall"), getPlain("VerySmall"), getPlain("Small"), getPlain("Medium"), getPlain("Large"), getPlain("VeryLarge"), getPlain("ExtraLarge") };		
 	}
 	
 	public float getKeyboardOpacity() {
@@ -5727,7 +5725,16 @@ public class Application implements KeyEventDispatcher {
 		sb.append("\"/>");
 	}
 
-		
+
+	public int getKbLocale() {		
+		return keyboardLocale;
+	}
+
+	public void setKbLocale(int localeIndex){
+		keyboardLocale = localeIndex;
+		if (guiManager!= null && guiManager.hasVirtualKeyboard())
+			guiManager.getVirtualKeyboard().setKbLocale(localeIndex);
+	}
 }
 
 
