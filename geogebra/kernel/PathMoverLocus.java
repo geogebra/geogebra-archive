@@ -221,50 +221,54 @@ public class PathMoverLocus extends PathMoverGeneric {
 			if (next_param < max_param) {
 				int rightIndexNext = (int) Math.min(myPointList.size()-1, Math.ceil(next_param));
 				if (((MyPoint) myPointList.get(rightIndexNext)).lineTo == false) {
+					next_param = max_param;
 					for (int i = rightIndexNext+1; i <= myPointList.size()-1; i++) {
 						if (((MyPoint) myPointList.get(i)).lineTo == true) {
 							next_param = i-1;
+							break;
 						}
 					}
-					next_param = max_param;
 				}
 			} else if (next_param > max_param) {
 				int rightIndexNext = (int) Math.min(myPointList.size()-1, Math.ceil(next_param - myPointList.size() + 1));
 				double next_param_little = next_param - myPointList.size() + 1;
 				if (((MyPoint) myPointList.get(rightIndexNext)).lineTo == false) {
+					next_param_little = max_param;
 					for (int i = rightIndexNext+1; i <= myPointList.size()-1; i++) {
 						if (((MyPoint) myPointList.get(i)).lineTo == true) {
 							next_param_little = i-1;
+							break;
 						}
 					}
-					next_param_little = max_param;
 				}
 				next_param = next_param_little + myPointList.size() - 1;
 			}
-				
+
 			hasNext = !(curr_param < start_param && next_param >= start_param
 				|| curr_param < start_paramUP && next_param >= start_paramUP);
 		} else {
 			if (next_param > min_param) {
 				int rightIndexNext = (int) Math.min(myPointList.size()-1, Math.ceil(next_param));
 				if (((MyPoint) myPointList.get(rightIndexNext)).lineTo == false) {
+					next_param = min_param;
 					for (int i = rightIndexNext - 1; i >= 1; i--) {
 						if (((MyPoint) myPointList.get(i)).lineTo == true) {
 							next_param = i;
+							break;
 						}
 					}
-					next_param = min_param;
 				}
 			} else if (next_param < min_param) {
 				int rightIndexNext = (int) Math.min(myPointList.size()-1, Math.ceil(next_param + myPointList.size() - 1));
 				double next_param_big = next_param + myPointList.size() - 1;
 				if (((MyPoint) myPointList.get(rightIndexNext)).lineTo == false) {
+					next_param_big = min_param;
 					for (int i = rightIndexNext - 1; i >= 1; i--) {
 						if (((MyPoint) myPointList.get(i)).lineTo == true) {
 							next_param_big = i;
+							break;
 						}
 					}
-					next_param_big = min_param;
 				}
 				next_param = next_param_big - myPointList.size() + 1;
 			}
