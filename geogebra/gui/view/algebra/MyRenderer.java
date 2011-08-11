@@ -185,7 +185,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 
 		FormulaDimension d = new FormulaDimension();
 		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
-				bgColor);
+				bgColor, true);
 
 		// Now use this size and draw again to get the final image
 		image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
@@ -197,7 +197,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
-				bgColor);
+				bgColor, true);
 
 		latexIcon.setImage(image);
 

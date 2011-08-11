@@ -137,7 +137,7 @@ public abstract class Drawable extends DrawableND {
 		if (label.startsWith("$") && label.endsWith("$")) {
 			boolean serif = true; // nice "x"s
 			if (geo.isGeoText()) serif = ((GeoText)geo).isSerifFont();
-			FormulaDimension dim = drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), serif, g2.getColor(), g2.getBackground());
+			FormulaDimension dim = drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), serif, g2.getColor(), g2.getBackground(), true);
 			labelRectangle.setBounds(xLabel, yLabel - dim.depth, (int)dim.width, (int)dim.height);
 			return;
 		}
@@ -370,7 +370,7 @@ public abstract class Drawable extends DrawableND {
 			if(isLaTeX) {
 				// save the height of this element by drawing it to a temporary buffer
 				FormulaDimension dim = new FormulaDimension();
-				dim = drawEquation(view.app, geo, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor);
+				dim = drawEquation(view.app, geo, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor, false);
 				
 				int height = dim.height;
 				
@@ -422,7 +422,7 @@ public abstract class Drawable extends DrawableND {
 				yOffset = (((lineHeights.get(currentLine))).intValue() - ((elementHeights.get(currentElement))).intValue()) / 2;
 				
 				// draw the equation and save the x offset
-				xOffset += drawEquation(view.app, geo, g2, xLabel + xOffset, (yLabel + height) + yOffset + elementDepths.get(currentElement), elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).width;
+				xOffset += drawEquation(view.app, geo, g2, xLabel + xOffset, (yLabel + height) + yOffset + elementDepths.get(currentElement), elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor, true).width;
 
 				++currentElement;
 			} else {
@@ -467,10 +467,9 @@ public abstract class Drawable extends DrawableND {
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3 + depth, width + 6, height + 6 );
 	}
 
-	final  public static FormulaDimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
-
+	final  public static FormulaDimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor, boolean useCache) {
 		//if (useJLaTeXMath)
-			return drawEquationJLaTeXMath(app, geo, g2, x, y, text, font, serif, fgColor, bgColor);
+			return drawEquationJLaTeXMath(app, geo, g2, x, y, text, font, serif, fgColor, bgColor, useCache);
 		//else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
 	}
 
@@ -598,7 +597,7 @@ public abstract class Drawable extends DrawableND {
 	 * @param bgColor
 	 * @return dimension of rendered equation
 	 */
-	final  public static FormulaDimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
+	final public static FormulaDimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor, boolean useCache)
 	{
 		//TODO uncomment when \- works
 		//text=addPossibleBreaks(text);
@@ -653,7 +652,7 @@ public abstract class Drawable extends DrawableND {
 
 		// if we're exporting, we want to draw it full resolution
 		// if it's a \jlmDynamic text, we don't want to add it to the cache
-		if (exporting || text.indexOf("\\jlmDynamic") > -1) {
+		if (exporting || text.indexOf("\\jlmDynamic") > -1 || !useCache) {
 
 			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula;
@@ -728,7 +727,7 @@ public abstract class Drawable extends DrawableND {
 				width = im.getWidth(null);
 			}
 			if (height == -1) {
-				Application.debug("height not set");
+				Application.debug("height not set"+im.getHeight(null));
 				width = im.getHeight(null);
 			}
 
