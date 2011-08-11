@@ -125,6 +125,7 @@ public class TextPreviewPanel extends EuclidianView {
 		// create previewGeoIndependent 
 		if (previewGeoIndependent == null){
 			previewGeoIndependent = new GeoText(kernel.getConstruction());
+			previewGeoIndependent.setFontSize(0);
 			previewGeoIndependent.addView(this);
 			add(previewGeoIndependent);
 		}
