@@ -16,6 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,39 +53,42 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 
 	private GuiManager guiManager;
 
-	// fields for the symbol table popup 
+	// symbol table popup fields
 	private JPopupMenu popup;
 	private MyTextField thisField = this;
 	private SymbolTable symbolTable;
 	private int caretPosition; // restores caret position when popup is done 
-
-
-	// fields to handle custom drawing
-	private boolean rollOver = false;
-	private float pos = 0;
-
 	private ImageIcon icon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), false);
 	private ImageIcon rollOverIcon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), true);
-
 	private boolean showSymbolTableIcon = false;
-	private MyCaret myCaret;
+
+	// colored character rendering fields
+	boolean caretUpdated = true;
+	boolean caretShowing = true;
 
 
-	private int bracket1pos;
-	private int bracket2pos;
-	private Color bracketColor;
-
+	// border button fields
 	private BorderButton borderBtn;
-
 	private Border defaultBorder;
 
+	
+	
 
+	/************************************
+	 * Construct an instance of MyTextField without a fixed column width
+	 * @param guiManager
+	 */
 	public MyTextField(GuiManager guiManager) {
 		super();
 		this.guiManager = guiManager;
 		initField();
 	}
 
+	/************************************
+	 * Construct an instance of MyTextField with a fixed column width
+	 * @param guiManager
+	 * @param columns
+	 */
 	public MyTextField(GuiManager guiManager, int columns) {
 		super(columns);
 		this.guiManager = guiManager;
@@ -92,11 +96,13 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 	}
 
 
+	
+	/**
+	 * Initializes the field: registers listeners, creates and sets the BorderButton
+	 */
 	private void initField(){
-		myCaret = new MyCaret();
-		setCaret(myCaret);
-		addFocusListener(this);
 		setOpaque(true);
+		addFocusListener(this);
 		addCaretListener(this);
 
 		JTextField dummy = new JTextField();		
@@ -107,6 +113,10 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 	}
 
 
+	//====================================================
+	//     BorderButton
+	//====================================================
+	
 	public BorderButton getBorderButton() {
 		return borderBtn;
 	}
@@ -128,15 +138,18 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		return	borderBtn.isVisibleIcon(index);
 	}
 
-
 	/**
-	 * Repaints the field on caret changes. This is needed for the custom colored text drawing. 
+	 * Overrrides setBorder to prevent removal of the custom border
 	 */
-	public void caretUpdate(CaretEvent arg0) {
-		repaint();
+	public void setBorder(Border border){
+		//do nothing;
 	}
+	
 
-
+	//====================================================
+	//     Event Handlers, Listeners
+	//====================================================
+	
 	public void focusGained(FocusEvent e) {
 
 		//	TODO: can't remember why the caret position was reset like this,
@@ -161,18 +174,32 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
 	}
 
-	/**
-	 * Sets a flag to show the symbol table icon when the field is focused
-	 * @param showSymbolTableIcon
-	 */
-	public void setShowSymbolTableIcon(boolean showSymbolTableIcon) {
-		this.showSymbolTableIcon = showSymbolTableIcon;
+	
 
+	public void actionPerformed(ActionEvent e) {
 
+		String cmd = e.getActionCommand();
+		if(cmd.equals(0 + BorderButton.cmdSuffix)){
+
+			if(popup == null)
+				createPopup();
+			symbolTable.updateFonts();
+			caretPosition = thisField.getCaretPosition();
+			Dimension d  = popup.getPreferredSize();
+			popup.show(thisField, thisField.getX() + thisField.getWidth() - d.width, - d.height);
+		}
 	}
 
+	
+	/**
+	 * Caret update
+	 */
+	public void caretUpdate(CaretEvent e) {
+		caretUpdated = true;
+		repaint();
+	}
 
-
+	
 
 	/**
 	 * Inserts a string into the text at the current caret position
@@ -204,7 +231,7 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 
 		//setCaretPosition(pos + text.length());
 		final int newPos = pos + text.length();
-		
+
 
 		// make sure AutoComplete works
 		if (this instanceof AutoCompleteTextField) {
@@ -241,12 +268,21 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		popup.setBorder(BorderFactory.createLineBorder(SystemColor.controlShadow));
 	}
 
+	/**
+	 * Sets a flag to show the symbol table icon when the field is focused
+	 * @param showSymbolTableIcon
+	 */
+	public void setShowSymbolTableIcon(boolean showSymbolTableIcon) {
+		this.showSymbolTableIcon = showSymbolTableIcon;
+	}
+
+
 
 	/** 
 	 * Gets the pixel location of the caret. Used to locate the popup. 
 	 * */
 	private Point getCaretPixelPosition(){
-		int width = thisField.getSize().width;  
+
 		int position = thisField.getCaretPosition();  
 		Rectangle r;
 		try {
@@ -321,129 +357,68 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 	}
 
 
-	public void setBorder(Border border){
-		//do nothing;
-	}
-
-	public void actionPerformed(ActionEvent e) {
-
-		String cmd = e.getActionCommand();
-		if(cmd.equals(0 + BorderButton.cmdSuffix)){
-
-			if(popup == null)
-				createPopup();
-			symbolTable.updateFonts();
-			caretPosition = thisField.getCaretPosition();
-			Dimension d  = popup.getPreferredSize();
-			popup.show(thisField, thisField.getX() + thisField.getWidth() - d.width, - d.height);
-		}
-
-	}
 
 
+	private float pos = 0;
+	private int scrollOffset = 0;
+	private int width = 0, height = 0, textBottom, fontHeight;
+	private FontRenderContext frc;
+	private Font font;
+	private Graphics2D g2;
+	private Insets insets;
 
-	/**
-	 * Custom caret with damage area set to a thin width. 
-	 */
-	class MyCaret extends DefaultCaret {
-
-		public MyCaret(){
-			super();
-			this.setBlinkRate(500);
-		}
-		protected synchronized void damage(Rectangle r){
-			if (r == null) return;
-			x = r.x;
-			y = r.y;
-			width = 4;
-			height = r.height;
-			repaint();
-
-		}
-	}
-
-	/**
-	 * Draws a text string with colored caret brackets and an optional icon on
-	 * the far right of the field.
-	 */
 	public void paintComponent(Graphics gr) {
 
-		// draw the text
+		// moving caret doesn't work without this... why?
 		super.paintComponent(gr);
 
-		// prepare for custom drawing
-		Graphics2D g2 = (Graphics2D)gr;
-		g2.setBackground(getBackground());
+		// flash caret if there's been no caret movement since last repaint
+		if (caretUpdated) caretShowing = false;
+		else caretShowing = !caretShowing;
 
-		// overwrite the caret brackets with colored text 
-		if(thisField.hasFocus()){
-			this.updateCaretBrackets();
-			if(this.bracket1pos >=0)
-				drawColoredChar(g2,bracket1pos, bracketColor);
-			if(this.bracket2pos >=0)
-				drawColoredChar(g2,bracket2pos, bracketColor);
-		}
+		caretUpdated = false;
 
+		g2 = (Graphics2D)gr;
 
-	}
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+				RenderingHints.VALUE_ANTIALIAS_ON);
 
+		insets = getInsets();
 
-
-
-	/**
-	 * Overwrites a character at a given position in the text string and
-	 * draws it in the specified color
-	 */
-	private void drawColoredChar(Graphics2D g2, int position, Color c){
-
-		// set font variables
-		FontRenderContext frc = ((Graphics2D) g2).getFontRenderContext();
-		Font font = g2.getFont();
-		Rectangle r = null;
-		try {
-			r = thisField.modelToView(position);
-			if(r !=null){
-				String s = this.getDocument().getText(position,1);
-				if(s!=null){
-					TextLayout layout = new TextLayout(s, font, frc);
-					g2.setFont(font);
-					float advance = layout.getAdvance();
-
-					//erase the character by drawing it in white
-					g2.setColor(Color.white);
-					g2.setFont(font.deriveFont(Font.BOLD));
-					g2.drawString(s, r.x, r.y + g2.getFontMetrics().getMaxAscent());
-
-					// now draw it in the given color
-					g2.setFont(font);
-					g2.setColor(c);				
-					g2.drawString(s, r.x, r.y + g2.getFontMetrics().getMaxAscent());
-				}
-			}
-
-		} catch (BadLocationException e) {
-			//e.printStackTrace();
-		}
-
-	}
-
-
-
-
-
-	/**
-	 * Updates the caret brackets and their color.
-	 */
-	private void updateCaretBrackets(){
-
-		int caret = getCaretPosition();
 		String text = getText();
 
-		// if the caret is to the immediate left of a bracket character then this 
-		// bracket and its match (if it exists) will be colored
+		width = getWidth();
+		height = getHeight();
 
-		bracket1pos = -1;
-		bracket2pos = -1;
+		//g2.setClip(0, 0, w, h);
+
+		fontHeight = g2.getFontMetrics().getHeight();
+		textBottom = (height - fontHeight) / 2 + fontHeight - 4;
+		//int x = this.getInsets().left;
+
+		g2.setColor(Color.white);
+		g2.setClip(0, 0, width, height);
+		g2.fillRect(0, 0, width, height);
+
+		frc = ((Graphics2D) g2).getFontRenderContext();
+
+		scrollOffset = getScrollOffset();
+
+		font = g2.getFont();
+		int caret = getCaretPosition();
+
+
+		pos = 0;		
+
+		// adjust if right-aligned
+		if (getHorizontalAlignment() == JTextField.RIGHT) {
+			pos = Math.max(0,getHorizontalVisibility().getExtent() - getLength(text));
+		}
+
+		int bracket1pos = -1;
+		int bracket2pos = -1;
 
 		int searchDirection = 0;
 		int searchEnd = 0;
@@ -500,9 +475,8 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 					break;
 
 				}
+
 			}
-
-
 		//Lines containing  textMode by Zbynek Konecny, 2010-05-09
 		boolean textMode = false;
 
@@ -521,26 +495,62 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		}
 
 
-		// iterate through the text chars to get bracket color
+		int selStart = getSelectionStart();
+		int selEnd = getSelectionEnd();
 
+
+
+		float caretPos = -1;
+
+		if (caret == 0) caretPos = pos;
 		textMode = false;
 		for (int i = 0 ; i < text.length() ; i++) {
-
 			if(text.charAt(i) == '\"') textMode = !textMode;
-
 			if (i == bracket1pos || i == bracket2pos) {
-				if (bracket2pos > -1) 
-					bracketColor = Color.RED; // matched
-				else 
-					bracketColor = Color.GREEN.darker();; // unmatched
+				if (bracket2pos > -1) g2.setColor(Color.RED); // matched
+				else g2.setColor(Color.GREEN); // unmatched
 			}
+			else g2.setColor(Color.BLACK);
+			if(textMode || text.charAt(i) == '\"')g2.setColor(Color.GRAY);
+			drawText(text.charAt(i)+"", i >= selStart && i < selEnd);
 
-			if(textMode || text.charAt(i) == '\"')
-				bracketColor = Color.GRAY;   // text mode
+			if (i + 1 == caret) caretPos = pos;
 		}
+
+		if (caretShowing && caretPos > -1 && hasFocus()) {
+			g2.setColor(Color.black);
+			g2.fillRect((int)caretPos - scrollOffset + insets.left, textBottom - fontHeight + 4 , 1, fontHeight);
+			g2.setPaintMode();
+
+		}
+	}
+
+	private float getLength(String text) {
+		if (text == null || text.length() == 0) return 0;
+		TextLayout layout = new TextLayout(text, font, frc);
+		return layout.getAdvance();
 
 	}
 
+	private void drawText(String str, boolean selected) {
+		if ("".equals(str)) return;
+		TextLayout layout = new TextLayout(str, font, frc);
+		g2.setFont(font);
+		float advance = layout.getAdvance();
+
+		if (selected) {
+			g2.setColor(getSelectionColor());
+			//g2.fillRect((int)pos - scrollOffset + insets.left, insets.bottom + 2 , (int)advance, height - insets.bottom - insets.top - 4);
+			g2.fillRect((int)pos - scrollOffset + insets.left, textBottom - fontHeight + 4 , (int)advance, fontHeight);
+			g2.setColor(getSelectedTextColor());
+		} 
+		g2.setClip(0, 0, width, height);
+		if (pos - scrollOffset + advance + insets.left > 0 && pos - scrollOffset < width)
+			g2.drawString(str, pos - scrollOffset + insets.left, textBottom);
+		//g2.drawString(str, pos - scrollOffset + insets.left, height - insets.bottom - insets.top - 4);
+		pos += layout.getAdvance();
+
+	}
 
 
 
