@@ -1,6 +1,6 @@
 package geogebra.gui.util;
 
-import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;

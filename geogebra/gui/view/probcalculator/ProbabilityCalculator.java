@@ -2,9 +2,9 @@ package geogebra.gui.view.probcalculator;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoIntegralDefinite;

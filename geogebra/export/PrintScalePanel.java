@@ -2,7 +2,7 @@ package geogebra.export;
 
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.main.Application;
 
 import java.awt.FlowLayout;

@@ -4,8 +4,8 @@
 
 package geogebra.cas.view;
 
-import geogebra.gui.inputbar.AutoCompleteTextField;
-import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.gui.inputfield.AutoCompleteTextField;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;

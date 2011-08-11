@@ -16,9 +16,9 @@ the Free Software Foundation.
 import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.TitlePanel;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.view.algebra.AlgebraHelperBar;
 import geogebra.gui.view.algebra.InputPanel;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;

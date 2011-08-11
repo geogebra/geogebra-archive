@@ -11,7 +11,7 @@ import static java.awt.event.KeyEvent.VK_TAB;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.inputfield.AutoCompleteTextField;
 
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;

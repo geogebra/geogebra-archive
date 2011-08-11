@@ -1,7 +1,8 @@
-package geogebra.gui.virtualkeyboard;
+package geogebra.gui.inputfield;
 
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.GuiManager;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;

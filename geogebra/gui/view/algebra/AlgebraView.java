@@ -19,7 +19,7 @@ the Free Software Foundation.
 package geogebra.gui.view.algebra;
 
 import geogebra.euclidian.Drawable;
-import geogebra.gui.MathTextField;
+import geogebra.gui.inputfield.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;

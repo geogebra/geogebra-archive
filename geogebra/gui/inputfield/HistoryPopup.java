@@ -1,10 +1,9 @@
-package geogebra.gui.util;
+package geogebra.gui.inputfield;
 
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.awt.event.KeyEvent.VK_UP;
-import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;

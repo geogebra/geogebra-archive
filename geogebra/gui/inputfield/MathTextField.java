@@ -1,9 +1,9 @@
-package geogebra.gui;
+package geogebra.gui.inputfield;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.gui.GeoGebraKeys;
 import geogebra.main.Application;
 
 /*

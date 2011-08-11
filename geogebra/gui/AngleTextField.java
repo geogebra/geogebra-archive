@@ -1,6 +1,6 @@
 package geogebra.gui;
 
-import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.main.Application;
 import geogebra.gui.GuiManager;
 

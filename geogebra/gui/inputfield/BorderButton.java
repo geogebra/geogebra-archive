@@ -1,5 +1,7 @@
-package geogebra.gui.util;
+package geogebra.gui.inputfield;
 
+
+import geogebra.gui.util.GeoGebraIcon;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

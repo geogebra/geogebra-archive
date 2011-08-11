@@ -2,8 +2,8 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.Drawable;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.view.spreadsheet.statdialog.StatDialog;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;

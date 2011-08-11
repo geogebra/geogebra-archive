@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui.inputbar;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.inputfield.AutoCompleteTextField;
 import geogebra.gui.view.algebra.AlgebraInputDropTargetListener;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.CircularDefinitionException;

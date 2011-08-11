@@ -1,6 +1,6 @@
 package geogebra.kernel;
 
-import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.inputfield.AutoCompleteTextField;
 import geogebra.util.Util;
 
 import javax.swing.JTextField;

@@ -13,14 +13,14 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.inputfield.AutoCompleteTextField;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.FullWidthLayout;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.SpringUtilities;
 import geogebra.gui.view.algebra.InputPanel;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AbsoluteScreenLocateable;
 import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.AlgoSlope;

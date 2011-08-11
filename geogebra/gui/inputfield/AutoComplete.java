@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // Copyright (c) 1999-2001 Matt Welsh. 
 //------------------------------------------------------------------------------
-package geogebra.gui.inputbar;
+package geogebra.gui.inputfield;
 
 import geogebra.util.AutoCompleteDictionary;
 

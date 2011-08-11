@@ -7,7 +7,7 @@ import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
-import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.inputfield.AutoCompleteTextField;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;

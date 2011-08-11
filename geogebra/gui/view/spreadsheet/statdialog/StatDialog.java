@@ -1,10 +1,10 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
 
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;

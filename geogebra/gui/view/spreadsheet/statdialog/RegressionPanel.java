@@ -1,7 +1,7 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.GeoGebraIcon;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.arithmetic.ExpressionNode;

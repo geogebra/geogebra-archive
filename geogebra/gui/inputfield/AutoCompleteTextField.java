@@ -1,12 +1,8 @@
-package geogebra.gui.inputbar;
-import geogebra.gui.MathTextField;
+package geogebra.gui.inputfield;
 import geogebra.gui.autocompletion.CommandCompletionListCellRenderer;
 import geogebra.gui.autocompletion.CompletionsPopup;
-import geogebra.gui.util.BorderButton;
 import geogebra.gui.util.GeoGebraIcon;
-import geogebra.gui.util.HistoryPopup;
 import geogebra.gui.util.Korean;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
 import geogebra.kernel.commands.MyException;
@@ -28,7 +24,6 @@ import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.basic.BasicBorders.ButtonBorder;
 
 public class AutoCompleteTextField extends MathTextField implements 
 AutoComplete, KeyListener, GeoElementSelectionListener {

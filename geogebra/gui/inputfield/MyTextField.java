@@ -1,11 +1,10 @@
-package geogebra.gui.virtualkeyboard;
+package geogebra.gui.inputfield;
 
 import geogebra.gui.GuiManager;
 import geogebra.gui.VirtualKeyboardListener;
-import geogebra.gui.inputbar.AutoCompleteTextField;
-import geogebra.gui.util.BorderButton;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SymbolTable;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.main.Application;
 
 import java.awt.Color;

@@ -14,7 +14,7 @@ the Free Software Foundation.
 
 package geogebra.gui.virtualkeyboard;
 
-import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.inputfield.AutoCompleteTextField;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 

@@ -12,9 +12,9 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.view.spreadsheet.FileBrowserPanel;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 

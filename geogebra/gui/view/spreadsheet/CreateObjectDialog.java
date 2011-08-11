@@ -3,7 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.FormulaDimension;
 import geogebra.gui.InputDialog;
-import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.gui.inputfield.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
