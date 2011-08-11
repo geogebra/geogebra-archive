@@ -672,7 +672,7 @@ public class WorksheetExportDialog extends JDialog {
 		// left column
 		// include HTML5
 		cbIncludeHTML5 = new JCheckBox(app.getMenu("IncludeHTML5"));
-		filePanelWest.add(cbIncludeHTML5);
+		if (GeoGebra.IS_PRE_RELEASE) filePanelWest.add(cbIncludeHTML5);
 
 		// download jar files
 		cbOfflineJars = new JCheckBox(app.getPlain("IncludeJARFiles"));
