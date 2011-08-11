@@ -95,7 +95,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
 		if (setDefaults)
 			setConstructionDefaults(); // init visual settings
-		//setEuclidianVisible(isGeoAngle());
+		
+		setEuclidianVisible(isGeoAngle());
 		//setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 		//setAnimationStep(DEFAULT_SLIDER_INCREMENT);					
 	}
