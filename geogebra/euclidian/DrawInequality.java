@@ -107,7 +107,8 @@ public class DrawInequality extends Drawable {
 			updateStrokes(geo);
 		} else
 			gpAxis = null;
-
+		if(labelVisible)
+			addLabelOffset();
 	}
 
 	private void updateRecursive(IneqTree it) {
