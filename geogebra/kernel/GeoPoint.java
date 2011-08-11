@@ -189,7 +189,7 @@ GeoPointND, Animatable, Transformable  {
     		GeoVector v = (GeoVector) geo; 
     		setCoords(v.x, v.y, 1d);   
 	    	setMode(v.toStringMode); // complex etc
-    	}
+    	}else throw new IllegalArgumentException();
     } 
     
     
