@@ -3795,11 +3795,16 @@ public class MyXMLHandler implements DocHandler {
 
 			while (it.hasNext()) {
 				GeoExpPair pair = it.next();
+				//the setIntervalMin and setIntervalMax methods might turn ? into defined
+				//this is intentional, but when loading a file we must override it for 3.2 compatibility
+				boolean wasDefined = pair.geo.isDefined();
 				NumberValue num = algProc.evaluateToNumeric(pair.exp, false);
 				((GeoNumeric)pair.geo).setIntervalMin(num);
 				GeoExpPair pair2 = it.next();
 				NumberValue num2 = algProc.evaluateToNumeric(pair2.exp, false);
 				((GeoNumeric)pair.geo).setIntervalMax(num2);
+				if(!wasDefined)
+					pair.geo.setUndefined();
 			}
 		} catch (Exception e) {
 			minMaxList.clear();
@@ -4132,6 +4137,8 @@ public class MyXMLHandler implements DocHandler {
 						+ ", labels = " + attrs.size());
 				return false;
 			}
+			System.out.println("   cmdOutput.length = " + cmdOutput.length
+					+ ", labels = " + attrs.size());
 			// enforce setting of labels
 			// (important for invisible objects like intersection points)
 			it = values.iterator();
@@ -4143,7 +4150,7 @@ public class MyXMLHandler implements DocHandler {
 				//Construction.resolveLabelDependency
 				//if (cons.isDependentLabel(label)){
 					//Application.debug("dependent label : "+label);
-				//	break;
+					//break;
 				//}
 				//else
 				//	Application.debug("not dependent label : "+label);
