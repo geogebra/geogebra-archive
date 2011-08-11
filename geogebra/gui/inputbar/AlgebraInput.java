@@ -107,42 +107,24 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 		// create sub-panels				 		
 		JPanel labelPanel = new JPanel(new BorderLayout());
-		labelPanel.setBorder(BorderFactory.createEmptyBorder(0,10, 0, 2));
+		
 		labelPanel.add(inputLabel, BorderLayout.EAST);
 
 		JPanel eastPanel = new JPanel(new BorderLayout());
 		if (app.showCmdList()) {
 			eastPanel.add(btnHelpToggle, BorderLayout.WEST);
 		}
-
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.ipady = 0; 
-		c.insets = new Insets(2,0,2,0);
-		c.fill = GridBagConstraints.NONE;
-		c.weightx = 0;
-		c.anchor = GridBagConstraints.LINE_START;
-		this.add(labelPanel, c);
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 1.0;
-		c.anchor = GridBagConstraints.CENTER;
-		c.ipady = 2; // adds extra height to the input field
-		this.add(inputPanel,c);
-
-		// add toggle button panel
-		if (app.showCmdList()){
-			c.ipady = 0; 
-			c.fill = GridBagConstraints.NONE;
-			c.weightx = 0;
-			c.anchor = GridBagConstraints.LINE_END;
-			// add space on the right to set off the Mac's window grab icon
-			if(Application.MAC_OS)
-				c.insets = new Insets(2,0,2,15);
-			else
-				c.insets = new Insets(2,0,2,2);
-			this.add(eastPanel,c);
-		}
+		
+		labelPanel.setBorder(BorderFactory.createEmptyBorder(0,10, 0, 2));
+		eastPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
+		inputPanel.setBorder(BorderFactory.createEmptyBorder(3,0,3,0));
+		
+		setLayout(new BorderLayout(0,0));
+		add(labelPanel, BorderLayout.WEST);
+		add(inputPanel, BorderLayout.CENTER);
+		add(eastPanel, BorderLayout.EAST);
+		
+		
 
 		setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow));
 		setLabels();

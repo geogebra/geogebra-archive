@@ -22,9 +22,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 
@@ -37,7 +34,6 @@ import javax.swing.border.Border;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultCaret;
 
 /**
  * Extends JTextField to add these features:
@@ -108,7 +104,7 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		defaultBorder = dummy.getBorder();
 		borderBtn = new BorderButton(this);
 		borderBtn.setBorderButton(0, icon, this);
-		setCustomBorder();
+		setDefaultBorder();
 	}
 
 
@@ -120,28 +116,28 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		return borderBtn;
 	}
 
-	private void setCustomBorder(){		
+	private void setDefaultBorder(){		
 		super.setBorder(BorderFactory.createCompoundBorder(defaultBorder, borderBtn));
 	}
 
 	protected void setBorderButton(int index, ImageIcon icon, ActionListener al){
 		borderBtn.setBorderButton(index, icon, al);
-		setCustomBorder();
+		setDefaultBorder();
 	}
 
 	protected void setVisibleBorderButton(int index, boolean isVisible){
 		borderBtn.setVisibleIcon(index, isVisible);
-		setCustomBorder();
+		setDefaultBorder();
 	}
 	protected boolean isVisibleBorderButton(int index){
 		return	borderBtn.isVisibleIcon(index);
 	}
 
 	/**
-	 * Overrrides setBorder to prevent removal of the custom border
+	 * Overrrides setBorder to prevent removal of the BorderButton
 	 */
 	public void setBorder(Border border){
-		//do nothing;
+		super.setBorder(BorderFactory.createCompoundBorder(border, borderBtn));
 	}
 	
 
