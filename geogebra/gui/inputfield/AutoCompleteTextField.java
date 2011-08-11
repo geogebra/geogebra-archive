@@ -736,7 +736,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * @param str
 	 */          
 	public void addToHistory(String str) {
-
+		
+		// exit if the new string is the same as the last entered string
+		if(!history.isEmpty() && str.equals(history.get(history.size()-1))) 
+			return;
+		
 		history.add(str);
 		historyIndex = history.size();
 		if(historyPopup != null && !isBorderButtonVisible(1))
