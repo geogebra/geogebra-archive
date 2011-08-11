@@ -127,7 +127,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			}	
 		};
 		setBorderButton(1, GeoGebraIcon.createUpDownTriangleIcon(false, true), al);
-		this.setVisibleBorderButton(1, false);
+		this.setBorderButtonVisible(1, false);
 
 	}
 
@@ -736,10 +736,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * @param str
 	 */          
 	public void addToHistory(String str) {
+
 		history.add(str);
 		historyIndex = history.size();
-		if(historyPopup != null && !isVisibleBorderButton(1))
-			setVisibleBorderButton(1, true);
+		if(historyPopup != null && !isBorderButtonVisible(1))
+			setBorderButtonVisible(1, true);
 	}
 
 	/**

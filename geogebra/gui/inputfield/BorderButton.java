@@ -107,12 +107,12 @@ implements MouseListener, MouseMotionListener{
 		al[index] = listener;
 	}
 
-	public void setVisibleIcon(int index, boolean isVisible){
+	public void setIconVisible(int index, boolean isVisible){
 		if(index < 0 || index > maxIconCount) return;
 		isVisibleIcon[index] = isVisible;
 	}
 
-	public boolean isVisibleIcon(int index){
+	public boolean isIconVisible(int index){
 		return isVisibleIcon[index];
 	}
 	

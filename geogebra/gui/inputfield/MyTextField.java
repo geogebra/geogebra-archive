@@ -125,12 +125,12 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		setDefaultBorder();
 	}
 
-	protected void setVisibleBorderButton(int index, boolean isVisible){
-		borderBtn.setVisibleIcon(index, isVisible);
+	protected void setBorderButtonVisible(int index, boolean isVisible){
+		borderBtn.setIconVisible(index, isVisible);
 		setDefaultBorder();
 	}
-	protected boolean isVisibleBorderButton(int index){
-		return	borderBtn.isVisibleIcon(index);
+	protected boolean isBorderButtonVisible(int index){
+		return	borderBtn.isIconVisible(index);
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		//thisField.setCaretPosition(thisField.getCaretPosition());
 
 		if(showSymbolTableIcon && hasFocus())
-			borderBtn.setVisibleIcon(0, true);
+			borderBtn.setIconVisible(0, true);
 		thisField.repaint();
 
 		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
@@ -163,7 +163,7 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 	public void focusLost(FocusEvent e) {
 
 		if(showSymbolTableIcon)
-			borderBtn.setVisibleIcon(0, false);
+			borderBtn.setIconVisible(0, false);
 		thisField.repaint();
 
 		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
