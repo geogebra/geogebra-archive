@@ -110,7 +110,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 					e.printStackTrace();
 				}
 				
-				GeoFunction paramEquation = new GeoFunction(cons, p, substituteFunctionX, f);
+				GeoFunction paramEquation = new GeoFunction(cons, p, null, f);
 				
 				AlgoRoots algo = new AlgoRoots(cons, paramEquation, 
 						new GeoNumeric(cons, f.getMinParameter()),

@@ -61,6 +61,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	private Coords [] pointsOnCurve;
 	
 	public GeoLocus locus;
+	public Polynomial poly;
 	
 //	private Thread factorThread;
 
@@ -83,6 +84,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	
 	protected GeoImplicitPoly(Construction c, String label,Polynomial poly){
 		this(c);
+		this.poly = poly;
 		setLabel(label);
 		setCoeff(poly.getCoeff());
 	}

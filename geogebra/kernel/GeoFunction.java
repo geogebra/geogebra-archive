@@ -118,29 +118,90 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	static int FUNCTION_COMPOSITE_IPOLY_FUNCS = 3;
 	int geoFunctionType = FUNCTION_DIRECT;
 	
-	//Currectly, the composite function is only for internal use
+	//Currently, the composite function is only for internal use
 	//The expression is not correct but it is not to be shown anyway.
 	public GeoFunction(Construction c, GeoImplicitPoly iPoly, GeoFunction f, GeoFunction g) { // composite iPoly(f(x), g(x))
 		this(c);
 		this.iPoly = iPoly;
-	
+		geoFunctionType = FUNCTION_COMPOSITE_IPOLY_FUNCS;
+
 		substituteFunctions = new GeoFunction[2];
 		substituteFunctions[0] = f;
 		substituteFunctions[1] = g;
-		setInterval(Math.max(f.intervalMin, g.intervalMin), Math.min(f.intervalMax, g.intervalMax));
 		
-		fun = new Function(c.getKernel()) {
-		    public double evaluate(double x) {
-	
-		    	return GeoFunction.this.iPoly.evalPolyAt(
-		    			substituteFunctions[0].getFunction().evaluate(x),
-		    			substituteFunctions[1].getFunction().evaluate(x));
-		    	
-		    }
-		};
-		fun.setExpression(f.getFunctionExpression()); //TODO: set the correct expression
+		if (f==null && g!=null) {
+			setInterval(g.intervalMin, g.intervalMax);
+			
+			fun = new Function(c.getKernel()) {
+			    public double evaluate(double x) {
 		
-		geoFunctionType = FUNCTION_COMPOSITE_IPOLY_FUNCS;
+			    	return GeoFunction.this.iPoly.evalPolyAt(
+			    			x,
+			    			substituteFunctions[1].getFunction().evaluate(x));
+			    	
+			    }
+			};
+			
+				
+			/*	Iterator it = iPoly.poly.getVariables().iterator();
+				ExpressionNode iPolyEN = (ExpressionNode)iPoly.poly.deepCopy(kernel);
+				ExpressionNode gEN = (ExpressionNode)g.getFunctionExpression().deepCopy(kernel);
+				ExpressionValue varX = null;
+				ExpressionValue varY = null;
+				ExpressionValue vargX = null;
+				vargX = g.getFunction().getFunctionVariable();
+				if (it.hasNext())	varX = (ExpressionValue)it.next();
+				if (it.hasNext())	varY = (ExpressionValue)it.next();
+				
+				if (vargX!= null && varX !=null && varY !=null) {
+					
+					ExpressionNode dummyX = new ExpressionNode();
+					gEN = gEN.replaceAndWrap(g.getFunction().getFunctionVariable(), dummyX);
+					iPolyEN = iPolyEN.replaceAndWrap(varY, gEN);
+					gEN = gEN.replaceAndWrap(dummyX, vargX);
+					
+				}*/
+				
+			//}
+				
+			//g.getFunction().getFunctionVariable();
+			//TODO: set the correct expression
+			fun.setExpression(new ExpressionNode(kernel, new GeoNumeric(c, 0))); 
+			
+		} else if (f!=null && g==null) {
+			setInterval(f.intervalMin, f.intervalMax);
+			
+			fun = new Function(c.getKernel()) {
+			    public double evaluate(double x) {
+		
+			    	return GeoFunction.this.iPoly.evalPolyAt(
+			    			substituteFunctions[0].getFunction().evaluate(x),
+			    			x);
+			    	
+			    }
+			};
+			//TODO: set the correct expression
+			fun.setExpression(new ExpressionNode(kernel, new GeoNumeric(c, 0))); 
+			
+			
+		} else if (f!=null && g!=null) {
+
+			setInterval(Math.max(f.intervalMin, g.intervalMin), Math.min(f.intervalMax, g.intervalMax));
+			
+			fun = new Function(c.getKernel()) {
+			    public double evaluate(double x) {
+		
+			    	return GeoFunction.this.iPoly.evalPolyAt(
+			    			substituteFunctions[0].getFunction().evaluate(x),
+			    			substituteFunctions[1].getFunction().evaluate(x));
+			    	
+			    }
+			};
+
+			//TODO: set the correct expression
+			fun.setExpression(new ExpressionNode(kernel, new GeoNumeric(c, 0))); 
+			
+		} //else: error
 	}
 	
 	

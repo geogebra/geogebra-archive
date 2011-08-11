@@ -36,6 +36,8 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.Polynomial;
+import geogebra.kernel.arithmetic.Term;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
 
@@ -3124,6 +3126,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		coeff[0][2]=matrix[1];
 		coeff[2][1]=coeff[1][2]=0;
 		implicitPoly.setCoeff(coeff);
+		
 	}
 	
 	/**

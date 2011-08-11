@@ -28,6 +28,7 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.PolyFunction;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.parser.ParseException;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -76,7 +77,7 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 			GeoFunction substituteFunctionX = null;
 			
 			ker.setSilentMode(true);
-			try {
+			/*try {
 				substituteFunctionX = (GeoFunction) ker.getAlgebraProcessor().processValidExpression(
 					ker.getParser().parseGeoGebraExpression("x"))[0];
 			} catch (MyError e) {
@@ -88,16 +89,38 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			
 			GeoImplicitPoly iPoly = new GeoImplicitPoly(cons);
 			c.toGeoImplicitPoly(iPoly);
-			GeoFunction paramEquation = new GeoFunction(cons, iPoly, substituteFunctionX, h);
+			GeoFunction paramEquation = new GeoFunction(cons, iPoly, null, h);
 			
-			AlgoRoots algo = new AlgoRoots(cons, paramEquation, 
-					new GeoNumeric(cons, h.getMinParameter()),
-					new GeoNumeric(cons, h.getMaxParameter()));
+			double nroots = 0;
+			double res[] = new double[2];
+			if (c.getType()==GeoConicND.CONIC_CIRCLE || c.getType()==GeoConicND.CONIC_ELLIPSE) {
+				nroots = kernel.getEquationSolver().solveQuadratic(new double[]
+				          {- A[5] * A[5] + A[1] * A[2],
+						2 * (A[1] * A[4] - A[3] * A[5]),
+						 A[0] * A[1] - A[3] * A[3]}
+					,res);
+			}
 			
+			AlgoRoots algo = null;
+			if (nroots == 2) {
+				//assume res[0]>=res[1]
+				if (res[1]>res[0]) {
+					double temp = res[0];
+					res[0] = res[1];
+					res[1] = temp;
+				}
+				algo = new AlgoRoots(cons, paramEquation, 
+						new GeoNumeric(cons, Math.max(res[1]-Kernel.MIN_PRECISION,h.getMinParameter())),
+						new GeoNumeric(cons, Math.min(res[0]+Kernel.MIN_PRECISION,h.getMaxParameter())));
+			} else { 
+				algo = new AlgoRoots(cons, paramEquation, 
+						new GeoNumeric(cons, h.getMinParameter()),
+						new GeoNumeric(cons, h.getMaxParameter()));
+			}
 			GeoPoint[] points = algo.getRootPoints();
 			List<double[]> valPairs=new ArrayList<double[]>();
 			for (int i=0;i<points.length;i++){
