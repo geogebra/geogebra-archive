@@ -19,7 +19,6 @@ public abstract class CASgeneric {
 	public CASgeneric(CASparser casParser, String translationResourcePath) {
 		this.casParser = casParser;
 		this.translationResourcePath = translationResourcePath;
-		setSignificantFiguresForNumeric(5);
 	}
 
 	/**
