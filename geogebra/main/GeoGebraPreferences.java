@@ -23,7 +23,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.prefs.Preferences;
+
+import com.sun.opengl.util.FileUtil;
 
 /**
  * Stores user settings and options as preferences.
@@ -432,22 +435,18 @@ public class GeoGebraPreferences {
      * @return Default preferences
      */
     private String getDefaultPreferences() {
-    	StringBuffer fileData = new StringBuffer(1000);
-      BufferedReader reader;
-			try {
-				reader = new BufferedReader(new FileReader(getClass().getResource("main/default-preferences.xml").getFile()));
-	      char[] buf = new char[1024];
-	      int numRead=0;
-	      while((numRead=reader.read(buf)) != -1){
-	          String readData = String.valueOf(buf, 0, numRead);
-	          fileData.append(readData);
-	          buf = new char[1024];
-	      }
-	      reader.close();
-	      return fileData.toString();
-      } catch (Exception e) {
-				e.printStackTrace();
-				return "";
-			}
+    	StringBuilder text = new StringBuilder();
+      String NL = System.getProperty("line.separator");
+      Scanner scanner = new Scanner(this.getClass().getResourceAsStream("/geogebra/main/default-preferences.xml"), "UTF-8");
+      try {
+        while (scanner.hasNextLine()){
+          text.append(scanner.nextLine() + NL);
+        }
+      }
+      finally{
+        scanner.close();
+      }
+      
+      return text.toString();
     }
 }

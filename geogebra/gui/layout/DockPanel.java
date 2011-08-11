@@ -585,7 +585,8 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		// make panels visible if necessary
 		if(isVisible()) {
 			if(hasStyleBar) {
-				styleBarPanel.setVisible((isAlone || showStyleBar) && dockManager.getLayout().isStyleBarAllowed());
+				styleBarPanel.setVisible((isAlone || showStyleBar) && app.getSettings().getLayout().isAllowingStyleBar());
+				toggleStyleBarButton.setVisible(app.getSettings().getLayout().isAllowingStyleBar());
 			} 
 			
 			// display toolbar panel if the dock panel is open in a frame
@@ -596,7 +597,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		
 		// if this is the last dock panel don't display the title bar, otherwise
 		// take the user's configuration into consideration
-		titlePanel.setVisible(!isAlone && dockManager.getLayout().isTitleBarVisible());
+		titlePanel.setVisible(!isAlone && !app.isApplet() && app.getSettings().getLayout().showTitleBar());
 		
 		// update the title bar if necessary
 		if(titlePanel.isVisible()) {

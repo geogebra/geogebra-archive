@@ -9,6 +9,9 @@ import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
+import geogebra.main.settings.AbstractSettings;
+import geogebra.main.settings.LayoutSettings;
+import geogebra.main.settings.SettingListener;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -36,7 +39,7 @@ import javax.swing.SwingUtilities;
  * 
  * @author Florian Sonner
  */
-public class Layout {	
+public class Layout implements SettingListener {	
 	private boolean isInitialized = false;
 	
 	private Application app;
@@ -44,19 +47,9 @@ public class Layout {
 	private ArrayList<Perspective> perspectives;
 	
 	/**
-	 * If the title bar should be displayed.
+	 * Layout settings.
 	 */
-	private boolean titleBarVisible = true;
-	
-	/**
-	 * Ignore the perspectives stored in the document?
-	 */
-	private boolean ignoreDocument = false; 
-	
-	/**
-	 * Are style bars allowed to be visible?
-	 */
-	private boolean allowStyleBar = true;
+	private LayoutSettings settings;
 	
 	/**
 	 * An array with the default perspectives.
@@ -84,6 +77,8 @@ public class Layout {
 		isInitialized = true;
 		
 		this.app = app;
+		this.settings = app.getSettings().getLayout();
+		this.settings.addListener(this);
 		this.dockManager = new DockManager(this);
 	}
 	
@@ -407,9 +402,11 @@ public class Layout {
 		 */
 		if(asPreference) {
 			sb.append("\t<settings ignoreDocument=\"");
-			sb.append(isIgnoringDocument());
+			sb.append(settings.isIgnoringDocumentLayout());
 			sb.append("\" showTitleBar=\"");
-			sb.append(isTitleBarVisible());
+			sb.append(settings.showTitleBar());
+			sb.append("\" allowStyleBar=\"");
+			sb.append(settings.isAllowingStyleBar());
 			sb.append("\" />\n");
 		}
 
@@ -465,50 +462,12 @@ public class Layout {
 		// if the view wasn't found at all we return false as well
 		return foundView;
 	}
-
+	
 	/**
-	 * @param titleBarVisible
+	 * Layout settings changed.
 	 */
-	public void setTitlebarVisible(boolean titleBarVisible) {
-		if(this.titleBarVisible != titleBarVisible)
-			return;
-		
-		this.titleBarVisible = titleBarVisible;
+	public void settingsChanged(AbstractSettings abstractSettings) {
 		dockManager.updatePanels();
-	}
-
-	/**
-	 * @return The visibility of the title bar.
-	 */
-	public boolean isTitleBarVisible() {
-		return !app.isApplet() && titleBarVisible;
-	}
-	
-	/**
-	 * @param allowStyleBar If style bars are allowed
-	 */
-	public void setStyleBarAllowed(boolean allowStyleBar) {
-		if(this.allowStyleBar == allowStyleBar) {
-			return;
-		}
-		
-		this.allowStyleBar = allowStyleBar;
-		getDockManager().updatePanels();
-	}
-
-	/**
-	 * @return If style bars are allowed (to be visible)
-	 */
-	public boolean isStyleBarAllowed() {
-		return allowStyleBar;
-	}
-	
-	public boolean isIgnoringDocument() {
-		return ignoreDocument;
-	}
-	
-	public void setIgnoreDocument(boolean ignore) {
-		ignoreDocument = ignore;
 	}
 	
 	/**

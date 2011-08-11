@@ -7,6 +7,7 @@ import geogebra.gui.util.FullWidthLayout;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.settings.Settings;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -46,6 +47,11 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 * Application object.
 	 */
 	private Application app;
+	
+	/**
+	 * Settings for all kind of application components.
+	 */
+	private Settings settings;
 
 	/** */
 	private JPanel virtualKeyboardPanel, guiFontsizePanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel, angleUnitPanel, continuityPanel, pointStylePanel, checkboxSizePanel, rightAnglePanel, coordinatesPanel;
@@ -57,7 +63,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout, cbGUIFont;
 	
 	/**	 */
-	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts, cbReverseMouseWheel;
+	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbAllowStyleBar, cbEnableScripting, cbUseJavaFonts, cbReverseMouseWheel;
 	
 	/** */
 	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian, continuityRadioOn, continuityRadioOff, pointStyleRadio0, pointStyleRadio1, pointStyleRadio2, pointStyleRadio3, pointStyleRadio4, pointStyleRadio6, pointStyleRadio7, checkboxSizeRadioRegular, checkboxSizeRadioLarge, rightAngleRadio1, rightAngleRadio2, rightAngleRadio3, rightAngleRadio4, coordinatesRadio1, coordinatesRadio2, coordinatesRadio3;
@@ -99,6 +105,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		super(new BorderLayout());
 		
 		this.app = app;
+		this.settings = app.getSettings();
 		
 		initGUI();
 		updateGUI();
@@ -274,6 +281,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbIgnoreDocumentLayout = new JCheckBox();
 		cbIgnoreDocumentLayout.addActionListener(this);
 		perspectivesPanel.add(cbIgnoreDocumentLayout);
+
+		cbAllowStyleBar = new JCheckBox();
+		cbAllowStyleBar.addActionListener(this);
+		perspectivesPanel.add(cbAllowStyleBar);
 		
 		managePerspectivesButton = new JButton();
 		managePerspectivesButton.addActionListener(this);
@@ -526,9 +537,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		coordinatesRadio2.setSelected(app.getKernel().getCoordStyle() == 1);
 		coordinatesRadio3.setSelected(app.getKernel().getCoordStyle() == 2);
 
-		Layout layout = app.getGuiManager().getLayout();
-		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
-		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
+		cbIgnoreDocumentLayout.setSelected(settings.getLayout().isIgnoringDocumentLayout());
+		cbShowTitleBar.setSelected(settings.getLayout().showTitleBar());
+		cbAllowStyleBar.setSelected(settings.getLayout().isAllowingStyleBar());
 		
 		tfKeyboardWidth.setText(Integer.toString(app.getKeyboardWidth()));
 		tfKeyboardHeight.setText(Integer.toString(app.getKeyboardHeight()));
@@ -597,9 +608,11 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		} else if(source == cbUseLocalLabels) {
 			app.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
 		} else if(source == cbShowTitleBar) {
-			app.getGuiManager().getLayout().setTitlebarVisible(cbShowTitleBar.isSelected());
+			settings.getLayout().setShowTitleBar(cbShowTitleBar.isSelected());
 		} else if(source == cbIgnoreDocumentLayout) {
-			app.getGuiManager().getLayout().setIgnoreDocument(cbIgnoreDocumentLayout.isSelected());
+			settings.getLayout().setIgnoreDocumentLayout(cbIgnoreDocumentLayout.isSelected());
+		} else if(source == cbAllowStyleBar) {
+			settings.getLayout().setAllowStyleBar(cbAllowStyleBar.isSelected());
 		} else if(source == managePerspectivesButton) {
 			app.getGuiManager().getLayout().showManageDialog();
 		} else if (source == angleUnitRadioDegree) {
@@ -776,6 +789,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		perspectivesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Perspectives")));
 		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
 		cbShowTitleBar.setText(app.getPlain("ShowTitleBar"));
+		cbAllowStyleBar.setText(app.getPlain("AllowStyleBar"));
 		managePerspectivesButton.setText(app.getMenu("ManagePerspectives"));
 		
 		miscPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Miscellaneous")));

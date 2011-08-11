@@ -204,12 +204,7 @@ public class GuiManager {
 	 *  - Active the glass pane if the application is changing from applet to
 	 *    frame mode.
 	 */
-	public void updateLayout() {
-		// show / hide title bar if necessary
-		// TODO we need to check the user preferences as well for frame mode
-		// 		as the application may have no title bars at all
-		layout.setTitlebarVisible(!app.isApplet());
-		
+	public void updateLayout() {		
 		// update the glass pane (add it for frame, remove it for applet)
 		layout.getDockManager().updateGlassPane();
 		
@@ -2525,7 +2520,7 @@ public class GuiManager {
 	}
 		
 	private void updateGUIafterLoadFile(boolean success, boolean isMacroFile) {
-		if(success && !isMacroFile && !layout.isIgnoringDocument()) {
+		if(success && !isMacroFile && !app.getSettings().getLayout().isIgnoringDocumentLayout()) {
 			getLayout().setPerspectives(app.getTmpPerspectives());
 			SwingUtilities.updateComponentTreeUI(getLayout().getRootComponent());
 			

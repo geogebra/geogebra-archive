@@ -468,8 +468,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 		if (customToolBar != null && customToolBar.length() > 0 && showToolBar)
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 		app.setShowResetIcon(showResetIcon);
-		app.setStyleBarAllowed(allowStyleBar);
 		app.setMaxIconSize(maxIconSize);
+		
+		app.getSettings().getLayout().setAllowStyleBar(allowStyleBar);
 
 		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);		
 		ev = app.getEuclidianView();		

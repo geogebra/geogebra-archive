@@ -286,11 +286,15 @@ public class MyXMLHandler implements DocHandler {
 
 	final public void startDocument() throws SAXException {
 		reset(true);
+		
+		app.getSettings().beginBatch();
 	}
 
 	final public void endDocument() throws SAXException {				
 		if (mode == MODE_INVALID)
 			throw new SAXException(app.getPlain("XMLTagANotFound","<geogebra>"));
+		
+		app.getSettings().endBatch();
 	}
 
 	final public void startElement(String eName, LinkedHashMap<String, String> attrs)
@@ -837,12 +841,6 @@ public class MyXMLHandler implements DocHandler {
 		boolean ok = true;
 
 		switch (eName.charAt(0)) {
-		/*
-		case 'u':
-		if (eName.equals("useLaTeX")) {
-			ok = handleAlgebraLaTeX(app.getGuiManager().getAlgebraView(), attrs);
-			break;
-		}*/
 		default:
 			System.err.println("unknown tag in <algebraView>: " + eName);
 		}
@@ -1703,12 +1701,16 @@ public class MyXMLHandler implements DocHandler {
 	 */
 	private boolean handleGuiSettings(Application app, LinkedHashMap<String, String> attrs) {
 		try {
-			// TODO this should be ignored for minimal applets
 			boolean ignoreDocument = !((String)attrs.get("ignoreDocument")).equals("false");
-			app.getGuiManager().getLayout().setIgnoreDocument(ignoreDocument);
+			app.getSettings().getLayout().setIgnoreDocumentLayout(ignoreDocument);
 			
 			boolean showTitleBar = !((String)attrs.get("showTitleBar")).equals("false");
-			app.getGuiManager().getLayout().setTitlebarVisible(showTitleBar);
+			app.getSettings().getLayout().setShowTitleBar(showTitleBar);
+			
+			if(attrs.containsKey("allowStyleBar")) {
+				boolean allowStyleBar = !((String)attrs.get("allowStyleBar")).equals("false"); 
+				app.getSettings().getLayout().setAllowStyleBar(allowStyleBar);
+			} 
 			
 			return true;
 		} catch(Exception e) {

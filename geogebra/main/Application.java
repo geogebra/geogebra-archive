@@ -43,6 +43,7 @@ import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.main.settings.Settings;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.ScriptManager;
@@ -344,6 +345,7 @@ public class Application implements KeyEventDispatcher {
 	private FontManager fontManager;
 	
 	protected GuiManager guiManager;
+	protected Settings settings;
 
 	private Component mainComp;
 	private boolean isApplet = false;
@@ -502,6 +504,9 @@ public class Application implements KeyEventDispatcher {
 		// init kernel
 		initKernel();
 		kernel.setPrintDecimals(Kernel.STANDARD_PRINT_DECIMALS);
+		
+		// init settings
+		settings = new Settings();
 
 		// init euclidian view
 		initEuclidianViews();
@@ -674,6 +679,13 @@ public class Application implements KeyEventDispatcher {
 	 */
 	final public synchronized GuiManager getGuiManager() {
 		return guiManager;
+	}
+	
+	/**
+	 * @return
+	 */
+	final public Settings getSettings() {
+		return settings;
 	}
 
 	final public JApplet getJApplet() {
@@ -1106,22 +1118,6 @@ public class Application implements KeyEventDispatcher {
 			getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
 		}
 		
-		/*
-		String cas = args.getStringValue("CAS");
-		if (cas.toLowerCase(Locale.US).equals("maxima")) {
-			setDefaultCAS(CAS_MAXIMA);
-			
-			if(args.containsArg("maximaPath")) {
-				setMaximaPath(args.getStringValue("maximaPath"));
-			}
-		}
-		else if (cas.toLowerCase(Locale.US).equals("mpreduce")) {
-			setDefaultCAS(CAS_MPREDUCE);
-		}
-		else if (cas.toLowerCase(Locale.US).equals("mathpiper")) {
-			setDefaultCAS(CAS_MATHPIPER);
-		}*/
-		
 		String fontSize = args.getStringValue("fontSize");
 		if(fontSize.length() > 0) {
 			setFontSize(Integer.parseInt(fontSize));
@@ -1284,12 +1280,6 @@ public class Application implements KeyEventDispatcher {
 		if (flag != showResetIcon) {
 			showResetIcon = flag;
 			euclidianView.updateBackground();
-		}
-	}
-	
-	public void setStyleBarAllowed(boolean flag) {
-		if(hasGui) {
-			getGuiManager().getLayout().setStyleBarAllowed(flag);
 		}
 	}
 	

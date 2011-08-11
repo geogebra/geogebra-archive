@@ -1,0 +1,98 @@
+package geogebra.main.settings;
+
+import java.util.LinkedList;
+
+/**
+ * Abstract base class for all setting objects. Provides functionality for
+ * setting listeners and batching.
+ * 
+ * @author Florian Sonner
+ * @see "http://www.geogebra.org/trac/wiki/GuiRefactoring"
+ */
+public abstract class AbstractSettings {
+	/**
+	 * Running in batch mode: Only at the end of the batch mode listeners
+	 * are notified if settings changed.
+	 */
+	private boolean isBatch;
+	
+	/**
+	 * Remember is settings changed. Used in batch mode.
+	 */
+	private boolean settingsChanged;
+	
+	/**
+	 * List with listeners.
+	 */
+	private LinkedList<SettingListener> listeners;
+	
+	public AbstractSettings() {
+		listeners = new LinkedList<SettingListener>();
+	}
+	
+	/**
+	 * Notify listeners about changed settings. This method has to be called by
+	 * implementors of subclasses if a setting's value has been changed.
+	 */
+	protected final void settingChanged() {
+		// batch mode: just set flag to inform listeners at the end
+		if(isBatch) {
+			settingsChanged = true;
+		}
+		
+		// otherwise: inform listeners immediately
+		else {
+			for(SettingListener listener : listeners) {
+				listener.settingsChanged(this);
+			}
+		}
+	}
+	
+	/**
+	 * Begin batch mode.
+	 */
+	public final void beginBatch() {
+		if(isBatch) {
+			throw new IllegalStateException("Use endBatch() to close the last batch first.");
+		}
+		
+		isBatch = true;
+		settingsChanged = false;
+	}
+	
+	/**
+	 * End batch mode.
+	 */
+	public final void endBatch() {
+		if(!isBatch) {
+			throw new IllegalStateException("beginBatch() has to be called before endBatch().");
+		}
+		
+		// notify listeners
+		if(settingsChanged) {
+			for(SettingListener listener : listeners) {
+				listener.settingsChanged(this);
+			}
+		}
+		
+		isBatch = false;
+	}
+	
+	/**
+	 * Add a new setting listener to be informed about setting changes.
+	 * 
+	 * @param listener
+	 */
+	public final void addListener(SettingListener listener) {
+		listeners.add(listener);
+	}
+	
+	/**
+	 * Remove a setting listener. 
+	 * 
+	 * @param listener
+	 */
+	public final void removeListener(SettingListener listener) {
+		listeners.remove(listener);
+	}
+}
