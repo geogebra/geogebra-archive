@@ -29,9 +29,9 @@ public class MySpecialDouble extends MyDouble {
 	
 	protected String strToString;
 	private boolean keepOriginalString;
-//	private int precision;
 	private boolean isLetterConstant; // for Pi, Euler, or Degree constant
-
+	private boolean scientificNotation = false;
+	
 	private static MySpecialDouble eulerConstant;
 	
 	public MySpecialDouble(Kernel kernel, double val, String strToString) {
@@ -41,17 +41,21 @@ public class MySpecialDouble extends MyDouble {
 		char firstChar = strToString.charAt(0);
 		isLetterConstant = Character.isLetter(firstChar) || firstChar == Unicode.degreeChar;
 		
-		keepOriginalString = kernel.isKeepCasNumbers();
+		keepOriginalString = kernel.isKeepCasNumbers() 
+			|| strToString.length() > 16
+			|| Double.isInfinite(val);
+			
 		if (!isLetterConstant && keepOriginalString) {
 			// from GeoGebraCAS we get a String using 15 significant figures
 			// like 3.14160000000000
 			// let's remove trailing zeros
 			BigDecimal bd = new BigDecimal(strToString);
 			bd = bd.stripTrailingZeros();
-			strToString = bd.toString();
+			strToString = bd.toString();			
 		}
 		
 		this.strToString = strToString;
+		scientificNotation = strToString.indexOf("E") > 0;
 	}
 	
 	public void setKeepOriginalString() {
@@ -72,12 +76,17 @@ public class MySpecialDouble extends MyDouble {
 	
 	public String toString() {
 		if (!isLetterConstant) {
-			if (keepOriginalString || strToString.length() > 16)
-				// keep original string
-				return strToString;		
-			else 
+			if (keepOriginalString) {
+				if (scientificNotation)
+					// change 5.1E-20 to 5.1*10^(-20) or 5.1 \cdot 10^{-20}
+					return kernel.convertScientificNotation(strToString);
+				else
+					// keep original string
+					return strToString;		
+			} else { 
 				// format double value using kernel settings
-				return super.toString();	
+				return super.toString();
+			}
 		}
 		
 		// letter constants for pi, e, or degree character

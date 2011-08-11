@@ -1723,7 +1723,7 @@ ExpressionValue myDouble():
    )
   {
     	if (ExternalCASParsing || GeoGebraCASParsing) {
-    		// preserve string from MathPiper: it may have higher
+    		// preserve string from CAS: it may have higher
     		// precision than double
     	   	return new MySpecialDouble(kernel, val, c.image);  
     	}

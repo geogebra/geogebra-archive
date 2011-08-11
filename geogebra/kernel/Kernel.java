@@ -8350,21 +8350,7 @@ public class Kernel {
 					else {						
 						// convert scientific notation 1.0E-20 to 1*10^(-20) 
 						String scientificStr = Double.toString(x);
-						StringBuilder sb = new StringBuilder(scientificStr.length() * 2);
-						boolean Efound = false;
-						for (int i=0; i < scientificStr.length(); i++) {
-							char ch = scientificStr.charAt(i);
-							if (ch == 'E') {
-								sb.append("*10^(");
-								Efound = true;
-							} else {
-								sb.append(ch);
-							}
-						}
-						if (Efound)
-							sb.append(")");	
-						
-						return sb.toString();
+						return convertScientificNotation(scientificStr);
 					}	
 				}
 								
@@ -8399,6 +8385,35 @@ public class Kernel {
 				else			
 					return formatNF(x);
 			}								
+	}
+	
+	/**
+	 * Converts 5.1E-20 to 5.1*10^(-20) or 5.1 \cdot 10^{-20} depending on current print form
+	 */
+	public String convertScientificNotation(String scientificStr) { 
+		StringBuilder sb = new StringBuilder(scientificStr.length() * 2);
+		boolean Efound = false;
+		for (int i=0; i < scientificStr.length(); i++) {
+			char ch = scientificStr.charAt(i);
+			if (ch == 'E') {
+				if (casPrintForm == ExpressionNode.STRING_TYPE_LATEX)
+					sb.append(" \\cdot 10^{");
+				else
+					sb.append("*10^(");
+				Efound = true;
+			} 
+			else if (ch != '+'){
+				sb.append(ch);
+			}
+		}
+		if (Efound) {
+			if (casPrintForm == ExpressionNode.STRING_TYPE_LATEX)
+				sb.append("}");
+			else
+				sb.append(")");
+		}				
+		
+		return sb.toString();
 	}
 	
 	
