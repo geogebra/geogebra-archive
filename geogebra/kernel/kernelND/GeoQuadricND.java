@@ -78,6 +78,12 @@ public abstract class GeoQuadricND extends GeoElement {
 	 */
 	public GeoQuadricND(Construction c, int dimension) {
 		super(c);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+
 		this.dimension = dimension;
 		matrixDim = (dimension+1)*(dimension+2)/2;
 		matrix = new double[matrixDim];

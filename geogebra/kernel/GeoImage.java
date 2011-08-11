@@ -57,6 +57,11 @@ implements Locateable, AbsoluteScreenLocateable,
 	 */
 	public GeoImage(Construction c) {
 		super(c);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
 
 		setAlphaValue(1f);
 		//setAlgebraVisible(false); // don't show in algebra view		

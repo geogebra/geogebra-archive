@@ -534,7 +534,10 @@ public abstract class GeoElement
 	public GeoElement(Construction c) {
 		super(c);
 		// this.geoID = geoCounter++;
-		setConstructionDefaults(); // init visual settings
+		
+		// moved to subclasses, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		//setConstructionDefaults(); // init visual settings
 
 		// new elements become breakpoints if only breakpoints are shown
 		//isConsProtBreakpoint = cons.showOnlyBreakpoints();

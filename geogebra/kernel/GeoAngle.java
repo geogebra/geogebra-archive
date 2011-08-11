@@ -84,8 +84,15 @@ public final class GeoAngle extends GeoNumeric {
 	 */
 	public GeoAngle(Construction c) {
 		super(c);
-		setAlphaValue(ConstructionDefaults.DEFAULT_ANGLE_ALPHA);
-		setLabelMode(GeoElement.LABEL_NAME);
+		
+		//setAlphaValue(ConstructionDefaults.DEFAULT_ANGLE_ALPHA);
+		//setLabelMode(GeoElement.LABEL_NAME);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+
 		setEuclidianVisible(false);
 	}
 

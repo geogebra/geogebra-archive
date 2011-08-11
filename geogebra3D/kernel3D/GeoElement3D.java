@@ -158,8 +158,7 @@ public abstract class GeoElement3D
 	/** Creates new GeoElement for given construction 
 	 * @param c construction*/
 	public GeoElement3D(Construction c) {
-		super(c);
-		
+		super(c);		
 	}
 
 	

@@ -34,17 +34,24 @@ implements Traceable {
     public double x, y, z = Double.NaN;
 	public boolean trace, spreadsheetTrace;		 
     
-    public GeoVec3D(Construction c) {super(c);}  
+    public GeoVec3D(Construction c) {
+    	super(c);
+	
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+    }  
     
     /** Creates new GeoVec3D with coordinates (x,y,z) and label */
     public GeoVec3D(Construction c, double x, double y, double z) {    	
-    	super(c);    	
+    	this(c);    	
        setCoords(x, y, z);
     }                 
     
     /** Copy constructor */
     public GeoVec3D(Construction c, GeoVec3D v) {   
-    	super(c); 	
+    	this(c); 	
         set(v);
     }
     

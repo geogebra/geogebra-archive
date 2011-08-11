@@ -77,6 +77,12 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 */
 	public GeoFunction(Construction c) {
 		super(c);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+
 	}
 
 	/**
@@ -96,7 +102,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 	
 	public GeoFunction(Construction c, Function f) {
-		super(c);
+		this(c);
 		fun = f;				
 		fun.initFunction();
 		if(fun.isBooleanFunction()){
@@ -159,7 +165,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	/** copy constructor 
 	 * @param f Function to be copied */
 	public GeoFunction(GeoFunction f) {
-		super(f.cons);
+		this(f.cons);
 		set(f);
 	}
 

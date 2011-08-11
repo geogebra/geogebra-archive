@@ -67,6 +67,12 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 	private GeoList(Construction c, int size) {
 		super(c);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+
 		geoList = new ArrayList<GeoElement>(size);
 		cacheList = new ArrayList<GeoElement>(size);
 		setEuclidianVisible(false);

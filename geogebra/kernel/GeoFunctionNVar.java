@@ -54,6 +54,11 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 	 */
 	public GeoFunctionNVar(Construction c) {
 		super(c);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
 	}
 	
 	/**
@@ -92,7 +97,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 	/** copy constructor 
 	 * @param f source function */
 	public GeoFunctionNVar(GeoFunctionNVar f) {
-		super(f.cons);
+		this(f.cons);
 		set(f);
 	}
 

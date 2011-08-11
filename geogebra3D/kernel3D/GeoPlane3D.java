@@ -49,6 +49,11 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	public GeoPlane3D(Construction c){
 		super(c);
 		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+		
 		coordsys = new CoordSys(2);
 
 		this.xmin = -2.5; this.xmax = 2.5;

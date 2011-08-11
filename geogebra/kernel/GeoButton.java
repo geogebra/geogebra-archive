@@ -33,7 +33,13 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, T
 	private int fontSize = 0;
 	
 	public GeoButton(Construction c) {
-		super(c);			
+		super(c);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+
 		setEuclidianVisible(true);
 		setAuxiliaryObject(true);
 	}

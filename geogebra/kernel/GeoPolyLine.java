@@ -43,8 +43,7 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	 * @param points vertices 
 	 */
 	public GeoPolyLine(Construction cons, String label, GeoPointND[] points) {
-		super(cons);
-		this.points = points;
+		this(cons, points);
 		setLabel(label);
 	}
 	
@@ -56,6 +55,12 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	public GeoPolyLine(Construction cons, GeoPointND[] points) {
 		super(cons);
 		this.points = points;
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		setConstructionDefaults(); // init visual settings
+
 	}
 
 

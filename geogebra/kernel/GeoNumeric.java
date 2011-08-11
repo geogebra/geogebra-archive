@@ -84,9 +84,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @param c Construction 
 	 */
 	public GeoNumeric(Construction c) {
+		this(c, true);
+	}
+
+	public GeoNumeric(Construction c, boolean setDefaults) {
 		super(c);
-		setEuclidianVisible(isGeoAngle());
-		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
+		
+		// moved from GeoElement's constructor
+		// must be called from the subclass, see
+		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
+		if (setDefaults)
+			setConstructionDefaults(); // init visual settings
+		//setEuclidianVisible(isGeoAngle());
+		//setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 		//setAnimationStep(DEFAULT_SLIDER_INCREMENT);					
 	}
 
