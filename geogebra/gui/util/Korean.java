@@ -113,7 +113,7 @@ public class Korean {
 		if (sb == null) sb = new StringBuilder();
 		else sb.setLength(0);
 		
-		char c;
+		char c, c2;
 		
 		for (int i = 0 ; i < str.length() - 1 ; i++) {
 			int offset = 1;
@@ -124,15 +124,129 @@ public class Korean {
 			case '\u1166' :
 				offset++;
 				// fall through
-			case '\u1100' : // these character are "doubled" by adding 1 to their Unicode value
+			//case '\u1100' : // these character are "doubled" by adding 1 to their Unicode value
 			case '\u1103' : 
-			case '\u1107' :
+			//case '\u1107' :
 			case '\u1109' :
 			case '\u110c' :
 			case '\u11a8' :
 			case '\u11ba' :
 				if (str.charAt(i+1) == c) {
 					sb.append((char)(c+offset)); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u1169' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u1161') {
+					sb.append('\u116a'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1162') {
+					sb.append('\u116b'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1175') {
+					sb.append('\u116c'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1169') {
+					sb.append('\u116d'); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u1105' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u1100') {
+					sb.append('\u11b0'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1106') {
+					sb.append('\u11b1'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1107') {
+					sb.append('\u11b2'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1109') {
+					sb.append('\u11b3'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1110') {
+					sb.append('\u11b4'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1112') {
+					sb.append('\u11b6'); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u116e' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u1165') {
+					sb.append('\u116f'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1166') {
+					sb.append('\u1170'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1175') {
+					sb.append('\u1171'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u116e') {
+					sb.append('\u1172'); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u1173' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u1175') {
+					sb.append('\u1174'); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u1100' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u1100') {
+					sb.append('\u11a9'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1109') {
+					sb.append('\u11aa'); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u1102' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u110c') {
+					sb.append('\u11ac'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1112') {
+					sb.append('\u11ad'); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u1111' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u1111') {
+					sb.append('\u11b5'); // eg \u1101 ie doubled char
+					i++;
+				} else {
+					sb.append(c);
+				}
+				break;
+			case '\u1107' :
+				c2 = str.charAt(i+1);
+				if ( c2 == '\u1109') {
+					sb.append('\u11b9'); // eg \u1101 ie doubled char
+					i++;
+				} else if ( c2 == '\u1107') {
+					sb.append('\u1108'); // eg \u1101 ie doubled char
 					i++;
 				} else {
 					sb.append(c);
