@@ -565,15 +565,6 @@ office@geogebra.org
                 <p200ant repack="true"  configFile="tools_p200.config">
                         <fileset refid="jars2pack"/>
                 </p200ant>
-		<!--apply executable="${env.JAVACMD}">
-		    <arg value="-jar" />
-		    <arg value="p200ant.jar" />
-		    <arg value="--segment-limit" />
-		    <arg value="-1" />
-		    <arg value="--repack" />
-		    <srcfile/>
-		    <fileset id="jars2pack" dir="${build.dir}" includes="*.jar" />
-		</apply-->
 	</target>
 
 	<!-- pack jars -->
@@ -595,21 +586,6 @@ office@geogebra.org
                         <fileset refid="unsignedJars"/>
                 </p200ant>
 
-		<!--apply executable="${env.JAVACMD}">
-		    <arg value="-jar" />
-		    <arg value="p200ant.jar" />
-		    <arg value="--segment-limit" />
-		    <arg value="-1" />
-		    <srcfile/>
-		    <fileset id="unsignedJars" dir="${build.dir}/unsigned/unpacked" includes="*.jar"/>
-		</apply>
-
-		<move todir="${build.dir}/unsigned/packed">
-			<fileset dir="${build.dir}/unsigned/unpacked">
-				<include name="*.jar.pack.gz" />
-			</fileset>
-		</move-->
-
 		<move todir="${build.dir}/unpacked">
 			<fileset dir="${build.dir}">
 				<include name="*.jar" />
@@ -623,20 +599,6 @@ office@geogebra.org
                         <fileset refid="signedJars"/>
                 </p200ant>
 
-		<!--apply executable="${env.JAVACMD}">
-		    <arg value="-jar" />
-		    <arg value="p200ant.jar" />
-		    <arg value="--segment-limit" />
-		    <arg value="-1" />
-		    <srcfile/>
-		    <fileset id="unsignedJars" dir="${build.dir}/unpacked" includes="*.jar"/>
-		</apply>
-
-		<move todir="${build.dir}/packed">
-			<fileset dir="${build.dir}/unpacked">
-				<include name="*.jar.pack.gz" />
-			</fileset>
-		</move-->
 	</target>
 
 	<!-- reads the version/build number from geogebra.GeoGebra.java -->
