@@ -120,7 +120,7 @@ public class FileDropTargetListener implements DropTargetListener {
 		try {
 			// try to get an image
 			if (transferable.isDataFlavorSupported (DataFlavor.imageFlavor)) { 
-				System.out.println ("image flavor not supported"); 
+				Application.debug("image flavor not supported"); 
 				//Image img = (Image) trans.getTransferData (DataFlavor.imageFlavor); 
 			} else if (transferable.isDataFlavorSupported (DataFlavor.javaFileListFlavor)) {
 				//Application.debug("javaFileList is supported");

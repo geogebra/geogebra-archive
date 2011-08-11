@@ -2,11 +2,12 @@ package geogebra.kernel.statistics;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
-//import geogebra.kernel.jama.Matrix;		//Ulven 20.02.10, Apache:
-import org.apache.commons.math.linear.RealMatrix;
+import geogebra.main.Application;
+
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.QRDecompositionImpl;
 import org.apache.commons.math.linear.DecompositionSolver;
+import org.apache.commons.math.linear.QRDecompositionImpl;
+import org.apache.commons.math.linear.RealMatrix;
 
 /* 
 GeoGebra - Dynamic Mathematics for Everyone
@@ -139,7 +140,7 @@ public final  class RegressionMath {
    	        //System.out.println(System.currentTimeMillis()-time);
     		//diff(pararray,par);
 		} catch (Throwable t) {
-			System.out.println(t.toString());
+			Application.debug(t.toString());
 			error=true;    		
     	}//try-catch.  ToDo: A bit more fine-grained error-handling...
     	return !error;

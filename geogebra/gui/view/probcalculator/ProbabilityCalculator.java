@@ -1760,7 +1760,6 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				fldParameterArray[i].setText("" + sliderArray[i].getValue());
 				doTextFieldActionPerformed(fldParameterArray[i]);
 
-				System.out.println(sliderArray[i].getValue());
 			}
 		}
 

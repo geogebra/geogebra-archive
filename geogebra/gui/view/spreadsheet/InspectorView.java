@@ -631,7 +631,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		}
 
 		int gap = table.getParent().getPreferredSize().width - table.getPreferredSize().width;
-		System.out.println(table.getParent().getPreferredSize().width);
+		//System.out.println(table.getParent().getPreferredSize().width);
 		if(gap > 0){
 			w = table.getColumnCount() - 1;
 			int newWidth = gap + table.getColumnModel().getColumn(table.getColumnCount() - 1).getWidth() ;
@@ -679,7 +679,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 
 		
 		else if (source == btnAddColumn) {
-			System.out.println(btnAddColumn.getSelectedIndex() + "=============");
+			//System.out.println(btnAddColumn.getSelectedIndex() + "=============");
 			addColumn(btnAddColumn.getSelectedIndex());
 		}	
 

@@ -205,7 +205,6 @@ implements MouseListener, MouseMotionListener{
 				String cmd = e.getActionCommand();
 				if(cmd.endsWith(cmdSuffix)){
 					int i = Integer.parseInt(cmd.substring(0, 1));
-					System.out.println(i);
 				}			
 			}	
 		};

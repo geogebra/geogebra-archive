@@ -410,7 +410,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 		if(table.getTableMode() == table.TABLE_MODE_AUTOFUNCTION
 				|| table.getTableMode() == table.TABLE_MODE_DROP){
-			System.out.println("drop is dragging ");
+			//System.out.println("drop is dragging ");
 			return;
 		}
 		
