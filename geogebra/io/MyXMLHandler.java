@@ -4136,24 +4136,13 @@ public class MyXMLHandler implements DocHandler {
 				System.err.println("   cmdOutput.length = " + cmdOutput.length
 						+ ", labels = " + attrs.size());
 				return false;
-			}
-			System.out.println("   cmdOutput.length = " + cmdOutput.length
-					+ ", labels = " + attrs.size());
+			}			
 			// enforce setting of labels
 			// (important for invisible objects like intersection points)
 			it = values.iterator();
 			int i = 0;
 			while (it.hasNext()) {
-				label = (String) it.next();
-				
-				//if the first label is a dependant label, then labels will be set by
-				//Construction.resolveLabelDependency
-				//if (cons.isDependentLabel(label)){
-					//Application.debug("dependent label : "+label);
-					//break;
-				//}
-				//else
-				//	Application.debug("not dependent label : "+label);
+				label = (String) it.next();				
 				
 				if ("".equals(label))
 					label = null;
