@@ -3,11 +3,7 @@ package geogebra.cas.view;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.gui.CasManager;
-import geogebra.gui.view.algebra.MyComboBoxListener;
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -16,25 +12,19 @@ import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable.PrintMode;
@@ -46,8 +36,7 @@ import javax.swing.event.ListSelectionListener;
  * 
  * @author Markus Hohenwarter, Quan Yuan
  */
-public class CASView extends JComponent implements CasManager, FocusListener,
-		View {
+public class CASView extends JComponent implements FocusListener, View {
 
 	private Kernel kernel;
 

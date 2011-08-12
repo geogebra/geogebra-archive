@@ -2,6 +2,7 @@ package geogebra.gui;
 
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
+import geogebra.cas.view.CASView;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
@@ -132,7 +133,7 @@ public class GuiManager {
 	private AlgebraInput algebraInput;
 	private AlgebraController algebraController;
 	private AlgebraView algebraView;
-	private CasManager casView;
+	private CASView casView;
     private SpreadsheetView spreadsheetView; 
     private EuclidianView euclidianView2;
     private ConstructionProtocolView constructionProtocolView;
@@ -297,9 +298,9 @@ public class GuiManager {
 			}
 	    }
 	  
-	public synchronized CasManager getCasView() {
+	public synchronized CASView getCasView() {
 		if (casView == null) {
-			casView = new geogebra.cas.view.CASView(app);
+			casView = new CASView(app);
 		}
 
 		return casView;

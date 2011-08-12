@@ -2139,6 +2139,7 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_CAS_SESSION:
 			if (eName.equals("cellPair")) {
 				casSessionMode = MODE_CAS_CELL_PAIR;
+				//TODO: store this information in kernel, not in view
 				casTableCellValueElement = app.getGuiManager().getCasView().createRow();
 			} else {
 				System.err.println("unknown tag in <cellPair>: " + eName);
