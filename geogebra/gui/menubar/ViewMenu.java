@@ -1,12 +1,13 @@
 package geogebra.gui.menubar;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.GuiManager;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.main.Application;
+import geogebra.main.settings.KeyboardSettings;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
@@ -105,9 +106,15 @@ class ViewMenu extends BaseMenu {
 		
 		JMenuItem mi;
 		
-		// show/hide keyboard
+		// show/hide keyboard		
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
 		app.setEmptyIcon(cbShowKeyboard);
+		KeyboardSettings kbs = app.getSettings().getKeyboard();
+		if(kbs.isShowKeyboardOnStart()){
+			cbShowKeyboard.setSelected(true);
+			VirtualKeyboard vk = app.getGuiManager().getVirtualKeyboard();
+			vk.setVisible(true);
+		}
 		add(cbShowKeyboard);
 		
 //		cbShowHandwriting = new JCheckBoxMenuItem(showHandwritingAction);

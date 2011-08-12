@@ -52,6 +52,7 @@ import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.main.MyError;
 import geogebra.main.MyResourceBundle;
+import geogebra.main.settings.KeyboardSettings;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
 
@@ -3207,8 +3208,10 @@ public class GuiManager {
 		 */
 		public VirtualKeyboard getVirtualKeyboard() {
 			if (virtualKeyboard == null) {				
-				virtualKeyboard = new VirtualKeyboard(app, app.getKeyboardWidth(), 
-						app.getKeyboardHeight(), app.getKeyboardOpacity());
+				KeyboardSettings settings = app.getSettings().getKeyboard();
+				virtualKeyboard = new VirtualKeyboard(app, settings.getKeyboardWidth(), 
+						settings.getKeyboardHeight(), settings.getKeyboardOpacity());
+				settings.addListener(virtualKeyboard);
 			}
 			
 			return virtualKeyboard;

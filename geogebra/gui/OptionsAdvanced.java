@@ -2,11 +2,10 @@ package geogebra.gui;
 
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.layout.Layout;
 import geogebra.gui.util.FullWidthLayout;
-import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.settings.KeyboardSettings;
 import geogebra.main.settings.Settings;
 
 import java.awt.BorderLayout;
@@ -541,11 +540,21 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbShowTitleBar.setSelected(settings.getLayout().showTitleBar());
 		cbAllowStyleBar.setSelected(settings.getLayout().isAllowingStyleBar());
 		
-		tfKeyboardWidth.setText(Integer.toString(app.getKeyboardWidth()));
-		tfKeyboardHeight.setText(Integer.toString(app.getKeyboardHeight()));
+		KeyboardSettings kbs = settings.getKeyboard();
+		cbKeyboardShowAutomatic.setSelected(kbs.isShowKeyboardOnStart());
+		Locale loc = kbs.getKeyboardLocale();
+		if(loc==null)
+			cbKeyboardLanguage.setSelectedIndex(0);
+		else{
+			int index = KeyboardSettings.supportedLocales.indexOf(kbs.getKeyboardLocale());
+			setLabelsKeyboardLanguage();
+			cbKeyboardLanguage.setSelectedIndex(index);
+		}
+		tfKeyboardWidth.setText(Integer.toString(kbs.getKeyboardWidth()));
+		tfKeyboardHeight.setText(Integer.toString(kbs.getKeyboardHeight()));
 		
 		slOpacity.removeChangeListener(this);
-		slOpacity.setValue((int)(app.getKeyboardOpacity() * 100));
+		slOpacity.setValue((int)(kbs.getKeyboardOpacity() * 100));
 		slOpacity.addChangeListener(this);
 		
 		// tooltip timeout
@@ -688,8 +697,17 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			int index = cbGUIFont.getSelectedIndex();
 			if (index == 0) app.setGUIFontSize(-1); // default
 			else app.setGUIFontSize(fontSizes[index - 1]);
-		} else if (source == cbKeyboardLanguage){
-			app.setKbLocale(cbKeyboardLanguage.getSelectedIndex());
+		} else if (source == cbKeyboardLanguage){			
+			int index = cbKeyboardLanguage.getSelectedIndex();
+			if(index==0)
+				settings.getKeyboard().setKeyboardLocale(app.getLocale());
+			else
+				settings.getKeyboard().setKeyboardLocale(
+						KeyboardSettings.supportedLocales.get(index-1));
+		}else if (source == cbKeyboardShowAutomatic){						
+			settings.getKeyboard().setShowKeyboardOnStart(cbKeyboardShowAutomatic.isSelected());			
+		}else if(source == tfKeyboardWidth || source == tfKeyboardHeight){
+			changeWidthOrHeight(source);
 		}
 	}
 
@@ -697,8 +715,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 * Slider changed.
 	 */
 	public void stateChanged(ChangeEvent e) {
-		if(e.getSource() == slOpacity) {
-			app.setKeyboardOpacity(slOpacity.getValue() / 100.0f);
+		if(e.getSource() == slOpacity) {			
+			settings.getKeyboard().setKeyboardOpacity(slOpacity.getValue() / 100.0f);
 		}
 	}
 
@@ -712,23 +730,29 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 */
 	public void focusLost(FocusEvent e) {		
 		
-		if(e.getSource() == tfKeyboardHeight) {
+		changeWidthOrHeight(e.getSource());
+	}
+
+	private void changeWidthOrHeight(Object source) {
+		KeyboardSettings kbs = settings.getKeyboard();
+		if(source == tfKeyboardHeight) {
 			try {
 				int windowHeight = Integer.parseInt(tfKeyboardHeight.getText());
-				app.setKeyboardHeight(windowHeight);
+				kbs.setKeyboardHeight(windowHeight);
 			} catch(NumberFormatException ex) {
 				app.showError("InvalidInput", tfKeyboardHeight.getText());
-				tfKeyboardHeight.setText(Integer.toString(app.getKeyboardHeight()));
+				tfKeyboardHeight.setText(Integer.toString(kbs.getKeyboardHeight()));
 			}
-		} else if(e.getSource() == tfKeyboardWidth) {
+		} else if(source == tfKeyboardWidth) {
 			try {
 				int windowWidth = Integer.parseInt(tfKeyboardWidth.getText());
-				app.setKeyboardWidth(windowWidth);
+				kbs.setKeyboardWidth(windowWidth);
 			} catch(NumberFormatException ex) {
 				app.showError("InvalidInput", tfKeyboardWidth.getText());
-				tfKeyboardWidth.setText(Integer.toString(app.getKeyboardWidth()));
+				tfKeyboardWidth.setText(Integer.toString(kbs.getKeyboardWidth()));
 			}
 		}
+		
 	}
 
 	/**
@@ -815,12 +839,12 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 * first item in the list.
 	 */
 	private void setLabelsKeyboardLanguage() {
-		String[] languages = new String[VirtualKeyboard.supportedLocales.size()+1];
+		String[] languages = new String[KeyboardSettings.supportedLocales.size()+1];
 		languages[0] = app.getPlain("Default");
 		String ggbLangCode;
 
-		for (int i = 0; i < VirtualKeyboard.supportedLocales.size(); i++) {
-			Locale loc = (Locale) VirtualKeyboard.supportedLocales.get(i);
+		for (int i = 0; i < KeyboardSettings.supportedLocales.size(); i++) {
+			Locale loc = (Locale) KeyboardSettings.supportedLocales.get(i);
 			ggbLangCode = loc.getLanguage() + loc.getCountry()
 					+ loc.getVariant();
 
@@ -836,6 +860,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbKeyboardLanguage.setModel(new DefaultComboBoxModel(languages));
 		cbKeyboardLanguage.setSelectedIndex(selectedIndex);
 		cbKeyboardLanguage.addActionListener(this);
+		cbKeyboardShowAutomatic.addActionListener(this);
+		tfKeyboardWidth.addActionListener(this);
+		tfKeyboardHeight.addActionListener(this);
 	}
 	
 	private void setLabelsGUIFontsize() {

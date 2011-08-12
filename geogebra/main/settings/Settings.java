@@ -23,6 +23,8 @@ public class Settings {
 	
 	private final ApplicationSettings applicationSettings;
 	
+	private final KeyboardSettings keyboardSettings;
+	
 	/**
 	 * Initialize settings using the constructors of the setting container classes.
 	 */
@@ -38,6 +40,7 @@ public class Settings {
 		consProtSettings = new ConstructionProtocolSettings();
 		layoutSettings = new LayoutSettings();
 		applicationSettings = new ApplicationSettings();
+		keyboardSettings = new KeyboardSettings();
 	}
 	
 	/**
@@ -56,6 +59,7 @@ public class Settings {
 		consProtSettings.beginBatch();
 		layoutSettings.beginBatch();
 		applicationSettings.beginBatch();
+		keyboardSettings.beginBatch();
 	}
 	
 	/**
@@ -74,6 +78,7 @@ public class Settings {
 		consProtSettings.endBatch();
 		layoutSettings.endBatch();
 		applicationSettings.endBatch();
+		keyboardSettings.endBatch();
 	}
 	
 	/** 
@@ -114,5 +119,9 @@ public class Settings {
 	 */
 	public final ApplicationSettings getApplication() {
 		return applicationSettings;
+	}
+	
+	public final KeyboardSettings getKeyboard() {
+		return keyboardSettings;
 	}
 }

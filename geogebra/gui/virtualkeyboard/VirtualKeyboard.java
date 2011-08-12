@@ -15,7 +15,11 @@ the Free Software Foundation.
 package geogebra.gui.virtualkeyboard;
 
 import geogebra.main.Application;
+
 import geogebra.main.MyResourceBundle;
+import geogebra.main.settings.AbstractSettings;
+import geogebra.main.settings.KeyboardSettings;
+import geogebra.main.settings.SettingListener;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -57,33 +61,14 @@ import javax.swing.UIManager;
  * (based loosely on http://sourceforge.net/projects/virtualkey/ )
  *
  */
-public class VirtualKeyboard extends JFrame implements ActionListener {
+public class VirtualKeyboard extends JFrame implements ActionListener, SettingListener {
 
 	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * List with supported languages.
 	 */
-	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
-	static {
-		supportedLocales.add(new Locale("ar")); // Arabic
-		supportedLocales.add(new Locale("cs")); // Czech
-		supportedLocales.add(new Locale("de")); // German
-		supportedLocales.add(new Locale("el")); // Greek
-		supportedLocales.add(new Locale("en", "GB")); // English (UK)
-		supportedLocales.add(new Locale("es")); // Spanish
-		supportedLocales.add(new Locale("fa")); // Persian
-		supportedLocales.add(new Locale("fr")); // French
-		supportedLocales.add(new Locale("hi")); // Hindi
-		supportedLocales.add(new Locale("hr")); // Croatian
-		supportedLocales.add(new Locale("hu")); // Hungarian
-		supportedLocales.add(new Locale("iw")); // Hebrew
-		supportedLocales.add(new Locale("ko")); // Korean
-		supportedLocales.add(new Locale("ml")); // Malayalam
-		supportedLocales.add(new Locale("no")); // Norwegian
-		supportedLocales.add(new Locale("sk")); // Slovakian
-	}
-
+	
 	
 
 
@@ -283,7 +268,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		//if (buttonSize < 20) buttonSize = 20;
 
 		updateButtons();
-
+		KeyboardSettings kbs = app.getSettings().getKeyboard();
+		kbs.keyboardResized(windowWidth,windowHeight);
 	}
 
 	/**
@@ -1052,8 +1038,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	private Locale kbLocale = null;
 
-	public void setKbLocale(int index){		
-		readConf(app,index == 0 ? null : supportedLocales.get(index-1),false);
+	public void setKbLocale(Locale loc){		
+		readConf(app,loc,false);
 		doSetLabels();
 	}
 	
@@ -1063,9 +1049,11 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 		Locale locale;
 
-		if (app != null)
-			locale = app.getKbLocale() < 1 ? app.getLocale() : 
-				supportedLocales.get(app.getKbLocale()-1);
+		if (app != null){
+			locale = app.getSettings().getKeyboard().getKeyboardLocale();
+			if(locale==null)
+				locale = app.getLocale();
+		}
 		else
 			locale = getLocale();
 
@@ -1209,6 +1197,17 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	public void setOpacity(float opacity) {
 		this.opacity = opacity;
 		updateOpacity();
+	}
+
+	public void settingsChanged(AbstractSettings settings) {	
+		KeyboardSettings kbs = (KeyboardSettings)settings;
+		setOpacity(kbs.getKeyboardOpacity());
+		setWindowHeight(kbs.getKeyboardHeight());
+		setWindowWidth(kbs.getKeyboardWidth());
+		Locale newLocale = kbs.getKeyboardLocale() == null ? 
+				app.getLocale() : kbs.getKeyboardLocale();
+		if(!newLocale.equals(kbLocale))
+			setKbLocale(kbs.getKeyboardLocale());
 	}
 
 }

@@ -429,11 +429,7 @@ public class Application implements KeyEventDispatcher {
 	private PluginManager pluginmanager = null;
 	private ScriptManager scriptManager = null;
 
-	private float keyboardOpacity = 0.7f;
-	private int keyboardWidth = 400;
-	private int keyboardHeight = 235;
-	private int keyboardLocale = -1;
-	private boolean showKeyboardOnStart = false;
+	
 	
 	// GUI elements to support a sidebar help panel for the input bar.
 	// The help panel slides open on a button press from the input bar.
@@ -5669,62 +5665,26 @@ public class Application implements KeyEventDispatcher {
 		return fontSizeStrings;
 	}
 	
-	public float getKeyboardOpacity() {
-		if (guiManager!= null && guiManager.hasVirtualKeyboard())
-			keyboardOpacity = guiManager.getVirtualKeyboard().getOpacity();
-		return keyboardOpacity;
-	}
-
-	public int getKeyboardWidth() {			
-		if (guiManager!= null && guiManager.hasVirtualKeyboard())
-			keyboardWidth = guiManager.getVirtualKeyboard().getWidth();
-		return keyboardWidth;
-	}
-
-	public int getKeyboardHeight() {
-		if (guiManager!= null && guiManager.hasVirtualKeyboard())
-			keyboardOpacity = guiManager.getVirtualKeyboard().getHeight();
-		return keyboardHeight;
-	}
-
-	public void setKeyboardWidth(int windowWidth) {
-		if (guiManager!= null && guiManager.hasVirtualKeyboard())
-			guiManager.getVirtualKeyboard().setWindowWidth(windowWidth);
-		keyboardWidth = windowWidth;	
-	}
+		
 	
-	public void setKeyboardHeight(int windowHeight) {
-		if (guiManager!= null && guiManager.hasVirtualKeyboard())
-			guiManager.getVirtualKeyboard().setWindowHeight(windowHeight);
-		keyboardHeight = windowHeight;
-	}
-	
-	public void setKeyboardOpacity(float opacity) {
-		if (guiManager!= null && guiManager.hasVirtualKeyboard())
-			guiManager.getVirtualKeyboard().setOpacity(opacity);	
-		keyboardOpacity = opacity;
-	}
 
 	public void getKeyboardXML(StringBuilder sb) {		
 		sb.append("<keyboard width=\"");
-		sb.append(keyboardWidth);
+		sb.append(getSettings().getKeyboard().getKeyboardWidth());
 		sb.append("\" height=\"");
-		sb.append(keyboardHeight);
+		sb.append(getSettings().getKeyboard().getKeyboardHeight());
 		sb.append("\" opacity=\"");
-		sb.append(keyboardOpacity);
+		sb.append(getSettings().getKeyboard().getKeyboardOpacity());
+		sb.append("\" language=\"");
+		sb.append(getSettings().getKeyboard().getKeyboardLocale());
+		sb.append("\" show=\"");
+		sb.append(getSettings().getKeyboard().isShowKeyboardOnStart());
 		sb.append("\"/>");
+		debug(getSettings().getKeyboard().isShowKeyboardOnStart());
 	}
 
 
-	public int getKbLocale() {		
-		return keyboardLocale;
-	}
-
-	public void setKbLocale(int localeIndex){
-		keyboardLocale = localeIndex;
-		if (guiManager!= null && guiManager.hasVirtualKeyboard())
-			guiManager.getVirtualKeyboard().setKbLocale(localeIndex);
-	}
+	
 }
 
 

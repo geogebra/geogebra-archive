@@ -64,6 +64,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.main.settings.KeyboardSettings;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -616,15 +617,18 @@ public class MyXMLHandler implements DocHandler {
 	private void handleKeyboard(LinkedHashMap<String, String> attrs) {
 		//TODO what if GuiManager is null?
 		try{			
-			int width = Integer.parseInt(attrs.get("width"));
-			Application.debug(width);
-			app.setKeyboardWidth(width);
-			int height = Integer.parseInt(attrs.get("height"));
-			Application.debug(height);
-			app.setKeyboardHeight(height);
+			int width = Integer.parseInt(attrs.get("width"));			
+			KeyboardSettings kbs = app.getSettings().getKeyboard();			
+			kbs.setKeyboardWidth(width);
+			int height = Integer.parseInt(attrs.get("height"));			
+			kbs.setKeyboardHeight(height);
 			float opacity = Float.parseFloat(attrs.get("opacity"));
-			app.setKeyboardOpacity(opacity);
+			kbs.setKeyboardOpacity(opacity);
+			boolean showOnStart = Boolean.parseBoolean(attrs.get("show"));			
+			kbs.setShowKeyboardOnStart(showOnStart);			
+			kbs.setKeyboardLocale(attrs.get("language"));
 		}catch(Exception e){
+			e.printStackTrace();
 			System.err.println("error in element <keyboard>");
 		}
 		
