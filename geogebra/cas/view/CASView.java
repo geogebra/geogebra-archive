@@ -19,6 +19,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ import javax.swing.event.ListSelectionListener;
  * 
  * @author Markus Hohenwarter, Quan Yuan
  */
-public class CASView extends JComponent implements FocusListener, View {
+public class CASView extends JComponent implements FocusListener, View, Printable {
 
 	private Kernel kernel;
 
