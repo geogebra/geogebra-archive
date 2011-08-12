@@ -203,7 +203,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 						DockManager dm=app.getGuiManager().getLayout().getDockManager();
 						
 						if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_CAS))
-							new geogebra.export.PrintPreview(app, app.getGuiManager().getCasView(), PageFormat.LANDSCAPE);
+							new geogebra.export.PrintPreview(app, (Printable) app.getGuiManager().getCasView(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_CONSTRUCTION_PROTOCOL))
 							new geogebra.export.PrintPreview(app, app.getGuiManager().getConstructionProtocolView(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_SPREADSHEET))
