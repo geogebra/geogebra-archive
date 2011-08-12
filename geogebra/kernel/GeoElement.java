@@ -26,7 +26,6 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionalNVar;
@@ -2810,7 +2809,7 @@ public abstract class GeoElement
 
 	/**
 	 * Returns the next free indexed label using the given prefix.
-	 * @param prefix, e.g. "c"
+	 * @param prefix e.g. "c"
 	 * @return indexed label, e.g. "c_2"
 	 */
 	public String getIndexLabel(String prefix) {
@@ -3722,6 +3721,7 @@ public abstract class GeoElement
 	/**
 	 * Returns simplified algebraic representation of this GeoElement. 
  	 * Used by the regression test output creator.    
+	 * @return sumplifiedrepresentation for regression test
 	 */
 	final public String getAlgebraDescriptionRegrOut() {
 		if (strAlgebraDescriptionNeedsUpdate) {

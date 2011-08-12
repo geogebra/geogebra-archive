@@ -1742,7 +1742,8 @@ public class Kernel {
 	public void undo() {
 		if (undoActive) {			
 			notifyReset();
-			clearJustCreatedGeosInViews();
+			clearJustCreatedGeosInViews();						
+			app.getActiveEuclidianView().getEuclidianController().clearSelections();
 			cons.undo();
 			notifyReset();
 

@@ -4697,7 +4697,7 @@ public class Application implements KeyEventDispatcher {
 					geo.removeOrSetUndefinedIfHasFixedDescendent();
 			}
 			getActiveEuclidianView().getEuclidianController().clearJustCreatedGeos();
-
+			getActiveEuclidianView().getEuclidianController().clearSelections();
 			storeUndoInfo();
 		}
 
