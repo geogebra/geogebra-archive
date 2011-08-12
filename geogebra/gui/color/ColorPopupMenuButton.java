@@ -23,6 +23,7 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	public static final int COLORSET_BGCOLOR = 1;
 	private int colorSetType;
 	private Color[]  colorSet; 
+	private Color defaultColor;
 	private HashMap<Color,Integer> lookupMap; 
 
 	private boolean hasSlider;
@@ -36,6 +37,7 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 		this.colorSetType = colorSetType;
 		this.hasSlider = hasSlider;
 		colorSet = getColorArray(colorSetType);
+		defaultColor = colorSet[0];
 
 		lookupMap = new HashMap<Color,Integer>();
 		for(int i = 0; i < colorSet.length; i++)
@@ -63,12 +65,18 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	public void actionPerformed(ActionEvent e){
 		if(this.hasSlider) {
 			Integer si = getSelectedIndex();
+			defaultColor = getSelectedColor();
 			updateColorTable();
 			setSelectedIndex(si);
 		}
 	}
 
-
+	public ImageIcon getButtonIcon() {
+		ImageIcon icon = super.getButtonIcon();
+		if (icon == null && this.hasSlider)
+			icon = GeoGebraIcon.createColorSwatchIcon( getSliderValue()/100f, iconSize, defaultColor, null);
+		return icon;
+	}
 
 	public int getColorIndex(Color color){
 		int index = -1;
@@ -89,7 +97,9 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	public Color getSelectedColor(){
 
 		int index = getSelectedIndex();
-		if(index == -1 || (colorSetType == COLORSET_BGCOLOR && index == colorSet.length-1))
+		if(index <= -1)
+			return defaultColor;
+		else if (colorSetType == COLORSET_BGCOLOR && index == colorSet.length-1)
 			return null;
 		else
 			return colorSet[index];
@@ -100,7 +110,10 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 		return GeoGebraColorConstants.getPopupArray(colorSetType);
 	}
 
-
+	public void setDefaultColor(float alpha, Color gc) {
+		defaultColor = gc;
+		this.setIcon(GeoGebraIcon.createColorSwatchIcon( alpha, iconSize, gc, null));
+	}
 
 	private String[] getToolTipArray(){
 		String[] toolTipArray = new String[colorSet.length];

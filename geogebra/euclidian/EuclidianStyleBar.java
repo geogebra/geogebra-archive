@@ -901,19 +901,14 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 						
 						getMySlider().setVisible(hasFillable);	
 						setSliderValue(Math.round(alpha * 100));
-						
+
 						updateColorTable();
-						
 						
 						// find the geoColor in the table and select it 
 						int index = this.getColorIndex(geoColor);
 						setSelectedIndex(index);
-						
-						// if nothing was selected, set the icon to show the non-standard color 
-						if(index == -1){
-							this.setIcon(GeoGebraIcon.createColorSwatchIcon( alpha, colorIconSize, geoColor, null));
-						}
-										
+						setDefaultColor(alpha, geoColor);
+
 						this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
 					}
 				}
@@ -974,6 +969,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					// find the geoColor in the table and select it 
 					int index = getColorIndex(geoColor);
 					setSelectedIndex(index);
+					setDefaultColor(alpha, geoColor);
 					
 					// if nothing was selected, set the icon to show the non-standard color 
 					if(index == -1){
@@ -1408,15 +1404,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 		
 		else if (source == btnColor) {
-			if(btnColor.getSelectedIndex() >=0){
-				if(mode == EuclidianConstants.MODE_PEN){
-					ec.getPen().setPenColor((Color) btnColor.getSelectedColor());
-					//btnLineStyle.setFgColor((Color)btnColor.getSelectedValue());
-				} else {
-					applyColor(targetGeos);
-					//btnLineStyle.setFgColor((Color)btnColor.getSelectedValue());
-					//btnPointStyle.setFgColor((Color)btnColor.getSelectedValue());
-				}
+			if(mode == EuclidianConstants.MODE_PEN){
+				ec.getPen().setPenColor((Color) btnColor.getSelectedColor());
+				//btnLineStyle.setFgColor((Color)btnColor.getSelectedValue());
+			} else {
+				applyColor(targetGeos);
+				//btnLineStyle.setFgColor((Color)btnColor.getSelectedValue());
+				//btnPointStyle.setFgColor((Color)btnColor.getSelectedValue());
 			}
 		}
 		
