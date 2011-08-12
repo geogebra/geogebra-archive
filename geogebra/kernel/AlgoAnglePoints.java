@@ -96,6 +96,7 @@ public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation
      }
     
     public AlgoAnglePoints(GeoPoint A, GeoPoint B, GeoPoint C) {
+    	super(A.cons, false);
     	this.A = A;
         this.B = B;
         this.C = C;

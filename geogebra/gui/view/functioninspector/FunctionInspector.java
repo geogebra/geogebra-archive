@@ -22,21 +22,17 @@ import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.SpecialNumberFormat;
 import geogebra.gui.util.SpecialNumberFormatInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
-import geogebra.kernel.AlgoCasDerivative;
 import geogebra.kernel.AlgoCurvature;
 import geogebra.kernel.AlgoDependentFunction;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoDependentPoint;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionInterval;
-import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoJoinPointsSegment;
-import geogebra.kernel.AlgoLengthFunction;
 import geogebra.kernel.AlgoOsculatingCircle;
 import geogebra.kernel.AlgoPointOnPath;
 import geogebra.kernel.AlgoRoots;
 import geogebra.kernel.AlgoRootsPolynomial;
-import geogebra.kernel.AlgoTangentFunctionPoint;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -53,6 +49,10 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.cas.AlgoDerivative;
+import geogebra.kernel.cas.AlgoIntegralDefinite;
+import geogebra.kernel.cas.AlgoLengthFunction;
+import geogebra.kernel.cas.AlgoTangentFunctionPoint;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
@@ -1273,14 +1273,14 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 
 		// derivative
-		AlgoCasDerivative deriv = new AlgoCasDerivative(cons, f);
+		AlgoDerivative deriv = new AlgoDerivative(cons, f);
 		cons.removeFromConstructionList(deriv);
 		derivative = (GeoFunction)deriv.getGeoElements()[0];
 		derivative.setEuclidianVisible(false);
 		hiddenGeoList.add(derivative);
 
 		// 2nd derivative
-		AlgoCasDerivative deriv2 = new AlgoCasDerivative(cons, f, null, new MyDouble(kernel, 2.0));
+		AlgoDerivative deriv2 = new AlgoDerivative(cons, f, null, new MyDouble(kernel, 2.0));
 		cons.removeFromConstructionList(deriv2);
 		derivative2 = (GeoFunction)deriv2.getGeoElements()[0];
 		derivative2.setEuclidianVisible(false);

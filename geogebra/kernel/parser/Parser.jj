@@ -1452,10 +1452,10 @@ ExpressionValue enelement():
 {   
 // boolean
 	<TRUE>
-	 { return  new MyBoolean(true); }     
+	 { return  new MyBoolean(kernel, true); }     
 |
 	<FALSE>
-	  { return new MyBoolean(false); }     
+	  { return new MyBoolean(kernel, false); }     
 |	 	 
  // number
     ev = myDouble()
@@ -1511,7 +1511,7 @@ ExpressionValue enelement():
     { 
     	// remove " (first and last character)
     	String text = c.image.substring(1, c.image.length()-1);
-    	return  new MyStringBuffer(text);
+    	return  new MyStringBuffer(kernel, text);
      }  
 }
 

@@ -3,6 +3,7 @@ package geogebra.cas.view;
 import geogebra.gui.GuiManager;
 import geogebra.gui.inputfield.MathTextField;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -90,7 +91,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		setTitle(app.getPlain("Substitute") + " - " + app.getCommand("Row") + " " + (editRow+1));
 		setResizable(true);
 		
-		CASTableCellValue cell=casView.getConsoleTable().getCASTableCellValue(editRow);
+		GeoCasCell cell=casView.getConsoleTable().getCASTableCellValue(editRow);
 		
 		HashSet<GeoElement> vars=cell.getInputVE().getVariables();
 		Vector<String> row;
@@ -307,7 +308,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		}
 
 		try {
-			CASTableCellValue currCell = table.getCASTableCellValue(editRow);
+			GeoCasCell currCell = table.getCASTableCellValue(editRow);
 			currCell.setProcessingInformation(prefix, subCmd, postfix);
 			currCell.setEvalCommand("Substitute");
 			currCell.setEvalComment(substComment.toString());

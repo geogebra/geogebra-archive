@@ -811,6 +811,10 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 			return;
 			
 		}
+		
+		public Kernel getKernel() {
+			return kernel;
+		}
 
 		
 }

@@ -53,7 +53,8 @@ public class AlgoAngleLines extends AlgoElement  implements AlgoDrawInformation{
         
     }
     
-    AlgoAngleLines(GeoLine g, GeoLine h) {        
+    AlgoAngleLines(GeoLine g, GeoLine h) {  
+    	super(g.cons, false);
         this.g = g;
         this.h = h;
    }

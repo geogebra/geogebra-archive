@@ -10,7 +10,6 @@ import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoHistogram;
-import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.AlgoSumLeft;
@@ -40,6 +39,7 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.main.Application;
 
 import java.awt.Color;

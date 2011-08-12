@@ -225,7 +225,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	public AlgoFunctionAreaSums(GeoFunction f, 
 			   NumberValue a, NumberValue b, NumberValue n, NumberValue d,
 			   int type) {
-
+		super(f.cons, false);
 		this.f = f;
 		this.a = a;
 		this.b = b;			
@@ -275,10 +275,9 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		sum.setDrawable(true);
 	}
 	
-	public AlgoFunctionAreaSums(  
-			   NumberValue a, NumberValue b, NumberValue n,
+	public AlgoFunctionAreaSums(NumberValue a, NumberValue b, NumberValue n,
 			   int type,double[]vals,double[]borders) {
-
+		super(a.getKernel().getConstruction(), false);
 		this.type = type;
 		
 		this.a = a;
@@ -327,8 +326,8 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param borders 
 	 * @param N 
 	 */
-	protected AlgoFunctionAreaSums(  
-			   NumberValue a, NumberValue b, double[]vals,double[]borders,int N) {
+	protected AlgoFunctionAreaSums(NumberValue a, NumberValue b, double[]vals,double[]borders,int N) {
+		super(a.getKernel().getConstruction(), false);
 		type = TYPE_BARCHART;	
 		this.a = a;
 		this.b = b;					
@@ -336,6 +335,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		this.leftBorder=borders;
 		this.N=N;
 	}
+	
 	/**
 	 *  BarChart [<list of data without repetition>, <frequency of each of these data>]
 	 * @param cons
@@ -373,8 +373,9 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param borders 
 	 * @param N 
 	 */
-	protected AlgoFunctionAreaSums(  
+	protected AlgoFunctionAreaSums(Construction cons, 
 			   boolean dummy,double[]vals,double[]borders,int N) {
+		super(cons, false);
 		type = TYPE_BARCHART_FREQUENCY_TABLE;
 		
 		this.yval=vals;
@@ -417,8 +418,9 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param N 
 	 */
 	protected AlgoFunctionAreaSums(NumberValue width,double[]vals,double[]borders,int N) {
-		type = TYPE_BARCHART_FREQUENCY_TABLE_WIDTH;
+		super(width.getKernel().getConstruction(), false);
 		
+		type = TYPE_BARCHART_FREQUENCY_TABLE_WIDTH;		
 		
 		this.width = width;
 		widthGeo = width.toGeoElement();
@@ -464,6 +466,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param N 
 	 */
 	protected AlgoFunctionAreaSums(GeoNumeric n,double[]vals,double[]borders,int N) {		
+		super(n.getKernel().getConstruction(), false);
 		
 		type = TYPE_BARCHART_RAWDATA;
 		
@@ -498,8 +501,9 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		sum.setDrawable(true);
 	}
 	
-	public AlgoFunctionAreaSums(double[]vals,double[]borders,int N) {
-
+	public AlgoFunctionAreaSums(Construction cons, double[]vals,double[]borders,int N) {
+		super(cons, false);
+		
 		type = TYPE_HISTOGRAM;
 		this.leftBorder = borders;
 		this.yval = vals;
@@ -552,6 +556,8 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	public AlgoFunctionAreaSums(GeoBoolean isCumulative,  
 			   GeoBoolean useDensity, GeoNumeric density,
 			   double[]vals,double[]borders,int N) {
+		super(useDensity.getConstruction(), false);
+		
 		type = TYPE_HISTOGRAM_DENSITY;
 		
 		this.isCumulative = isCumulative;
@@ -608,6 +614,9 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	protected AlgoFunctionAreaSums( 
 			NumberValue p1, NumberValue p2, NumberValue p3, GeoBoolean isCumulative, int type,
 			NumberValue a, NumberValue b, double[]vals, double[]borders, int N) {
+		
+		super(isCumulative.getConstruction(), false);
+		
 		this.type = type;
 		this.p1 = p1;
 		this.p2 = p2;

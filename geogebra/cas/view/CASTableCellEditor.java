@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 
 import java.awt.Component;
@@ -24,7 +25,7 @@ import javax.swing.text.JTextComponent;
 public class CASTableCellEditor extends CASTableCell implements TableCellEditor, KeyListener {
 	
 	private CASTable casTable;
-	private CASTableCellValue cellValue;
+	private GeoCasCell cellValue;
 	
 	private boolean editing = false;
 	private int editingRow;
@@ -38,11 +39,11 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		if (value instanceof CASTableCellValue) {						
+		if (value instanceof GeoCasCell) {						
 			editing = true;
 			editingRow = row;
 
-			cellValue = (CASTableCellValue) value;
+			cellValue = (GeoCasCell) value;
 			cellValue.setRow(row);
 			casTable = (CASTable) table;
 
@@ -196,7 +197,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			case '|':
 				// insert output of previous row (not in parentheses)
 				if (editingRow > 0 && text.length() == 0) {
-					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					GeoCasCell selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
 					inputArea.setText(selCellValue.getOutput() + " ");
 				}
 				break;
@@ -204,7 +205,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			case ')':
 				// insert output of previous row in parentheses		
 				if (editingRow > 0 && text.length() == 0) {
-					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					GeoCasCell selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
 					String prevOutput = selCellValue.getOutput();
 					inputArea.setText("(" +  prevOutput);
 				}
@@ -213,7 +214,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			case '=':
 				// insert input of previous row
 				if (editingRow > 0 && text.length() == 0) {
-					CASTableCellValue selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					GeoCasCell selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
 					inputArea.setText(selCellValue.getInput());
 					e.consume();
 				}

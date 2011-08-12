@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import geogebra.gui.inputfield.MyTextField;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -96,7 +97,7 @@ public abstract class CASTableCell extends JPanel{
 
 	
 	
-	public void setValue(CASTableCellValue cellValue) {
+	public void setValue(GeoCasCell cellValue) {
 		// set input panel
 		String input = cellValue.getInput();
 		inputPanel.setInput(input);

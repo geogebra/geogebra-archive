@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.cas.AlgoDerivative;
+
 
 /**
  * @author Victor Franco Espino
@@ -20,7 +22,7 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 	private double f1eval[] = new double[2];
 	private double f2eval[] = new double[2];
 	
-    AlgoCasDerivative algoCAS, algoCAS2;
+    AlgoDerivative algoCAS, algoCAS2;
 
 	AlgoCurvatureVectorCurve(Construction cons, String label, GeoPoint A,
 			GeoCurveCartesian f) {
@@ -47,12 +49,12 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 		}
 
 		// First derivative of curve f
-		algoCAS = new AlgoCasDerivative(cons, f);
+		algoCAS = new AlgoDerivative(cons, f);
 		cons.removeFromConstructionList(algoCAS);
 		this.f1 = (GeoCurveCartesian) algoCAS.getResult();
 
 		// Second derivative of curve f
-		algoCAS2 = new AlgoCasDerivative(cons, f1);
+		algoCAS2 = new AlgoDerivative(cons, f1);
 		cons.removeFromConstructionList(algoCAS2);
 		this.f2 = (GeoCurveCartesian) algoCAS2.getResult();
 		

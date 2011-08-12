@@ -132,8 +132,8 @@ public class AlgoBoxPlot extends AlgoElement implements AlgoDrawInformation {
 		sum.setDrawable(true);
 	}
 
-	private AlgoBoxPlot(double[] list1, NumberValue a, NumberValue b) {
-
+	private AlgoBoxPlot(Construction cons, double[] list1, NumberValue a, NumberValue b) {
+		super(cons, false);
 		type = TYPE_RAW;
 
 		this.a = a;
@@ -158,7 +158,7 @@ public class AlgoBoxPlot extends AlgoElement implements AlgoDrawInformation {
 	}
 
 	public AlgoBoxPlot copy() {
-		return new AlgoBoxPlot(leftBorder.clone(),
+		return new AlgoBoxPlot(cons, leftBorder.clone(),
 					(NumberValue) a.deepCopy(kernel), (NumberValue) b
 							.deepCopy(kernel));		
 	}

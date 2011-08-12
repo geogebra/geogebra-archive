@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 
 import javax.swing.event.TableModelEvent;
@@ -17,7 +18,7 @@ public class CASTableModel extends DefaultTableModel {
         this.app = app;
         
         // create first row
-    	CASTableCellValue value = new CASTableCellValue(table.getCASView());
+    	GeoCasCell value = new GeoCasCell(app.getKernel().getConstruction());
     	setValueAt(value, 0, CASTable.COL_CAS_CELLS);
     	fireTableCellUpdated(0, CASTable.COL_CAS_CELLS);
     }

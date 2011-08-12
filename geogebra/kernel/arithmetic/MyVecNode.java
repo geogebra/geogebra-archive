@@ -280,5 +280,9 @@ public class MyVecNode extends ValidExpression implements VectorValue, Replaceab
 	public String toOutputValueString() {
 		return toValueString();
 	}
+	
+	public Kernel getKernel() {
+		return kernel;
+	}
 
 }

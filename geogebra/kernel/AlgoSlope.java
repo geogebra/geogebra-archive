@@ -55,15 +55,11 @@ public class AlgoSlope extends AlgoElement implements AlgoDrawInformation{
      * @param cons
      * @param g
      */
-    AlgoSlope(Construction cons, GeoLine g) {
-        super(cons);
+    AlgoSlope(GeoLine g) {
+        super(g.cons, false);
         this.g = g;
     }
     
-
-    public AlgoSlope(GeoLine g) {
-    	this.g = g;
-	}
 	public String getClassName() {
         return "AlgoSlope";
     }

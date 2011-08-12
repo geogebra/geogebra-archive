@@ -245,4 +245,7 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue, Repla
     	return this;
     }
 
+    public Kernel getKernel() {
+		return kernel;
+	}
 }

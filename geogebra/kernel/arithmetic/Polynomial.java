@@ -550,4 +550,7 @@ public class Polynomial extends ValidExpression implements Serializable, Express
 		return toValueString();
 	}
 
+	public Kernel getKernel() {
+		return kernel;
+	}
 } // end of class Polynomial

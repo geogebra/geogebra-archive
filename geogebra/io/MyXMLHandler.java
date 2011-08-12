@@ -3032,13 +3032,13 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleInputExpression(LinkedHashMap<String, String> attrs) {
 		try {
 			String input = (String) attrs.get("value");
-			((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setInput(input);
+			((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setInput(input);
 			
 			String prefix = (String) attrs.get("prefix");
 			String eval = (String) attrs.get("eval");
 			String postfix = (String) attrs.get("postfix");
 			if (eval != null) {
-				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setProcessingInformation(prefix, eval, postfix);
+				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setProcessingInformation(prefix, eval, postfix);
 			}
 			return true;
 		} catch (Exception e) {
@@ -3052,19 +3052,19 @@ public class MyXMLHandler implements DocHandler {
 			boolean error = parseBoolean((String) attrs.get("error"));
 			
 			if (error) {
-				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setError(output);
+				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setError(output);
 			} else {
-				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setOutput(output);
+				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setOutput(output);
 			}
 			
 			String evalCommandComment = (String) attrs.get("evalCommand");
 			if (evalCommandComment != null) {
-				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setEvalCommand(evalCommandComment);
+				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setEvalCommand(evalCommandComment);
 			}
 			
 			String evalComment = (String) attrs.get("evalComment");
 			if (evalComment != null) {
-				((geogebra.cas.view.CASTableCellValue) casTableCellValueElement).setEvalComment(evalComment);
+				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setEvalComment(evalComment);
 			}
 			
 			

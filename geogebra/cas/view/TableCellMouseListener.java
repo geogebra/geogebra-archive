@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import geogebra.kernel.cas.GeoCasCell;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
@@ -43,7 +45,7 @@ public class TableCellMouseListener extends MouseAdapter {
 		}
 		
 		// get renderer for this row
-		CASTableCellValue clickedCellValue = table.getCASTableCellValue(clickedRow);
+		GeoCasCell clickedCellValue = table.getCASTableCellValue(clickedRow);
 		TableCellRenderer  renderer =  table.getCellRenderer(clickedRow, CASTable.COL_CAS_CELLS);
 		CASTableCell tableCell = (CASTableCell) table.prepareRenderer(renderer, clickedRow, CASTable.COL_CAS_CELLS);
 		
@@ -93,7 +95,7 @@ public class TableCellMouseListener extends MouseAdapter {
 		
 		// NOT EDITING: put into next free cell
 		else {
-			CASTableCellValue newValue = null;
+			GeoCasCell newValue = null;
 			if (table.getRowCount() > clickedRow + 1) {
 				newValue = table.getCASTableCellValue(clickedRow + 1);
 				if (newValue.isInputEmpty()) {
@@ -104,7 +106,7 @@ public class TableCellMouseListener extends MouseAdapter {
 			
 			// create new row
 			if (newValue == null) {
-				newValue = new CASTableCellValue(table.getCASView());			
+				newValue = new GeoCasCell(casView.getApp().getKernel().getConstruction());			
 				newValue.setInput(outputStr);
 				table.insertRowAfter(clickedRow, newValue, true);	
 			}

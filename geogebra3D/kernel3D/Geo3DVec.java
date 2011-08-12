@@ -634,5 +634,9 @@ implements Vector3DValue {
 		public String toOutputValueString() {
 			return toValueString();
 		}
+		
+		public Kernel getKernel() {
+			return kernel;
+		}
 
 }

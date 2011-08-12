@@ -352,6 +352,9 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_FUNCTION_NVAR = 25;
 	public static final int GEO_CLASS_POLYLINE = 26;
 	public static final int GEO_CLASS_LINEAR_INEQUALITY = 27;
+	
+	// Call cell type
+	public static final int GEO_CLASS_CAS_CELL = 1001;
 
 	// 3D types
 	public static final int GEO_CLASS_POINT3D = 3010;
@@ -4082,14 +4085,15 @@ public abstract class GeoElement
 	}
 
 	public String getCaptionXML() {
-		StringBuilder sb = new StringBuilder();
 		// caption text
 		if (caption != null && caption.length() > 0 && !caption.equals(label)) {
+			StringBuilder sb = new StringBuilder();
 			sb.append("\t<caption val=\"");
 			sb.append(Util.encodeXML(caption));
 			sb.append("\"/>\n");
+			return sb.toString();
 		}
-		return sb.toString();
+		else return "";
 	}
 
 	/**

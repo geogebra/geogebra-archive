@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.cas.AlgoIntegralDefinite;
 
 
 /**
@@ -76,6 +77,7 @@ public class AlgoIntegralFunctions extends AlgoElement  implements AlgoDrawInfor
 	
 	public AlgoIntegralFunctions(GeoFunction f, GeoFunction g,
 			MyDouble a, MyDouble b, GeoBoolean evaluate) {
+		super(f.getConstruction(), false);
 		this.f = f;
 		this.g = g;		
 		this.a = a;

@@ -6,6 +6,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.cas.GeoCasCell;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -90,7 +91,7 @@ public class CASInputHandler {
 		// get current row and input text		
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
-		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
+		GeoCasCell cellValue = consoleTable.getCASTableCellValue(selRow);
 
 /*
 		// DIRECT MathPiper use: line starts with "MathPiper:"
@@ -188,7 +189,7 @@ public class CASInputHandler {
 			// insert a new row below with the assignment label and process it using the current command
 			if (success && needInsertRow) {
 				String assignmentLabel = cellValue.getEvalVE().getLabelForAssignment();
-				CASTableCellValue newRowValue = new CASTableCellValue(casView);
+				GeoCasCell newRowValue = new GeoCasCell(kernel.getConstruction());
 				newRowValue.setInput(assignmentLabel);
 				consoleTable.insertRow(newRowValue, true);
 				processCurrentRow(ggbcmd, params);
@@ -274,21 +275,21 @@ public class CASInputHandler {
 			currentRow=1+(lastRowSelected=selectedIndices[nrEquations-1]);;
 		}
 
-		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(currentRow);
+		GeoCasCell cellValue = consoleTable.getCASTableCellValue(currentRow);
 		if (cellValue!=null){
 			if (!cellValue.isEmpty() && !oneRowOnly){
-				cellValue= new CASTableCellValue(casView);
+				cellValue= new GeoCasCell(kernel.getConstruction());
 				consoleTable.insertRowAfter(lastRowSelected, cellValue, true);
 			} 
 		} else {
-			cellValue= new CASTableCellValue(casView);
+			cellValue= new GeoCasCell(kernel.getConstruction());
 			consoleTable.insertRowAfter(lastRowSelected, cellValue, true);
 		}
 
 		//gets the number of equations
 		for (int i=0;i<selectedIndices.length;i++){
 			String cellText;
-			CASTableCellValue selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
+			GeoCasCell selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
 			if (selectedIndices[i]==selRow){
 				cellText=consoleTable.getEditor().getInput();
 			} else {
@@ -318,7 +319,7 @@ public class CASInputHandler {
 		String[] references=new String[nrEquations];
 		String[] equations=new String[nrEquations];
 		for (int i=0;i<selectedIndices.length;i++){
-			CASTableCellValue selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
+			GeoCasCell selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
 			String cellText;
 			String assignedVariable=selCellValue.getAssignmentVariable();
 			boolean inTheSelectedRow= currentRow==selectedIndices[i];
@@ -372,7 +373,7 @@ public class CASInputHandler {
 		for (int i=0; i<equations.length; i++){
 			equations[i]=resolveCASrowReferences(equations[i], currentRow, ROW_REFERENCE_DYNAMIC);
 			equations[i]=resolveCASrowReferences(equations[i], currentRow, ROW_REFERENCE_STATIC);
-			CASTableCellValue v=new CASTableCellValue(casView);
+			GeoCasCell v=new GeoCasCell(kernel.getConstruction());
 			if (equations[i].startsWith("(")){
 				equations[i]=equations[i].substring(1,equations[i].lastIndexOf(")"));
 			}
@@ -390,7 +391,7 @@ public class CASInputHandler {
 		}
 
 		equationsVariablesResolved.append("}");
-		CASTableCellValue cellToObtainParameters=new CASTableCellValue(casView);
+		GeoCasCell cellToObtainParameters=new GeoCasCell(kernel.getConstruction());
 
 		String prefix, evalText, postfix;			
 
@@ -468,7 +469,7 @@ public class CASInputHandler {
 	 * @param cellValue
 	 * @return
 	 */
-	private String resolveButtonParameter(String param, CASTableCellValue cellValue) {
+	private String resolveButtonParameter(String param, GeoCasCell cellValue) {
 		if (param.charAt(0) == '%') {
 			int n = Integer.parseInt(param.substring(1));
 			
@@ -508,7 +509,7 @@ public class CASInputHandler {
 
 		// process dependent rows below
 		if (success) {
-			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
+			GeoCasCell cellValue = consoleTable.getCASTableCellValue(selRow);
 			// check if the processed row is an assignment, e.g. b := 25
 			String var = cellValue.getAssignmentVariable();
 			// process all dependent rows below
@@ -556,7 +557,7 @@ public class CASInputHandler {
 
 		// process all rows below that have one of vars as inputVariable
 		for (int i = startRow; i < consoleTable.getRowCount(); i++) {
-			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(i);
+			GeoCasCell cellValue = consoleTable.getCASTableCellValue(i);
 
 			// check for row references like $2
 			boolean needsProcessing = cellValue.includesRowReferences();
@@ -617,7 +618,7 @@ public class CASInputHandler {
 		// TODO: remove
 		System.out.println("CASInputHandler.processRow: " + row);
 		
-		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(row);
+		GeoCasCell cellValue = consoleTable.getCASTableCellValue(row);
 
 		// resolve dynamic references for prefix and postfix
 		// dynamic references for evalText is handled in evaluateGeoGebraCAS()
@@ -651,7 +652,7 @@ public class CASInputHandler {
 	 * @param prefix
 	 * @param postfix
 	 */
-	private void setCellOutput(CASTableCellValue cellValue, String prefix, String result, String postfix) {
+	private void setCellOutput(GeoCasCell cellValue, String prefix, String result, String postfix) {
 		// Set the value into the table		
 		if (result != null && prefix != null && postfix != null)	{
 			if (prefix.length() == 0 && postfix.length() == 0) {
@@ -814,7 +815,7 @@ public class CASInputHandler {
 	 * @param currentRow the row whose input should be updated
 	 */
 	public void updateReferencesAfterRowInsert(int insertedAfter, int currentRow) {	
-		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
+		GeoCasCell v = (GeoCasCell) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
 		String inputExp = v.getInput();
 		String evalText = v.getEvalText();
 		String evalComm = v.getEvalComment();
@@ -856,7 +857,7 @@ public class CASInputHandler {
 	 */
 	public void updateReferencesAfterRowDelete(int deletedRow, int currentRow) {	
 
-		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
+		GeoCasCell v = (GeoCasCell) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
 		String inputExp = v.getInput();
 		String evalText = v.getEvalText();
 		String evalComm = v.getEvalComment();

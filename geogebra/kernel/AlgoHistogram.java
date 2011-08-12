@@ -38,8 +38,8 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 		super(cons, label, list1, list2);		
 	}
 	
-	private AlgoHistogram(double[]vals,double[]borders,int N) {
-		super(vals, borders,N);		
+	private AlgoHistogram(Construction cons, double[]vals,double[]borders,int N) {
+		super(cons, vals, borders,N);		
 	}
 	
 
@@ -90,7 +90,7 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 			return new AlgoHistogram((GeoBoolean)getIsCumulative().copy(), 
 				(GeoBoolean)getUseDensityGeo().copy(),(GeoNumeric)getDensityGeo().copy(),
 				getValues().clone(),getLeftBorder().clone(),N);
-		return new AlgoHistogram(getValues().clone(),getLeftBorder().clone(),N);
+		return new AlgoHistogram(kernel.getConstruction(), getValues().clone(),getLeftBorder().clone(),N);
 	}
 	
 }

@@ -25,9 +25,11 @@ import java.util.HashSet;
 public class MyStringBuffer extends ValidExpression implements TextValue {
     
     private StringBuilder sb;
+    private Kernel kernel;
     
-    public MyStringBuffer(String str) {
+    public MyStringBuffer(Kernel kernel, String str) {
         sb = new StringBuilder(str);
+        this.kernel = kernel;
     }
     
     public void append(String str) {
@@ -107,7 +109,7 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
     }
 
     public MyStringBuffer getText() {
-        return new MyStringBuffer(sb.toString());
+        return new MyStringBuffer(kernel, sb.toString());
     }
     
     final public boolean isExpressionNode() {
@@ -126,5 +128,9 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
 	public boolean isVector3DValue() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public Kernel getKernel() {
+		return kernel;
 	}
 }

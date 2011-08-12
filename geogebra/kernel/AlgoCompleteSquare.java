@@ -4,6 +4,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.cas.AlgoCoefficients;
 import geogebra.main.Application;
 
 public class AlgoCompleteSquare extends AlgoElement {
@@ -12,7 +13,7 @@ public class AlgoCompleteSquare extends AlgoElement {
 	private FunctionVariable fv;
 	private MyDouble a,h,k; //a(x-h)^2+k
 	private int lastDeg;
-	private AlgoCasCoefficients algoCoef;
+	private AlgoCoefficients algoCoef;
 	public AlgoCompleteSquare(Construction cons,String label,GeoFunction f){
 		super(cons);
 		this.f=f;
@@ -53,12 +54,12 @@ public class AlgoCompleteSquare extends AlgoElement {
 			}
 		}
 		if(!isQuadratic){
-			if(algoCoef==null)
-				algoCoef = new AlgoCasCoefficients(cons,f);
-			else
-				algoCoef.compute();
+			if(algoCoef==null) {
+				algoCoef = new AlgoCoefficients(cons,f);
+				cons.removeFromConstructionList(algoCoef);
+			}
 			coefs = algoCoef.getResult();
-			algoCoef.remove();
+
 			degInt = coefs.size()-1;
 			isQuadratic = coefs.isDefined() && coefs.get(0).isDefined();
 			for(int i=1;i<degInt;i++){

@@ -222,7 +222,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case IS_ELEMENT_OF:
         {       	
         	if (rt.isListValue()) {
-        		return new MyBoolean(MyList.isElementOf(lt, ((ListValue)rt).getMyList()));
+        		return new MyBoolean(kernel, MyList.isElementOf(lt, ((ListValue)rt).getMyList()));
         	} else {    
                 String [] str = { "IllegalListOperation", lt.toString(), strIS_ELEMENT_OF,  rt.toString() };
                 throw new MyError(app, str);
@@ -232,7 +232,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case IS_SUBSET_OF:
         {       	
         	if (lt.isListValue() && rt.isListValue()) {
-        		return new MyBoolean(MyList.listContains(((ListValue)rt).getMyList(), ((ListValue)lt).getMyList()));
+        		return new MyBoolean(kernel, MyList.listContains(((ListValue)rt).getMyList(), ((ListValue)lt).getMyList()));
         	} else {    
                 String [] str = { "IllegalListOperation", lt.toString(), strIS_SUBSET_OF,  rt.toString() };
                 throw new MyError(app, str);
@@ -242,7 +242,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case IS_SUBSET_OF_STRICT:
         {       	
         	if (lt.isListValue() && rt.isListValue()) {
-        		return new MyBoolean(MyList.listContainsStrict(((ListValue)rt).getMyList(), ((ListValue)lt).getMyList()));
+        		return new MyBoolean(kernel, MyList.listContainsStrict(((ListValue)rt).getMyList(), ((ListValue)lt).getMyList()));
         	} else {    
                 String [] str = { "IllegalListOperation", lt.toString(), strIS_SUBSET_OF_STRICT,  rt.toString() };
                 throw new MyError(app, str);
@@ -262,7 +262,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case LESS:
         	// number < number
         	if (lt.isNumberValue() && rt.isNumberValue())
-				return new MyBoolean(
+				return new MyBoolean(kernel, 
         			Kernel.isGreater(
     					((NumberValue)rt).getDouble(),
 						((NumberValue)lt).getDouble()	
@@ -277,7 +277,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	        	
         	// number > number
         	if (lt.isNumberValue() && rt.isNumberValue())
-				return new MyBoolean(
+				return new MyBoolean(kernel, 
         			Kernel.isGreater(
     					((NumberValue)lt).getDouble(),
 						((NumberValue)rt).getDouble()	
@@ -291,7 +291,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case LESS_EQUAL:
         	// number <= number
         	if (lt.isNumberValue() && rt.isNumberValue())
-				return new MyBoolean(
+				return new MyBoolean(kernel, 
         			Kernel.isGreaterEqual(
     					((NumberValue)rt).getDouble(),
 						((NumberValue)lt).getDouble()	
@@ -305,7 +305,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case GREATER_EQUAL:
         	// number >= number
         	if (lt.isNumberValue() && rt.isNumberValue())
-				return new MyBoolean(
+				return new MyBoolean(kernel, 
         			Kernel.isGreaterEqual(
     					((NumberValue)lt).getDouble(),
 						((NumberValue)rt).getDouble()	
@@ -319,7 +319,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case PARALLEL:
         	// line parallel to line
         	if (lt instanceof GeoLine && rt instanceof GeoLine) {
-				return new MyBoolean(((GeoLine)lt).isParallel((GeoLine)rt));        		
+				return new MyBoolean(kernel, ((GeoLine)lt).isParallel((GeoLine)rt));        		
         	} else { 
                 String [] str = { "IllegalComparison", lt.toString(), strPARALLEL,  rt.toString() };
                 throw new MyError(app, str);
@@ -328,7 +328,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case PERPENDICULAR:
         	// line perpendicular to line
         	if (lt instanceof GeoLine && rt instanceof GeoLine) {
-				return new MyBoolean(((GeoLine)lt).isPerpendicular((GeoLine)rt));   
+				return new MyBoolean(kernel, ((GeoLine)lt).isPerpendicular((GeoLine)rt));   
         	} else { 
                 String [] str = { "IllegalComparison", lt.toString(), strPERPENDICULAR,  rt.toString() };
                 throw new MyError(app, str);
@@ -1733,7 +1733,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             	if( lt instanceof Evaluatable) {
             		NumberValue arg = (NumberValue) rt;
             		if(lt instanceof GeoFunction && ((GeoFunction)lt).isBooleanFunction())
-            			return new MyBoolean(((GeoFunction)lt).evaluateBoolean(arg.getDouble()));            	                     			            
+            			return new MyBoolean(kernel, ((GeoFunction)lt).evaluateBoolean(arg.getDouble()));            	                     			            
 	            	return arg.getNumber().apply((Evaluatable)lt);
             	}
             }
@@ -1742,7 +1742,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             		GeoPoint pt = (GeoPoint)rt;
             		FunctionNVar fun=((GeoFunction)lt).getFunction();
             		if(lt instanceof GeoFunction && fun.isBooleanFunction())
-            			return new MyBoolean(fun.evaluateBoolean(pt));            	                     			            
+            			return new MyBoolean(kernel, fun.evaluateBoolean(pt));            	                     			            
 	            	return new MyDouble(kernel,fun.evaluate(pt));
             	}
             }
@@ -1772,7 +1772,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             		double [] args = list.toDouble(); 
             		if (args != null){
             			if(funN.isBooleanFunction())            				
-            				return new MyBoolean(funN.evaluateBoolean(args));           			
+            				return new MyBoolean(kernel, funN.evaluateBoolean(args));           			
             			return new MyDouble(kernel, funN.evaluate(args));
             		}
             		//let's assume that we called this as f(x,y) and we actually want the function
@@ -1784,7 +1784,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             		if(funN.getVarNumber() == 2 && ev instanceof GeoPoint){            			
             			GeoPoint pt = (GeoPoint)ev;
             			if(funN.isBooleanFunction())            				
-            				return new MyBoolean(funN.evaluateBoolean(pt));
+            				return new MyBoolean(kernel, funN.evaluateBoolean(pt));
             			return new MyDouble(kernel, funN.evaluate(pt));
             		}
             		else if(funN.getVarNumber() == 2 && ev instanceof MyVecNode){            			
@@ -1793,14 +1793,14 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             					((NumberValue)pt.getX().evaluate()).getDouble(),
             					((NumberValue)pt.getY().evaluate()).getDouble()};
             			if(funN.isBooleanFunction())            				
-            				return new MyBoolean(funN.evaluateBoolean(vals));
+            				return new MyBoolean(kernel, funN.evaluateBoolean(vals));
             			return new MyDouble(kernel, funN.evaluate(vals));
             		}
             		else if(ev instanceof ListValue &&  ((ListValue)ev).getMyList().getListElement(0).evaluate().isNumberValue()){
             			double[] vals = ((ListValue)ev).toDouble();
             			if(vals!=null){
             			if(funN.isBooleanFunction())
-            				return new MyBoolean(funN.evaluateBoolean(vals));
+            				return new MyBoolean(kernel, funN.evaluateBoolean(vals));
             			return new MyDouble(kernel, funN.evaluate(vals));
             			}
             		}
@@ -1885,13 +1885,13 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
     private MyBoolean evalEquals(Kernel kernel, ExpressionValue lt, ExpressionValue rt) {
     	// booleans
     	if (lt.isBooleanValue() && rt.isBooleanValue())
-			return new MyBoolean(
+			return new MyBoolean(kernel, 
 					((BooleanValue)lt).getBoolean() == ((BooleanValue)rt).getBoolean()
 				); 
     	
     	//  nummber == number
     	else if (lt.isNumberValue() && rt.isNumberValue())
-			return new MyBoolean(
+			return new MyBoolean(kernel, 
     			Kernel.isEqual(
     				((NumberValue)lt).getDouble(),
 					((NumberValue)rt).getDouble()
@@ -1907,9 +1907,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
     		
     		// needed for eg Sequence[If[Element[list1,i]=="b",0,1],i,i,i]
     		if (strL == null || strR == null)
-    			return new MyBoolean(false);
+    			return new MyBoolean(kernel, false);
     		
-			return new MyBoolean(strL.equals(strR));      
+			return new MyBoolean(kernel, strL.equals(strR));      
 		} else if (lt.isListValue() && rt.isListValue()) {
 			
 			MyList list1 = ((ListValue)lt).getMyList();
@@ -1918,49 +1918,49 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 			int size = list1.size();
 			
 			if ( size != list2.size())
-				return new MyBoolean(false );
+				return new MyBoolean(kernel, false );
 			
 			for (int i = 0 ; i < size ; i++) {
 				if (!evalEquals(kernel,list1.getListElement(i).evaluate(), list2.getListElement(i).evaluate()).getBoolean())
-					return new MyBoolean(false);
+					return new MyBoolean(kernel, false);
 			}
 			
-			return new MyBoolean(true);
+			return new MyBoolean(kernel, true);
 			
     	}
     	else if (lt.isGeoElement() && rt.isGeoElement()) {
     		GeoElement geo1 = (GeoElement) lt;
     		GeoElement geo2 = (GeoElement) rt;
     		
-    		return new MyBoolean(geo1.isEqual(geo2));
+    		return new MyBoolean(kernel, geo1.isEqual(geo2));
     	}
     	else if (lt.isVectorValue() && rt.isVectorValue()) {
     		VectorValue vec1 = (VectorValue) lt;
     		VectorValue vec2 = (VectorValue) rt;		
-    		return new MyBoolean(vec1.getVector().equals(vec2.getVector()));
+    		return new MyBoolean(kernel, vec1.getVector().equals(vec2.getVector()));
     	}
     		
     		/*    		// Michael Borcherds 2008-05-01
     		// replaced following code with one line:
 
     		if (geo1.isGeoPoint() && geo2.isGeoPoint()) {
-    			return new MyBoolean(((GeoPoint)geo1).equals((GeoPoint) geo2));
+    			return new MyBoolean(kernel, ((GeoPoint)geo1).equals((GeoPoint) geo2));
     		}
     		else if (geo1.isGeoLine() && geo2.isGeoLine()) {
-    			return new MyBoolean(((GeoLine)geo1).equals((GeoLine) geo2));
+    			return new MyBoolean(kernel, ((GeoLine)geo1).equals((GeoLine) geo2));
     		}
     		else if (geo1.isGeoConic() && geo2.isGeoConic()) {
-    			return new MyBoolean(((GeoConic)geo1).equals((GeoConic) geo2));
+    			return new MyBoolean(kernel, ((GeoConic)geo1).equals((GeoConic) geo2));
     		}
     		else if (geo1.isGeoVector() && geo2.isGeoVector()) {
-    			return new MyBoolean(((GeoVector)geo1).equals((GeoVector) geo2));
+    			return new MyBoolean(kernel, ((GeoVector)geo1).equals((GeoVector) geo2));
     		}
     		else if (geo1.isGeoList() && geo2.isGeoList()) { // Michael Borcherds 2008-04-12
-    			return new MyBoolean(((GeoList)geo1).equals((GeoList) geo2));
+    			return new MyBoolean(kernel, ((GeoList)geo1).equals((GeoList) geo2));
     		}*/
     	     
     	
-    	return new MyBoolean(false);
+    	return new MyBoolean(kernel, false);
     }
 
 

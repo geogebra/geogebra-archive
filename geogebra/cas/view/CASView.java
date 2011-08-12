@@ -7,6 +7,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -48,7 +49,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 	private GeoGebraCAS cas;
 	private Application app;
 	private JPanel btPanel;
-	private HashMap<String, CASTableCellValue> assignmentCellMap;
+	private HashMap<String, GeoCasCell> assignmentCellMap;
 	private HashSet<String> ignoreUpdateVars;
 	private final RowHeader rowHeader;
 
@@ -63,7 +64,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 		createCASTable();
 
 		// map for assignments to cell
-		assignmentCellMap = new HashMap<String, CASTableCellValue>();
+		assignmentCellMap = new HashMap<String, GeoCasCell>();
 		ignoreUpdateVars = new HashSet<String>();
 
 		// row header
@@ -119,7 +120,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 						consoleTable.insertRow(null, true);
 						undoNeeded = true;
 					} else {
-						CASTableCellValue cellValue = consoleTable
+						GeoCasCell cellValue = consoleTable
 								.getCASTableCellValue(rows - 1);
 						if (cellValue.isEmpty()) {
 							consoleTable.startEditingRow(rows - 1);
@@ -267,7 +268,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 		// get the content of each pair in the table with a loop
 		// append the content to the string sb
 		for (int i = 0; i < numOfRows; ++i) {
-			CASTableCellValue temp = consoleTable.getCASTableCellValue(i);
+			GeoCasCell temp = consoleTable.getCASTableCellValue(i);
 			sb.append(temp.getXML());
 		}
 
@@ -388,7 +389,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 		int updateStartRow = 0;
 
 		// check if we have a cell with an assignment for geo
-		CASTableCellValue cellValue = assignmentCellMap.get(geo.getLabel());
+		GeoCasCell cellValue = assignmentCellMap.get(geo.getLabel());
 		
 		if (cellValue != null && geo.isIndependent()) {
 			int row = cellValue.getRow();
@@ -473,14 +474,14 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 		consoleTable.deleteAllRows();
 
 		// insert one empty row
-		consoleTable.insertRow(new CASTableCellValue(this), false);
+		consoleTable.insertRow(new GeoCasCell(kernel.getConstruction()), false);
 		repaintView();
 	}
 
 	/**
 	 * Returns an empty row at the bottom of the cas view.
 	 */
-	public CASTableCellValue createRow() {
+	public GeoCasCell createRow() {
 		return consoleTable.createRow();
 	}
 
@@ -507,7 +508,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 		clearView();
 	}
 
-	public void setAssignment(String varLabel, CASTableCellValue cellValue) {
+	public void setAssignment(String varLabel, GeoCasCell cellValue) {
 		assignmentCellMap.put(varLabel, cellValue);
 	}
 	

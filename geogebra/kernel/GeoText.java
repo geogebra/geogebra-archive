@@ -386,9 +386,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	
 	public MyStringBuffer getText() {
 		if (str != null)
-			return new MyStringBuffer(str);
+			return new MyStringBuffer(kernel, str);
 		else
-			return new MyStringBuffer("");
+			return new MyStringBuffer(kernel, "");
 	}	
 		
 	/**

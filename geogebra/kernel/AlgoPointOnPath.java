@@ -103,7 +103,7 @@ public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
     GeoPoint getP() {
         return P;
     }
-    Path getPath() {
+    public Path getPath() {
         return path;
     }
       

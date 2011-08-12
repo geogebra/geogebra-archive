@@ -2,6 +2,7 @@ package geogebra.cas.view;
 
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
+import geogebra.kernel.cas.GeoCasCell;
 
 import java.awt.Component;
 
@@ -18,11 +19,11 @@ public class CASTableCellRenderer extends CASTableCell implements
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
-		if (value instanceof CASTableCellValue) {
+		if (value instanceof GeoCasCell) {
 			inputPanel.setFont(view.getFont());
 			dummyField.setFont(view.getFont());
 			
-			CASTableCellValue tempV = (CASTableCellValue) value;	
+			GeoCasCell tempV = (GeoCasCell) value;	
 			
 			Kernel kernel = tempV.getKernel();
 			int oldCASPrintForm = kernel.getCASPrintForm();

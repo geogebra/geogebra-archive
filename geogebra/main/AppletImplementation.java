@@ -703,7 +703,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 				// make sure translated command names are loaded
 				app.initTranslatedCommands();
 				
-				return new MyBoolean(app.getGgbApi().evalCommand(cmdString));
+				return new MyBoolean(kernel, app.getGgbApi().evalCommand(cmdString));
 				
 			}
 		});

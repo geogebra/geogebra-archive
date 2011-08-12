@@ -184,12 +184,15 @@ public class Variable extends ValidExpression implements ExpressionValue {
 	}
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}    
     
 	public String toOutputValueString() {
 		return toValueString();
+	}
+
+	public Kernel getKernel() {
+		return kernel;
 	}
 
 }

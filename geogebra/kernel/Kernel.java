@@ -32,6 +32,29 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
+import geogebra.kernel.cas.AlgoCoefficients;
+import geogebra.kernel.cas.AlgoDegree;
+import geogebra.kernel.cas.AlgoDerivative;
+import geogebra.kernel.cas.AlgoExpand;
+import geogebra.kernel.cas.AlgoFactor;
+import geogebra.kernel.cas.AlgoFactors;
+import geogebra.kernel.cas.AlgoIntegral;
+import geogebra.kernel.cas.AlgoIntegralDefinite;
+import geogebra.kernel.cas.AlgoLengthCurve;
+import geogebra.kernel.cas.AlgoLengthCurve2Points;
+import geogebra.kernel.cas.AlgoLengthFunction;
+import geogebra.kernel.cas.AlgoLengthFunction2Points;
+import geogebra.kernel.cas.AlgoLimit;
+import geogebra.kernel.cas.AlgoLimitAbove;
+import geogebra.kernel.cas.AlgoLimitBelow;
+import geogebra.kernel.cas.AlgoPartialFractions;
+import geogebra.kernel.cas.AlgoPolynomialDiv;
+import geogebra.kernel.cas.AlgoPolynomialMod;
+import geogebra.kernel.cas.AlgoSimplify;
+import geogebra.kernel.cas.AlgoSolveODECas;
+import geogebra.kernel.cas.AlgoTangentCurve;
+import geogebra.kernel.cas.AlgoTangentFunctionNumber;
+import geogebra.kernel.cas.AlgoTangentFunctionPoint;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.discrete.AlgoConvexHull;
 import geogebra.kernel.discrete.AlgoDelauneyTriangulation;
@@ -58,7 +81,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -491,7 +513,6 @@ public class Kernel {
 	 * Evaluates an expression in MathPiper syntax with.
      * @return result string (null possible)
 	 * @throws Throwable 
-	 * @deprecated since GeoGebra 4.0, use evaluateGeoGebraCAS() instead
      *
 	final public String evaluateMathPiper(String exp) {
 		if (ggbCAS == null) {
@@ -505,7 +526,6 @@ public class Kernel {
 	 * Evaluates an expression in Maxima syntax with.
      * @return result string (null possible)
 	 * @throws Throwable 
-	 * @deprecated since GeoGebra 4.0, use evaluateGeoGebraCAS() instead
      *
 	final public String evaluateMaxima(String exp) {
 		if (ggbCAS == null) {
@@ -3573,7 +3593,7 @@ public class Kernel {
 	 * Mod[a, b] Polynomial remainder
 	 */
 	final public GeoFunction Mod(String label, GeoFunction a, GeoFunction b) {
-		AlgoCasPolynomialMod algo = new AlgoCasPolynomialMod(cons, label, a, b);
+		AlgoPolynomialMod algo = new AlgoPolynomialMod(cons, label, a, b);
 		GeoFunction f = algo.getResult();
 		return f;
 	}
@@ -3582,7 +3602,7 @@ public class Kernel {
 	 * Div[a, b] Polynomial Division
 	 */
 	final public GeoFunction Div(String label, GeoFunction a, GeoFunction b) {
-		AlgoCasPolynomialDiv algo = new AlgoCasPolynomialDiv(cons, label, a, b);
+		AlgoPolynomialDiv algo = new AlgoPolynomialDiv(cons, label, a, b);
 		GeoFunction f = algo.getResult();
 		return f;
 	}
@@ -7173,7 +7193,7 @@ public class Kernel {
 		CasEvaluableFunction f, GeoNumeric var,
 		NumberValue n) {
 		
-		AlgoCasDerivative algo = new AlgoCasDerivative(cons, label, f, var, n);
+		AlgoDerivative algo = new AlgoDerivative(cons, label, f, var, n);
 		return algo.getResult();	
 	}
 	
@@ -7195,17 +7215,17 @@ public class Kernel {
 	}
 
 	final public GeoElement Expand(String label, CasEvaluableFunction func) {		
-		AlgoCasExpand algo = new AlgoCasExpand(cons, label, func);
+		AlgoExpand algo = new AlgoExpand(cons, label, func);
 		return algo.getResult();			
 	}
 	
 	final public GeoElement Simplify(String label, CasEvaluableFunction func) {		
-		AlgoCasSimplify algo = new AlgoCasSimplify(cons, label, func);
+		AlgoSimplify algo = new AlgoSimplify(cons, label, func);
 		return algo.getResult();			
 	}
 	
 	final public GeoElement SolveODE(String label, CasEvaluableFunction func) {		
-		AlgoCasSolveODE algo = new AlgoCasSolveODE(cons, label, func);
+		AlgoSolveODECas algo = new AlgoSolveODECas(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -7225,7 +7245,7 @@ public class Kernel {
 	}
 
 	final public GeoElement Factor(String label, CasEvaluableFunction func) {		
-		AlgoCasFactor algo = new AlgoCasFactor(cons, label, func);
+		AlgoFactor algo = new AlgoFactor(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -7239,7 +7259,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoList Factors(String label, GeoFunction func) {		
-		AlgoCasFactors algo = new AlgoCasFactors(cons, label, func);
+		AlgoFactors algo = new AlgoFactors(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -7297,7 +7317,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric Degree(String label, GeoFunction func) {		
-		AlgoCasDegree algo = new AlgoCasDegree(cons, label, func);
+		AlgoDegree algo = new AlgoDegree(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -7306,7 +7326,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric Limit(String label, GeoFunction func, NumberValue num) {		
-		AlgoCasLimit algo = new AlgoCasLimit(cons, label, func, num);
+		AlgoLimit algo = new AlgoLimit(cons, label, func, num);
 		return algo.getResult();			
 	}
 	
@@ -7315,7 +7335,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric LimitBelow(String label, GeoFunction func, NumberValue num) {		
-		AlgoCasLimitBelow algo = new AlgoCasLimitBelow(cons, label, func, num);
+		AlgoLimitBelow algo = new AlgoLimitBelow(cons, label, func, num);
 		return algo.getResult();			
 	}
 	
@@ -7324,7 +7344,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoNumeric LimitAbove(String label, GeoFunction func, NumberValue num) {		
-		AlgoCasLimitAbove algo = new AlgoCasLimitAbove(cons, label, func, num);
+		AlgoLimitAbove algo = new AlgoLimitAbove(cons, label, func, num);
 		return algo.getResult();			
 	}
 	
@@ -7333,7 +7353,7 @@ public class Kernel {
 	 * Michael Borcherds 
 	 */
 	final public GeoElement PartialFractions(String label, CasEvaluableFunction func) {		
-		AlgoCasPartialFractions algo = new AlgoCasPartialFractions(cons, label, func);
+		AlgoPartialFractions algo = new AlgoPartialFractions(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -7342,7 +7362,7 @@ public class Kernel {
 	 * Michael Borcherds 2008-04-04
 	 */
 	final public GeoList Coefficients(String label, GeoFunction func) {		
-		AlgoCasCoefficients algo = new AlgoCasCoefficients(cons, label, func);
+		AlgoCoefficients algo = new AlgoCoefficients(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -7372,7 +7392,7 @@ public class Kernel {
 	 * Integral of function f
 	 */
 	final public GeoElement Integral(String label, CasEvaluableFunction f, GeoNumeric var) {
-		AlgoCasIntegral algo = new AlgoCasIntegral(cons, label, f, var);
+		AlgoIntegral algo = new AlgoIntegral(cons, label, f, var);
 		return algo.getResult();
 	}
 	

@@ -428,6 +428,8 @@ public class Equation extends ValidExpression implements ReplaceableValue {
         return this;
     }
 	
-
+	public Kernel getKernel() {
+		return kernel;
+	}
  
 } // end of class Equation

@@ -12,11 +12,11 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.cas.AlgoIntegralDefinite;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

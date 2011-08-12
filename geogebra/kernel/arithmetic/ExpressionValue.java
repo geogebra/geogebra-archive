@@ -52,5 +52,6 @@ public interface ExpressionValue {
     public String toLaTeXString(boolean symbolic);   
     public void resolveVariables();
 	public String toRealString();
+	public Kernel getKernel();
 }
 

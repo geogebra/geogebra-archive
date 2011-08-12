@@ -912,6 +912,10 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 		
 	}
 
+	public Kernel getKernel() {
+		return kernel;
+	}
+
 
 
 }

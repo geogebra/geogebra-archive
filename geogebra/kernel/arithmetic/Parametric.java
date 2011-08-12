@@ -136,4 +136,7 @@ public class Parametric extends ValidExpression {
 		return toValueString();
 	}
 
+	public Kernel getKernel() {
+		return kernel;
+	}
 }

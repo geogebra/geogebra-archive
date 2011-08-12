@@ -358,13 +358,13 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 	private MyBoolean evalEquals(ExpressionValue lt, ExpressionValue rt) {
 		// booleans
 		if (lt.isBooleanValue() && rt.isBooleanValue())
-			return new MyBoolean(
+			return new MyBoolean(kernel, 
 					((BooleanValue) lt).getBoolean() == ((BooleanValue) rt)
 							.getBoolean());
 
 		// nummber == number
 		else if (lt.isNumberValue() && rt.isNumberValue())
-			return new MyBoolean(kernel.isEqual(((NumberValue) lt).getDouble(),
+			return new MyBoolean(kernel, kernel.isEqual(((NumberValue) lt).getDouble(),
 					((NumberValue) rt).getDouble()));
 
 		// needed for eg If[""=="a",0,1]
@@ -376,18 +376,18 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 			// needed for eg Sequence[If[Element[list1,i]=="b",0,1],i,i,i]
 			if (strL == null || strR == null)
-				return new MyBoolean(false);
+				return new MyBoolean(kernel, false);
 
-			return new MyBoolean(strL.equals(strR));
+			return new MyBoolean(kernel, strL.equals(strR));
 		} else if (lt.isGeoElement() && rt.isGeoElement()) {
 			GeoElement geo1 = (GeoElement) lt;
 			GeoElement geo2 = (GeoElement) rt;
 
-			return new MyBoolean(geo1.isEqual(geo2));
+			return new MyBoolean(kernel, geo1.isEqual(geo2));
 		} else if (lt.isVectorValue() && rt.isVectorValue()) {
 			VectorValue vec1 = (VectorValue) lt;
 			VectorValue vec2 = (VectorValue) rt;
-			return new MyBoolean(vec1.getVector().equals(vec2.getVector()));
+			return new MyBoolean(kernel, vec1.getVector().equals(vec2.getVector()));
 		}
 
 		/*
@@ -403,11 +403,11 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		 * (geo1.isGeoVector() && geo2.isGeoVector()) { return new
 		 * MyBoolean(((GeoVector)geo1).equals((GeoVector) geo2)); } else if
 		 * (geo1.isGeoList() && geo2.isGeoList()) { // Michael Borcherds
-		 * 2008-04-12 return new MyBoolean(((GeoList)geo1).equals((GeoList)
+		 * 2008-04-12 return new MyBoolean(kernel, ((GeoList)geo1).equals((GeoList)
 		 * geo2)); }
 		 */
 
-		return new MyBoolean(false);
+		return new MyBoolean(kernel, false);
 	}
 
 	/**

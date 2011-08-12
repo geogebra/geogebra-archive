@@ -77,7 +77,7 @@ AbsoluteScreenLocateable {
     }
     
     final public MyBoolean getMyBoolean() {
-    	return new MyBoolean(value);
+    	return new MyBoolean(kernel, value);
     }
 
 	public GeoElement copy() {

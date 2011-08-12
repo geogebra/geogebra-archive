@@ -4,6 +4,7 @@
 package geogebra.cas.view;
 
 import geogebra.kernel.Kernel;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -155,11 +156,11 @@ public class CASTable extends JTable {
 	 * @param newValue 
 	 * @param startEditing 
 	 */
-	public void insertRow(CASTableCellValue newValue, boolean startEditing) {
+	public void insertRow(GeoCasCell newValue, boolean startEditing) {
 		int lastRow = tableModel.getRowCount()-1;
 		if (isRowEmpty(lastRow)) {
 			if (newValue == null)
-				newValue = new CASTableCellValue(view);
+				newValue = new GeoCasCell(kernel.getConstruction());
 			tableModel.setValueAt(newValue, lastRow, COL_CAS_CELLS);
 			startEditingRow(lastRow);
 		} else {
@@ -174,9 +175,9 @@ public class CASTable extends JTable {
 	 * @param newValue 
 	 * @param startEditing 
 	 */
-	public void insertRowAfter(int selectedRow, CASTableCellValue newValue, boolean startEditing) {							
+	public void insertRowAfter(int selectedRow, GeoCasCell newValue, boolean startEditing) {							
 		if (newValue == null)
-			newValue = new CASTableCellValue(view);
+			newValue = new GeoCasCell(kernel.getConstruction());
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
 		// make sure the row is shown when at the bottom of the viewport
 		table.scrollRectToVisible(table.getCellRect(selectedRow+1, 0, false));
@@ -246,17 +247,17 @@ public class CASTable extends JTable {
      * Creates a new row in the cas view.
      * @return The new row.
      */
-    public CASTableCellValue createRow() {
+    public GeoCasCell createRow() {
     	stopEditing();
     	
     	// make sure we have at least one row
     	int rows = getRowCount();
     	if (rows == 0) { 
-    		insertRow(new CASTableCellValue(view), false);
+    		insertRow(new GeoCasCell(kernel.getConstruction()), false);
     		rows = 1;
     	} 
     	
-    	CASTableCellValue retRow;
+    	GeoCasCell retRow;
     	
     	// check if last row is empty
 		if (isRowEmpty(rows-1)) {
@@ -265,7 +266,7 @@ public class CASTable extends JTable {
 		}
 		else {
 			// last row is not empty
-			retRow = new CASTableCellValue(view);
+			retRow = new GeoCasCell(kernel.getConstruction());
 			insertRow(retRow, false);
 		}
     	
@@ -282,14 +283,14 @@ public class CASTable extends JTable {
 			tableModel.fireTableRowsUpdated(0, rowCount - 1);
 	}
 	
-	public CASTableCellValue getCASTableCellValue(int row) {
-		return (CASTableCellValue) tableModel.getValueAt(row, COL_CAS_CELLS);
+	public GeoCasCell getCASTableCellValue(int row) {
+		return (GeoCasCell) tableModel.getValueAt(row, COL_CAS_CELLS);
 	}
 	
 	public boolean isRowEmpty(int row) {	
 		if (row < 0) return false;
 		
-		CASTableCellValue value = (CASTableCellValue) tableModel.getValueAt(row, 0);
+		GeoCasCell value = (GeoCasCell) tableModel.getValueAt(row, 0);
 		return value.isEmpty();
 	}
 

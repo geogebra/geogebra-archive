@@ -1,5 +1,6 @@
 package geogebra.kernel;
 
+import geogebra.kernel.cas.AlgoDerivative;
 import geogebra.main.Application;
 
 
@@ -17,7 +18,7 @@ public class AlgoCurvatureVector extends AlgoElement {
     private GeoFunction f, f1, f2; // f = f(x), f1 is f'(x), f2 is f''(x)
     private GeoVector v; // output
     
-    AlgoCasDerivative algoCAS, algoCAS2;
+    AlgoDerivative algoCAS, algoCAS2;
 
     AlgoCurvatureVector(Construction cons, String label, GeoPoint A, GeoFunction f){
     	this(cons, A, f);
@@ -42,12 +43,12 @@ public class AlgoCurvatureVector extends AlgoElement {
         } catch (CircularDefinitionException e) {}                         
         
         //First derivative of function f
-        algoCAS = new AlgoCasDerivative(cons, f);
+        algoCAS = new AlgoDerivative(cons, f);
         cons.removeFromConstructionList(algoCAS);
 		this.f1 = (GeoFunction) algoCAS.getResult();
 		
 		//Second derivative of function f
-		algoCAS2 = new AlgoCasDerivative(cons, f1);
+		algoCAS2 = new AlgoDerivative(cons, f1);
 		cons.removeFromConstructionList(algoCAS2);
 		this.f2 = (GeoFunction) algoCAS2.getResult();
 		
