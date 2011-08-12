@@ -202,6 +202,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	if (pointOnConic == null) 
     		// check if we have a point on B that is also on A
     		 pointOnConic = getPointFrom1on2(B, A); 
+    	
     	// if we didn't have a common point, there's no special case
     	if (pointOnConic == null) 
     		return false;				    	
@@ -269,7 +270,13 @@ public class AlgoIntersectConics extends AlgoIntersect {
 				if (p.isLabelSet() && 
 						p.getIncidenceList()!=null && 
 						p.getIncidenceList().contains(B)) {
-					pointOnConic = p;
+					
+					//TODO: a potential temporary fix for #94.
+    				if (A.isOnPath(p, Kernel.EPSILON) && B.isOnPath(p, Kernel.EPSILON))
+    					pointOnConic = p;
+    				
+					
+					//pointOnConic = p;
 					break;
 				}
 			}
