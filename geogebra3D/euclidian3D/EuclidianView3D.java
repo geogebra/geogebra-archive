@@ -1030,6 +1030,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void clearView() {
 		drawable3DLists.clear();
+		getEuclidianController().initNewMode(getMode()); //TODO: put in a better place
 		
 	}
 

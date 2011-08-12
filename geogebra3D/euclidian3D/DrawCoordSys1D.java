@@ -205,10 +205,10 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 				
 				((GeoCoordSys1D) getGeoElement()).set(geo);
 				getGeoElement().setEuclidianVisible(true);
-				setWaitForUpdate();
+				//setWaitForUpdate();
 			} else {
 				getGeoElement().setEuclidianVisible(false);
-				setWaitForUpdate();
+				//setWaitForUpdate();
 			}
 			
 			
@@ -227,20 +227,21 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 			GeoPointND secondPoint = (GeoPointND) selectedPoints.get(1);
 			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoordsInD(3), secondPoint.getCoordsInD(3));
 			getGeoElement().setEuclidianVisible(true);
-			setWaitForUpdate();
+			//setWaitForUpdate();
 		}else if (selectedPoints.size()==1){
 			GeoPointND firstPoint = (GeoPointND) selectedPoints.get(0);
 			GeoPointND secondPoint = getView3D().getCursor3D();
 			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoordsInD(3), secondPoint.getCoordsInD(3));
 			getGeoElement().setEuclidianVisible(true);
-			setWaitForUpdate();
+			//setWaitForUpdate();
 		}else{
 			getGeoElement().setEuclidianVisible(false);
+			//setWaitForUpdate();
 		}
 		
 		//Application.debug("selectedPoints : "+selectedPoints+" -- isEuclidianVisible : "+getGeoElement().isEuclidianVisible());
 	
-			
+		setWaitForUpdate();	
 	}
 	
 	
