@@ -4,6 +4,8 @@ import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.awt.event.KeyEvent.VK_UP;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;
@@ -16,7 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -27,9 +28,12 @@ import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 /**
  * Prepares and shows a JPopupMenu containing the history list for an AutoCompleteTextField.
+ * Adapted from OptionsPopup.
  * @author G. Sturr
  *
  */
@@ -41,6 +45,10 @@ public class HistoryPopup implements ListSelectionListener{
 	private JList historyList;
 	private boolean isDownPopup = false;
 
+	private KeyListener keyListener;
+	private KeyListener[] textFieldKeyListeners;
+	private DefaultListModel model;
+
 
 	public HistoryPopup(AutoCompleteTextField autoCompleteField){
 
@@ -48,10 +56,53 @@ public class HistoryPopup implements ListSelectionListener{
 
 		historyList = new JList();
 		historyList.setCellRenderer(new HistoryListCellRenderer());
-
 		historyList.setBorder(BorderFactory.createEmptyBorder());
 		historyList.addListSelectionListener(this);
+		historyList.setFocusable(false);
+		
+		popup = new JPopupMenu();
+		JScrollPane scroller = new JScrollPane(historyList);	
+		scroller.setBorder(BorderFactory.createEmptyBorder());
+		popup.add(scroller);
+		popup.setFocusable(false);
+		
+		registerListeners();	
+	}
 
+
+	private class PopupListener implements PopupMenuListener {
+
+		private KeyListener[] listListeners;
+
+		public void popupMenuCanceled(PopupMenuEvent e) {
+		}
+
+		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+			textField.removeKeyListener(keyListener);
+			for (KeyListener listener: textFieldKeyListeners) {
+				textField.addKeyListener(listener);
+			}			
+		}
+
+		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+			// Remove key listeners and replace with own;
+			textFieldKeyListeners = textField.getKeyListeners();
+			for (KeyListener listener: textFieldKeyListeners) {
+				textField.removeKeyListener(listener);
+			}
+			textField.addKeyListener(keyListener);
+
+			listListeners = historyList.getKeyListeners();
+			for (KeyListener listener: listListeners) {
+				historyList.removeKeyListener(listener);
+			}
+			historyList.addKeyListener(keyListener);
+		}
+
+	}
+
+	private void registerListeners() {
+		
 		// add mouse motion listener to repaint the list for rollover effect
 		historyList.addMouseMotionListener(new MouseMotionAdapter(){
 			public void mouseMoved(MouseEvent e){
@@ -59,35 +110,25 @@ public class HistoryPopup implements ListSelectionListener{
 			}
 		});
 
-
-		// add key listener 
-		historyList.addKeyListener(new KeyAdapter() {
+		// create key listener (will be added by PopupListener)
+		keyListener = new KeyAdapter() {
 			public void keyPressed(KeyEvent e) { handleSpecialKeys(e); }
-		});
+		};
 
 		// add mouse listener
 		historyList.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) { handleMouseClick(e); }
 		});
-
-
-
-		popup = new JPopupMenu();
-		// scrollpane for the list	
-		JScrollPane scroller = new JScrollPane(historyList);
-		//scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);		
-		scroller.setBorder(BorderFactory.createEmptyBorder());
-
-		popup.add(scroller);
+		
+		popup.addPopupMenuListener(new PopupListener());
 	}
-
-
-
+	
+	
 	public void showPopup() {		
 
 		// get the current history list and load it into the JList
 		ArrayList<String> list = textField.getHistory();
-		DefaultListModel model = new DefaultListModel();
+		model = new DefaultListModel();
 
 		if(isDownPopup)
 			for(int i=0; i < list.size(); i++)
@@ -113,9 +154,15 @@ public class HistoryPopup implements ListSelectionListener{
 			historyList.ensureIndexIsVisible(list.size()-1);
 		}
 
+		popup.setPreferredSize(null);
+
+
 		// set the width of the popup equal to the textfield width
-		popup.setPopupSize(new Dimension(textField.getWidth(), 
-				historyList.getPreferredScrollableViewportSize().height));
+		Dimension d = popup.getPreferredSize();
+		d.width = textField.getWidth();
+		popup.setPopupSize(d);
+
+		//	popup.pack();
 
 		// position the popup above/below the text field 
 		// with small vertical offset to compensate for the shadow in upwards popups
@@ -124,7 +171,6 @@ public class HistoryPopup implements ListSelectionListener{
 		else
 			popup.show(textField, 0, -popup.getPreferredSize().height-4);
 
-		historyList.requestFocus();
 	}
 
 
@@ -182,15 +228,16 @@ public class HistoryPopup implements ListSelectionListener{
 		if (!isPopupVisible()) {
 			return;
 		}
-
 		switch(keyEvent.getKeyCode()) {
 		case VK_ESCAPE:			// [ESC] cancel the popup and undo any changes
+			System.out.println("esc");
 			undoPopupChange();
 			hidePopup();
 			keyEvent.consume();
 			break;
 
-		case VK_ENTER:			
+		case VK_ENTER:
+			System.out.println("enter");
 			hidePopup();
 			keyEvent.consume();
 			break;
@@ -199,11 +246,15 @@ public class HistoryPopup implements ListSelectionListener{
 			if(!isDownPopup &&
 					historyList.getSelectedIndex() == historyList.getModel().getSize()-1)
 				hidePopup();
+			else
+				navigateRelative(+1);
 			break;
 
 		case VK_UP:				
 			if(isDownPopup && historyList.getSelectedIndex() == 0)
 				hidePopup();
+			else
+				navigateRelative(-1);
 			break;	
 
 		default:
@@ -213,6 +264,29 @@ public class HistoryPopup implements ListSelectionListener{
 
 
 
+
+	private void navigateRelative(int offset) {
+		boolean up = offset < 0;
+		int end = model.getSize() - 1;
+		int index = historyList.getSelectedIndex();
+
+		// Wrap around
+		if (-1 == index) {
+			index = up ? end : 0;
+		} else if (0 == index && up || end == index && !up) {
+			index = - 1;
+		} else {
+			index += offset;
+			index = max(0, min(end, index));
+		}
+
+		if(-1 == index) {
+			historyList.clearSelection();
+		} else {
+			historyList.setSelectedIndex(index);
+			historyList.ensureIndexIsVisible(index);
+		}
+	}
 
 
 
