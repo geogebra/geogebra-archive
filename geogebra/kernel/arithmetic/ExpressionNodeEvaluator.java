@@ -1678,8 +1678,18 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
        
         case ZCOORD:
             // z(vector)
+        	Application.debug(lt.getClass());
             if (lt.isVectorValue())
 				return new MyDouble(kernel, 0);
+            else if (lt.isPolynomialInstance() && ((Polynomial) lt).degree() == 0) {                                 
+                lt = ((Polynomial) lt).getConstantCoefficient();                    
+                return new Polynomial( kernel,
+                            new Term(kernel, 
+                                new ExpressionNode(kernel, lt, ExpressionNode.ZCOORD, null),
+                                ""
+                            )
+                       );                   
+            }   
             else if (lt.isVector3DValue()) {
             	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[2]);
             }
