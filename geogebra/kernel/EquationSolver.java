@@ -283,17 +283,17 @@ public class EquationSolver {
     	double a = eqn[2] / d;
     	double b = eqn[1] / d;
     	double c = eqn[0] / d;
-    	double q = (a * a - 3 * b);
-    	double r = (2 * a * a * a - 9 * a * b + 27 * c);
+    	double q = (a * a - 3 * b);   //D(q) = 2aD(a) + 3D(b)
+    	double r = (2 * a * a * a - 9 * a * b + 27 * c);    // D(r) = (3aa-9b)D(a) - 9aD(b) + 27D(c)
 
-    	double Q = q / 9;
+    	double Q = q / 9;  //D(Q) = D(q)/9
     	double R = r / 54;
 
     	double Q3 = Q * Q * Q;
     	double R2 = R * R;
 
-    	double CR2 = 729 * r * r;
-    	double CQ3 = 2916 * q * q * q;
+    	double CR2 = 729 * r * r; // D(CR2) = 729*2rD(r)    ( |1458r(3aa-9b) - 8748q*2a| + |-9a*1458r -8748q*3| + |27*1458r| )*epsilon 
+    	double CQ3 = 2916 * q * q * q; //D(CQ3) = 2916*3qD(q)  (D(root) ~ D(2sqrt(Q))= -1/sqrt(Q)  D(Q), |D(root)| |2a+3|/sqrt(9q) *epsilon
     	
     	//Application.debug("Q = "+Q+" R = "+R+" Q3 = "+Q3+" R2 = "+R2+" CR2 = "+CR2+" CQ3 = "+CQ3);
 	
@@ -308,7 +308,10 @@ public class EquationSolver {
     	}
     	// Michael Borcherds changed to check CR2 equal to CQ3 to first 8 significant digits
     	// important for eg y=(ax-b)^2(cx-d)
-    	else if (Math.abs(CR2 - CQ3) < Math.max(CR2, CQ3) * epsilon) // else if (CR2 == CQ3) 
+    	// |D(CR2-CQ3)|< (|r(aa-3b) - 4qa| + |-3ar -6q| + |9r|)*13122*sqrt(q) / |2a+3| *epsilon
+    	// for simplicity, it (may be)  about 10* max(CR2,CR3)/|2a+3| * epsilon
+    	//else if (Math.abs(CR2 - CQ3) < Math.max(CR2, CQ3) * epsilon) // else if (CR2 == CQ3)
+    	else if (Math.abs(CR2 - CQ3) < Math.max(CR2, CQ3) *10 / Math.abs(2*a+3) * epsilon) // else if (CR2 == CQ3) 
     	{
     		// this test is actually R2 == Q3, written in a form suitable
     	    //     for exact computation with integers 

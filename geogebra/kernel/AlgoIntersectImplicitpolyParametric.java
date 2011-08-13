@@ -139,7 +139,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 			double startP[]=new double[2];
 			l.getInhomPointOnLine(startP);
 			tx=new PolynomialFunction(new double[]{startP[0],l.getY()}); //x=p1+t*r1
-			ty=new PolynomialFunction(new double[]{startP[1],-l.getX()}); //x=p1+t*r1
+			ty=new PolynomialFunction(new double[]{startP[1],-l.getX()}); //y=p2+t*r2
 			maxT = l.getMaxParameter();
 			minT = l.getMinParameter();
 		}else{
