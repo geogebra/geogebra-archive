@@ -8,6 +8,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
+import geogebra.main.settings.AbstractSettings;
+import geogebra.main.settings.LayoutSettings;
+import geogebra.main.settings.SettingListener;
+import geogebra.main.settings.SpreadsheetSettings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,7 +43,8 @@ import javax.swing.JTable.PrintMode;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class SpreadsheetView extends JPanel implements View, ComponentListener, FocusListener, Printable
+public class SpreadsheetView extends JPanel implements 
+View, ComponentListener, FocusListener, Printable, SettingListener
 {
 
 	private static final long serialVersionUID = 1L;
@@ -81,18 +86,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	// toolbar manager
 	SpreadsheetToolbarManager toolbarManager;
 
-	//Properties
-	private boolean showFormulaBar = false;
-	private boolean showGrid = true;
-	private boolean showRowHeader = true;
-	private boolean showColumnHeader = true;	
-	private boolean showVScrollBar = true;
-	private boolean showHScrollBar = true;
-	private boolean showBrowserPanel = false;
-	private boolean isColumnSelect = false; //TODO: do we need forced column select?
-	private boolean allowSpecialEditor = false;
-	private boolean allowToolTips = true;
-	private boolean equalsRequired; // flag for requiring commands start with "="
+
 
 	private StatDialog oneVarStatDialog;
 	private StatDialog twoVarStatDialog;
@@ -101,13 +95,11 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 	// file browser defaults
 	public static final String DEFAULT_URL = "http://www.geogebra.org/static/data/data.xml";
-	private String defaultFile; 
 	public static final int DEFAULT_MODE = FileBrowserPanel.MODE_FILE;
-
+	//private int initialBrowserMode = DEFAULT_MODE;
 	// file browser settings
-	private String initialURL = DEFAULT_URL;
-	private String initialFilePath; 
-	private int initialBrowserMode = DEFAULT_MODE;
+	//private String initialURL = DEFAULT_URL;
+
 
 
 	// current toolbar mode
@@ -122,6 +114,8 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 	private SpreadsheetViewDnD dndHandler;
 
+	private SpreadsheetSettings settings;
+
 	/**
 	 * Construct spreadsheet view as a split panel. 
 	 * Left panel holds file tree browser, right panel holds spreadsheet. 
@@ -131,6 +125,11 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		this.app = app;
 		kernel = app.getKernel();
 		view = this;
+
+		// Initialize settings and register listener
+		this.settings = app.getSettings().getSpreadsheet();
+		this.settings.addListener(this);
+
 
 		// Build the spreadsheet table and enclosing scrollpane
 		buildSpreadsheet(rows, columns);
@@ -145,7 +144,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		splitPane.setBorder(BorderFactory.createEmptyBorder());
 
 		// Set the browser as the left component or to null if showBrowserPanel == false
-		setShowFileBrowser(showBrowserPanel);  
+		setShowFileBrowser(settings.showBrowserPanel());  
 
 
 		setLayout(new BorderLayout());
@@ -168,12 +167,12 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 		// init the default file location for the file browser
 		if(app.hasFullPermissions()){
-			defaultFile = System.getProperty("user.dir");
-			initialFilePath = defaultFile;
+			settings.setDefaultFile(System.getProperty("user.dir"));
+			settings.setInitialFilePath(settings.defaultFile());
 		}
 
 		dndHandler = new SpreadsheetViewDnD(app, this);
-		
+
 	}
 
 
@@ -279,7 +278,15 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		}
 	}
 
-
+	/** 
+	 * get spreadsheet styleBar 
+	 */
+	public SpreadsheetStyleBar getSpreadsheetStyleBar(){
+		if(styleBar==null){
+			styleBar = new SpreadsheetStyleBar(this);
+		}
+		return styleBar;
+	}
 
 
 	//===============================================================
@@ -507,12 +514,32 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	private boolean scrollToShow = false;
 
 
-
-
-
 	public void setScrollToShow(boolean scrollToShow) {
 		this.scrollToShow = scrollToShow;
 	}
+
+
+	//=====================================================
+	//               Formula Bar
+	//=====================================================
+
+
+	public FormulaBar getFormulaBar() {
+		if(formulaBar == null){
+			// Build the formula bar
+			formulaBar = new FormulaBar(app, this); 
+			formulaBar.setBorder(BorderFactory.createCompoundBorder(
+					BorderFactory.createMatteBorder(0,0,1,0,SystemColor.controlShadow), 
+					BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+		}
+		return formulaBar;
+	}
+
+	public void updateFormulaBar(){
+		if(formulaBar != null && settings.showFormulaBar())
+			formulaBar.update();
+	}
+
 
 
 
@@ -702,43 +729,43 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		sb.append("\t<layout ");
 
 		sb.append(" showFormulaBar=\"");
-		sb.append(showFormulaBar  ? "true" : "false" );
+		sb.append(settings.showFormulaBar()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showGrid=\"");
-		sb.append(showGrid  ? "true" : "false" );
+		sb.append(settings.showGrid()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showHScrollBar=\"");
-		sb.append(showHScrollBar  ? "true" : "false" );
+		sb.append(settings.showHScrollBar()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showVScrollBar=\"");
-		sb.append(showVScrollBar  ? "true" : "false" );
+		sb.append(settings.showVScrollBar()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showBrowserPanel=\"");
-		sb.append(showBrowserPanel  ? "true" : "false" );
+		sb.append(settings.showBrowserPanel()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showColumnHeader=\"");
-		sb.append(showColumnHeader  ? "true" : "false" );
+		sb.append(settings.showColumnHeader()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showRowHeader =\"");
-		sb.append(showRowHeader  ? "true" : "false" );
+		sb.append(settings.showRowHeader()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" allowSpecialEditor=\"");
-		sb.append(allowSpecialEditor  ? "true" : "false" );
+		sb.append(settings.allowSpecialEditor()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" allowToolTips=\"");
-		sb.append(allowToolTips  ? "true" : "false" );
+		sb.append(settings.allowToolTips()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" equalsRequired=\"");
-		sb.append(equalsRequired  ? "true" : "false" );
+		sb.append(settings.equalsRequired()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append("/>\n");
@@ -750,24 +777,24 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		// file browser
 		sb.append("\t<spreadsheetBrowser ");
 
-		if(initialFilePath != defaultFile 
-				|| initialURL != DEFAULT_URL 
-				|| initialBrowserMode != DEFAULT_MODE)
+		if(settings.initialPath() != settings.defaultFile() 
+				|| settings.initialURL() != DEFAULT_URL 
+				|| settings.initialBrowserMode() != DEFAULT_MODE)
 		{	
 			sb.append(" default=\"");
 			sb.append("false");
 			sb.append("\"");	
 
 			sb.append(" dir=\"");
-			sb.append(initialFilePath);
+			sb.append(settings.initialPath());
 			sb.append("\"");
 
 			sb.append(" URL=\"");
-			sb.append(initialURL);
+			sb.append(settings.initialURL());
 			sb.append("\"");
 
 			sb.append(" mode=\"");
-			sb.append(initialBrowserMode);
+			sb.append(settings.initialBrowserMode());
 			sb.append("\"");	
 
 		}else{
@@ -997,7 +1024,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			fileBrowser = new FileBrowserPanel(this);
 			fileBrowser.setMinimumSize(new Dimension(50, 0));
 			initFileBrowser();
-			fileBrowser.setRoot(initialFilePath, initialBrowserMode);
+			fileBrowser.setRoot(settings.initialPath(), settings.initialBrowserMode());
 		}	
 		return fileBrowser;
 	}
@@ -1015,11 +1042,11 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			splitPane.setDividerLocation(0);
 			splitPane.setDividerSize(0);
 		}
-		showBrowserPanel = showFileBrowser;
+
 	}
 
 	public boolean getShowBrowserPanel(){
-		return showBrowserPanel;
+		return settings.showBrowserPanel();
 
 	}
 
@@ -1069,42 +1096,42 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 
 	public int getInitialBrowserMode() {
-		return initialBrowserMode;
+		return settings.initialBrowserMode();
 	}
 
 	public void setInitialBrowserMode(int mode) {
-		initialBrowserMode = mode;
+		// do nothing yet
 	}
 
 
 	public String getInitialURLString() {
-		return initialURL;
+		return settings.initialURL();
 	}
 
 	public void setInitialURLString(String initialURLString) {
-		this.initialURL = initialURLString;
+		// do nothing yet
 	}
 
 	public String getInitialFileString() {
-		return initialFilePath;
+		return settings.initialPath();
 	}
 
 	public void setInitialFileString(String initialFileString) {
-		this.initialFilePath = initialFileString;
+		// do nothing yet
 	}
 
 
 	public void setBrowserDefaults(boolean doRestore){
 
 		if(doRestore){
-			initialFilePath = defaultFile;
-			initialURL = DEFAULT_URL;
-			initialBrowserMode = FileBrowserPanel.MODE_FILE;
+			settings.setInitialFilePath(settings.defaultFile());
+			settings.setInitialURL(DEFAULT_URL);
+			settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
 			//initFileBrowser();
 
 		}else{
-			initialFilePath = fileBrowser.getRootString();
-			initialBrowserMode = fileBrowser.getMode();
+			settings.setInitialFilePath(fileBrowser.getRootString());
+			settings.setInitialBrowserMode(fileBrowser.getMode());
 		}
 	}
 
@@ -1112,22 +1139,29 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		// don't init file browser without full permissions (e.g. unsigned applets)
 		if(!app.hasFullPermissions() || !getShowBrowserPanel()) return;
 
-		if(initialBrowserMode == FileBrowserPanel.MODE_FILE)
-			setFileBrowserDirectory(initialFilePath, initialBrowserMode);
+		if(settings.initialBrowserMode() == FileBrowserPanel.MODE_FILE)
+			setFileBrowserDirectory(settings.initialPath(), settings.initialBrowserMode());
 		else
-			setFileBrowserDirectory(initialURL, initialBrowserMode);
+			setFileBrowserDirectory(settings.initialURL(), settings.initialBrowserMode());
 	}
 
 	public void setFileBrowserDirectory(String rootString, int mode) {
 		getFileBrowser().setRoot(rootString, mode);
 	}
 
+	/*
+	public void setDefaultFileBrowserDirectory() {
+		if(this.DEFAULT_MODE == FileBrowserPanel.MODE_FILE)
+			setFileBrowserDirectory(String rootString, int mode)
+		else
+			setFileBrowserDirectory(DEFAULT_URL, FileBrowserPanel.MODE_URL);
+	}
+	 */
 
 
 	//================================================
-	//	         Spreadsheet Properties
+	//	         Spreadsheet Settings
 	//================================================
-
 
 
 	public void setShowRowHeader(boolean showRowHeader) {
@@ -1136,11 +1170,10 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		} else {
 			spreadsheet.setRowHeaderView(null);
 		}
-		this.showRowHeader = showRowHeader;
 	}
 
 	public boolean getShowRowHeader(){
-		return showRowHeader;
+		return settings.showRowHeader();
 	}
 
 
@@ -1152,11 +1185,10 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			table.getTableHeader().setVisible(false);
 			spreadsheet.setColumnHeaderView(null);
 		}
-		this.showColumnHeader = showColumnHeader;
 	}
 
 	public boolean getShowColumnHeader(){
-		return showColumnHeader;
+		return settings.showColumnHeader();
 	}
 
 
@@ -1168,11 +1200,11 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			spreadsheet
 			.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		}
-		this.showVScrollBar = showVScrollBar;
 	}
 
+
 	public boolean getShowVScrollBar() {
-		return showVScrollBar;
+		return settings.showVScrollBar();
 	}
 
 	public void setShowHScrollBar(boolean showHScrollBar) {
@@ -1183,16 +1215,14 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 			spreadsheet
 			.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		}
-		this.showHScrollBar = showHScrollBar;
 	}
 
 	public boolean getShowHScrollBar() {
-		return showHScrollBar;
+		return settings.showHScrollBar();
 	}
 
 	public void setShowGrid(boolean showGrid) {
 		table.setShowGrid(showGrid);
-		this.showGrid = showGrid;
 		if(showGrid)
 			table.setIntercellSpacing(new Dimension(1,1));
 		else
@@ -1201,21 +1231,20 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	}
 
 	public boolean getShowGrid() {
-		return showGrid;
+		return settings.showGrid();
 	}
 
 
 	public boolean getAllowToolTips() {
-		return allowToolTips;
+		return settings.allowToolTips();
 	}
 
 	public void setAllowToolTips(boolean allowToolTips) {
-		this.allowToolTips = allowToolTips;
+		// do nothing yet
 	}
 
 
 	public void setShowFormulaBar(boolean showFormulaBar) {
-		this.showFormulaBar = showFormulaBar;
 		if(showFormulaBar)
 			spreadsheetPanel.add(getFormulaBar(),BorderLayout.NORTH);
 		else
@@ -1230,38 +1259,9 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	}
 
 	public boolean getShowFormulaBar(){
-		return showFormulaBar;
+		return settings.showFormulaBar();
 	}
 
-	public FormulaBar getFormulaBar() {
-		if(formulaBar == null){
-			// Build the formula bar
-			formulaBar = new FormulaBar(app, this); 
-			formulaBar.setBorder(BorderFactory.createCompoundBorder(
-					BorderFactory.createMatteBorder(0,0,1,0,SystemColor.controlShadow), 
-					BorderFactory.createEmptyBorder(4, 4, 4, 4)));
-		}
-		return formulaBar;
-	}
-
-	public void updateFormulaBar(){
-		if(formulaBar != null && showFormulaBar)
-			formulaBar.update();
-	}
-
-
-
-
-	/**
-	 * 
-	 * get spreadsheet styleBar 
-	 */
-	public SpreadsheetStyleBar getSpreadsheetStyleBar(){
-		if(styleBar==null){
-			styleBar = new SpreadsheetStyleBar(this);
-		}
-		return styleBar;
-	}
 
 	public boolean isVisibleStyleBar(){
 		return styleBar == null || styleBar.isVisible();
@@ -1269,29 +1269,27 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 
 	public void setColumnSelect(boolean isColumnSelect){
-		this.isColumnSelect = isColumnSelect;
+		//do nothing yet
 	}
 
 	public boolean isColumnSelect(){
-		return isColumnSelect;
+		return settings.isColumnSelect();
 	}
 
 
 
 	public void setAllowSpecialEditor(boolean allowSpecialEditor){
-		this.allowSpecialEditor = allowSpecialEditor;
 		repaint();
 	}
 
 	public boolean allowSpecialEditor(){
-		return allowSpecialEditor;
+		return settings.allowSpecialEditor();
 	}
 
 	/**
 	 * sets requirement that commands entered into cells must start with "="
 	 */	
 	public void setEqualsRequired(boolean isEqualsRequired){
-		this.equalsRequired = isEqualsRequired;
 		table.setEqualsRequired(isEqualsRequired);
 	}
 
@@ -1299,8 +1297,38 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 	 * gets requirement that commands entered into cells must start with "="
 	 */
 	public boolean isEqualsRequired(){
-		return equalsRequired;
+		return settings.equalsRequired();
 	}
+
+
+
+	public void settingsChanged(AbstractSettings settings0) {
+
+		setShowColumnHeader(settings.showColumnHeader());
+		setShowRowHeader(settings.showRowHeader()) ;
+		setShowVScrollBar(settings.showVScrollBar());
+		setShowHScrollBar(settings.showHScrollBar());
+		setShowGrid(settings.showGrid());
+		setAllowToolTips(settings.allowToolTips());
+		setShowFormulaBar(settings.showFormulaBar());
+		setColumnSelect(settings.isColumnSelect());
+		setAllowSpecialEditor(settings.allowSpecialEditor());
+		setEqualsRequired(settings.equalsRequired());
+
+		if(settings.showBrowserPanel()){
+			setShowFileBrowser(true);
+			
+			if(settings.isDefaultBrowser()){
+				//setFileBrowserDirectory(this, this.DEFAULT_MODE);
+			}
+			else{
+				this.initFileBrowser();
+			}
+		}
+
+
+	}
+
 
 
 
@@ -1352,10 +1380,13 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 
 
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-			throws PrinterException {
+	throws PrinterException {
 		Drawable.exporting=true;
 		int r=table.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
 		Drawable.exporting=false;
 		return r;
 	}
+
+
+
 }

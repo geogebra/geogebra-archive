@@ -66,6 +66,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.main.settings.EuclidianSettings;
 import geogebra.main.settings.KeyboardSettings;
+import geogebra.main.settings.SpreadsheetSettings;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -1076,18 +1077,18 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleSpreadsheetLayout(Object spreadsheetView,
 			LinkedHashMap<String, String> attrs) {
 
-		SpreadsheetView sv = (SpreadsheetView)spreadsheetView;
+		SpreadsheetSettings settings = app.getSettings().getSpreadsheet();
 		try {
-			sv.setShowFormulaBar(parseBoolean((String) attrs.get("showFormulaBar")));	
-			sv.setShowGrid(parseBoolean((String) attrs.get("showGrid")));	
-			sv.setShowFileBrowser(parseBoolean((String) attrs.get("showBrowserPanel")));	
-			sv.setShowColumnHeader(parseBoolean((String) attrs.get("showColumnHeader")));	
-			sv.setShowRowHeader(parseBoolean((String) attrs.get("showRowHeader")));	
-			sv.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	
-			sv.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));
-			sv.setAllowSpecialEditor(parseBoolean((String) attrs.get("allowSpecialEditor")));
-			sv.setAllowToolTips(parseBoolean((String) attrs.get("allowToolTips")));
-			sv.setEqualsRequired(parseBoolean((String) attrs.get("equalsRequired")));
+			settings.setShowFormulaBar(parseBoolean((String) attrs.get("showFormulaBar")));	
+			settings.setShowGrid(parseBoolean((String) attrs.get("showGrid")));	
+			settings.setShowFileBrowser(parseBoolean((String) attrs.get("showBrowserPanel")));	
+			settings.setShowColumnHeader(parseBoolean((String) attrs.get("showColumnHeader")));	
+			settings.setShowRowHeader(parseBoolean((String) attrs.get("showRowHeader")));	
+			settings.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	
+			settings.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));
+			settings.setAllowSpecialEditor(parseBoolean((String) attrs.get("allowSpecialEditor")));
+			settings.setAllowToolTips(parseBoolean((String) attrs.get("allowToolTips")));
+			settings.setEqualsRequired(parseBoolean((String) attrs.get("equalsRequired")));
 			return true;
 			
 		} catch (Exception e) {

@@ -17,6 +17,7 @@ import geogebra.gui.view.spreadsheet.FileBrowserPanel;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.settings.SpreadsheetSettings;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -52,7 +53,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 
 	private Application app;
 	private Kernel kernel;
-	private SpreadsheetView view;
+	private SpreadsheetSettings settings;
 	
 	private JCheckBox cbShowFormulaBar, cbShowGrid, cbShowRowHeader, 
 	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, 
@@ -71,8 +72,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	 * Creates a new dialog for the properties of the spreadsheet view.
 	 */
 	public OptionsSpreadsheet(Application app, SpreadsheetView view) {
-		this.app = app;		
-		this.view = view;
+		this.app = app;	
+		this.settings = app.getSettings().getSpreadsheet();
+		
 		kernel = app.getKernel();
 		
 		// build GUI
@@ -299,64 +301,64 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         // layout tab GUI
 		
 		cbShowFormulaBar.removeActionListener(this);
-		cbShowFormulaBar.setSelected(view.getShowFormulaBar());
+		cbShowFormulaBar.setSelected(settings.showFormulaBar());
 		cbShowFormulaBar.addActionListener(this);       
 		
 		cbShowGrid.removeActionListener(this);
-		cbShowGrid.setSelected(view.getShowGrid());
+		cbShowGrid.setSelected(settings.showGrid());
 		cbShowGrid.addActionListener(this);          
         
         cbShowRowHeader.removeActionListener(this);
-        cbShowRowHeader.setSelected(view.getShowRowHeader()); 
+        cbShowRowHeader.setSelected(settings.showRowHeader()); 
         cbShowRowHeader.addActionListener(this);
         
         cbShowColumnHeader.removeActionListener(this);
-        cbShowColumnHeader.setSelected(view.getShowColumnHeader()); 
+        cbShowColumnHeader.setSelected(settings.showColumnHeader()); 
         cbShowColumnHeader.addActionListener(this);
         
         cbShowHScrollbar.removeActionListener(this);
-        cbShowHScrollbar.setSelected(view.getShowHScrollBar()); 
+        cbShowHScrollbar.setSelected(settings.showHScrollBar()); 
         cbShowHScrollbar.addActionListener(this);
                
         cbShowVScrollbar.removeActionListener(this);
-        cbShowVScrollbar.setSelected(view.getShowVScrollBar()); 
+        cbShowVScrollbar.setSelected(settings.showVScrollBar()); 
         cbShowVScrollbar.addActionListener(this);
         
       
         cbAllowSpecialEditor.removeActionListener(this);
-        cbAllowSpecialEditor.setSelected(view.allowSpecialEditor()); 
+        cbAllowSpecialEditor.setSelected(settings.allowSpecialEditor()); 
         cbAllowSpecialEditor.addActionListener(this);
       
         cbAllowToolTips.removeActionListener(this);
-        cbAllowToolTips.setSelected(view.getAllowToolTips()); 
+        cbAllowToolTips.setSelected(settings.allowToolTips()); 
         cbAllowToolTips.addActionListener(this);
         
         cbPrependCommands.removeActionListener(this);
-        cbPrependCommands.setSelected(view.isEqualsRequired()); 
+        cbPrependCommands.setSelected(settings.equalsRequired()); 
         cbPrependCommands.addActionListener(this);
         
         //======================================
         // browser tab GUI
         
         cbShowBrowser.removeActionListener(this);
-        cbShowBrowser.setSelected(view.getShowBrowserPanel()); 
+        cbShowBrowser.setSelected(settings.showBrowserPanel()); 
         cbShowBrowser.addActionListener(this);
         
         dirRadioButton.removeActionListener(this);
-        dirRadioButton.setSelected(view.getInitialBrowserMode() == FileBrowserPanel.MODE_FILE); 
+        dirRadioButton.setSelected(settings.initialBrowserMode() == FileBrowserPanel.MODE_FILE); 
         dirRadioButton.addActionListener(this);
        
         urlRadioButton.removeActionListener(this);
-        urlRadioButton.setSelected(view.getInitialBrowserMode() == FileBrowserPanel.MODE_URL); 
+        urlRadioButton.setSelected(settings.initialBrowserMode() == FileBrowserPanel.MODE_URL); 
         urlRadioButton.addActionListener(this);
         
         dirField.removeActionListener(this);
-        dirField.setText(view.getInitialFileString());
+        dirField.setText(settings.initialPath());
         dirField.setCaretPosition(0);
         dirField.addActionListener(this);
         
         urlField.removeActionListener(this);
-        urlField.setText(view.getInitialURLString());
+        urlField.setText(settings.initialURL());
         urlField.setCaretPosition(0);
         urlField.addActionListener(this);
         
@@ -383,60 +385,58 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		// layout options
 		
 		if (source == cbShowFormulaBar) {
-			view.setShowFormulaBar(cbShowFormulaBar.isSelected());			
+			settings.setShowFormulaBar(cbShowFormulaBar.isSelected());			
 		}
 		
 		if (source == cbShowGrid) {
-			view.setShowGrid(cbShowGrid.isSelected());			
+			settings.setShowGrid(cbShowGrid.isSelected());			
 		}
 		
 		else if (source == cbShowRowHeader) {
-			view.setShowRowHeader(cbShowRowHeader.isSelected());			
+			settings.setShowRowHeader(cbShowRowHeader.isSelected());			
 		}
 			
 		else if (source == cbShowColumnHeader) {
-			view.setShowColumnHeader(cbShowColumnHeader.isSelected());
+			settings.setShowColumnHeader(cbShowColumnHeader.isSelected());
 		}
 		
 		else if (source == cbShowHScrollbar) {
-			view.setShowHScrollBar(cbShowHScrollbar.isSelected());
+			settings.setShowHScrollBar(cbShowHScrollbar.isSelected());
 		}
 		
 		else if (source == cbShowVScrollbar) {
-			view.setShowVScrollBar(cbShowVScrollbar.isSelected());
+			settings.setShowVScrollBar(cbShowVScrollbar.isSelected());
 		}
 			
 		else if (source == cbAllowSpecialEditor) {
-			view.setAllowSpecialEditor(cbAllowSpecialEditor.isSelected());
+			settings.setAllowSpecialEditor(cbAllowSpecialEditor.isSelected());
 		}
 		
 		else if (source == cbAllowToolTips) {
-			view.setAllowToolTips(cbAllowToolTips.isSelected());
+			settings.setAllowToolTips(cbAllowToolTips.isSelected());
 		}
 		
 		else if (source == cbPrependCommands) {
-			view.setEqualsRequired(cbPrependCommands.isSelected());
+			settings.setEqualsRequired(cbPrependCommands.isSelected());
 		}
 		
 		//========================================
 		// browser options
 				
 		else if (source == cbShowBrowser) {
-			view.setShowFileBrowser(cbShowBrowser.isSelected());
+			settings.setShowFileBrowser(cbShowBrowser.isSelected());
 		}
 
 		else if (source == dirRadioButton) {
 			dirField.selectAll();
-			view.setInitialFileString(dirField.getText());
-			view.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
-			view.setFileBrowserDirectory(dirField.getText(),FileBrowserPanel.MODE_FILE);
+			settings.setInitialFilePath(dirField.getText());
+			settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
 		}
 		
 		else if (source == urlRadioButton) {
 			urlField.selectAll();
-			view.setFileBrowserDirectory(urlField.getText(), FileBrowserPanel.MODE_URL);
-			view.setInitialURLString(urlField.getText());
-			view.setInitialBrowserMode(FileBrowserPanel.MODE_URL);
+			settings.setInitialURL(urlField.getText());
+			settings.setInitialBrowserMode(FileBrowserPanel.MODE_URL);
 
 		}
 
@@ -446,17 +446,16 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnVal = fc.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				view.setFileBrowserDirectory(fc.getSelectedFile().getPath(), FileBrowserPanel.MODE_FILE);
 				dirField.setText(fc.getSelectedFile().getName());
 			}
 		}
 		
 		else if (source == restoreButton) {
-			view.setBrowserDefaults(true);
+			settings.setDefaultBrowser(true);
 		}
 		
 		else if (source == setCurrentButton) {
-			view.setBrowserDefaults(false);
+			settings.setDefaultBrowser(false);
 		}
 		
 		updateGUI();
