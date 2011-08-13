@@ -454,9 +454,15 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_PLUS:
 			case KeyEvent.VK_MINUS:
 			case KeyEvent.VK_EQUALS:				
-				((EuclidianView)app.getActiveEuclidianView()).getEuclidianController().zoomInOut(event);
-				app.setUnsaved();
-				consumed = true;					
+				boolean spanish = app.getLocale().toString().startsWith("es");
+
+				// AltGr+ on Spanish keyboard is ] so
+				// allow <Ctrl>+ (zoom) but not <Ctrl><Alt>+ (fast zoom)
+				if (!spanish || !event.isAltDown()) {
+					((EuclidianView)app.getActiveEuclidianView()).getEuclidianController().zoomInOut(event);
+					app.setUnsaved();
+					consumed = true;				
+				}
 				break;
 				
 			// Ctrl + D: toggles algebra style: value, definition, command
