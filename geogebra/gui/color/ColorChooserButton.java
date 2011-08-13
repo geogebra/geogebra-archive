@@ -1,3 +1,14 @@
+/* 
+GeoGebra - Dynamic Mathematics for Everyone
+http://www.geogebra.org
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation.
+
+*/
 package geogebra.gui.color;
 
 
@@ -171,7 +182,7 @@ public class ColorChooserButton extends JButton{
 			
 			/*metaPanel = new JPanel(new BorderLayout());
 			
-			pickButton = new JButton("»");
+			pickButton = new JButton("ï¿½");
 			pickButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					pickButton.setVisible(false);

@@ -5,19 +5,16 @@ import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
@@ -37,9 +34,7 @@ import javax.swing.event.ChangeListener;
 public class PopupMenuButton extends JButton implements ChangeListener{
 
 	private int mode;
-	private int rows, columns;
-	private Object[] data;
-	private int size;
+	private Object[] data;	
 	private Application app;
 	private PopupMenuButton thisButton;
 
@@ -53,6 +48,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 
 	private Color fgColor;
 	private int fontStyle = 0;
+	
 
 
 	public void setFontStyle(int fontStyle) {
@@ -78,7 +74,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.iconSize = iconSize;
 	}
 
-	private boolean hasTable, hasSlider;
+	private boolean hasTable;
 
 	// flag to determine if the popup should persist after a mouse click
 	private boolean keepVisible = true;
@@ -98,13 +94,12 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	private boolean isFixedIcon = false;
 
 
-	private boolean isIniting = true;
-	private JMenuItem component;
+	private boolean isIniting = true;	
 	protected boolean popupIsVisible;
 
 
 
-	/*************************************
+	/*#***********************************
 	/** Button constructors */
 
 	public PopupMenuButton(Application app){
@@ -121,8 +116,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			Integer mode, final boolean hasTable, boolean hasSlider){
 		super(); 
 		this.app = app;
-		this.hasTable = hasTable;
-		this.hasSlider = hasSlider;
+		this.hasTable = hasTable;		
 		this.mode = mode;
 		this.iconSize = iconSize;
 		this.thisButton = this;
@@ -159,7 +153,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				if(prepareToShowPopup() == false) return;
 
 				Point locButton = getLocation();
-				int h = e.getX() - locButton.x;
+				
 
 				// trigger popup 
 				// default: trigger only when the mouse is over the right side of the button
@@ -188,9 +182,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 
 
 		// create selection table
-		if(hasTable){
-			this.rows = rows;
-			this.columns = columns;
+		if(hasTable){			
 			this.data = data;
 
 			myTable = new SelectionTable(app,data,rows,columns,iconSize,mode);
@@ -236,6 +228,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	/**
 	 * Prepares the popup before it is shown. Override this if the popup needs
 	 * special handling before opening. 
+	 * @return true if not overriden
 	 */
 	public boolean prepareToShowPopup(){
 		return true;
@@ -265,8 +258,6 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	protected void processMouseEvent(MouseEvent e){
 
 		if(e.getID() == MouseEvent.MOUSE_RELEASED){
-			Point locButton = getLocation();
-			int h = e.getX() - locButton.x;
 			// mouse is over the popup triangle side of the button
 			if(isStandardButton || e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) 
 				return;
@@ -472,7 +463,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	@Override
 	public void setIcon(Icon icon) {
 
-		if(isFixedIcon) {
+		if(isFixedIcon) {			
 			super.setIcon(icon);
 			return;
 		}
@@ -487,15 +478,6 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			//icon = GeoGebraIcon.createEmptyIcon(1, iconSize.height);
 		}else{
 			icon = GeoGebraIcon.ensureIconSize((ImageIcon) icon, iconSize);
-		}
-
-
-		// get icon width and height		
-		int w = 0;
-		int h = 18;
-		if(icon != null){
-			w = (icon.getIconWidth() > 0) ? icon.getIconWidth() : 0;
-			h = (icon.getIconHeight() > 0) ? icon.getIconHeight() : 18;
 		}
 
 		// add a down_triangle image to the left of the icon

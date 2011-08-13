@@ -66,7 +66,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	// fields for setting/unsetting default geos 
 	private HashMap<Integer,Integer> defaultGeoMap;
 	private ArrayList<GeoElement> defaultGeos;
-	private GeoElement oldDefaultGeo, currentDefaultGeo;
+	private GeoElement oldDefaultGeo;
 	
 	// flags and constants
 	protected int iconHeight = 18;
@@ -91,6 +91,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	/*************************************************
 	 * Constructs a styleBar
+	 * @param ev view
 	 */
 	public EuclidianStyleBar(EuclidianViewInterface ev) {
 		
@@ -137,6 +138,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	/**
 	 * Handles ggb mode changes.
+	 * @param mode new mode
 	 */
 	public void setMode(int mode) {
 	
@@ -870,9 +872,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					boolean geosOK = (geos.length > 0 || mode == EuclidianConstants.MODE_PEN);
 					for (int i = 0; i < geos.length; i++) {
 						GeoElement geo = ((GeoElement)geos[i]).getGeoElementForPropertiesDialog();
-						if (geo instanceof GeoImage || geo instanceof GeoText)
+						if (geo instanceof GeoImage || geo instanceof GeoText){
 							geosOK = false;
-						break;
+							break;
+						}
 					}
 
 					setVisible(geosOK);
@@ -934,9 +937,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				boolean geosOK = (geos.length > 0);
 				for (int i = 0; i < geos.length; i++) {
 					GeoElement geo = ((GeoElement)geos[i]).getGeoElementForPropertiesDialog();
-					if (!(geo instanceof GeoText))
+					if (!(geo instanceof GeoText)){
 						geosOK = false;
-					break;
+						break;
+					}
 				}
 
 				setVisible(geosOK);
@@ -1041,8 +1045,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			}
 
 
-			public ImageIcon getButtonIcon(){			
-				return GeoGebraIcon.createTextSymbolIcon("A", app.getPlainFont(), textColorIconSize,  geoColor,  null);
+			public ImageIcon getButtonIcon(){				
+				return GeoGebraIcon.createTextSymbolIcon("A", app.getPlainFont(), textColorIconSize,  getSelectedColor(),  null);
 			}
 
 		};

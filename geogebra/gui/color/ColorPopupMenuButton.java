@@ -1,3 +1,14 @@
+/* 
+GeoGebra - Dynamic Mathematics for Everyone
+http://www.geogebra.org
+
+This file is part of GeoGebra.
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by 
+the Free Software Foundation.
+
+*/
 package geogebra.gui.color;
 
 import geogebra.gui.util.GeoGebraIcon;
@@ -65,7 +76,7 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	public void actionPerformed(ActionEvent e){
 		if(this.hasSlider) {
 			Integer si = getSelectedIndex();
-			defaultColor = getSelectedColor();
+			defaultColor = getSelectedColor();			
 			updateColorTable();
 			setSelectedIndex(si);
 		}
@@ -81,7 +92,7 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	public int getColorIndex(Color color){
 		int index = -1;
 
-		if(color == null && colorSetType == this.COLORSET_BGCOLOR){
+		if(color == null && colorSetType == COLORSET_BGCOLOR){
 			index = colorSet.length - 1;
 			return index;
 		}
@@ -112,13 +123,20 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 
 	public void setDefaultColor(float alpha, Color gc) {
 		defaultColor = gc;
-		this.setIcon(GeoGebraIcon.createColorSwatchIcon( alpha, iconSize, gc, null));
+		if(gc!=null)
+			this.setIcon(GeoGebraIcon.createColorSwatchIcon( alpha, iconSize, gc, null));
+		else
+			this.setIcon(GeoGebraIcon.createNullSymbolIcon(iconSize.width, iconSize.height));
 	}
 
 	private String[] getToolTipArray(){
 		String[] toolTipArray = new String[colorSet.length];
-		for(int i=0; i<toolTipArray.length; i++){			
-			toolTipArray[i] = GeoGebraColorConstants.getGeogebraColorName(app, colorSet[i]);
+		for(int i=0; i<toolTipArray.length; i++){
+			if(colorSet[i]==null)
+				toolTipArray[i] = app.getMenu("Transparent");
+			else
+				toolTipArray[i] = GeoGebraColorConstants.getGeogebraColorName(app, colorSet[i]);
+			
 		}
 		return toolTipArray;
 	}
