@@ -1523,8 +1523,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 					if (geo.isGeoNumeric())	datum = ((GeoNumeric)geo).getDouble(); 
 					else { sum.setUndefined(); return; }
 
-					// if datum is outside the range, set undefined
-					Application.printStacktrace(list1+","+leftBorder[N-1]);
+					// if datum is outside the range, set undefined					
 					if (datum < leftBorder[0] || datum > leftBorder[N-1]) { sum.setUndefined(); return; }
 
 					if(!this.histogramRight){
