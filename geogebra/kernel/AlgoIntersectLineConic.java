@@ -269,9 +269,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 		// if existingIntersection is still not found, find a point from line g on conic c
 		if (existingIntersection == null) {
 		  	ArrayList pointsOnLine = g.getPointsOnLine();
-		  	//for debug
-		  	int three = 1+1;
-		  	three = three+1;
+
 		  	
 	    	if (pointsOnLine != null) {
 	    		//get a point from pointsOnLine to see if it is on c.
@@ -301,6 +299,9 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 		
 		//when there is no more ProbabilisticChecking
 		handlingSpecialCase = false;
+		
+		
+		
 		
 		// if existingIntersection is still not found, report no special case handled
     	if (existingIntersection == null) {
@@ -388,8 +389,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
          *
          * We want to find a permutation of Q, so that the 
          * distances between old point Di and new Point Qi are minimal.         
-         */        
-         
+         */           
         // remember the defined points D, so that Di = Pi if Pi is defined        
         // and set age                
         boolean noSingularity = !P[0].isEqual(P[1]); // singularity check        
@@ -431,6 +431,10 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
                     count++;
                 }
             }                                    
+            
+            for (i=count; i< P.length; i++) {
+            	P[i].setUndefined();
+            }
             return;
         }
         
