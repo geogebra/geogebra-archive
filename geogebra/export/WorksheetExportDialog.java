@@ -192,7 +192,7 @@ public class WorksheetExportDialog extends JDialog {
 				app.getMenu("Help"), Application.WIKI_EXPORT_WORKSHEET);
 		helpButton.setAction(helpAction);
 
-		exportButton = new JButton(app.getMenu("Upload"));
+		exportButton = new JButton(app.getPlain("Upload"));
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
@@ -291,7 +291,7 @@ public class WorksheetExportDialog extends JDialog {
 				int selected = modeSwitch.getSelectedIndex();
 
 				if (selected == TAB_HTML) {
-					exportButton.setText(app.getPlain("Export"));
+					exportButton.setText(app.getMenu("Export"));
 					
 					textAbove.setText(textAboveUpload.getText());
 					textBelow.setText(textBelowUpload.getText());
@@ -306,7 +306,7 @@ public class WorksheetExportDialog extends JDialog {
 					
 					titlePanel.updateData();
 				} else {
-					exportButton.setText(app.getMenu("Upload"));
+					exportButton.setText(app.getPlain("Upload"));
 					
 					textAboveUpload.setText(textAbove.getText());
 					textBelowUpload.setText(textBelow.getText());
