@@ -725,7 +725,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		sb.append(command);
 		sb.append(text.substring(curWordStart + curWord.length()));
 		setText(sb.toString());
-		int bracketIndex = command.indexOf('[');
+		int bracketIndex = command.indexOf('[') + 1;
+		
 		setCaretPosition(curWordStart + bracketIndex);
 		moveToNextArgument(false);
 		return true;
