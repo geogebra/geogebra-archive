@@ -135,7 +135,7 @@ public class SpreadsheetView extends JPanel implements View, ComponentListener, 
 		// Build the spreadsheet table and enclosing scrollpane
 		buildSpreadsheet(rows, columns);
 
-		// Build the spreadsheet panel: formualBar above, spreadsheet in Center  
+		// Build the spreadsheet panel: formulaBar above, spreadsheet in Center  
 		spreadsheetPanel = new JPanel(new BorderLayout());
 		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
 

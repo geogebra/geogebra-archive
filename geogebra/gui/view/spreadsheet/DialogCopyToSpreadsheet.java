@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -34,6 +35,7 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 	private JPanel optionsPanel;
 
 	private String title;
+	private JCheckBox ckTranspose;
 	
 
 
@@ -63,8 +65,9 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 		copyTypePanel.add(rbDependent);
 
 		JPanel orderTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		orderTypePanel.add(rbOrderRow);
-		orderTypePanel.add(rbOrderCol);
+		//orderTypePanel.add(rbOrderRow);
+		//orderTypePanel.add(rbOrderCol);
+		orderTypePanel.add(ckTranspose);
 
 		JPanel cancelOKPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		cancelOKPanel.add(btnCopy);
@@ -108,6 +111,9 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 		bg2.add(rbOrderCol);
 		rbOrderRow.setSelected(!dndHandler.isRowOrdered());
 		rbOrderCol.setSelected(dndHandler.isRowOrdered());
+		
+		ckTranspose = new JCheckBox();
+		ckTranspose.setSelected(dndHandler.isRowOrdered());
 
 
 	}
@@ -123,6 +129,8 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 
 		rbOrderRow.setText(app.getMenu("RowOrder"));
 		rbOrderCol.setText(app.getMenu("ColumnOrder"));
+		
+		ckTranspose.setText(app.getMenu("Transpose"));
 	}
 
 
@@ -139,7 +147,8 @@ public class DialogCopyToSpreadsheet extends JDialog implements ActionListener {
 
 		else if (source == btnCopy) {
 			dndHandler.setCopyByValue(rbFree.isSelected());
-			dndHandler.setRowOrdered(rbOrderRow.isSelected());
+			//dndHandler.setRowOrdered(rbOrderRow.isSelected());
+			dndHandler.setRowOrdered(ckTranspose.isSelected());
 			dndHandler.setAllowDrop(true);
 			setVisible(false);
 		} 
