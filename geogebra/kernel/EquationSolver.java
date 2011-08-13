@@ -311,7 +311,7 @@ public class EquationSolver {
     	// |D(CR2-CQ3)|< (|r(aa-3b) - 4qa| + |-3ar -6q| + |9r|)*13122*sqrt(q) / |2a+3| *epsilon
     	// for simplicity, it (may be)  about 10* max(CR2,CR3)/|2a+3| * epsilon
     	//else if (Math.abs(CR2 - CQ3) < Math.max(CR2, CQ3) * epsilon) // else if (CR2 == CQ3)
-    	else if (Math.abs(CR2 - CQ3) < Math.max(CR2, CQ3) *10 / Math.abs(2*a+3) * epsilon) // else if (CR2 == CQ3) 
+    	else if (Math.abs(CR2 - CQ3) < Math.max(CR2, CQ3) *10 / Math.abs(Math.max(1,2*a+3)) * epsilon) // else if (CR2 == CQ3) 
     	{
     		// this test is actually R2 == Q3, written in a form suitable
     	    //     for exact computation with integers 
