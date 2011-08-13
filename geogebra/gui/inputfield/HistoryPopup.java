@@ -128,6 +128,9 @@ public class HistoryPopup implements ListSelectionListener{
 
 		// get the current history list and load it into the JList
 		ArrayList<String> list = textField.getHistory();
+		
+		if(list.isEmpty()) return;
+		
 		model = new DefaultListModel();
 
 		if(isDownPopup)
