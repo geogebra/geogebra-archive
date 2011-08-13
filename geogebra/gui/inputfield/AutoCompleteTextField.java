@@ -629,6 +629,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private boolean moveToNextArgument(boolean find) {
 		String text = getText();
 		int caretPos = getCaretPosition();
+		
+		// make sure it works if caret is just after [
+		if (caretPos > 0 && text.charAt(caretPos - 1) == '[') caretPos--;
+		
 		Matcher argMatcher = syntaxArgPattern.matcher(text);
 		boolean hasNextArgument = argMatcher.find(caretPos);
 		if (find && !hasNextArgument) {
