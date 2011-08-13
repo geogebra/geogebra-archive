@@ -64,6 +64,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.main.settings.EuclidianSettings;
 import geogebra.main.settings.KeyboardSettings;
 
 import java.awt.Color;
@@ -668,11 +669,14 @@ public class MyXMLHandler implements DocHandler {
 	private void startEuclidianViewElement(String eName, LinkedHashMap<String, String> attrs) {
 		boolean ok = true;
 		EuclidianView ev=null;
+		EuclidianSettings evSet=null;
 		if(viewNo==2){
 			ev=app.getGuiManager().getEuclidianView2();
+			evSet = app.getSettings().getEuclidian(2);
 		}
 		else{
 			ev=app.getEuclidianView();
+			evSet = app.getSettings().getEuclidian(1);
 		}
 		
 		switch (eName.charAt(0)) {
@@ -687,7 +691,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case 'b':
 			if (eName.equals("bgColor")) {
-				ok = handleBgColor(ev, attrs);
+				ok = handleBgColor(evSet, attrs);
 				break;
 			}
 
@@ -1156,11 +1160,11 @@ public class MyXMLHandler implements DocHandler {
 //		}
 //	}
 
-	private boolean handleBgColor(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private boolean handleBgColor(EuclidianSettings evSet, LinkedHashMap<String, String> attrs) {
 		Color col = handleColorAttrs(attrs);
 		if (col == null)
 			return false;
-		ev.setBackground(col);
+		evSet.setBackground(col);
 		return true;
 	}
 

@@ -56,6 +56,10 @@ import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
+import geogebra.main.settings.AbstractSettings;
+import geogebra.main.settings.EuclidianSettings;
+import geogebra.main.settings.KeyboardSettings;
+import geogebra.main.settings.SettingListener;
 import geogebra.util.MyMath;
 
 import java.awt.BasicStroke;
@@ -105,7 +109,7 @@ import javax.swing.Timer;
  * @version
  */
 public class EuclidianView extends JPanel  
-implements View, EuclidianViewInterface, Printable, EuclidianConstants {
+implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingListener {
 
 	protected static final long serialVersionUID = 1L;
 
@@ -582,6 +586,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		// enable drop transfers 
 		setTransferHandler(new EuclidianViewTransferHandler(this));
+		
+		// settings from XML for EV1, EV2
+		// not for eg probability calculator
+		if (evNo == 1 || evNo == 2) {
+			EuclidianSettings es = app.getSettings().getEuclidian(evNo);
+			settingsChanged(es);
+			es.addListener(this);
+		}
 	}
 	
 	public Application getApplication() {
@@ -5214,5 +5226,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if(yminObject == num)
 			yminObject = num2;
 		updateBounds();
+	}
+	public void settingsChanged(AbstractSettings settings) {
+		EuclidianSettings kbs = (EuclidianSettings)settings;
+		setBackground(kbs.getBackground());
+		
 	}
 }
