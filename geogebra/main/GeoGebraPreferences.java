@@ -14,19 +14,11 @@ package geogebra.main;
 
 import geogebra.GeoGebra;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
-
-import com.sun.opengl.util.FileUtil;
 
 /**
  * Stores user settings and options as preferences.
