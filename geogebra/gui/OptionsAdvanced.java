@@ -542,14 +542,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		
 		KeyboardSettings kbs = settings.getKeyboard();
 		cbKeyboardShowAutomatic.setSelected(kbs.isShowKeyboardOnStart());
-		Locale loc = kbs.getKeyboardLocale();
-		if(loc==null)
-			cbKeyboardLanguage.setSelectedIndex(0);
-		else{
-			int index = KeyboardSettings.supportedLocales.indexOf(kbs.getKeyboardLocale());
-			setLabelsKeyboardLanguage();
-			cbKeyboardLanguage.setSelectedIndex(index);
-		}
+		
 		tfKeyboardWidth.setText(Integer.toString(kbs.getKeyboardWidth()));
 		tfKeyboardHeight.setText(Integer.toString(kbs.getKeyboardHeight()));
 		
@@ -854,6 +847,16 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		}
 		
 		int selectedIndex = cbKeyboardLanguage.getSelectedIndex();
+		
+		if(selectedIndex == -1) {
+			Locale loc = settings.getKeyboard().getKeyboardLocale();
+			if(loc == null) {
+				selectedIndex = 0;
+			} else{
+				// look for index in locale list and add 1 to compensate default entry
+				selectedIndex = KeyboardSettings.supportedLocales.indexOf(settings.getKeyboard().getKeyboardLocale())+1;
+			}
+		}
 		
 		// take care that this doesn't fire events by accident 
 		cbKeyboardLanguage.removeActionListener(this);
