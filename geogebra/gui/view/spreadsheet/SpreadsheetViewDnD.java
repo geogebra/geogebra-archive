@@ -84,18 +84,19 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 		this.allowDrop = allowDrop;
 	}
 
-	public boolean isRowOrdered() {
+	public boolean isTranspose() {
 		return isTranspose;
 	}
 
+	public void setTranspose(boolean isTranspose) {
+		this.isTranspose = isTranspose;
+	}
+
+	
 	public boolean isCopyByValue() {
 		return isCopyByValue;
 	}
-
-	public void setRowOrdered(boolean isRowOrdered) {
-		this.isTranspose = isRowOrdered;
-	}
-
+	
 	public void setCopyByValue(boolean isCopyByValue) {
 		this.isCopyByValue = isCopyByValue;
 	}
@@ -209,12 +210,13 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 
 			if(!allowDrop){
 				allowDrop = true;
-				dte.dropComplete(false);
+				handleDropComplete(dte, false);
+				
 				return;
 			}
 
 			boolean success =  handleHtmlFlavorDrop(dte);
-			dte.dropComplete(success);
+			handleDropComplete(dte, success);
 			return;
 		}
 
@@ -223,12 +225,13 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 				||t.isDataFlavorSupported(HTMLflavor)){
 
 			boolean success = table.copyPasteCut.paste(currentCell.x, currentCell.y, currentCell.x, currentCell.y, t);
-			dte.dropComplete(success);
+			handleDropComplete(dte, success);
 			return;
 		}
 
 	}
 
+	
 
 	/**
 	 * Handles drops from the AlgebraView
@@ -256,6 +259,8 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 			for(int i=0; i < geoArray.length; i++){
 				GeoElement geo = app.getKernel().lookupLabel(list.get(i));
 				if(geo != null)
+					if(GeoElement.isSpreadsheetLabel(geo.getLabel()))
+						return false;
 					geoArray[i] = geo;
 			}
 
@@ -360,6 +365,11 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 		return false;
 	}
 
+	
+	private void handleDropComplete(DropTargetDropEvent dte, boolean success){
+		dte.dropComplete(success);
+		table.setTableMode(table.TABLE_MODE_STANDARD);
+	}
 
 	public void dropActionChanged(DropTargetDragEvent dte) {
 		// TODO Auto-generated method stub
