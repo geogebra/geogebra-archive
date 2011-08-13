@@ -160,6 +160,8 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	// maximum frequency of bar chart
 	// this is used by stat dialogs when setting window dimensions
 	private double freqMax;
+
+	private boolean histogramRight;
 	
 	/**
 	 * Returns maximum frequency of a bar chart or histogram
@@ -342,17 +344,16 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param label
 	 * @param list1
 	 * @param list2
-	 * @param dummy
 	 */
 	public AlgoFunctionAreaSums(Construction cons, String label,  
-			   GeoList list1, GeoList list2, boolean dummy) {
+			   GeoList list1, GeoList list2) {
 
-		this(cons, list1, list2, dummy);
+		this(cons, list1, list2);
 		sum.setLabel(label);
 	}
 	
 	public AlgoFunctionAreaSums(Construction cons, 
-			   GeoList list1, GeoList list2, boolean dummy) {
+			   GeoList list1, GeoList list2) {
 
 		super(cons);
 		
@@ -368,6 +369,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	}
 	/**
 	 * Constructor for copying BarChart
+	 * @param cons 
 	 * @param dummy to distinguish from other constructors
 	 * @param vals 
 	 * @param borders 
@@ -484,13 +486,14 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param label
 	 * @param list1
 	 * @param list2
+	 * @param right 
 	 */
-	public AlgoFunctionAreaSums(Construction cons, String label, GeoList list1, GeoList list2) {
+	public AlgoFunctionAreaSums(Construction cons, String label, GeoList list1, GeoList list2, boolean right) {
 		
 		super(cons);
 		
 		type = TYPE_HISTOGRAM;
-		
+		this.histogramRight = right;
 		this.list1 = list1;
 		this.list2 = list2;
 		
@@ -521,21 +524,22 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param list2
 	 * @param useDensity 
 	 * @param density
+	 * @param right 
 	 */
 	public AlgoFunctionAreaSums(Construction cons, String label, GeoBoolean isCumulative,  
-			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density) {
+			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density,boolean right) {
 
 
-		this(cons, isCumulative, list1, list2,  useDensity, density);
+		this(cons, isCumulative, list1, list2,  useDensity, density,right);
 		
 		sum.setLabel(label);
 	}
 	
 	public AlgoFunctionAreaSums(Construction cons, GeoBoolean isCumulative,  
-			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density) {
+			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density,boolean right) {
 
 		super(cons);
-		
+		this.histogramRight = right;
 		type = TYPE_HISTOGRAM_DENSITY;
 		
 		this.isCumulative = isCumulative;
@@ -636,7 +640,9 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		
 	}
 
-
+	public boolean isRight(){
+		return histogramRight;
+	}
 
 	
 
@@ -1510,7 +1516,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 				// work out frequencies in each class
 				
 				//TODO: finish right histogram option for 2nd case below
-				boolean isHistogramRight = false;
+				
 				
 				for (int i=0; i < list2.size() ; i++) {
 					geo = list2.get(i);
@@ -1518,9 +1524,10 @@ implements EuclidianViewCE, AlgoDrawInformation{
 					else { sum.setUndefined(); return; }
 
 					// if datum is outside the range, set undefined
-					if (datum < leftBorder[0] || datum > leftBorder[N-1] ) { sum.setUndefined(); return; }
+					Application.printStacktrace(list1+","+leftBorder[N-1]);
+					if (datum < leftBorder[0] || datum > leftBorder[N-1]) { sum.setUndefined(); return; }
 
-					if(!isHistogramRight){
+					if(!this.histogramRight){
 						// fudge to make the last boundary eg 10 <= x <= 20
 						// all others are 10 <= x < 20
 						double oldMaxBorder = leftBorder[N-1];
@@ -1528,10 +1535,8 @@ implements EuclidianViewCE, AlgoDrawInformation{
 
 						// check which class this datum is in
 						for (int j=1; j < N; j++) {
-							//System.out.println("checking "+leftBorder[j]);
-							if (datum < leftBorder[j]) 
+							if (Kernel.isGreater(leftBorder[j],datum)) 
 							{
-								//System.out.println(datum+" "+j);
 								yval[j-1]++;
 								break;
 							}
@@ -1549,16 +1554,14 @@ implements EuclidianViewCE, AlgoDrawInformation{
 						leftBorder[0] += Math.abs(leftBorder[0] / 100000000);
 
 						// check which class this datum is in
-						for (int j=1; j <= N; j++) {
-							//System.out.println("checking "+leftBorder[j]);
-							if (datum < leftBorder[j]) 
+						for (int j=1; j < N; j++) {
+							if (Kernel.isGreaterEqual(leftBorder[j],datum)) 
 							{
-								//System.out.println(datum+" "+j);
 								yval[j-1]++;
 								break;
 							}
 						}
-						leftBorder[N-1] = oldMinBorder;
+						leftBorder[0] = oldMinBorder;
 					}
 
 

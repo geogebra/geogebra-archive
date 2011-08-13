@@ -36,7 +36,7 @@ public class AlgoFrequencyPolygon extends AlgoElement {
 	private GeoPointND[] points; 
 	private AlgoHistogram algoHistogram;
 
-
+	private boolean right = false;
 	/**
 	 * Creates a frequency polygon from two data lists.
 	 * @param cons construction
@@ -147,10 +147,10 @@ public class AlgoFrequencyPolygon extends AlgoElement {
 		cons.setSuppressLabelCreation(true);
 
 		if(useDensity == null){
-			algoHistogram = new AlgoHistogram(cons, null, list1, list2);
+			algoHistogram = new AlgoHistogram(cons, null, list1, list2,right);
 		}else{
 			algoHistogram = new AlgoHistogram(cons, null, isCumulative, list1,
-					list2, useDensity, density);
+					list2, useDensity, density,right);
 		}
 		cons.setSuppressLabelCreation(suppressLabelCreation);
 

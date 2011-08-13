@@ -62,7 +62,7 @@ public class StatGeo   {
 	public static final int TABLE_TWO_VAR = 1;
 	public static final int TABLE_REGRESSION = 2;
 
-
+	private boolean histogramRight;
 
 	/*************************************************
 	 * Constructs a GeoPlot instance
@@ -234,7 +234,7 @@ public class StatGeo   {
 			//text = "FrequencyPolygon[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
 		al2 = new AlgoFrequencyPolygon(cons, new GeoBoolean(cons, settings.isCumulative), (GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
 			else
-				al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), (GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
+				al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), (GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density),histogramRight);
 			//text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
 		cons.removeFromConstructionList(al2);
 

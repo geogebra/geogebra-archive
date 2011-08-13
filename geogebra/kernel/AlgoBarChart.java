@@ -60,7 +60,7 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 	 */
 	public AlgoBarChart(Construction cons, String label,
 			GeoList list1, GeoList list2) {
-		super(cons, label, list1, list2, true); // true = dummy		
+		super(cons, label, list1, list2);		
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 
 	public AlgoBarChart(Construction cons, GeoList discreteValueList,
 			GeoList discreteProbList) {
-		super(cons, discreteValueList, discreteProbList, true);
+		super(cons, discreteValueList, discreteProbList);
 	}
 
 	public String getClassName() {

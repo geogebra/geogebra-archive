@@ -459,7 +459,8 @@ public class CommandDispatcher {
     	//=============================================================	
     	cmdTable.put("BarChart", new CmdBarChart(kernel));    	
     	cmdTable.put("BoxPlot", new CmdBoxPlot(kernel));    	
-    	cmdTable.put("Histogram", new CmdHistogram(kernel)); 
+    	cmdTable.put("Histogram", new CmdHistogram(kernel));
+    	cmdTable.put("HistogramRight", new CmdHistogramRight(kernel)); 
     	cmdTable.put("DotPlot", new CmdDotPlot(kernel)); 
     	cmdTable.put("StemPlot", new CmdStemPlot(kernel));  
     	cmdTable.put("ResidualPlot", new CmdResidualPlot(kernel));  

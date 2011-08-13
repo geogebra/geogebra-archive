@@ -15,8 +15,8 @@ package geogebra.kernel.commands;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.RenameInputHandler;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
@@ -72,7 +72,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -3597,15 +3596,20 @@ class CmdBoxPlot extends CommandProcessor {
  * Histogram[ <List>, <List> ]
  */
 class CmdHistogram extends CommandProcessor {
-
+	private boolean right;
 	/**
 	 * Create new command processor
 	 * 
 	 * @param kernel
 	 *            kernel
 	 */
-	public CmdHistogram(Kernel kernel) {
+	public CmdHistogram(Kernel kernel) {		
+		this(kernel,false);
+	}
+	
+	public CmdHistogram(Kernel kernel,boolean right) {
 		super(kernel);
+		this.right = right;
 	}
 
 	final public GeoElement[] process(Command c) throws MyError {
@@ -3619,7 +3623,7 @@ class CmdHistogram extends CommandProcessor {
 			if ((ok[0] = (arg[0].isGeoList()))
 					&& (ok[1] = (arg[1].isGeoList()))) {
 				GeoElement[] ret = { kernel.Histogram(c.getLabel(),
-						(GeoList) arg[0], (GeoList) arg[1]) };
+						(GeoList) arg[0], (GeoList) arg[1],right) };
 				return ret;
 			} else if (!ok[0])
 				throw argErr(app, c.getName(), arg[0]);
@@ -3634,7 +3638,7 @@ class CmdHistogram extends CommandProcessor {
 					&& (ok[2] = (arg[2].isGeoBoolean()))) {
 				GeoElement[] ret = { kernel.Histogram(c.getLabel(),
 						(GeoList) arg[0], (GeoList) arg[1],
-						(GeoBoolean) arg[2], null) };
+						(GeoBoolean) arg[2], null,right) };
 				return ret;
 			} else if (!ok[0])
 				throw argErr(app, c.getName(), arg[0]);
@@ -3652,7 +3656,7 @@ class CmdHistogram extends CommandProcessor {
 					&& (ok[3] = (arg[3].isGeoNumeric()))) {
 				GeoElement[] ret = { kernel.Histogram(c.getLabel(),
 						(GeoList) arg[0], (GeoList) arg[1],
-						(GeoBoolean) arg[2], (GeoNumeric) arg[3]) };
+						(GeoBoolean) arg[2], (GeoNumeric) arg[3],right) };
 				return ret;
 			}
 			
@@ -3662,7 +3666,7 @@ class CmdHistogram extends CommandProcessor {
 					&& (ok[3] = (arg[3].isGeoBoolean()))) {
 				GeoElement[] ret = { kernel.Histogram(c.getLabel(),
 						(GeoBoolean) arg[0], (GeoList) arg[1],
-						(GeoList) arg[2], (GeoBoolean) arg[3]) };
+						(GeoList) arg[2], (GeoBoolean) arg[3],right) };
 				return ret;
 			}
 			
@@ -3684,7 +3688,7 @@ class CmdHistogram extends CommandProcessor {
 					&& (ok[4] = (arg[4].isGeoNumeric()))) {
 				GeoElement[] ret = { kernel.Histogram(c.getLabel(),
 						(GeoBoolean) arg[0], (GeoList) arg[1],
-						(GeoList) arg[2], (GeoBoolean) arg[3], (GeoNumeric) arg[4]) };
+						(GeoList) arg[2], (GeoBoolean) arg[3], (GeoNumeric) arg[4],right) };
 				return ret;
 			} else if (!ok[0])
 				throw argErr(app, c.getName(), arg[0]);
@@ -3704,7 +3708,11 @@ class CmdHistogram extends CommandProcessor {
 
 	}
 }
-
+class CmdHistogramRight extends CmdHistogram {
+	public CmdHistogramRight(Kernel kernel){
+		super(kernel,true);
+	}
+}
 
 /**
  * Histogram[ <List>, <List> ]

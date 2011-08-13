@@ -3250,8 +3250,8 @@ public class Kernel {
 	 * Histogram[classList, dataList]
 	 */
 	final public GeoNumeric Histogram(String label, 
-					GeoList list1, GeoList list2) {
-		AlgoHistogram algo = new AlgoHistogram(cons, label, list1, list2);
+					GeoList list1, GeoList list2, boolean right) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, list1, list2, right);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}
@@ -3260,8 +3260,8 @@ public class Kernel {
 	 *  Histogram[classList, dataList, useDensity, density]
 	 */
 	final public GeoNumeric Histogram(String label, 
-					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
-		AlgoHistogram algo = new AlgoHistogram(cons, label, null, list1, list2, useDensity, density);
+					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density, boolean right) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, null, list1, list2, useDensity, density, right);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}
@@ -3270,8 +3270,8 @@ public class Kernel {
 	 * Histogram[isCumulative, classList, dataList, useDensity]
 	 */
 	final public GeoNumeric Histogram(String label, GeoBoolean isCumulative,
-					GeoList list1, GeoList list2, GeoBoolean useDensity) {
-		AlgoHistogram algo = new AlgoHistogram(cons, label, isCumulative, list1, list2, useDensity, null);
+					GeoList list1, GeoList list2, GeoBoolean useDensity, boolean right) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, isCumulative, list1, list2, useDensity, null, right);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}
@@ -3281,8 +3281,8 @@ public class Kernel {
 	  * Histogram[isCumulative, classList, dataList, useDensity, density]
 	 */
 	final public GeoNumeric Histogram(String label, GeoBoolean isCumulative,
-					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
-		AlgoHistogram algo = new AlgoHistogram(cons, label, isCumulative, list1, list2, useDensity, density);
+					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density, boolean right) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, isCumulative, list1, list2, useDensity, density, right);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}

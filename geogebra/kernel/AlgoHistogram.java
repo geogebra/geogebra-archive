@@ -32,10 +32,11 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 	 * @param label label for the histogram
 	 * @param list1 list of boundaries
 	 * @param list2 list of heights or raw data
+	 * @param right 
 	 */
 	public AlgoHistogram(Construction cons, String label,
-								   GeoList list1, GeoList list2) {
-		super(cons, label, list1, list2);		
+								   GeoList list1, GeoList list2,boolean right) {
+		super(cons, label, list1, list2, right);		
 	}
 	
 	private AlgoHistogram(Construction cons, double[]vals,double[]borders,int N) {
@@ -52,14 +53,15 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 	 * @param list2 list of heights or raw data
 	 * @param useDensity flag  
 	 * @param density density scaling factor 
+	 * @param right 
 	 */
 	public AlgoHistogram(Construction cons, String label,
 			GeoBoolean isCumulative,					   
 			GeoList list1, 
 			GeoList list2, 
 			GeoBoolean useDensity, 
-			GeoNumeric density) {
-		super(cons, label, isCumulative, list1, list2, useDensity, density);		
+			GeoNumeric density,boolean right) {
+		super(cons, label, isCumulative, list1, list2, useDensity, density,right);		
 	}
 	
 	private AlgoHistogram(
@@ -75,13 +77,13 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 			GeoList list1, 
 			GeoList list2, 
 			GeoBoolean useDensity, 
-			GeoNumeric density) {
-		super(cons, isCumulative, list1, list2, useDensity, density);		
+			GeoNumeric density,boolean right) {
+		super(cons, isCumulative, list1, list2, useDensity, density,right);		
 	}
 	
 
 	public String getClassName() {
-		return "AlgoHistogram";
+		return isRight()?"AlgoHistogramRight":"AlgoHistogram";
 	}
 	
 	public AlgoHistogram copy() {
