@@ -1546,7 +1546,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			if(!(geo.getGeoElementForPropertiesDialog() instanceof GeoImage || geo.getGeoElementForPropertiesDialog() instanceof GeoText))
 				if((geo.getObjectColor() != color || geo.getAlphaValue() != alpha) ){
 					geo.setObjColor(color);
-					geo.setAlphaValue(alpha);
+					//if we change alpha for functions, hit won't work properly
+					if(geo.isFillable())
+						geo.setAlphaValue(alpha);
 					geo.updateRepaint();
 					needUndo = true;
 			}
