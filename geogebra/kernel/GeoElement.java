@@ -1056,12 +1056,11 @@ public abstract class GeoElement
 			) return;
 		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
 		else if (layer < 0) layer = 0;
-		GuiManager guiManager = app.getGuiManager();
-		if (guiManager!=null){
-			EuclidianViewInterface ev = app.getActiveEuclidianView();//app.getEuclidianView();
-			if (ev != null)
-				ev.changeLayer(this,this.layer,layer);
-		}
+	
+		EuclidianViewInterface ev = app.getActiveEuclidianView();//app.getEuclidianView();
+		if (ev != null)
+			ev.changeLayer(this,this.layer,layer);
+		
 		this.layer=layer;
 	}
 
