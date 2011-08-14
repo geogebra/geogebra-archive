@@ -126,7 +126,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		header.add(app.getPlain("OldExpression"));
 		header.add(app.getPlain("NewExpression"));
 		replaceTable=new JTable(data,header);
-		replaceTable.setDefaultEditor(Object.class,new MathTextCellEditor(app.getGuiManager()));
+		replaceTable.setDefaultEditor(Object.class,new MathTextCellEditor());
 		replaceTable.getTableHeader().setReorderingAllowed(false);
 		double fontFactor=Math.max(1,app.getGUIFontSize()/DEFAULT_FONT_SIZE);
 		replaceTable.setRowHeight((int) (DEFAULT_TABLE_CELL_HEIGHT*fontFactor));
@@ -331,7 +331,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		boolean editing;
 		MathTextField delegate;
 		
-		public MathTextCellEditor(GuiManager guiManager) {
+		public MathTextCellEditor() {
 			super();
 			delegate=new MathTextField(app);
 			editing=false;

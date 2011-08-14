@@ -3029,7 +3029,7 @@ public abstract class GeoElement
 		}
 
 		//G.Sturr 2010-6-26
-		if(getSpreadsheetTrace()){
+		if(getSpreadsheetTrace() && app.useFullGui()){
 			app.getGuiManager().traceToSpreadsheet(this);
 
 		}
@@ -4343,8 +4343,8 @@ public abstract class GeoElement
 		// Get spreadsheet trace XML from the trace manager
 
 		// trace to spreadsheet
-		if (isSpreadsheetTraceable() && getSpreadsheetTrace()) {
-		sb.append( ((SpreadsheetView) app.getGuiManager().getSpreadsheetView())
+		if (app.useFullGui() && isSpreadsheetTraceable() && getSpreadsheetTrace()) {
+			sb.append( ((SpreadsheetView) app.getGuiManager().getSpreadsheetView())
 					.getTraceManager().getTraceXML(this));
 		}
 
@@ -5293,7 +5293,8 @@ public abstract class GeoElement
 	 * Called after mouse_release.
 	 */
 	public void resetTraceColumns() {
-		app.getGuiManager().resetTraceColumn(this);
+		if (app.useFullGui())
+			app.getGuiManager().resetTraceColumn(this);
 	}
 
 	/** @return if geos of this type can be traced to the spreadsheet */
@@ -5320,66 +5321,6 @@ public abstract class GeoElement
 	public void setTraceSettings(TraceSettings t){
 			traceSettings = t;
 	}
-
-
-
-	/*
-	 * ----------------- OLD CODE -------------------------
-
-	private int traceColumn1 = -1;
-	private double lastTrace1 = Math.random();
-	private double lastTrace2 = Math.random();
-
-	public void resetTraceColumns() {
-		traceColumn1 = -1;
-	}
-
-	public String getTraceColumn1() {
-		if (app.isUsingLayout() && app.getGuiManager().showSpreadsheetView() && traceColumn1 == -1) {
-			traceColumn1 = app.getGuiManager().getHighestUsedSpreadsheetColumn() + 1;
-		}
-		return GeoElement.getSpreadsheetColumnName(traceColumn1);
-	}
-
-	public String getTraceColumn2() {
-		if (app.isUsingLayout() && app.getGuiManager().showSpreadsheetView() && traceColumn1 == -1) {
-			traceColumn1 = app.getGuiManager().getHighestUsedSpreadsheetColumn() + 1;
-		}
-		return GeoElement.getSpreadsheetColumnName(traceColumn1 + 1);
-	}
-
-	public int getTraceRow() {
-		if (traceColumn1 == -1) return -1;
-
-		if (!(app.isUsingLayout() && app.getGuiManager().showSpreadsheetView())) return -1;
-
-		return app.getGuiManager().getSpreadsheetTraceRow(traceColumn1);
-	}
-
-	public double getLastTrace1() {
-		return lastTrace1;
-	}
-
-	public double getLastTrace2() {
-		return lastTrace2;
-	}
-
-	public void setLastTrace1(double val) {
-		lastTrace1 = val;
-	}
-
-	public void setLastTrace2(double val) {
-		lastTrace2 = val;
-	}
-
-
-	 */
-
-	// END G.Sturr
-	// ========================================
-
-
-
 
 	/*
 	 * over-ridden in GeoList
