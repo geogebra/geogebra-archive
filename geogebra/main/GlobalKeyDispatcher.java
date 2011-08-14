@@ -256,7 +256,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_1:
 			case KeyEvent.VK_NUMPAD1:
 				// event.isShiftDown() doesn't work if NumLock on
-				if (event.isShiftDown() || event.isAltDown()) {
+				// however .isAltDown() stops AltGr-1 from working (| on some keyboards)
+				if (event.isShiftDown()) {// || event.isAltDown()) {
 					app.getGuiManager().setShowView(
 							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN),
 							Application.VIEW_EUCLIDIAN);
