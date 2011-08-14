@@ -1,10 +1,12 @@
 #!/bin/sh
-# Creates zip files from geogebrea.properties from SVN repository
+# Creates a zip file containing geogebra.properties from SVN repository
+# Also puts geogebratube translations into the zip.
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
 ZIPDIR=/Users/zoltan/source/translation/gui
 DATE=`date +%Y%m%d`
 ZIPFILE=geogebra_prop_40_$DATE.zip
+TUBE_REPO=file:///opt/repos/tube/trunk # not used yet, but assumed
 
 date
 echo "$0: start"
@@ -15,6 +17,12 @@ test -r autobuild.conf || {
  }
 . ./autobuild.conf
 
+# Updating GeoGebraTube and copy files to the properties directory:
+cd $SVNDIR/tube/trunk/languages
+$SVN_COMMAND update --accept theirs-full --force
+cp *.properties $SVNDIR/geogebra/geogebra/properties
+
+# Updating GeoGebra properties:
 cd $SVNDIR/geogebra/geogebra/properties
 $SVN_COMMAND update --accept theirs-full --force
 cd ../gui
@@ -22,11 +30,14 @@ $SVN_COMMAND update --accept theirs-full --force
 cp _license.txt ..
 cd ..
 
+# Moving old zip file to old/:
 mkdir -p $ZIPDIR/old
 mv $ZIPDIR/*.zip $ZIPDIR/old
 
+# Zipping:
 zip -r $ZIPFILE properties _license.txt -x properties/.svn/\*
 
+# Deploying:
 mv $ZIPFILE $ZIPDIR
 
 date
