@@ -266,7 +266,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 		// license
 		String text = app.loadTextFile(Application.LICENSE_FILE);
 		// We may want to modify the window size when the license file changes:
-		JTextArea textArea = new JTextArea(25, 72); // window size fine tuning (rows, cols)
+		JTextArea textArea = new JTextArea(24, 72); // window size fine tuning (rows, cols)
 		JScrollPane scrollPane = new JScrollPane(textArea,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
