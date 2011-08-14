@@ -9,7 +9,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra.main.settings.AbstractSettings;
-import geogebra.main.settings.LayoutSettings;
 import geogebra.main.settings.SettingListener;
 import geogebra.main.settings.SpreadsheetSettings;
 
@@ -39,8 +38,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JViewport;
 import javax.swing.JTable.PrintMode;
+import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -87,8 +86,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	// toolbar manager
 	SpreadsheetToolbarManager toolbarManager;
 
-
-
 	private StatDialog oneVarStatDialog;
 	private StatDialog twoVarStatDialog;
 	private StatDialog multiVarStatDialog;
@@ -128,8 +125,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		view = this;
 
 		// Initialize settings and register listener
-		this.settings = app.getSettings().getSpreadsheet();
-		this.settings.addListener(this);
+		settings = app.getSettings().getSpreadsheet();
+		settings.addListener(this);
 
 
 		// Build the spreadsheet table and enclosing scrollpane
@@ -1314,6 +1311,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 	public void settingsChanged(AbstractSettings settings0) {
 
+		// layout
 		setShowColumnHeader(settings.showColumnHeader());
 		setShowRowHeader(settings.showRowHeader()) ;
 		setShowVScrollBar(settings.showVScrollBar());
@@ -1325,6 +1323,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		setAllowSpecialEditor(settings.allowSpecialEditor());
 		setEqualsRequired(settings.equalsRequired());
 
+		// browser panel
 		if(settings.showBrowserPanel()){
 			setShowFileBrowser(true);
 
@@ -1336,8 +1335,22 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			}
 		}
 
+		// row height and column widths
 		setColumnWidthsFromSettings();
 		setRowHeightsFromSettings();
+		
+		// cell format
+		getTable().getCellFormatHandler().processXMLString(settings.cellFormat());	
+		
+		// preferredSize
+		this.setPreferredSize(settings.preferredSize());
+		
+		
+		// initial position
+		// TODO not working yet ... 
+		//setSpreadsheetScrollPosition(settings.scrollPosition().x, settings.scrollPosition().y);
+		//getTable().setInitialCellSelection(settings.selectedCell().x, settings.selectedCell().y);
+		
 	}
 
 

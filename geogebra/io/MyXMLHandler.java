@@ -70,6 +70,7 @@ import geogebra.main.settings.SpreadsheetSettings;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -766,8 +767,7 @@ public class MyXMLHandler implements DocHandler {
 			
 		case 's':
 			if (eName.equals("size")) {
-				ok = handleSpreadsheetSize(app.getGuiManager()
-						.getSpreadsheetView(), attrs);
+				ok = handleSpreadsheetSize(attrs);
 				break;
 			}
 			if (eName.equals("spreadsheetColumn")) {
@@ -779,8 +779,7 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			}
 			if (eName.equals("selection")) {
-				ok = handleSpreadsheetInitalSelection(app.getGuiManager()
-						.getSpreadsheetView(), attrs);
+				ok = handleSpreadsheetInitalSelection(attrs);
 				break;
 			}
 
@@ -789,8 +788,7 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			}
 			if (eName.equals("spreadsheetCellFormat")) {
-				ok = handleSpreadsheetFormat(app.getGuiManager()
-						.getSpreadsheetView(), attrs);
+				ok = handleSpreadsheetFormat(attrs);
 				break;
 			}
 			
@@ -1015,18 +1013,14 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleSpreadsheetSize(Object spreadsheetView,
-			LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetSize(LinkedHashMap<String, String> attrs) {
 		if (app.isApplet())
 			return true;
 
 		try {
 			int width = Integer.parseInt((String) attrs.get("width"));
 			int height = Integer.parseInt((String) attrs.get("height"));
-			
-			app.getGuiManager().getSpreadsheetView().setPreferredSize(new Dimension(width, height));
-			//((geogebra.gui.view.spreadsheet.SpreadsheetView) spreadsheetView)
-			//		.setPreferredSize(new Dimension(width+118, height));
+			app.getSettings().getSpreadsheet().setPreferredSize(new Dimension(width,height));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1060,12 +1054,11 @@ public class MyXMLHandler implements DocHandler {
 	}
 	
 	
-	private boolean handleSpreadsheetFormat(Object spreadsheetView,
-			LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetFormat(LinkedHashMap<String, String> attrs) {
 
 		try {
-			String cellFormats = (String) attrs.get("formatMap");
-			((SpreadsheetView)spreadsheetView).getTable().getCellFormatHandler().processXMLString(cellFormats);	
+			String cellFormat = (String) attrs.get("formatMap");
+			app.getSettings().getSpreadsheet().setCellFormat(cellFormat);	
 			return true;
 			
 		} catch (Exception e) {
@@ -1109,19 +1102,20 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 	
-	private boolean handleSpreadsheetInitalSelection(Object spreadsheetView,
-			LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetInitalSelection(LinkedHashMap<String, String> attrs) {
 
-		SpreadsheetView sv = (SpreadsheetView)spreadsheetView;
+		SpreadsheetSettings settings = app.getSettings().getSpreadsheet();
 		try {
 			
 			int hScroll = Integer.parseInt((String) attrs.get("hScroll"));
 			int vScroll = Integer.parseInt((String) attrs.get("vScroll"));
-			sv.setSpreadsheetScrollPosition(hScroll, vScroll);
+			settings.setScrollPosition(new Point(hScroll, vScroll));
+			
 			
 			int row = Integer.parseInt((String) attrs.get("row"));
 			int column = Integer.parseInt((String) attrs.get("column"));
-			sv.getTable().setInitialCellSelection(row, column);
+			settings.setScrollPosition(new Point(row, column));
+			
 			return true;
 			
 		} catch (Exception e) {

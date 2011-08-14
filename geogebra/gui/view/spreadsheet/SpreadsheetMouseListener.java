@@ -185,7 +185,10 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 		}					
 
 		if (!rightClick) {
-
+			
+			// memory testing
+			//Application.debug("", true, true, 0);
+			
 			if(table.getSelectionType() != MyTable.CELL_SELECT){
 				table.setSelectionType(MyTable.CELL_SELECT);
 			}

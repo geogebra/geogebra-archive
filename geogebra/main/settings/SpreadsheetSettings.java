@@ -1,9 +1,10 @@
 package geogebra.main.settings;
 
-import java.util.HashMap;
-
-import geogebra.gui.view.spreadsheet.FileBrowserPanel;
 import geogebra.gui.view.spreadsheet.MyTable;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.util.HashMap;
 
 /**
  * Settings for the spreadsheet view.
@@ -38,6 +39,15 @@ public class SpreadsheetSettings extends AbstractSettings {
 	private int preferredColumnWidth = MyTable.TABLE_CELL_WIDTH;
 	private int preferredRowHeight = MyTable.TABLE_CELL_HEIGHT;
 
+	// cell format
+	private String cellFormat;
+	
+	// initial selection
+	private Point scrollPosition = new Point(0,0);
+	private Point selectedCell = new Point(0,0);
+	
+	// preferred size
+	private Dimension preferredSize;;
 	
 	
 	//============================================
@@ -294,7 +304,89 @@ public class SpreadsheetSettings extends AbstractSettings {
 	}
 
 
+	//============================================
+	//  Cell Format Settings
+	//============================================
+	
+	/**
+	 * @return the cellFormat
+	 */
+	public String cellFormat() {
+		return cellFormat;
+	}
 
+	/**
+	 * @param cellFormat the cellFormat to set
+	 */
+	public void setCellFormat(String cellFormat) {
+		if(this.cellFormat == null || !this.cellFormat.equals(cellFormat)) {
+			this.cellFormat = cellFormat;
+			settingChanged();
+		}
+	}
+	
+
+	//============================================
+	//  Initial Position Settings
+	//============================================
+	/**
+	 * @return the scrollPosition
+	 */
+	public Point scrollPosition() {
+		return scrollPosition;
+	}
+
+	/**
+	 * @param scrollPosition the scrollPosition to set
+	 */
+	public void setScrollPosition(Point scrollPosition) {
+		if(this.scrollPosition == null || !this.scrollPosition.equals(scrollPosition)) {
+			this.scrollPosition = scrollPosition;
+			settingChanged();
+		}
+	}
+	
+	/**
+	 * @return the selectedCell
+	 */
+	public Point selectedCell() {
+		return selectedCell;
+	}
+
+	/**
+	 * @param selectedCell the selectedCell to set
+	 */
+	public void setSelectedCell(Point selectedCell) {
+		if(this.selectedCell == null || !this.selectedCell.equals(selectedCell)) {
+			this.selectedCell = selectedCell;
+			settingChanged();
+		}
+	}
+	
+	
+
+	//============================================
+	//  PreferredSize Settings
+	//============================================
+	/**
+	 * @return the preferredSize
+	 */
+	public Dimension preferredSize() {
+		return preferredSize;
+	}
+
+	/**
+	 * @param preferredSize the preferredSize to set
+	 */
+	public void setPreferredSize(Dimension preferredSize) {
+		if(this.preferredSize == null || !this.preferredSize.equals(preferredSize)) {
+			this.preferredSize = preferredSize;
+			settingChanged();
+		}
+	}
+	
+
+	
 	//============================================
 	//  File Browser Settings
 	//============================================
