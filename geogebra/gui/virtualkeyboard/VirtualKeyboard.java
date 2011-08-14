@@ -20,6 +20,7 @@ import geogebra.main.MyResourceBundle;
 import geogebra.main.settings.AbstractSettings;
 import geogebra.main.settings.KeyboardSettings;
 import geogebra.main.settings.SettingListener;
+import geogebra.util.Unicode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -116,6 +117,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener, SettingLi
 
 	private Font [] fonts = new Font[100];
 
+	private String fontName = null;
+
 	public static void mainx(String[] args) {    
 
 		try {							
@@ -158,17 +161,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener, SettingLi
 		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
 
-
-		// TODO: use app.getFontCanDisplay()
-		String fName = app.getPlainFont().getFontName();
-
-		for (int i = 0 ; i < 100 ; i++) {
-			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
-		}
-
-
-
-
+		setFonts();
+		
 		initialize();
 
 		setLabels();
@@ -238,6 +232,20 @@ public class VirtualKeyboard extends JFrame implements ActionListener, SettingLi
 
 	}
 	
+	private void setFonts() {
+		
+		
+		String fName = app.getFontCanDisplay(""+Unicode.getTestChar(app.getLocale().getLanguage())).getFontName();
+
+		if (fName.equals(this.fontName)) return;
+		
+		this.fontName = fName;
+		
+		for (int i = 0 ; i < 100 ; i++) {
+			fonts[i] = new Font(fName, Font.PLAIN, i+1);    
+		}
+	}
+
 	/**
 	 * Updates the opacity.
 	 */
@@ -1095,6 +1103,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener, SettingLi
 	 * called when eg language changed
 	 */
 	public void setLabels() {
+		
+		setFonts();
 
 		setTitle((app == null) ? "Virtual Keyboard" : app.getPlain("VirtualKeyboard"));
 
