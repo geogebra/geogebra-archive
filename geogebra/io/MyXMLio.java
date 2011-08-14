@@ -839,8 +839,8 @@ public class MyXMLio {
 		}
 		
 		// save spreadsheetView settings
-		if (app.useFullGui() && app.getGuiManager().hasSpreadsheetView())
-			app.getGuiManager().getSpreadsheetViewXML(sb);
+	//	if (app.useFullGui() && app.getGuiManager().hasSpreadsheetView())
+	//		app.getGuiManager().getSpreadsheetViewXML(sb);
 		
 		// save algebraView settings
 		//app.getGuiManager().getAlgebraViewXML(sb);
