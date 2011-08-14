@@ -1,5 +1,7 @@
 package geogebra.main.settings;
 
+import geogebra.main.Application;
+
 import java.util.LinkedList;
 
 /**
@@ -51,11 +53,7 @@ public abstract class AbstractSettings {
 	/**
 	 * Begin batch mode.
 	 */
-	public final void beginBatch() {
-		if(isBatch) {
-			throw new IllegalStateException("Use endBatch() to close the last batch first.");
-		}
-		
+	public final void beginBatch() {		
 		isBatch = true;
 		settingsChanged = false;
 	}
@@ -65,7 +63,7 @@ public abstract class AbstractSettings {
 	 */
 	public final void endBatch() {
 		if(!isBatch) {
-			throw new IllegalStateException("beginBatch() has to be called before endBatch().");
+			Application.debug("Settings: endBatch() called without beginBatch(). Maybe beginBatch() is missing?");
 		}
 		
 		// notify listeners
