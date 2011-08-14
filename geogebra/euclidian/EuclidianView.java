@@ -3491,12 +3491,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		
 		//Application.printStacktrace(""+geo.isVisibleInView(this));
 		
-		
-		//G.Sturr 2010-6-30
-		// filter out any geo not marked for this view
-		if(!isVisibleInThisView(geo)) return;
-		// END G.Sturr
-		
+		// filter out any geo not marked for this view, or any geo not Euclidian visible 
+		// note: when visibility is changed, geo.setEuclidianVisibile calls this method again
+		if(!isVisibleInThisView(geo) || !geo.isEuclidianVisible()) 
+			return;
+			
 		
 		// check if there is already a drawable for geo
 		Drawable d = getDrawable(geo);

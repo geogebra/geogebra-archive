@@ -1370,6 +1370,12 @@ public abstract class GeoElement
 
 	public void setEuclidianVisible(boolean visible) {
 		euclidianVisible = visible;
+		
+		// call EV add() to create Drawable if none exists 
+		if(visible)
+			for(Object view:viewSet)
+				((View)view).add(this);
+		
 	}
 
 	public void forceEuclidianVisible(boolean visible) {

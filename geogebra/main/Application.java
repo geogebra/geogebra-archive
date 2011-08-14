@@ -4466,8 +4466,19 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		if (showMemory) {
-			sb.append(" free memory: ");
+			System.gc(); System.gc(); System.gc(); System.gc();
+
+		    long usedK = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 ;
+
+			sb.append("\n free memory: ");
 			sb.append(Runtime.getRuntime().freeMemory());
+			sb.append(" total memory: ");
+			sb.append(Runtime.getRuntime().totalMemory());
+			sb.append(" max memory: ");
+			sb.append(Runtime.getRuntime().maxMemory());
+			sb.append("\n used memory (total-free): ");
+			sb.append(usedK + "K");			
+			
 		}
 			
 		PrintStream debug = System.out;
