@@ -758,17 +758,18 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			}
 
+		case 'p':
+			if (eName.equals("prefCellSize")) {
+				ok = handleSpreadsheetCellSize(attrs);
+				break;
+			}
+			
 		case 's':
 			if (eName.equals("size")) {
 				ok = handleSpreadsheetSize(app.getGuiManager()
 						.getSpreadsheetView(), attrs);
 				break;
-			} else
-
-				if (eName.equals("spreadsheetPreferredCellSize")) {
-					ok = handleSpreadsheetColumn(attrs);
-					break;
-				}
+			}
 			if (eName.equals("spreadsheetColumn")) {
 				ok = handleSpreadsheetColumn(attrs);
 				break;
@@ -784,8 +785,7 @@ public class MyXMLHandler implements DocHandler {
 			}
 
 			if (eName.equals("spreadsheetBrowser")) {
-				ok = handleSpreadsheetBrowser(app.getGuiManager()
-						.getSpreadsheetView(), attrs);
+				ok = handleSpreadsheetBrowser(attrs);
 				break;
 			}
 			if (eName.equals("spreadsheetCellFormat")) {
@@ -1045,7 +1045,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 	
-	private boolean handleSpreadsheetPreferredCellSize(LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetCellSize(LinkedHashMap<String, String> attrs) {
 
 		try {
 			int width = Integer.parseInt((String) attrs.get("width"));
@@ -1129,20 +1129,17 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 	
-	private boolean handleSpreadsheetBrowser(Object spreadsheetView,
-			LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetBrowser(LinkedHashMap<String, String> attrs) {
 
-		SpreadsheetView sv = (SpreadsheetView)spreadsheetView;
+		SpreadsheetSettings settings = app.getSettings().getSpreadsheet();
 		try {
 			if(Boolean.parseBoolean((String) attrs.get("default"))){
-				sv.setBrowserDefaults(true);
+				settings.setDefaultBrowser(true);
 
 			}else{
-
-				sv.setInitialBrowserMode(Integer.parseInt((String) attrs.get("mode")));
-				sv.setInitialFileString((String) attrs.get("dir"));
-				sv.setInitialURLString((String) attrs.get("URL"));
-				sv.initFileBrowser();
+				settings.setInitialBrowserMode(Integer.parseInt((String) attrs.get("mode")));
+				settings.setInitialFilePath((String) attrs.get("dir"));
+				settings.setInitialURL((String) attrs.get("URL"));
 			}
 
 			return true;

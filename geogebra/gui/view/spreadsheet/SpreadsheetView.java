@@ -690,7 +690,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		}
 
 
-		sb.append("\t<spreadsheetPreferredCellSize ");
+		sb.append("\t<prefCellSize ");
 		sb.append(" width=\"");
 		sb.append(table.preferredColumnWidth);
 		sb.append("\"");
@@ -703,7 +703,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		for (int col = 0 ; col < table.getColumnCount() ; col++) {
 			TableColumn column = table.getColumnModel().getColumn(col); 
 			int colWidth = column.getWidth();
-			if (colWidth != DEFAULT_COLUMN_WIDTH)
+			//if (colWidth != DEFAULT_COLUMN_WIDTH)
+			if (colWidth !=	table.preferredColumnWidth)
 				sb.append("\t<spreadsheetColumn id=\""+col+"\" width=\""+colWidth+"\"/>\n");
 		}
 
@@ -786,36 +787,38 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 
 		// file browser
-		sb.append("\t<spreadsheetBrowser ");
+		if(fileBrowser != null){
+			sb.append("\t<spreadsheetBrowser ");
 
-		if(settings.initialPath() != settings.defaultFile() 
-				|| settings.initialURL() != DEFAULT_URL 
-				|| settings.initialBrowserMode() != DEFAULT_MODE)
-		{	
-			sb.append(" default=\"");
-			sb.append("false");
-			sb.append("\"");	
+			if(settings.initialPath() != settings.defaultFile() 
+					|| settings.initialURL() != DEFAULT_URL 
+					|| settings.initialBrowserMode() != DEFAULT_MODE)
+			{	
+				sb.append(" default=\"");
+				sb.append("false");
+				sb.append("\"");	
 
-			sb.append(" dir=\"");
-			sb.append(settings.initialPath());
-			sb.append("\"");
+				sb.append(" dir=\"");
+				sb.append(settings.initialPath());
+				sb.append("\"");
 
-			sb.append(" URL=\"");
-			sb.append(settings.initialURL());
-			sb.append("\"");
+				sb.append(" URL=\"");
+				sb.append(settings.initialURL());
+				sb.append("\"");
 
-			sb.append(" mode=\"");
-			sb.append(settings.initialBrowserMode());
-			sb.append("\"");	
+				sb.append(" mode=\"");
+				sb.append(settings.initialBrowserMode());
+				sb.append("\"");	
 
-		}else{
+			}else{
 
-			sb.append(" default=\"");
-			sb.append("true");
-			sb.append("\"");	
+				sb.append(" default=\"");
+				sb.append("true");
+				sb.append("\"");	
+			}
+
+			sb.append("/>\n");
 		}
-
-		sb.append("/>\n");
 
 		//---- end browser
 
@@ -921,8 +924,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 	}
 
-	public void setColumnWidths(){
-		
+	public void setColumnWidthsFromSettings(){
+
 		table.setPreferredColumnWidth(settings.preferredColumnWidth());
 		HashMap<Integer,Integer> widthMap = settings.getWidthMap();
 		for (int i = 0; i < table.getColumnCount(); ++ i) {
@@ -933,7 +936,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		}
 	}
 
-	public void setRowHeights(){
+	public void setRowHeightsFromSettings(){
 		HashMap<Integer,Integer> heightMap = app.getSettings().getSpreadsheet().getHeightMap();
 		table.setRowHeight(app.getSettings().getSpreadsheet().preferredRowHeight());
 		if(!heightMap.isEmpty()){
@@ -943,7 +946,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		}
 	}
 
-	
+
 	public void updateRowHeader() {
 		rowHeader.updateRowHeader();
 	}
@@ -1333,11 +1336,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			}
 		}
 
-
-		setColumnWidths();
-		setRowHeights();
-
-
+		setColumnWidthsFromSettings();
+		setRowHeightsFromSettings();
 	}
 
 
