@@ -209,7 +209,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_SPREADSHEET))
 							new geogebra.export.PrintPreview(app, (Printable) app.getGuiManager().getSpreadsheetView(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_EUCLIDIAN2))
-							new geogebra.export.PrintPreview(app, app.getGuiManager().getEuclidianView2(), PageFormat.LANDSCAPE);
+							new geogebra.export.PrintPreview(app, app.getEuclidianView2(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_ALGEBRA))
 							new geogebra.export.PrintPreview(app, app.getGuiManager().getAlgebraView(), PageFormat.LANDSCAPE);
 						else //graphics view focused

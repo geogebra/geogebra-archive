@@ -4198,7 +4198,7 @@ public abstract class GeoElement
 					EVs += 1; // bit 0
 				}
 
-				EuclidianView ev2 = app.getGuiManager().getEuclidianView2();
+				EuclidianView ev2 = app.getEuclidianView2();
 				if (ev2 != null) {
 					if (isVisibleInView(ev2)) {
 						EVs += 2; // bit 1

@@ -664,7 +664,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			if(cbView.getSelectedIndex() == 0)
 				setView(app.getEuclidianView());
 			else
-				setView(app.getGuiManager().getEuclidianView2());
+				setView(app.getEuclidianView2());
 		}
 
 		

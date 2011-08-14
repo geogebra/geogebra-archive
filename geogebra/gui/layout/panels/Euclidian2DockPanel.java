@@ -34,10 +34,10 @@ public class Euclidian2DockPanel extends EuclidianDockPanelAbstract {
 //	}
 //	
 	protected JComponent loadStyleBar() {
-		return app.getGuiManager().getEuclidianView2().getStyleBar();
+		return app.getEuclidianView2().getStyleBar();
 	}
 	
 	protected JComponent loadComponent() {
-		return app.getGuiManager().getEuclidianView2();
+		return app.getEuclidianView2();
 	}
 }

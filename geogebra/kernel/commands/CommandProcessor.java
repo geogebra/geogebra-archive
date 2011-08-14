@@ -15,6 +15,7 @@ package geogebra.kernel.commands;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.gui.GuiManager;
 import geogebra.gui.RenameInputHandler;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
@@ -9082,7 +9083,7 @@ class CmdFillCells extends CommandProcessor {
 
 		switch (n) {
 		case 2:
-			app.getGuiManager().setScrollToShow(false);
+			app.setScrollToShow(false);
 			arg = resArgs(c);
 			if (arg[0].isGeoList()) {
 
@@ -9147,12 +9148,12 @@ class CmdFillCells extends CommandProcessor {
 									new GeoNumeric(cons, p.y));
 						} catch (Exception e) {
 							e.printStackTrace();
-							app.getGuiManager().setScrollToShow(true);
+							app.setScrollToShow(true);
 							throw argErr(app, c.getName(), arg[1]);
 						}
 
 					}
-					app.getGuiManager().setScrollToShow(true);
+					app.setScrollToShow(true);
 
 					return ret;
 
@@ -9171,12 +9172,12 @@ class CmdFillCells extends CommandProcessor {
 								GeoElement.setSpreadsheetCell(app, row, col,
 										geo);
 							} catch (Exception e) {
-								app.getGuiManager().setScrollToShow(true);
+								app.setScrollToShow(true);
 								e.printStackTrace();
 								throw argErr(app, c.getName(), arg[1]);
 							}
 						}
-					app.getGuiManager().setScrollToShow(true);
+					app.setScrollToShow(true);
 					return ret;
 				}
 
@@ -9185,7 +9186,7 @@ class CmdFillCells extends CommandProcessor {
 				// if (list.isMatrix())
 
 				app.storeUndoInfo();
-				app.getGuiManager().setScrollToShow(true);
+				app.setScrollToShow(true);
 				return ret;
 
 			} else {
@@ -9193,7 +9194,7 @@ class CmdFillCells extends CommandProcessor {
 				if (GeoElement.isSpreadsheetLabel(arg[0].getLabel())) {
 
 					if (!arg[1].isGeoList()) {
-						app.getGuiManager().setScrollToShow(true);
+						app.setScrollToShow(true);
 						throw argErr(app, c.getName(), arg[1]);
 					}
 
@@ -9205,7 +9206,7 @@ class CmdFillCells extends CommandProcessor {
 					int row = GeoElement.getSpreadsheetRow(matcher);
 
 					if (row == -1 || column == -1) {
-						app.getGuiManager().setScrollToShow(true);
+						app.setScrollToShow(true);
 						throw argErr(app, c.getName(), arg[0]);
 					}
 
@@ -9228,7 +9229,7 @@ class CmdFillCells extends CommandProcessor {
 								}
 							}
 						} catch (Exception e) {
-							app.getGuiManager().setScrollToShow(true);
+							app.setScrollToShow(true);
 							throw argErr(app, c.getName(), list);
 						}
 
@@ -9245,20 +9246,20 @@ class CmdFillCells extends CommandProcessor {
 										+ i, list.get(i).copy());
 							} catch (Exception e) {
 								e.printStackTrace();
-								app.getGuiManager().setScrollToShow(true);
+								app.setScrollToShow(true);
 								throw argErr(app, c.getName(), arg[1]);
 							}
 					}
 
 				} else {
-					app.getGuiManager().setScrollToShow(true);
+					app.setScrollToShow(true);
 					throw argErr(app, c.getName(), arg[0]);
 				}
 			}
 
 			GeoElement[] ret = {};
 			app.storeUndoInfo();
-			app.getGuiManager().setScrollToShow(true);
+			app.setScrollToShow(true);
 			return ret;
 
 		default:
@@ -9325,6 +9326,13 @@ class CmdSetActiveView extends CommandProcessor {
 	final public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
+		
+		GeoElement[] ret = {};
+		
+
+		if (!app.useFullGui()) return ret;
+			
+		GuiManager guiManager = app.getGuiManager();
 
 		switch (n) {
 		case 1:
@@ -9337,27 +9345,26 @@ class CmdSetActiveView extends CommandProcessor {
 				// ignore all errors (eg when a view is not available etc)
 				switch (view) {
 				case 1:
-					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN);
+					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN);
 					 break;
 				case 2:
-					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN2);
+					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN2);
 					 break;
 				case 3:
-					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN3D);
+					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN3D);
 					 break;
 				case -1:
-					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
+					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
 					 break;
 				case -2:
-					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_ALGEBRA);
+					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_ALGEBRA);
 					 break;
 				case -3:
-					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_CAS);
+					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_CAS);
 					 break;
 				// default: // might be needed when support for more than 2 Eucldian Views added 
 				}
 				
-				GeoElement[] ret = {};
 				return ret;
 
 			} else

@@ -269,7 +269,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 				return;
 			}
 
-			app.getGuiManager().setScrollToShow(true);
+			app.setScrollToShow(true);
 			GeoElement[] geos;
 			try {
 				geos = app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling( input, true, false, true );
@@ -307,7 +307,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			}
 
 
-			app.getGuiManager().setScrollToShow(false);
+			app.setScrollToShow(false);
 
 			if (success) {						   
 				inputField.addToHistory(input);

@@ -1295,7 +1295,7 @@ public class Application implements KeyEventDispatcher {
 
 	public void refreshViews() {
 		euclidianView.updateBackground();
-		if (getGuiManager().hasEuclidianView2()) getGuiManager().getEuclidianView2().updateBackground();
+		if (hasEuclidianView2()) getEuclidianView2().updateBackground();
 		kernel.notifyRepaint();
 	}
 
@@ -2913,8 +2913,8 @@ public class Application implements KeyEventDispatcher {
 
 		if (guiManager != null) {
 			getGuiManager().updateFonts();
-			if (getGuiManager().hasEuclidianView2()) {
-				getGuiManager().getEuclidianView2().updateFonts();
+			if (hasEuclidianView2()) {
+				getEuclidianView2().updateFonts();
 			}
 		}
 
@@ -3332,8 +3332,8 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		getEuclidianView().getStyleBar().updateStyleBar();	
-		if (getGuiManager().hasEuclidianView2())
-			getGuiManager().getEuclidianView2().getStyleBar().updateStyleBar();
+		if (hasEuclidianView2())
+			getEuclidianView2().getStyleBar().updateStyleBar();
 	}
 
 	public void updateMenuWindow() {
@@ -3807,8 +3807,8 @@ public class Application implements KeyEventDispatcher {
 		getEuclidianView().getXML(sb,asPreference);
 		
 		//save euclidian view 2 settings
-		if(getGuiManager().hasEuclidianView2()){
-			getGuiManager().getEuclidianView2().getXML(sb,asPreference);
+		if(hasEuclidianView2()){
+			getEuclidianView2().getXML(sb,asPreference);
 		}
 
 		// save spreadsheetView settings
@@ -5691,7 +5691,12 @@ public class Application implements KeyEventDispatcher {
 		sb.append("\" show=\"");
 		sb.append(getSettings().getKeyboard().isShowKeyboardOnStart());
 		sb.append("\"/>");
-		debug(getSettings().getKeyboard().isShowKeyboardOnStart());
+	}
+
+
+	public void setScrollToShow(boolean b) {
+		if (guiManager != null) 
+			guiManager.setScrollToShow(b);
 	}
 
 

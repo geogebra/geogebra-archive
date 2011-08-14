@@ -673,7 +673,7 @@ public class MyXMLHandler implements DocHandler {
 		EuclidianView ev=null;
 		EuclidianSettings evSet=null;
 		if(viewNo==2){
-			ev=app.getGuiManager().getEuclidianView2();
+			ev=app.getEuclidianView2();
 			evSet = app.getSettings().getEuclidian(2);
 		}
 		else{
@@ -2656,7 +2656,7 @@ public class MyXMLHandler implements DocHandler {
 			} else { 				
 				// don't want to create EV2 unnecessarily
 				if (app.hasEuclidianView2())
-						geo.removeView(app.getGuiManager().getEuclidianView2());
+						geo.removeView(app.getEuclidianView2());
 			}
 			return true;
 			

@@ -6489,7 +6489,7 @@ class GraphicsViewLocationPanel
 			GeoElement geo = (GeoElement) geos[i];	
 			if (geo.isVisibleInView(ev)) 
 				isInEV = true;
-			if (geo.isVisibleInView(app.getGuiManager().getEuclidianView2())) 
+			if (geo.isVisibleInView(app.getEuclidianView2())) 
 				isInEV2 = true;
 		}		
 
@@ -6541,7 +6541,7 @@ class GraphicsViewLocationPanel
 			for (int i=0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				
-				EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
+				EuclidianView ev2 = (EuclidianView)app.getEuclidianView2();
 				
 				if(cbGraphicsView2.isSelected()){
 					geo.addView(ev2);
