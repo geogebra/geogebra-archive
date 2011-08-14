@@ -58,9 +58,15 @@ implements MouseListener, MouseMotionListener{
 
 		this.borderOwner = borderOwner;
 
+		MouseListener[] ml = borderOwner.getMouseListeners();
+		for(int i=0; i < ml.length; i++)
+			borderOwner.removeMouseListener(ml[i]);
 		borderOwner.addMouseListener(this);
+		for(int i=0; i < ml.length; i++)
+			borderOwner.addMouseListener(ml[i]);
+		
 		borderOwner.addMouseMotionListener(this);
-
+		
 		icon = new ImageIcon[maxIconCount];
 		isVisibleIcon = new boolean[maxIconCount];
 		isMouseOverIcon = new boolean[maxIconCount];
@@ -168,13 +174,21 @@ implements MouseListener, MouseMotionListener{
 	public void mouseClicked(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	public void mousePressed(MouseEvent e) {}
+	
+	public void mousePressed(MouseEvent e) {	
+		for(int i=0; i < iconRect.length; i++){
+			if(isMouseOverIcon[i]){
+				e.consume();
+				ActionEvent ae = new ActionEvent(this,ActionEvent.ACTION_PERFORMED, i + cmdSuffix);
+				al[i].actionPerformed(ae);
+			}
+		}
+	}
 
 	public void mouseReleased(MouseEvent e) {
 		for(int i=0; i < iconRect.length; i++){
 			if(isMouseOverIcon[i]){
-				ActionEvent ae = new ActionEvent(this,ActionEvent.ACTION_PERFORMED, i + cmdSuffix);
-				al[i].actionPerformed(ae);
+				e.consume();
 			}
 		}
 	}
