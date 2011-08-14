@@ -3799,6 +3799,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		if (d != null) {
 			((Drawable) d).update();
 		}
+		// call add() in case the geo visiblilty has changed and it needs a Drawable
+		else if(geo.isEuclidianVisible())
+			add(geo);
 	}
 
 	final public Drawable getDrawableFor(GeoElement geo) {
