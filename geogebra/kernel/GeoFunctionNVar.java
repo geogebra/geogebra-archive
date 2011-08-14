@@ -514,8 +514,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 			return fun.getIneqs();
 		}
 				
-		public void update(){			
-			isInequality = fun.updateIneqs();
+		public void update(){
+			if(fun.isBooleanFunction())
+				isInequality = fun.updateIneqs();
 			super.update();
 		}
 		public boolean isRegion() {

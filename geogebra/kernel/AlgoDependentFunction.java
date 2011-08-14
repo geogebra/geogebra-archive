@@ -135,9 +135,11 @@ public class AlgoDependentFunction extends AlgoElement {
                 
             expandedFun.setExpression(node);
             f.setFunction(expandedFun);
-            f.resetIneqs();
+            if(f.isBooleanFunction())
+            	f.resetIneqs();
         }
-        else f.getFunction().updateIneqs();        
+        else if(f.isBooleanFunction())
+        	f.getFunction().updateIneqs();        
     }
     
     /**
