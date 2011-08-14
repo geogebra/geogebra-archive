@@ -810,7 +810,8 @@ public class MyXMLHandler implements DocHandler {
 
 		case 'd':
 			if (eName.equals("distribution")) {
-				ok = handleProbabilityDistribution((ProbabilityCalculator)app.getGuiManager().getProbabilityCalculator(), attrs);
+				if (app.useFullGui())
+					ok = handleProbabilityDistribution((ProbabilityCalculator)app.getGuiManager().getProbabilityCalculator(), attrs);
 				break;
 			}
 		default:

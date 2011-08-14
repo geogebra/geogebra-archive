@@ -851,7 +851,7 @@ public class MyXMLio {
 		}
 		
 		// save ProbabilityCalculator settings
-		if (app.getGuiManager().hasProbabilityCalculator()){
+		if (app.useFullGui() && app.getGuiManager().hasProbabilityCalculator()){
 			app.getGuiManager().getProbabilityCalculatorXML(sb);
 		}
 
