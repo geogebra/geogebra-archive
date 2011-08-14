@@ -674,6 +674,8 @@ public class CellFormat {
 	 */
 	public void processXMLString(String xml){
 		clearAll();
+		if(xml == null) return;
+		
 		//System.out.println("XML:  " + xml);
 		String[] cellGroup = xml.split(cellDelimiter);
 		//System.out.println("cellGroup:  " + java.util.Arrays.toString(cellGroup));
