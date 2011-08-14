@@ -86,8 +86,8 @@ public class AlgoFrequency extends AlgoElement {
 		input = tempList.toArray(input);
 
 		
-		output = new GeoElement[1];
-		output[0] = frequency;
+		setOutputLength(1);
+		setOutput(0,frequency);
 		setDependencies(); // done by AlgoElement
 	}
 
@@ -217,7 +217,7 @@ public class AlgoFrequency extends AlgoElement {
 
 			
 			//set density conditions
-			boolean hasDensity = true;
+			boolean hasDensity = false;
 			if(useDensity != null)
 				hasDensity = useDensity.getBoolean();
 			
@@ -227,16 +227,25 @@ public class AlgoFrequency extends AlgoElement {
 			}
 			
 			double cumulativeClassFreq = 0;
-			for(int i=1; i < classList.size()-1; i++){
+			double swap;
+			int length = classList.size();
+			for(int i=1; i < length; i++){
 
 				lowerClassBound = ((GeoNumeric)classList.get(i-1)).getDouble();
 				upperClassBound = ((GeoNumeric)classList.get(i)).getDouble();
-				
-				
+				boolean increasing = true;
+				if(lowerClassBound>upperClassBound){
+					swap = upperClassBound;
+					upperClassBound = lowerClassBound;
+					lowerClassBound = swap;
+					increasing = false;
+				}
 					classFreq = f.getCumFreq((Comparable)upperClassBound) 
 					- f.getCumFreq((Comparable)lowerClassBound) 
-					+ f.getCount((Comparable)lowerClassBound)
-					- f.getCount((Comparable)upperClassBound);
+					+ f.getCount((Comparable)lowerClassBound);
+				if((i!=length -1 && increasing) ||
+					(i!=1 && !increasing))
+					classFreq -= f.getCount((Comparable)upperClassBound);
 				
 
 			//	System.out.println(" =================================");
@@ -251,34 +260,13 @@ public class AlgoFrequency extends AlgoElement {
 				// add the frequency to the output GeoList
 				frequency.add(new GeoNumeric(cons, doCumulative?cumulativeClassFreq:classFreq));
 
-				/*
-				System.out.println(" =================================");
-				System.out.println("lower class bound: " + lowerClassBound);
-				System.out.println("upper class bound: " + upperClassBound);
-				System.out.println("lower class cumFreq: " + f.getCumFreq((Comparable)lowerClassBound));
-				System.out.println("upper class cumFreq: " + f.getCumFreq((Comparable)upperClassBound));
-				System.out.println("lower class count: " + f.getCount((Comparable)lowerClassBound));
-				*/
 
 			}
 
 			// handle the last (highest) class frequency specially
 			// it must also count values equal to the highest class bound  
-				lowerClassBound = ((GeoNumeric)classList.get(classList.size()-2)).getDouble();
-				upperClassBound = ((GeoNumeric)classList.get(classList.size()-1)).getDouble();
-				classFreq = f.getCumFreq((Comparable)upperClassBound) 
-				- f.getCumFreq((Comparable)lowerClassBound) 
-				+ f.getCount((Comparable)lowerClassBound);
 			
-			if(hasDensity){
-				classFreq = densityValue *classFreq/(upperClassBound - lowerClassBound );
-			}
-			if(doCumulative)
-				cumulativeClassFreq += classFreq;
 			
-				
-			// add the last frequency to the output GeoList
-			frequency.add(new GeoNumeric(cons, doCumulative?cumulativeClassFreq:classFreq));
 
 		}
 	}
