@@ -2315,7 +2315,7 @@ public class GuiManager {
 				isMacroFile = urlString.endsWith(".ggt");
 				success = app.loadXML(url, isMacroFile);
 			} catch (IOException e) {
-				//success = false;
+				e.printStackTrace();
 			}
 
 			
@@ -2329,7 +2329,7 @@ public class GuiManager {
 					// load file
 					success = app.loadXML(zipFile);   
 				} catch (IOException e) {
-					//success = false;
+					e.printStackTrace();
 				}			
 				// special case: urlString is actually a GeoGebra XML file
 			} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
@@ -2352,11 +2352,11 @@ public class GuiManager {
 						isMacroFile = urlString.contains(".ggt");
 						success = app.loadXML(urlg, isMacroFile);
 					} catch (IOException e) {
-						//success = false;
+						e.printStackTrace();
 					}
 				}
 			} catch (IOException e) {
-				//success = false;
+				e.printStackTrace();
 			}
 		}
 		
