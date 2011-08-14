@@ -683,10 +683,10 @@ public class MyXMLHandler implements DocHandler {
 		switch (eName.charAt(0)) {
 		case 'a':
 			if (eName.equals("axesColor")) {
-				ok = handleAxesColor(ev, attrs);
+				ok = handleAxesColor(evSet, attrs);
 				break;
 			} else if (eName.equals("axis")) {
-				ok = handleAxis(ev, attrs);
+				ok = handleAxis(evSet, attrs);
 				break;
 			}
 
@@ -698,7 +698,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case 'c':
 			if (eName.equals("coordSystem")) {
-				ok = handleCoordSystem(ev, attrs);
+				ok = handleCoordSystem(evSet, attrs);
 				break;
 			}
 
@@ -710,15 +710,15 @@ public class MyXMLHandler implements DocHandler {
 
 		case 'g':
 			if (eName.equals("grid")) {
-				ok = handleGrid(ev, attrs);
+				ok = handleGrid(evSet, attrs);
 				break;
 			} else if (eName.equals("gridColor")) {
-				ok = handleGridColor(ev, attrs);
+				ok = handleGridColor(evSet, attrs);
 				break;
 			}
 		case 'l':
 			if (eName.equals("lineStyle")) {
-				ok = handleLineStyle(ev, attrs);
+				ok = handleLineStyle(evSet, attrs);
 				break;
 			}
 
@@ -882,11 +882,11 @@ public class MyXMLHandler implements DocHandler {
 //
 //	}
 
-	private HashMap<EuclidianView,String>xmin=new HashMap<EuclidianView,String>(),
-	    xmax=new HashMap<EuclidianView,String>(),
-		ymin=new HashMap<EuclidianView,String>(),
-		ymax=new HashMap<EuclidianView,String>();
-	private boolean handleCoordSystem(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private HashMap<EuclidianSettings,String>xmin=new HashMap<EuclidianSettings,String>(),
+	    xmax=new HashMap<EuclidianSettings,String>(),
+		ymin=new HashMap<EuclidianSettings,String>(),
+		ymax=new HashMap<EuclidianSettings,String>();
+	private boolean handleCoordSystem(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		if(xmin.keySet().size()>1){
 		xmin.clear();
 		xmax.clear();
@@ -905,7 +905,7 @@ public class MyXMLHandler implements DocHandler {
 			if (strYscale != null) {
 				yscale = Double.parseDouble(strYscale);
 			}
-			ev.setCoordSystem(xZero, yZero, scale, yscale, false);
+			ev.setCoordSystem(xZero, yZero, scale, yscale);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1179,7 +1179,7 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 
-	private boolean handleAxesColor(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private boolean handleAxesColor(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		Color col = handleColorAttrs(attrs);
 		if (col == null)
 			return false;
@@ -1187,7 +1187,7 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 
-	private boolean handleGridColor(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private boolean handleGridColor(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		Color col = handleColorAttrs(attrs);
 		if (col == null)
 			return false;
@@ -1195,7 +1195,7 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 
-	private boolean handleLineStyle(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private boolean handleLineStyle(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		try {
 			ev.setAxesLineStyle(Integer.parseInt((String) attrs.get("axes")));
 			ev.setGridLineStyle(Integer.parseInt((String) attrs.get("grid")));
@@ -1205,7 +1205,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleGrid(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private boolean handleGrid(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		// <grid distX="2.0" distY="4.0"/>
 		try {
 			double[] dists = new double[3];
@@ -1235,7 +1235,7 @@ public class MyXMLHandler implements DocHandler {
 	 * @param attrs
 	 * @return true iff succesful
 	 */
-	protected boolean handleAxis(EuclidianViewInterface ev, LinkedHashMap<String, String> attrs) {
+	protected boolean handleAxis(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		
 		try {
 			int axis = Integer.parseInt((String) attrs.get("id"));
@@ -1247,7 +1247,7 @@ public class MyXMLHandler implements DocHandler {
 			// show this axis
 			if (strShowAxis != null) {
 				boolean showAxis = parseBoolean(strShowAxis);
-				ev.setShowAxis(axis, showAxis, true);
+				ev.setShowAxis(axis, showAxis);
 			}
 
 			// set label
@@ -2315,22 +2315,22 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 
 	private void processEvSizes() {
-		for(EuclidianView ev:xmin.keySet()){			
+		for(EuclidianSettings ev:xmin.keySet()){			
 			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmin.get(ev),true);			
 			ev.setXminObject(n);			
 		}
-		for(EuclidianView ev:xmax.keySet()){
+		for(EuclidianSettings ev:xmax.keySet()){
 			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmax.get(ev),true);			
 			ev.setXmaxObject(n);			
 		}
-		for(EuclidianView ev:ymin.keySet()){
+		for(EuclidianSettings ev:ymin.keySet()){
 			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymin.get(ev),true);
 			ev.setYminObject(n);			
 		}
-		for(EuclidianView ev:ymax.keySet()){
+		for(EuclidianSettings ev:ymax.keySet()){
 			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymax.get(ev),true);
 			ev.setYmaxObject(n);			
-			ev.updateBounds();
+			//ev.updateBounds();
 		}
 		
 		

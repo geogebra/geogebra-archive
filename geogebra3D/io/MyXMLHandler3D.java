@@ -2,15 +2,14 @@ package geogebra3D.io;
 
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.LevelOfDetail;
+import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 import java.util.LinkedHashMap;
 
@@ -55,8 +54,8 @@ public class MyXMLHandler3D extends MyXMLHandler {
 				//ok = handleAxesColor(ev, attrs);
 				break;
 			} else if (eName.equals("axis")) {
-				ok = handleAxis(ev, attrs);
-				//Application.debug("ok = "+ok);
+				//ok = handleAxis(ev, attrs);
+				Application.debug("TODO: add EuclidianSettings for 3D");
 				break;
 			}
 

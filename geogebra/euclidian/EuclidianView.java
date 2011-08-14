@@ -61,6 +61,7 @@ import geogebra.main.settings.EuclidianSettings;
 import geogebra.main.settings.KeyboardSettings;
 import geogebra.main.settings.SettingListener;
 import geogebra.util.MyMath;
+import geogebra.util.Unicode;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -115,8 +116,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 
 	protected static final int MIN_WIDTH = 50;
 	protected static final int MIN_HEIGHT = 50;
-	
-	protected static final String PI_STRING = "\u03c0";
 	
 	private static final String EXPORT1 = "Export_1"; // Points used to define corners for export (if they exist)
 	private static final String EXPORT2 = "Export_2";
@@ -4740,6 +4739,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	}
 
 	public void setGridDistances(double[] dist) {
+		if (dist == null) {
+			Application.debug("NULL");
+			return;
+		}
 		gridDistances = dist;
 		setAutomaticGridDistance(false);
 	}
@@ -4783,7 +4786,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		// check if pi is an axis unit
 		for (int i = 0; i < 2; i++) {
 			piAxisUnit[i] = axesUnitLabels[i] != null
-					&& axesUnitLabels[i].equals(PI_STRING);
+					&& axesUnitLabels[i].equals(Unicode.PI_STRING);
 		}
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
@@ -5228,8 +5231,38 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		updateBounds();
 	}
 	public void settingsChanged(AbstractSettings settings) {
-		EuclidianSettings kbs = (EuclidianSettings)settings;
-		setBackground(kbs.getBackground());
+		EuclidianSettings evs = (EuclidianSettings)settings;
+		
+		setXminObject(evs.getXminObject());
+		setXmaxObject(evs.getXmaxObject());
+		setYminObject(evs.getYminObject());
+		setYmaxObject(evs.getYmaxObject());
+		
+		
+		setBackground(evs.getBackground());
+		setAxesColor(evs.getAxesColor());
+		setGridColor(evs.getGridColor());
+		setAxesLineStyle(evs.getAxesLineStyle());
+		setGridLineStyle(evs.getGridLineStyle());
+		setGridDistances(evs.getGridDistances());
+		setShowAxis(0, evs.getShowAxis(0), false);
+		setShowAxis(1, evs.getShowAxis(1), false);
+		axesLabels = evs.getAxesLabels();
+		setAxesUnitLabels(evs.getAxesUnitLabels());
+		
+		showAxesNumbers = evs.getShowAxisNumbers();
+		
+		double[] temp2 = evs.getAxesNumberingDistances();
+		setAxesNumberingDistance(temp2[0], 0);
+		setAxesNumberingDistance(temp2[1], 1);
+		
+		axesTickStyles = evs.getAxesTickStyles();
+		
+		axisCross = evs.getAxesCross();
+		positiveAxes = evs.getPositiveAxes();
+		
+		// do last?
+		setCoordSystem(evs.getXZero(), evs.getYZero(), getXscale(), getYscale(), true);
 		
 	}
 }
