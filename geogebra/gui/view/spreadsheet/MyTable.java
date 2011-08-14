@@ -164,7 +164,8 @@ public class MyTable extends JTable implements FocusListener
 	private ArrayList<Point> adjustedRowHeights = new ArrayList<Point>();
 	private boolean doRecordRowHeights = true;
 
-	public int preferredColumnWidth = TABLE_CELL_WIDTH; //G.Sturr 2010-4-10 
+	public int preferredColumnWidth = TABLE_CELL_WIDTH;
+
 
 
 	// Collection of cells that contain geos that can be edited with one click,
@@ -417,7 +418,13 @@ public class MyTable extends JTable implements FocusListener
 		editor.setLabels();
 	}
 
+	public int preferredColumnWidth() {
+		return preferredColumnWidth;
+	}
 
+	public void setPreferredColumnWidth(int preferredColumnWidth) {
+		this.preferredColumnWidth = preferredColumnWidth;
+	}
 
 	//===============================================================
 	//                   Selection
@@ -1601,7 +1608,7 @@ public class MyTable extends JTable implements FocusListener
 		}
 	}
 
-	// Reset the row heights --- used after addColumn destoys the row heights
+	// Reset the row heights --- used after addColumn destroys the row heights
 	public void resetRowHeights(){
 		doRecordRowHeights = false;
 		for(Point p: adjustedRowHeights){
@@ -1649,7 +1656,7 @@ public class MyTable extends JTable implements FocusListener
 
 
 	/**
-	 * Enlarge the row and/or column of a cell to fit the cell's preffered size. 
+	 * Enlarge the row and/or column of a cell to fit the cell's preferred size. 
 	 */
 	public void setPreferredCellSize(int row, int col, boolean adjustWidth, boolean adjustHeight) {
 
@@ -1678,7 +1685,7 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 	/**
-	 * Adjust the width of a column to fit the maximum prefferred width of 
+	 * Adjust the width of a column to fit the maximum preferred width of 
 	 * its cell contents.
 	 */
 	public void fitColumn(int column){
@@ -1774,17 +1781,10 @@ public class MyTable extends JTable implements FocusListener
 			}
 		}
 
-		public void columnAdded(TableColumnModelEvent arg0) {			
-		}
-
-		public void columnMoved(TableColumnModelEvent arg0) {	
-		}
-
-		public void columnRemoved(TableColumnModelEvent arg0) {	
-		}
-
-		public void columnSelectionChanged(ListSelectionEvent arg0) {	
-		}
+		public void columnAdded(TableColumnModelEvent arg0) {}
+		public void columnMoved(TableColumnModelEvent arg0) {}
+		public void columnRemoved(TableColumnModelEvent arg0) {}
+		public void columnSelectionChanged(ListSelectionEvent arg0) {}
 	}
 
 

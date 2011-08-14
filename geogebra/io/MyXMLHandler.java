@@ -751,28 +751,30 @@ public class MyXMLHandler implements DocHandler {
 		boolean ok = true;
 
 		switch (eName.charAt(0)) {
-		
+
 		case 'l':
-		if (eName.equals("layout")) {
-			ok = handleSpreadsheetLayout(app.getGuiManager()
-					.getSpreadsheetView(), attrs);
-			break;
-		}
-		
+			if (eName.equals("layout")) {
+				ok = handleSpreadsheetLayout(attrs);
+				break;
+			}
+
 		case 's':
 			if (eName.equals("size")) {
 				ok = handleSpreadsheetSize(app.getGuiManager()
 						.getSpreadsheetView(), attrs);
 				break;
 			} else
+
+				if (eName.equals("spreadsheetPreferredCellSize")) {
+					ok = handleSpreadsheetColumn(attrs);
+					break;
+				}
 			if (eName.equals("spreadsheetColumn")) {
-				ok = handleSpreadsheetColumn(app.getGuiManager()
-						.getSpreadsheetView(), attrs);
+				ok = handleSpreadsheetColumn(attrs);
 				break;
 			}
 			if (eName.equals("spreadsheetRow")) {
-				ok = handleSpreadsheetRow(app.getGuiManager()
-						.getSpreadsheetView(), attrs);
+				ok = handleSpreadsheetRow(attrs);
 				break;
 			}
 			if (eName.equals("selection")) {
@@ -780,7 +782,7 @@ public class MyXMLHandler implements DocHandler {
 						.getSpreadsheetView(), attrs);
 				break;
 			}
-			
+
 			if (eName.equals("spreadsheetBrowser")) {
 				ok = handleSpreadsheetBrowser(app.getGuiManager()
 						.getSpreadsheetView(), attrs);
@@ -1031,13 +1033,26 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleSpreadsheetColumn(Object spreadsheetView,
-			LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetColumn(LinkedHashMap<String, String> attrs) {
 
 		try {
 			int col = Integer.parseInt((String) attrs.get("id"));
 			int width = Integer.parseInt((String) attrs.get("width"));
-			app.getGuiManager().setColumnWidth(col, width);
+			app.getSettings().getSpreadsheet().addWidth(col, width);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private boolean handleSpreadsheetPreferredCellSize(LinkedHashMap<String, String> attrs) {
+
+		try {
+			int width = Integer.parseInt((String) attrs.get("width"));
+			int height = Integer.parseInt((String) attrs.get("height"));
+			app.getSettings().getSpreadsheet().setPreferredColumnWidth(width);
+			app.getSettings().getSpreadsheet().setPreferredRowHeight(height);
+			
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1061,21 +1076,19 @@ public class MyXMLHandler implements DocHandler {
 	
 	
 	
-	private boolean handleSpreadsheetRow(Object spreadsheetView,
-			LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetRow(LinkedHashMap<String, String> attrs) {
 
 		try {
 			int row = Integer.parseInt((String) attrs.get("id"));
 			int height = Integer.parseInt((String) attrs.get("height"));
-			app.getGuiManager().setRowHeight(row, height);
+			app.getSettings().getSpreadsheet().addHeight(row, height);
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 	}
 	
-	private boolean handleSpreadsheetLayout(Object spreadsheetView,
-			LinkedHashMap<String, String> attrs) {
+	private boolean handleSpreadsheetLayout(LinkedHashMap<String, String> attrs) {
 
 		SpreadsheetSettings settings = app.getSettings().getSpreadsheet();
 		try {

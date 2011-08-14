@@ -1,12 +1,16 @@
 package geogebra.main.settings;
 
+import java.util.HashMap;
+
 import geogebra.gui.view.spreadsheet.FileBrowserPanel;
+import geogebra.gui.view.spreadsheet.MyTable;
 
 /**
  * Settings for the spreadsheet view.
  */
 public class SpreadsheetSettings extends AbstractSettings {
-	
+
+	// layout settings
 	private boolean showFormulaBar = false;
 	private boolean showGrid = true;
 	private boolean showRowHeader = true;
@@ -18,20 +22,79 @@ public class SpreadsheetSettings extends AbstractSettings {
 	private boolean allowSpecialEditor = false;
 	private boolean allowToolTips = true;
 	private boolean equalsRequired; 
-	
-	
+
+
 	// file browser settings
 	private String defaultFile; 
 	private String initialURL;
 	private String initialFilePath ; 
 	private int initialBrowserMode;
 	private boolean isDefaultBrowser;
+
+
+	// row and column size
+	private HashMap<Integer,Integer> widthMap;
+	private HashMap<Integer,Integer> heightMap;
+	private int preferredColumnWidth = MyTable.TABLE_CELL_WIDTH;
+	private int preferredRowHeight = MyTable.TABLE_CELL_HEIGHT;
+
 	
 	
+	//============================================
+	//  Row/Column Dimension Settings
+	//============================================
+
+	public HashMap<Integer,Integer> getWidthMap(){
+		if(widthMap == null)
+			widthMap = new HashMap<Integer,Integer>();
+		return widthMap;
+	}
+
+	public void addWidth(int index, int width){
+		getWidthMap().put(index,width);
+		settingChanged();
+		
+	}
+	
+	public int preferredColumnWidth(){
+		return preferredColumnWidth;
+	}
+
+	public void setPreferredColumnWidth(int prefWidth){
+		this.preferredColumnWidth = prefWidth;
+		settingChanged();
+		
+	}
+	
+	
+	public HashMap<Integer,Integer> getHeightMap(){
+		if(heightMap == null)
+			heightMap = new HashMap<Integer,Integer>();
+		return heightMap;
+	}
+
+	public void addHeight(int index, int height){
+		getHeightMap().put(index,height);
+		settingChanged();
+		
+	}
+	
+	public int preferredRowHeight(){
+		return preferredRowHeight;
+	}
+
+	public void setPreferredRowHeight(int preferredRowHeight){
+		this.preferredRowHeight = preferredRowHeight;
+		settingChanged();
+	}
+
+	
+	
+
 	//============================================
 	//  Layout Settings
 	//============================================
-	
+
 	/**
 	 * @return the showFormulaBar
 	 */
@@ -66,7 +129,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
+
 	/**
 	 * @return the showRowHeader
 	 */
@@ -84,7 +147,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
+
 	/**
 	 * @return the showColumnHeader
 	 */
@@ -102,8 +165,8 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
-	
+
+
 	/**
 	 * @return the showVScrollBar
 	 */
@@ -121,7 +184,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
+
 	/**
 	 * @return the showHScrollBar
 	 */
@@ -139,7 +202,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
+
 	/**
 	 * @return the showBrowserPanel
 	 */
@@ -157,7 +220,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
+
 	/**
 	 * @return the allowSpecialEditor
 	 */
@@ -175,7 +238,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
+
 	/**
 	 * @return the allowToolTips
 	 */
@@ -193,8 +256,8 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
-	
+
+
 	/**
 	 * @return the equalsRequired
 	 */
@@ -212,7 +275,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
+
 	/**
 	 * @return the isColumnSelect
 	 */
@@ -230,13 +293,13 @@ public class SpreadsheetSettings extends AbstractSettings {
 		}
 	}
 
-	
-	
+
+
 	//============================================
 	//  File Browser Settings
 	//============================================
-	
-	
+
+
 	/**
 	 * @return the defaultFile
 	 */
@@ -253,7 +316,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 			settingChanged();
 		}
 	}
-	
+
 	/**
 	 * @return the initialURL
 	 */
@@ -302,8 +365,8 @@ public class SpreadsheetSettings extends AbstractSettings {
 			settingChanged();
 		}
 	}
-	
-	
+
+
 	/**
 	 * @return the isDefaultBrowser
 	 */
@@ -320,10 +383,10 @@ public class SpreadsheetSettings extends AbstractSettings {
 			settingChanged();
 		}
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 }

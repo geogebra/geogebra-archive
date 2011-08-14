@@ -32,6 +32,7 @@ import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -106,15 +107,15 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	private int mode = -1;
 
 
-
 	private JSplitPane splitPane;
 	private FormulaBar formulaBar;
 	private JPanel spreadsheetPanel;
 
-
 	private SpreadsheetViewDnD dndHandler;
 
 	private SpreadsheetSettings settings;
+
+
 
 	/**
 	 * Construct spreadsheet view as a split panel. 
@@ -688,6 +689,16 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			sb.append("/>\n");
 		}
 
+
+		sb.append("\t<spreadsheetPreferredCellSize ");
+		sb.append(" width=\"");
+		sb.append(table.preferredColumnWidth);
+		sb.append("\"");
+		sb.append(" height=\"");
+		sb.append(table.getRowHeight());
+		sb.append("\"");
+		sb.append("/>\n");
+
 		// column widths 
 		for (int col = 0 ; col < table.getColumnCount() ; col++) {
 			TableColumn column = table.getColumnModel().getColumn(col); 
@@ -861,7 +872,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		h = dummy.getPreferredSize().height;
 		w = dummy.getPreferredSize().width;
 		table.setRowHeight(h);
-		table.preferredColumnWidth = w;
+		table.setPreferredColumnWidth(w);
 		table.headerRenderer.setPreferredSize(new Dimension(w, h));
 
 		table.setFont(app.getPlainFont());
@@ -884,6 +895,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	}
 
 
+
 	public void setColumnWidth(int col, int width) {
 		//Application.debug("col = "+col+" width = "+width);
 		TableColumn column = table.getColumnModel().getColumn(col); 
@@ -902,14 +914,36 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		int size = font.getSize();
 		if (size < 12) size = 12; // minimum size
 		double multiplier = (double)(size)/12.0;
-		table.preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
+		table.setPreferredColumnWidth((int) (MyTable.TABLE_CELL_WIDTH * multiplier));
 		for (int i = 0; i < table.getColumnCount(); ++ i) {
-			table.getColumnModel().getColumn(i).setPreferredWidth(table.preferredColumnWidth);
+			table.getColumnModel().getColumn(i).setPreferredWidth(table.preferredColumnWidth());
 		}
 
 	}
 
+	public void setColumnWidths(){
+		
+		table.setPreferredColumnWidth(settings.preferredColumnWidth());
+		HashMap<Integer,Integer> widthMap = settings.getWidthMap();
+		for (int i = 0; i < table.getColumnCount(); ++ i) {
+			if(widthMap.containsKey(i))
+				table.getColumnModel().getColumn(i).setPreferredWidth(widthMap.get(i));
+			else
+				table.getColumnModel().getColumn(i).setPreferredWidth(table.preferredColumnWidth());
+		}
+	}
 
+	public void setRowHeights(){
+		HashMap<Integer,Integer> heightMap = app.getSettings().getSpreadsheet().getHeightMap();
+		table.setRowHeight(app.getSettings().getSpreadsheet().preferredRowHeight());
+		if(!heightMap.isEmpty()){
+			for (Integer r: heightMap.keySet()) {
+				table.setRowHeight(r, heightMap.get(r));
+			}
+		}
+	}
+
+	
 	public void updateRowHeader() {
 		rowHeader.updateRowHeader();
 	}
@@ -941,7 +975,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		if (table.getWidth() < spreadsheet.getWidth()) {
 
 			int newColumns = (spreadsheet.getWidth() - table.getWidth())
-			/ table.preferredColumnWidth;
+			/ table.preferredColumnWidth();
 			table.removeComponentListener(this);
 			table.setMyColumnCount(table.getColumnCount() + newColumns);
 			table.addComponentListener(this);
@@ -971,15 +1005,9 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		expandSpreadsheetToViewport();
 	}
 
-	public void componentHidden(ComponentEvent e) {
-	}
-
-	public void componentMoved(ComponentEvent e) {
-	}
-
-	public void componentShown(ComponentEvent e) {
-
-	}
+	public void componentHidden(ComponentEvent e) {}
+	public void componentMoved(ComponentEvent e) {}
+	public void componentShown(ComponentEvent e) {}
 
 
 
@@ -1172,10 +1200,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		}
 	}
 
-	public boolean getShowRowHeader(){
-		return settings.showRowHeader();
-	}
-
 
 	public void setShowColumnHeader(boolean showColumnHeader) {
 		if (showColumnHeader) {
@@ -1185,10 +1209,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			table.getTableHeader().setVisible(false);
 			spreadsheet.setColumnHeaderView(null);
 		}
-	}
-
-	public boolean getShowColumnHeader(){
-		return settings.showColumnHeader();
 	}
 
 
@@ -1203,10 +1223,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	}
 
 
-	public boolean getShowVScrollBar() {
-		return settings.showVScrollBar();
-	}
-
 	public void setShowHScrollBar(boolean showHScrollBar) {
 		if (showHScrollBar) {
 			spreadsheet
@@ -1217,9 +1233,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		}
 	}
 
-	public boolean getShowHScrollBar() {
-		return settings.showHScrollBar();
-	}
 
 	public void setShowGrid(boolean showGrid) {
 		table.setShowGrid(showGrid);
@@ -1228,10 +1241,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		else
 			table.setIntercellSpacing(new Dimension(0,0));
 		getSpreadsheetStyleBar().updateStyleBar();
-	}
-
-	public boolean getShowGrid() {
-		return settings.showGrid();
 	}
 
 
@@ -1276,8 +1285,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		return settings.isColumnSelect();
 	}
 
-
-
 	public void setAllowSpecialEditor(boolean allowSpecialEditor){
 		repaint();
 	}
@@ -1317,7 +1324,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 		if(settings.showBrowserPanel()){
 			setShowFileBrowser(true);
-			
+
 			if(settings.isDefaultBrowser()){
 				//setFileBrowserDirectory(this, this.DEFAULT_MODE);
 			}
@@ -1325,6 +1332,10 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 				this.initFileBrowser();
 			}
 		}
+
+
+		setColumnWidths();
+		setRowHeights();
 
 
 	}
