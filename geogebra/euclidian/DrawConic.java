@@ -126,6 +126,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	private boolean isPreview = false;
     
 	public Area getShape(){
+		Application.debug(super.getShape()+","+shape);
 		Area a = super.getShape()!=null? 
 				super.getShape():(shape==null?new Area():new Area(shape));
 		if(conic.isInverseFill()){                    	        	
@@ -211,6 +212,9 @@ final public class DrawConic extends Drawable implements Previewable {
         type = conic.getType();               
         
         switch (type) {
+        	case GeoConic.CONIC_EMPTY:
+        		setShape(conic.evaluate(0,0)<0?null:new Area(view.getBoundingPath()));
+        		shape = null;
             case GeoConic.CONIC_SINGLE_POINT:                
                 updateSinglePoint();
                 break;       
@@ -297,7 +301,10 @@ final public class DrawConic extends Drawable implements Previewable {
     }
     
     final private void updateSinglePoint() {
-    	
+    	//we want to determine the sign of the result but we can't use fixed point
+    	//as it may be equal to the single point. Point (b.x+1,0) differs in one coord.
+    	setShape(conic.evaluate(conic.b.x+1,0)<0?null:new Area(view.getBoundingPath()));
+    	shape = null;
     	if (conic.isGeoElement3D()){//TODO implement for 3D conics
     		isVisible=false;
     		return;
@@ -306,6 +313,9 @@ final public class DrawConic extends Drawable implements Previewable {
         if (firstPoint) {
             firstPoint = false;
             point = conic.getSinglePoint();
+            if (point == null)
+    			point = new GeoPoint(conic.getConstruction());
+    			point.setCoords(conic.b.x, conic.b.y, 1.0d);
             drawPoint = new DrawPoint(view, point,isPreview);                
             drawPoint.setGeoElement(conic);
             //drawPoint.font = view.fontConic;            
