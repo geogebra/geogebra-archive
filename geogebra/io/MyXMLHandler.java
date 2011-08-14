@@ -1548,7 +1548,7 @@ public class MyXMLHandler implements DocHandler {
 	
 		if(splitOrientation == JSplitPane.HORIZONTAL_SPLIT) {
 			if(tmp_showSpreadsheet) {
-				width += 5 + app.getGuiManager().getSpreadsheetView().getPreferredSize().width;
+				width += 5 + app.getSettings().getSpreadsheet().preferredSize().width;
 			} 
 			
 			if(tmp_showAlgebra) {
@@ -1556,7 +1556,7 @@ public class MyXMLHandler implements DocHandler {
 			}
 		} else {
 			if(tmp_showSpreadsheet) {
-				height += 5 + app.getGuiManager().getSpreadsheetView().getPreferredSize().height;
+				height += 5 + app.getSettings().getSpreadsheet().preferredSize().height;
 			} 
 			if(tmp_showAlgebra) {
 				height += 5 + tmp_sp2;
