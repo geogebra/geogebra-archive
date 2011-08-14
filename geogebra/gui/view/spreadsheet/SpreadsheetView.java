@@ -862,7 +862,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 		Font font = app.getPlainFont();
 
-		MyTextField dummy = new MyTextField(app.getGuiManager());
+		MyTextField dummy = new MyTextField(app);
 		dummy.setFont(font);
 		dummy.setText("9999");  // for row header width
 		int h = dummy.getPreferredSize().height;

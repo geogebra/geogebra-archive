@@ -369,15 +369,15 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		lblGeoName.setFont(app.getBoldFont());
 
 		lblStep = new JLabel();
-		fldStep = new MyTextField(app.getGuiManager());
+		fldStep = new MyTextField(app);
 		fldStep.addActionListener(this);
 		fldStep.setColumns(6);
 
 		lblInterval = new JLabel();
-		fldLow = new MyTextField(app.getGuiManager());
+		fldLow = new MyTextField(app);
 		fldLow.addActionListener(this);
 		fldLow.setColumns(6);
-		fldHigh = new MyTextField(app.getGuiManager());
+		fldHigh = new MyTextField(app);
 		fldHigh.addActionListener(this);
 		fldHigh.setColumns(6);
 
@@ -1455,7 +1455,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		this.setFont(app.getPlainFont());
 		tableXY.setFont(app.getPlainFont());
 		tableInterval.setFont(app.getPlainFont());
-		MyTextField dummyField = new MyTextField(app.getGuiManager());
+		MyTextField dummyField = new MyTextField(app);
 		tableXY.setRowHeight(dummyField.getPreferredSize().height);
 		tableInterval.setRowHeight(dummyField.getPreferredSize().height);
 

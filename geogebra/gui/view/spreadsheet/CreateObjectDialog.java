@@ -147,7 +147,7 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 		typeList.addListSelectionListener(this);
 
 		lblName = new JLabel();
-		fldName = new MyTextField(app.getGuiManager());
+		fldName = new MyTextField(app);
 		fldName.setShowSymbolTableIcon(true);
 		fldName.addFocusListener(this);
 

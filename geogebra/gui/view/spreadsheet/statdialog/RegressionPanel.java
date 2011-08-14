@@ -81,8 +81,8 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 		lblTitleX = new JLabel();
 		lblTitleY = new JLabel();
 
-		fldTitleX = new MyTextField(app.getGuiManager());
-		fldTitleY = new MyTextField(app.getGuiManager());
+		fldTitleX = new MyTextField(app);
+		fldTitleY = new MyTextField(app);
 	//	fldTitleX.setColumns(15);
 	//	fldTitleY.setColumns(15);
 
@@ -159,12 +159,12 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 		
 		predictionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		lblEvaluate = new JLabel();	
-		fldInputX = new MyTextField(app.getGuiManager());
+		fldInputX = new MyTextField(app);
 		fldInputX.addActionListener(this);
 
 		fldInputX.setColumns(6);
 		lblOutputY = new JLabel();
-		fldOutputY = new MyTextField(app.getGuiManager());
+		fldOutputY = new MyTextField(app);
 
 		fldOutputY.setColumns(6);
 		fldOutputY.setEditable(false);

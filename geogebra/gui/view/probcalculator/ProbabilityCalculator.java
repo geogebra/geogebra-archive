@@ -410,7 +410,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 		for(int i = 0; i < maxParameterCount; ++i){
 			lblParameterArray[i] = new JLabel();
-			fldParameterArray[i] = new MyTextField(app.getGuiManager());
+			fldParameterArray[i] = new MyTextField(app);
 			fldParameterArray[i].setColumns(6);
 			fldParameterArray[i].addActionListener(this);
 			fldParameterArray[i].addFocusListener(this);
@@ -465,17 +465,17 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		lblProbOf = new JLabel();
 		lblBetween = new JLabel();   // <= X <=
 		lblEndProbOf = new JLabel();
-		fldLow = new MyTextField(app.getGuiManager());
+		fldLow = new MyTextField(app);
 		fldLow.setColumns(6);
 		fldLow.addActionListener(this);
 		fldLow.addFocusListener(this);
 
-		fldHigh = new MyTextField(app.getGuiManager());
+		fldHigh = new MyTextField(app);
 		fldHigh.setColumns(6);
 		fldHigh.addActionListener(this);
 		fldHigh.addFocusListener(this);
 
-		fldResult = new MyTextField(app.getGuiManager());
+		fldResult = new MyTextField(app);
 		fldResult.setColumns(6);
 		fldResult.addActionListener(this);
 		fldResult.addFocusListener(this);

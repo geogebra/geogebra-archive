@@ -100,7 +100,7 @@ public class DynamicTextInputPane extends JTextPane {
 			}
 		}
 
-		DynamicTextField tf = new DynamicTextField(app.getGuiManager(), inputDialog); 
+		DynamicTextField tf = new DynamicTextField(app, inputDialog); 
 		Document tfDoc = tf.getDocument();
 		tf.setText(text);
 		tf.setMode(mode);
@@ -260,8 +260,8 @@ public class DynamicTextInputPane extends JTextPane {
 
 		private JPopupMenu contextMenu;
 
-		public DynamicTextField(GuiManager guiManager, TextInputDialog id) {
-			super(guiManager);
+		public DynamicTextField(Application app, TextInputDialog id) {
+			super(app);
 			this.id = id;
 
 			// add a mouse listener to trigger the context menu

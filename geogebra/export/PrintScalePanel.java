@@ -45,8 +45,8 @@ public class PrintScalePanel extends JPanel {
 		
 		setLayout(new FlowLayout(FlowLayout.LEFT));			
 		
-		tfScale1 = new MyTextField(app.getGuiManager());
-		tfScale2 = new MyTextField(app.getGuiManager());
+		tfScale1 = new MyTextField(app);
+		tfScale2 = new MyTextField(app);
 		tfScale1.setColumns(maxFracDigits);	
 		tfScale2.setColumns(maxFracDigits);
 		tfScale1.setHorizontalAlignment(SwingConstants.RIGHT);

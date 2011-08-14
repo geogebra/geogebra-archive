@@ -5197,9 +5197,9 @@ class SliderPanel
 		coSliderHorizontal.addActionListener(this);
 		sliderPanel.add(coSliderHorizontal);				
 					
-		tfMin = new AngleTextField(6, app.getGuiManager());
-		tfMax = new AngleTextField(6, app.getGuiManager());
-		tfWidth = new MyTextField(app.getGuiManager(),4);
+		tfMin = new AngleTextField(6, app);
+		tfMax = new AngleTextField(6, app);
+		tfWidth = new MyTextField(app,4);
 		tfields = new MyTextField[3];
 		tLabels = new JLabel[3];
 		tfields[0] = tfMin;
@@ -5524,7 +5524,7 @@ class AnimationStepPanel
 		
 		// text field for animation step
 		label = new JLabel();
-		tfAnimStep = new AngleTextField(6, app.getGuiManager());
+		tfAnimStep = new AngleTextField(6, app);
 		label.setLabelFor(tfAnimStep);
 		tfAnimStep.addActionListener(this);
 		tfAnimStep.addFocusListener(this);
@@ -5666,7 +5666,7 @@ class TextfieldSizePanel
 		
 		// text field for textfield size
 		label = new JLabel();
-		tfTextfieldSize = new MyTextField(app.getGuiManager(), 5);
+		tfTextfieldSize = new MyTextField(app, 5);
 		label.setLabelFor(tfTextfieldSize);
 		tfTextfieldSize.addActionListener(this);
 		tfTextfieldSize.addFocusListener(this);

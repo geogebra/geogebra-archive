@@ -462,7 +462,7 @@ public class WorksheetExportDialog extends JDialog {
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		// title textfield
-		titleField = new MyTextField(app.getGuiManager());
+		titleField = new MyTextField(app);
 		
 		titleField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

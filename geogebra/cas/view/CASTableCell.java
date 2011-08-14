@@ -32,7 +32,7 @@ public abstract class CASTableCell extends JPanel{
 		setBackground(Color.white);
 		
 		inputPanel = new CASInputPanel(app);
-		dummyField = new MyTextField(app.getGuiManager());
+		dummyField = new MyTextField(app);
 		
 		// The inputPanel needs to have variable width so that it fits the JScrollPane
 		// viewport when in editing mode but also can grow to the size of its

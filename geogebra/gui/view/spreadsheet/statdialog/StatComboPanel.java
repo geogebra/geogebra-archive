@@ -253,8 +253,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		southTitlePanel.setBackground(plotPanel.getBackground());
 		lblTitleX = new JLabel();
 		lblTitleY = new JLabel();
-		fldTitleX = new MyTextField(app.getGuiManager(),20);
-		fldTitleY = new MyTextField(app.getGuiManager(),20);
+		fldTitleX = new MyTextField(app,20);
+		fldTitleY = new MyTextField(app,20);
 		fldTitleX.setEditable(false);
 		fldTitleX.setBorder(BorderFactory.createEmptyBorder());
 		fldTitleY.setEditable(false);
@@ -518,7 +518,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private void createPredictonPanel(){
 		predictionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		lblEvaluate = new JLabel();	
-		fldInputX = new MyTextField(app.getGuiManager());
+		fldInputX = new MyTextField(app);
 		fldInputX.setColumns(4);
 		lblOutputY = new JLabel();
 
@@ -561,14 +561,14 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		lblStart = new JLabel();
 		lblWidth = new JLabel();
 
-		fldStart = new MyTextField(app.getGuiManager());
+		fldStart = new MyTextField(app);
 		Dimension d = fldStart.getMaximumSize();
 		d.height = fldStart.getPreferredSize().height;
 		fldStart.setMaximumSize(d);
 		fldStart.addActionListener(this);
 		fldStart.setText("" + (int)settings.classStart);
 
-		fldWidth = new MyTextField(app.getGuiManager());
+		fldWidth = new MyTextField(app);
 		fldWidth.setMaximumSize(d);
 		fldStart.setColumns(4);
 		fldWidth.setColumns(4);

@@ -180,8 +180,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			dimLabel[i] = new JLabel("");
 		
         JPanel xDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-        tfMinX = new MyTextField(app.getGuiManager(),8);
-		tfMaxX = new MyTextField(app.getGuiManager(),8);
+        tfMinX = new MyTextField(app,8);
+		tfMaxX = new MyTextField(app,8);
 		tfMinX.addActionListener(this);
 		tfMaxX.addActionListener(this);
 		tfMinX.addFocusListener(this);
@@ -193,8 +193,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         xDimPanel.add(tfMaxX);
               
         JPanel yDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-		tfMinY = new MyTextField(app.getGuiManager(),8);
-		tfMaxY = new MyTextField(app.getGuiManager(),8);		
+		tfMinY = new MyTextField(app,8);
+		tfMaxY = new MyTextField(app,8);		
 		tfMinY.addActionListener(this);
 		tfMaxY.addActionListener(this);
 		tfMinY.addFocusListener(this);
@@ -207,8 +207,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
    
             
         JPanel axesRatioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-        tfAxesRatioX = new MyTextField(app.getGuiManager(),6);
-        tfAxesRatioY = new MyTextField(app.getGuiManager(),6);
+        tfAxesRatioX = new MyTextField(app,6);
+        tfAxesRatioY = new MyTextField(app,6);
         tfAxesRatioX.setEnabled(view.isZoomable());
         tfAxesRatioY.setEnabled(view.isZoomable());
         tfAxesRatioX.addActionListener(this);
@@ -868,7 +868,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			
 			
 			JPanel crossPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));	
-			tfCross = new MyTextField(app.getGuiManager(),6);
+			tfCross = new MyTextField(app,6);
 			tfCross.addActionListener(this);
 			crossPanel.add(new JLabel(app.getPlain("CrossAt") + ":"));
 			crossPanel.add(tfCross);

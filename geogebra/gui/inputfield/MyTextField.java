@@ -46,7 +46,7 @@ import javax.swing.text.BadLocationException;
  */
 public class MyTextField extends JTextField implements ActionListener, FocusListener, VirtualKeyboardListener, CaretListener {
 
-	private GuiManager guiManager;
+	private Application app;
 
 	// symbol table popup fields
 	private JPopupMenu popup;
@@ -73,9 +73,9 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 	 * Construct an instance of MyTextField without a fixed column width
 	 * @param guiManager
 	 */
-	public MyTextField(GuiManager guiManager) {
+	public MyTextField(Application app) {
 		super();
-		this.guiManager = guiManager;
+		this.app = app;
 		initField();
 	}
 
@@ -84,9 +84,9 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 	 * @param guiManager
 	 * @param columns
 	 */
-	public MyTextField(GuiManager guiManager, int columns) {
+	public MyTextField(Application app, int columns) {
 		super(columns);
-		this.guiManager = guiManager;
+		this.app = app;
 		initField();
 	}
 
@@ -157,7 +157,8 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 			borderBtn.setIconVisible(0, true);
 		thisField.repaint();
 
-		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
+		if (app.getGuiManager() != null)
+			app.getGuiManager().setCurrentTextfield((VirtualKeyboardListener)this, false);
 	}
 
 	public void focusLost(FocusEvent e) {
@@ -166,7 +167,8 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 			borderBtn.setIconVisible(0, false);
 		thisField.repaint();
 
-		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
+		if (app.getGuiManager() != null)
+			app.getGuiManager().setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
 	}
 
 	
@@ -258,7 +260,7 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 	private void createPopup(){
 		popup = new JPopupMenu();
 		popup.setFocusable(false);
-		symbolTable = new SymbolTable(guiManager.app, this);
+		symbolTable = new SymbolTable(app, this);
 		popup.add(symbolTable);
 		popup.setBorder(BorderFactory.createLineBorder(SystemColor.controlShadow));
 	}

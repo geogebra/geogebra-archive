@@ -138,14 +138,14 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		lblHypParameter = new JLabel();
 		lblTailType = new JLabel();
 
-		fldNullHyp = new MyTextField(app.getGuiManager());
+		fldNullHyp = new MyTextField(app);
 		fldNullHyp.setColumns(4);
 		fldNullHyp.setText("" + 0);
 		fldNullHyp.addActionListener(this);
 		fldNullHyp.addFocusListener(this);
 
 		lblConfLevel = new JLabel();
-		fldConfLevel = new MyTextField(app.getGuiManager());
+		fldConfLevel = new MyTextField(app);
 		fldConfLevel.setColumns(4);
 		fldConfLevel.addActionListener(this);
 		fldConfLevel.addFocusListener(this);

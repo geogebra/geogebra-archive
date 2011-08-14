@@ -259,28 +259,28 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		ckShowGrid.addActionListener(this);
 
 		lblXMin = new JLabel();
-		fldXMin = new MyTextField(app.getGuiManager(),fieldWidth);
+		fldXMin = new MyTextField(app,fieldWidth);
 		fldXMin.setEditable(true);
 		fldXMin.addActionListener(this);
 		
 		lblXMax = new JLabel();
-		fldXMax = new MyTextField(app.getGuiManager(),fieldWidth);
+		fldXMax = new MyTextField(app,fieldWidth);
 		fldXMax.addActionListener(this);
 		
 		lblYMin = new JLabel();
-		fldYMin = new MyTextField(app.getGuiManager(),fieldWidth);
+		fldYMin = new MyTextField(app,fieldWidth);
 		fldYMin.addActionListener(this);
 		
 		lblYMax = new JLabel();
-		fldYMax = new MyTextField(app.getGuiManager(),fieldWidth);
+		fldYMax = new MyTextField(app,fieldWidth);
 		fldYMax.addActionListener(this);
 		
 		lblXInterval = new JLabel();
-		fldXInterval = new MyTextField(app.getGuiManager(),fieldWidth);
+		fldXInterval = new MyTextField(app,fieldWidth);
 		fldXInterval.addActionListener(this);
 		
 		lblYInterval = new JLabel();
-		fldYInterval = new MyTextField(app.getGuiManager(),fieldWidth);
+		fldYInterval = new MyTextField(app,fieldWidth);
 		fldYInterval.addActionListener(this);
 		
 		//layout

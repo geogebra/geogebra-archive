@@ -19,13 +19,13 @@ public class MathTextField extends MyTextField implements KeyListener {
 	private static GeoGebraKeys ggbKeys;
 	
 	public MathTextField(Application app) {
-		super(app.getGuiManager());
+		super(app);
 		ggbKeys = new GeoGebraKeys(app);
 		addKeyListener(this);
 	}
 	
 	public MathTextField(Application app, int length) {
-		super(app.getGuiManager(), length);
+		super(app, length);
 		ggbKeys = new GeoGebraKeys(app);
 		addKeyListener(this);
 	}

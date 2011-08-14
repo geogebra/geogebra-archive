@@ -493,7 +493,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 		// components
 		lblOneVarTitle = new JLabel();
-		fldOneVarTitle = new MyTextField(app.getGuiManager());
+		fldOneVarTitle = new MyTextField(app);
 		fldOneVarTitle.setColumns(30);
 
 		// panels

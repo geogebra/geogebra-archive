@@ -176,7 +176,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         group.add(urlRadioButton);
         
         
-        dirField = new MyTextField(app.getGuiManager());
+        dirField = new MyTextField(app);
         dirField.setAlignmentX(0.0f);
        // dirField.setMaximumSize(new Dimension(300,20));
         dirField.setColumns(30);
@@ -184,7 +184,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         dirField.addFocusListener(this);
         dirField.setEditable(false);
         
-        urlField = new MyTextField(app.getGuiManager());
+        urlField = new MyTextField(app);
         urlField.setAlignmentX(0.0f);
        // urlField.setMaximumSize(new Dimension(300,20));
         urlField.setColumns(30);

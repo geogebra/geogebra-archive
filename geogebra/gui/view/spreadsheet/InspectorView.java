@@ -217,11 +217,11 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		lblStep = new JLabel(app.getMenu("Step") + ":");
 		lblStart = new JLabel(app.getMenu("Start") + ":");
 		lblShow = new JLabel(app.getMenu("Show") + ":");
-		fldStep = new MyTextField(app.getGuiManager());
+		fldStep = new MyTextField(app);
 		fldStep.addActionListener(this);
 		fldStep.setColumns(6);
 
-		fldStart = new MyTextField(app.getGuiManager());
+		fldStart = new MyTextField(app);
 		fldStart.addActionListener(this);
 		fldStart.setColumns(6);
 

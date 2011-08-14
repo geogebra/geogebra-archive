@@ -112,14 +112,14 @@ public class ToolNameIconPanel extends JPanel {
 			public void keyTyped(KeyEvent arg0) {}			
 		};
 		{			
-			tfToolName = new MyTextField(app.getGuiManager());
+			tfToolName = new MyTextField(app);
 			int n = app.getKernel().getMacroNumber()+1;
 			tfToolName.setText(app.getMenu("Tool")+n);
 			add(tfToolName, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));											
 			tfToolName.addKeyListener(kl);
 		}	
 		{
-			tfCmdName = new MyTextField(app.getGuiManager());
+			tfCmdName = new MyTextField(app);
 			tfCmdName.setText(tfToolName.getText());
 			add(tfCmdName, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));									
 			FocusListener fl = new FocusListener() {			
@@ -132,7 +132,7 @@ public class ToolNameIconPanel extends JPanel {
 			tfCmdName.addFocusListener(fl);
 		}
 		{
-			tfToolHelp = new MyTextField(app.getGuiManager());				
+			tfToolHelp = new MyTextField(app);				
 			add(tfToolHelp, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		}
 		{

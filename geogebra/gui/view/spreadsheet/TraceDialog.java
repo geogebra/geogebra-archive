@@ -280,7 +280,7 @@ implements
 		
 		// start row panel
 		lblStartRow = new JLabel(app.getMenu("StartRow"+": "));
-		firstRowField = new MyTextField(app.getGuiManager());
+		firstRowField = new MyTextField(app);
 		firstRowField.setColumns(3);
 		firstRowField.addActionListener(this);
 		firstRowField.addFocusListener(this);
@@ -295,7 +295,7 @@ implements
 		cbRowLimit = new JCheckBox(app.getMenu("RowLimit"+": "));  
 		cbRowLimit.addActionListener(this);
 
-		numRowsField = new MyTextField(app.getGuiManager());
+		numRowsField = new MyTextField(app);
 		numRowsField.setAlignmentX(0.0f);
         numRowsField.setColumns(3);
         numRowsField.addActionListener(this);

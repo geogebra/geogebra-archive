@@ -236,7 +236,7 @@ public class InspectorTable extends JTable{
 
 	private class MyEditor extends DefaultCellEditor {
 		public MyEditor() {
-			super(new MyTextField(app.getGuiManager()));
+			super(new MyTextField(app));
 			this.setClickCountToStart(1);
 			
 
