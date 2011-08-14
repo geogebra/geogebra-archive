@@ -7,7 +7,6 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -253,7 +252,7 @@ public class DrawInequality extends Drawable {
 			} else
 				fill(g2, getShape(), true);
 		}
-		Application.debug("dl"+xLabel+","+yLabel);
+		
 		if (labelVisible) {
 			g2.setFont(view.fontConic);
 			g2.setPaint(geo.getLabelColor());			
