@@ -21,7 +21,7 @@ test -r autobuild.conf || {
 cd $SVNDIR/tube/trunk/languages
 $SVN_COMMAND update --accept theirs-full --force
 for i in *.properties; do
- cp tube_$i $SVNDIR/geogebra/geogebra/properties # renaming
+ cp $i $SVNDIR/geogebra/geogebra/properties/tube_$i # renaming
  done
 
 # Updating GeoGebra properties:
