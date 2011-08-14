@@ -2299,7 +2299,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// deselect slider after drag, but not on click
 			//if (movedGeoNumericDragged) movedGeoNumeric.setSelected(false);
 
-			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) movedGeoNumeric.resetTraceColumns();
+			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET && app.useFullGui()) {
+				movedGeoNumeric.resetTraceColumns();
+			}
 		}
 
 		movedGeoPointDragged = false;
