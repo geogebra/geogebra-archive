@@ -353,7 +353,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         urlRadioButton.addActionListener(this);
         
         dirField.removeActionListener(this);
-        dirField.setText(settings.initialPath());
+        dirField.setText(settings.initialFilePath());
         dirField.setCaretPosition(0);
         dirField.addActionListener(this);
         
@@ -429,14 +429,18 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 
 		else if (source == dirRadioButton) {
 			dirField.selectAll();
+			settings.beginBatch();
 			settings.setInitialFilePath(dirField.getText());
 			settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
+			settings.endBatch();
 		}
 		
 		else if (source == urlRadioButton) {
 			urlField.selectAll();
+			settings.beginBatch();
 			settings.setInitialURL(urlField.getText());
 			settings.setInitialBrowserMode(FileBrowserPanel.MODE_URL);
+			settings.endBatch();
 
 		}
 

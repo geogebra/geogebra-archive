@@ -198,12 +198,12 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
-		
+
 		app = view.getApplication();
 		kernel = app.getKernel();
 		this.tableModel = tableModel;
 		this.view = view;
-		
+
 		table = this;
 		grabCursor = createCursor(app.getImageIcon("cursor_grab.gif").getImage(), true);
 		grabbingCursor = createCursor(app.getImageIcon("cursor_grabbing.gif").getImage(), true);
@@ -211,8 +211,8 @@ public class MyTable extends JTable implements FocusListener
 
 		// set row height 	
 		setRowHeight(TABLE_CELL_HEIGHT);
-		
-		
+
+
 		// prepare column headers
 		SpreadsheetColumnController columnController = new SpreadsheetColumnController(app,this);
 		headerRenderer = columnController.new ColumnHeaderRenderer();
@@ -225,7 +225,7 @@ public class MyTable extends JTable implements FocusListener
 
 		// set columns and column headers
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		headerRenderer.setPreferredSize(new Dimension(preferredColumnWidth, TABLE_CELL_HEIGHT));	
 		for (int i = 0; i < getColumnCount(); ++ i) {
 			getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
@@ -592,7 +592,7 @@ public class MyTable extends JTable implements FocusListener
 
 		if(isSelectNone && (minSelectionColumn != -1 || minSelectionRow != -1)) 
 			setSelectNone(false);
-		
+
 		if(changedAnchor && !isEditing())
 			view.updateFormulaBar();
 
@@ -1164,8 +1164,8 @@ public class MyTable extends JTable implements FocusListener
 
 
 	private Rectangle targetcellFrame;
-	
-	
+
+
 	public Rectangle getTargetcellFrame() {
 		return targetcellFrame;
 	}
@@ -1194,8 +1194,8 @@ public class MyTable extends JTable implements FocusListener
 
 			g2.draw(targetcellFrame);
 		}
-		
-		
+
+
 		if(!view.hasViewFocus()){
 			if(!isSelectNone)
 				setSelectNone(true);
@@ -1203,7 +1203,7 @@ public class MyTable extends JTable implements FocusListener
 		}
 
 
-		
+
 
 		/*
 		for(GeoElement geo: view.getTraceManager().getTraceGeoList()){
@@ -1597,6 +1597,7 @@ public class MyTable extends JTable implements FocusListener
 				adjustedRowHeights.add(new Point(row, rowHeight));
 		} catch (Exception e) {
 		}
+		view.updateRowHeightSetting(row, rowHeight);
 	}
 
 	@Override
@@ -1604,8 +1605,10 @@ public class MyTable extends JTable implements FocusListener
 		super.setRowHeight(rowHeight);
 		try {
 			view.updateRowHeader();
+			view.updatePreferredRowHeight(rowHeight);
 		} catch (Exception e) {
 		}
+
 	}
 
 	// Reset the row heights --- used after addColumn destroys the row heights
@@ -1778,7 +1781,10 @@ public class MyTable extends JTable implements FocusListener
 		public void columnMarginChanged(ChangeEvent e) {
 			if(isSelectAll() && minSelectionColumn >= 0){
 				preferredColumnWidth = table.getColumnModel().getColumn(minSelectionColumn).getPreferredWidth();
+				//view.updatePreferredColumnWidth(preferredColumnWidth);
 			}
+			// TODO: find more efficient way to record column widths
+			view.updateAllColumnWidthSettings();
 		}
 
 		public void columnAdded(TableColumnModelEvent arg0) {}
@@ -1825,11 +1831,11 @@ public class MyTable extends JTable implements FocusListener
 
 			if(!initAutoFunction())  return;
 		}
-		
+
 		else if(tableMode == TABLE_MODE_DROP){
-		  // nothing to do (yet)
+			// nothing to do (yet)
 		}
-		
+
 		else
 		{
 			// Clear the targetcellFrame and ensure the selection rectangle color is standard 
@@ -1853,7 +1859,7 @@ public class MyTable extends JTable implements FocusListener
 	 */
 	protected boolean initAutoFunction(){
 
-	
+
 		// Selection is a single cell.
 		// The selected cell is the target cell. Allow the user to drag a new selection for the
 		// autoFunction. The autoFunction values are previewed in the targetCell while dragging.
@@ -1887,7 +1893,7 @@ public class MyTable extends JTable implements FocusListener
 			app.clearSelectedGeos();
 
 		}
-		
+
 		// try to create autoFunction cell(s) adjacent to the selection
 		else if(selectedCellRanges.size() == 1){
 
@@ -1896,7 +1902,7 @@ public class MyTable extends JTable implements FocusListener
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			// Don't stay in this mode, we're done
 			return false;
 		}
@@ -1917,7 +1923,7 @@ public class MyTable extends JTable implements FocusListener
 	protected void performAutoFunctionCreation(CellRange cr){
 
 		if(cr.isColumn() || cr.isRow()) return;
-		
+
 		boolean success = true;
 		boolean isOK = true;
 		GeoElement targetCell = null;
@@ -1945,7 +1951,7 @@ public class MyTable extends JTable implements FocusListener
 			repaint();
 		}
 		else {
-			
+
 			targetRange = new CellRange(this, cr.getMinColumn(), cr.getMaxRow() + 1, cr.getMaxColumn(), cr.getMaxRow() + 1);
 			for(int col = cr.getMinColumn(); col <= cr.getMaxColumn(); col ++){
 
@@ -1964,19 +1970,19 @@ public class MyTable extends JTable implements FocusListener
 			app.setMoveMode();
 			setSelection(targetRange);
 			repaint();
-			
+
 		}
 
 	}
 
-	
-	
+
+
 	/**
 	 * Stops the autofunction from updating and creates a new geo for the target
 	 * cell based on the current autofunction mode.
 	 */
 	protected void stopAutoFunction(){
-	
+
 		setTableMode(TABLE_MODE_STANDARD);
 
 		if(createAutoFunctionCell(targetCell, selectedCellRanges.get(0))){
@@ -1986,11 +1992,11 @@ public class MyTable extends JTable implements FocusListener
 			changeSelection(coords.y, coords.x, false, false);
 			repaint();
 		}
-		
+
 	}
 
-	
-	
+
+
 	/**
 	 * Creates an autofunction in the given target cell based on the current
 	 * autofunction mode and the given cell range.
@@ -1998,7 +2004,7 @@ public class MyTable extends JTable implements FocusListener
 	protected boolean createAutoFunctionCell(GeoElement targetCell, CellRange cr){
 
 		boolean success = true;
-		
+
 		// Get the targetCell label and the selected cell range
 		String targetCellLabel = targetCell.getLabel();
 		String cellRangeString = getCellRangeProcessor().getCellRangeString(cr);
@@ -2020,15 +2026,15 @@ public class MyTable extends JTable implements FocusListener
 			targetCell.setUndefined();
 			success = false;
 		}
-		
+
 		return success;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/**
 	 * Updates the autofunction by recalculating the autofunction value as the
 	 * user drags the mouse to create a selection. The current autofunction

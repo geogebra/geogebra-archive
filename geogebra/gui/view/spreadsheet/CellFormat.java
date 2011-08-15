@@ -215,9 +215,9 @@ public class CellFormat {
 	}
 
 
-	
-	
-	
+
+
+
 
 	//========================================================
 	//       Setters
@@ -308,10 +308,19 @@ public class CellFormat {
 					formatTable.put(cellPoint, value);
 			}
 		}
+
+		setCellFormatString();
 		table.repaint();		
 
 	}
 
+	private void setCellFormatString(){
+		StringBuilder sb = encodeFormats();
+		if(sb == null)
+			table.getView().updateCellFormat(null);
+		else
+			table.getView().updateCellFormat(sb.toString());
+	}
 
 
 	/**
@@ -675,7 +684,7 @@ public class CellFormat {
 	public void processXMLString(String xml){
 		clearAll();
 		if(xml == null) return;
-		
+
 		//System.out.println("XML:  " + xml);
 		String[] cellGroup = xml.split(cellDelimiter);
 		//System.out.println("cellGroup:  " + java.util.Arrays.toString(cellGroup));

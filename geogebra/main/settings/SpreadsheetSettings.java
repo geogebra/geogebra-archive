@@ -28,9 +28,9 @@ public class SpreadsheetSettings extends AbstractSettings {
 	// file browser settings
 	private String defaultFile; 
 	private String initialURL;
-	private String initialFilePath ; 
-	private int initialBrowserMode;
-	private boolean isDefaultBrowser;
+	private String initialFilePath; 
+	private int initialBrowserMode = -1;
+	private boolean isDefaultBrowser = true;
 
 
 	// row and column size
@@ -319,10 +319,9 @@ public class SpreadsheetSettings extends AbstractSettings {
 	 * @param cellFormat the cellFormat to set
 	 */
 	public void setCellFormat(String cellFormat) {
-		if(this.cellFormat == null || !this.cellFormat.equals(cellFormat)) {
+		if(this.cellFormat != null && this.cellFormat.equals(cellFormat)) return;
 			this.cellFormat = cellFormat;
 			settingChanged();
-		}
 	}
 	
 
@@ -403,10 +402,9 @@ public class SpreadsheetSettings extends AbstractSettings {
 	 * @param defaultFile the defaultFile to set
 	 */
 	public void setDefaultFile(String defaultFile) {
-		if(this.defaultFile == null || !this.defaultFile.equals(defaultFile)) {
+		if(this.defaultFile != null && this.defaultFile.equals(defaultFile)) return;
 			this.defaultFile = defaultFile;
 			settingChanged();
-		}
 	}
 
 	/**
@@ -420,15 +418,15 @@ public class SpreadsheetSettings extends AbstractSettings {
 	 * @param initialURL the initialURL to set
 	 */
 	public void setInitialURL(String initialURL) {
-		if(this.initialURL == null |! this.initialURL.equals(initialURL)) {
-			this.initialURL = initialURL;
-			settingChanged();
-		}
+		if(this.initialURL != null && this.initialURL.equals(initialURL)) return;
+		this.initialURL = initialURL;
+		settingChanged();
 	}
+	
 	/**
 	 * @return the initialFilePath
 	 */
-	public String initialPath() {
+	public String initialFilePath() {
 		return initialFilePath;
 	}
 
@@ -436,10 +434,9 @@ public class SpreadsheetSettings extends AbstractSettings {
 	 * @param defaultFile the defaultFile to set
 	 */
 	public void setInitialFilePath(String initialFilePath) {
-		if(this.initialFilePath == null || !this.initialFilePath.equals(initialFilePath)) {
+		if(this.initialFilePath != null && this.initialFilePath.equals(initialFilePath)) return;
 			this.initialFilePath = initialFilePath;
 			settingChanged();
-		}
 	}
 	/**
 	 * @return the initialBrowserMode

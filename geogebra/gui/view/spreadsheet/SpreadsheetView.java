@@ -31,6 +31,7 @@ import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -161,13 +162,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		// Create spreadsheet trace manager
 		// TODO move this out of the spreadsheet
 		traceManager = new SpreadsheetTraceManager(this);
-
-
-		// init the default file location for the file browser
-		if(app.hasFullPermissions()){
-			settings.setDefaultFile(System.getProperty("user.dir"));
-			settings.setInitialFilePath(settings.defaultFile());
-		}
 
 		dndHandler = new SpreadsheetViewDnD(app, this);
 
@@ -418,6 +412,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	 * This method is called on startup or when new window is called
 	 */
 	public void restart() {
+
 		clearView();
 		//setDefaultLayout();
 		//setDefaultSelection();
@@ -438,7 +433,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			multiVarStatDialog.setVisible(false);
 
 		table.getCellFormatHandler().clearAll();
-
 	}	
 
 	/** Resets spreadsheet after undo/redo call. */
@@ -787,7 +781,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		if(fileBrowser != null){
 			sb.append("\t<spreadsheetBrowser ");
 
-			if(settings.initialPath() != settings.defaultFile() 
+			if(settings.initialFilePath() != settings.defaultFile() 
 					|| settings.initialURL() != DEFAULT_URL 
 					|| settings.initialBrowserMode() != DEFAULT_MODE)
 			{	
@@ -796,7 +790,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 				sb.append("\"");	
 
 				sb.append(" dir=\"");
-				sb.append(settings.initialPath());
+				sb.append(settings.initialFilePath());
 				sb.append("\"");
 
 				sb.append(" URL=\"");
@@ -1051,8 +1045,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		if (fileBrowser == null && app.hasFullPermissions()) {
 			fileBrowser = new FileBrowserPanel(this);
 			fileBrowser.setMinimumSize(new Dimension(50, 0));
-			initFileBrowser();
-			fileBrowser.setRoot(settings.initialPath(), settings.initialBrowserMode());
+			//initFileBrowser();
+			//fileBrowser.setRoot(settings.initialPath(), settings.initialBrowserMode());
 		}	
 		return fileBrowser;
 	}
@@ -1064,6 +1058,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			splitPane.setLeftComponent(getFileBrowser());
 			splitPane.setDividerLocation(defaultDividerLocation);
 			splitPane.setDividerSize(4);
+			initFileBrowser();
+			
 		} else {
 			splitPane.setLeftComponent(null);
 			splitPane.setLastDividerLocation(splitPane.getDividerLocation());
@@ -1127,25 +1123,14 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		return settings.initialBrowserMode();
 	}
 
-	public void setInitialBrowserMode(int mode) {
-		// do nothing yet
-	}
-
 
 	public String getInitialURLString() {
 		return settings.initialURL();
 	}
 
-	public void setInitialURLString(String initialURLString) {
-		// do nothing yet
-	}
 
 	public String getInitialFileString() {
-		return settings.initialPath();
-	}
-
-	public void setInitialFileString(String initialFileString) {
-		// do nothing yet
+		return settings.initialFilePath();
 	}
 
 
@@ -1165,10 +1150,10 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 	public void initFileBrowser(){
 		// don't init file browser without full permissions (e.g. unsigned applets)
-		if(!app.hasFullPermissions() || !getShowBrowserPanel()) return;
+		if(!app.hasFullPermissions() || !settings.showBrowserPanel()) return;
 
 		if(settings.initialBrowserMode() == FileBrowserPanel.MODE_FILE)
-			setFileBrowserDirectory(settings.initialPath(), settings.initialBrowserMode());
+			setFileBrowserDirectory(settings.initialFilePath(), settings.initialBrowserMode());
 		else
 			setFileBrowserDirectory(settings.initialURL(), settings.initialBrowserMode());
 	}
@@ -1307,10 +1292,96 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		return settings.equalsRequired();
 	}
 
+	
+	boolean allowSettingUpate = true;
+
+	protected void updateCellFormat(String cellFormat){
+		if(!allowSettingUpate) return;
+		
+		settings.removeListener(this);
+		settings.setCellFormat(cellFormat);
+		settings.addListener(this);
+	}
+
+	protected void updateAllRowSettings(){
+		if(!allowSettingUpate) return;
+		
+		settings.removeListener(this);
+		settings.setPreferredRowHeight(table.getRowHeight());
+		settings.getHeightMap().clear();
+		for (int row = 0 ; row < table.getRowCount() ; row++) {
+			int rowHeight = table.getRowHeight(row);
+			if (rowHeight != table.getRowHeight())
+				settings.getHeightMap().put(row,rowHeight);
+		}
+		settings.addListener(this);
+	}
+
+	
+
+	protected void updateRowHeightSetting(int row, int height){
+		if(!allowSettingUpate) return;
+
+		settings.removeListener(this);
+		settings.getHeightMap().put(row, height);
+		settings.addListener(this);
+	}
+
+	protected void updatePreferredRowHeight(int preferredRowHeight){
+		if(!allowSettingUpate) return;
+
+		settings.removeListener(this);
+		settings.getHeightMap().clear();
+		settings.setPreferredRowHeight(preferredRowHeight);
+		settings.addListener(this);
+	}
 
 
+	protected void updateColumnWidth(int col, int colWidth){
+		if(!allowSettingUpate) return;
+		
+		settings.removeListener(this);
+		settings.getWidthMap().put(col, colWidth);
+		settings.addListener(this);
+	}
+
+	protected void updatePreferredColumnWidth(int colWidth){
+		if(!allowSettingUpate) return;
+		
+		settings.removeListener(this);
+		settings.getWidthMap().clear();
+		settings.setPreferredColumnWidth(table.preferredColumnWidth);
+		settings.addListener(this);
+	}
+
+
+	protected void updateAllColumnWidthSettings(){
+		if(!allowSettingUpate) return;
+		
+		settings.removeListener(this);
+		settings.setPreferredColumnWidth(table.preferredColumnWidth);
+		settings.getWidthMap().clear();
+		for (int col = 0 ; col < table.getColumnCount() ; col++) {
+			TableColumn column = table.getColumnModel().getColumn(col); 
+			int colWidth = column.getWidth();
+			if (colWidth !=	table.preferredColumnWidth)
+				settings.getWidthMap().put(col, colWidth);
+		}
+		settings.addListener(this);
+	}
+
+
+	protected SpreadsheetSettings settings(){
+		return settings();
+	}
+
+	
+	
 	public void settingsChanged(AbstractSettings settings0) {
 
+		allowSettingUpate = false;
+
+		//Application.debug("========> settings changed");
 		// layout
 		setShowColumnHeader(settings.showColumnHeader());
 		setShowRowHeader(settings.showRowHeader()) ;
@@ -1324,33 +1395,40 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		setEqualsRequired(settings.equalsRequired());
 
 		// browser panel
-		if(settings.showBrowserPanel()){
-			setShowFileBrowser(true);
-
-			if(settings.isDefaultBrowser()){
-				//setFileBrowserDirectory(this, this.DEFAULT_MODE);
-			}
-			else{
-				this.initFileBrowser();
-			}
+		if(app.hasFullPermissions()){
+			//Application.debug("========> setting file browser fields");
+			settings.removeListener(this);
+			if(settings.initialBrowserMode() < 0)
+				settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
+			if(settings.defaultFile() == null)
+				settings.setDefaultFile(System.getProperty("user.dir"));
+			if(settings.initialFilePath() == null)
+				settings.setInitialFilePath(System.getProperty("user.dir"));
+			if(settings.initialURL() == null)
+				settings.setInitialURL(DEFAULT_URL);
+			settings.addListener(this);
 		}
 
-		// row height and column widths
+		setShowFileBrowser(settings.showBrowserPanel());
+
+		// row height and column widths		
 		setColumnWidthsFromSettings();
 		setRowHeightsFromSettings();
-		
+
 		// cell format
 		getTable().getCellFormatHandler().processXMLString(settings.cellFormat());	
-		
+
 		// preferredSize
 		this.setPreferredSize(settings.preferredSize());
-		
-		
+
+
 		// initial position
 		// TODO not working yet ... 
 		//setSpreadsheetScrollPosition(settings.scrollPosition().x, settings.scrollPosition().y);
 		//getTable().setInitialCellSelection(settings.selectedCell().x, settings.selectedCell().y);
-		
+
+		allowSettingUpate = true;
+
 	}
 
 
