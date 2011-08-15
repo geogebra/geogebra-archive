@@ -108,7 +108,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		if(fun.isBooleanFunction()){
 			GeoElement ge = cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_INEQUALITY_1VAR);
 			setVisualStyle(ge);
-			setAlphaValue(ge.getAlphaValue());		
+			setAlphaValue(ge.getAlphaValue());
+			//initialize inequlaities to make sure that drawable is made when necessary
+			getIneqs();
 		}
 	}
 

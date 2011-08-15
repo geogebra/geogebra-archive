@@ -67,8 +67,10 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 	 * @param f function to be wrapped
 	 */
 	public GeoFunctionNVar(Construction c, FunctionNVar f) {
-		this(c);
-		fun = f;	
+		this(c);		
+		fun = f;
+		if(fun != null)
+			isInequality = fun.initIneqs(this.getFunctionExpression(),this);
 	}
 
 	/**
@@ -78,7 +80,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 	 * @param f function to be wrapped
 	 */
 	public GeoFunctionNVar(Construction c, String label, FunctionNVar f) {
-		this(c,f);	
+		this(c,f);		
 		setLabel(label);		
 	}
 	

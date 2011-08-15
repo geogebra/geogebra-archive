@@ -212,7 +212,7 @@ public class ConstructionDefaults {
 		seg.setObjColor(colLine);
 		defaultGeoElements.put(DEFAULT_SEGMENT, seg);
 		
-		GeoFunctionNVar inequality = new GeoFunctionNVar(cons, null);	
+		GeoFunctionNVar inequality = new GeoFunctionNVar(cons);	
 		//inequality.setLocalVariableLabel("Inequality");
 		inequality.setObjColor(colInequality);
 		inequality.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
