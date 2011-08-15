@@ -93,7 +93,7 @@ public final class GeoAngle extends GeoNumeric {
 		//http://benpryor.com/blog/2008/01/02/dont-call-subclass-methods-from-a-superclass-constructor/
 		setConstructionDefaults(); // init visual settings
 
-		setEuclidianVisible(false);
+		//setEuclidianVisible(false);
 	}
 
 	/**
@@ -454,4 +454,12 @@ public final class GeoAngle extends GeoNumeric {
 	public void setZero() {
 		rawValue = 0;
 	}
+	public boolean isDrawable() {		
+		return isDrawable || (getDrawAlgorithm()!=getParentAlgorithm()) || (isIndependent() && isLabelSet()
+				|| getParentAlgorithm() instanceof AlgoAnglePolygon
+				|| getParentAlgorithm() instanceof AlgoAngleLines
+				|| getParentAlgorithm() instanceof AlgoAnglePoints);		
+	}
+
+
 }

@@ -60,7 +60,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	/** value of the number or angle */
 	protected double value;	
 
-	private boolean isDrawable = false;
+	protected boolean isDrawable = false;
 	//private boolean isRandomNumber = false;
 	
 	private int slopeTriangleSize = 1;
