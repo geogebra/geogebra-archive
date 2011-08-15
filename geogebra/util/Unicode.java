@@ -143,7 +143,7 @@ public class Unicode {
 			// Arabic is in standard Java fonts, so we don't need to search for a font
 			//testCharMap.put("ar", '\u0681'); // Arabic
 			testCharMap.put("ml", '\u0D2E'); // Malayalam
-			testCharMap.put("ko", '\uD55C'); // Korean
+			testCharMap.put("ko", '\u1103'); // Korean, changed from \uD55C (doesn't work in Ubuntu)
 			testCharMap.put("ru", '\u0439'); // Russian
 			testCharMap.put("mr", '\u092e'); // Marathi
 			testCharMap.put("ne", '\u0947'); // Nepalese
