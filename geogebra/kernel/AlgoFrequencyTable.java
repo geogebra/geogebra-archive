@@ -13,13 +13,12 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.apache.commons.math.stat.Frequency;
-
-
-
-
+/**
+ * FrequencyTable[] algorithm based on AlgoFrequency
+ * @author kondr
+ *
+ */
 public class AlgoFrequencyTable extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
@@ -64,7 +63,7 @@ public class AlgoFrequencyTable extends AlgoElement {
 	
 	
 	public String getClassName() {
-		return "AlgoFrequency";
+		return "AlgoFrequencyTable";
 	}
 
 	protected void setInputOutput(){
