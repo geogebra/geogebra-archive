@@ -3800,7 +3800,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 			((Drawable) d).update();
 		}
 		// call add() in case the geo visiblilty has changed and it needs a Drawable
-		else if(geo.isEuclidianVisible())
+		else if(geo.isEuclidianVisible() && kernel.getConstruction().isInConstructionList(geo))
 			add(geo);
 	}
 
