@@ -113,7 +113,7 @@ public class AlgoFrequencyTable extends AlgoElement {
 		}
 
 		
-		
+		boolean useDens = useDensity != null && useDensity.getBoolean();
 		
 		// If classList does not exist, 
 		// get the unique value list and compute frequencies for this list  
@@ -124,7 +124,11 @@ public class AlgoFrequencyTable extends AlgoElement {
 		int length = fr.size();
 		if(classList == null){
 			GeoList va = freq.getValue();
-			for(int i= 0;i< length;i++){
+			sb.append(app.getMenu("Value"));
+			sb.append("&");
+			sb.append(useDens ?app.getMenu("Count"):app.getCommand("Frequency"));
+			sb.append("\\\\\\hline");
+			for(int i= 0;i< length;i++){				
 				sb.append(va.get(i).toValueString());
 				sb.append("&");
 				sb.append(fr.get(i).toValueString());
@@ -136,6 +140,10 @@ public class AlgoFrequencyTable extends AlgoElement {
 		//=======================================================
 
 		else for(int i= 0;i< length;i++){
+			sb.append(app.getMenu("Interval"));
+			sb.append("&");
+			sb.append(useDens ?app.getMenu("Count"):app.getCommand("Frequency"));
+			sb.append("\\\\\\hline");
 				sb.append(classList.get(i).toValueString());
 				sb.append("\\text{ -- }");
 				sb.append(classList.get(i+1).toValueString());
