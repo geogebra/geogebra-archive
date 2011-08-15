@@ -36,7 +36,7 @@ import javax.swing.JTextField;
 
 /**
  * JPanel to display settings options for a ComboStatPanel
- * @author gsturr
+ * @author G. Sturr
  *
  */
 public class OptionsPanel extends JPanel implements PropertyChangeListener, ActionListener, FocusListener, StatPanelInterface{

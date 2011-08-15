@@ -4,6 +4,8 @@ package geogebra.gui.view.spreadsheet.statdialog;
 import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.util.SpecialNumberFormat;
+import geogebra.gui.util.SpecialNumberFormatInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -42,7 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
 
-public class StatDialog extends JDialog  implements ActionListener, View, Printable   {
+public class StatDialog extends JDialog  implements ActionListener, View, Printable,
+SpecialNumberFormatInterface {
 
 	// ggb 
 	private Application app;
@@ -113,18 +116,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private Dimension defaultDialogDimension;
 
 
-	
-	//--------------- number format
-	// TODO change to NumberFormat class
-	private int printFigures = -1, printDecimals = 4;
-
-	public int getPrintFigures() {
-		return printFigures;
-	}
-	public int getPrintDecimals() {
-		return printDecimals;
-	}
-	private JMenu menuDecimalPlaces;
+	// number format
+	private SpecialNumberFormat nf;
 
 
 
@@ -142,6 +135,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		this.spView = spView;
 		this.mode = mode;
 
+		nf = new SpecialNumberFormat(app, this);
+		
 		sdc = new StatDialogController(app, spView, this);
 
 		defaultDialogDimension = new Dimension(700,500);
@@ -374,8 +369,8 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 		JCheckBoxMenuItem menuItem;
 
-		btnOptions.addPopupMenuItem(this.createMenuDecimalPlaces());
-		updateMenuDecimalPlaces();
+		// rounding
+		btnOptions.addPopupMenuItem(nf.createMenuDecimalPlaces());
 
 		menuItem = new JCheckBoxMenuItem(app.getMenu("ShowData"));
 		menuItem.setSelected(showDataPanel);
@@ -430,19 +425,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	public String format(double x){
 
-		// override the default decimal place setting
-		if(printDecimals >= 0)
-			kernel.setTemporaryPrintDecimals(printDecimals);
-		else
-			kernel.setTemporaryPrintFigures(printFigures);
-
-		// get the formatted string
-		String result = kernel.format(x);
-
-		// restore the default decimal place setting
-		kernel.restorePrintAccuracy();
-
-		return result;
+		return nf.format(x);
 	}
 
 	
@@ -594,48 +577,17 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		else if(source == btnPrint){
 			doPrint();
 		}
-
-
-
-		String cmd = e.getActionCommand();
-
-		// decimal places
-		if (cmd.endsWith("decimals")) {
-			try {
-				String decStr = cmd.substring(0, 2).trim();
-				int decimals = Integer.parseInt(decStr);
-				// Application.debug("decimals " + decimals);
-
-				printDecimals = decimals;
-				printFigures = -1;
-				updateDialog(false);
-
-
-			} catch (Exception ex) {
-				app.showError(e.toString());
-			}
-		}
-
-		// significant figures
-		else if (cmd.endsWith("figures")) {
-			try {
-				String decStr = cmd.substring(0, 2).trim();
-				int figures = Integer.parseInt(decStr);
-				//	 Application.debug("figures " + figures);
-
-				printFigures = figures;
-				printDecimals = -1;
-				updateDialog(false);
-
-
-			} catch (Exception ex) {
-				app.showError(e.toString());
-			}
-		}
-
+		
 		btnClose.requestFocus();
 	}
 
+	
+	/**
+	 * Updates the dialog when the number format options have been changed
+	 */
+	public void changedNumberFormat() {
+		updateDialog(false);
+	}
 
 
 
@@ -871,79 +823,5 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		super.paint(graphics);	
 
 	}
-
-
-	//=========================================
-	// Number Format
-	//=========================================
-
-	/**
-	 * Update the menu with all decimal places.
-	 */
-	private void updateMenuDecimalPlaces() {
-		if (menuDecimalPlaces == null)
-			return;
-		int pos = -1;
-
-		if (printFigures >= 0) {
-			if (printFigures > 0 && printFigures < Application.figuresLookup.length)
-				pos = Application.figuresLookup[printFigures];
-		} else {
-			if (printDecimals > 0 && printDecimals < Application.decimalsLookup.length)
-				pos = Application.decimalsLookup[printDecimals];
-		}
-
-		try {
-			((JRadioButtonMenuItem) menuDecimalPlaces.getMenuComponent(pos))
-			.setSelected(true);
-		} catch (Exception e) {
-		}
-
-	}
-
-	private JMenu createMenuDecimalPlaces(){
-		menuDecimalPlaces = new JMenu(app.getMenu("Rounding"));
-		String[] strDecimalSpaces = app.getRoundingMenu();
-
-		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this,
-				strDecimalSpaces, Application.strDecimalSpacesAC, 0);
-
-		return menuDecimalPlaces;
-	}
-
-	/**
-	 * Create a set of radio buttons automatically.
-	 * 
-	 * @param menu
-	 * @param al
-	 * @param items
-	 * @param actionCommands
-	 * @param selectedPos
-	 */
-	private void addRadioButtonMenuItems(JMenu menu, ActionListener al,
-			String[] items, String[] actionCommands, int selectedPos) {
-		JRadioButtonMenuItem mi;
-		ButtonGroup bg = new ButtonGroup();
-		// String label;
-
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] == "---") {
-				menu.addSeparator();
-			} else {
-				String text = app.getMenu(items[i]);
-				mi = new JRadioButtonMenuItem(text);
-				mi.setFont(app.getFontCanDisplay(text));
-				if (i == selectedPos)
-					mi.setSelected(true);
-				mi.setActionCommand(actionCommands[i]);
-				mi.addActionListener(al);
-				bg.add(mi);
-				menu.add(mi);
-			}
-		}
-	}
-
-
-
 
 }
