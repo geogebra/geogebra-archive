@@ -7330,13 +7330,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// selectionList may only contain max objects
 	final protected int addToHighlightedList(ArrayList selectionList,
-			ArrayList geos, int max) {
+			ArrayList<GeoElement> geos, int max) {
 		
 		
 		if (geos == null)
 			return 0;
 
-		Object geo;
+		GeoElement geo;
 		int ret = 0;
 		for (int i = 0; i < geos.size(); i++) {
 			geo = geos.get(i);
