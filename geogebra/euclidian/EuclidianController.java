@@ -4092,7 +4092,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected Hits getRegionHits(Hits hits){
-		return hits.getHits(Region.class, tempArrayList);
+		return hits.getRegionHits(tempArrayList);
 	}
 
 		
@@ -4104,7 +4104,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean doSingleHighlighting, boolean chooseGeo, boolean complex) {
 
 		// create hits for region
-		Hits regionHits = getRegionHits(hits);//hits.getHits(Region.class, tempArrayList);
+		Hits regionHits = getRegionHits(hits);
 
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon
@@ -7080,6 +7080,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return addToSelectionList(list, hits.getHits(geoClass, handleAddSelectedArrayList), max, addMore,
 					hits.size()==1);
 	}
+	protected int handleAddSelectedRegions(Hits hits, int max, boolean addMore, ArrayList list) {	
+		
+		
+		if (selectionPreview)
+			return addToHighlightedList(list, hits.getRegionHits(handleAddSelectedArrayList) , max);
+		else
+			return addToSelectionList(list, hits.getRegionHits(handleAddSelectedArrayList), max, addMore,
+					hits.size()==1);
+	}
 	protected Hits handleAddSelectedArrayList = new Hits();
 
 	final protected int addSelectedPoint(Hits hits, int max,
@@ -7145,7 +7154,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	final protected int addSelectedRegion(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedRegions, Region.class);
+		return handleAddSelectedRegions(hits, max, addMoreThanOneAllowed, selectedRegions);
 	}
 	
 	final protected int addSelectedImplicitpoly(Hits hits, int max,

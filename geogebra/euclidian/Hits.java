@@ -5,6 +5,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -19,7 +20,7 @@ import java.util.Iterator;
 
 //TODO change ArrayList to TreeSet 
 
-public class Hits extends ArrayList {
+public class Hits extends ArrayList<GeoElement> {
 	
 	
 	private int listCount;
@@ -56,9 +57,9 @@ public class Hits extends ArrayList {
 	} 
 	
 	/** adding specifics GeoElements */
-	public void add(GeoElement geo){
+	public boolean add(GeoElement geo){
 		
-		if (!geo.isSelectionAllowed()) return;
+		if (!geo.isSelectionAllowed()) return false;
 		
 		if (geo.isGeoList()) {
 			listCount++;
@@ -67,7 +68,7 @@ public class Hits extends ArrayList {
 		} else if (geo.isGeoPolygon()) {
 			polyCount++;
 		} 
-		super.add(geo);		
+		return super.add(geo);		
 	}
 	
 
@@ -99,10 +100,11 @@ public class Hits extends ArrayList {
 	*/
 	
 	/** absorbs new elements in hits2
-	 * returns the repeated elements in hits2
 	 * Tam: 2011/5/21
+	 * @param hits2 
+	 * @return the repeated elements in hits2
 	 */
-	public Hits absorb(ArrayList hits2){
+	public Hits absorb(ArrayList<GeoElement> hits2){
 		Hits ret = new Hits();
 		for(int i=0; i<hits2.size(); i++){
 			if (!contains(hits2.get(i)))
@@ -156,9 +158,9 @@ public class Hits extends ArrayList {
 	
 	final private void removePolygonsDependingSidePresent(boolean sidePresentWanted){
 	
-		Iterator it = this.iterator();
+		Iterator<GeoElement> it = this.iterator();
 		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
+			GeoElement geo = it.next();
 			if (geo.isGeoPolygon()) {
 				boolean sidePresent = false;
 				GeoSegmentND [] sides = ((GeoPolygon) geo).getSegments();
@@ -287,15 +289,18 @@ public class Hits extends ArrayList {
 	*/
 
 	/**
-	 * returns array of changeable GeoElements out of hits
+	 * @param view 
+	 * @return array of changeable GeoElements out of hits
 	 */
 	final public Hits getMoveableHits(EuclidianViewInterface view) {
 		return getMoveables(view, TEST_MOVEABLE, null);
 	}
 
 	/**
-	 * returns array of changeable GeoElements out of hits that implement
 	 * PointRotateable
+	 * @param view 
+	 * @param rotCenter 
+	 * @return array of changeable GeoElements out of hits that implement 
 	 */
 	final public Hits getPointRotateableHits(EuclidianViewInterface view, GeoPointND rotCenter) {
 		return getMoveables(view, TEST_ROTATEMOVEABLE, rotCenter);
@@ -320,7 +325,7 @@ public class Hits extends ArrayList {
 				else if (geo.isGeoPoint()) {
 					GeoPointND point = (GeoPointND) geo;
 					if (point.hasChangeableCoordParentNumbers())
-						moveableList.add(point);
+						moveableList.add((GeoElement)point);
 				}
 				// not a point, but has moveable input points
 				else if (geo.hasMoveableInputPoints(view)) {
@@ -360,7 +365,9 @@ public class Hits extends ArrayList {
 	*/
 
 	/**
-	 * returns array of GeoElements NOT of type geoclass out of hits
+	 * @param geoclass 
+	 * @param result 
+	 * @return array of GeoElements NOT of type geoclass out of hits 
 	 */
 	final public Hits getOtherHits(Class geoclass,
 			Hits result) {
@@ -393,10 +400,13 @@ public class Hits extends ArrayList {
 
 	/**
 	 * Stores all GeoElements of type geoclass to result list.
+	 * @param geoclass 
 	 * 
 	 * @param other ==
 	 *            true: returns array of GeoElements NOT of type geoclass out of
 	 *            hits.
+	 * @param result Hits in which the result should be stored
+	 * @return result
 	 */
 	final protected Hits getHits(Class geoclass,
 			boolean other, Hits result) {
@@ -415,14 +425,29 @@ public class Hits extends ArrayList {
 		return result;
 	}
 	
+	final protected Hits getRegionHits(
+			Hits result) {
+		result.clear();
+		for (int i = 0; i < size(); ++i) {
+			if (((GeoElement)get(i)).isRegion())
+				result.add(get(i));
+		}
+		//return result.size() == 0 ? null : result;
+		
+		return result;
+	}
+	
 	
 
 	/**
 	 * Stores all GeoElements of any of type geoclasses to result list.
+	 * @param geoclasses 
 	 * 
 	 * @param other ==
 	 *            true: returns array of GeoElements NOT of any of type geoclasses out of
 	 *            hits.
+	 * @param result Hits in which the result should be stored
+	 * @return result
 	 */
 	final public Hits getHits(Class[] geoclasses,
 			boolean other, Hits result) {
@@ -493,8 +518,10 @@ public class Hits extends ArrayList {
 	/**
 	 * if there are GeoPoints in hits, all these points are returned. Otherwise
 	 * hits is returned.
+	 * @return list of hit points
 	 * 
-	 * @see EuclidianController: mousePressed(), mouseMoved()
+	 * @see EuclidianController#mousePressed(MouseEvent)
+	 * @see EuclidianController#mouseMoved(MouseEvent)
 	 */
 	public Hits getTopHits() {
 		
