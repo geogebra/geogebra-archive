@@ -1632,30 +1632,31 @@ public class WorksheetExportDialog extends JDialog {
 		/*
 		 * if (cbOfflineJars.isSelected() && ggbFile != null) { // ggb file
 		 * sb.append("\t<param name=\"filename\" value=\"");
-		 * sb.append(ggbFile.getName()); sb.append("\"/>"); } else
+		 * sb.append(ggbFile.getName()); sb.append("\" />"); } else
 		 */
 		{
 			// base64 encoding
 			sb.append("\t<param name=\"ggbBase64\" value=\"");
 			appendBase64(app, sb);
-			appendWithLineBreak(sb, "\"/>");
+			// space before '/>' stops moodle stripping the paramater! 
+			appendWithLineBreak(sb, "\" />");
 		}
 
 		// loading image for online applet
 		if (!cbOfflineJars.isSelected()) {
 			appendWithLineBreak(sb, "\t<param name=\"image\" value=\""
-					+ GeoGebra.LOADING_GIF + "\"  />");
-			appendWithLineBreak(sb, "\t<param name=\"boxborder\" value=\"false\"  />");
+					+ GeoGebra.LOADING_GIF + "\" />");
+			appendWithLineBreak(sb, "\t<param name=\"boxborder\" value=\"false\" />");
 			appendWithLineBreak(sb,
-					"\t<param name=\"centerimage\" value=\"true\"  />");
+					"\t<param name=\"centerimage\" value=\"true\" />");
 		}
 
 		if (!cbOpenButton.isSelected()) {
 			appendAllAppletParameters(sb, TYPE_HTMLFILE);
 		} else {// button type
-			appendWithLineBreak(sb, "\t<param name=\"type\" value=\"button\"  />");
+			appendWithLineBreak(sb, "\t<param name=\"type\" value=\"button\" />");
 			// white background
-			appendWithLineBreak(sb, "\t<param name=\"bgcolor\" value=\"#FFFFFF\"  />");
+			appendWithLineBreak(sb, "\t<param name=\"bgcolor\" value=\"#FFFFFF\" />");
 		}
 
 		// problem with Moodle 1.9.5 mangling this
