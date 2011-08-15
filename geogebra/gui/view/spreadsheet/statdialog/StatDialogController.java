@@ -381,10 +381,10 @@ public class StatDialogController {
 		sd.comboStatPanel2.updatePlot(doCreateGeo);
 
 		if(mode == sd.MODE_ONEVAR){
-			sd.statTable.updatePanel();
+			sd.statisticsPanel.updatePanel();
 		}
 		else if(mode == sd.MODE_REGRESSION){
-			sd.statTable.updatePanel();
+			sd.statisticsPanel.updatePanel();
 		}
 		
 	}

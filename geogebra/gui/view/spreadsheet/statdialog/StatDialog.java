@@ -52,10 +52,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private StatDialogController sdc;
 
 
-	public StatDialogController getStatDialogController() {
-		return sdc;
-	}
-
 	// modes
 	public static final int MODE_ONEVAR = 0;
 	public static final int MODE_REGRESSION = 1;
@@ -65,8 +61,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	// data collections
 	//protected GeoElement geoRegression;
 	//protected GeoList dataAll, dataSelected;
-
-
 
 	// flags
 	private boolean showDataPanel = false;
@@ -98,34 +92,30 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	private int regressionMode = REG_NONE;
 	private int regressionOrder = 2;
 
-
 	// oneVar title panel objects
 	private JLabel lblOneVarTitle;
 	private MyTextField fldOneVarTitle;
-
-	// stat and data panel objects
-	protected JLabel statisticsHeader;
-	protected JPanel statPanel;
-	protected DataPanel dataPanel;
-	protected BasicStatTable statTable;
-	protected RegressionPanel regressionPanel;
-
-	// plot display objects 
-	protected StatComboPanel comboStatPanel, comboStatPanel2;;
 
 	// button panel objects
 	private JButton btnClose, btnPrint;
 	private PopupMenuButton btnOptions;
 	private StatDialogOptionsPanel dialogOptionsPanel;
-
-	// main GUI panel objects
+	
+	// main GUI panels 
+	protected DataPanel dataPanel;
+	protected StatisticsPanel statisticsPanel;
+	protected RegressionPanel regressionPanel;
+	protected StatComboPanel comboStatPanel, comboStatPanel2;
 	private JSplitPane statDataPanel, displayPanel, comboPanelSplit; 
-	private JPanel cardPanel, buttonPanel;
+	private JPanel buttonPanel;
 	private int defaultDividerSize;
 
 	private Dimension defaultDialogDimension;
 
 
+	
+	//--------------- number format
+	// TODO change to NumberFormat class
 	private int printFigures = -1, printDecimals = 4;
 
 	public int getPrintFigures() {
@@ -134,79 +124,17 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	public int getPrintDecimals() {
 		return printDecimals;
 	}
-
 	private JMenu menuDecimalPlaces;
 
 
-	//=================================
-	// getters/setters
-
-	public String format(double x){
-
-		// override the default decimal place setting
-		if(printDecimals >= 0)
-			kernel.setTemporaryPrintDecimals(printDecimals);
-		else
-			kernel.setTemporaryPrintFigures(printFigures);
-
-		// get the formatted string
-		String result = kernel.format(x);
-
-		// restore the default decimal place setting
-		kernel.restorePrintAccuracy();
-
-		return result;
-	}
 
 
-	public GeoElement getRegressionModel() {
-		return sdc.getRegressionModel();
-	}
-
-
-	public StatGeo getStatGeo() {
-		if(statGeo == null)
-			statGeo = new StatGeo(app);
-		return statGeo;
-	}
-
-	public int getRegressionOrder() {
-		return regressionOrder;
-	}
-
-
-	public void setRegressionMode(int regressionMode) {
-		this.regressionMode = regressionMode;
-	}
-
-	public int getRegressionMode() {
-		return regressionMode;
-	}
-
-	public void setRegressionOrder(int regressionOrder) {
-		this.regressionOrder = regressionOrder;
-	}
-
-	public Application getApp() {
-		return app;
-	}
-
-	public void setLeftToRight(boolean leftToRight) {
-		sdc.setLeftToRight(leftToRight);
-	}
-
-	public int getMode(){
-		return mode;
-	}
-
-
+	
 	/*************************************************
 	 * Construct the dialog
 	 */
 	public StatDialog(SpreadsheetView spView, Application app, int mode){
 		super(app.getFrame(),false);
-
-
 
 		isIniting = true;
 		this.app = app;
@@ -236,14 +164,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 	/*************************************************  
 	 * END StatDialog constructor  */
 
+	
 
 	private void createGUI(){
 
-
 		// Create two StatCombo panels with default plots.
-		// StatCombo panels display various plots and tables
-		// selected by a comboBox.
-		//================================================
+		// StatCombo panels display various plots and tables selected by a comboBox.
+		
 		switch(mode){
 
 		case MODE_ONEVAR:
@@ -266,25 +193,18 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 
 
-
-		// Create a StatPanel to display basic statistics for the current data set
-		//================================================
-		if(mode == MODE_ONEVAR){
-			statTable = new BasicStatTable(app, this, mode);
-			//statTable.evaluateStatTable(dataSelected,null);
+		// Create StatisticPanel
+		// A StatisticsPanel displays statistics and inference results from the current data set	
+		
+		if(mode != MODE_MULTIVAR){
+			statisticsPanel = new StatisticsPanel(app, this);
 		}
 
-		else if(mode == MODE_REGRESSION){
-			statTable = new BasicStatTable(app, this, mode);
-			//statTable.evaluateStatTable(dataSelected,geoRegression);
-		}
-
-
-
-		// Create a DataPanel.
-		// Data panels display the current data set(s) and allow temporary editing. 
+	
+		// Create DataPanel.
+		// A DataPanel display the current data set(s) and allow temporary editing. 
 		// Edited data is used by the statTable and statCombo panels. 
-		//================================================
+		
 		if(mode != MODE_MULTIVAR){
 			dataPanel = new DataPanel(app, this, sdc.getDataAll(), mode);
 			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -293,7 +213,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 
 		// Init the GUI and attach this view to the kernel
-		//================================================
+		
 		initGUI();
 		updateFonts();
 		btnClose.requestFocus();
@@ -331,15 +251,12 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 		createOptionsButton();
 
-
 		JPanel rightButtonPanel = new JPanel(new FlowLayout());
 		rightButtonPanel.add(btnOptions);
 		//	rightButtonPanel.add(btnPrint);
 		rightButtonPanel.add(btnClose);
 
 		JPanel centerButtonPanel = new JPanel(new FlowLayout());
-
-
 		JPanel leftButtonPanel = new JPanel(new FlowLayout());
 
 		//leftButtonPanel.add(cbShowData);
@@ -356,24 +273,11 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		//===========================================
 		// statData panel
 
-		if(mode != MODE_MULTIVAR){
-			statisticsHeader = new JLabel();
-			statisticsHeader.setHorizontalAlignment(JLabel.LEFT);		
-			statisticsHeader.setBorder(BorderFactory.createCompoundBorder(
-					BorderFactory.createEtchedBorder(),	
-					BorderFactory.createEmptyBorder(2,5,2,2)));
+		if(mode != MODE_MULTIVAR){			
+			statisticsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+			dataPanel.setBorder(statisticsPanel.getBorder());
 
-			// put it all into the stat panel
-			statPanel = new JPanel(new BorderLayout());
-
-			statPanel.add(statisticsHeader, BorderLayout.NORTH);
-			statPanel.add(statTable, BorderLayout.CENTER);
-			statTable.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
-			statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-			dataPanel.setBorder(statPanel.getBorder());
-
-			statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statPanel, null);
+			statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statisticsPanel, null);
 			statDataPanel.setResizeWeight(0.5);
 
 		}
@@ -409,17 +313,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		}
 
 
-		cardPanel = new JPanel(new CardLayout());
-		cardPanel.add("displayPanel", displayPanel);
-
 
 		//============================================
 		// main panel
 
 		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(cardPanel, BorderLayout.CENTER);
+		mainPanel.add(displayPanel, BorderLayout.CENTER);
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-		((CardLayout)cardPanel.getLayout()).show(cardPanel, "displayPanel");
 
 
 		getContentPane().add(mainPanel);
@@ -438,57 +338,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 	}
 
-
-
-
-
-	public void setLabels(){
-
-		switch(mode){
-		case MODE_ONEVAR:
-			setTitle(app.getMenu("OneVariableStatistics"));	
-			lblOneVarTitle.setText(app.getMenu("DataTitle") + ": ");
-			statisticsHeader.setText(app.getMenu("Statistics")); 
-			break;
-
-		case MODE_REGRESSION:
-			setTitle(app.getMenu("RegressionAnalysis"));	
-			statisticsHeader.setText(app.getMenu("Statistics"));
-			regressionPanel.setLabels();
-			break;
-
-		case MODE_MULTIVAR:
-			setTitle(app.getMenu("MultiVariableStatistics"));	
-			break;
-		}
-
-		this.createOptionsButton();
-
-		btnClose.setText(app.getMenu("Close"));
-		//	btnPrint.setText(app.getMenu("Print"));	
-		//	btnOptions.setText(app.getMenu("Options"));
-
-		// call setLabels() for all child panels
-		setLabelsRecursive(this.getContentPane()); 
-
-	}
-
-
-	public void setLabelsRecursive(Container c) {
-
-		Component[] components = c.getComponents();
-		for(Component com : components) {
-			if(com instanceof StatPanelInterface){
-				//System.out.println(c.getClass().getSimpleName());
-				((StatPanelInterface)com).setLabels();
-			}
-			else if(com instanceof Container) 
-				setLabelsRecursive((Container) com);
-		}
-	}
-
-
-
+	
 	private JPanel createOneVarTitlePanel(){
 
 		// components
@@ -568,12 +418,81 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		});
 		btnOptions.addPopupMenuItem(item);
 
-
-
-
 	}
 
 
+
+	
+	
+	//======================================
+	//    Getters/setters
+	//======================================
+
+	public String format(double x){
+
+		// override the default decimal place setting
+		if(printDecimals >= 0)
+			kernel.setTemporaryPrintDecimals(printDecimals);
+		else
+			kernel.setTemporaryPrintFigures(printFigures);
+
+		// get the formatted string
+		String result = kernel.format(x);
+
+		// restore the default decimal place setting
+		kernel.restorePrintAccuracy();
+
+		return result;
+	}
+
+	
+	public StatDialogController getStatDialogController() {
+		return sdc;
+	}
+
+	public GeoElement getRegressionModel() {
+		return sdc.getRegressionModel();
+	}
+
+
+	public StatGeo getStatGeo() {
+		if(statGeo == null)
+			statGeo = new StatGeo(app);
+		return statGeo;
+	}
+
+	public int getRegressionOrder() {
+		return regressionOrder;
+	}
+
+
+	public void setRegressionMode(int regressionMode) {
+		this.regressionMode = regressionMode;
+	}
+
+	public int getRegressionMode() {
+		return regressionMode;
+	}
+
+	public void setRegressionOrder(int regressionOrder) {
+		this.regressionOrder = regressionOrder;
+	}
+
+	public Application getApp() {
+		return app;
+	}
+
+	public void setLeftToRight(boolean leftToRight) {
+		sdc.setLeftToRight(leftToRight);
+	}
+
+	public int getMode(){
+		return mode;
+	}
+
+
+	
+	
 
 	//=================================================
 	//      Handlers for Component Visibility
@@ -618,7 +537,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 
 		if(showStatPanel){
 			if(statDataPanel.getTopComponent() == null){
-				statDataPanel.setTopComponent(statPanel);
+				statDataPanel.setTopComponent(statisticsPanel);
 				statDataPanel.resetToPreferredSizes();
 			}
 		}else{
@@ -714,13 +633,6 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			}
 		}
 
-
-
-
-
-
-
-
 		btnClose.requestFocus();
 	}
 
@@ -773,10 +685,57 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			if(com instanceof Container) 
 				setFontRecursive((Container) com, font);
 		}
-		//this.pack();
 	}
 
 
+
+	public void setLabels(){
+
+		switch(mode){
+		case MODE_ONEVAR:
+			setTitle(app.getMenu("OneVariableStatistics"));	
+			lblOneVarTitle.setText(app.getMenu("DataTitle") + ": ");
+			break;
+
+		case MODE_REGRESSION:
+			setTitle(app.getMenu("RegressionAnalysis"));	
+			regressionPanel.setLabels();
+			break;
+
+		case MODE_MULTIVAR:
+			setTitle(app.getMenu("MultiVariableStatistics"));	
+			break;
+		}
+
+		this.createOptionsButton();
+
+		btnClose.setText(app.getMenu("Close"));
+		//	btnPrint.setText(app.getMenu("Print"));	
+		//	btnOptions.setText(app.getMenu("Options"));
+
+		// call setLabels() for all child panels
+		setLabelsRecursive(this.getContentPane()); 
+
+	}
+
+
+	public void setLabelsRecursive(Container c) {
+
+		Component[] components = c.getComponents();
+		for(Component com : components) {
+			if(com instanceof StatPanelInterface){
+				//System.out.println(c.getClass().getSimpleName());
+				((StatPanelInterface)com).setLabels();
+			}
+			else if(com instanceof Container) 
+				setLabelsRecursive((Container) com);
+		}
+	}
+
+
+
+	
+	
 	//=================================================
 	//      View Implementation
 	//=================================================
