@@ -40,8 +40,15 @@ public class AlgoFrequency extends AlgoElement {
 	AlgoFrequency(Construction cons, String label, GeoBoolean isCumulative, GeoList classList, GeoList dataList) {
 		this(cons, label, isCumulative, classList, dataList, null, null);	
 	}
-
+	AlgoFrequency(Construction cons, GeoBoolean isCumulative, GeoList classList, GeoList dataList) {
+		this(cons, isCumulative, classList, dataList, null, null);	
+	}
 	AlgoFrequency(Construction cons, String label, GeoBoolean isCumulative, GeoList classList, GeoList dataList, 
+			GeoBoolean useDensity, GeoNumeric density) {
+		this(cons,isCumulative,classList,dataList,useDensity,density);
+		frequency.setLabel(label);
+	}
+	AlgoFrequency(Construction cons, GeoBoolean isCumulative, GeoList classList, GeoList dataList, 
 			GeoBoolean useDensity, GeoNumeric density) {
 		super(cons);
 		
@@ -54,7 +61,7 @@ public class AlgoFrequency extends AlgoElement {
 		frequency = new GeoList(cons);
 		setInputOutput();
 		compute();
-		frequency.setLabel(label);
+		
 		
 	}
 
@@ -94,7 +101,9 @@ public class AlgoFrequency extends AlgoElement {
 	GeoList getResult() {
 		return frequency;
 	}
-
+	public GeoList getValue(){
+		return value;
+	}
 
 
 	protected final void compute() {

@@ -2161,6 +2161,7 @@ public class Kernel {
 	
 	/**
 	 * Returns whether any macros have been added to this kernel. 
+	 * @return whether any macros have been added to this kernel.
 	 */
 	public boolean hasMacros() {
 		return (macroManager != null && macroManager.getMacroNumber() > 0);
@@ -5070,7 +5071,98 @@ public class Kernel {
 	}
 	
 	
+	/** 
+	 * FrequencyTable[dataList]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label, GeoList dataList) {		
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, null, null, dataList);
+		GeoText table = algo.getResult();
+		return table;
+	}
 	
+	/** 
+	 * FrequencyTable[isCumulative, dataList]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label,GeoBoolean isCumulative, GeoList dataList) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, isCumulative, null, dataList);
+		GeoText table = algo.getResult();
+		return table;
+	}
+	
+	
+	/** 
+	 * FrequencyTable[classList, dataList]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label, GeoList classList, GeoList dataList ) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, null, classList, dataList);
+		GeoText table = algo.getResult();
+		return table;
+	}
+	
+	
+	/** 
+	 * FrequencyTable[classList, dataList, useDensity]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label,  GeoList classList, GeoList dataList,
+			GeoBoolean useDensity) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, null, classList, dataList, useDensity, null);
+		GeoText table = algo.getResult();
+		return table;
+	}
+
+	/** 
+	 * FrequencyTable[classList, dataList, useDensity, scaleFactor]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label,  GeoList classList, GeoList dataList,
+			GeoBoolean useDensity, GeoNumeric scaleFactor) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, null, classList, dataList, useDensity, scaleFactor);
+		GeoText table = algo.getResult();
+		return table;
+	}
+	
+	
+	/** 
+	 * FrequencyTable[isCumulative, classList, dataList]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label, GeoBoolean isCumulative,  GeoList classList, GeoList dataList) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, isCumulative, classList, dataList, null, null);
+		GeoText table = algo.getResult();
+		return table;
+	}
+	
+
+	
+	/** 
+	 * FrequencyTable[isCumulative, classList, dataList, useDensity]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label, GeoBoolean isCumulative,  GeoList classList, GeoList dataList,
+			GeoBoolean useDensity) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, isCumulative, classList, dataList, useDensity, null);
+		GeoText table = algo.getResult();
+		return table;
+	}
+	
+	
+	
+	/** 
+	 * FrequencyTable[isCumulative, classList, dataList, useDensity, scaleFactor]
+	 * Zbynek Konecny
+	 */
+	final public GeoText FrequencyTable(String label, GeoBoolean isCumulative,  GeoList classList, GeoList dataList,
+			GeoBoolean useDensity, GeoNumeric scaleFactor) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, isCumulative, classList, dataList, useDensity, scaleFactor);
+		GeoText table = algo.getResult();
+		return table;
+	}
+	
+		
 	/** 
 	 * Unique[dataList]
 	 * G. Sturr

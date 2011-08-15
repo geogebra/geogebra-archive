@@ -466,6 +466,7 @@ public class CommandDispatcher {
     	cmdTable.put("ResidualPlot", new CmdResidualPlot(kernel));  
     	cmdTable.put("FrequencyPolygon", new CmdFrequencyPolygon(kernel));
     	cmdTable.put("NormalQuantilePlot", new CmdNormalQuantilePlot(kernel));
+    	cmdTable.put("FrequencyTable", new CmdFrequencyTable(kernel));
     	
     	cmdSubTable[TABLE_CHARTS].putAll(cmdTable);
     	cmdTable.clear();
