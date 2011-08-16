@@ -89,12 +89,16 @@ public class AlgoRotateText extends AlgoElement {
     		return;
     	}
     	
+    	boolean latex = args.isLaTeX();
+    	
     	sb.setLength(0);
     	sb.append("\\rotatebox{");
     	sb.append(angle.getValue()*180/Math.PI); // convert to degrees
-    	sb.append("}{");
+    	sb.append("}{ ");
+    	if (!latex) sb.append("\\text{ ");
     	sb.append(args.getTextString());
-    	sb.append("}");
+    	if (!latex) sb.append(" } ");
+    	sb.append(" }");
 
     	text.setTextString(sb.toString());
     	text.setLaTeX(true,false);
