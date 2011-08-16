@@ -3491,11 +3491,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		
 		//Application.printStacktrace(""+geo.isVisibleInView(this));
 		
-		// filter out any geo not marked for this view, or any geo not Euclidian visible 
-		// note: when visibility is changed, geo.setEuclidianVisibile calls this method again
-		if(!isVisibleInThisView(geo) || !geo.isEuclidianVisible()) 
-			return;
-			
+		
+		//G.Sturr 2010-6-30
+		// filter out any geo not marked for this view
+		if(!isVisibleInThisView(geo)) return;
+		// END G.Sturr
+		
 		
 		// check if there is already a drawable for geo
 		Drawable d = getDrawable(geo);
@@ -3799,9 +3800,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		if (d != null) {
 			((Drawable) d).update();
 		}
-		// call add() in case the geo visiblilty has changed and it needs a Drawable
-		else if(geo.isEuclidianVisible() && kernel.getConstruction().isInConstructionList(geo))
-			add(geo);
 	}
 
 	final public Drawable getDrawableFor(GeoElement geo) {
