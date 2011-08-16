@@ -150,8 +150,14 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 	}
 
 	protected void compute() {
-		initForNearToRelationship(); //force to update the algo in use
-		//parentOutput = algo.getIntersectionPoints();
+
+		parentOutput = algo.getIntersectionPoints();
+		
+		if (point!=null) {
+			int cpi = algo.getClosestPointIndex(point);
+			if (cpi != index)
+				algo.setIntersectionPoint(index, parentOutput[cpi]);
+		}
 		
 		//update index if reference point has been defined
 		if (refPoint!=null)
