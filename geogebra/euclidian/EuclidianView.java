@@ -5262,7 +5262,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		positiveAxes = evs.getPositiveAxes();
 		
 		// do last?
-		setCoordSystem(evs.getXZero(), evs.getYZero(), getXscale(), getYscale(), true);
+		setCoordSystem(evs.getXZero(), evs.getYZero(), evs.getXscale(), evs.getYscale(), true);
 		
 	}
 }
