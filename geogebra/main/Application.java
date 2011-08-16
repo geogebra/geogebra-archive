@@ -3813,7 +3813,7 @@ public class Application implements KeyEventDispatcher {
 
 		// save spreadsheetView settings
 		if (getGuiManager().hasSpreadsheetView()){
-			getGuiManager().getSpreadsheetViewXML(sb);
+			getGuiManager().getSpreadsheetViewXML(sb, asPreference);
 		}
 		
 		// save AlgebraView settings

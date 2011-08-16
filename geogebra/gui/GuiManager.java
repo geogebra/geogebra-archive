@@ -442,9 +442,9 @@ public class GuiManager {
 	// XML
 	//=====================================================
 	
-	public void getSpreadsheetViewXML(StringBuilder sb) {
+	public void getSpreadsheetViewXML(StringBuilder sb, boolean asPreference) {
 		if (spreadsheetView != null)
-			spreadsheetView.getXML(sb);
+			spreadsheetView.getXML(sb, asPreference);
 	}
 	
 	//public void getAlgebraViewXML(StringBuilder sb) {

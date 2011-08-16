@@ -165,6 +165,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 		dndHandler = new SpreadsheetViewDnD(app, this);
 
+		settingsChanged(settings);
+
 	}
 
 
@@ -433,6 +435,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			multiVarStatDialog.setVisible(false);
 
 		table.getCellFormatHandler().clearAll();
+		settingsChanged(settings);
 	}	
 
 	/** Resets spreadsheet after undo/redo call. */
@@ -662,23 +665,20 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	/**
 	 * returns settings in XML format
 	 */
-	public void getXML(StringBuilder sb) {
+	public void getXML(StringBuilder sb, boolean asPreference) {
 		sb.append("<spreadsheetView>\n");
 
 		int width = getWidth();//getPreferredSize().width;
 		int height = getHeight();//getPreferredSize().height;
 
-		//if (width > MIN_WIDTH && height > MIN_HEIGHT) 
-		{
-			sb.append("\t<size ");
-			sb.append(" width=\"");
-			sb.append(width);
-			sb.append("\"");
-			sb.append(" height=\"");
-			sb.append(height);
-			sb.append("\"");
-			sb.append("/>\n");
-		}
+		sb.append("\t<size ");
+		sb.append(" width=\"");
+		sb.append(width);
+		sb.append("\"");
+		sb.append(" height=\"");
+		sb.append(height);
+		sb.append("\"");
+		sb.append("/>\n");
 
 
 		sb.append("\t<prefCellSize ");
@@ -690,42 +690,47 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		sb.append("\"");
 		sb.append("/>\n");
 
-		// column widths 
-		for (int col = 0 ; col < table.getColumnCount() ; col++) {
-			TableColumn column = table.getColumnModel().getColumn(col); 
-			int colWidth = column.getWidth();
-			//if (colWidth != DEFAULT_COLUMN_WIDTH)
-			if (colWidth !=	table.preferredColumnWidth)
-				sb.append("\t<spreadsheetColumn id=\""+col+"\" width=\""+colWidth+"\"/>\n");
+		
+		if(!asPreference){
+
+			// column widths 
+			for (int col = 0 ; col < table.getColumnCount() ; col++) {
+				TableColumn column = table.getColumnModel().getColumn(col); 
+				int colWidth = column.getWidth();
+				//if (colWidth != DEFAULT_COLUMN_WIDTH)
+				if (colWidth !=	table.preferredColumnWidth)
+					sb.append("\t<spreadsheetColumn id=\""+col+"\" width=\""+colWidth+"\"/>\n");
+			}
+
+			// row heights 
+			for (int row = 0 ; row < table.getRowCount() ; row++) {
+				int rowHeight = table.getRowHeight(row);
+				if (rowHeight != table.getRowHeight())
+					sb.append("\t<spreadsheetRow id=\""+row+"\" height=\""+rowHeight+"\"/>\n");
+			}
+
+			// initial selection
+			sb.append("\t<selection ");
+
+			sb.append(" hScroll=\"");
+			sb.append(spreadsheet.getHorizontalScrollBar().getValue());
+			sb.append("\"");
+
+			sb.append(" vScroll=\"");
+			sb.append(spreadsheet.getVerticalScrollBar().getValue());
+			sb.append("\"");
+
+			sb.append(" column=\"");
+			sb.append(table.getColumnModel().getSelectionModel().getAnchorSelectionIndex());
+			sb.append("\"");
+
+			sb.append(" row=\"");
+			sb.append(table.getSelectionModel().getAnchorSelectionIndex());
+			sb.append("\"");
+
+			sb.append("/>\n");
 		}
 
-		// row heights 
-		for (int row = 0 ; row < table.getRowCount() ; row++) {
-			int rowHeight = table.getRowHeight(row);
-			if (rowHeight != table.getRowHeight())
-				sb.append("\t<spreadsheetRow id=\""+row+"\" height=\""+rowHeight+"\"/>\n");
-		}
-
-		// initial selection
-		sb.append("\t<selection ");
-
-		sb.append(" hScroll=\"");
-		sb.append(spreadsheet.getHorizontalScrollBar().getValue());
-		sb.append("\"");
-
-		sb.append(" vScroll=\"");
-		sb.append(spreadsheet.getVerticalScrollBar().getValue());
-		sb.append("\"");
-
-		sb.append(" column=\"");
-		sb.append(table.getColumnModel().getSelectionModel().getAnchorSelectionIndex());
-		sb.append("\"");
-
-		sb.append(" row=\"");
-		sb.append(table.getSelectionModel().getAnchorSelectionIndex());
-		sb.append("\"");
-
-		sb.append("/>\n");
 
 
 		// layout
@@ -811,9 +816,12 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			sb.append("/>\n");
 		}
 
-		//---- end browser
 
-		table.getCellFormatHandler().getXML(sb);
+		//cell formats
+		if(!asPreference)
+			table.getCellFormatHandler().getXML(sb);
+
+
 
 		sb.append("</spreadsheetView>\n");
 
@@ -1059,7 +1067,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 			splitPane.setDividerLocation(defaultDividerLocation);
 			splitPane.setDividerSize(4);
 			initFileBrowser();
-			
+
 		} else {
 			splitPane.setLeftComponent(null);
 			splitPane.setLastDividerLocation(splitPane.getDividerLocation());
@@ -1292,12 +1300,12 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		return settings.equalsRequired();
 	}
 
-	
+
 	boolean allowSettingUpate = true;
 
 	protected void updateCellFormat(String cellFormat){
 		if(!allowSettingUpate) return;
-		
+
 		settings.removeListener(this);
 		settings.setCellFormat(cellFormat);
 		settings.addListener(this);
@@ -1305,7 +1313,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 	protected void updateAllRowSettings(){
 		if(!allowSettingUpate) return;
-		
+
 		settings.removeListener(this);
 		settings.setPreferredRowHeight(table.getRowHeight());
 		settings.getHeightMap().clear();
@@ -1317,7 +1325,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		settings.addListener(this);
 	}
 
-	
+
 
 	protected void updateRowHeightSetting(int row, int height){
 		if(!allowSettingUpate) return;
@@ -1339,7 +1347,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 	protected void updateColumnWidth(int col, int colWidth){
 		if(!allowSettingUpate) return;
-		
+
 		settings.removeListener(this);
 		settings.getWidthMap().put(col, colWidth);
 		settings.addListener(this);
@@ -1347,7 +1355,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 	protected void updatePreferredColumnWidth(int colWidth){
 		if(!allowSettingUpate) return;
-		
+
 		settings.removeListener(this);
 		settings.getWidthMap().clear();
 		settings.setPreferredColumnWidth(table.preferredColumnWidth);
@@ -1357,7 +1365,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 	protected void updateAllColumnWidthSettings(){
 		if(!allowSettingUpate) return;
-		
+
 		settings.removeListener(this);
 		settings.setPreferredColumnWidth(table.preferredColumnWidth);
 		settings.getWidthMap().clear();
@@ -1375,8 +1383,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		return settings();
 	}
 
-	
-	
+
+
 	public void settingsChanged(AbstractSettings settings0) {
 
 		allowSettingUpate = false;
