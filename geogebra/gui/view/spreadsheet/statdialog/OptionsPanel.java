@@ -46,7 +46,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 	private StatPanelSettings settings;
 
 	// histogram  panel components
-	private JCheckBox ckCumulative, ckManual, ckOverlayNormal,ckOverlayPolygon;
+	private JCheckBox ckCumulative, ckManual, ckOverlayNormal,ckOverlayPolygon, ckShowFrequencyTable;
 	private JRadioButton ckRelative, ckNormalized,  ckFreq ;
 	private JLabel lblFreqType;
 
@@ -181,12 +181,16 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		ckOverlayPolygon = new JCheckBox();
 		ckOverlayPolygon.addActionListener(this);
 
+		ckShowFrequencyTable = new JCheckBox();
+		ckShowFrequencyTable.addActionListener(this);
+
 
 		// layout
 		JPanel freqPanel = new JPanel(new GridBagLayout()); 
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx=0;
 		c.anchor=GridBagConstraints.WEST;
+		freqPanel.add(insetPanel(tab2,ckShowFrequencyTable),c);
 		freqPanel.add(insetPanel(tab2,ckCumulative),c);
 		freqPanel.add(insetPanel(tab2, ckFreq),c);
 		freqPanel.add(insetPanel(tab2, ckRelative),c);
@@ -348,6 +352,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		lblOverlay.setText(app.getMenu("Overlay"));
 		ckOverlayNormal.setText(app.getMenu("NormalCurve"));
 		ckOverlayPolygon.setText(app.getMenu("FrequencyPolygon"));
+		ckShowFrequencyTable.setText(app.getMenu("FrequencyTable"));
 
 		// graph options
 		ckAutoWindow.setText(app.getMenu("AutoDimension"));
@@ -385,6 +390,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		ckOverlayPolygon.setSelected(settings.hasOverlayPolygon);	
 		ckShowGrid.setSelected(settings.showGrid);	
 		ckAutoWindow.setSelected(settings.isAutomaticWindow);
+		ckShowFrequencyTable.setSelected(settings.showFrequencyTable);
 
 
 		lblYMin.setVisible(showYSettings);
@@ -505,6 +511,10 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		}
 		else if(source == ckAutoWindow){
 			settings.isAutomaticWindow = ckAutoWindow.isSelected();
+			firePropertyChange("settings", true, false);
+		}
+		else if(source == ckShowFrequencyTable){
+			settings.showFrequencyTable = ckShowFrequencyTable.isSelected();
 			firePropertyChange("settings", true, false);
 		}
 

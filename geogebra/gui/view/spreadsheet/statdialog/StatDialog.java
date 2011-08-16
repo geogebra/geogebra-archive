@@ -103,7 +103,7 @@ SpecialNumberFormatInterface {
 	private JButton btnClose, btnPrint;
 	private PopupMenuButton btnOptions;
 	private StatDialogOptionsPanel dialogOptionsPanel;
-	
+
 	// main GUI panels 
 	protected DataPanel dataPanel;
 	protected StatisticsPanel statisticsPanel;
@@ -122,7 +122,7 @@ SpecialNumberFormatInterface {
 
 
 
-	
+
 	/*************************************************
 	 * Construct the dialog
 	 */
@@ -136,7 +136,7 @@ SpecialNumberFormatInterface {
 		this.mode = mode;
 
 		nf = new SpecialNumberFormat(app, this);
-		
+
 		sdc = new StatDialogController(app, spView, this);
 
 		defaultDialogDimension = new Dimension(700,500);
@@ -159,13 +159,13 @@ SpecialNumberFormatInterface {
 	/*************************************************  
 	 * END StatDialog constructor  */
 
-	
+
 
 	private void createGUI(){
 
 		// Create two StatCombo panels with default plots.
 		// StatCombo panels display various plots and tables selected by a comboBox.
-		
+
 		switch(mode){
 
 		case MODE_ONEVAR:
@@ -190,16 +190,16 @@ SpecialNumberFormatInterface {
 
 		// Create StatisticPanel
 		// A StatisticsPanel displays statistics and inference results from the current data set	
-		
+
 		if(mode != MODE_MULTIVAR){
 			statisticsPanel = new StatisticsPanel(app, this);
 		}
 
-	
+
 		// Create DataPanel.
 		// A DataPanel display the current data set(s) and allow temporary editing. 
 		// Edited data is used by the statTable and statCombo panels. 
-		
+
 		if(mode != MODE_MULTIVAR){
 			dataPanel = new DataPanel(app, this, sdc.getDataAll(), mode);
 			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -208,7 +208,7 @@ SpecialNumberFormatInterface {
 
 
 		// Init the GUI and attach this view to the kernel
-		
+
 		initGUI();
 		updateFonts();
 		btnClose.requestFocus();
@@ -272,8 +272,9 @@ SpecialNumberFormatInterface {
 			statisticsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 			dataPanel.setBorder(statisticsPanel.getBorder());
 
-			statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statisticsPanel, null);
+			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statisticsPanel, null);
 			statDataPanel.setResizeWeight(0.5);
+			statDataPanel.setBorder(BorderFactory.createEmptyBorder());
 
 		}
 
@@ -281,6 +282,7 @@ SpecialNumberFormatInterface {
 		// create a plotComboPanel		
 		comboPanelSplit = new JSplitPane(
 				JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
+		
 
 
 		JPanel plotComboPanel = new JPanel(new BorderLayout());
@@ -306,6 +308,7 @@ SpecialNumberFormatInterface {
 			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 					null, plotComboPanel);
 		}
+		displayPanel.setBorder(BorderFactory.createEmptyBorder());
 
 
 
@@ -333,24 +336,19 @@ SpecialNumberFormatInterface {
 
 	}
 
-	
+
 	private JPanel createOneVarTitlePanel(){
 
-		// components
 		lblOneVarTitle = new JLabel();
 		fldOneVarTitle = new MyTextField(app);
-		fldOneVarTitle.setColumns(30);
 
-		// panels
-		JPanel OneVarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		OneVarPanel.add(lblOneVarTitle);
-		OneVarPanel.add(fldOneVarTitle);
+		JPanel titlePanel = new JPanel(new BorderLayout(5,0));
+		titlePanel.add(lblOneVarTitle, BorderLayout.WEST);
+		titlePanel.add(fldOneVarTitle, BorderLayout.CENTER);
 
-		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(OneVarPanel, BorderLayout.CENTER);
-		mainPanel.setBorder(BorderFactory.createEtchedBorder());
-
-		return mainPanel;
+		//titlePanel.setBorder(BorderFactory.createEtchedBorder());
+		titlePanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+		return titlePanel;
 	}
 
 
@@ -417,8 +415,8 @@ SpecialNumberFormatInterface {
 
 
 
-	
-	
+
+
 	//======================================
 	//    Getters/setters
 	//======================================
@@ -428,7 +426,7 @@ SpecialNumberFormatInterface {
 		return nf.format(x);
 	}
 
-	
+
 	public StatDialogController getStatDialogController() {
 		return sdc;
 	}
@@ -474,8 +472,8 @@ SpecialNumberFormatInterface {
 	}
 
 
-	
-	
+
+
 
 	//=================================================
 	//      Handlers for Component Visibility
@@ -507,25 +505,25 @@ SpecialNumberFormatInterface {
 		if(mode == MODE_MULTIVAR) return;
 
 		if(showDataPanel){
-			if(statDataPanel.getBottomComponent() == null){
-				statDataPanel.setBottomComponent(dataPanel);
+			if(statDataPanel.getRightComponent() == null){
+				statDataPanel.setRightComponent(dataPanel);
 				statDataPanel.resetToPreferredSizes();				
 			}
 		}else{
-			if(statDataPanel.getBottomComponent() != null){
-				statDataPanel.setBottomComponent(null);
+			if(statDataPanel.getRightComponent() != null){
+				statDataPanel.setRightComponent(null);
 				statDataPanel.resetToPreferredSizes();
 			}
 		}
 
 		if(showStatPanel){
-			if(statDataPanel.getTopComponent() == null){
-				statDataPanel.setTopComponent(statisticsPanel);
+			if(statDataPanel.getLeftComponent() == null){
+				statDataPanel.setLeftComponent(statisticsPanel);
 				statDataPanel.resetToPreferredSizes();
 			}
 		}else{
-			if(statDataPanel.getTopComponent() != null){
-				statDataPanel.setTopComponent(null);
+			if(statDataPanel.getLeftComponent() != null){
+				statDataPanel.setLeftComponent(null);
 				statDataPanel.resetToPreferredSizes();
 			}
 		}
@@ -577,11 +575,11 @@ SpecialNumberFormatInterface {
 		else if(source == btnPrint){
 			doPrint();
 		}
-		
+
 		btnClose.requestFocus();
 	}
 
-	
+
 	/**
 	 * Updates the dialog when the number format options have been changed
 	 */
@@ -686,8 +684,8 @@ SpecialNumberFormatInterface {
 
 
 
-	
-	
+
+
 	//=================================================
 	//      View Implementation
 	//=================================================

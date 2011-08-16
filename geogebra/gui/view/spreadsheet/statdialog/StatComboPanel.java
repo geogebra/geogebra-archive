@@ -2,6 +2,7 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.GeoGebraIcon;
+import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.main.Application;
@@ -19,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -73,7 +75,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	public static final int PLOT_ZINT = 8;
 	public static final int PLOT_TTEST = 9;
 	public static final int PLOT_TINT = 10;
-	
+
 
 	// two variable plot types
 	public static final int PLOT_SCATTERPLOT = 30;
@@ -85,21 +87,21 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	public static final int PLOT_MULTIVARSTATS = 51;
 	public static final int PLOT_ANOVA= 52;
 	public static final int PLOT_TWOVAR_INFERENCE = 53;
-	
+
 	public static final int PLOT_TTEST_2MEANS = 54;
 	public static final int PLOT_TTEST_PAIRED = 55;
 	public static final int PLOT_TINT_2MEANS = 56;
 	public static final int PLOT_TINT_PAIRED = 57;
-	
+
 	// currently selected plot type
 	private int selectedPlot;
 
-	
+
 	// plot reference vars
 	protected static HashMap<Integer, String> plotMap;
 	private HashMap<String, Integer> plotMapReverse;
 
-	
+
 	private StatPanelSettings settings;
 
 
@@ -113,7 +115,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private JPanel statDisplayPanel;
 	private TwoVarInferencePanel twoVarInferencePanel;
 	private OneVarInferencePanel oneVarInferencePanel;
-	private JPanel metaPlotPanel, northTitlePanel, southTitlePanel;
+	private JPanel metaPlotPanel, plotPanelNorth, plotPanelSouth;
 	private PlotPanelEuclidianView plotPanel;
 	private ANOVATable anovaTable;
 	private MultiVarStatPanel multiVarStatPanel;
@@ -146,13 +148,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private MyTextField fldWidth;
 	private JLabel lblNumClasses;
 
-	// model prediction panel
-	private JPanel southPanel;	
-	private JPanel predictionPanel;
-	private JLabel lblEvaluate;
-	private MyTextField fldInputX;
-	private JLabel lblOutputY;
-	private boolean showSouthPanel;
+
 
 	// stemplot adjustment panel
 	private JToolBar stemAdjustPanel;
@@ -167,9 +163,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	private JLabel lblTitleX, lblTitleY;
 	private MyTextField fldTitleX, fldTitleY;
-	
-	
-	
+	private FrequencyTable frequencyTable;
+
+
+
 
 	/***************************************** 
 	 * Constructs a ComboStatPanel
@@ -247,10 +244,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		//plotPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		//settings.plotPanel = plotPanel;
 
-		northTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		southTitlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		northTitlePanel.setBackground(plotPanel.getBackground());
-		southTitlePanel.setBackground(plotPanel.getBackground());
+		plotPanelNorth = new JPanel();
+		plotPanelSouth = new JPanel();
+		plotPanelNorth.setBackground(plotPanel.getBackground());
+		plotPanelSouth.setBackground(plotPanel.getBackground());
 		lblTitleX = new JLabel();
 		lblTitleY = new JLabel();
 		fldTitleX = new MyTextField(app,20);
@@ -265,8 +262,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		metaPlotPanel = new JPanel(new BorderLayout());
 		metaPlotPanel.add(plotPanel, BorderLayout.CENTER);
-		metaPlotPanel.add(northTitlePanel, BorderLayout.NORTH);
-		metaPlotPanel.add(southTitlePanel, BorderLayout.SOUTH);
+
 
 		createImagePanel();
 
@@ -318,14 +314,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		});
 		optionsPanel.setVisible(false);
 
+		frequencyTable = new FrequencyTable(app, statDialog); 
 
-
-		// create south panel  (just holds prediction panel for now)
-
-		southPanel= new JPanel(new BorderLayout());	
-		showSouthPanel = false;
-		createPredictonPanel();
-		southPanel.add(predictionPanel);
 
 
 		// =======================================
@@ -338,7 +328,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 		mainPanel.add(statDisplayPanel,BorderLayout.CENTER);		
 		mainPanel.add(optionsPanel,BorderLayout.EAST);
-		//mainPanel.add(southPanel,BorderLayout.SOUTH);
+
 
 		this.setLayout(new BorderLayout());
 		this.add(mainPanel, BorderLayout.CENTER);
@@ -360,15 +350,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		lblStart.setText(app.getMenu("Start") + ": ");
 		lblWidth.setText(app.getMenu("Width") + ": ");
 		if(mode == statDialog.MODE_REGRESSION){
-
 			lblTitleX.setText(app.getMenu("Column.X") + ": ");
 			lblTitleY.setText(app.getMenu("Column.Y") + ": ");
-
-			lblEvaluate.setText(app.getMenu("Evaluate")+ ": ");
 		}
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
 
-	//	optionsButton.setText(app.getMenu("Options"));
+		//	optionsButton.setText(app.getMenu("Options"));
 		optionsPanel.setLabels();
 
 	}
@@ -383,13 +370,13 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		if(cbDisplayType == null){
 			cbDisplayType = new JComboBox();
 			cbDisplayType.setRenderer(new MyRenderer());
-			
-			
+
+
 		}else{
 			cbDisplayType.removeActionListener(this);
 			cbDisplayType.removeAllItems();
 		}
-		
+
 		switch(mode){
 
 		case StatDialog.MODE_ONEVAR:
@@ -397,7 +384,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			cbDisplayType.addItem(plotMap.get(PLOT_BOXPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_DOTPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_STEMPLOT));
-		//	cbDisplayType.addItem(plotMap.get(PLOT_FREQUENCYTABLE));
+			//	cbDisplayType.addItem(plotMap.get(PLOT_FREQUENCYTABLE));
 			cbDisplayType.addItem(plotMap.get(PLOT_NORMALQUANTILE));
 			cbDisplayType.addItem(MyRenderer.SEPARATOR);
 			cbDisplayType.addItem(plotMap.get(PLOT_ZTEST));
@@ -435,21 +422,44 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 	/**
-	 * Creates a title panels for the scatterplot 
+	 * Updates the plot panel. Adds/removes additional panels as needed for the
+	 * current selected plot.
 	 */
-	private void updateTitlePanels(){
+	private void updatePlotPanel(){
+
+		metaPlotPanel.removeAll();
+		plotPanelSouth.removeAll();
+		plotPanelNorth.removeAll();
+		metaPlotPanel.add(plotPanel, BorderLayout.CENTER);
 
 		if(selectedPlot == this.PLOT_SCATTERPLOT){
-			southTitlePanel.add(lblTitleX);
-			southTitlePanel.add(fldTitleX);
-			northTitlePanel.add(lblTitleY);
-			northTitlePanel.add(fldTitleY);
-		}else{
-			southTitlePanel.removeAll();
-			northTitlePanel.removeAll();
+			plotPanelNorth.setLayout(new FlowLayout(FlowLayout.LEFT));
+			plotPanelSouth.setLayout(new FlowLayout(FlowLayout.CENTER));
+			plotPanelSouth.add(lblTitleX);
+			plotPanelSouth.add(fldTitleX);
+			plotPanelNorth.add(lblTitleY);
+			plotPanelNorth.add(fldTitleY);
+
+			metaPlotPanel.add(plotPanelNorth, BorderLayout.NORTH);
+			metaPlotPanel.add(plotPanelSouth, BorderLayout.SOUTH);
 		}
-		southTitlePanel.revalidate();
-		northTitlePanel.revalidate();
+
+		else if(selectedPlot == this.PLOT_HISTOGRAM){
+			
+		//	plotPanelNorth.setLayout(new FlowLayout(FlowLayout.LEFT));
+		//	plotPanelNorth.add(lblTitleY);
+		//	plotPanelNorth.add(fldTitleY);
+		//	metaPlotPanel.add(plotPanelNorth, BorderLayout.NORTH);
+			
+			if(settings.showFrequencyTable){
+				plotPanelSouth.setLayout(new BorderLayout());
+				plotPanelSouth.add(frequencyTable, BorderLayout.CENTER);
+				metaPlotPanel.add(plotPanelSouth, BorderLayout.SOUTH);
+			}
+		}
+
+		//plotPanelSouth.revalidate();
+		//plotPanelNorth.revalidate();
 
 	}
 
@@ -510,24 +520,6 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	}
 
-
-
-	/**
-	 * Creates a panel to evaluate the regression model for a given x value
-	 */
-	private void createPredictonPanel(){
-		predictionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		lblEvaluate = new JLabel();	
-		fldInputX = new MyTextField(app);
-		fldInputX.setColumns(4);
-		lblOutputY = new JLabel();
-
-		predictionPanel.add(lblEvaluate);
-		predictionPanel.add(new JLabel("x = "));
-		predictionPanel.add(fldInputX);
-		predictionPanel.add(new JLabel("y = "));
-		predictionPanel.add(lblOutputY);
-	}
 
 
 
@@ -635,12 +627,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		plotMap.put(PLOT_FREQUENCYTABLE, app.getMenu("FrequencyTable"));
 		plotMap.put(PLOT_STEMPLOT, app.getMenu("StemPlot"));
 		plotMap.put(PLOT_ONEVAR_INFERENCE, app.getMenu("OneVariableInference"));
-		
+
 		plotMap.put(PLOT_TTEST, app.getMenu("TMeanTest"));
 		plotMap.put(PLOT_TINT, app.getMenu("TMeanInterval"));
 		plotMap.put(PLOT_ZTEST, app.getMenu("ZMeanTest"));
 		plotMap.put(PLOT_ZINT, app.getMenu("ZMeanInterval"));
-		
+
 
 		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
 		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
@@ -650,12 +642,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		plotMap.put(PLOT_MULTIVARSTATS, app.getMenu("Statistics"));
 		plotMap.put(PLOT_ANOVA, app.getMenu("ANOVA"));
 		plotMap.put(PLOT_TWOVAR_INFERENCE, app.getMenu("TwoVariableInference"));
-		
+
 		plotMap.put(PLOT_TTEST_2MEANS, app.getMenu("TTestDifferenceOfMeans"));
 		plotMap.put(PLOT_TTEST_PAIRED, app.getMenu("TTestPairedDifferences"));
 		plotMap.put(PLOT_TINT_2MEANS, app.getMenu("TEstimateDifferenceOfMeans"));
 		plotMap.put(PLOT_TINT_PAIRED, app.getMenu("TEstimatePairedDifferences"));
-		
+
 		// REVERSE PLOT MAP
 		plotMapReverse = new HashMap<String, Integer>();
 		for(Integer key: plotMap.keySet()){
@@ -664,7 +656,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	}
 
-	
+
 
 	//==============================================
 	//              DISPLAY UPDATE
@@ -673,7 +665,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	public void updatePlot(boolean doCreate){
 
 		GeoList dataListSelected = statDialog.getStatDialogController().getDataSelected();
-		
+
 		GeoElement geo;
 		String underConstruction = "\\text{" + app.getPlain("NotAvailable") + "}";
 		if(hasControlPanel)
@@ -683,8 +675,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			clearPlotGeoList();
 
 		optionsButton.setVisible(true);
-		southPanel.setVisible(false);
-		updateTitlePanels();
+		updatePlotPanel();
 
 		switch(selectedPlot){
 
@@ -708,7 +699,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				plotGeoList.add(normalCurve);
 			}
 
-
+			AlgoHistogram algo = (AlgoHistogram) histogram.getParentAlgorithm();
+			frequencyTable.setTable(algo.getLeftBorder(), algo.getYValue(), settings);
 			plotPanel.setPlotSettings(statGeo.getHistogramSettings( dataListSelected, histogram, settings));
 
 			if(hasControlPanel)
@@ -735,7 +727,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				dotPlot = statGeo.createDotPlot( dataListSelected);
 				plotGeoList.add(dotPlot);
 			}
-				plotPanel.setPlotSettings(statGeo.updateDotPlot(dataListSelected, dotPlot));
+			plotPanel.setPlotSettings(statGeo.updateDotPlot(dataListSelected, dotPlot));
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
@@ -749,17 +741,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
 			break;
 
-		case PLOT_FREQUENCYTABLE:
-			imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
-			optionsButton.setVisible(false);
-			break;
 
 		case PLOT_NORMALQUANTILE:
 			if(doCreate){
 				plotGeoList.add(statGeo.createNormalQuantilePlot( dataListSelected));
 			}
-				plotPanel.setPlotSettings(statGeo.updateNormalQuantilePlot(dataListSelected));
+			plotPanel.setPlotSettings(statGeo.updateNormalQuantilePlot(dataListSelected));
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
@@ -820,7 +807,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			boxPlotTitles = statGeo.createBoxPlotTitles(statDialog, plotPanel.getPlotSettings());
 			for (int i = 0 ; i < boxPlotTitles.length ; i++)
 				plotGeoList.add(boxPlotTitles[i]);
-			
+
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			optionsButton.setVisible(false);
 			break;
@@ -841,7 +828,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			optionsButton.setVisible(false);
 			break;
 
-			
+
 		case PLOT_TTEST_2MEANS:
 		case PLOT_TTEST_PAIRED:
 		case PLOT_TINT_2MEANS:
@@ -899,21 +886,21 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			/*
 			optionsPanel.reInit(selectedPlot);
 			OptionsDialog dlg = new OptionsDialog(new JFrame(), app.getMenu("Options"));
-			
-			
+
+
 			Point p = optionsButton.getLocationOnScreen();
 			Dimension dlgDim  = dlg.getPreferredSize();
 			dlgDim.height = statDialog.getHeight() - 100;
 			p.x = statDialog.getX() + statDialog.getWidth() - dlgDim.width + 20;
 			p.y = p.y + optionsButton.getHeight() + 20;
-			
+
 			dlg.setLocation(p);
 			dlg.setVisible(true);
-			*/
-			
+			 */
+
 			optionsPanel.reInit(selectedPlot);
 			optionsPanel.setVisible(optionsButton.isSelected());
-			
+
 		}
 
 		else if(source == cbDisplayType){
@@ -921,8 +908,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				cbDisplayType.setSelectedItem(plotMap.get(selectedPlot));
 			}
 			else{
-			selectedPlot = plotMapReverse.get(cbDisplayType.getSelectedItem());
-			updatePlot(true);
+				selectedPlot = plotMapReverse.get(cbDisplayType.getSelectedItem());
+				updatePlot(true);
 			}
 		}
 
@@ -960,7 +947,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 	public void removeGeos(){
-		
+
 		clearPlotGeoList();
 	}
 
@@ -971,9 +958,9 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 	public void updateFonts(){
-			
+
 	}
-	
+
 	public void attachView() {
 		plotPanel.attachView();
 
@@ -1018,16 +1005,16 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 	public void updateFonts(Font font) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void updatePanel() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
-	
+
 
 	public class OptionsDialog extends JDialog implements ActionListener {
 		public OptionsDialog(JFrame parent, String title) {
@@ -1048,38 +1035,38 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	//============================================================
 	//           ComboBox Renderer with SEPARATOR
 	//============================================================
-	
+
 	class MyRenderer extends JLabel implements ListCellRenderer {
-		
+
 		public static final String SEPARATOR = "SEPARATOR";
-	    JSeparator separator;
+		JSeparator separator;
 
-	    public MyRenderer() {
-	      setOpaque(true);
-	      setBorder(new EmptyBorder(1, 1, 1, 1));
-	      separator = new JSeparator(JSeparator.HORIZONTAL);
-	    }
+		public MyRenderer() {
+			setOpaque(true);
+			setBorder(new EmptyBorder(1, 1, 1, 1));
+			separator = new JSeparator(JSeparator.HORIZONTAL);
+		}
 
-	    public Component getListCellRendererComponent(JList list, Object value,
-	        int index, boolean isSelected, boolean cellHasFocus) {
-	      String str = (value == null) ? "" : value.toString();
-	      if (SEPARATOR.equals(str)) {
-	        return separator;
-	      }
-	      if (isSelected) {
-	        setBackground(list.getSelectionBackground());
-	        setForeground(list.getSelectionForeground());
-	      } else {
-	        setBackground(list.getBackground());
-	        setForeground(list.getForeground());
-	      }
-	      setFont(list.getFont());
-	      setText(str);
-	      return this;
-	    }
-	  }
-	
-	
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			String str = (value == null) ? "" : value.toString();
+			if (SEPARATOR.equals(str)) {
+				return separator;
+			}
+			if (isSelected) {
+				setBackground(list.getSelectionBackground());
+				setForeground(list.getSelectionForeground());
+			} else {
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+			}
+			setFont(list.getFont());
+			setText(str);
+			return this;
+		}
+	}
+
+
 
 
 } 

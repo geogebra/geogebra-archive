@@ -24,7 +24,7 @@ import javax.swing.table.TableColumn;
 
 public class StatTable extends JScrollPane {
 
-	private JTable statTable;
+	private JTable myTable;
 	private MyRowHeader rowHeader;
 	private String[] rowNames;
 
@@ -38,13 +38,13 @@ public class StatTable extends JScrollPane {
 
 	public StatTable(){
 		
-
 		// create and initialize the table
 		initTable();
 
 		// enclose the table in this scrollPane	
-		setViewportView(statTable);
-		setBorder(BorderFactory.createEmptyBorder());
+		setViewportView(myTable);
+		myTable.setBorder(BorderFactory.createEmptyBorder());
+		//setBorder(BorderFactory.createEmptyBorder());
 
 		// set the  corners
 		setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
@@ -54,17 +54,16 @@ public class StatTable extends JScrollPane {
 		((JPanel)this.getCorner(ScrollPaneConstants.UPPER_LEFT_CORNER)).
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1,TABLE_GRID_COLOR));
 		
-
 	} 
 
 	public JTable getTable(){
-		return statTable;
+		return myTable;
 	}
 
 	private void initTable(){
 
 		// construct the stat table	
-		statTable = new JTable(){
+		myTable = new JTable(){
 			// disable cell editing
 			@Override
 			public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -87,15 +86,15 @@ public class StatTable extends JScrollPane {
 		};
 
 		// table settings
-		statTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
-		statTable.setColumnSelectionAllowed(true); 
-		statTable.setRowSelectionAllowed(true);
-		statTable.setShowGrid(true); 	 
-		statTable.setGridColor(TABLE_GRID_COLOR); 	 	
-		statTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		myTable.setDefaultRenderer(Object.class, new MyCellRenderer());    
+		myTable.setColumnSelectionAllowed(true); 
+		myTable.setRowSelectionAllowed(true);
+		myTable.setShowGrid(true); 	 
+		myTable.setGridColor(TABLE_GRID_COLOR); 	 	
+		myTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		//((JLabel) statTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
-		statTable.setBackground(Color.white);
+		myTable.setBackground(Color.white);
 
 	}
 
@@ -111,11 +110,11 @@ public class StatTable extends JScrollPane {
 	public void setStatTable(int rows, String[] rowNames, int columns, String[] columnNames){
 
 		tableModel = new DefaultTableModel(rows,columns);
-		statTable.setModel(tableModel);
+		myTable.setModel(tableModel);
 
 		// set column names
 		if(columnNames == null){
-			statTable.setTableHeader(null);
+			myTable.setTableHeader(null);
 			this.setColumnHeaderView(null);	
 		}else{
 			tableModel.setColumnCount(0);
@@ -126,7 +125,7 @@ public class StatTable extends JScrollPane {
 		// create row header
 		if(rowNames != null){
 			this.rowNames = rowNames;
-			rowHeader = new MyRowHeader(statTable);	
+			rowHeader = new MyRowHeader(myTable);	
 			//rowHeaderModel = new DefaultListModel();
 			//.setModel(rowHeaderModel);
 			setRowHeaderView(rowHeader);
@@ -135,7 +134,7 @@ public class StatTable extends JScrollPane {
 		}
 
 
-		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());		
+		myTable.setPreferredScrollableViewportSize(myTable.getPreferredSize());		
 		//statTable.setMinimumSize(statTable.getPreferredSize());
 
 
@@ -150,12 +149,12 @@ public class StatTable extends JScrollPane {
 		// set column names
 		if(columnNames != null){
 			for(int i=0; i< columnNames.length; i++)
-				statTable.getColumnModel().getColumn(i).setHeaderValue(columnNames[i]);	
+				myTable.getColumnModel().getColumn(i).setHeaderValue(columnNames[i]);	
 		}
 
 		if(rowNames != null){
 			this.rowNames = rowNames; 
-			rowHeader = new MyRowHeader(statTable);		
+			rowHeader = new MyRowHeader(myTable);		
 			setRowHeaderView(rowHeader);
 		}
 
@@ -172,20 +171,20 @@ public class StatTable extends JScrollPane {
 	public void updateFonts(Font font) {
 		setFont(font);
 		//Application.debug("");
-		if(statTable != null && statTable.getRowCount()>0){
-			statTable.setFont(font); 
+		if(myTable != null && myTable.getRowCount()>0){
+			myTable.setFont(font); 
 
-			int h = statTable.getCellRenderer(0,0).getTableCellRendererComponent(statTable, "X",
+			int h = myTable.getCellRenderer(0,0).getTableCellRendererComponent(myTable, "X",
 					false, false, 0, 0).getPreferredSize().height; 
-			statTable.setRowHeight(h);
+			myTable.setRowHeight(h);
 
 			if(rowHeader != null){
 				rowHeader.setFont(font);
-				rowHeader.setFixedCellHeight(statTable.getRowHeight());
+				rowHeader.setFixedCellHeight(myTable.getRowHeight());
 			}
 			
-			if(statTable.getTableHeader() != null)	
-				statTable.getTableHeader().setFont(font);
+			if(myTable.getTableHeader() != null)	
+				myTable.getTableHeader().setFont(font);
 		}
 	}
 
@@ -197,7 +196,7 @@ public class StatTable extends JScrollPane {
 	 */
 	public void autoFitColumnWidth(int column, int defaultColumnWidth){
 
-		JTable table = statTable;
+		JTable table = myTable;
 		if(table.getRowCount() <= 0)
 			return;
 

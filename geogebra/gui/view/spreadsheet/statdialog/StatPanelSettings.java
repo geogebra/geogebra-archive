@@ -8,10 +8,12 @@ public class StatPanelSettings {
 		public static final int TYPE_NORMALIZED = 2;
 		public int type = TYPE_COUNT;
 
+		// histogram options
 		public boolean isCumulative = false;
 		public boolean useManualClasses = false;
 		public boolean hasOverlayNormal = false;
 		public boolean hasOverlayPolygon = false;
+		public boolean showFrequencyTable = false;
 		
 		public double classStart = 0;
 		public double classWidth = 5;

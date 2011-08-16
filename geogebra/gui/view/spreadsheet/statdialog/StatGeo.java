@@ -208,18 +208,15 @@ public class StatGeo   {
 	public GeoElement createHistogram(GeoList dataList, int numClasses, StatPanelSettings settings, boolean isFrequencyPolygon){
 
 		GeoElement geo;
-		//String label = dataList.getLabel();	
-		//String classes;
 		getDataBounds(dataList);
 		double classWidth = (xMaxData - xMinData)/(numClasses); 
+		
 		AlgoElement al, al2;
 		if(settings.useManualClasses){
 			classWidth = settings.classWidth;
 			al = new AlgoClasses(cons, dataList, new GeoNumeric(cons, settings.classStart), new GeoNumeric(cons, settings.classWidth), null);
-			//classes = "Classes[" + label + "," + settings.classStart + "," + settings.classWidth + "]";
 		}else{
 			al = new AlgoClasses(cons, dataList, null, null, new GeoNumeric(cons, numClasses));
-			//classes = "Classes[" + label + "," + numClasses + "]";
 		}
 		cons.removeFromConstructionList(al);
 		
@@ -229,17 +226,15 @@ public class StatGeo   {
 		if(settings.type == StatPanelSettings.TYPE_NORMALIZED)
 			density = 1.0/dataList.size();
 
-		String text;
 		if(isFrequencyPolygon)
-			//text = "FrequencyPolygon[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
-		al2 = new AlgoFrequencyPolygon(cons, new GeoBoolean(cons, settings.isCumulative), (GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
-			else
-				al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), (GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density),histogramRight);
-			//text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
+			al2 = new AlgoFrequencyPolygon(cons, new GeoBoolean(cons, settings.isCumulative), 
+					(GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
+		else
+			al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), 
+					(GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density),histogramRight);
 		cons.removeFromConstructionList(al2);
 
-		//Application.debug(text);
-		//geo = createGeoFromString(text);
+
 		geo = al2.getGeoElements()[0];
 		if(isFrequencyPolygon){
 			geo.setObjColor(Color.BLACK);
