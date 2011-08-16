@@ -6,7 +6,7 @@ public class StatPanelSettings {
 		public static final int TYPE_COUNT = 0;
 		public static final int TYPE_RELATIVE = 1;
 		public static final int TYPE_NORMALIZED = 2;
-		public int type = TYPE_COUNT;
+		public int frequencyType = TYPE_COUNT;
 
 		// histogram options
 		public boolean isCumulative = false;
@@ -17,6 +17,8 @@ public class StatPanelSettings {
 		
 		public double classStart = 0;
 		public double classWidth = 5;
+		public boolean isLeftRule = true;
+		
 		
 		// graph options
 		public boolean isAutomaticWindow = true;

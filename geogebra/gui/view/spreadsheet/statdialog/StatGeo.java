@@ -210,6 +210,8 @@ public class StatGeo   {
 		GeoElement geo;
 		getDataBounds(dataList);
 		double classWidth = (xMaxData - xMinData)/(numClasses); 
+		histogramRight = !settings.isLeftRule;
+		
 		
 		AlgoElement al, al2;
 		if(settings.useManualClasses){
@@ -221,9 +223,9 @@ public class StatGeo   {
 		cons.removeFromConstructionList(al);
 		
 		double density = -1;
-		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
+		if(settings.frequencyType == StatPanelSettings.TYPE_RELATIVE)
 			density = 1.0*classWidth/dataList.size();
-		if(settings.type == StatPanelSettings.TYPE_NORMALIZED)
+		if(settings.frequencyType == StatPanelSettings.TYPE_NORMALIZED)
 			density = 1.0/dataList.size();
 
 		if(isFrequencyPolygon)

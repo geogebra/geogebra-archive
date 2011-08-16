@@ -202,8 +202,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		settings = new StatPanelSettings();
 
 
-		// create options button and panel
-		optionsPanel= new OptionsPanel(app, settings);
+		// create options button
 		optionsButton = new JToggleButton();
 		optionsButton.setIcon(app.getImageIcon("document-properties.png"));
 		optionsButton.setFocusable(false);
@@ -306,7 +305,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 		// create options panel
 
-		optionsPanel= new OptionsPanel(app, settings);
+		optionsPanel= new OptionsPanel(app, statDialog, settings);
 		optionsPanel.addPropertyChangeListener("settings", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				updatePlot(true);
@@ -898,7 +897,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			dlg.setVisible(true);
 			 */
 
-			optionsPanel.reInit(selectedPlot);
+			optionsPanel.setPanel(selectedPlot);
 			optionsPanel.setVisible(optionsButton.isSelected());
 
 		}
@@ -1016,21 +1015,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 
-	public class OptionsDialog extends JDialog implements ActionListener {
-		public OptionsDialog(JFrame parent, String title) {
-			super(parent, title, true);
-			optionsPanel.setVisible(true);
-			getContentPane().add(optionsPanel, BorderLayout.CENTER);
-			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-			pack(); 
-		}
-		public void actionPerformed(ActionEvent e) {
-			setVisible(false); 
-			dispose(); 
-		}
-
-	}
-
+	
 
 	//============================================================
 	//           ComboBox Renderer with SEPARATOR
