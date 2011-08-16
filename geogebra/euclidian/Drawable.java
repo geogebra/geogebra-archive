@@ -466,10 +466,14 @@ public abstract class Drawable extends DrawableND {
 		}
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3 + depth, width + 6, height + 6 );
 	}
-
 	final  public static FormulaDimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor, boolean useCache) {
+
+		return drawEquation(app, geo, g2, x, y, text, font, serif, fgColor, bgColor, useCache, null, null);
+	}
+	
+	final  public static FormulaDimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor, boolean useCache, Integer maxWidth, Float lineSpace) {
 		//if (useJLaTeXMath)
-			return drawEquationJLaTeXMath(app, geo, g2, x, y, text, font, serif, fgColor, bgColor, useCache);
+			return drawEquationJLaTeXMath(app, geo, g2, x, y, text, font, serif, fgColor, bgColor, useCache, maxWidth, lineSpace);
 		//else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
 	}
 
@@ -581,7 +585,6 @@ public abstract class Drawable extends DrawableND {
 		}
 	}
 
-
 	static boolean drawEquationJLaTeXMathFirstCall = true;
 	
 	/**
@@ -597,7 +600,7 @@ public abstract class Drawable extends DrawableND {
 	 * @param bgColor
 	 * @return dimension of rendered equation
 	 */
-	final public static FormulaDimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor, boolean useCache)
+	final public static FormulaDimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor, boolean useCache, Integer maxWidth, Float lineSpace)
 	{
 		//TODO uncomment when \- works
 		//text=addPossibleBreaks(text);
@@ -660,7 +663,11 @@ public abstract class Drawable extends DrawableND {
 
 			try {
 				formula = new TeXFormula(text);
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
+				
+				if (maxWidth == null)
+					icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
+				else
+					icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, TeXConstants.UNIT_CM, maxWidth.intValue(), TeXConstants.ALIGN_LEFT, TeXConstants.UNIT_CM, lineSpace.floatValue());
 			} catch (MyError e) {
 				//e.printStackTrace();
 				//Application.debug("MyError LaTeX parse exception: "+e.getMessage()+"\n"+text);
@@ -668,6 +675,8 @@ public abstract class Drawable extends DrawableND {
 
 				formula = TeXFormula.getPartialTeXFormula(text);
 				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
+				
+				 formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 15, TeXConstants.UNIT_CM, 4f, TeXConstants.ALIGN_LEFT, TeXConstants.UNIT_CM, 0.5f);
 
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				//return new Dimension(rec.width, rec.height);
