@@ -1556,7 +1556,7 @@ public class MyXMLHandler implements DocHandler {
 		tmp_perspective.setDockPanelInfo(dpXml);
 		tmp_perspective.setShowToolBar(true);
 		
-		Dimension evSize = app.getEuclidianView().getPreferredSize();
+		Dimension evSize = app.getSettings().getEuclidian(1).getPreferredSize();
 		
 		// calculate window dimensions
 		int width = evSize.width;
