@@ -54,7 +54,7 @@ public final class DrawText extends Drawable {
         this.text = text;
         geo = text;
         
-        textFont = view.fontPoint;
+        textFont = view.getApplication().getPlainFont().deriveFont(Font.PLAIN, view.fontSize);
         
         // this is needed as (bold) LaTeX texts are created with isLaTeX = false at this stage
         updateStrokes(text);
