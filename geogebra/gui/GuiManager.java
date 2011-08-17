@@ -2307,10 +2307,10 @@ public class GuiManager {
 		if (urlString.endsWith(".ggb") || urlString.endsWith(".ggt")) {
 			
 			try {
-				URL url = new URL(urlString);
+				URL url = getEscapedUrl(urlString);
 				isMacroFile = urlString.endsWith(".ggt");
 				success = app.loadXML(url, isMacroFile);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
@@ -2333,23 +2333,15 @@ public class GuiManager {
 			} else {
 				try {
 					// try to load from GeoGebra applet
-					if (urlString.startsWith("www")) {
-						urlString = "http://" + urlString;	// Add protocol
-					}
-					URL url = new URL(urlString);
+					URL url = getEscapedUrl(urlString);
 					success = loadFromHtml(url);
 					
 					// fallback: maybe some address like download.php?file=1234, e.g. the forum
 					if (! success) {
-						try {
-							URL urlg = new URL(urlString);
-							isMacroFile = urlString.contains(".ggt");
-							success = app.loadXML(urlg, isMacroFile);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						isMacroFile = urlString.contains(".ggt");
+						success = app.loadXML(url, isMacroFile);
 					}
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -2363,6 +2355,15 @@ public class GuiManager {
 		
 		app.setDefaultCursor();
 		return success;
+	}
+	
+	// See http://stackoverflow.com/questions/6198894/java-encode-url for an explanation
+	private URL getEscapedUrl(String url) throws Exception {
+		if (url.startsWith("www")) {
+			url = "http://" + url;
+		}
+		URL u = new URL(url);
+		return new URI(u.getProtocol(), u.getAuthority(), u.getPath(), u.getQuery(), u.getRef()).toURL();
 	}
 	
 	/**
@@ -2923,7 +2924,7 @@ public class GuiManager {
 	    
 	    public void showURLinBrowser(String strURL) {
 	    	try {
-	    		URL url = new URL(strURL);
+	    		URL url = getEscapedUrl(strURL);
 	    		showURLinBrowser(url);
 	    	} catch (Exception e) {
 	    		e.printStackTrace();
@@ -2966,7 +2967,7 @@ public class GuiManager {
 					+ "help/" + localeCode+"/" + typeStr + "/" +
 	        			java.net.URLEncoder.encode(strURL.replace(" ", "_"),"utf-8").replace("%2F", "/");
 	        		Application.debug(strURL);
-	                URL url =   new URL(strURL);
+	                URL url = getEscapedUrl(strURL);
                 	return url;
 
 	        } catch (Exception e) {     
