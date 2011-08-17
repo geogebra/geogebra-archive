@@ -730,24 +730,28 @@ public class DockManager implements AWTEventListener {
 		}
 		
 		
-		// euclidian focus
-		
-		if (!(panel instanceof EuclidianDockPanelAbstract))
-			return;
-		
+		// euclidian focus		
 		if(focusedEuclidianDockPanel != panel) {
 			// remove focus from previously focused dock panel
 			if(focusedEuclidianDockPanel != null) {
 				focusedEuclidianDockPanel.setEuclidianFocus(false);
 			}
-
-			focusedEuclidianDockPanel = (EuclidianDockPanelAbstract) panel;
-
-			if(focusedEuclidianDockPanel != null) {
+			
+			// if a panel has focus and that panel is a euclidian dock panel
+			// change the focused euclidian dock panel to that panel
+			if(panel != null && panel instanceof EuclidianDockPanelAbstract) {
+				focusedEuclidianDockPanel = (EuclidianDockPanelAbstract) panel;
 				focusedEuclidianDockPanel.setEuclidianFocus(true);
 			}
 			
+			// (panels which are not euclidian dock panels do not change the focused
+			// euclidian dock panel (ie the old is kept))
 			
+			// in case there is no focused panel there is also no focused euclidian
+			// dock panel
+			if(panel == null) {
+				focusedEuclidianDockPanel = null;
+			}
 		}
 		
 	}
