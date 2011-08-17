@@ -99,7 +99,7 @@ public class AlgoTangentFunctionNumber extends AlgoUsingTempCASalgo {
     // calc tangent at x=a
     protected final void compute() {
         double a = n.getDouble();
-        if (!f.isDefined() || !deriv.isDefined() || Double.isInfinite(a) || Double.NaN == a) {
+        if (!f.isDefined() || !deriv.isDefined() || Double.isInfinite(a) || Double.isNaN(a)) {
             tangent.setUndefined();
             return;
         }       

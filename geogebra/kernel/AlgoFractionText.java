@@ -49,8 +49,8 @@ public class AlgoFractionText extends AlgoElement {
         input = new GeoElement[1];
         input[0] = num;
 
-        output = new GeoElement[1];
-        output[0] = text;
+        setOutputLength(1);
+        setOutput(0, text);
         setDependencies(); // done by AlgoElement
     }
 
@@ -92,7 +92,7 @@ public class AlgoFractionText extends AlgoElement {
      * Santa Monica, CA 90405
      * http://homepage.smc.edu/kennedy_john/DEC2FRAC.PDF
      */
-	private double[] DecimalToFraction(double Decimal, double AccuracyFactor) {
+	private double[] DecimalToFraction(double decimal, double AccuracyFactor) {
 	double FractionNumerator, FractionDenominator;
 	double DecimalSign;
 	double Z;
@@ -101,32 +101,32 @@ public class AlgoFractionText extends AlgoElement {
 	
 	
 	double ret[] = {0,0};
-	if (Decimal == Double.NaN) return ret; // return 0/0 
+	if (Double.isNaN(decimal)) return ret; // return 0/0 
 	
-	if (Decimal == Double.POSITIVE_INFINITY) {
+	if (decimal == Double.POSITIVE_INFINITY) {
 	  ret[0] = 1;
 	  ret[1] = 0 ; // 1/0
 	  return ret;
 	}
-	if (Decimal == Double.NEGATIVE_INFINITY) {
+	if (decimal == Double.NEGATIVE_INFINITY) {
 		ret[0] = -1;
 		ret[1] = 0; // -1/0
 		return ret;
 	}
 	
-	if (Decimal < 0.0) DecimalSign = -1.0; else DecimalSign = 1.0;
+	if (decimal < 0.0) DecimalSign = -1.0; else DecimalSign = 1.0;
 	
-	Decimal = Math.abs(Decimal);
+	decimal = Math.abs(decimal);
 	
-	if (Math.abs(Decimal - Math.floor(Decimal)) < AccuracyFactor) { // handles exact integers including 0 �
-		FractionNumerator = Decimal * DecimalSign;
+	if (Math.abs(decimal - Math.floor(decimal)) < AccuracyFactor) { // handles exact integers including 0 �
+		FractionNumerator = decimal * DecimalSign;
 		FractionDenominator = 1.0;
 		
 		ret[0] = FractionNumerator;
 		ret[1] = FractionDenominator;
 		return ret;
 	}
-	if (Decimal < 1.0E-19) { // X = 0 already taken care of �
+	if (decimal < 1.0E-19) { // X = 0 already taken care of �
 		FractionNumerator = DecimalSign;
 		FractionDenominator = 9999999999999999999.0;
 		
@@ -134,7 +134,7 @@ public class AlgoFractionText extends AlgoElement {
 		ret[1] = FractionDenominator;
 		return ret;
 	}
-	if (Decimal > 1.0E19) {
+	if (decimal > 1.0E19) {
 		FractionNumerator = 9999999999999999999.0 * DecimalSign;
 		FractionDenominator = 1.0;
 		
@@ -143,7 +143,7 @@ public class AlgoFractionText extends AlgoElement {
 		return ret;
 	}
 	
-	Z = Decimal;
+	Z = decimal;
 	PreviousDenominator = 0.0;
 	FractionDenominator = 1.0;
 	do {
@@ -151,8 +151,8 @@ public class AlgoFractionText extends AlgoElement {
 		ScratchValue = FractionDenominator;
 		FractionDenominator = FractionDenominator * Math.floor(Z) + PreviousDenominator;
 		PreviousDenominator = ScratchValue;
-		FractionNumerator = Math.floor(Decimal * FractionDenominator + 0.5); // Rounding Function
-	} while ( Math.abs((Decimal - (FractionNumerator /FractionDenominator))) > AccuracyFactor && Z != Math.floor(Z));
+		FractionNumerator = Math.floor(decimal * FractionDenominator + 0.5); // Rounding Function
+	} while ( Math.abs((decimal - (FractionNumerator /FractionDenominator))) > AccuracyFactor && Z != Math.floor(Z));
 	FractionNumerator = DecimalSign*FractionNumerator;
 	
 	ret[0] = FractionNumerator;
