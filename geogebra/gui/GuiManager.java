@@ -2418,23 +2418,35 @@ public class GuiManager {
 	
 	private String getAttributeValue(String page, String lowerCasedPage, String attrName) {
 		int index;
-		if (-1 != (index = lowerCasedPage.indexOf(attrName))) {		// name='filename'
+		if (-1 != (index = lowerCasedPage.indexOf(attrName))) {		// value='test.ggb'
 			index += attrName.length();
-			return getAttributeValue(page, '\'', index);	// Search for next single quote (')
+			return getAttributeValue(page, index, '\'');			// Search for next single quote (')
 		}
-		attrName = attrName.replace('\'', ' ');
-		if (-1 != (index = lowerCasedPage.indexOf(attrName))) {		// name=filename
+		attrName = attrName.replaceAll("'", "");
+		if (-1 != (index = lowerCasedPage.indexOf(attrName))) {		// value=filename_ or value=filename>  ( ) or (>) 
 			index += attrName.length();
-			return getAttributeValue(page, ' ', index);		// Search for next white space ( )
+			return getAttributeValue(page, index, ' ', '>');		// Search for next white space ( ) or angle bracket (>)
 		}
 		return null;
 	}
 	
-	private String getAttributeValue(String page, char attributeEndMarker, int index) {
-		int endIndex = page.indexOf('\'', index);
+	private String getAttributeValue(String page, int begin, char... attributeEndMarkers) {
+		int end = begin;
+		while (end < page.length() && !isMarker(attributeEndMarkers, page.charAt(end))) {
+			end++;
+		}
 		
-		return index == -1 || endIndex == -1 || index == endIndex ?
-				null : page.substring(index, endIndex);
+		return end == page.length()|| end == begin ?		// attribute value not terminated or empty
+				null : page.substring(begin, end);
+	}
+	
+	private static boolean isMarker(char[] markers, char character) {
+		for (char m : markers) {
+			if (m == character) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private String fetchPage(URL url) throws IOException {
