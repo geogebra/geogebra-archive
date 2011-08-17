@@ -3104,11 +3104,10 @@ public class GuiManager {
 			GeoGebraFrame frame = (GeoGebraFrame) app.getFrame();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("GeoGebra");
 			if (app.getCurrentFile() != null) {
-				sb.append(" - ");
 				sb.append(app.getCurrentFile().getName());
 			} else {
+				sb.append(app.getPlain("ApplicationName"));
 				if (GeoGebraFrame.getInstanceCount() > 1) {
 					int nr = frame.getInstanceNumber();
 					sb.append(" (");
