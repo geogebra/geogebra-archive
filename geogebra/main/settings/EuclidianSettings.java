@@ -31,12 +31,12 @@ public class EuclidianSettings extends AbstractSettings {
 	/**
 	 * Line style of axes.
 	 */
-	private int axesLineStyle;
+	private int axesLineStyle = EuclidianView.AXES_LINE_TYPE_ARROW;
 	
 	/**
 	 * Line style of grid.
 	 */
-	private int gridLineStyle;
+	private int gridLineStyle = EuclidianView.LINE_TYPE_DASHED_SHORT;
 	
 	/**
 	 * Various distances between lines of the grid.
@@ -60,7 +60,36 @@ public class EuclidianSettings extends AbstractSettings {
 		gridDistances = null;
 		axisNumberingDistanceX = Double.NaN;
 		axisNumberingDistanceY = Double.NaN;
-	}
+
+		setGridLineStyle(EuclidianView.LINE_TYPE_DASHED_SHORT);
+		setAxesLineStyle(EuclidianView.AXES_LINE_TYPE_ARROW);
+		setAxesColor(Color.black); // Michael Borcherds 2008-01-26 was darkgray
+		setGridColor(Color.lightGray);
+		setBackground(Color.white);
+
+		//pointCapturingMode = EuclidianView.POINT_CAPTURING_AUTOMATIC;
+
+		//rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
+			
+		showAxesNumbers[0] = true;
+		showAxesNumbers[1] = true;
+		axesLabels[0] = null;
+		axesLabels[1] = null;
+		axesUnitLabels[0] = null;
+		axesUnitLabels[1] = null;
+		piAxisUnit[0] = false;
+		piAxisUnit[1] = false;
+		axesTickStyles[0] = EuclidianView.AXES_TICK_STYLE_MAJOR;
+		axesTickStyles[1] = EuclidianView.AXES_TICK_STYLE_MAJOR;
+
+		// for axes labeling with numbers
+		automaticAxesNumberingDistances[0] = true;
+		automaticAxesNumberingDistances[1] = true;
+		automaticAxesNumberingDistances[2] = true;
+
+		// distances between grid lines
+		automaticGridDistance = true;
+}
 	
 	/**
 	 * Change background color.
