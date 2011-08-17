@@ -12,6 +12,9 @@ the Free Software Foundation.
 package geogebra.gui.view.consprotocol;
 
 import geogebra.main.Application;
+import geogebra.main.settings.AbstractSettings;
+import geogebra.main.settings.ConstructionProtocolSettings;
+import geogebra.main.settings.SettingListener;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -40,7 +43,7 @@ import javax.swing.event.ChangeListener;
 /**
  * Navigation buttons for the construction protocol
  */
-public class ConstructionProtocolNavigation extends JPanel implements ActionListener {
+public class ConstructionProtocolNavigation extends JPanel implements ActionListener, SettingListener {
 
 	/**
 	 * 
@@ -64,7 +67,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 	 * Creates a new navigation bar to step through the construction protocol.
 	 * @param internalNavigation: true if navigation bar is part of the protocol window
 	 */
-	public ConstructionProtocolNavigation(ConstructionProtocolView prot) {		
+	public ConstructionProtocolNavigation(ConstructionProtocolView prot) {
 		this.prot = prot;			
 		app = prot.getApplication();	
 				
@@ -80,7 +83,11 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 		
 		lbSteps = new JLabel();
 		
-		initGUI();			
+		initGUI();
+		
+		ConstructionProtocolSettings cps = app.getSettings().getConstructionProtocol();
+		settingsChanged(cps);
+		cps.addListener(this);
 	}
 		
 	public boolean isPlayButtonVisible() {
@@ -308,5 +315,14 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
         		stopAnimation();
         	}
         }       
-    }	
+    }
+
+	public void settingsChanged(AbstractSettings settings) {
+		ConstructionProtocolSettings cps = (ConstructionProtocolSettings)settings;
+		setPlayButtonVisible(cps.showPlayButton());
+		setPlayDelay(cps.getPlayDelay());
+		setConsProtButtonVisible(cps.showConstructionProtocol());
+		update();
+		
+	}	
 }

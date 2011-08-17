@@ -64,6 +64,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.main.settings.ConstructionProtocolSettings;
 import geogebra.main.settings.EuclidianSettings;
 import geogebra.main.settings.KeyboardSettings;
 import geogebra.main.settings.SpreadsheetSettings;
@@ -1669,12 +1670,27 @@ public class MyXMLHandler implements DocHandler {
 			boolean showProtButton = parseBoolean((String) attrs
 					.get("protButton"));
 			
-			app.setShowConstructionProtocolNavigation(show);
-			if (show) {
-				app.getGuiManager().setShowConstructionProtocolNavigation(show,
-					playButton, playDelay, showProtButton);
+			//Maybe there is not guiManager yet. In this case we store the
+			//navigation bar's states in ConstructionProtocolSettings
+			
+			if(app.getGuiManager()!=null){
+				app.setShowConstructionProtocolNavigation(show);			
+				
+				if (show) {
+					app.getGuiManager().setShowConstructionProtocolNavigation(show,
+						playButton, playDelay, showProtButton);
+				}
+			} else {
+				ConstructionProtocolSettings cpSettings = app.getSettings().getConstructionProtocol(); 
+				cpSettings.setShowPlayButton(playButton);
+				cpSettings.setPlayDelay(playDelay);
+				cpSettings.setShowConstructionProtocol(showProtButton);
+				app.setShowConstructionProtocolNavigation(show);
+				
+				
 			}
-
+			
+			
 			// construction step: handled at end of parsing
 			String strConsStep = (String) attrs.get("consStep");
 			if (strConsStep != null)

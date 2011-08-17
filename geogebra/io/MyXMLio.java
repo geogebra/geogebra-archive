@@ -330,7 +330,9 @@ public class MyXMLio {
 		if (!isGGTFile && oldVal &&
 				app.showConsProtNavigation()) 
 		{
-				app.getGuiManager().setConstructionStep(handler.getConsStep());
+				//app.getGuiManager().setConstructionStep(handler.getConsStep());
+				app.getKernel().getConstruction().setStep(handler.getConsStep());
+				
 		}
 		
 	}
