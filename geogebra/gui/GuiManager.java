@@ -54,6 +54,7 @@ import geogebra.main.GeoGebraPreferences;
 import geogebra.main.MyError;
 import geogebra.main.MyResourceBundle;
 import geogebra.main.settings.KeyboardSettings;
+import geogebra.util.Base64;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
 
@@ -75,11 +76,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -104,10 +103,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.parser.ParserDelegator;
 
 
 /**
@@ -2336,16 +2331,12 @@ public class GuiManager {
 			// 'standard' case: url with GeoGebra applet (Java or HTML5)
 			} else {
 				try {
-					// try base64
+					// try to load from GeoGebra applet
 					URL url = new URL(urlString);
-					success = loadBase64fromHTML(url.openStream());
+					success = loadFromHtml(url);
 					
-					// try ggb
-					if (success == false) { 
-						success = loadGgbFromHTML(url.openStream(), urlString);
-					}
-					//maybe some address like download.php?file=1234, e.g. the forum
-					if (success == false) {
+					// fallback: maybe some address like download.php?file=1234, e.g. the forum
+					if (! success) {
 						try {
 							URL urlg = new URL(urlString);
 							isMacroFile = urlString.contains(".ggt");
@@ -2370,120 +2361,208 @@ public class GuiManager {
 		return success;
 	}
 	
-	static String base64Str;
-	
-	public boolean loadBase64fromHTML(InputStream fis) throws IOException {
-
-		BufferedReader myInput = new BufferedReader(new InputStreamReader(fis));
-
-		HTMLEditorKit.ParserCallback callback = 
-			new HTMLEditorKit.ParserCallback () {
-			
-			boolean base64Found = false;
-			
-			public void handleSimpleTag(HTML.Tag tag, 
-                    MutableAttributeSet attrSet, int pos) {
-				if (!base64Found && tag == HTML.Tag.PARAM) {
-					if (((String)attrSet.getAttribute(HTML.Attribute.NAME)).toLowerCase(Locale.US).equals("ggbbase64")) {
-						//Application.debug(""+attrSet.getAttribute(HTML.Attribute.VALUE));
-						
-						//Application.debug("base64 found using HTML parser");
-						
-						base64Found = true;
-						base64Str = (String)attrSet.getAttribute(HTML.Attribute.VALUE);
-					}
-				} 
-			}
-		};
+	/**
+	 * Tries to load a construction from the following sources in order:
+	 * <ol>
+	 *   <li>
+	 *     From embedded base64 string
+	 * 	   <ol type="a">
+	 *       <li><code>&lt;article ... data-param-ggbbase64="..." /&gt;</code></li>
+	 *       <li><code>&lt;param name="ggbBase64" value="..." /&gt;</code></li>
+	 *     </ol>
+	 *   </li>
+	 *   <li>
+	 *     From relative referenced *.ggb file
+	 * 	   <ol type="a">
+	 *       <li><code>&lt;article ... data-param-filename="..." /&gt;</code></li>
+	 *       <li><code>&lt;param name="filename" value="..." /&gt;</code></li>
+	 *     </ol>
+	 *   </li>
+	 * </ol>
+	 * 
+	 */
+	private boolean loadFromHtml(URL url) throws IOException {
+		String page = fetchPage(url);
+		page = page.replaceAll("\\s+", " ");			// Normalize white spaces
+		page = page.replace('"', '\'');					// Replace double quotes (") with single quotes (')
+		String lowerCasedPage = page.toLowerCase();		// We must preserve casing for base64 strings and case sensitve file systems
 		
-		 Reader reader = new InputStreamReader (fis);
-		new ParserDelegator().parse(reader, callback, true);
+		String val = getAttributeValue(page, lowerCasedPage, "data-param-ggbbase64='");
+		val = val == null ? getAttributeValue(page, lowerCasedPage, "name='ggbbase64' value='") : val;
 		
-		if (base64Str != null) {
-			// decode Base64
-			byte[] zipFile = geogebra.util.Base64.decode(base64Str);
-			base64Str = null;
+		if (val != null) {	// 'val' is the base64 string
+			byte[] zipFile = Base64.decode(val);
 			
-			// load file
-			return app.loadXML(zipFile);   
+			return app.loadXML(zipFile);
+		}
+		
+		val = getAttributeValue(page, lowerCasedPage, "data-param-filename='");
+		val = val == null ? getAttributeValue(page, lowerCasedPage, "name='filename' value='") : val;
+		
+		if (val != null) {	// 'val' is the relative path to *.ggb file
+			String path = url.getPath();	// http://www.geogebra.org/mobile/test.html?test=true -> path would be '/mobile/test.html'
+			int index = path.lastIndexOf('/');
+			path = index == -1 ? path : path.substring(0, index + 1);		
+			URL fileUrl = new URL(url.getProtocol(), url.getHost(), path);
+			
+			return app.loadXML(fileUrl, false);
 		}
 		
 		return false;
-
 	}
-    
-	public boolean loadGgbFromHTML(InputStream fis, String source) throws IOException {
-
-		BufferedReader myInput = new BufferedReader
-		(new InputStreamReader(fis));
-
-		StringBuilder sb = new StringBuilder();
-
-		String thisLine;
-
-		boolean started = false;
-
-		while ((thisLine = myInput.readLine()) != null)  {
-
-			// don't start reading until filename tag
-			if (!started && thisLine.indexOf("filename") > -1) started = true;
-
-			if (started) {
-				sb.append(thisLine);
-
-				if (thisLine.indexOf("</applet>") > -1) break;
+	
+	private String getAttributeValue(String page, String lowerCasedPage, String attrName) {
+		int index;
+		if (-1 != (index = lowerCasedPage.indexOf(attrName))) {		// name='filename'
+			index += attrName.length();
+			return getAttributeValue(page, '\'', index);	// Search for next single quote (')
+		}
+		attrName = attrName.replace('\'', ' ');
+		if (-1 != (index = lowerCasedPage.indexOf(attrName))) {		// name=filename
+			index += attrName.length();
+			return getAttributeValue(page, ' ', index);		// Search for next white space ( )
+		}
+		return null;
+	}
+	
+	private String getAttributeValue(String page, char attributeEndMarker, int index) {
+		int endIndex = page.indexOf('\'', index);
+		
+		return index == -1 || endIndex == -1 || index == endIndex ?
+				null : page.substring(index, endIndex);
+	}
+	
+	private String fetchPage(URL url) throws IOException {
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			StringBuilder page = new StringBuilder();
+			String line;
+			while (null != (line = reader.readLine())) {
+				page.append(line);			// page does not contain any line breaks '\n', '\r' or "\r\n"
 			}
-
-
-
+			return page.toString();
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
 		}
-
-		String fileArgument = sb.toString();
-
-		String matchString = "name=\"filename\" value=\"";
-		// old style, no quotes
-		String matchString2 = "name=filename value=\"";
-
-		int start = fileArgument.indexOf(matchString);
-		
-		if (start == -1) {
-			matchString = matchString2;
-			start = fileArgument.indexOf(matchString);
-		}
-		
-		// match "/> or " /> or "> etc
-		int end   = fileArgument.indexOf(">");
-		while (end > start && fileArgument.charAt(end) != '\"') end--;
-
-		// check for two <param> tags on the same line
-		if (start > end) {
-			fileArgument = fileArgument.substring(start);
-			start = 0;
-			end   = fileArgument.indexOf(">");
-			while (end > start && fileArgument.charAt(end) != '\"') end--;
-		}
-		
-		if (start < 0 || end < 0 || end <= start) {
-			//app.setDefaultCursor();
-			//app.showError(app.getError("LoadFileFailed") + ":\n" + source);
-			return false;
-		}
-
-		
-		int index = source.lastIndexOf('/');
-		if (index != -1)
-			source = source.substring(0, index + 1); // path without file.ggb
-
-		Application.debug("Trying to load from:" + source + fileArgument
-				.substring(matchString.length() + start, end));
-
-		URL url = new URL(source + fileArgument.substring(matchString.length() + start, end));
-		
-		return app.loadXML(url, false);
-
 	}
+	
+//	static String base64Str;
+//	
+//	public boolean loadBase64fromHTML(InputStream fis) throws IOException {
+//
+//		BufferedReader myInput = new BufferedReader(new InputStreamReader(fis));
+//
+//		HTMLEditorKit.ParserCallback callback = 
+//			new HTMLEditorKit.ParserCallback () {
+//			
+//			boolean base64Found = false;
+//			
+//			public void handleSimpleTag(HTML.Tag tag, 
+//                    MutableAttributeSet attrSet, int pos) {
+//				if (!base64Found && tag == HTML.Tag.PARAM) {
+//					if (((String)attrSet.getAttribute(HTML.Attribute.NAME)).toLowerCase(Locale.US).equals("ggbbase64")) {
+//						//Application.debug(""+attrSet.getAttribute(HTML.Attribute.VALUE));
+//						
+//						//Application.debug("base64 found using HTML parser");
+//						
+//						base64Found = true;
+//						base64Str = (String)attrSet.getAttribute(HTML.Attribute.VALUE);
+//					}
+//				} 
+//			}
+//		};
+//		
+//		 Reader reader = new InputStreamReader (fis);
+//		new ParserDelegator().parse(reader, callback, true);
+//		
+//		if (base64Str != null) {
+//			// decode Base64
+//			byte[] zipFile = geogebra.util.Base64.decode(base64Str);
+//			base64Str = null;
+//			
+//			// load file
+//			return app.loadXML(zipFile);   
+//		}
+//		
+//		return false;
+//
+//	}
+//    
+//	public boolean loadGgbFromHTML(InputStream fis, String source) throws IOException {
+//
+//		BufferedReader myInput = new BufferedReader
+//		(new InputStreamReader(fis));
+//
+//		StringBuilder sb = new StringBuilder();
+//
+//		String thisLine;
+//
+//		boolean started = false;
+//
+//		while ((thisLine = myInput.readLine()) != null)  {
+//
+//			// don't start reading until filename tag
+//			if (!started && thisLine.indexOf("filename") > -1) started = true;
+//
+//			if (started) {
+//				sb.append(thisLine);
+//
+//				if (thisLine.indexOf("</applet>") > -1) break;
+//			}
+//
+//
+//
+//		}
+//
+//		String fileArgument = sb.toString();
+//
+//		String matchString = "name=\"filename\" value=\"";
+//		// old style, no quotes
+//		String matchString2 = "name=filename value=\"";
+//
+//		int start = fileArgument.indexOf(matchString);
+//		
+//		if (start == -1) {
+//			matchString = matchString2;
+//			start = fileArgument.indexOf(matchString);
+//		}
+//		
+//		// match "/> or " /> or "> etc
+//		int end   = fileArgument.indexOf(">");
+//		while (end > start && fileArgument.charAt(end) != '\"') end--;
+//
+//		// check for two <param> tags on the same line
+//		if (start > end) {
+//			fileArgument = fileArgument.substring(start);
+//			start = 0;
+//			end   = fileArgument.indexOf(">");
+//			while (end > start && fileArgument.charAt(end) != '\"') end--;
+//		}
+//		
+//		if (start < 0 || end < 0 || end <= start) {
+//			//app.setDefaultCursor();
+//			//app.showError(app.getError("LoadFileFailed") + ":\n" + source);
+//			return false;
+//		}
+//
+//		
+//		int index = source.lastIndexOf('/');
+//		if (index != -1)
+//			source = source.substring(0, index + 1); // path without file.ggb
+//
+//		Application.debug("Trying to load from:" + source + fileArgument
+//				.substring(matchString.length() + start, end));
+//
+//		URL url = new URL(source + fileArgument.substring(matchString.length() + start, end));
+//		
+//		return app.loadXML(url, false);
+//
+//	}
     
-    	/*
+    /*
 	 * loads an html file with <param name="ggbBase64" value="UEsDBBQACAAI...
 	 */
 	public boolean loadBase64File(final File file) {
@@ -2504,10 +2583,7 @@ public class GuiManager {
 
 
 		try {
-			FileInputStream fis = null;
-			fis = new FileInputStream(file);
-			success = loadBase64fromHTML(fis);		
-			
+			success = loadFromHtml(file.toURI().toURL());	// file.toURL() does not escape illegal characters
 		} catch (Exception e) {
 			app.setDefaultCursor();
 			app.showError(app.getError("LoadFileFailed") + ":\n" + file);
