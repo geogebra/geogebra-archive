@@ -2303,34 +2303,24 @@ public class GuiManager {
 		boolean isMacroFile =  false;
 		app.setWaitCursor();
 		
-		// check first for ggb/ggt file
-		if (urlString.endsWith(".ggb") || urlString.endsWith(".ggt")) {
-			
-			try {
+		try {
+			// check first for ggb/ggt file
+			if (urlString.endsWith(".ggb") || urlString.endsWith(".ggt")) {
 				URL url = getEscapedUrl(urlString);
 				isMacroFile = urlString.endsWith(".ggt");
 				success = app.loadXML(url, isMacroFile);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-		// special case: urlString is actually a base64 encoded ggb file
-		} else if (urlString.startsWith("UEs")) {
-			// decode Base64
-			byte[] zipFile;
-			try {
-				zipFile = geogebra.util.Base64.decode(urlString);
-				// load file
+					
+			// special case: urlString is actually a base64 encoded ggb file
+			} else if (urlString.startsWith("UEs")) {
+				byte[] zipFile = Base64.decode(urlString);
 				success = app.loadXML(zipFile);   
-			} catch (IOException e) {
-				e.printStackTrace();
-			}			
-		// special case: urlString is actually a GeoGebra XML file
-		} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
-			success = app.loadXML(urlString);   	
-		// 'standard' case: url with GeoGebra applet (Java or HTML5)
-		} else {
-			try {
+			
+			// special case: urlString is actually a GeoGebra XML file
+			} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
+				success = app.loadXML(urlString);   
+				
+			// 'standard' case: url with GeoGebra applet (Java or HTML5)
+			} else {
 				// try to load from GeoGebra applet
 				URL url = getEscapedUrl(urlString);
 				success = loadFromHtml(url);
@@ -2340,9 +2330,9 @@ public class GuiManager {
 					isMacroFile = urlString.contains(".ggt");
 					success = app.loadXML(url, isMacroFile);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		
 		if (!success && !suppressErrorMsg) {
