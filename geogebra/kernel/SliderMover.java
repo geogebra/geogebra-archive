@@ -33,12 +33,12 @@ public class SliderMover {
 	private static final int BOUNDS_INFINITE_FIXED = 4;
 	
 	private GeoNumeric path;
-	protected double start_param, start_paramUP;
+	protected double start_param, start_paramUP, start_paramDOWN;
 	protected double curr_param, last_param, param_extent, min_param, max_param,
 					max_step_width, step_width, offset;
 	protected int  mode;	
 	protected boolean posOrientation;
-	private boolean maxBorderSet, minBorderSet;
+	private boolean maxBorderSet, minBorderSet, lastMaxBorderSet, lastMinBorderSet;;
 	
 	/**
 	 * Creates new path mover for given path
@@ -108,6 +108,7 @@ public class SliderMover {
 						
 		param_extent = max_param - min_param;		
 		start_paramUP = start_param + param_extent;
+		start_paramDOWN = start_param - param_extent;
 
 		max_step_width = param_extent / MIN_STEPS;		
 		posOrientation = true; 						
@@ -123,6 +124,7 @@ public class SliderMover {
 	public void resetStartParameter() {		
 		curr_param = start_param;	
 		last_param = start_param;
+		maxBorderSet = lastMaxBorderSet = minBorderSet = lastMinBorderSet = false;
 		step_width = max_step_width;		
 	}
 	
@@ -134,6 +136,8 @@ public class SliderMover {
 		//  check if we are in our interval
 		boolean lineTo = true;				
 		last_param = curr_param;
+		lastMaxBorderSet = maxBorderSet;
+		lastMinBorderSet = minBorderSet;
 		
 		// in the last step we got outside a border and stopped there
 		// now continue at the other border
@@ -232,7 +236,7 @@ public class SliderMover {
 				|| curr_param < start_paramUP && next_param >= start_paramUP);
 		} else {
 			hasNext = !(curr_param > start_param && next_param <= start_param
-				|| curr_param > start_paramUP && next_param <= start_paramUP);
+				|| curr_param > start_paramDOWN && next_param <= start_paramDOWN);
 		}
 							
 		return hasNext;
@@ -272,12 +276,30 @@ public class SliderMover {
 		double abs_new_step = Math.abs(new_step);		
 		
 		if (abs_new_step > max_step_width) {
-			step_width = (new_step >= 0 ? max_step_width : -max_step_width);						
-			return false;
+			if (new_step >= 0) {
+				if (step_width == max_step_width)
+					return false;
+				step_width = max_step_width;
+				return true;
+			} else {
+				if (step_width == -max_step_width)
+					return false;
+				step_width = -max_step_width;
+				return true;
+			}
 		} 
 		else if (abs_new_step < MIN_STEP_WIDTH) {
-			step_width = (new_step >= 0 ? MIN_STEP_WIDTH : -MIN_STEP_WIDTH);	
-			return false;
+			if (new_step >= 0) {
+				if (step_width == MIN_STEP_WIDTH)
+					return false;
+				step_width = MIN_STEP_WIDTH;
+				return true;
+			} else {
+				if (step_width == -MIN_STEP_WIDTH)
+					return false;
+				step_width = -MIN_STEP_WIDTH;
+				return true;
+			}
 		} 
 		else {
 			step_width = new_step;
@@ -287,6 +309,8 @@ public class SliderMover {
 
 	final public void stepBack() {			
 		curr_param = last_param;		
+		maxBorderSet = lastMaxBorderSet;
+		minBorderSet = lastMinBorderSet;
 	}
 	
 
