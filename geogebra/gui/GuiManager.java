@@ -2297,7 +2297,7 @@ public class GuiManager {
 	}
 	
 	public boolean loadURL(String urlString, boolean suppressErrorMsg) {
-		urlString = urlString.trim().toLowerCase();
+		urlString = urlString.trim().toLowerCase(Locale.US);
 		
 		boolean success = false;
 		boolean isMacroFile =  false;
@@ -2387,9 +2387,9 @@ public class GuiManager {
 	 */
 	private boolean loadFromHtml(URL url) throws IOException {
 		String page = fetchPage(url);
-		page = page.replaceAll("\\s+", " ");			// Normalize white spaces
-		page = page.replace('"', '\'');					// Replace double quotes (") with single quotes (')
-		String lowerCasedPage = page.toLowerCase();		// We must preserve casing for base64 strings and case sensitve file systems
+		page = page.replaceAll("\\s+", " ");		// Normalize white spaces
+		page = page.replace('"', '\'');				// Replace double quotes (") with single quotes (')
+		String lowerCasedPage = page.toLowerCase(Locale.US);	// We must preserve casing for base64 strings and case sensitve file systems
 		
 		String val = getAttributeValue(page, lowerCasedPage, "data-param-ggbbase64='");
 		val = val == null ? getAttributeValue(page, lowerCasedPage, "name='ggbbase64' value='") : val;
