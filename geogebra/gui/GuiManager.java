@@ -2943,33 +2943,29 @@ public class GuiManager {
 
 	    	String localeCode = app.getLocale().toString();
 	    		    	
-	    	String strURL = "";
+	    	String helpItem = "";
 	    	String typeStr = "";
 	    	switch(type){
 	    	case HELP_COMMAND:
-	    		strURL =  app.getEnglishCommand(pageName);
+	    		helpItem =  app.getEnglishCommand(pageName);
 	    		typeStr = "cmd";
 	    		break;
 	    	case HELP_TOOL:
-	    		strURL =  app.getEnglishMenu(pageName);
+	    		helpItem =  app.getEnglishMenu(pageName);
 	    		typeStr = "tool";
 	    		break;
 	    	case HELP_GENERIC:	    		
-	    			strURL = pageName;
+	    		helpItem = pageName;
 	    		typeStr = "article";
 	    		break;
 	    	default:
 	    		Application.printStacktrace("Bad getHelpURL call");
 	    	}
 			try {
-			//the server cannot handle %2F in URL, we have to leave / unencoded	
-			strURL = GeoGebra.GEOGEBRA_WEBSITE
-					+ "help/" + localeCode+"/" + typeStr + "/" +
-	        			java.net.URLEncoder.encode(strURL.replace(" ", "_"),"utf-8").replace("%2F", "/");
-	        		Application.debug(strURL);
-	                URL url = getEscapedUrl(strURL);
-                	return url;
-
+				String url = GeoGebra.GEOGEBRA_WEBSITE + "help/" + localeCode + "/" + typeStr + "/" + helpItem;
+				Application.debug(url);
+				
+				return getEscapedUrl(url);
 	        } catch (Exception e) {     
 	        	e.printStackTrace();
 	        }
