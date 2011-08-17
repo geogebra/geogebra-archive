@@ -2330,21 +2330,22 @@ public class GuiManager {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}			
-				// special case: urlString is actually a GeoGebra XML file
+			// special case: urlString is actually a GeoGebra XML file
 			} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
-				success = app.loadXML(urlString);   		
+				success = app.loadXML(urlString);   	
+			// 'standard' case: url with GeoGebra applet (Java or HTML5)
 			} else {
 				try {
-					
 					// try base64
 					URL url = new URL(urlString);
 					success = loadBase64fromHTML(url.openStream());
 					
 					// try ggb
-					if (success == false) 
+					if (success == false) { 
 						success = loadGgbFromHTML(url.openStream(), urlString);
+					}
 					//maybe some address like download.php?file=1234, e.g. the forum
-					if (success == false){
+					if (success == false) {
 						try {
 							URL urlg = new URL(urlString);
 							isMacroFile = urlString.contains(".ggt");
