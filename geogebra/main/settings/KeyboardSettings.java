@@ -31,6 +31,7 @@ public class KeyboardSettings extends AbstractSettings {
 		supportedLocales.add(new Locale("ml")); // Malayalam
 		supportedLocales.add(new Locale("no")); // Norwegian
 		supportedLocales.add(new Locale("sk")); // Slovakian
+		supportedLocales.add(new Locale("ru")); // Slovakian
 	}
 
 	private float keyboardOpacity = 0.7f;
