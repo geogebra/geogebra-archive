@@ -648,7 +648,10 @@ public class EquationSolver {
 					}
 					
 					//	small f'(root): don't go too far from our laguerre root !	
-					root = rootFinderBrent.solve(new RealRootAdapter(polyFunc), left, right);
+					double brentRoot = rootFinderBrent.solve(new RealRootAdapter(polyFunc), left, right,root);
+					if (Math.abs(polyFunc.evaluate(brentRoot))<Math.abs(polyFunc.evaluate(root))){
+						root=brentRoot;
+					}
 					//System.out.println("Polish bisectNewtonRaphson: " + root);
 				} 
 				else {
@@ -658,7 +661,10 @@ public class EquationSolver {
 					}
 					
 					// the root is not bounded: give Mr. Newton a chance
-					root = rootFinderNewton.solve(new RealRootDerivAdapter(polyFunc), left, right, root);
+					double newtonRoot = rootFinderNewton.solve(new RealRootDerivAdapter(polyFunc), left, right, root);
+					if (Math.abs(polyFunc.evaluate(newtonRoot))<Math.abs(polyFunc.evaluate(root))){
+						root=newtonRoot;
+					}
 					//System.out.println("Polish newtonRaphson: " + root);
 				}				
 			} 
@@ -672,7 +678,10 @@ public class EquationSolver {
 						rootFinderBrent = fact.newBrentSolver();
 					}
 					
-					root = rootFinderBrent.solve(new RealRootAdapter(derivFunc), left, right);
+					double brentRoot = rootFinderBrent.solve(new RealRootAdapter(derivFunc), left, right);
+					if (Math.abs(polyFunc.evaluate(brentRoot))<Math.abs(polyFunc.evaluate(root))){
+						root=brentRoot;
+					}
 					//System.out.println("    find extremum successfull: " + root);
 				} catch (Exception ex) {
 					Application.debug(ex.getMessage());

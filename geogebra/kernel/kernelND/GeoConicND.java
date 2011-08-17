@@ -16,7 +16,6 @@ import geogebra.kernel.EquationSolver;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
@@ -38,6 +37,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic.Term;
+import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
 

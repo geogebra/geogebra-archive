@@ -15,13 +15,21 @@ the Free Software Foundation.
  *
  * Created on 28.07.2010, 13:20
  */
-package geogebra.kernel;
+package geogebra.kernel.implicit;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import geogebra.euclidian.EuclidianConstants;
 
+import geogebra.kernel.AlgoRoots;
+import geogebra.kernel.AlgoSimpleRootsPolynomial;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.parser.ParseException;
 
 import geogebra.main.MyError;
@@ -86,7 +94,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 		double maxT=Double.POSITIVE_INFINITY;
 		double minT=Double.NEGATIVE_INFINITY;
 		if (f!=null){
-			if (!f.isDefined){
+			if (!f.isDefined()){
 				return;
 			}
 			
@@ -129,7 +137,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 				return;
 			}
 			tx=new PolynomialFunction(new double[]{0,1}); //x=t
-			ty=new PolynomialFunction(f.fun.getNumericPolynomialDerivative(0).getCoeffs()); //y=f(t)
+			ty=new PolynomialFunction(f.getFunction().getNumericPolynomialDerivative(0).getCoeffs()); //y=f(t)
 			maxT = f.getMaxParameter();
 			minT = f.getMinParameter();
 		}else if (l!=null){

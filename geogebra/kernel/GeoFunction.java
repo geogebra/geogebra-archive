@@ -24,6 +24,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
+import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;

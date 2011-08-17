@@ -72,8 +72,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	}
 
 	@Override
-	protected
-	GeoPoint[] getIntersectionPoints() {
+	public	GeoPoint[] getIntersectionPoints() {
 		return points.getOutput(new GeoPoint[0]);
 	}
 

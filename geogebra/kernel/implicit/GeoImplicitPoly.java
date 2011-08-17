@@ -16,10 +16,33 @@ the Free Software Foundation.
  * Created on 03. June 2010, 11:57
  */
 
-package geogebra.kernel;
+package geogebra.kernel.implicit;
 
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.AlgoClosestPoint;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoPointOnPath;
+import geogebra.kernel.ConicMirrorable;
+import geogebra.kernel.Construction;
+import geogebra.kernel.Dilateable;
+import geogebra.kernel.EuclidianViewCE;
+import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoLocus;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoUserInputElement;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.Mirrorable;
+import geogebra.kernel.MyPoint;
+import geogebra.kernel.Path;
+import geogebra.kernel.PathMover;
+import geogebra.kernel.PointRotateable;
+import geogebra.kernel.Traceable;
+import geogebra.kernel.Transformable;
+import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -65,7 +88,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	
 //	private Thread factorThread;
 
-	protected GeoImplicitPoly(Construction c) {
+	public GeoImplicitPoly(Construction c) {
 		super(c);
 		degX=-1;
 		degY=-1;
@@ -82,7 +105,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		setCoeff(coeff,true);
 	}
 	
-	protected GeoImplicitPoly(Construction c, String label,Polynomial poly){
+	public GeoImplicitPoly(Construction c, String label,Polynomial poly){
 		this(c);
 		this.poly = poly;
 		setLabel(label);
@@ -112,7 +135,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	 * @param c
 	 */
 	public GeoImplicitPoly(GeoConic c){
-		this(c.cons);
+		this(c.getConstruction());
 		coeff=new double[3][3];
 		coeff[0][0]=c.matrix[2];
 		coeff[1][1]=2*c.matrix[3];
@@ -798,9 +821,8 @@ Dilateable, Transformable, EuclidianViewCE {
 	
 	final public double distance(GeoPoint p) {
 		AlgoClosestPoint algo = new AlgoClosestPoint(cons, "", this, p);
-		algo.compute();
 		algo.remove();
-		GeoPoint pointOnCurve = (GeoPoint) algo.getOutput(0);
+		GeoPoint pointOnCurve = (GeoPoint) algo.getP();
 		return p.distance(pointOnCurve);
 	}
 	

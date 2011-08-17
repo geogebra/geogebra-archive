@@ -1,10 +1,15 @@
-package geogebra.kernel;
+package geogebra.kernel.implicit;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -25,7 +30,7 @@ public class AlgoDependentImplicitPoly extends AlgoElement {
 //	private FunctionNVar[] dependentFromFunctions;
 	private Set<FunctionNVar> dependentFromFunctions;
     
-	protected AlgoDependentImplicitPoly(Construction c,String label, Equation equ) {
+	public AlgoDependentImplicitPoly(Construction c,String label, Equation equ) {
 		super(c, false);
 		equation=equ;
 		Polynomial lhs = equ.getNormalForm();

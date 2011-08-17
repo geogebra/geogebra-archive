@@ -53,7 +53,7 @@ public class AlgoClosestPoint extends AlgoElement implements PathAlgo {
         setDependencies(); // done by AlgoElement
     }
 
-    GeoPoint getP() {
+    public GeoPoint getP() {
         return P;
     }
       

@@ -100,7 +100,7 @@ public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
         setDependencies(); // done by AlgoElement
     }
 
-    GeoPoint getP() {
+    public GeoPoint getP() {
         return P;
     }
     public Path getPath() {

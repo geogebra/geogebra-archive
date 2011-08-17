@@ -16,19 +16,20 @@ the Free Software Foundation.
  * Created on 04.08.2010, 23:12
  */
 
-package geogebra.kernel;
+package geogebra.kernel.implicit;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
-import edu.uci.ics.jung.algorithms.scoring.DegreeScorer;
-
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.main.Application;
+import geogebra.kernel.AlgoSimpleRootsPolynomial;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoConic;
+import geogebra.kernel.Kernel;
+
 
 /**
  *	Algorithm to intersect two implicit polynomial equations<br />
@@ -113,53 +114,6 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		return 0;
 	}
 
-
-	/**
-	 * calculates the quotient of p/d (no calculation of the remainder is done)
-	 * @param p
-	 * @param d
-	 * @return quotient of p/d
-	 */
-	private PolynomialFunction polynomialDivision(PolynomialFunction p, PolynomialFunction d){
-		double[] cp=p.getCoefficients();
-		double[] cd=d.getCoefficients();
-		double[] cq;
-		int degD=cd.length-1;
-//		Application.debug(String.format("Divide %s by %s",p,d));
-		while(degD>=0&&Kernel.isZero(cd[degD])){
-			degD--;
-		}
-		if (degD<0){ // => division by zero
-			cp[0]=1/0;
-		}
-		if (cp.length-1<degD){ 
-			return new PolynomialFunction(new double[]{0});
-		}else{
-			cq=new double[cp.length-degD];
-		}
-		double lcd=cd[degD];
-		int k=cp.length-1;
-		for (int i=cq.length-1;i>=0;i--){
-			cq[i]=cp[k]/lcd;
-			for (int j=0;j<=degD-1;j++){
-				cp[j+i]=cp[j+i]-cq[i]*cd[j];
-			}
-			k--;
-		}
-		PolynomialFunction ret=new PolynomialFunction(cq);
-//		Application.debug(ret);
-		return ret;
-	}
-	
-	private double getLeadingCoeff(PolynomialFunction p){
-		double[] c=p.getCoefficients();
-		for (int i=c.length-1;i>=0;i--){
-			if (!Kernel.isZero(c[i]))
-				return c[i];
-		}
-		return 0;
-	}
-
 	@Override
 	protected void compute() {
 				if (c1!=null){
@@ -194,7 +148,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		//where p=a.getDegY(), q=b.getDegY() 
 		//we should minimize m^2 n q^2 by choosing to use polyX or polyY univarType.
 		
-		int q = a.getDegY();
+//		int q = a.getDegY();
 		PolynomialFunction[][] mat=new PolynomialFunction[n][n];
 		PolynomialFunction[] aNew = new PolynomialFunction[m+n];
 		PolynomialFunction[] bPolys = new PolynomialFunction[n+1];
@@ -313,7 +267,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 			int r=0;
 			double glc=0; //greatest leading coefficient
 			for (int i=k;i<n;i++){
-				double lc=getLeadingCoeff(mat[i][k]);
+				double lc=PolynomialUtils.getLeadingCoeff(mat[i][k]);
 				if (!Kernel.isZero(lc)){
 					if (Math.abs(lc)>Math.abs(glc)){
 						glc=lc;
@@ -337,7 +291,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 					PolynomialFunction t1=mat[i][j].multiply(mat[k][k]);
 					PolynomialFunction t2=mat[i][k].multiply(mat[k][j]);
 					PolynomialFunction t=t1.subtract(t2);
-					mat[i][j]=polynomialDivision(t, c);
+					mat[i][j]=PolynomialUtils.polynomialDivision(t, c);
 				}
 			}
 			c=mat[k][k];

@@ -9,9 +9,17 @@ under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
-package geogebra.kernel;
+package geogebra.kernel.implicit;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.AlgoElement.OutputHandler;
+import geogebra.kernel.AlgoElement.elementFactory;
 import geogebra.main.Application;
 
 /**

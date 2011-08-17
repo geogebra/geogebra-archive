@@ -33,7 +33,6 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
-import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -58,6 +57,7 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MySpecialDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Variable;
+import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
@@ -2149,8 +2149,8 @@ class CmdAsymptote extends CommandProcessor {
 				return ret;
 			}
 			else if (arg[0].isGeoImplicitPoly()) {
-				GeoElement[] ret = { kernel.AsymptoteImplicitpoly(c.getLabel(),
-						(GeoImplicitPoly) arg[0]) };
+				GeoElement[] ret =  {kernel.AsymptoteImplicitpoly(c.getLabel(),
+						(GeoImplicitPoly) arg[0])} ;
 				return ret;
 			}
 			throw argErr(app, "Asymptote", arg[0]);

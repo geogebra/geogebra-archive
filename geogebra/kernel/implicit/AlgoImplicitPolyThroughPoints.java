@@ -1,15 +1,17 @@
-package geogebra.kernel;
+package geogebra.kernel.implicit;
 
 import geogebra.euclidian.EuclidianConstants;
-
-import java.awt.Label;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 
 public class AlgoImplicitPolyThroughPoints extends AlgoElement 
 {
 	private GeoList P; // input points      
     private GeoImplicitPoly implicitPoly; // output 
 	
-	AlgoImplicitPolyThroughPoints(Construction cons, String label, GeoList p)
+	public AlgoImplicitPolyThroughPoints(Construction cons, String label, GeoList p)
 	{
 		super(cons);
 		this.P = p;

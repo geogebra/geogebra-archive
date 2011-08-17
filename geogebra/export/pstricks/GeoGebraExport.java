@@ -25,7 +25,6 @@ import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
-import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -40,6 +39,7 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.cas.AlgoIntegralDefinite;
+import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.main.Application;
 
 import java.awt.Color;

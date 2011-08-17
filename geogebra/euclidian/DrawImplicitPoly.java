@@ -19,7 +19,7 @@ package geogebra.euclidian;
 
 import java.awt.geom.Area;
 
-import geogebra.kernel.GeoImplicitPoly;
+import geogebra.kernel.implicit.GeoImplicitPoly;
 
 /**
  * Draw GeoImplicitPoly on euclidian view
