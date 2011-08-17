@@ -5261,8 +5261,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		axisCross = evs.getAxesCross();
 		positiveAxes = evs.getPositiveAxes();
 		
-		// do last?
-		setCoordSystem(evs.getXZero(), evs.getYZero(), evs.getXscale(), evs.getYscale(), true);
+		if(evs.getXmaxObject()==null)
+			setCoordSystem(evs.getXZero(), evs.getYZero(), evs.getXscale(), evs.getYscale(), true);
+		else
+			updateBounds();
 		
 	}
 }
