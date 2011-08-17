@@ -674,7 +674,6 @@ public class MyXMLHandler implements DocHandler {
 	
 	private void startEuclidianViewElement(String eName, LinkedHashMap<String, String> attrs) {
 		boolean ok = true;
-		EuclidianView ev=null;
 		EuclidianSettings evSet=null;
 		
 		// must do this first
@@ -686,11 +685,9 @@ public class MyXMLHandler implements DocHandler {
 		}
 
 		if(viewNo==2){
-			ev=app.getEuclidianView2();
 			evSet = app.getSettings().getEuclidian(2);
 		}
 		else{
-			ev=app.getEuclidianView();
 			evSet = app.getSettings().getEuclidian(1);
 		}
 
@@ -725,7 +722,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case 'e':
 			if (eName.equals("evSettings")) {
-				ok = handleEvSettings(ev, attrs);
+				ok = handleEvSettings(evSet, attrs);
 				break;
 			}
 
@@ -745,7 +742,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case 's':
 			if (eName.equals("size")) {
-				ok = handleEvSize(ev, attrs);
+				ok = handleEvSize(evSet, attrs);
 				break;
 			}
 		case 'v':
@@ -942,7 +939,7 @@ public class MyXMLHandler implements DocHandler {
 	}
 	}
 
-	private boolean handleEvSettings(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private boolean handleEvSettings(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		try {
 			// axes attribute was removed with V3.0, see handleAxis()
 			// this code is for downward compatibility
@@ -1005,15 +1002,18 @@ public class MyXMLHandler implements DocHandler {
 			// size of checkbox
 			String strBooleanSize = (String) attrs.get("checkboxSize");
 			if (strBooleanSize != null)
-				ev.setBooleanSize(Integer.parseInt(strBooleanSize));
+				app.booleanSize = Integer.parseInt(strBooleanSize);
+				//ev.setBooleanSize(Integer.parseInt(strBooleanSize));
 
 			// v3.0: appearance of right angle
 			String strRightAngleStyle = (String) attrs.get("rightAngleStyle");
 			if (strRightAngleStyle == null)
 				// before v3.0 the default was a dot to show a right angle
-				ev.setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_DOT);
+				//ev.setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_DOT);
+				app.rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_DOT;
 			else
-				ev.setRightAngleStyle(Integer.parseInt(strRightAngleStyle));
+				//ev.setRightAngleStyle(Integer.parseInt(strRightAngleStyle));
+				app.rightAngleStyle = Integer.parseInt(strRightAngleStyle);
 
 			return true;
 		} catch (Exception e) {
@@ -1021,7 +1021,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleEvSize(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+	private boolean handleEvSize(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
 		// removed, needed to resize applet correctly
 		//if (app.isApplet())
 		//	return true;

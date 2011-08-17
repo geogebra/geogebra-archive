@@ -7,6 +7,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.Unicode;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 /**
  * Settings for an euclidian view. To which view these settings are associated
@@ -67,9 +68,7 @@ public class EuclidianSettings extends AbstractSettings {
 		setGridColor(Color.lightGray);
 		setBackground(Color.white);
 
-		//pointCapturingMode = EuclidianView.POINT_CAPTURING_AUTOMATIC;
-
-		//rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
+		pointCapturingMode = EuclidianView.POINT_CAPTURING_AUTOMATIC;
 			
 		showAxesNumbers[0] = true;
 		showAxesNumbers[1] = true;
@@ -250,6 +249,16 @@ public class EuclidianSettings extends AbstractSettings {
 	private double invXscale;
 
 	private double invYscale;
+
+	private Dimension preferredSize;
+
+	private boolean showGrid;
+
+	private boolean gridIsBold;
+
+	private int gridType;
+
+	private int pointCapturingMode;
 	
 	/*
 	 * change visibility of axes
@@ -526,8 +535,74 @@ public class EuclidianSettings extends AbstractSettings {
 			setAxisNumberingDistanceY(tickDist);
 		
 	}
-	
 
+	public void setPreferredSize(Dimension dimension) {
+		preferredSize = dimension;
+		
+	}
+
+	public Dimension getPreferredSize() {
+		return preferredSize;
+	}
+
+	public void setShowAxes(boolean x, boolean y) {
+		showAxes[0] = x;
+		showAxes[1] = y;
+		settingChanged();
+		
+	}
+
+	public void showGrid(boolean show) {
+		if (show == showGrid)
+			return;
+		showGrid = show;
+		settingChanged();
+	}
+
+	public boolean getShowGrid() {
+		return showGrid;
+	}
+
+	public boolean getGridIsBold() {
+		return gridIsBold;
+	}
 	
+	public void setGridIsBold(boolean gridIsBold ) {
+		if (this.gridIsBold == gridIsBold) return;
+		
+		this.gridIsBold=gridIsBold;
+		
+		settingChanged();
+	}
+
+	final public int getGridType() {
+		return gridType;
+	}
+
+	/**
+	 * Set grid type.
+	 */
+	public void setGridType(int type) {
+		if (gridType == type) return;
+		gridType = type;		
+		settingChanged();
+	}
+
+	/**
+	 * Returns point capturing mode.
+	 */
+	final public int getPointCapturingMode() {
+		return pointCapturingMode;
+	}
+
+	/**
+	 * Set capturing of points to the grid.
+	 */
+	public void setPointCapturing(int mode) {
+		if (pointCapturingMode == mode) return;
+		pointCapturingMode = mode;
+		settingChanged();
+	}
+
 	// TODO add more settings here
 }

@@ -338,7 +338,7 @@ public class DrawAngle extends Drawable implements Previewable {
 		double r = arcSize * view.invXscale;
 
 		// check whether we need to take care for a special 90 degree angle appearance
-		show90degrees = view.rightAngleStyle != EuclidianView.RIGHT_ANGLE_STYLE_NONE &&
+		show90degrees = view.getRightAngleStyle() != EuclidianView.RIGHT_ANGLE_STYLE_NONE &&
 						angle.isEmphasizeRightAngle() &&  
 						kernel.isEqual(angExt, Kernel.PI_HALF);
 		
@@ -352,7 +352,7 @@ public class DrawAngle extends Drawable implements Previewable {
 		
 		// SPECIAL case for 90 degree angle, by Loic and Markus
 		if (show90degrees) {						
-			switch (view.rightAngleStyle) {									
+			switch (view.getRightAngleStyle()) {									
 			case EuclidianView.RIGHT_ANGLE_STYLE_SQUARE:
 				// set 90 degrees square									
 				if (square == null) 
@@ -563,7 +563,7 @@ public class DrawAngle extends Drawable implements Previewable {
 
 	final public void draw(Graphics2D g2) {
 		if (isVisible) {
-			if (!show90degrees || view.rightAngleStyle != EuclidianView.RIGHT_ANGLE_STYLE_L) {
+			if (!show90degrees || view.getRightAngleStyle() != EuclidianView.RIGHT_ANGLE_STYLE_L) {
 					fill(g2, shape, false); // fill using default/hatching/image as appropriate
 	        	
 			}
@@ -582,7 +582,7 @@ public class DrawAngle extends Drawable implements Previewable {
 			
 			// special handling of 90 degree dot
 			if (show90degrees) {
-				switch (view.rightAngleStyle) {
+				switch (view.getRightAngleStyle()) {
 					case EuclidianView.RIGHT_ANGLE_STYLE_DOT:
 						g2.fill(dot90degree);
 						break;

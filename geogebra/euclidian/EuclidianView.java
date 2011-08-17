@@ -427,7 +427,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 
 	// added by Loic BEGIN
 	// right angle
-	int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
+	//int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 
 	// END
 	
@@ -642,7 +642,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
 
 		// added by Loic BEGIN
-		rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
+		app.rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 		// END
 			
 		showAxesNumbers[0] = true;
@@ -809,12 +809,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	 * @param style 
 	 */
 	public void setRightAngleStyle(int style) {
-		rightAngleStyle = style;
+		app.rightAngleStyle = style;
 		updateAllDrawables(true);
 	}
 
 	final public int getRightAngleStyle() {
-		return rightAngleStyle;
+		return app.rightAngleStyle;
 	}
 
 	// END
@@ -3934,7 +3934,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		sb.append("\" pointCapturing=\"");
 		sb.append(pointCapturingMode);
 		sb.append("\" rightAngleStyle=\"");
-		sb.append(rightAngleStyle);
+		sb.append(app.rightAngleStyle);
 		
 		sb.append("\" checkboxSize=\"");
 		sb.append(app.booleanSize); // Michael Borcherds 2008-05-12
@@ -5270,6 +5270,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		
 		axisCross = evs.getAxesCross();
 		positiveAxes = evs.getPositiveAxes();
+		
+		Dimension ps = evs.getPreferredSize();
+		if (ps != null) setPreferredSize(ps);
+		
+		showGrid(evs.getShowGrid());
+		
+		setGridIsBold(evs.getGridIsBold());
+		
+		setGridType(evs.getGridType());
+		
+		setPointCapturing(evs.getPointCapturingMode());
 		
 		if(evs.getXmaxObject()==null)
 			setCoordSystem(evs.getXZero(), evs.getYZero(), evs.getXscale(), evs.getYscale(), true);

@@ -403,7 +403,7 @@ public class Application implements KeyEventDispatcher {
 	public int MAX_LAYER_USED = 0;
 	public int pointStyle = EuclidianView.POINT_STYLE_DOT;
 	public int booleanSize=13;
-
+	public int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 
 	private boolean rightClickEnabled = true;
 	private boolean chooserPopupsEnabled = true;	
