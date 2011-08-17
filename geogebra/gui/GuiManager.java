@@ -2403,10 +2403,11 @@ public class GuiManager {
 		val = getAttributeValue(page, lowerCasedPage, "data-param-filename='");
 		val = val == null ? getAttributeValue(page, lowerCasedPage, "name='filename' value='") : val;
 		
-		if (val != null) {	// 'val' is the relative path to *.ggb file
-			String path = url.getPath();	// http://www.geogebra.org/mobile/test.html?test=true -> path would be '/mobile/test.html'
+		if (val != null) {		// 'val' is the relative path to *.ggb file
+			String path = url.getPath();		// http://www.geogebra.org/mobile/test.html?test=true -> path would be '/mobile/test.html'
 			int index = path.lastIndexOf('/');
-			path = index == -1 ? path : path.substring(0, index + 1);		
+			path = index == -1 ? path : path.substring(0, index + 1);		// Remove the 'test.html' part
+			path += val;													// Add filename
 			URL fileUrl = new URL(url.getProtocol(), url.getHost(), path);
 			
 			return app.loadXML(fileUrl, false);
