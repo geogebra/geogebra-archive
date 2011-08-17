@@ -153,7 +153,7 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 
 		parentOutput = algo.getIntersectionPoints();
 		
-		if (point!=null) {
+		if (point!=null && kernel.isContinuous()) {
 			int cpi = algo.getClosestPointIndex(point);
 			if (cpi != index)
 				algo.setIntersectionPoint(index, parentOutput[cpi]);
