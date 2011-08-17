@@ -2297,6 +2297,7 @@ public class GuiManager {
 	}
 	
 	public boolean loadURL(String urlString, boolean suppressErrorMsg) {
+		urlString = urlString.trim().toLowerCase();
 		
 		boolean success = false;
 		boolean isMacroFile =  false;
@@ -2332,6 +2333,9 @@ public class GuiManager {
 			} else {
 				try {
 					// try to load from GeoGebra applet
+					if (urlString.startsWith("www")) {
+						urlString = "http://" + urlString;	// Add protocol
+					}
 					URL url = new URL(urlString);
 					success = loadFromHtml(url);
 					
