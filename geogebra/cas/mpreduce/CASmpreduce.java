@@ -20,6 +20,7 @@ import org.mathpiper.mpreduce.Interpreter2;
 public class CASmpreduce extends CASgeneric {
 	
 	private final static String RB_GGB_TO_MPReduce = "/geogebra/cas/mpreduce/ggb2mpreduce";
+	private int significantNumbers=-1;
 	private Interpreter2 mpreduce;
 	private final CasParserTools parserTools;
 	
@@ -235,7 +236,8 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("load_package reset;");
 		mpreduce.evaluate("load_package randpoly;");
 		mpreduce.evaluate("load_package taylor;");
-		mpreduce.evaluate("load_package assist;");
+//      due to performance reasons this package is not loaded
+//		mpreduce.evaluate("load_package assist;");
 		mpreduce.evaluate("load_package groebner;");		
 		mpreduce.evaluate("load_package trigsimp;");		
 		
@@ -285,8 +287,6 @@ public class CASmpreduce extends CASgeneric {
 				"int(~a+~w*csc(~x),~x) => int(a,x)+w*log(abs(tan(x / 2))) when freeof(w,x)" +
 				"};"
 				);
-		
-		mpreduce.evaluate("let {cos(~w)^2 => 1-sin(w)^2}");
 		
 		mpreduce.evaluate("let {impart(arbint(~w)) => 0, arbint(~w)*i =>  0};");
 		mpreduce.evaluate("let {atan(sin(~x)/cos(~x))=>x};");
@@ -372,8 +372,10 @@ public class CASmpreduce extends CASgeneric {
 				" return log10(x) " +
 				"end;");
 		
-		mpreduce.evaluate("procedure flattenlist(a);" +
+		mpreduce.evaluate("procedure flattenlist a;" +
 				"if 1=for each elem!! in a product length(elem!!) then for each elem!! in a join elem!! else a;");
+		
+		mpreduce.evaluate("procedure depth a; if arglength(a)>0 and part(a,0)='list then 1+depth(part(a,1)) else 0;");
 		
 		mpreduce.evaluate("procedure mysolve(eqn, var);"
 				+ " begin scalar solutions!!, bool!!;"
@@ -717,6 +719,38 @@ public class CASmpreduce extends CASgeneric {
 				"      off rounded, roundall, numval;" +
 				"    part(divpol(a*b*a,b*a*b),1)>>" +
 				" end;");
+		
+		// to avoid using the package assist
+		mpreduce.evaluate("procedure mkset a;" +
+				" begin scalar result, bool;" +
+				"  result:=list();" +
+				"  for each elem in a do <<" +
+				"  bool:=1;" +
+				"  for each x in result do" +
+				"    if elem=x then bool:=0;" +
+				"  if bool=1 then" +
+				"    result:=elem . result;" +
+				"  >>;" +
+				"  return reverse(result)" +
+				" end;");
+		
+		mpreduce.evaluate("procedure shuffle a;" +
+				"begin scalar lengtha,s,tmp;" +
+				" lengtha:=length(a);" +
+				" if lengtha>1 then" +
+				"  for i:=lengtha step -1 until 1 do <<" +
+				"   s:=random(i)+1;" +
+				"   tmp:= part(a,i);" +
+				"   a:=(part(a,i):=part(a,s));" +
+				"   a:=(part(a,s):=tmp);" +
+				"  >>;" +
+				" return a " +
+				"end;");
+		
+		//TODO: write function
+		mpreduce.evaluate("procedure listofliststomat(a);" +
+				"a;");
+		
 	}
 
 	private String getVersionString() {
@@ -740,6 +774,9 @@ public class CASmpreduce extends CASgeneric {
 	 * @param significantNumbers
 	 */
 	public void setSignificantFiguresForNumeric(int significantNumbers) {
+		if (this.significantNumbers==significantNumbers)
+			return;
+		this.significantNumbers=significantNumbers;
 		try{
 			mpreduce.evaluate("printprecision!!:=" + significantNumbers);
 		} catch (Throwable th) {
