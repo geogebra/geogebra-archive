@@ -497,6 +497,9 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 		}
 	}
 
+	public int getViewID() {
+		return Application.VIEW_PLOT_PANEL;
+	}
 
 	
 

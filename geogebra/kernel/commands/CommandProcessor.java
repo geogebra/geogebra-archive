@@ -8717,10 +8717,10 @@ class CmdSetVisibleInView extends CommandProcessor {
 					boolean show = ((GeoBoolean)arg[2]).getBoolean();
 
 					if (show) {
-						geo.addView(ev);
+						geo.addView(ev.getViewID());
 						ev.add(geo);
 					} else {
-						geo.removeView(ev);
+						geo.removeView(ev.getViewID());
 						ev.remove(geo);
 					}
 					

@@ -541,4 +541,9 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 	public void setLabels() {
 		consoleTable.setLabels();
 	}
+
+
+	public int getViewID() {
+		return Application.VIEW_CAS;
+	}
 }

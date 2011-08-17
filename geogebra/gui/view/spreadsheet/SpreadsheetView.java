@@ -1498,6 +1498,9 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		return r;
 	}
 
+	public int getViewID() {
+		return Application.VIEW_SPREADSHEET;
+	}
 
 
 }

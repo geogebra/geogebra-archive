@@ -163,7 +163,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	
 	protected boolean isVisibleInThisView(GeoElement geo){
-		return geo.isVisibleInView(ev) ;
+		return geo.isVisibleInView(ev.getViewID()) ;
 	}
 	
 	

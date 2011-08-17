@@ -265,13 +265,13 @@ public class Application3D extends Application{
 	
 	public void addToEuclidianView(GeoElement geo){
 		super.addToEuclidianView(geo);
-		geo.addView(getEuclidianView3D());
+		geo.addView(Application.VIEW_EUCLIDIAN3D);
 		getEuclidianView3D().add(geo);
 	}
 
 	public void removeFromEuclidianView(GeoElement geo){
 		super.removeFromEuclidianView(geo);
-		geo.removeView(getEuclidianView3D());
+		geo.removeView(Application.VIEW_EUCLIDIAN3D);
 		getEuclidianView3D().remove(geo);
 	}	
 	

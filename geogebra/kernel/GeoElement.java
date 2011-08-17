@@ -535,6 +535,7 @@ public abstract class GeoElement
 	 */
 	public GeoElement(Construction c) {
 		super(c);
+		
 		// this.geoID = geoCounter++;
 		
 		// moved to subclasses, see
@@ -4193,16 +4194,13 @@ public abstract class GeoElement
 			if (app.useFullGui() && app.hasEuclidianView2()) {
 
 				int EVs = 0;
-				if (!isVisibleInView(app.getEuclidianView())) {
+				if (!isVisibleInView(Application.VIEW_EUCLIDIAN)) {
 					//Application.debug("visible in ev1");
 					EVs += 1; // bit 0
 				}
 
-				EuclidianView ev2 = app.getEuclidianView2();
-				if (ev2 != null) {
-					if (isVisibleInView(ev2)) {
-						EVs += 2; // bit 1
-					}
+				if (isVisibleInView(Application.VIEW_EUCLIDIAN2)) {
+					EVs += 2; // bit 1
 				}
 
 				if (EVs != 0) {
@@ -5514,21 +5512,21 @@ public abstract class GeoElement
 
 	HashSet<Object> viewSet = new HashSet<Object>();
 
-	public void addView(Object view){
+	public void addView(int view){
 		viewSet.add(view);
 	}
-	public void removeView(Object view){
+	public void removeView(int view){
 		viewSet.remove(view);
 	}
 
-	public boolean isVisibleInView(Object view){
+	public boolean isVisibleInView(int view){
 		// if no views are set, add geo to both  by default
 		if(viewSet.isEmpty()){
 			EuclidianViewInterface ev = app.getActiveEuclidianView();
-			viewSet.add(ev);
+			viewSet.add(ev.getViewID());
 			// if ev isn't Graphics or Graphics 2, then also add 1st 2D euclidian view
 			if (!(ev.isDefault2D()))
-				viewSet.add(app.getEuclidianView());
+				viewSet.add(Application.VIEW_EUCLIDIAN);
 
 		}
 		return viewSet.contains(view);
@@ -5539,7 +5537,7 @@ public abstract class GeoElement
 	 * @return true if visible in 3D view
 	 */
 	public boolean isVisibleInView3D(){
-		return hasDrawable3D() && (isGeoElement3D() || isVisibleInView(app.getEuclidianView()));
+		return hasDrawable3D() && (isGeoElement3D() || isVisibleInView(Application.VIEW_EUCLIDIAN));
 	}
 
 

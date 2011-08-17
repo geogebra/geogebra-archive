@@ -322,7 +322,7 @@ public class Application implements KeyEventDispatcher {
 	
 	private boolean hasGui = false;
 	
-	public static final int VIEW_ERROR = 0;
+	public static final int VIEW_NONE = 0;
 	public static final int VIEW_EUCLIDIAN = 1;
 	public static final int VIEW_ALGEBRA = 2;
 	public static final int VIEW_SPREADSHEET = 4;
@@ -330,8 +330,12 @@ public class Application implements KeyEventDispatcher {
 	public static final int VIEW_EUCLIDIAN2 = 16;
 	public static final int VIEW_CONSTRUCTION_PROTOCOL = 32;
 	public static final int VIEW_PROBABILITY_CALCULATOR = 64;
+	public static final int VIEW_FUNCTION_INSPECTOR = 128;
+	public static final int VIEW_INSPECTOR = 256;
     public static final int VIEW_EUCLIDIAN3D = 512;
     public static final int VIEW_EUCLIDIAN_FOR_PLANE = 1024;
+    public static final int VIEW_PLOT_PANEL = 2048;
+    public static final int VIEW_TEXT_PREVIEW = 4096;
 
 	/**
 	 * The preferred size of this application. Used in case the frame size should be updated.
@@ -5366,12 +5370,12 @@ public class Application implements KeyEventDispatcher {
 	
 	
 	public void addToEuclidianView(GeoElement geo){
-		geo.addView(getEuclidianView());
+		geo.addView(Application.VIEW_EUCLIDIAN);
 		getEuclidianView().add(geo);
 	}
 
 	public void removeFromEuclidianView(GeoElement geo){
-		geo.removeView(getEuclidianView());
+		geo.removeView(Application.VIEW_EUCLIDIAN);
 		getEuclidianView().remove(geo);
 	}
 

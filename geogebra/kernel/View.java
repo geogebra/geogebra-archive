@@ -25,4 +25,5 @@ public interface View {
 	public void reset(); 
 	public void clearView();
 	public void setMode(int mode);
+	public int getViewID();
 }

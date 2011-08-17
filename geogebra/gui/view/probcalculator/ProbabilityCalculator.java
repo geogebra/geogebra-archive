@@ -1396,9 +1396,9 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 	private void hideGeoFromViews(GeoElement geo){
 		// add the geo to our view and remove it from EV		
-		geo.addView(plotPanel);
+		geo.addView(plotPanel.getViewID());
 		plotPanel.add(geo);
-		geo.removeView(app.getEuclidianView());
+		geo.removeView(Application.VIEW_EUCLIDIAN);
 		app.getEuclidianView().remove(geo);
 	}
 
@@ -1919,8 +1919,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			for(GeoElement geo: newGeoList){
 				geo.setAuxiliaryObject(false);
 				if(evNo == 2){
-					geo.addView(app.getEuclidianView2());
-					geo.removeView(app.getEuclidianView());
+					geo.addView(Application.VIEW_EUCLIDIAN2);
+					geo.removeView(Application.VIEW_EUCLIDIAN);
 					geo.update();
 				}
 			}
@@ -1946,6 +1946,9 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		app.setDefaultCursor();
 	}
 
+	public int getViewID() {
+		return Application.VIEW_PROBABILITY_CALCULATOR;
+	}
 
 
 

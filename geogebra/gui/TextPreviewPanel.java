@@ -15,6 +15,7 @@ import geogebra.kernel.arithmetic.TextValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.TokenMgrError;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.Color;
@@ -126,7 +127,7 @@ public class TextPreviewPanel extends EuclidianView {
 		if (previewGeoIndependent == null){
 			previewGeoIndependent = new GeoText(kernel.getConstruction());
 			previewGeoIndependent.setFontSize(0);
-			previewGeoIndependent.addView(this);
+			previewGeoIndependent.addView(this.getViewID());
 			add(previewGeoIndependent);
 		}
 
@@ -218,7 +219,7 @@ public class TextPreviewPanel extends EuclidianView {
 			textAlgo = new AlgoDependentText(cons, (ExpressionNode) exp);
 			cons.removeFromConstructionList(textAlgo);
 			previewGeoDependent = textAlgo.getGeoText();
-			previewGeoDependent.addView(this);
+			previewGeoDependent.addView(this.getViewID());
 			add(previewGeoDependent);
 
 			// set the display style
@@ -412,6 +413,9 @@ public class TextPreviewPanel extends EuclidianView {
 		return inputValue;
 	}
 
+	public int getViewID() {
+		return Application.VIEW_TEXT_PREVIEW;
+	}
 
 
 

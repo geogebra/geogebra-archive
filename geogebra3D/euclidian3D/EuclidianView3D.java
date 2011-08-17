@@ -3595,6 +3595,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		// TODO Auto-generated method stub
 		return false;
 	}
+	public int getViewID() {
+		return Application.VIEW_EUCLIDIAN3D;
+	}
 	
 	
 }

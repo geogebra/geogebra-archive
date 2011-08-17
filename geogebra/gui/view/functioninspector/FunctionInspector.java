@@ -1625,6 +1625,9 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		geo.update();
 	}
 
+	public int getViewID() {
+		return Application.VIEW_FUNCTION_INSPECTOR;
+	}
 
 }
 

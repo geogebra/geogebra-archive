@@ -596,12 +596,12 @@ public class CopyPaste {
 				if (app.getActiveEuclidianView() == app.getEuclidianView()) {
 					app.addToEuclidianView(geo);
 					if (app.hasEuclidianView2()) {
-						geo.removeView(app.getEuclidianView2());
+						geo.removeView(Application.VIEW_EUCLIDIAN2);
 						app.getEuclidianView2().remove(geo);
 					}
 				} else {
 					app.removeFromEuclidianView(geo);
-					geo.addView(app.getEuclidianView2());
+					geo.addView(Application.VIEW_EUCLIDIAN2);
 					app.getEuclidianView2().add(geo);
 				}
 

@@ -884,6 +884,10 @@ public class PropertiesDialog
 		public void mouseReleased(MouseEvent arg0) {
 		}
 
+		public int getViewID() {
+			return Application.VIEW_NONE;
+		}
+
 	} // JTreeGeoElements
 
 

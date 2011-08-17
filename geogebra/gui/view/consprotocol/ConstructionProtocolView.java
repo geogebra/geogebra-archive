@@ -1547,6 +1547,10 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
         		kernel.notifyRepaint();     		
         	}
         }
+
+		public int getViewID() {
+			return Application.VIEW_CONSTRUCTION_PROTOCOL;
+		}
 	}
 
 	/************

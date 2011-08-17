@@ -869,6 +869,10 @@ public class AlgebraView extends JTree implements View, Printable{
 		int r=(pageIndex==0)? 0:1;
 		return r;
 	}
+
+	public int getViewID() {
+		return Application.VIEW_ALGEBRA;
+	}
 	
 	/**
 	 * returns settings in XML format

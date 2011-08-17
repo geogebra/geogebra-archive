@@ -822,4 +822,8 @@ SpecialNumberFormatInterface {
 
 	}
 
+	public int getViewID() {
+		return Application.VIEW_NONE;
+	}
+
 }

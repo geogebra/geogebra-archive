@@ -30,7 +30,7 @@ public class ErrorDockPanel extends DockPanel {
 	 */
 	public ErrorDockPanel(Application app, int viewId) {
 		super(
-			Application.VIEW_ERROR,	// view id 
+			Application.VIEW_NONE,	// view id 
 			"ErrorWindow (viewId="+viewId+")", 			// view title phrase
 			null,						// toolbar string
 			false,						// style bar?

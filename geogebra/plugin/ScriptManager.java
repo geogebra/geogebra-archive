@@ -534,7 +534,11 @@ public class ScriptManager {
     	public void repaintView() {
     		// no repaint should occur here: views that are
     		// part of the applet do this on their own    		
-    	}    	    	
+    	}
+
+		public int getViewID() {
+			return Application.VIEW_NONE;
+		}
 	}
 		
 	public synchronized void initJavaScriptView() {

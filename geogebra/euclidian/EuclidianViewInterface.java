@@ -420,4 +420,5 @@ public interface EuclidianViewInterface {
 	 * @return true if the axes ratio is 1
 	 */
 	public boolean isUnitAxesRatio();
+	public int getViewID();
 }

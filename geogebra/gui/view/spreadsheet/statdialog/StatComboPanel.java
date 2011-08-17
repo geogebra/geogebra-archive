@@ -856,9 +856,9 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		if(doCreate){
 			for(GeoElement listGeo:plotGeoList){
 				// add the geo to our view and remove it from EV		
-				listGeo.addView(plotPanel);
+				listGeo.addView(plotPanel.getViewID());
 				plotPanel.add(listGeo);
-				listGeo.removeView(app.getEuclidianView());
+				listGeo.removeView(Application.VIEW_EUCLIDIAN);
 				app.getEuclidianView().remove(listGeo);
 			}
 		}

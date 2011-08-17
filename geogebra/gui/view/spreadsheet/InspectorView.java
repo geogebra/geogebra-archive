@@ -1044,6 +1044,12 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 	}
 
 
+
+	public int getViewID() {
+		return Application.VIEW_INSPECTOR;
+	}
+
+
 }
 
 

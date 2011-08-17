@@ -3512,7 +3512,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	}
 	
 	public boolean isVisibleInThisView(GeoElement geo){
-		return geo.isVisibleInView(this);
+		return geo.isVisibleInView(this.getViewID());
 	}
 
 	
@@ -5287,5 +5287,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		else
 			updateBounds();
 		
+	}
+	public int getViewID() {
+		switch (evNo) {
+		case 1: return Application.VIEW_EUCLIDIAN;
+		case 2: return Application.VIEW_EUCLIDIAN2;
+		default: return Application.VIEW_NONE;
+		}
 	}
 }

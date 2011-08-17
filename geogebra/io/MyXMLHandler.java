@@ -2669,17 +2669,17 @@ public class MyXMLHandler implements DocHandler {
 			  EVs = Integer.parseInt(str);
 			
 			if ((EVs & 1) == 0) // bit 0
-				geo.addView(app.getEuclidianView());
+				geo.addView(Application.VIEW_EUCLIDIAN);
 			else
-				geo.removeView(app.getEuclidianView());
+				geo.removeView(Application.VIEW_EUCLIDIAN);
 			
 			// will create EV2 if it's there, so care needed
 			if ((EVs & 2) == 2) { // bit 1
-				geo.addView(app.getEuclidianView2());		
+				geo.addView(Application.VIEW_EUCLIDIAN2);		
 			} else { 				
 				// don't want to create EV2 unnecessarily
 				if (app.hasEuclidianView2())
-						geo.removeView(app.getEuclidianView2());
+						geo.removeView(Application.VIEW_EUCLIDIAN);
 			}
 			return true;
 			
