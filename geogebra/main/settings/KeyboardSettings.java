@@ -16,22 +16,22 @@ public class KeyboardSettings extends AbstractSettings {
 	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
 	static {
 		supportedLocales.add(new Locale("ar")); // Arabic
-		supportedLocales.add(new Locale("cs")); // Czech
-		supportedLocales.add(new Locale("de")); // German
-		supportedLocales.add(new Locale("el")); // Greek
-		supportedLocales.add(new Locale("en", "GB")); // English (UK)
-		supportedLocales.add(new Locale("es")); // Spanish
-		supportedLocales.add(new Locale("fa")); // Persian
-		supportedLocales.add(new Locale("fr")); // French
-		supportedLocales.add(new Locale("hi")); // Hindi
 		supportedLocales.add(new Locale("hr")); // Croatian
-		supportedLocales.add(new Locale("hu")); // Hungarian
+		supportedLocales.add(new Locale("cs")); // Czech
+		supportedLocales.add(new Locale("en", "GB")); // English (UK)
+		supportedLocales.add(new Locale("fr")); // French
+		supportedLocales.add(new Locale("de")); // German
+		supportedLocales.add(new Locale("el")); // Greek	
 		supportedLocales.add(new Locale("iw")); // Hebrew
+		supportedLocales.add(new Locale("hi")); // Hindi		
+		supportedLocales.add(new Locale("hu")); // Hungarian		
 		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("ml")); // Malayalam
 		supportedLocales.add(new Locale("no")); // Norwegian
-		supportedLocales.add(new Locale("sk")); // Slovakian
-		supportedLocales.add(new Locale("ru")); // Slovakian
+		supportedLocales.add(new Locale("fa")); // Persian
+		supportedLocales.add(new Locale("ru")); // Russian
+		supportedLocales.add(new Locale("sk")); // Slovak
+		supportedLocales.add(new Locale("es")); // Spanish
 	}
 
 	private float keyboardOpacity = 0.7f;
