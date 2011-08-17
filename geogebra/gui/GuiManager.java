@@ -2314,36 +2314,34 @@ public class GuiManager {
 				e.printStackTrace();
 			}
 			
+		// special case: urlString is actually a base64 encoded ggb file
+		} else if (urlString.startsWith("UEs")) {
+			// decode Base64
+			byte[] zipFile;
+			try {
+				zipFile = geogebra.util.Base64.decode(urlString);
+				// load file
+				success = app.loadXML(zipFile);   
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
+		// special case: urlString is actually a GeoGebra XML file
+		} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
+			success = app.loadXML(urlString);   	
+		// 'standard' case: url with GeoGebra applet (Java or HTML5)
 		} else {
-			// special case: urlString is actually a base64 encoded ggb file
-			if (urlString.startsWith("UEs")) {
-				// decode Base64
-				byte[] zipFile;
-				try {
-					zipFile = geogebra.util.Base64.decode(urlString);
-					// load file
-					success = app.loadXML(zipFile);   
-				} catch (IOException e) {
-					e.printStackTrace();
-				}			
-			// special case: urlString is actually a GeoGebra XML file
-			} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
-				success = app.loadXML(urlString);   	
-			// 'standard' case: url with GeoGebra applet (Java or HTML5)
-			} else {
-				try {
-					// try to load from GeoGebra applet
-					URL url = getEscapedUrl(urlString);
-					success = loadFromHtml(url);
-					
-					// fallback: maybe some address like download.php?file=1234, e.g. the forum
-					if (! success) {
-						isMacroFile = urlString.contains(".ggt");
-						success = app.loadXML(url, isMacroFile);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+			try {
+				// try to load from GeoGebra applet
+				URL url = getEscapedUrl(urlString);
+				success = loadFromHtml(url);
+				
+				// fallback: maybe some address like download.php?file=1234, e.g. the forum
+				if (! success) {
+					isMacroFile = urlString.contains(".ggt");
+					success = app.loadXML(url, isMacroFile);
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		
