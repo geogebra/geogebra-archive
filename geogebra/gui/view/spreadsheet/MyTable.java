@@ -1586,27 +1586,32 @@ public class MyTable extends JTable implements FocusListener
 
 
 
-	//G.STURR 2010-1-15
 	// Keep row heights of table and rowHeader in sync
 	@Override
 	public void setRowHeight(int row, int rowHeight) {
-		super.setRowHeight(row, rowHeight);
-		try {
-			view.updateRowHeader();
-			if(doRecordRowHeights)
-				adjustedRowHeights.add(new Point(row, rowHeight));
-		} catch (Exception e) {
-		}
-		view.updateRowHeightSetting(row, rowHeight);
+		super.setRowHeight(row, rowHeight);	
+			try {
+				if(view != null){
+					view.updateRowHeader();
+					if(doRecordRowHeights)
+						adjustedRowHeights.add(new Point(row, rowHeight));
+					view.updateRowHeightSetting(row, rowHeight);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 
 	@Override
 	public void setRowHeight(int rowHeight) {
 		super.setRowHeight(rowHeight);
 		try {
-			view.updateRowHeader();
-			view.updatePreferredRowHeight(rowHeight);
+			if(view != null){
+				view.updateRowHeader();
+				view.updatePreferredRowHeight(rowHeight);
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}

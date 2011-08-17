@@ -947,7 +947,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 
 	public void updateRowHeader() {
-		rowHeader.updateRowHeader();
+		if(rowHeader != null)
+			rowHeader.updateRowHeader();
 	}
 
 
