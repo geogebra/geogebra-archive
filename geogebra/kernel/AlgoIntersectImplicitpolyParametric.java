@@ -39,6 +39,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 	private GeoImplicitPoly p;
 	private GeoLine l;
 	private GeoFunction f;
+	private GeoPoint[] tangentPoints;
 
 	public AlgoIntersectImplicitpolyParametric(Construction c,GeoImplicitPoly p,GeoLine l) {
 		this(c,null,false,p,l);
@@ -133,6 +134,7 @@ public class AlgoIntersectImplicitpolyParametric extends
 			minT = f.getMinParameter();
 		}else if (l!=null){
 			if (!l.isDefined()){
+				points.adjustOutputSize(0);
 				return;
 			}
 			//get parametrisation of line
@@ -142,6 +144,10 @@ public class AlgoIntersectImplicitpolyParametric extends
 			ty=new PolynomialFunction(new double[]{startP[1],-l.getX()}); //y=p2+t*r2
 			maxT = l.getMaxParameter();
 			minT = l.getMinParameter();
+			
+			if (l.getParentAlgorithm() instanceof AlgoTangentImplicitpoly) {
+				tangentPoints = ((AlgoTangentImplicitpoly)l.getParentAlgorithm()).getTangentPoints();
+			}
 		}else{
 			return;
 		}
@@ -162,9 +168,73 @@ public class AlgoIntersectImplicitpolyParametric extends
 			}
 		
 		setRootsPolynomialWithinRange(sum,minT,maxT);
-		
+		mergeWithTangentPoints();
 	}
 	
+	private void mergeWithTangentPoints() {
+		
+		if (tangentPoints == null
+				|| tangentPoints.length == 0)
+			return;
+		
+		
+		
+		//assumption: tangent points are far apart from each other such that dist(tangent1,tangent2) > epsilon.
+		boolean addTangent[] = new boolean[tangentPoints.length];
+		int orgSize = points.size();
+		while (!points.getElement(orgSize-1).isDefined())
+			--orgSize;
+		
+		int newSize = orgSize;
+		double EPS2 = Kernel.EPSILON;  //TODO: have a better guess of the error
+		
+		for (int i = 0; i<tangentPoints.length; ++i) {
+			if (tangentPoints[i].getIncidenceList()!=null
+					&& tangentPoints[i].getIncidenceList().contains(l)) {
+				addTangent[i] = true;
+				for (int j = 0; j<orgSize; ++j) {
+					if (points.getElement(j).distanceSqr(tangentPoints[i])<EPS2) {
+						if (addTangent[i]) {
+							points.getElement(j).setUndefined();
+							--newSize;
+						} else {
+							addTangent[i] = false;
+							points.getElement(i).setCoords(tangentPoints[j]);
+						}
+						
+					}
+				}
+				if (addTangent[i])
+					++newSize;
+				
+			} else {
+				addTangent[i] = false;
+			}
+		}
+		
+		
+		int definedCount = 0;
+		for (int i=0; i<orgSize; ++i) {
+			if (points.getElement(i).isDefined()) {
+				if (definedCount!=i)
+					points.getElement(definedCount).setCoords(points.getElement(i));
+				++definedCount;
+			}
+		}
+		
+		points.adjustOutputSize(newSize);
+		
+		for (int i=0; i<tangentPoints.length; ++i) {
+			if (addTangent[i]) {
+				points.getElement(definedCount++).setCoords(tangentPoints[i]);
+			}
+		}
+		
+		if (setLabels)
+			points.updateLabels();
+		
+	}
+
 	public String getClassName() {
         return "AlgoIntersectImplicitpolyParametric";
     }
@@ -173,5 +243,6 @@ public class AlgoIntersectImplicitpolyParametric extends
     	return EuclidianConstants.MODE_INTERSECT;
     }
     
+	
 	
 }

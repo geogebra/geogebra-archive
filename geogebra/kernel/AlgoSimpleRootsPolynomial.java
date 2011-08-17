@@ -31,7 +31,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	protected boolean setLabels;
     protected EquationSolver eqnSolver;
     protected GeoElement[] geos;
-    private OutputHandler<GeoPoint> points;
+    protected OutputHandler<GeoPoint> points;
 	
 	public AlgoSimpleRootsPolynomial(Construction c) {
 		super(c);
@@ -39,7 +39,8 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 		points=new OutputHandler<GeoPoint>(new elementFactory<GeoPoint>() {
 					public GeoPoint newElement() {
 						GeoPoint p=new GeoPoint(cons);
-						p.setCoords(0, 0, 1);
+						//p.setCoords(0, 0, 1);
+						p.setUndefined();
 						p.setParentAlgorithm(AlgoSimpleRootsPolynomial.this);
 						return p;
 					}

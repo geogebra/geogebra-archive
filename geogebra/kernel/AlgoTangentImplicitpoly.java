@@ -24,6 +24,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 	private GeoPoint R;
 	private GeoLine g;
 	
+	private GeoPoint[] ip; //tangent points.
 	private OutputHandler<GeoLine> tangents;
 	
 	private String[] labels;
@@ -130,6 +131,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 		algo.compute();
 		algo.remove();
 		GeoPoint[] ip = algo.getIntersectionPoints();
+		this.ip=ip;
 		
 		int n=0;
 		for(int i=0; i<ip.length; i++)
@@ -140,6 +142,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 			tangents.adjustOutputSize(tangents.size() + 1);
 			tangents.getElement(n).setCoords(ip[i].getY() - this.R.getY(), this.R.getX() - ip[i].getX(), 
 				ip[i].getX() * this.R.getY() - this.R.getX() * ip[i].getY());
+			ip[i].addIncidence(tangents.getElement(n));
 			n++;
 		}
 		
@@ -174,4 +177,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
         update();
     }
 
+	public GeoPoint[] getTangentPoints() {
+		return ip;
+	}
 }
