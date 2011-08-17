@@ -46,7 +46,7 @@ public class Variable extends ValidExpression implements ExpressionValue {
 		return new Variable(kernel, name);
 	}
     
-    public String getName() { return name; }
+    public String getName() { return toString(); }
     
     public boolean isConstant() {
         return false;
@@ -132,9 +132,9 @@ public class Variable extends ValidExpression implements ExpressionValue {
     public void resolveVariables() {
     	// this has to be handled in ExpressionNode
     }
-    
+
     public String toString() {
-        return name;
+		return kernel.printVariableName(name);
     }
     
 	public String toValueString() {
