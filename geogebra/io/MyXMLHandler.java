@@ -240,6 +240,9 @@ public class MyXMLHandler implements DocHandler {
 	//indicate the view no currently parsing
 	private int viewNo=0;
 
+	// flag so that we can reset EVSettings the first time we get them (for EV1 and EV2)
+	private boolean resetEVsettingsNeeded = false;
+
 	
 
 	/** Creates a new instance of MyXMLHandler 
@@ -576,6 +579,7 @@ public class MyXMLHandler implements DocHandler {
 	private void startGeoGebraElement(String eName, LinkedHashMap<String, String> attrs) {
 		if (eName.equals("euclidianView")) {
 			mode = MODE_EUCLIDIAN_VIEW;
+			resetEVsettingsNeeded  = true;
 		}else if (eName.equals("euclidianView3D")) {
 			mode = MODE_EUCLIDIAN_VIEW3D;
 		}else if (eName.equals("algebraView")) {
@@ -672,6 +676,15 @@ public class MyXMLHandler implements DocHandler {
 		boolean ok = true;
 		EuclidianView ev=null;
 		EuclidianSettings evSet=null;
+		
+		// must do this first
+		if(eName.equals("viewNumber")){
+			int number = Integer.parseInt((String) attrs.get("viewNo"));
+			if(number==2){
+				viewNo=number;
+			}
+		}
+
 		if(viewNo==2){
 			ev=app.getEuclidianView2();
 			evSet = app.getSettings().getEuclidian(2);
@@ -679,6 +692,13 @@ public class MyXMLHandler implements DocHandler {
 		else{
 			ev=app.getEuclidianView();
 			evSet = app.getSettings().getEuclidian(1);
+		}
+
+		// make sure eg is reset the first time (for each EV) we get the settings
+		// "viewNumber" not stored for EV1 so we need to do this here
+		if (resetEVsettingsNeeded) {
+			resetEVsettingsNeeded = false;
+			evSet.reset();
 		}
 		
 		switch (eName.charAt(0)) {
@@ -730,10 +750,12 @@ public class MyXMLHandler implements DocHandler {
 			}
 		case 'v':
 			if(eName.equals("viewNumber")){
+				/* moved earlier, must check first
 				int number = Integer.parseInt((String) attrs.get("viewNo"));
 				if(number==2){
 					viewNo=number;
-				}
+				}*/
+				ok = true;
 				break;
 			}
 

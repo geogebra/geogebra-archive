@@ -4685,8 +4685,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	 * @param axis 0 for xAxis, 1 for yAxis
 	 */
 	public void setAxesNumberingDistance(double dist, int axis) {
-		axesNumberingDistances[axis] = dist;
-		setAutomaticAxesNumberingDistance(false, axis);
+		if (!Double.isNaN(dist)) {
+			axesNumberingDistances[axis] = dist;
+			setAutomaticAxesNumberingDistance(false, axis);
+		} else {
+			setAutomaticAxesNumberingDistance(true, axis);			
+		}
 	}
 
 	public Color getBackground() {
@@ -5244,17 +5248,23 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		setGridColor(evs.getGridColor());
 		setAxesLineStyle(evs.getAxesLineStyle());
 		setGridLineStyle(evs.getGridLineStyle());
-		setGridDistances(evs.getGridDistances());
+		
+		double[] d = evs.getGridDistances();
+		if (d != null)
+			setGridDistances(d);
+		else
+			setAutomaticGridDistance(true);
+		
 		setShowAxis(0, evs.getShowAxis(0), false);
 		setShowAxis(1, evs.getShowAxis(1), false);
 		axesLabels = evs.getAxesLabels();
 		setAxesUnitLabels(evs.getAxesUnitLabels());
 		
 		showAxesNumbers = evs.getShowAxisNumbers();
-		
-		double[] temp2 = evs.getAxesNumberingDistances();
-		setAxesNumberingDistance(temp2[0], 0);
-		setAxesNumberingDistance(temp2[1], 1);
+
+		// might be Double.NaN, handled in setAxesNumberingDistance()
+		setAxesNumberingDistance(evs.getAxisNumberingDistanceX(), 0);
+		setAxesNumberingDistance(evs.getAxisNumberingDistanceY(), 1);
 		
 		axesTickStyles = evs.getAxesTickStyles();
 		

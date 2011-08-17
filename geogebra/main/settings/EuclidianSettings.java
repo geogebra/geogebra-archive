@@ -41,12 +41,26 @@ public class EuclidianSettings extends AbstractSettings {
 	/**
 	 * Various distances between lines of the grid.
 	 */
-	double[] gridDistances = { 2, 2, Math.PI/6 };
+	double[] gridDistances = null;//{ 2, 2, Math.PI/6 };
 	
 	private double[] axisCross = {0,0};
 	private boolean[] positiveAxes = {false, false};
 	private boolean[] drawBorderAxes = {false,false};
 	NumberValue xminObject, xmaxObject, yminObject, ymaxObject;
+	
+
+	/* 
+	 * some settings are not stored in XML, eg
+	 * 	eg automaticGridDistance
+	 * so we need to clear these parameters
+	 * to make sure the others are set OK
+	 * see EuclidianView.settingsChanged()
+	 */
+	public void reset() {
+		gridDistances = null;
+		axisNumberingDistanceX = Double.NaN;
+		axisNumberingDistanceY = Double.NaN;
+	}
 	
 	/**
 	 * Change background color.
@@ -188,7 +202,8 @@ public class EuclidianSettings extends AbstractSettings {
 	// for axes labeling with numbers
 	protected boolean[] automaticAxesNumberingDistances = { true, true, true };
 
-	protected double[] axesNumberingDistances = { 2, 2, 2 };
+	protected double axisNumberingDistanceX = Double.NaN;
+	protected double axisNumberingDistanceY = Double.NaN;
 
 	// distances between grid lines
 	protected boolean automaticGridDistance = true;
@@ -281,20 +296,38 @@ public class EuclidianSettings extends AbstractSettings {
 		return showAxesNumbers;
 	}
 
-	public double[] getAxesNumberingDistances() {
-		return axesNumberingDistances;
+	public double getAxisNumberingDistanceX() {
+		return axisNumberingDistanceX;
+	}
+
+	public double getAxisNumberingDistanceY() {
+		return axisNumberingDistanceY;
 	}
 
 	/**
 	 * 
 	 * @param dist
-	 * @param axis 0 for xAxis, 1 for yAxis
 	 */
-	public void setAxesNumberingDistance(double dist, int axis) {
+	public void setAxisNumberingDistanceX(double dist) {
 		
-		axesNumberingDistances[axis] = dist;
+	
+		axisNumberingDistanceX = dist;
 		
-		setAutomaticAxesNumberingDistance(false, axis);
+		setAutomaticAxesNumberingDistance(false, 0);
+		
+		settingChanged();
+	}
+
+	/**
+	 * 
+	 * @param dist
+	 */
+	public void setAxisNumberingDistanceY(double dist) {
+		
+	
+		axisNumberingDistanceY = dist;
+		
+		setAutomaticAxesNumberingDistance(false, 1);
 		
 		settingChanged();
 	}
@@ -454,6 +487,14 @@ public class EuclidianSettings extends AbstractSettings {
 		// real world values
 		// not needed in Settings
 		//setRealWorldBounds();
+		
+	}
+
+	public void setAxesNumberingDistance(double tickDist, int axis) {
+		if (axis == 0) 
+			setAxisNumberingDistanceX(tickDist);
+		else
+			setAxisNumberingDistanceY(tickDist);
 		
 	}
 	
