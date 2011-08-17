@@ -2317,10 +2317,9 @@ public class GuiManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 			
-		} else
-		// special case: urlString is actually a base64 encoded ggb file
+		} else {
+			// special case: urlString is actually a base64 encoded ggb file
 			if (urlString.startsWith("UEs")) {
 				// decode Base64
 				byte[] zipFile;
@@ -2334,29 +2333,29 @@ public class GuiManager {
 				// special case: urlString is actually a GeoGebra XML file
 			} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
 				success = app.loadXML(urlString);   		
-			} else {	
-			
-			try {
-				
-				// try base64
-				URL url = new URL(urlString);
-				success = loadBase64fromHTML(url.openStream());
-				
-				// try ggb
-				if (success == false) 
-					success = loadGgbFromHTML(url.openStream(), urlString);
-				//maybe some address like download.php?file=1234, e.g. the forum
-				if (success == false){
-					try {
-						URL urlg = new URL(urlString);
-						isMacroFile = urlString.contains(".ggt");
-						success = app.loadXML(urlg, isMacroFile);
-					} catch (IOException e) {
-						e.printStackTrace();
+			} else {
+				try {
+					
+					// try base64
+					URL url = new URL(urlString);
+					success = loadBase64fromHTML(url.openStream());
+					
+					// try ggb
+					if (success == false) 
+						success = loadGgbFromHTML(url.openStream(), urlString);
+					//maybe some address like download.php?file=1234, e.g. the forum
+					if (success == false){
+						try {
+							URL urlg = new URL(urlString);
+							isMacroFile = urlString.contains(".ggt");
+							success = app.loadXML(urlg, isMacroFile);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		
