@@ -742,10 +742,10 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		{	
 			plotSettings.pointCaptureStyle = EuclidianView.POINT_CAPTURING_OFF;
 			plotSettings.xAxesIntervalAuto = true;
-			plotPanel.setPlotSettings(plotSettings);
+			plotPanel.updateSettings(plotSettings);
 		}	
 
-		plotPanel.setPlotSettings(plotSettings);
+		plotPanel.updateSettings(plotSettings);
 
 	}
 

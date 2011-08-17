@@ -122,7 +122,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		String tabTitle = StatComboPanel.plotMap.get(plotType);
 		tabbedPane.insertTab(tabTitle, null, new JScrollPane(mainPanel),null, 0);
 		tabbedPane.addTab(app.getMenu("Graph"), new JScrollPane(graphPanel));
-		showYSettings = false;
+		showYSettings = true;
 		
 		switch(plotType){
 		
@@ -536,11 +536,11 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 				firePropertyChange("settings", true, false);
 			}
 			else if(source == fldXInterval){
-				settings.xInterval = value;
+				settings.xAxesInterval = value;
 				firePropertyChange("settings", true, false);
 			}
 			else if(source == fldYInterval){
-				settings.yInterval = value;
+				settings.yAxesInterval = value;
 				firePropertyChange("settings", true, false);
 			}
 						

@@ -101,8 +101,8 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 	public void updateFonts(Font font){
 		statTable.updateFonts(font);
 		statTable.getTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		statTable.autoFitColumnWidth(0, 30);
-		statTable.autoFitColumnWidth(1, 30);
+		statTable.autoFitColumnWidth(0, 3);
+		statTable.autoFitColumnWidth(1, 3);
 		statTable.getTable().setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
 		int w = statTable.getTable().getColumnModel().getTotalColumnWidth();

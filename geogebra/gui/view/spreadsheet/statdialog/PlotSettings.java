@@ -27,11 +27,24 @@ public class PlotSettings {
 	
 	public boolean showGrid = false;
 	
+	/**
+	 * Default constructor
+	 */
 	public PlotSettings(){
 		
 	}
 	
-	
+	/**
+	 * Partial default constructor
+	 * @param xMinEV
+	 * @param xMaxEV
+	 * @param yMinEV
+	 * @param yMaxEV
+	 * @param showYAxis
+	 * @param showArrows
+	 * @param forceXAxisBuffer
+	 * @param isEdgeAxis
+	 */
 	public PlotSettings(double xMinEV, double xMaxEV, double yMinEV,
 			double yMaxEV, boolean showYAxis, boolean showArrows,
 			boolean forceXAxisBuffer, boolean[] isEdgeAxis) {

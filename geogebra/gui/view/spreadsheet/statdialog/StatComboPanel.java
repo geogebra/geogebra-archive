@@ -424,7 +424,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	 * Updates the plot panel. Adds/removes additional panels as needed for the
 	 * current selected plot.
 	 */
-	private void updatePlotPanel(){
+	private void updatePlotPanelLayout(){
 
 		metaPlotPanel.removeAll();
 		plotPanelSouth.removeAll();
@@ -674,7 +674,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			clearPlotGeoList();
 
 		optionsButton.setVisible(true);
-		updatePlotPanel();
+		updatePlotPanelLayout();
 
 		switch(selectedPlot){
 
@@ -700,7 +700,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 			AlgoHistogram algo = (AlgoHistogram) histogram.getParentAlgorithm();
 			frequencyTable.setTable(algo.getLeftBorder(), algo.getYValue(), settings);
-			plotPanel.setPlotSettings(statGeo.getHistogramSettings( dataListSelected, histogram, settings));
+			statGeo.getHistogramSettings( dataListSelected, histogram, settings);
+			plotPanel.updateSettings(settings);
 
 			if(hasControlPanel)
 				if(settings.useManualClasses)
@@ -715,7 +716,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		case PLOT_BOXPLOT:
 			if(doCreate)
 				plotGeoList.add(statGeo.createBoxPlot( dataListSelected));
-			plotPanel.setPlotSettings(statGeo.getBoxPlotSettings( dataListSelected));
+			statGeo.getBoxPlotSettings( dataListSelected, settings);
+			plotPanel.updateSettings(settings);
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
@@ -726,7 +728,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				dotPlot = statGeo.createDotPlot( dataListSelected);
 				plotGeoList.add(dotPlot);
 			}
-			plotPanel.setPlotSettings(statGeo.updateDotPlot(dataListSelected, dotPlot));
+			statGeo.updateDotPlot(dataListSelected, dotPlot, settings);
+			plotPanel.updateSettings(settings);
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
@@ -745,7 +748,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			if(doCreate){
 				plotGeoList.add(statGeo.createNormalQuantilePlot( dataListSelected));
 			}
-			plotPanel.setPlotSettings(statGeo.updateNormalQuantilePlot(dataListSelected));
+			statGeo.updateNormalQuantilePlot(dataListSelected, settings);
+			plotPanel.updateSettings(settings);
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
@@ -767,7 +771,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		case PLOT_SCATTERPLOT:
 			if(doCreate)
 				plotGeoList.add(statGeo.createScatterPlot(dataListSelected));
-			plotPanel.setPlotSettings(statGeo.getScatterPlotSettings(dataListSelected, settings));
+			statGeo.getScatterPlotSettings(dataListSelected, settings);
+			plotPanel.updateSettings(settings);
 
 			fldTitleX.setText(statDialog.getDataTitles()[0]);
 			fldTitleY.setText(statDialog.getDataTitles()[1]);
@@ -784,7 +789,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			if(doCreate)
 				plotGeoList.add((GeoElement) statGeo.createRegressionPlot(dataListSelected, statDialog.getRegressionMode(), statDialog.getRegressionOrder(), true));
 			if(statDialog.getRegressionMode() != statDialog.REG_NONE)
-				plotPanel.setPlotSettings(statGeo.getResidualPlotSettings(dataListSelected, plotGeoList.get(plotGeoList.size()-1), settings));
+				statGeo.getResidualPlotSettings(dataListSelected, plotGeoList.get(plotGeoList.size()-1), settings);
+				plotPanel.updateSettings(settings);
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
@@ -802,8 +808,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				for (int i = 0 ; i < boxPlots.length ; i++)
 					plotGeoList.add(boxPlots[i]);
 			}
-			plotPanel.setPlotSettings(statGeo.getMultipleBoxPlotSettings( dataListSelected));
-			boxPlotTitles = statGeo.createBoxPlotTitles(statDialog, plotPanel.getPlotSettings());
+			
+			statGeo.getMultipleBoxPlotSettings(dataListSelected, settings);
+			plotPanel.updateSettings(settings);
+			boxPlotTitles = statGeo.createBoxPlotTitles(statDialog, settings);
 			for (int i = 0 ; i < boxPlotTitles.length ; i++)
 				plotGeoList.add(boxPlotTitles[i]);
 
@@ -910,6 +918,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				selectedPlot = plotMapReverse.get(cbDisplayType.getSelectedItem());
 				updatePlot(true);
 			}
+			optionsPanel.setVisible(false);
 		}
 
 

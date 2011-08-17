@@ -97,7 +97,7 @@ public class StatGeo   {
 		}
 	}
 
-/*
+	/*
 	private double evaluateExpression(String expr){
 
 		NumberValue nv;
@@ -124,7 +124,7 @@ public class StatGeo   {
 		dataBounds = new double[4];
 
 		if(isMatrix){
-			
+
 			GeoNumeric index = new GeoNumeric(cons, 1);
 			AlgoListElement le = new AlgoListElement(cons, dataList, index);
 			GeoList list = (GeoList) le.getGeoElements()[0];
@@ -132,26 +132,26 @@ public class StatGeo   {
 			AlgoListMin minAlgo = new AlgoListMin(cons, list);
 			cons.removeFromConstructionList(minAlgo);
 			cons.removeFromConstructionList(maxAlgo);
-			
+
 			GeoNumeric maxGeo = (GeoNumeric) maxAlgo.getGeoElements()[0];
 			GeoNumeric minGeo = (GeoNumeric) minAlgo.getGeoElements()[0];
-			
+
 			//dataBounds[0] = this.evaluateExpression("Min[ Element[" + label + ", 1] ]");
 			//dataBounds[1] = this.evaluateExpression("Max[ Element[" + label + ", 1] ]");
 			dataBounds[0] = ((GeoNumeric)minAlgo.getGeoElements()[0]).getDouble();
 			dataBounds[1] = ((GeoNumeric)maxAlgo.getGeoElements()[0]).getDouble();
-			
+
 			//System.out.println(s + ":  " + dataBounds[0] + "--------" + dataBounds[0] );
 			double min, max;
 			for(int i = 1; i < dataList.size(); i++){
 				//min = this.evaluateExpression("Min[ Element[" + label + "," + (i+1) + "]]");
 				//max = this.evaluateExpression("Max[ Element[" + label + "," + (i+1) + "]]");
-				
+
 				index.setValue(i);
 				index.updateCascade();
 				min = minGeo.getDouble();
 				max = maxGeo.getDouble();
-				
+
 				dataBounds[0] = Math.min(dataBounds[0], min);
 				dataBounds[1] = Math.max(dataBounds[1], max);
 			}
@@ -163,12 +163,12 @@ public class StatGeo   {
 			ExpressionNode enY = new ExpressionNode(kernel, dataList, ExpressionNode.YCOORD, null);
 			AlgoDependentListExpression listX = new AlgoDependentListExpression(cons, enX);
 			AlgoDependentListExpression listY = new AlgoDependentListExpression(cons, enY);
-			
+
 			AlgoListMax maxX = new AlgoListMax(cons, (GeoList)listX.getGeoElements()[0]);
 			AlgoListMax maxY = new AlgoListMax(cons, (GeoList)listY.getGeoElements()[0]);
 			AlgoListMin minX = new AlgoListMin(cons, (GeoList)listX.getGeoElements()[0]);
 			AlgoListMin minY = new AlgoListMin(cons, (GeoList)listY.getGeoElements()[0]);
-			
+
 			cons.removeFromConstructionList(listX);
 			cons.removeFromConstructionList(listY);
 			cons.removeFromConstructionList(maxX);
@@ -179,7 +179,7 @@ public class StatGeo   {
 			dataBounds[1] = ((GeoNumeric)maxX.getGeoElements()[0]).getDouble();
 			dataBounds[2] = ((GeoNumeric)minY.getGeoElements()[0]).getDouble();
 			dataBounds[3] = ((GeoNumeric)maxY.getGeoElements()[0]).getDouble();
-			
+
 			//dataBounds[0] = this.evaluateExpression("Min[x(" + label + ")]");
 			//dataBounds[1] = this.evaluateExpression("Max[x(" + label + ")]");
 			//dataBounds[2] = this.evaluateExpression("Min[y(" + label + ")]");
@@ -211,8 +211,8 @@ public class StatGeo   {
 		getDataBounds(dataList);
 		double classWidth = (xMaxData - xMinData)/(numClasses); 
 		histogramRight = !settings.isLeftRule;
-		
-		
+
+
 		AlgoElement al, al2;
 		if(settings.useManualClasses){
 			classWidth = settings.classWidth;
@@ -221,7 +221,7 @@ public class StatGeo   {
 			al = new AlgoClasses(cons, dataList, null, null, new GeoNumeric(cons, numClasses));
 		}
 		cons.removeFromConstructionList(al);
-		
+
 		double density = -1;
 		if(settings.frequencyType == StatPanelSettings.TYPE_RELATIVE)
 			density = 1.0*classWidth/dataList.size();
@@ -254,18 +254,18 @@ public class StatGeo   {
 		GeoElement geo;
 		//String label = dataList.getLabel();	
 		//String text = "Normal[Mean[" + label + "],SD[" + label + "],x]";
-		
+
 		AlgoMean mean = new AlgoMean(cons, dataList);
 		AlgoStandardDeviation sd = new AlgoStandardDeviation(cons, dataList);
-		
+
 		cons.removeFromConstructionList(mean);
 		cons.removeFromConstructionList(sd);
-		
+
 		GeoElement meanGeo = mean.getGeoElements()[0];
 		GeoElement sdGeo = sd.getGeoElements()[0];
-		
+
 		FunctionVariable x = new FunctionVariable(kernel);
-		
+
 		ExpressionNode normal = new ExpressionNode(kernel, x, ExpressionNode.MINUS, meanGeo);
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, sdGeo);
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.POWER, new MyDouble(kernel,2.0));
@@ -273,7 +273,7 @@ public class StatGeo   {
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.EXP, null);
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, new MyDouble(kernel,Math.sqrt(2*Math.PI)));
 		normal = new ExpressionNode(kernel, normal, ExpressionNode.DIVIDE, sdGeo);
-		
+
 		Function f = new Function(normal, x);		
 		geo = new GeoFunction(cons, f);
 
@@ -286,9 +286,8 @@ public class StatGeo   {
 
 
 
-	public PlotSettings getHistogramSettings(GeoList dataList, GeoElement histogram, StatPanelSettings settings){	
+	public void  getHistogramSettings(GeoList dataList, GeoElement histogram, StatPanelSettings settings){	
 
-		PlotSettings ps = new PlotSettings();	
 		getDataBounds(dataList);	
 
 		double freqMax = ((AlgoFunctionAreaSums)histogram.getParentAlgorithm()).getFreqMax();
@@ -304,56 +303,48 @@ public class StatGeo   {
 		yMinData = 0.0;
 		yMaxData = freqMax;
 
-		ps = setXYBounds(ps, settings, .2, .1);
+		setXYBounds(settings, .2, .1);
 
-		//	double buffer = .25*(xMaxData - xMinData);
-		//	ps.xMin = xMinData - buffer;  
-		//	ps.xMax = xMaxData + buffer;
-		//	ps.yMin = -1.0;
-		//	ps.yMax = 1.1 * freqMax;
-		ps.showYAxis = true;
-		ps.isEdgeAxis[0] = false;
-		ps.isEdgeAxis[1] = true;
-		ps.isPositiveOnly[1] = true;
-		ps.forceXAxisBuffer = true;
+		settings.showYAxis = true;
+		settings.isEdgeAxis[0] = false;
+		settings.isEdgeAxis[1] = true;
+		settings.isPositiveOnly[1] = true;
+		settings.forceXAxisBuffer = true;
 
-		return ps;
 
 	}
 
 
 	public GeoElement createBoxPlot(GeoList dataList){
-		
+
 		//String label = dataList.getLabel();	
 		GeoElement geo;
 
 		//String	text = "BoxPlot[1,0.5," + label + "]";
 		//geo  = createGeoFromString(text);
-		
+
 		AlgoBoxPlot boxPlot = new AlgoBoxPlot(cons, new MyDouble(kernel, 1d), new MyDouble(kernel, 0.5), dataList);
 		cons.removeFromConstructionList(boxPlot);
 		geo = boxPlot.getGeoElements()[0];
-		
+
 		geo.setObjColor(StatDialog.BOXPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
 		return geo;		
 	}
 
-	public PlotSettings getBoxPlotSettings(GeoList dataList){
-
-		PlotSettings ps = new PlotSettings();
+	public void getBoxPlotSettings(GeoList dataList, StatPanelSettings settings){
 
 		getDataBounds(dataList);
+		if(settings.isAutomaticWindow){
+			double buffer = .25*(xMaxData - xMinData);
+			settings.xMin = xMinData - buffer;
+			settings.xMax = xMaxData + buffer;
+			settings.yMin = -1.0;
+			settings.yMax = 2;
+		}
 
-		double buffer = .25*(xMaxData - xMinData);
-		ps.xMin = xMinData - buffer;
-		ps.xMax = xMaxData + buffer;
-		ps.yMin = -1.0;
-		ps.yMax = 2;
-		ps.showYAxis = false;
-		ps.forceXAxisBuffer = true;
-
-		return ps;
+		settings.showYAxis = false;
+		settings.forceXAxisBuffer = true;
 
 	}
 
@@ -366,54 +357,50 @@ public class StatGeo   {
 		//String len = "Length[" + label + "]";
 		//String	text = "Sequence[BoxPlot[k, 1/3, Element[" + label + "," + len + "-k+1]], k, 1," + len + "]";
 		//geo  = createGeoFromString(text);
-		
+
 		//AlgoListLength len = new AlgoListLength(cons, dataList);
 		//GeoNumeric num = (GeoNumeric) len.getGeoElements()[0];
 		//cons.removeFromConstructionList(len);
-		
+
 		int length = dataList.size();
-		
+
 		GeoElement[] ret = new GeoElement[length];
-		
+
 		for (int i = 0 ; i < length ; i++) {
 			AlgoBoxPlot bp = new AlgoBoxPlot(cons, new GeoNumeric(cons, i+1), new GeoNumeric(cons, 1d/3d), (GeoList)dataList.get((length-1)-i));
 			cons.removeFromAlgorithmList(bp);
 			ret[i] = bp.getGeoElements()[0];
 			ret[i].setObjColor(StatDialog.BOXPLOT_COLOR);
 			ret[i].setAlphaValue(0.25f);
-			
+
 		}
-		
+
 		return ret;		
 	}
 
-	public PlotSettings getMultipleBoxPlotSettings(GeoList dataList){
-
-		PlotSettings ps = new PlotSettings();
-
-		getDataBounds(dataList, false,true);		
-		double buffer = .25*(xMaxData - xMinData);
-		ps.xMin = xMinData - buffer;
-		ps.xMax = xMaxData + buffer;
-		ps.yMin = -1.0;
-		ps.yMax = dataList.size()+1;
-		ps.showYAxis = false;
-		ps.forceXAxisBuffer = true;
-
-		return ps;
-
+	public void getMultipleBoxPlotSettings(GeoList dataList, StatPanelSettings settings){
+		if(settings.isAutomaticWindow){
+			getDataBounds(dataList, false,true);		
+			double buffer = .25*(xMaxData - xMinData);
+			settings.xMin = xMinData - buffer;
+			settings.xMax = xMaxData + buffer;
+			settings.yMin = -1.0;
+			settings.yMax = dataList.size()+1;
+		}
+		settings.showYAxis = false;
+		settings.forceXAxisBuffer = true;
 	}
 
-	public GeoElement[] createBoxPlotTitles(StatDialog statDialog, PlotSettings ps){
+
+	public GeoElement[] createBoxPlotTitles(StatDialog statDialog, StatPanelSettings settings){
 
 		String[] dataTitles = statDialog.getDataTitles();	
-		
+
 		int length = dataTitles.length;
 		GeoElement[] ret = new GeoElement[length];
 
 		for (int i = 0; i < dataTitles.length; i++){
-			//sb.append("Text[\"  " + dataTitles[dataTitles.length - i - 1] + "\", (" + ps.xMin + "," + (i+1) + ")],");
-			GeoPoint p = new GeoPoint(cons, ps.xMin, i+1d, 1d);
+			GeoPoint p = new GeoPoint(cons, settings.xMin, i+1d, 1d);
 			GeoText t = new GeoText(cons, ""+dataTitles[dataTitles.length - i - 1]);
 			AlgoText text = new AlgoText(cons, t, p, null, null);
 			cons.removeFromAlgorithmList(text);
@@ -432,11 +419,11 @@ public class StatGeo   {
 
 		//String text = "DotPlot[" + label + "]";
 		//geo  = createGeoFromString(text);
-		
+
 		AlgoDotPlot dp = new AlgoDotPlot(cons, dataList);
 		cons.removeFromConstructionList(dp);
 		GeoElement geo = dp.getGeoElements()[0];
-		
+
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
 
@@ -444,36 +431,32 @@ public class StatGeo   {
 	}
 
 
-	public PlotSettings updateDotPlot(GeoList dataList, GeoElement dotPlot){
-
-		PlotSettings ps = new PlotSettings();
+	public void updateDotPlot(GeoList dataList, GeoElement dotPlot, StatPanelSettings settings){
 
 		getDataBounds(dataList);
-		//String label = dataList.getLabel();	
 
-		double buffer = .25*(xMaxData - xMinData);		
-		ps.xMin = xMinData - buffer;
-		ps.xMax = xMaxData + buffer;
-		ps.yMin = -1.0;
-		
-		ExpressionNode en = new ExpressionNode(kernel, dotPlot, ExpressionNode.YCOORD, null);
-		AlgoDependentListExpression list = new AlgoDependentListExpression(cons, en);
-		
-		AlgoListMax max = new AlgoListMax(cons, (GeoList)list.getGeoElements()[0]);
-		
-		cons.removeFromConstructionList(list);
-		cons.removeFromConstructionList(max);
+		if(settings.isAutomaticWindow){
+			double buffer = .25*(xMaxData - xMinData);		
+			settings.xMin = xMinData - buffer;
+			settings.xMax = xMaxData + buffer;
+			settings.yMin = -1.0;
 
-		//ps.yMax = evaluateExpression("Max[y(" + dotPlot.getLabel() +  ")]") + 1;
-		ps.yMax = ((GeoNumeric)max.getGeoElements()[0]).getDouble() + 1;
-		ps.showYAxis = false;
-		ps.forceXAxisBuffer = true;
+			ExpressionNode en = new ExpressionNode(kernel, dotPlot, ExpressionNode.YCOORD, null);
+			AlgoDependentListExpression list = new AlgoDependentListExpression(cons, en);
+			AlgoListMax max = new AlgoListMax(cons, (GeoList)list.getGeoElements()[0]);
 
-		return ps;
+			cons.removeFromConstructionList(list);
+			cons.removeFromConstructionList(max);
+
+			settings.yMax = ((GeoNumeric)max.getGeoElements()[0]).getDouble() + 1;
+		}
+
+		settings.showYAxis = false;
+		settings.forceXAxisBuffer = true;
 
 	}
 
-	
+
 	public GeoElement createNormalQuantilePlot(GeoList dataList){
 
 		//String label = dataList.getLabel();	
@@ -481,11 +464,11 @@ public class StatGeo   {
 
 		//String text = "NormalQuantilePlot[" + label + "]";
 		//geo  = createGeoFromString(text);
-		
+
 		AlgoNormalQuantilePlot qp = new AlgoNormalQuantilePlot(cons, dataList);
 		cons.removeFromConstructionList(qp);
 		GeoElement geo = qp.getGeoElements()[0];		
-		
+
 		geo.setObjColor(StatDialog.NQPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
 
@@ -493,28 +476,26 @@ public class StatGeo   {
 	}
 
 
-	public PlotSettings updateNormalQuantilePlot(GeoList dataList){
-
-		PlotSettings ps = new PlotSettings();
+	public void updateNormalQuantilePlot(GeoList dataList, StatPanelSettings settings){
 
 		getDataBounds(dataList);
 		String label = dataList.getLabel();	
 
-		double buffer = .25*(xMaxData - xMinData);		
-		ps.xMin = xMinData - buffer;
-		ps.xMax = xMaxData + buffer;
-		ps.yMin = -4.0;
-		ps.yMax = 4.0;
-		ps.showYAxis = true;
-		ps.isEdgeAxis[1]=true;
-		ps.forceXAxisBuffer = false;
+		if(settings.isAutomaticWindow){
+			double buffer = .25*(xMaxData - xMinData);		
+			settings.xMin = xMinData - buffer;
+			settings.xMax = xMaxData + buffer;
+			settings.yMin = -4.0;
+			settings.yMax = 4.0;
+			settings.showYAxis = true;
+		}
 
-		return ps;
-
+		settings.isEdgeAxis[1] = true;
+		settings.forceXAxisBuffer = false;
 	}
-	
-	
-	
+
+
+
 
 	public GeoElement createScatterPlot(GeoList dataList){
 
@@ -538,20 +519,18 @@ public class StatGeo   {
 
 	}
 
-	public PlotSettings getScatterPlotSettings(GeoList dataList, StatPanelSettings settings){
+	public void getScatterPlotSettings(GeoList dataList, StatPanelSettings settings){
 
-		PlotSettings ps = new PlotSettings();	
 		getDataBounds(dataList, true);	
 
-		ps = setXYBounds(ps, settings);
+		setXYBounds(settings);
 
-		ps.showYAxis = true;
-		ps.forceXAxisBuffer = false;
-		ps.isEdgeAxis[0] = true;
-		ps.isEdgeAxis[1] = true;
-		ps.isPositiveOnly[0] = true;
-		ps.isPositiveOnly[1] = true;
-		return ps;		
+		settings.showYAxis = true;
+		settings.forceXAxisBuffer = false;
+		settings.isEdgeAxis[0] = true;
+		settings.isEdgeAxis[1] = true;
+		settings.isPositiveOnly[0] = true;
+		settings.isPositiveOnly[1] = true;		
 
 	}
 
@@ -560,9 +539,9 @@ public class StatGeo   {
 	public GeoElement createRegressionPlot(GeoList dataList, int regType, int order, boolean residual){
 
 		boolean regNone = false;
-		
+
 		AlgoElement algo;
-		
+
 		switch (regType) {
 		case StatDialog.REG_LOG:
 			algo = new AlgoFitLog(cons, dataList);
@@ -589,12 +568,12 @@ public class StatGeo   {
 		default:
 			algo = new AlgoFitLineY(cons, dataList);
 			break;
-		
+
 		}
-		
+
 		cons.removeFromConstructionList(algo);
 		GeoElement geo = algo.getGeoElements()[0];
-		
+
 		if (residual) {
 			AlgoResidualPlot algoRP = new AlgoResidualPlot(cons, dataList, (GeoFunctionable) geo);
 			geo = algoRP.getGeoElements()[0];
@@ -606,7 +585,7 @@ public class StatGeo   {
 			geo.setObjColor(StatDialog.REGRESSION_COLOR);
 			if(regType == StatDialog.REG_LINEAR)	
 				((GeoLine)geo).setToExplicit();	
-	
+
 			// hide the dummy geo
 			if(regNone) geo.setEuclidianVisible(false);
 		}
@@ -616,25 +595,27 @@ public class StatGeo   {
 	}
 
 
-	
 
-	public void updateRegressionPlot(PlotSettings ps, GeoList dataList){
 
-		getDataBounds(dataList, true);
+	public void updateRegressionPlot(GeoList dataList, StatPanelSettings settings){
 
-		double xBuffer = .25*(xMaxData - xMinData);
-		ps.xMin = xMinData - xBuffer;
-		ps.xMax = xMaxData + xBuffer;
+		if(settings.isAutomaticWindow){
+			getDataBounds(dataList, true);
 
-		double yBuffer = .25*(yMaxData - yMinData);
-		ps.yMin = yMinData - yBuffer;
-		ps.yMax = yMaxData + yBuffer;
+			double xBuffer = .25*(xMaxData - xMinData);
+			settings.xMin = xMinData - xBuffer;
+			settings.xMax = xMaxData + xBuffer;
 
-		ps.showYAxis = true;
-		ps.forceXAxisBuffer = false;
+			double yBuffer = .25*(yMaxData - yMinData);
+			settings.yMin = yMinData - yBuffer;
+			settings.yMax = yMaxData + yBuffer;
+		}
+
+		settings.showYAxis = true;
+		settings.forceXAxisBuffer = false;
 
 	}
-/*
+	/*
 	public GeoElement createResidualPlot(GeoList dataList, int regType, int order){
 
 		GeoElement geo = null;
@@ -658,9 +639,7 @@ public class StatGeo   {
 
 	}*/
 
-	public PlotSettings getResidualPlotSettings(GeoList dataList, GeoElement residualPlot, StatPanelSettings settings){
-
-		PlotSettings ps = new PlotSettings();	
+	public void getResidualPlotSettings(GeoList dataList, GeoElement residualPlot, StatPanelSettings settings){
 
 		getDataBounds(dataList, true);	
 
@@ -668,23 +647,22 @@ public class StatGeo   {
 		yMaxData = Math.max(Math.abs(residualBounds[0]),Math.abs(residualBounds[1]));
 		yMinData = -yMaxData;
 
-		ps = setXYBounds(ps, settings);
+		setXYBounds(settings);
 
-		ps.showYAxis = true;
-		ps.forceXAxisBuffer = false;
-		ps.isEdgeAxis[0] = false;
-		ps.isEdgeAxis[1] = true;
-		ps.isPositiveOnly[0] = true;
-		ps.isPositiveOnly[1] = false;
-		return ps;
+		settings.showYAxis = true;
+		settings.forceXAxisBuffer = false;
+		settings.isEdgeAxis[0] = false;
+		settings.isEdgeAxis[1] = true;
+		settings.isPositiveOnly[0] = true;
+		settings.isPositiveOnly[1] = false;
 
 	}
 
-	private PlotSettings setXYBounds(PlotSettings ps, StatPanelSettings settings){
-		return setXYBounds( ps,  settings, .2, .2);
+	private void setXYBounds(StatPanelSettings settings){
+		setXYBounds(settings, .2, .2);
 	}
 
-	private PlotSettings setXYBounds(PlotSettings ps, StatPanelSettings settings, double xBufferScale, double yBufferScale){
+	private void setXYBounds(StatPanelSettings settings, double xBufferScale, double yBufferScale){
 
 		if(settings.isAutomaticWindow){
 
@@ -697,16 +675,6 @@ public class StatGeo   {
 			settings.yMax = yMaxData + yBuffer;
 		}
 
-		ps.xMin = settings.xMin;
-		ps.xMax = settings.xMax;
-		ps.yMin = settings.yMin;
-		ps.yMax = settings.yMax;
-		ps.xAxesInterval = settings.xInterval;
-		ps.yAxesInterval = settings.yInterval;
-
-
-		ps.showGrid = settings.showGrid;
-		return ps;
 	}
 
 
@@ -716,11 +684,11 @@ public class StatGeo   {
 
 		//String	text = "StemPlot[" + label + "," + adjustment + "]";
 		//tempGeo  = createGeoFromString(text);
-		
+
 		AlgoStemPlot sp = new AlgoStemPlot(cons, dataList, new GeoNumeric(cons, adjustment));
 		GeoElement tempGeo = sp.getGeoElements()[0];
 		cons.removeFromConstructionList(sp);
-		
+
 		String latex = tempGeo.getLaTeXdescription();
 		tempGeo.remove();
 

@@ -48,7 +48,7 @@ public class FrequencyTable extends JTable implements StatPanelInterface{
 		DefaultTableModel model = statTable.getModel();
 		
 		for(int row = 0; row < freq.length -1; row++){
-			String interval = statDialog.format(classes[row]) + "-" + statDialog.format(classes[row+1]);
+			String interval = statDialog.format(classes[row]) + " - " + statDialog.format(classes[row+1]);
 			model.setValueAt(interval, row, 0);
 			model.setValueAt(statDialog.format(freq[row]), row, 1);
 		}

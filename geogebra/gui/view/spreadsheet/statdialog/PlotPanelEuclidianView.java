@@ -63,7 +63,13 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 	public PlotSettings getPlotSettings() {
 		return plotSettings;
 	}
-	public void setPlotSettings(PlotSettings plotSettings) {
+	
+	
+	/**
+	 * Sets the given plotSettings and updates the panel accordingly
+	 * @param plotSettings
+	 */
+	public void updateSettings(PlotSettings plotSettings) {
 		this.plotSettings = plotSettings;
 		this.setEVParams();
 	}
