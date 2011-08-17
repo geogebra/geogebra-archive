@@ -29,7 +29,6 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
 import geogebra.gui.util.ImageSelection;
 import geogebra.gui.view.algebra.AlgebraView;
-import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.Perspective;
@@ -40,6 +39,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
+import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
@@ -5701,6 +5701,27 @@ public class Application implements KeyEventDispatcher {
 	public void setScrollToShow(boolean b) {
 		if (guiManager != null) 
 			guiManager.setScrollToShow(b);
+	}
+
+
+	public View getView(int viewID) {
+		switch (viewID) {
+		case VIEW_EUCLIDIAN: return (View)getEuclidianView();
+		case VIEW_ALGEBRA: return (View)getAlgebraView();
+		case VIEW_SPREADSHEET: return (View)getGuiManager().getSpreadsheetView();
+		case VIEW_CAS: return (View)getGuiManager().getCasView();
+		case VIEW_EUCLIDIAN2: return (View)getEuclidianView2();
+		case VIEW_CONSTRUCTION_PROTOCOL: return (View)getGuiManager().getConstructionProtocolView();
+		case VIEW_PROBABILITY_CALCULATOR: return (View)getGuiManager().getProbabilityCalculator();
+		//case VIEW_FUNCTION_INSPECTOR: return (View)getGuiManager().
+		//case VIEW_INSPECTOR: return (View)getGuiManager().getSpreadsheetView();
+		//case VIEW_EUCLIDIAN3D: return (View)getGuiManager().getSpreadsheetView();
+		//case VIEW_EUCLIDIAN_FOR_PLANE: return (View)getGuiManager().getSpreadsheetView();
+		//case VIEW_PLOT_PANEL: return (View)getGuiManager().getSpreadsheetView();
+		//case VIEW_TEXT_PREVIEW: return (View)getGuiManager().getSpreadsheetView();
+		}
+		
+		return null;
 	}
 
 
