@@ -1630,5 +1630,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public void update(){				
 		super.update();
 	}
+	
+	public boolean isGeoFunctionBoolean(){
+		return isBooleanFunction();
+	}
 
 }

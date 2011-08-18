@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.main.Application;
@@ -88,7 +87,8 @@ public class AlgoSequence extends AlgoElement {
         	var_step_geo = var_step.toGeoElement();
         	
     	expressionParentAlgo = expression.getParentAlgorithm();
-    	expIsFunctionOrCurve = expression.isGeoFunction() || expression.isGeoCurveCartesian();    	      
+    	expIsFunctionOrCurve = expression.isGeoFunction() || expression.isGeoCurveCartesian() 
+    	|| expression.isGeoFunctionNVar() || expression.isGeoFunctionBoolean();    	      
     	isSimple = false; 	
 //    	Application.debug("expression: " + expression);
 //   	Application.debug("  parent algo: " + expression.getParentAlgorithm());
@@ -348,7 +348,7 @@ public class AlgoSequence extends AlgoElement {
 		// by their current values
 		if (expIsFunctionOrCurve) {
 			// GeoFunction
-			if (listElement.isGeoFunction()) {
+			if (listElement.isGeoFunction() || listElement.isGeoFunctionBoolean()) {
 				GeoFunction f = (GeoFunction) listElement;
 				f.replaceChildrenByValues(var);
 			}
@@ -357,6 +357,12 @@ public class AlgoSequence extends AlgoElement {
 				GeoCurveCartesianND curve = (GeoCurveCartesianND) listElement;
 				curve.replaceChildrenByValues(var);
 			}
+			
+			else if(listElement.isGeoFunctionNVar()){				
+				GeoFunctionNVar fnv = (GeoFunctionNVar) listElement;
+				fnv.replaceChildrenByValues(var);
+			}
+			
 		}		
 				
 		return listElement;

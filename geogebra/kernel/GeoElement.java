@@ -4605,7 +4605,15 @@ public abstract class GeoElement
 	public boolean isGeoFunction() {
 		return false;
 	}
-
+	
+	public boolean isGeoFunctionNVar() {
+		return false;
+	}
+	
+	public boolean isGeoFunctionBoolean() {
+		return false;
+	}
+	
 	public boolean isGeoFunctionConditional() {
 		return false;
 	}
