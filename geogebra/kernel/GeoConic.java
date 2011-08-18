@@ -22,7 +22,10 @@ import java.util.ArrayList;
 
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 /**
@@ -507,6 +510,45 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	
 	public boolean isFillable() {
 		return type != GeoConic.CONIC_LINE;
+	}
+
+	/* 
+	 *               ( A[0]  A[3]    A[4] )
+	 *      matrix = ( A[3]  A[1]    A[5] )
+	 *               ( A[4]  A[5]    A[2] )
+	 */
+
+	public void setCoeffs(ExpressionValue[][] coeff) {
+		// TODO Auto-generated method stub
+		if(coeff.length > 2)
+			matrix[0] = evalCoeff(coeff[2][0]);
+		else
+			matrix[0] = 0;
+		if(coeff[0].length > 2)
+			matrix[1] = evalCoeff(coeff[0][2]);
+		else
+			matrix[1] = 0;
+		
+		matrix[2] = evalCoeff(coeff[0][0]);
+		
+		matrix[3] = evalCoeff(coeff[1][1])/2;
+		
+		matrix[4] = evalCoeff(coeff[1][0])/2;
+		
+		matrix[5] = evalCoeff(coeff[0][1])/2;
+		
+		classifyConic(false);
+		if(coeff.length == 2 && coeff[0].length ==2){
+			type = CONIC_LINE;
+		}
+		Application.debug(this);
+	}
+	
+	private double evalCoeff(ExpressionValue ev){
+		if(ev!=null){
+			return ((NumberValue)ev.evaluate()).getDouble();
+		}
+		return 0;
 	}
 
 

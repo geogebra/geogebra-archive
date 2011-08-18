@@ -125,8 +125,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	private int previewMode, neededPrevPoints;
 	private boolean isPreview = false;
     
-	public Area getShape(){
-		Application.debug(super.getShape()+","+shape);
+	public Area getShape(){	
 		Area a = super.getShape()!=null? 
 				super.getShape():(shape==null?new Area():new Area(shape));
 		if(conic.isInverseFill()){                    	        	
@@ -354,10 +353,12 @@ final public class DrawConic extends Drawable implements Previewable {
         }
         
         if(conic.type == GeoConic.CONIC_PARALLEL_LINES||
-        		conic.type == GeoConic.CONIC_INTERSECTING_LINES){
+        		conic.type == GeoConic.CONIC_INTERSECTING_LINES
+        		|| conic.type == GeoConic.CONIC_LINE){
         	
-	       shape = lineToGpc(drawLines[1]);
-	       ((Area)shape).exclusiveOr(lineToGpc(drawLines[0]));
+	       shape = lineToGpc(drawLines[0]);
+	       if(conic.type != GeoConic.CONIC_LINE)
+	    	   ((Area)shape).exclusiveOr(lineToGpc(drawLines[1]));
 	       //FIXME: buggy when conic(RW(0),RW(0))=0
 	       
 	       	       

@@ -52,7 +52,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 		MyStringBuffer msb;
 		Polynomial poly;
 
-		lt = left.evaluate(); // left tree
+		lt = left.evaluate(); // left tree		
+		if(operation == NO_OPERATION)
+			return lt;
 		rt = right.evaluate(); // right tree
 
 		// handle list operations first
@@ -187,6 +189,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 				String[] str = { "IllegalBoolean", lt.toString(), strAND, rt.toString() };
 				throw new MyError(app, str);
 			}
+			
 
 			/*
 			 * COMPARING operations
@@ -1571,7 +1574,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 			}
 
 		default:
-			throw new MyError(app, "ExpressionNode: Unhandled operation");
+			throw new MyError(app, "ExpressionNode: Unhandled operation."+(operation-NO_OPERATION));
 
 		}
 	}

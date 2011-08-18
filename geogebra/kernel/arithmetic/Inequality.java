@@ -149,36 +149,39 @@ public class Inequality {
 		}
 
 		else {						
-			GeoElement newBorder = kernel.getAlgebraProcessor()
-					.evaluateToGeoElement(normal.toValueString() + "=0", false);
-			if (newBorder == null || newBorder.isGeoImplicitPoly())
-				return;
-			/* TODO: return this once filling works for implicit polynomials
-			 * if (newBorder.isGeoImplicitPoly()) {
-				type = INEQUALITY_IMPLICIT;
-				if (impBorder == null)
-					impBorder = (GeoImplicitPoly) newBorder;
-				else
-					impBorder.set(newBorder);
-				border = impBorder;
-			}*/
-			if (newBorder.isGeoConic()) {
-				type = INEQUALITY_CONIC;
-				if (conicBorder == null)
-					conicBorder = (GeoConic) newBorder;
-				else
-					conicBorder.set(newBorder);
-				border = conicBorder;						
-				if (conicBorder.type == GeoConic.CONIC_INTERSECTING_LINES) {
-				   isAboveBorder = true;
-				} else setAboveBorderFromConic();
+			Polynomial xVar=new Polynomial(kernel,"x");
+			Polynomial yVar=new Polynomial(kernel,"y");
+			ExpressionNode replaced = 
+					((ExpressionNode) normal.deepCopy(kernel)).replaceAndWrap(fv[0], xVar).
+					replaceAndWrap(fv[1], yVar);
+			Equation equ=new Equation(kernel,replaced,new MyDouble(kernel,0));				
+			try{
+				equ.initEquation();			
 			}
-			if (newBorder.isGeoLine()) {
+			catch(Throwable t){
+				type = INEQUALITY_INVALID;
+				return;
+			}
+			Polynomial newBorder =  equ.getNormalForm();			
+			if(newBorder.degree()<3){
+				if (conicBorder == null)
+					conicBorder = new GeoConic(kernel.getConstruction());
+				//conicBorder.setLabel("res");
+				conicBorder.setCoeffs(equ.getNormalForm().getCoeff());
+				type = INEQUALITY_CONIC;
+				border = conicBorder;						
+				setAboveBorderFromConic();	
+			}
+			else{
+				
+			}
+			//TODO implicit ineq	
+			/*if (newBorder.isGeoLine()) {
 				type = INEQUALITY_CONIC;
 				if (conicBorder == null)
 					conicBorder = new GeoConic(kernel.getConstruction());				
 				border = conicBorder;
-			}
+			}}*/
 		}
 		if (type == INEQUALITY_PARAMETRIC_X || type == INEQUALITY_PARAMETRIC_Y) {
 			funBorder = new GeoFunction(kernel.getConstruction());
@@ -197,6 +200,12 @@ public class Inequality {
 	}
 
 	private void setAboveBorderFromConic() {
+		if (conicBorder.type == GeoConic.CONIC_INTERSECTING_LINES ||
+				conicBorder.type == GeoConic.CONIC_EMPTY ||
+				conicBorder.type == GeoConic.CONIC_LINE) {
+			   		isAboveBorder = true;
+			   		return;
+		}
 		GeoVec2D midpoint = conicBorder.getTranslationVector();
 		ExpressionNode normalCopy = (ExpressionNode) normal
 				.deepCopy(kernel);

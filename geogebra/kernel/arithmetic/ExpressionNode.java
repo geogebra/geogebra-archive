@@ -764,8 +764,9 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		ExpressionValue ev = replace(oldOb, newOb);
 		
 		// replace root by new object
-		if (ev.isExpressionNode())
+		if (ev.isExpressionNode()){
 			return (ExpressionNode) ev;
+		}
 		else
 			return new ExpressionNode(kernel, ev);	
 	}
@@ -793,8 +794,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		} 			
 		else if (right instanceof ReplaceableValue) {
 			right = ((ReplaceableValue) right).replace(oldOb, newOb);			
-		}
-		
+		}		
 		return this;
 	}
 
