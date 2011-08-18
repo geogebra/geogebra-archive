@@ -537,7 +537,7 @@ public class Application implements KeyEventDispatcher {
 
 		// open file given by startup parameter
 		handleOptionArgsEarly(args); // for --regressionFile=...
-		boolean fileLoaded = handleFileArg(args);
+		boolean fileLoaded = handleFileArg(args);	
 		
 		// initialize GUI
 		if(useFullGui()) {
@@ -3150,8 +3150,10 @@ public class Application implements KeyEventDispatcher {
 			return;
 		showConsProtNavigation = flag;
 
-		getGuiManager().setShowConstructionProtocolNavigation(flag);
-		updateMenubar();
+		if(getGuiManager()!=null){
+			getGuiManager().setShowConstructionProtocolNavigation(flag);
+			updateMenubar();
+		}
 	}
 
 	public boolean showConsProtNavigation() {
