@@ -223,8 +223,9 @@ public class PrintPreview extends JDialog {
 		
 		// show scale panel for euclidian view
 		EuclidianView ev = app.getEuclidianView();
+		EuclidianView ev2 = app.getEuclidianView2();
 		app.clearSelectedGeos();
-		if (m_target == ev) {		
+		if (m_target == ev || m_target == ev2) {		
 			// checkbox to turn on/off printing of scale string
 			cbEVscalePanel = new JCheckBox();
 			cbEVscalePanel.setSelected(app.isPrintScaleString());
@@ -236,7 +237,7 @@ public class PrintPreview extends JDialog {
 			});
 						
 			// scale panel to set scale of x-axis in cm
-			PrintScalePanel scalePanel = new PrintScalePanel(app, ev);				
+			PrintScalePanel scalePanel = new PrintScalePanel(app, (EuclidianView) m_target);				
 			scalePanel.addActionListener(lst);									
 			
 			JPanel tempPanel = new JPanel();
