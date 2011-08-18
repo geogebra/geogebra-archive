@@ -4000,13 +4000,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 				sb.append(axesNumberingDistances[i]);
 			}
 			
-			//  axis crossing values 		
-			sb.append("\" axisCross=\"");
-			sb.append(axisCross[i]);
+			//  axis crossing values 	
+			if (!Kernel.isZero(axisCross[i])) {
+				sb.append("\" axisCross=\"");
+				sb.append(axisCross[i]);
+			}
 
 			// positive direction only flags
-			sb.append("\" positiveAxis=\"");
-			sb.append(positiveAxes[i]);
+			if (positiveAxes[i]) {
+				sb.append("\" positiveAxis=\"");
+				sb.append(positiveAxes[i]);
+			}
 
 			sb.append("\"/>\n");
 		}

@@ -88,6 +88,14 @@ public class EuclidianSettings extends AbstractSettings {
 
 		// distances between grid lines
 		automaticGridDistance = true;
+		
+		axisCross[0] = 0;
+		axisCross[1] = 0;
+		positiveAxes[0] = false;
+		positiveAxes[1] = false;
+		drawBorderAxes[0] = false;
+		drawBorderAxes[1] = false;
+
 }
 	
 	/**
