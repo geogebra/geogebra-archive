@@ -102,6 +102,7 @@ public class Kernel {
 
 	/** standard precision */ 
 	public final static double STANDARD_PRECISION = 1E-8;
+	public final static double STANDARD_PRECISION_SQRT = 1E-4;
 	
 	/** minimum precision */
 	public final static double MIN_PRECISION = 1E-5;
@@ -112,6 +113,7 @@ public class Kernel {
 	
 	/** current working precision */
 	public static double EPSILON = STANDARD_PRECISION;
+	public static double EPSILON_SQRT = STANDARD_PRECISION_SQRT;
 
 	/** maximum precision of double numbers */
 	public final static double MAX_DOUBLE_PRECISION = 1E-15;
