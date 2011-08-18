@@ -913,7 +913,6 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	}
 
 	public float getAlphaValue() {
-
 		if (super.getAlphaValue() == -1) {
 			// no alphaValue set
 			// so we need to set it to that of the first element, if there is
@@ -938,7 +937,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 				}
 			} else {
-				return 1.0f;
+				return -1.0f;
 			}
 		}
 
