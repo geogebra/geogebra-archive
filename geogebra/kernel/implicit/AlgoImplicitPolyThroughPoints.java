@@ -1,6 +1,5 @@
 package geogebra.kernel.implicit;
 
-import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;

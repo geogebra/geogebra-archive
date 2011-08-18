@@ -5,7 +5,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 

@@ -16,13 +16,8 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.arithmetic.NumberValue;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 
 /**

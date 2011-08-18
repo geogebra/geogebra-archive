@@ -3,7 +3,6 @@ package geogebra.gui.inputbar;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.TableSymbols;
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;

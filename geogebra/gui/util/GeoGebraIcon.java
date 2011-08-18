@@ -2,7 +2,6 @@ package geogebra.gui.util;
 
 
 import geogebra.euclidian.DrawText;
-import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;

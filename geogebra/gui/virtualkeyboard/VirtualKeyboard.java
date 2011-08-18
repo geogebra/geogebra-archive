@@ -15,7 +15,6 @@ the Free Software Foundation.
 package geogebra.gui.virtualkeyboard;
 
 import geogebra.main.Application;
-
 import geogebra.main.MyResourceBundle;
 import geogebra.main.settings.AbstractSettings;
 import geogebra.main.settings.KeyboardSettings;
@@ -41,7 +40,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.font.FontRenderContext;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;

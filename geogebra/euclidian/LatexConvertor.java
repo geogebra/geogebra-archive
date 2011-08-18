@@ -3,7 +3,6 @@ package geogebra.euclidian;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.commands.AlgebraProcessor;
-import geogebra.main.Application;
 
 import org.scilab.forge.jlatexmath.dynamic.ExternalConverter;
 

@@ -22,7 +22,6 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 
 
 /**

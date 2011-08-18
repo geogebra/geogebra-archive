@@ -1,7 +1,5 @@
 package geogebra.gui.layout;
 
-import geogebra.main.Application;
-
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,7 +10,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;

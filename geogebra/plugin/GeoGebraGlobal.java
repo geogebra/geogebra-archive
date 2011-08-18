@@ -1,8 +1,6 @@
 package geogebra.plugin;
 
-import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra.main.MyError;
 
 import javax.swing.JOptionPane;
 

@@ -12,7 +12,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.implicit.GeoImplicitPoly;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 
 

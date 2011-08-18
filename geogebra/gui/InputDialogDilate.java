@@ -3,10 +3,8 @@ package geogebra.gui;
 
 import geogebra.gui.GuiManager.NumberInputHandler;
 import geogebra.kernel.Construction;
-import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Transformable;
 import geogebra.kernel.arithmetic.NumberValue;

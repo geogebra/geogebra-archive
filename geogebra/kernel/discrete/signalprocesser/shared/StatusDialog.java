@@ -1,7 +1,10 @@
 package geogebra.kernel.discrete.signalprocesser.shared;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
+
+import javax.swing.JFrame;
 
 public class StatusDialog extends javax.swing.JDialog {
     

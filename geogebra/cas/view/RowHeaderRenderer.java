@@ -1,6 +1,5 @@
 package geogebra.cas.view;
 
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 

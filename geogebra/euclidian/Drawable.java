@@ -24,11 +24,9 @@ import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Unicode;
-import geogebra.util.Util;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -46,7 +44,6 @@ import java.util.Iterator;
 import javax.swing.JLabel;
 
 import org.scilab.forge.jlatexmath.AlphabetRegistration;
-import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;

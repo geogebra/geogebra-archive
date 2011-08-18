@@ -1,7 +1,6 @@
 package geogebra.kernel;
 
 import geogebra.kernel.cas.AlgoDerivative;
-import geogebra.main.Application;
 
 
 /**

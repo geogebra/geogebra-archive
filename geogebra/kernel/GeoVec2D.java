@@ -26,7 +26,6 @@ import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
-import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 import java.util.HashSet;

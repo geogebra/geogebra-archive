@@ -21,7 +21,6 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.implicit.GeoImplicitPoly;
-import geogebra.main.Application;
 
 /**
  *

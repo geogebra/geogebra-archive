@@ -8,7 +8,6 @@ import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;

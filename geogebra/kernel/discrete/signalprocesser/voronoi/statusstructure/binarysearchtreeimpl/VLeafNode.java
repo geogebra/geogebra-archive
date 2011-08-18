@@ -1,9 +1,7 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl;
 
-import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.*;
-
-import java.util.*;
+import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.VSiteEvent;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.VLinkedNode;
 
 public class VLeafNode extends VLinkedNode implements VNode {
     

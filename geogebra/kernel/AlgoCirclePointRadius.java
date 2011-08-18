@@ -21,7 +21,6 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoQuadricND;
-import geogebra.main.Application;
 
 /**
  *

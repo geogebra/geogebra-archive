@@ -14,9 +14,6 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  * Find Numerator

@@ -16,9 +16,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.GeneralPathClipped;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;

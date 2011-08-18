@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.ImageIcon;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;

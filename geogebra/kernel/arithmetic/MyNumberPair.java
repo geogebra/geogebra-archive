@@ -18,12 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
-import geogebra.main.MyParseError;
-
-import java.util.HashSet;
 
 /** 
  * 

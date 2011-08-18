@@ -18,8 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -27,6 +25,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
+
+import java.util.ArrayList;
 
 /**
  * Conics in 2D

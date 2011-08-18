@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.export;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.GuiManager;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.consprotocol.ConstructionProtocolView;
 import geogebra.main.Application;
@@ -37,8 +36,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.plaf.FileChooserUI;
-import javax.swing.JFileChooser;
 
 public class ConstructionProtocolExportDialog extends JDialog implements
 		KeyListener {

@@ -21,10 +21,8 @@ import geogebra.main.MyError;
 import geogebra.util.MaxSizeHashMap;
 import geogebra.util.MyMath;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Iterator;
 
 /**
  * Function of N variables that returns either a number or a boolean. This

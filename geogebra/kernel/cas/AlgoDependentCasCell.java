@@ -1,8 +1,6 @@
 package geogebra.kernel.cas;
 
 import geogebra.kernel.AlgoElement;
-import geogebra.kernel.Construction;
-import geogebra.kernel.arithmetic.Function;
 
 /**
  * Algorithm to take care of GeoCasCells and possibly 

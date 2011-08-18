@@ -1,6 +1,5 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl;
 
-import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.*;
 
 public interface VNode {
 

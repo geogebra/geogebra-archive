@@ -1,12 +1,12 @@
 package geogebra.kernel.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoInterval;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.GeoFunction;
 import geogebra.main.MyError;
 
 /*

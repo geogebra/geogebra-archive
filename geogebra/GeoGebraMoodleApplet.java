@@ -14,7 +14,6 @@ package geogebra;
 import edu.xtec.adapter.Adapter;
 import edu.xtec.adapter.AdapterFactory;
 import edu.xtec.adapter.ExitListener;
-import geogebra.GeoGebraApplet;
 
 /**
  * Simple applet that uses an {@link edu.xtec.adapter.Adapter}.

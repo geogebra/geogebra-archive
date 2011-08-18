@@ -18,12 +18,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 import java.util.ArrayList;
 
 import org.apache.commons.math.stat.inference.OneWayAnovaImpl;
-import org.apache.commons.math.stat.inference.TTestImpl;
 
 /**
  * Performs a one way ANOVA test.

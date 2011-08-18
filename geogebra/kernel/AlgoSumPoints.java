@@ -12,10 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 
 /**

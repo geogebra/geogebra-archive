@@ -19,8 +19,6 @@ package geogebra.kernel;
 
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.euclidian.EuclidianConstants;
-import geogebra.main.Application;
 
 public class AlgoIncircle extends AlgoElement {
 

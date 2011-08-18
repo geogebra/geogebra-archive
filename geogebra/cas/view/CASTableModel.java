@@ -4,8 +4,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 public class CASTableModel extends DefaultTableModel {

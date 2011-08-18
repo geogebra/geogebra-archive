@@ -1,11 +1,10 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.kernel.GeoElement;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.arithmetic.Term;
 
 /**
  * Utility class for spreadsheet cell ranges.

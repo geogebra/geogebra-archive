@@ -18,14 +18,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.optimization.FitRealFunction ;				//as PRFunction
-//Not used: import geogebra.kernel.arithmetic.Function;
-//import geogebra.kernel.arithmetic.FunctionVariable;
-//Not used: import geogebra.kernel.arithmetic.MyDouble;
-//import geogebra.kernel.arithmetic.*;
+import geogebra.kernel.optimization.FitRealFunction;
+
 import org.apache.commons.math.optimization.fitting.CurveFitter;
 import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
-//import org.apache.commons.math.optimization.fitting.ParametricRealFunction;
 
 /**
 <pre>

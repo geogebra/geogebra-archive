@@ -13,8 +13,6 @@ the Free Software Foundation.
 
 package geogebra.gui.editor;
 
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * 

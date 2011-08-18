@@ -1,10 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -14,12 +11,10 @@ import java.awt.event.ActionListener;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 
 /**
  * Cell editor for GeoBoolean.

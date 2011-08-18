@@ -2,7 +2,7 @@ package geogebra.kernel.discrete.signalprocesser.voronoi.representation.voronoic
 
 import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
 
-import java.util.*;
+import java.util.Collection;
 
 public class BestVoronoiCells {
     

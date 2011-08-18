@@ -1,19 +1,13 @@
 package geogebra.kernel.commands;
 
 
-import javax.swing.SwingUtilities;
-
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoInterval;
-import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.Path;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.MyError;
 
 

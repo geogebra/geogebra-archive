@@ -16,7 +16,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.Traceable;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

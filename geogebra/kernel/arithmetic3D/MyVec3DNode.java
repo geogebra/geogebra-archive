@@ -19,12 +19,10 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic3D;
 
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ReplaceableValue;
 import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.main.Application;
 import geogebra.main.MyParseError;
 import geogebra3D.kernel3D.Geo3DVec;
 

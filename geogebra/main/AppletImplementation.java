@@ -16,7 +16,6 @@ import geogebra.AppletImplementationInterface;
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
 import geogebra.GeoGebraAppletPreloader;
-import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.MyBoolean;

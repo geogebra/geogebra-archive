@@ -16,7 +16,6 @@ the Free Software Foundation.
  */ 
 package geogebra.kernel.arithmetic;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 

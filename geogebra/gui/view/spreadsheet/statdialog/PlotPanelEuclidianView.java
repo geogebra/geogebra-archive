@@ -2,7 +2,6 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.util.ImageSelection;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -10,7 +9,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;

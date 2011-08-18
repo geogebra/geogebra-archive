@@ -1,7 +1,6 @@
 package geogebra.kernel;
 
 import geogebra.Matrix.CoordMatrix4x4;
-
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -14,7 +13,6 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
-
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoQuadric3D;

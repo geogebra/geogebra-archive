@@ -11,9 +11,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.MyPoint;
-import geogebra.kernel.discrete.AlgoShortestDistance.MyLink;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,18 +1,14 @@
 package geogebra.gui.layout.panels;
 
+import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.main.Application;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-
-import geogebra.euclidian.EuclidianViewInterface;
-import geogebra.gui.layout.DockPanel;
-import geogebra.gui.toolbar.Toolbar;
-import geogebra.main.Application;
 
 /**
  * Dock panel for the primary euclidian view.

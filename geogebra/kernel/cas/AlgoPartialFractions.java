@@ -12,14 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.cas;
 
-import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.Construction;
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.main.Application;
 
 public class AlgoPartialFractions extends AlgoCasBase {
    

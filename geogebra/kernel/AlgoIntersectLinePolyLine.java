@@ -23,7 +23,6 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 
-
 import java.util.TreeMap;
 
 

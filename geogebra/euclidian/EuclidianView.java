@@ -58,7 +58,6 @@ import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra.main.settings.AbstractSettings;
 import geogebra.main.settings.EuclidianSettings;
-import geogebra.main.settings.KeyboardSettings;
 import geogebra.main.settings.SettingListener;
 import geogebra.util.MyMath;
 import geogebra.util.Unicode;

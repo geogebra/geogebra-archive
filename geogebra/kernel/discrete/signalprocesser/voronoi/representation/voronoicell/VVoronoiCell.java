@@ -3,8 +3,6 @@ package geogebra.kernel.discrete.signalprocesser.voronoi.representation.voronoic
 
 import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
 
-import java.util.*;
-
 public class VVoronoiCell extends VPoint {
 //public class VVoronoiCell extends signalprocesser.voronoi.representation.boundaryproblem.VVertex {
     

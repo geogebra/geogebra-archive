@@ -21,8 +21,6 @@ import geogebra.kernel.roots.RealRootUtil;
 
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math.analysis.solvers.NewtonSolver;
-import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
-import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
 
 /**
  * Finds one real root of a function with newtons method.

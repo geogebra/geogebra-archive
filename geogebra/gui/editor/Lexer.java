@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui.editor;
 
 import java.io.IOException;
+
 import javax.swing.text.Document;
 
 /**

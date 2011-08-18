@@ -1,12 +1,8 @@
 package geogebra.gui.menubar;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.util.ImageSelection;
 import geogebra.main.Application;
 
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;

@@ -1,14 +1,13 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.representation.voronoicell;
 
-import geogebra.kernel.discrete.signalprocesser.voronoi.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.representation.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.*;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.AbstractRepresentation;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.VLinkedNode;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.VInternalNode;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.VLeafNode;
 
-import java.awt.*;
-import javax.swing.*;
-
-import java.util.*;
+import java.awt.Graphics2D;
+import java.util.Collection;
 
 // Note: this implementation is specifically dependant on the
 //   binary search tree implementation of the status structure

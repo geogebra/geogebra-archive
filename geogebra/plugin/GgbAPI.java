@@ -27,7 +27,6 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
-import geogebra.util.DownloadManager;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;

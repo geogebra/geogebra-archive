@@ -50,8 +50,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
 
-import org.mozilla.javascript.ContextFactory.Listener;
-
 
 /**
  * Dialog to create a new user defined tool

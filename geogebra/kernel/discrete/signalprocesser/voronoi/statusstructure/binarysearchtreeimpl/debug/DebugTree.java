@@ -1,13 +1,21 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.debug;
 
-import geogebra.kernel.discrete.signalprocesser.voronoi.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.*;
+import geogebra.kernel.discrete.signalprocesser.shared.TextToolkit;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiShared;
+import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.VSiteEvent;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.VInternalNode;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.VLeafNode;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.VNode;
 
-import geogebra.kernel.discrete.signalprocesser.shared.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JPanel;
 
 public class DebugTree extends javax.swing.JDialog {
     

@@ -13,8 +13,8 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.optimization.ExtremumFinder;
-import geogebra.main.Application;
 import geogebra.kernel.optimization.RealRootFunctionVariable;
+import geogebra.main.Application;
 
 /**
  * AlgoOptimize: Abstract class for AlgoMaximize and AlgoMinimize

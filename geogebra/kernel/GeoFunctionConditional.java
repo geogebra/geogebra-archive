@@ -12,16 +12,15 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-
 import geogebra.cas.CASgeneric;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.Unicode;
+
+import java.util.ArrayList;
 
 
 /**

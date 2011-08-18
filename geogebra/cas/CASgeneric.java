@@ -1,14 +1,13 @@
 package geogebra.cas;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.MyResourceBundle;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public abstract class CASgeneric {
 	

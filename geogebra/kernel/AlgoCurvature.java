@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import geogebra.main.Application;
 
 /**
  * @author  Victor Franco Espino, Markus Hohenwarter

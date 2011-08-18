@@ -13,8 +13,6 @@ the Free Software Foundation.
 package geogebra.gui;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.menubar.GeoGebraMenuBar;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;

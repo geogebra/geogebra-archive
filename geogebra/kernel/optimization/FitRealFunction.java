@@ -12,9 +12,16 @@ the Free Software Foundation.
 */
 
 
-import geogebra.kernel.*;
-import geogebra.kernel.arithmetic.*;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.NumberValue;
 
 /**
 <h3>FitRealFunction</h3>

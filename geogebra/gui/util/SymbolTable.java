@@ -1,16 +1,13 @@
 package geogebra.gui.util;
 
 import geogebra.gui.inputfield.MyTextField;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
-import geogebra.util.Unicode;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
 import javax.swing.SwingConstants;

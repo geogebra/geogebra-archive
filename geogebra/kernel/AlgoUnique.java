@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.math.stat.Frequency;

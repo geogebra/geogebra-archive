@@ -12,20 +12,13 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoFunctionable;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
-import geogebra.euclidian.EuclidianView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 /**

@@ -13,10 +13,10 @@ the Free Software Foundation.
 
 package geogebra.gui.editor;
 
+import geogebra.main.Application;
+
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.ViewFactory;
-
-import geogebra.main.Application;
 
 /**
  * 

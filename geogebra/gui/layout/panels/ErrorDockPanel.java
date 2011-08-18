@@ -1,22 +1,12 @@
 package geogebra.gui.layout.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.SystemColor;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 /**
  * Dock panel for error of loading (used for 3D panel not supported by ggb version < 5.0)

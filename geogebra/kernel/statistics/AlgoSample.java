@@ -21,7 +21,6 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 /**

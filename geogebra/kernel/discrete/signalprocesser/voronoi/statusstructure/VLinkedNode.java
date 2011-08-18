@@ -1,9 +1,12 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure;
 
-import geogebra.kernel.discrete.signalprocesser.voronoi.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.*;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiShared;
+import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.EventQueue;
+import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.VCircleEvent;
+import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.VSiteEvent;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class VLinkedNode {
     

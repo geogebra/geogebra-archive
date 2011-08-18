@@ -23,7 +23,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.TDistributionImpl;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
-import org.apache.commons.math.util.FastMath;
 
 /**
  * Calculates a t-confidence interval estimate of the difference of means.

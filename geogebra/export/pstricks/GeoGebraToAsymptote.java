@@ -45,8 +45,8 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.main.Application;
-import geogebra.util.Util;
 import geogebra.util.Unicode;
+import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -56,7 +56,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 /*
 import org.mozilla.javascript.Context;

@@ -14,8 +14,6 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 
-import geogebra.kernel.kernelND.GeoSegmentND;
-
 /**
  * Adapted from AlgoPerimeterPoly
  */

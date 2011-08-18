@@ -19,10 +19,8 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
-
-import geogebra.main.Application;
+import java.util.List;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 

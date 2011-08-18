@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 
 

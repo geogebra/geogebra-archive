@@ -13,20 +13,19 @@ the Free Software Foundation.
 package geogebra.util;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.main.Application;
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoPolyLine;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.AlgoPolygonRegular;
-import geogebra.kernel.AlgoPolyLine;
-import geogebra.kernel.GeoPolyLine;
-import geogebra.kernel.GeoAxis;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
+import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.UndoManager;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.Arrays;

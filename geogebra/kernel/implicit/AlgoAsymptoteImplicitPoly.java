@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.implicit;
 
-import java.util.ArrayList;
-
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
@@ -22,6 +20,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
+
+import java.util.ArrayList;
 /**
  * Find asymptotes of ImplicitCurves
  * 

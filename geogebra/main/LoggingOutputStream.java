@@ -1,8 +1,8 @@
 package geogebra.main;
-import java.io.ByteArrayOutputStream; 
-import java.io.IOException; 
-import java.util.logging.Level; 
-import java.util.logging.Logger; 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
  
 /** 
  * An OutputStream that writes contents to a Logger upon each call to flush() 

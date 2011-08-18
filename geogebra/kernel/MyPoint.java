@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianConstants;
 
 
 public class MyPoint {

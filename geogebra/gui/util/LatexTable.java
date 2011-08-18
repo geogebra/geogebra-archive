@@ -5,16 +5,13 @@ import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
-import geogebra.util.Util;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
 import javax.swing.SwingConstants;

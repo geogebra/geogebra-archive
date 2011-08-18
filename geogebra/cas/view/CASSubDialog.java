@@ -1,6 +1,5 @@
 package geogebra.cas.view;
 
-import geogebra.gui.GuiManager;
 import geogebra.gui.inputfield.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.cas.GeoCasCell;

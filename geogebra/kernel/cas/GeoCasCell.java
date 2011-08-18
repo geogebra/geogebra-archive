@@ -1,11 +1,8 @@
 package geogebra.kernel.cas;
 
-import geogebra.cas.CASparser;
 import geogebra.cas.view.CASInputHandler;
-import geogebra.cas.view.CASView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;

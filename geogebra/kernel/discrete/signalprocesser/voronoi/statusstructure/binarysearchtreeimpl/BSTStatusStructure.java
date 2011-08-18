@@ -1,14 +1,10 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.binarysearchtreeimpl;
 
-import geogebra.kernel.discrete.signalprocesser.voronoi.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.*;
-import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.*;
-
-import java.awt.Rectangle;
-import java.awt.Graphics2D;
-
-import java.util.*;
-import javax.swing.*;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiShared;
+import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.EventQueue;
+import geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue.VSiteEvent;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.AbstractStatusStructure;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.VLinkedNode;
 
 public class BSTStatusStructure extends AbstractStatusStructure {
     

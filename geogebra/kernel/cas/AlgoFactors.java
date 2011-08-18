@@ -17,7 +17,6 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.arithmetic.ExpressionNode;
 /**
  * Try to expand the given function 
  * 

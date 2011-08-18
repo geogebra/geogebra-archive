@@ -1,13 +1,12 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.kernel.Kernel;
+import geogebra.main.Application;
+
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.SystemColor;
-
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 import javax.swing.BorderFactory;
 import javax.swing.JTable;

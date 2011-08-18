@@ -22,7 +22,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
-import geogebra.main.MyError;
 import geogebra.util.GgbMat;
 
 import java.util.ArrayList;

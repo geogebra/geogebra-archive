@@ -15,7 +15,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;

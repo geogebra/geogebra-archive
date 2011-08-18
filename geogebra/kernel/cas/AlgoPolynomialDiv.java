@@ -16,8 +16,6 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
 /**
  * Polynomial division
  * 

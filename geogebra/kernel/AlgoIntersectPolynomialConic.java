@@ -18,21 +18,15 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.kernel.parser.ParseException;
-import geogebra.main.Application;
-import geogebra.main.MyError;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
 public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 

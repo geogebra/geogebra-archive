@@ -4,13 +4,7 @@ package geogebra.gui;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 public class InputDialogOpenURL extends InputDialog{
 	

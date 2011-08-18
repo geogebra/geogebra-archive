@@ -1,11 +1,6 @@
 package geogebra.gui.view.functioninspector;
 
 import geogebra.gui.inputfield.MyTextField;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -13,16 +8,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;

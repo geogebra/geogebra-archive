@@ -39,7 +39,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
-import javax.swing.JTable.PrintMode;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TreeSelectionEvent;

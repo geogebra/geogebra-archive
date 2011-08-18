@@ -20,9 +20,7 @@ package geogebra.io;
 
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
-import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.probcalculator.ProbabilityCalculator;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;

@@ -4,7 +4,6 @@ import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.PointProperties;
-import geogebra.kernel.TextProperties;
 import geogebra.main.Application;
 
 import java.awt.Color;

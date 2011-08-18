@@ -3,7 +3,6 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.PolyFunction;
 import geogebra.kernel.roots.RealRootFunction;
-import geogebra.main.Application;
 
 import java.util.Iterator;
 import java.util.LinkedList;

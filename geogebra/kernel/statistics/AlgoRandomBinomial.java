@@ -12,8 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import org.apache.commons.math.special.Gamma;
-
 import geogebra.kernel.AlgoTwoNumFunction;
 import geogebra.kernel.Construction;
 import geogebra.kernel.arithmetic.NumberValue;

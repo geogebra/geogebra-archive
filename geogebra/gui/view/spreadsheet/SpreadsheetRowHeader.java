@@ -1,14 +1,12 @@
 package geogebra.gui.view.spreadsheet;
 
 
-import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;

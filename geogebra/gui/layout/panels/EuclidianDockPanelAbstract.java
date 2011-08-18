@@ -2,10 +2,8 @@ package geogebra.gui.layout.panels;
 
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.layout.DockPanel;
-import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;

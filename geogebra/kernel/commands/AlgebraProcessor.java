@@ -1,6 +1,5 @@
 package geogebra.kernel.commands;
 
-import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -42,7 +41,6 @@ import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.util.Unicode;
 
 import java.util.ArrayList;
 import java.util.Set;

@@ -1,13 +1,17 @@
 package geogebra.export;
 
+import geogebra.gui.util.AnimatedGifEncoder;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.Kernel;
+import geogebra.main.Application;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Iterator;
@@ -22,14 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JTextField;
-
-import geogebra.gui.util.AnimatedGifEncoder;
-import geogebra.kernel.Kernel;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
-import geogebra.main.Application;
 
 /**
  * Dialog to export a slider as animation.

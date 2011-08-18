@@ -18,7 +18,6 @@ import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -43,7 +42,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.text.JTextComponent;
 
 public class ButtonDialog extends JDialog 

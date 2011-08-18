@@ -23,8 +23,6 @@ import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
-import geogebra.main.Application;
-import geogebra.util.Unicode;
 
 import java.util.ArrayList;
 

@@ -2,7 +2,6 @@ package geogebra.gui.util;
 
 
 
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
@@ -10,7 +9,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;

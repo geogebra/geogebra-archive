@@ -18,9 +18,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.AlgoElement.OutputHandler;
-import geogebra.kernel.AlgoElement.elementFactory;
-import geogebra.main.Application;
 
 /**
  *	Algorithm to calculate all tangents to the implicit polynomial equation

@@ -5,18 +5,14 @@
 package geogebra.cas.view;
 
 import geogebra.gui.inputfield.AutoCompleteTextField;
-import geogebra.gui.inputfield.MyTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 public class CASInputPanel extends JPanel {

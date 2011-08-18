@@ -20,10 +20,9 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-//Not used: import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
-//Not used: import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.*;
+import geogebra.kernel.arithmetic.NumberValue;
+
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.DecompositionSolver;
 import org.apache.commons.math.linear.QRDecompositionImpl;

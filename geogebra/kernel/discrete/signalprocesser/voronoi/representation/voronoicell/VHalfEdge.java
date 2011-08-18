@@ -1,7 +1,4 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.representation.voronoicell;
-import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
-
-import java.util.*;
 
 public class VHalfEdge {
     

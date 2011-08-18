@@ -12,7 +12,6 @@
 
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.integration.EllipticArcLength;
 
 /**

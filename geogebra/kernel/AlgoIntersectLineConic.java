@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.main.Application;
 
 import java.util.ArrayList;
 

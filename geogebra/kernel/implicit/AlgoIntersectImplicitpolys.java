@@ -18,17 +18,17 @@ the Free Software Foundation.
 
 package geogebra.kernel.implicit;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.AlgoSimpleRootsPolynomial;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.Kernel;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
 
 /**

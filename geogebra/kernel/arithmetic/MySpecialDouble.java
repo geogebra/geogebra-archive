@@ -13,7 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 import java.math.BigDecimal;

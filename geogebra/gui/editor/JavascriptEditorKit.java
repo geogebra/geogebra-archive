@@ -13,20 +13,17 @@ the Free Software Foundation.
 
 package geogebra.gui.editor;
 
+import geogebra.main.Application;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.ViewFactory;
-
-import geogebra.main.Application;
 
 /**
  * 

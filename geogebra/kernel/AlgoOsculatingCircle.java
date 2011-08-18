@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import geogebra.main.Application;
 
 
 

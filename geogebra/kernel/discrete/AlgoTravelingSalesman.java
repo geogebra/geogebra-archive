@@ -3,24 +3,14 @@ package geogebra.kernel.discrete;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
-import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiAlgorithm;
-import geogebra.kernel.discrete.signalprocesser.voronoi.representation.AbstractRepresentation;
-import geogebra.kernel.discrete.signalprocesser.voronoi.representation.RepresentationFactory;
-import geogebra.kernel.discrete.signalprocesser.voronoi.representation.simpletriangulation.SimpleTriangulationRepresentation;
-import geogebra.kernel.discrete.signalprocesser.voronoi.representation.simpletriangulation.VTriangle;
 import geogebra.kernel.discrete.tsp.method.tsp.BranchBound;
 import geogebra.kernel.discrete.tsp.method.tsp.Opt3;
 import geogebra.kernel.discrete.tsp.model.Node;
 import geogebra.kernel.kernelND.GeoPointND;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 public class AlgoTravelingSalesman extends AlgoHull{
 

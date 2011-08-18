@@ -12,16 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.GeoPoint;
-import geogebra.main.Application;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.main.Application;
 
 
 

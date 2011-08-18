@@ -1,15 +1,21 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.shapegeneration;
 import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
 
-import java.io.*;
-import java.util.*;
-
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.event.*;
-import java.awt.font.*;
-import javax.swing.*;
-import java.awt.image.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
+import java.util.ArrayList;
 
 public class ShapeGeneration {
     

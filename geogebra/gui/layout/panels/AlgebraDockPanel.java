@@ -1,13 +1,13 @@
 package geogebra.gui.layout.panels;
 
+import geogebra.gui.layout.DockPanel;
+import geogebra.main.Application;
+
 import java.awt.Color;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
-
-import geogebra.gui.layout.DockPanel;
-import geogebra.main.Application;
 
 /**
  * Dock panel for the algebra view.

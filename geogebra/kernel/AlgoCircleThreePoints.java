@@ -18,9 +18,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.euclidian.EuclidianConstants;
 
 
 /**

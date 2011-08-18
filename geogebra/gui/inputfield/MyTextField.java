@@ -1,6 +1,5 @@
 package geogebra.gui.inputfield;
 
-import geogebra.gui.GuiManager;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SymbolTable;

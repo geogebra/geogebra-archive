@@ -2,7 +2,6 @@ package geogebra.gui;
 
 import geogebra.gui.inputfield.MyTextField;
 import geogebra.main.Application;
-import geogebra.gui.GuiManager;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

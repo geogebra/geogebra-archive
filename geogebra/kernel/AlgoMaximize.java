@@ -12,9 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.optimization.ExtremumFinder;
-import geogebra.main.Application;
-import geogebra.kernel.optimization.RealRootFunctionVariable;
 
 /**
  * AlgoMaximize

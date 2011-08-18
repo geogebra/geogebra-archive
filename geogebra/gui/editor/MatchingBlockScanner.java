@@ -18,6 +18,7 @@ the Free Software Foundation.
 package geogebra.gui.editor;
 
 import java.io.StringReader;
+
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 

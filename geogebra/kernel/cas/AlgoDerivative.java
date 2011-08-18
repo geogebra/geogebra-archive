@@ -17,7 +17,6 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 /**
  * Derivative of a function

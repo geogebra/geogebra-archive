@@ -16,7 +16,6 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.TableSymbols;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;

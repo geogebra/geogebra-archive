@@ -17,18 +17,18 @@ the Free Software Foundation.
 
 package geogebra.gui.editor;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.Iterator;
+import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
+
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-
-import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
 
 
 /**

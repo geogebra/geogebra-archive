@@ -1,14 +1,9 @@
 package geogebra.cas.view;
 
-import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.cas.GeoCasCell;
-import geogebra.main.Application;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;

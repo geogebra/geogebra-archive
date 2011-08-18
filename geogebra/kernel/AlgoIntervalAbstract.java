@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
 
 public abstract class AlgoIntervalAbstract extends AlgoElement {
 

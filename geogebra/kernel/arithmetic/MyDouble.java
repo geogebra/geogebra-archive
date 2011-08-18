@@ -22,7 +22,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 import geogebra.util.Unicode;
 

@@ -1,6 +1,5 @@
 package geogebra.Matrix;
 
-import geogebra.kernel.Kernel;
 
 public class Coords3D{
 	double[] val = new double[4];

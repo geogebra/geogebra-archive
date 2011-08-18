@@ -21,7 +21,6 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
-import geogebra.main.Application;
 
 
 

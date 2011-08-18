@@ -14,7 +14,6 @@ package geogebra.kernel;
 
 
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 import java.util.ArrayList;
 

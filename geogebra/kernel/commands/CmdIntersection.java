@@ -1,17 +1,9 @@
 package geogebra.kernel.commands;
 
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoFunctionable;
-import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.main.MyError;
 
 

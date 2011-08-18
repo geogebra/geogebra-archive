@@ -13,9 +13,7 @@ the Free Software Foundation.
 package geogebra.export;
 
 import geogebra.GeoGebra;
-import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
-import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.export.epsgraphics.ColorMode;
 import geogebra.gui.util.FileTransferable;
 import geogebra.gui.util.ImageSelection;

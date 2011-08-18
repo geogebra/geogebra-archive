@@ -1,11 +1,9 @@
 package geogebra.gui;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JCheckBox;
-
 import geogebra.gui.GuiManager.NumberChangeSignInputHandler;
 import geogebra.main.Application;
+
+import javax.swing.JCheckBox;
 
 /**
  * InputDialog with checkbox to change sign

@@ -28,10 +28,9 @@ import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
-import geogebra.main.MyError;
-
 
 import java.util.HashMap;
 import java.util.Iterator;

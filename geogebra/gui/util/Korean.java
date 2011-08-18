@@ -1,7 +1,5 @@
 package geogebra.gui.util;
 
-import geogebra.main.Application;
-
 import java.util.HashMap;
 
 public class Korean {

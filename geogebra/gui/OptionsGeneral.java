@@ -1,15 +1,12 @@
 package geogebra.gui;
 
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,7 +14,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.border.BevelBorder;
 import javax.swing.plaf.basic.BasicCheckBoxUI;
 
 /**

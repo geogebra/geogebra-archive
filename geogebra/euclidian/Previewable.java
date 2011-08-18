@@ -1,7 +1,5 @@
 package geogebra.euclidian;
 
-import geogebra.kernel.GeoElement;
-
 import java.awt.Graphics2D;
 
 /**

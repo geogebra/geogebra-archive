@@ -19,11 +19,6 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.TreeSet;
-
-import org.apache.commons.math.stat.inference.TTestImpl;
 import org.apache.commons.math.stat.ranking.NaturalRanking;
 import org.apache.commons.math.stat.ranking.TiesStrategy;
 

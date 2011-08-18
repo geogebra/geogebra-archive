@@ -13,15 +13,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-import java.util.ArrayList;
-
-import org.apache.commons.math.distribution.BinomialDistributionImpl;
-import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
-import org.apache.commons.math.distribution.IntegerDistribution;
-import org.apache.commons.math.distribution.PascalDistributionImpl;
-import org.apache.commons.math.distribution.ZipfDistributionImpl;
-import org.apache.commons.math.distribution.PoissonDistributionImpl;
-
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -29,6 +20,15 @@ import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.optimization.NegativeRealRootFunction;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
+
+import java.util.ArrayList;
+
+import org.apache.commons.math.distribution.BinomialDistributionImpl;
+import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
+import org.apache.commons.math.distribution.IntegerDistribution;
+import org.apache.commons.math.distribution.PascalDistributionImpl;
+import org.apache.commons.math.distribution.PoissonDistributionImpl;
+import org.apache.commons.math.distribution.ZipfDistributionImpl;
 
 
 

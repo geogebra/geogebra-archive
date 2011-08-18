@@ -2,12 +2,12 @@ package geogebra.util;
 
 import geogebra.gui.util.Korean;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.ArrayList;
 
 /**
  * A default implementation of the autocomplete dictionary. This implementation

@@ -22,13 +22,9 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.gui.DynamicTextInputPane;
 import geogebra.gui.TextInputDialog;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;

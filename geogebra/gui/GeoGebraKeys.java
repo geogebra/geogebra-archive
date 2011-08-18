@@ -1,6 +1,5 @@
 package geogebra.gui;
 
-import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
@@ -9,6 +8,7 @@ import geogebra.util.Util;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Locale;
+
 import javax.swing.text.JTextComponent;
 
 /*

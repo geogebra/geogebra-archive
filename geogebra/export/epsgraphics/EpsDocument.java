@@ -27,8 +27,12 @@
  */
 package geogebra.export.epsgraphics;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Date;
 
 /**
  * This represents an EPS document. Several EpsGraphics2D objects may point to

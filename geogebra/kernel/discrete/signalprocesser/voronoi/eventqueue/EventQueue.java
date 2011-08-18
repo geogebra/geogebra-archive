@@ -1,8 +1,7 @@
 package geogebra.kernel.discrete.signalprocesser.voronoi.eventqueue;
-import geogebra.kernel.discrete.signalprocesser.voronoi.*;
-
-import java.io.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeMap;
 
 public class EventQueue {
     

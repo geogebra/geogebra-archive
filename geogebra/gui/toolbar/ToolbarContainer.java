@@ -1,5 +1,9 @@
 package geogebra.gui.toolbar;
 
+import geogebra.gui.MySmallJButton;
+import geogebra.main.Application;
+import geogebra.util.Util;
+
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -17,10 +21,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import geogebra.gui.MySmallJButton;
-import geogebra.main.Application;
-import geogebra.util.Util;
 
 /**
  * Container for one or multiple toolbars. Takes care of fundamental things such

@@ -3,9 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

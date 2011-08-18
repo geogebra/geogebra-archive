@@ -17,9 +17,9 @@ the Free Software Foundation.
  */
 package geogebra.euclidian;
 
-import java.awt.geom.Area;
-
 import geogebra.kernel.implicit.GeoImplicitPoly;
+
+import java.awt.geom.Area;
 
 /**
  * Draw GeoImplicitPoly on euclidian view

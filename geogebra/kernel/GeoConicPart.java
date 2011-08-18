@@ -21,7 +21,6 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.EllipticArcLength;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 
 /**

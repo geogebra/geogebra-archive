@@ -12,14 +12,14 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import java.util.ArrayList;
-
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
+
+import java.util.ArrayList;
 
 import org.apache.commons.math.distribution.BinomialDistribution;
 import org.apache.commons.math.distribution.BinomialDistributionImpl;

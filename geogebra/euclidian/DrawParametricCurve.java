@@ -18,6 +18,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.VarString;
 import geogebra.kernel.roots.RealRootUtil;
+
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;

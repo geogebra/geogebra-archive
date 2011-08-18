@@ -19,7 +19,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
-import geogebra.main.Application;
 
 
 public class AlgoTangentFunctionPoint extends AlgoUsingTempCASalgo {

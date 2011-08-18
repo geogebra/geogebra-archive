@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.VectorValue;
-import geogebra.main.Application;
 
 /**
  *

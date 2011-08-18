@@ -1,8 +1,5 @@
 package geogebra.cas.view;
 
-import java.awt.Color;
-
-import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.GeoGebraColorConstants;
 
 import javax.swing.BorderFactory;

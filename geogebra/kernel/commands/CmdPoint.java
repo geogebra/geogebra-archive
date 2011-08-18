@@ -1,8 +1,6 @@
 package geogebra.kernel.commands;
 
 
-import javax.swing.SwingUtilities;
-
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;

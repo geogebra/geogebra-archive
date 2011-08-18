@@ -14,7 +14,6 @@ package geogebra.export;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
-import geogebra.gui.OptionsDialog;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputfield.MyTextField;
@@ -30,7 +29,6 @@ import geogebra.util.DownloadManager;
 import geogebra.util.Util;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;

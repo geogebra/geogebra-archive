@@ -1,9 +1,9 @@
 package geogebra.kernel;
 
-import org.apache.commons.math.linear.LUDecompositionImpl;
-
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.GgbMat;
+
+import org.apache.commons.math.linear.LUDecompositionImpl;
 
 /**
  * Container for transforms

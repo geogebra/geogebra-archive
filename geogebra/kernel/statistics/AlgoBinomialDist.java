@@ -12,12 +12,12 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import org.apache.commons.math.distribution.BinomialDistribution;
-
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+
+import org.apache.commons.math.distribution.BinomialDistribution;
 
 
 

@@ -1,15 +1,12 @@
 package geogebra.gui.view.algebra;
 
-import geogebra.gui.util.GeoGebraIcon;
 import geogebra.main.Application;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JToolBar;
-import javax.swing.tree.TreeModel;
 
 /**
  * Helper tool bar for the algebra view which displays some useful

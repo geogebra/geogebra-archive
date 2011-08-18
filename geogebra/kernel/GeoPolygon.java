@@ -21,7 +21,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;

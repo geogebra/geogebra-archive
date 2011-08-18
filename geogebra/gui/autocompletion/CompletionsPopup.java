@@ -5,12 +5,10 @@ import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
-import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_TAB;
-
+import static java.awt.event.KeyEvent.VK_UP;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-
 import geogebra.gui.inputfield.AutoCompleteTextField;
 
 import java.awt.Rectangle;

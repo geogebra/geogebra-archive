@@ -1,10 +1,8 @@
 package geogebra.gui.layout.panels;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-
-import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
+
+import javax.swing.JComponent;
 
 /**
  * Dock panel for the secondary euclidian view.

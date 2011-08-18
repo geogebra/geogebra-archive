@@ -1,9 +1,14 @@
 package geogebra.kernel.discrete.signalprocesser.shared;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.LayoutManager;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 public class JCollapsiblePanel extends JPanel implements MouseListener {
     

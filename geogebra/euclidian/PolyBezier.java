@@ -19,9 +19,6 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import java.awt.Point;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Iterator;

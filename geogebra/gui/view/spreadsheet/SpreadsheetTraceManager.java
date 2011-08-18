@@ -1,10 +1,5 @@
 package geogebra.gui.view.spreadsheet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.TreeSet;
-
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
@@ -15,6 +10,11 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.TreeSet;
 
 /**
  * This class manages tracing of GeoElements to the spreadsheet. A trace is a

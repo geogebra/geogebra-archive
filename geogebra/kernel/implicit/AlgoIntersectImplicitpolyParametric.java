@@ -17,11 +17,7 @@ the Free Software Foundation.
  */
 package geogebra.kernel.implicit;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import geogebra.euclidian.EuclidianConstants;
-
 import geogebra.kernel.AlgoRoots;
 import geogebra.kernel.AlgoSimpleRootsPolynomial;
 import geogebra.kernel.Construction;
@@ -31,8 +27,10 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.parser.ParseException;
-
 import geogebra.main.MyError;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 

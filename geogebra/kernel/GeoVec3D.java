@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.util.Util;
 
 
 /**

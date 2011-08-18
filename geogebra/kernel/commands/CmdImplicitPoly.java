@@ -6,12 +6,8 @@ import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.kernel.arithmetic.Equation;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 

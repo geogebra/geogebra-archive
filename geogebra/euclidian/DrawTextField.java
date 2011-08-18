@@ -14,7 +14,6 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.arithmetic.ExpressionNode;

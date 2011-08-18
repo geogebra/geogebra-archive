@@ -4,8 +4,6 @@ import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.main.Application;
 
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;

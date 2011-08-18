@@ -7,9 +7,6 @@ the Free Software Foundation.
  */
 
 package geogebra.export.pstricks;
-import geogebra.euclidian.DrawConic;
-import geogebra.euclidian.DrawImplicitPoly;
-import geogebra.euclidian.DrawInequality1Var;
 import geogebra.euclidian.DrawPoint;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
@@ -45,8 +42,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionNVar;
-import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.main.Application;

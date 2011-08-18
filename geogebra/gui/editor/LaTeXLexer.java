@@ -18,6 +18,7 @@ package geogebra.gui.editor;
 
 import java.io.IOException;
 import java.io.StringReader;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;

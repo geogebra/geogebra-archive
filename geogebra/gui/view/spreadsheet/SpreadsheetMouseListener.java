@@ -5,7 +5,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
-import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;

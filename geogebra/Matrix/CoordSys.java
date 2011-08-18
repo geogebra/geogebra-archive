@@ -1,10 +1,6 @@
 package geogebra.Matrix;
 
-import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 /**
  * Class describing 1D, 2D and 3D coordinate systems.

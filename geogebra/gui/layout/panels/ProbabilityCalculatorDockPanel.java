@@ -1,11 +1,9 @@
 package geogebra.gui.layout.panels;
 
-import javax.swing.JComponent;
-
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.layout.DockPanel;
-import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
+
+import javax.swing.JComponent;
 
 /**
  * Dock panel for the probability calculator.

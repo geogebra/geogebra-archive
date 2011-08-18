@@ -1,12 +1,10 @@
 package geogebra.gui.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
+
+import java.util.ArrayList;
 
 /**
  * Arrays of special strings and unicode symbols used when building tables and lists. 

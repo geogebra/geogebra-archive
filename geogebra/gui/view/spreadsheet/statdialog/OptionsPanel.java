@@ -1,8 +1,6 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.gui.inputfield.MyTextField;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -12,7 +10,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -27,7 +24,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

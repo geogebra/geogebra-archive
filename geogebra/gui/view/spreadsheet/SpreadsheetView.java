@@ -31,7 +31,6 @@ import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -39,8 +38,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable.PrintMode;
 import javax.swing.JViewport;
+import javax.swing.JTable.PrintMode;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 

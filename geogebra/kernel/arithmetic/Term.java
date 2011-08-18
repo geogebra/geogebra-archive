@@ -20,7 +20,6 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 import java.io.Serializable;
 

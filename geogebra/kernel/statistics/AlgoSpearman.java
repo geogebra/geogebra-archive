@@ -12,16 +12,15 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
-import org.apache.commons.math.stat.correlation.SpearmansCorrelation;
-
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.NumberValue;
+
+import org.apache.commons.math.stat.correlation.SpearmansCorrelation;
 
 /**
  * Finds Spearman's correlation coefficient from a list of points or two lists of

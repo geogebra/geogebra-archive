@@ -12,15 +12,12 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.GeoDummyVariable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
-import geogebra.main.MyError;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * stores left and right hand side of an equation as

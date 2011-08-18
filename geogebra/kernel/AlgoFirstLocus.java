@@ -1,7 +1,5 @@
 package geogebra.kernel;
 
-import geogebra.main.Application;
-
 import java.util.ArrayList;
 
 public class AlgoFirstLocus extends AlgoFirst {

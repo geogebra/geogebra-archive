@@ -5,8 +5,6 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 public class RemoveMaxAndMinButton extends JDialog{
 	  public RemoveMaxAndMinButton(JFrame frame, String str){

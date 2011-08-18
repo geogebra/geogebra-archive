@@ -60,7 +60,6 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
-import geogebra.util.CopyPaste;
 
 import java.awt.Color;
 import java.awt.Component;

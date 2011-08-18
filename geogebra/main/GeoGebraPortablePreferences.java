@@ -12,18 +12,12 @@
 
 package geogebra.main;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Locale;
-import java.util.prefs.Preferences;
-
-import geogebra.main.Application;
-import java.net.URL;
-import java.io.*;
 import java.util.Properties;
 /**
  * Class GeoGebraPortablePreferences
@@ -78,7 +72,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	/// --- --- ///
 	private final static boolean 	DEBUG 	= 	true;
 	private final static String		ERROR	=	"Error?";		//For debugging
-	//private final static String		EQUAL	=	"§EQUALS§";		//Substituting for "="
+	//private final static String		EQUAL	=	"ï¿½EQUALSï¿½";		//Substituting for "="
 	private final static String		COMMENT	=	"GeoGebra Portable preferences (GeoGebra settings file)";
 		
 	/// --- Properties --- ///

@@ -18,10 +18,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
+
+import java.util.ArrayList;
 
 
 /**

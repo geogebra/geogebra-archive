@@ -2,20 +2,14 @@ package geogebra.gui.view.spreadsheet.statdialog;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
+
 import javax.swing.table.DefaultTableModel;
+
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.distribution.FDistribution;

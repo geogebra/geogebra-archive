@@ -1,18 +1,11 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
-import geogebra.kernel.GeoList;
 import geogebra.main.Application;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -20,7 +13,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class StatDialogOptionsPanel extends JPanel implements  ActionListener, StatPanelInterface{

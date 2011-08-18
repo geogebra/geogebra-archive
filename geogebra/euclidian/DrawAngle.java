@@ -17,21 +17,16 @@ import geogebra.kernel.AlgoAngleLines;
 import geogebra.kernel.AlgoAnglePoints;
 import geogebra.kernel.AlgoAngleVector;
 import geogebra.kernel.AlgoAngleVectors;
-import geogebra.kernel.AlgoCircleTwoPoints;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
-import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -40,7 +35,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 /**
  * 

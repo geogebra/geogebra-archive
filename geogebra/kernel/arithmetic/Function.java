@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.Kernel;
@@ -20,7 +19,6 @@ import geogebra.kernel.roots.RealRootDerivFunction;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 

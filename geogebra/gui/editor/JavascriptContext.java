@@ -13,19 +13,17 @@ the Free Software Foundation.
 
 package geogebra.gui.editor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.text.ViewFactory;
-import javax.swing.text.View;
-import javax.swing.text.Element;
-
 import geogebra.main.Application;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.text.Element;
+import javax.swing.text.View;
 
 /**
  * 
