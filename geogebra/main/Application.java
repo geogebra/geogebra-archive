@@ -2509,6 +2509,8 @@ public class Application implements KeyEventDispatcher {
 
 	private StringBuilder sbPlain = new StringBuilder();
 
+	private boolean showConstProtNavigationNeedsUpdate=false;
+
 	final public String getMenu(String key) {
 		
 		if (tooltipFlag) return getMenuTooltip(key);
@@ -3142,17 +3144,23 @@ public class Application implements KeyEventDispatcher {
 			updateContentPane();
 	}
 
+	public boolean getShowCPNavNeedsUpdate(){
+		return showConstProtNavigationNeedsUpdate;
+	}
 	/**
 	 * Displays the construction protocol navigation
 	 */
 	public void setShowConstructionProtocolNavigation(boolean flag) {
-		if (flag == showConsProtNavigation)
+		if ((flag == showConsProtNavigation)&&(showConstProtNavigationNeedsUpdate == false))
 			return;
 		showConsProtNavigation = flag;
 
 		if(getGuiManager()!=null){
 			getGuiManager().setShowConstructionProtocolNavigation(flag);
 			updateMenubar();
+			showConstProtNavigationNeedsUpdate = false;
+		}else{
+			showConstProtNavigationNeedsUpdate = true;
 		}
 	}
 

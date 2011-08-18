@@ -66,6 +66,11 @@ public class EuclidianDockPanel extends EuclidianDockPanelAbstract {
 			panel.add(app.getEuclidianView(), BorderLayout.CENTER);
 			
 			consProtNav = app.getGuiManager().getConstructionProtocolNavigation();
+		
+			
+			if (app.getShowCPNavNeedsUpdate()){
+				app.setShowConstructionProtocolNavigation(app.showConsProtNavigation());
+			}
 			consProtNav.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray));
 			consProtNav.setVisible(app.showConsProtNavigation());
 			
