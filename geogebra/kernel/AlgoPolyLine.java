@@ -36,7 +36,7 @@ public class AlgoPolyLine extends AlgoElement {
     	this(cons, labels, null, geoList);
     }
     
-    protected AlgoPolyLine(Construction cons, String [] labels, GeoPointND [] points) {
+    public AlgoPolyLine(Construction cons, String [] labels, GeoPointND [] points) {
     	this(cons, labels, points, null);
     }
  

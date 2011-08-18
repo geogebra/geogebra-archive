@@ -31,6 +31,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitLineY;
 import geogebra.kernel.statistics.AlgoFitLog;
@@ -229,25 +230,62 @@ public class StatGeo   {
 		if(settings.frequencyType == StatPanelSettings.TYPE_NORMALIZED)
 			density = 1.0/dataList.size();
 
-		if(isFrequencyPolygon)
-			al2 = new AlgoFrequencyPolygon(cons, new GeoBoolean(cons, settings.isCumulative), 
-					(GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
-		else
-			al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), 
-					(GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density),histogramRight);
+
+		//if(isFrequencyPolygon)
+		//	al2 = new AlgoFrequencyPolygon(cons, new GeoBoolean(cons, settings.isCumulative), 
+		//		(GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density));
+		//else
+		al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), 
+				(GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density),histogramRight);
 		cons.removeFromConstructionList(al2);
 
-
-		geo = al2.getGeoElements()[0];
 		if(isFrequencyPolygon){
+			AlgoPolyLine al3 = createFrequencyPolygon((AlgoHistogram) al2, settings.isCumulative);
+			cons.removeFromConstructionList(al3);
+			geo = al3.getGeoElements()[0];
 			geo.setObjColor(StatDialog.OVERLAY_COLOR);
 			geo.setLineThickness(StatDialog.thicknessCurve);
+
 		}else{
+			geo = al2.getGeoElements()[0];
 			geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
 			geo.setAlphaValue(StatDialog.opacityBarChart);
 			geo.setLineThickness(StatDialog.thicknessBarChart);
 		}
 		return geo;	
+	}
+
+
+	/**
+	 * Creates a FrequencyPolygon algo using AlgoPolyLine instead of AlgoFrequencyPolygon
+	 * This is needed until FrequencyPolygonRight is implemented
+	 * 
+	 * @param histogram
+	 * @param doCumulative
+	 * @return
+	 */
+	private AlgoPolyLine createFrequencyPolygon(AlgoHistogram histogram, boolean doCumulative){
+
+		double[] leftBorder = histogram.getLeftBorder();
+		double yValue[] = histogram.getYValue();
+		int size = doCumulative ? yValue.length : yValue.length-1;
+		GeoPointND[] points = new GeoPoint[size];
+
+		boolean suppressLabelCreation = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+		if(doCumulative)
+			points[0] = new GeoPoint(cons, null, leftBorder[0], 0.0, 1.0);
+		for (int i = 0; i < yValue.length-1; i++) {
+			if(doCumulative)
+				points[i+1] = new GeoPoint(cons, null, leftBorder[i+1], yValue[i], 1.0);
+			else
+				points[i] = new GeoPoint(cons, null, (leftBorder[i+1] + leftBorder[i])/2, yValue[i], 1.0);
+		}	
+		cons.setSuppressLabelCreation(suppressLabelCreation);
+
+		AlgoPolyLine polyLine = new AlgoPolyLine(cons, null, points);
+		cons.removeFromConstructionList(polyLine);
+		return polyLine;
 	}
 
 
@@ -502,8 +540,8 @@ public class StatGeo   {
 	}
 
 
-	
-	
+
+
 	public GeoElement createScatterPlotLine(GeoList points){
 
 		AlgoPolyLine polyLine = new AlgoPolyLine(cons, null, points);
@@ -521,8 +559,8 @@ public class StatGeo   {
 
 
 	}
-	
-	
+
+
 
 	public GeoElement createScatterPlot(GeoList dataList){
 
