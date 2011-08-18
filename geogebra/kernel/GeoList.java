@@ -1256,7 +1256,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 		for (int i = 0; i < geoList.size(); i++) {
 			GeoElement geo = (GeoElement) geoList.get(i);
-			geo.setLabelMode(mode);
+			if (!geo.isLabelSet())
+				geo.setLabelMode(mode);
 		}
 
 	}
