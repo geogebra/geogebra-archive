@@ -935,11 +935,17 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				view.setAxesTickStyles(styles);
 			}	
 
-			else if (source == tfCross) {			
-				double cross = parseDouble(tfCross.getText());			
+			else if (source == tfCross) {		
+				String str = tfCross.getText();
+				if ("".equals(str)) str = "0";
+				double cross = parseDouble(str);	
+				if (!(Double.isInfinite(cross) || Double.isNaN(cross))) {	
 					double[] ac = view.getAxesCross();
 					ac[axis] = cross;
 					view.setAxesCross(ac);
+				}
+				
+				tfCross.setText(""+ view.getAxesCross()[axis]);
 			}		
 
 			else if (source == cbPositiveAxis) {
