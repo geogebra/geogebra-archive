@@ -1250,7 +1250,9 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 
 	/*
 	 * for CmdSetLabelMode
-	 */
+	 *
+	 * removed: no point setting labelmode for objects with no labels
+	 * and we don't want to set labelmode for objects with labels...
 	public void setLabelMode(int mode) {
 		super.setLabelMode(mode);
 
@@ -1260,7 +1262,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 				geo.setLabelMode(mode);
 		}
 
-	}
+	}*/
 
 	// G.Sturr 2010-6-12
 	// Selection index for lists used in comboBoxes
