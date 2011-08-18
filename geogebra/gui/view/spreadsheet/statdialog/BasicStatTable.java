@@ -181,8 +181,6 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 			for(int column=0; column < 1; column++){
 				if(statMap[row].length == 2){
 					if(statMap[row][1] != null){
-						//expr = statMap[row][1] + "[" + dataLabel + "]";
-						//value = evaluateExpression(expr);
 						AlgoElement algo = getStatMapAlgo(statMap[row][1], dataList, geoRegression);
 						kernel.getConstruction().removeFromConstructionList(algo);
 						value = ((GeoNumeric)algo.getGeoElements()[0]).getDouble();
@@ -191,8 +189,6 @@ public class BasicStatTable extends JPanel implements StatPanelInterface {
 				}
 				else if(statMap[row].length == 3){
 					if(statMap[row][1] != null && geoRegression != null){
-						//expr = statMap[row][1] + "[" + dataLabel + " , " + regressionLabel + "]";
-						//value = evaluateExpression(expr);
 						AlgoElement algo = getStatMapAlgo(statMap[row][1], dataList, geoRegression);
 						kernel.getConstruction().removeFromConstructionList(algo);
 						value = ((GeoNumeric)algo.getGeoElements()[0]).getDouble();

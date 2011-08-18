@@ -242,7 +242,8 @@ public class StatGeo   {
 			geo.setObjColor(Color.BLACK);
 		}else{
 			geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
-			geo.setAlphaValue(0.25f);
+			geo.setAlphaValue(StatDialog.opacityBarChart);
+			geo.setLineThickness(StatDialog.thicknessBarChart);
 		}
 		return geo;	
 	}
@@ -279,7 +280,8 @@ public class StatGeo   {
 
 		//Application.debug(text);
 		//geo = createGeoFromString(text);
-		geo.setObjColor(Color.BLACK);
+		geo.setObjColor(StatDialog.OVERLAY_COLOR);
+		geo.setLineThickness(StatDialog.thicknessCurve);
 
 		return geo;	
 	}
@@ -328,7 +330,7 @@ public class StatGeo   {
 		geo = boxPlot.getGeoElements()[0];
 
 		geo.setObjColor(StatDialog.BOXPLOT_COLOR);
-		geo.setAlphaValue(0.25f);
+		geo.setAlphaValue(StatDialog.opacityBarChart);
 		return geo;		
 	}
 
@@ -371,7 +373,7 @@ public class StatGeo   {
 			cons.removeFromAlgorithmList(bp);
 			ret[i] = bp.getGeoElements()[0];
 			ret[i].setObjColor(StatDialog.BOXPLOT_COLOR);
-			ret[i].setAlphaValue(0.25f);
+			ret[i].setAlphaValue(StatDialog.opacityBarChart);
 
 		}
 
@@ -425,7 +427,7 @@ public class StatGeo   {
 		GeoElement geo = dp.getGeoElements()[0];
 
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
-		geo.setAlphaValue(0.25f);
+		geo.setAlphaValue(StatDialog.opacityBarChart);
 
 		return geo;	
 	}
@@ -470,7 +472,8 @@ public class StatGeo   {
 		GeoElement geo = qp.getGeoElements()[0];		
 
 		geo.setObjColor(StatDialog.NQPLOT_COLOR);
-		geo.setAlphaValue(0.25f);
+		geo.setAlphaValue(StatDialog.opacityBarChart);
+		geo.setLineThickness(StatDialog.thicknessCurve);
 
 		return geo;	
 	}
@@ -492,6 +495,8 @@ public class StatGeo   {
 
 		settings.isEdgeAxis[1] = true;
 		settings.forceXAxisBuffer = false;
+		settings.isPositiveOnly[0] = false;
+		settings.isPositiveOnly[1] = false;	
 	}
 
 
@@ -512,7 +517,7 @@ public class StatGeo   {
 		geo.setAuxiliaryObject(true);
 		geo.setLabelVisible(false);	
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
-		geo.setAlphaValue(0.25f);
+		geo.setAlphaValue(StatDialog.opacityBarChart);
 
 		return geo;
 
@@ -578,7 +583,8 @@ public class StatGeo   {
 			AlgoResidualPlot algoRP = new AlgoResidualPlot(cons, dataList, (GeoFunctionable) geo);
 			geo = algoRP.getGeoElements()[0];
 			geo.setObjColor(StatDialog.DOTPLOT_COLOR);
-			geo.setAlphaValue(0.25f);
+			geo.setAlphaValue(StatDialog.opacityBarChart);
+			geo.setLineThickness(StatDialog.thicknessCurve);
 		} else {
 
 			// set geo options

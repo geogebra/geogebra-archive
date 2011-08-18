@@ -29,6 +29,7 @@ public class ANOVATable extends BasicStatTable {
 
 	public ANOVATable(Application app, StatDialog statDialog){
 		super(app, statDialog, -1);
+		this.setMinimumSize(this.getPreferredSize());
 	}
 
 	

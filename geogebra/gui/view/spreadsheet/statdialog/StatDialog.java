@@ -9,14 +9,12 @@ import geogebra.gui.util.SpecialNumberFormatInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -33,15 +31,12 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
 
 public class StatDialog extends JDialog  implements ActionListener, View, Printable,
@@ -54,16 +49,12 @@ SpecialNumberFormatInterface {
 	private StatGeo statGeo;
 	private StatDialogController sdc;
 
-
 	// modes
 	public static final int MODE_ONEVAR = 0;
 	public static final int MODE_REGRESSION = 1;
 	public static final int MODE_MULTIVAR = 2;
 	private int mode;
 
-	// data collections
-	//protected GeoElement geoRegression;
-	//protected GeoList dataAll, dataSelected;
 
 	// flags
 	private boolean showDataPanel = false;
@@ -75,11 +66,19 @@ SpecialNumberFormatInterface {
 	// colors
 	public static final Color TABLE_GRID_COLOR = GeoGebraColorConstants.TABLE_GRID_COLOR;
 	public static final Color TABLE_HEADER_COLOR = new Color(240,240,240);   
-	public static final Color HISTOGRAM_COLOR = new Color(0,0,255); // blue with alpha 0.25   
-	public static final Color BOXPLOT_COLOR = new Color(204,0,0);  // rose with alpha 0.25 
-	public static final Color DOTPLOT_COLOR = new Color(0,204,204); // blue-green   
-	public static final Color NQPLOT_COLOR =  new Color(0,0,255); // blue with alpha 0.25     
-	public static final Color REGRESSION_COLOR = Color.RED;    
+	public static final Color HISTOGRAM_COLOR = GeoGebraColorConstants.BLUE;    
+	public static final Color BOXPLOT_COLOR = GeoGebraColorConstants.CRIMSON;
+	public static final Color DOTPLOT_COLOR = GeoGebraColorConstants.GRAY5;    
+	public static final Color NQPLOT_COLOR =  GeoGebraColorConstants.GRAY5;    
+	public static final Color REGRESSION_COLOR = Color.RED;   
+	public static final Color OVERLAY_COLOR = GeoGebraColorConstants.DARKBLUE;    
+	
+	public static final float opacityBarChart = 0.3f; 
+	public static final int thicknessCurve = 4;
+	public static final int thicknessBarChart = 3;
+	
+	
+	
 
 	// regression types
 	public static final int REG_NONE = 0;
@@ -160,7 +159,6 @@ SpecialNumberFormatInterface {
 	 * END StatDialog constructor  */
 
 
-
 	private void createGUI(){
 
 		// Create two StatCombo panels with default plots.
@@ -180,29 +178,25 @@ SpecialNumberFormatInterface {
 			break;
 
 		case MODE_MULTIVAR:
-			showComboPanel2 = true;
+			showComboPanel2 = false;
 			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_MULTIBOXPLOT, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_MULTIVARSTATS, mode, true);
 			break;		
 
 		}
 
 
-		// Create StatisticPanel
-		// A StatisticsPanel displays statistics and inference results from the current data set	
-
-		if(mode != MODE_MULTIVAR){
-			statisticsPanel = new StatisticsPanel(app, this);
-		}
+		// Create StatisticPanel to displays statistics and inference results
+		// from the current data set
+		statisticsPanel = new StatisticsPanel(app, this);
+		statisticsPanel.setBorder(BorderFactory.createEmptyBorder(4, 2, 2, 2));
 
 
-		// Create DataPanel.
-		// A DataPanel display the current data set(s) and allow temporary editing. 
-		// Edited data is used by the statTable and statCombo panels. 
-
+		// Create DataPanel to display the current data set(s) and allow
+		// temporary editing. 
 		if(mode != MODE_MULTIVAR){
 			dataPanel = new DataPanel(app, this, sdc.getDataAll(), mode);
-			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+			//dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+			dataPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		}
 
 
@@ -223,8 +217,6 @@ SpecialNumberFormatInterface {
 
 
 
-
-
 	//=================================================
 	//       GUI
 	//=================================================
@@ -232,8 +224,34 @@ SpecialNumberFormatInterface {
 
 	private void initGUI() {
 
+		//===========================================
+		// statData panel
+
 		if(mode == MODE_ONEVAR)
 			showStatPanel = true;
+
+		if(mode != MODE_MULTIVAR){					
+			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statisticsPanel, null);
+			statDataPanel.setResizeWeight(0.5);
+			statDataPanel.setBorder(BorderFactory.createEmptyBorder());
+		}
+		if(mode == MODE_MULTIVAR){			
+			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statisticsPanel, null);
+			statDataPanel.setDividerSize(0);
+			statDataPanel.setBorder(BorderFactory.createEmptyBorder());
+		}
+
+		// create a splitPane to hold the two plotComboPanels		
+		comboPanelSplit = new JSplitPane(
+				JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
+
+		comboPanelSplit.setDividerLocation(0.5);
+		comboPanelSplit.setBorder(BorderFactory.createEmptyBorder());
+
+		// grab the default divider size 
+		defaultDividerSize = comboPanelSplit.getDividerSize();
+
+
 
 		//===========================================
 		// button panel
@@ -241,94 +259,55 @@ SpecialNumberFormatInterface {
 		btnClose = new JButton();
 		btnClose.addActionListener(this);
 
-		//	btnPrint = new JButton();
-		//	btnPrint.addActionListener(this);
-
 		createOptionsButton();
 
 		JPanel rightButtonPanel = new JPanel(new FlowLayout());
 		rightButtonPanel.add(btnOptions);
-		//	rightButtonPanel.add(btnPrint);
 		rightButtonPanel.add(btnClose);
 
-		JPanel centerButtonPanel = new JPanel(new FlowLayout());
-		JPanel leftButtonPanel = new JPanel(new FlowLayout());
-
-		//leftButtonPanel.add(cbShowData);
-		//leftButtonPanel.add(cbShowCombo2);
-
-
 		buttonPanel = new JPanel(new BorderLayout());
-		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
-		buttonPanel.add(centerButtonPanel, BorderLayout.CENTER);
 		buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
-		// END button panel
-
-
-		//===========================================
-		// statData panel
-
-		if(mode != MODE_MULTIVAR){			
-			statisticsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-			dataPanel.setBorder(statisticsPanel.getBorder());
-
-			statDataPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statisticsPanel, null);
-			statDataPanel.setResizeWeight(0.5);
-			statDataPanel.setBorder(BorderFactory.createEmptyBorder());
-
-		}
-
-
-		// create a plotComboPanel		
-		comboPanelSplit = new JSplitPane(
-				JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
-		
-
 
 		JPanel plotComboPanel = new JPanel(new BorderLayout());
 		plotComboPanel.add(comboPanelSplit, BorderLayout.CENTER);
 		if(mode == MODE_ONEVAR){
 			JPanel oneVarTitlePanel = createOneVarTitlePanel();
-			//plotComboPanel.add(oneVarTitlePanel, BorderLayout.SOUTH);
 			buttonPanel.add(oneVarTitlePanel, BorderLayout.NORTH);
 		}
 		if(mode == MODE_REGRESSION){
 			regressionPanel = new RegressionPanel(app, this);
-			//plotComboPanel.add(regressionPanel, BorderLayout.SOUTH);
 			buttonPanel.add(regressionPanel, BorderLayout.NORTH);
 		}
 
 
 		// display panel
+		//============================================
 		if(mode != MODE_MULTIVAR){
 			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 					statDataPanel, plotComboPanel);
-			displayPanel.setDividerLocation(150);
+			displayPanel.setResizeWeight(0.5);
 		}else{
-			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					null, plotComboPanel);
+			displayPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+					plotComboPanel, statDataPanel);
+			displayPanel.setResizeWeight(0.5);
+
+
 		}
 		displayPanel.setBorder(BorderFactory.createEmptyBorder());
 
 
 
-		//============================================
-		// main panel
 
+		// main panel
+		//============================================
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(displayPanel, BorderLayout.CENTER);
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
 
 		getContentPane().add(mainPanel);
 		getContentPane().setPreferredSize(defaultDialogDimension);
 		setResizable(true);
 		pack();
-
-		comboPanelSplit.setDividerLocation(0.5);
-
-		// grab the default divider size 
-		defaultDividerSize = comboPanelSplit.getDividerSize();
 
 		setShowComboPanel2(showComboPanel2);
 		updateStatDataPanelVisibility();
@@ -500,58 +479,64 @@ SpecialNumberFormatInterface {
 	}
 
 
-	private void updateStatDataPanelVisibility(){
+	public void updateStatDataPanelVisibility(){
 
-		if(mode == MODE_MULTIVAR) return;
+		if(statDataPanel == null) return;
 
-		if(showDataPanel){
-			if(statDataPanel.getRightComponent() == null){
-				statDataPanel.setRightComponent(dataPanel);
-				statDataPanel.resetToPreferredSizes();				
-			}
-		}else{
-			if(statDataPanel.getRightComponent() != null){
-				statDataPanel.setRightComponent(null);
-				statDataPanel.resetToPreferredSizes();
-			}
-		}
+		if(mode != MODE_MULTIVAR){
 
-		if(showStatPanel){
-			if(statDataPanel.getLeftComponent() == null){
-				statDataPanel.setLeftComponent(statisticsPanel);
-				statDataPanel.resetToPreferredSizes();
-			}
-		}else{
-			if(statDataPanel.getLeftComponent() != null){
-				statDataPanel.setLeftComponent(null);
-				statDataPanel.resetToPreferredSizes();
-			}
-		}
-
-		// hide/show divider
-		if(showDataPanel &&  showStatPanel)
-			statDataPanel.setDividerSize(defaultDividerSize);	
-		else
-			statDataPanel.setDividerSize(0);
-
-
-		// hide/show statData panel 	
-		if(showDataPanel ||  showStatPanel){
-			if(displayPanel.getLeftComponent() == null){ 
-				displayPanel.setLeftComponent(statDataPanel);
-				//displayPanel.resetToPreferredSizes();
-				displayPanel.setDividerLocation(displayPanel.getLastDividerLocation());
-				displayPanel.setDividerSize(defaultDividerSize);				
+			if(showDataPanel){
+				if(statDataPanel.getRightComponent() == null){
+					statDataPanel.setRightComponent(dataPanel);
+					statDataPanel.resetToPreferredSizes();				
+				}
+			}else{
+				if(statDataPanel.getRightComponent() != null){
+					statDataPanel.setRightComponent(null);
+					statDataPanel.resetToPreferredSizes();
+				}
 			}
 
-		}else{ // statData panel is empty, so hide it	
-			displayPanel.setLastDividerLocation(displayPanel.getDividerLocation());
-			displayPanel.setLeftComponent(null);
-			displayPanel.setDividerSize(0);
+			if(showStatPanel){
+				if(statDataPanel.getLeftComponent() == null){
+					statDataPanel.setLeftComponent(statisticsPanel);
+					statDataPanel.resetToPreferredSizes();
+				}
+			}else{
+				if(statDataPanel.getLeftComponent() != null){
+					statDataPanel.setLeftComponent(null);
+					statDataPanel.resetToPreferredSizes();
+				}
+			}
+
+
+			// hide/show divider
+			if(showDataPanel &&  showStatPanel)
+				statDataPanel.setDividerSize(defaultDividerSize);	
+			else
+				statDataPanel.setDividerSize(0);
+
+
+			// hide/show statData panel 	
+			if(showDataPanel ||  showStatPanel){
+				if(displayPanel.getLeftComponent() == null){ 
+					displayPanel.setLeftComponent(statDataPanel);
+					//displayPanel.resetToPreferredSizes();
+					displayPanel.setDividerLocation(displayPanel.getLastDividerLocation());
+					displayPanel.setDividerSize(defaultDividerSize);				
+				}
+
+			}else{ // statData panel is empty, so hide it	
+				displayPanel.setLastDividerLocation(displayPanel.getDividerLocation());
+				displayPanel.setLeftComponent(null);
+				displayPanel.setDividerSize(0);
+			}
 		}
 
 		setLabels();
 		updateFonts();
+
+		displayPanel.resetToPreferredSizes();
 	}
 
 
@@ -721,13 +706,15 @@ SpecialNumberFormatInterface {
 
 		// attachView to plot panels
 		comboStatPanel.attachView();
-		comboStatPanel2.attachView();
+		if(comboStatPanel2 != null)
+			comboStatPanel2.attachView();
 	}
 
 	public void detachView() {
 		kernel.detach(this);
 		comboStatPanel.detachView();
-		comboStatPanel2.detachView();
+		if(comboStatPanel2 != null)
+			comboStatPanel2.detachView();
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
 	}

@@ -67,31 +67,14 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	public static final int PLOT_BOXPLOT = 1;
 	public static final int PLOT_DOTPLOT = 2;
 	public static final int PLOT_NORMALQUANTILE = 3;
-	public static final int PLOT_FREQUENCYTABLE = 4;
 	public static final int PLOT_STEMPLOT = 5;
-	public static final int PLOT_ONEVAR_INFERENCE = 6;
-
-	public static final int PLOT_ZTEST = 7;
-	public static final int PLOT_ZINT = 8;
-	public static final int PLOT_TTEST = 9;
-	public static final int PLOT_TINT = 10;
-
 
 	// two variable plot types
 	public static final int PLOT_SCATTERPLOT = 30;
 	public static final int PLOT_RESIDUAL = 31;
-	public static final int PLOT_REGRESSION_INFERENCE= 32;
 
 	// multi variable plot types
 	public static final int PLOT_MULTIBOXPLOT = 50;
-	public static final int PLOT_MULTIVARSTATS = 51;
-	public static final int PLOT_ANOVA= 52;
-	public static final int PLOT_TWOVAR_INFERENCE = 53;
-
-	public static final int PLOT_TTEST_2MEANS = 54;
-	public static final int PLOT_TTEST_PAIRED = 55;
-	public static final int PLOT_TINT_2MEANS = 56;
-	public static final int PLOT_TINT_PAIRED = 57;
 
 	// currently selected plot type
 	private int selectedPlot;
@@ -112,17 +95,13 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 	// display panels 	
-	private JPanel statDisplayPanel;
-	private TwoVarInferencePanel twoVarInferencePanel;
-	private OneVarInferencePanel oneVarInferencePanel;
+	private JPanel displayCardPanel;
 	private JPanel metaPlotPanel, plotPanelNorth, plotPanelSouth;
 	private PlotPanelEuclidianView plotPanel;
-	private ANOVATable anovaTable;
-	private MultiVarStatPanel multiVarStatPanel;
-	private LinearRegressionPanel regressionPanel;
+	
 
 	private JLabel imageContainer;
-	private StatTable regressionAnalysisTable;
+	
 
 	// control panel
 	private JPanel controlPanel;
@@ -205,7 +184,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		// create options button
 		optionsButton = new JToggleButton();
 		optionsButton.setIcon(app.getImageIcon("document-properties.png"));
-		optionsButton.setFocusable(false);
+		optionsButton.setIcon(app.getImageIcon("inputhelp_left_20x20.png"));
+		optionsButton.setSelectedIcon(app.getImageIcon("inputhelp_right_20x20.png"));
+		optionsButton.setBorderPainted(false);
+		//optionsButton.setFocusPainted(false);
 		//optionsButton.setIcon(app.getImageIcon("tool.png"));
 		optionsButton.addActionListener(this);
 
@@ -262,49 +244,19 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		metaPlotPanel = new JPanel(new BorderLayout());
 		metaPlotPanel.add(plotPanel, BorderLayout.CENTER);
 
-
 		createImagePanel();
-
-		if(mode == statDialog.MODE_ONEVAR){
-			oneVarInferencePanel =new OneVarInferencePanel(app, statDialog);
-		}
-
-		else if(mode == statDialog.MODE_REGRESSION){
-			regressionPanel = new LinearRegressionPanel(app, statDialog);
-		}
-
-		else if(mode == statDialog.MODE_MULTIVAR){
-			twoVarInferencePanel =new TwoVarInferencePanel(app, statDialog);
-			multiVarStatPanel = new MultiVarStatPanel(app, statDialog, -1);
-			anovaTable = new ANOVATable(app, statDialog);
-		}
-
 
 
 		// put display panels into a card layout
 
-		statDisplayPanel = new JPanel(new CardLayout());
-		statDisplayPanel.setBackground(plotPanel.getBackground());
+		displayCardPanel = new JPanel(new CardLayout());
+		displayCardPanel.setBackground(plotPanel.getBackground());
 
-		statDisplayPanel.add("plotPanel", metaPlotPanel);
-		statDisplayPanel.add("imagePanel", new JScrollPane(imagePanel));
-
-		if(mode == statDialog.MODE_ONEVAR){
-			statDisplayPanel.add("oneVarInferencePanel", oneVarInferencePanel);
-		}
-		else if(mode == statDialog.MODE_REGRESSION){
-			statDisplayPanel.add("regressionPanel", regressionPanel);
-		}
-		else if(mode == statDialog.MODE_MULTIVAR){
-			statDisplayPanel.add("twoVarInferencePanel", twoVarInferencePanel);
-			statDisplayPanel.add("multiVarStatPanel", multiVarStatPanel);
-			statDisplayPanel.add("anovaPanel", anovaTable);	
-		}
-
+		displayCardPanel.add("plotPanel", metaPlotPanel);
+		displayCardPanel.add("imagePanel", new JScrollPane(imagePanel));
 
 
 		// create options panel
-
 		optionsPanel= new OptionsPanel(app, statDialog, settings);
 		optionsPanel.addPropertyChangeListener("settings", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -325,7 +277,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		if(hasControlPanel){
 			mainPanel.add(controlPanel,BorderLayout.NORTH);
 		}
-		mainPanel.add(statDisplayPanel,BorderLayout.CENTER);		
+		mainPanel.add(displayCardPanel,BorderLayout.CENTER);		
 		mainPanel.add(optionsPanel,BorderLayout.EAST);
 
 
@@ -354,8 +306,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
 
-		//	optionsButton.setText(app.getMenu("Options"));
 		optionsPanel.setLabels();
+		optionsButton.setToolTipText(app.getPlain("Options"));
 
 	}
 
@@ -383,32 +335,16 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			cbDisplayType.addItem(plotMap.get(PLOT_BOXPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_DOTPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_STEMPLOT));
-			//	cbDisplayType.addItem(plotMap.get(PLOT_FREQUENCYTABLE));
 			cbDisplayType.addItem(plotMap.get(PLOT_NORMALQUANTILE));
-			cbDisplayType.addItem(MyRenderer.SEPARATOR);
-			cbDisplayType.addItem(plotMap.get(PLOT_ZTEST));
-			cbDisplayType.addItem(plotMap.get(PLOT_TTEST));
-			cbDisplayType.addItem(MyRenderer.SEPARATOR);
-			cbDisplayType.addItem(plotMap.get(PLOT_ZINT));
-			cbDisplayType.addItem(plotMap.get(PLOT_TINT));
 			break;
 
 		case StatDialog.MODE_REGRESSION:
 			cbDisplayType.addItem(plotMap.get(PLOT_SCATTERPLOT));
 			cbDisplayType.addItem(plotMap.get(PLOT_RESIDUAL));
-			cbDisplayType.addItem(plotMap.get(PLOT_REGRESSION_INFERENCE));
 			break;
 
 		case StatDialog.MODE_MULTIVAR:
 			cbDisplayType.addItem(plotMap.get(PLOT_MULTIBOXPLOT));
-			cbDisplayType.addItem(plotMap.get(PLOT_MULTIVARSTATS));
-			cbDisplayType.addItem(MyRenderer.SEPARATOR);
-			cbDisplayType.addItem(plotMap.get(PLOT_ANOVA));
-			cbDisplayType.addItem(plotMap.get(PLOT_TTEST_2MEANS));
-			cbDisplayType.addItem(plotMap.get(PLOT_TTEST_PAIRED));
-			cbDisplayType.addItem(MyRenderer.SEPARATOR);
-			cbDisplayType.addItem(plotMap.get(PLOT_TINT_2MEANS));
-			cbDisplayType.addItem(plotMap.get(PLOT_TINT_PAIRED));
 			break;
 		}
 
@@ -444,12 +380,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 
 		else if(selectedPlot == this.PLOT_HISTOGRAM){
-			
-		//	plotPanelNorth.setLayout(new FlowLayout(FlowLayout.LEFT));
-		//	plotPanelNorth.add(lblTitleY);
-		//	plotPanelNorth.add(fldTitleY);
-		//	metaPlotPanel.add(plotPanelNorth, BorderLayout.NORTH);
-			
+
+			//	plotPanelNorth.setLayout(new FlowLayout(FlowLayout.LEFT));
+			//	plotPanelNorth.add(lblTitleY);
+			//	plotPanelNorth.add(fldTitleY);
+			//	metaPlotPanel.add(plotPanelNorth, BorderLayout.NORTH);
+
 			if(settings.showFrequencyTable){
 				plotPanelSouth.setLayout(new BorderLayout());
 				plotPanelSouth.add(frequencyTable, BorderLayout.CENTER);
@@ -623,29 +559,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		plotMap.put(PLOT_BOXPLOT, app.getMenu("Boxplot"));
 		plotMap.put(PLOT_DOTPLOT, app.getMenu("DotPlot"));
 		plotMap.put(PLOT_NORMALQUANTILE, app.getMenu("NormalQuantilePlot"));
-		plotMap.put(PLOT_FREQUENCYTABLE, app.getMenu("FrequencyTable"));
 		plotMap.put(PLOT_STEMPLOT, app.getMenu("StemPlot"));
-		plotMap.put(PLOT_ONEVAR_INFERENCE, app.getMenu("OneVariableInference"));
-
-		plotMap.put(PLOT_TTEST, app.getMenu("TMeanTest"));
-		plotMap.put(PLOT_TINT, app.getMenu("TMeanInterval"));
-		plotMap.put(PLOT_ZTEST, app.getMenu("ZMeanTest"));
-		plotMap.put(PLOT_ZINT, app.getMenu("ZMeanInterval"));
-
 
 		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
 		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
-		plotMap.put(PLOT_REGRESSION_INFERENCE, app.getMenu("RegressionInference"));
 
 		plotMap.put(PLOT_MULTIBOXPLOT, app.getMenu("StackedBoxPlots"));
-		plotMap.put(PLOT_MULTIVARSTATS, app.getMenu("Statistics"));
-		plotMap.put(PLOT_ANOVA, app.getMenu("ANOVA"));
-		plotMap.put(PLOT_TWOVAR_INFERENCE, app.getMenu("TwoVariableInference"));
-
-		plotMap.put(PLOT_TTEST_2MEANS, app.getMenu("TTestDifferenceOfMeans"));
-		plotMap.put(PLOT_TTEST_PAIRED, app.getMenu("TTestPairedDifferences"));
-		plotMap.put(PLOT_TINT_2MEANS, app.getMenu("TEstimateDifferenceOfMeans"));
-		plotMap.put(PLOT_TINT_PAIRED, app.getMenu("TEstimatePairedDifferences"));
 
 		// REVERSE PLOT MAP
 		plotMapReverse = new HashMap<String, Integer>();
@@ -710,7 +629,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 					((CardLayout)controlCards.getLayout()).show(controlCards, "numClassesPanel");	
 
 
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 			break;	
 
 		case PLOT_BOXPLOT:
@@ -718,7 +637,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				plotGeoList.add(statGeo.createBoxPlot( dataListSelected));
 			statGeo.getBoxPlotSettings( dataListSelected, settings);
 			plotPanel.updateSettings(settings);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 			break;
 
 		case PLOT_DOTPLOT:
@@ -730,7 +649,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			}
 			statGeo.updateDotPlot(dataListSelected, dotPlot, settings);
 			plotPanel.updateSettings(settings);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 			break;
 
 		case PLOT_STEMPLOT:
@@ -740,7 +659,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			if(hasControlPanel)
 				((CardLayout)controlCards.getLayout()).show(controlCards, "stemAdjustPanel");
 
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "imagePanel");
 			break;
 
 
@@ -750,23 +669,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			}
 			statGeo.updateNormalQuantilePlot(dataListSelected, settings);
 			plotPanel.updateSettings(settings);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 			break;
-
-
-		case PLOT_ZTEST:
-		case PLOT_TTEST:
-		case PLOT_ZINT:
-		case PLOT_TINT:
-			oneVarInferencePanel.setSelectedPlot(selectedPlot);
-			oneVarInferencePanel.updatePanel();
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "oneVarInferencePanel");
-			optionsButton.setVisible(false);
-			//	if(hasControlPanel)
-			//((CardLayout)controlCards.getLayout()).show(controlCards, "twoSampleSelectionPanel");
-			break;
-
-
 
 		case PLOT_SCATTERPLOT:
 			if(doCreate)
@@ -780,7 +684,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			if(statDialog.getRegressionModel()!=null){
 				plotGeoList.add(statDialog.getRegressionModel());  
 			}
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 
 			break;
 
@@ -790,17 +694,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				plotGeoList.add((GeoElement) statGeo.createRegressionPlot(dataListSelected, statDialog.getRegressionMode(), statDialog.getRegressionOrder(), true));
 			if(statDialog.getRegressionMode() != statDialog.REG_NONE)
 				statGeo.getResidualPlotSettings(dataListSelected, plotGeoList.get(plotGeoList.size()-1), settings);
-				plotPanel.updateSettings(settings);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			plotPanel.updateSettings(settings);
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 			break;
 
-
-		case PLOT_REGRESSION_INFERENCE:
-			//	regressionAnalysisList = statGeo.createRegressionAnalysisList(dataListSelected, statDialog.getRegressionModel() );
-			regressionPanel.updateRegressionPanel();
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "regressionPanel");
-
-			break;
 
 		case PLOT_MULTIBOXPLOT:
 			if(doCreate){
@@ -808,48 +705,20 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				for (int i = 0 ; i < boxPlots.length ; i++)
 					plotGeoList.add(boxPlots[i]);
 			}
-			
+
 			statGeo.getMultipleBoxPlotSettings(dataListSelected, settings);
 			plotPanel.updateSettings(settings);
 			boxPlotTitles = statGeo.createBoxPlotTitles(statDialog, settings);
 			for (int i = 0 ; i < boxPlotTitles.length ; i++)
 				plotGeoList.add(boxPlotTitles[i]);
 
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 			optionsButton.setVisible(false);
 			break;
 
-		case PLOT_MULTIVARSTATS:
-			multiVarStatPanel.updatePanel();
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "multiVarStatPanel");
-			optionsButton.setVisible(false);
-			break;
-
-		case PLOT_ANOVA:
-			//imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
-			//((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
-
-			anovaTable.updatePanel();
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "anovaPanel");
-
-			optionsButton.setVisible(false);
-			break;
-
-
-		case PLOT_TTEST_2MEANS:
-		case PLOT_TTEST_PAIRED:
-		case PLOT_TINT_2MEANS:
-		case PLOT_TINT_PAIRED:	
-			twoVarInferencePanel.setSelectedPlot(selectedPlot);
-			twoVarInferencePanel.updatePanel();
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "twoVarInferencePanel");
-			optionsButton.setVisible(false);
-			//	if(hasControlPanel)
-			//((CardLayout)controlCards.getLayout()).show(controlCards, "twoSampleSelectionPanel");
-			break;
 
 		default:
-			//System.out.println(plotMap.get(plotIndex));
+
 		}
 
 
@@ -868,7 +737,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 	//============================================================
-	//            Action Event Handlers
+	//     Event Handlers
 	//============================================================
 
 
@@ -890,24 +759,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 
 		else if(source == optionsButton){
-			/*
-			optionsPanel.reInit(selectedPlot);
-			OptionsDialog dlg = new OptionsDialog(new JFrame(), app.getMenu("Options"));
-
-
-			Point p = optionsButton.getLocationOnScreen();
-			Dimension dlgDim  = dlg.getPreferredSize();
-			dlgDim.height = statDialog.getHeight() - 100;
-			p.x = statDialog.getX() + statDialog.getWidth() - dlgDim.width + 20;
-			p.y = p.y + optionsButton.getHeight() + 20;
-
-			dlg.setLocation(p);
-			dlg.setVisible(true);
-			 */
-
 			optionsPanel.setPanel(selectedPlot);
 			optionsPanel.setVisible(optionsButton.isSelected());
-
 		}
 
 		else if(source == cbDisplayType){
@@ -919,6 +772,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				updatePlot(true);
 			}
 			optionsPanel.setVisible(false);
+			optionsButton.setSelected(false);
 		}
 
 
@@ -939,12 +793,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 
-	//============================================================
-	//            Other Event Handlers
-	//============================================================
 
 	public void clearPlotGeoList(){
-
 		for(GeoElement geo : plotGeoList){
 			if(geo != null){
 				geo.remove();
@@ -955,14 +805,12 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 	public void removeGeos(){
-
 		clearPlotGeoList();
 	}
 
 
 	public void detachView(){
 		//plotPanel.detachView();
-
 	}
 
 	public void updateFonts(){
@@ -1010,21 +858,14 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	}
 
 
+	public void updateFonts(Font font) { }
 
-	public void updateFonts(Font font) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void updatePanel() {
-		// TODO Auto-generated method stub
-
-	}
+	public void updatePanel() { }
 
 
 
 
-	
+
 
 	//============================================================
 	//           ComboBox Renderer with SEPARATOR

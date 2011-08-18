@@ -9,15 +9,20 @@ import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -38,6 +43,13 @@ import org.apache.commons.math.distribution.TDistributionImpl;
 import org.apache.commons.math.stat.StatUtils;
 import org.apache.commons.math.stat.inference.TTestImpl;
 
+/**
+ * Extended JPanel that contains interactive sub-panels for performing one
+ * variable inference with the current data set.
+ * 
+ * @author G. Sturr
+ * 
+ */
 public class OneVarInferencePanel extends JPanel implements ActionListener,  FocusListener, StatPanelInterface {
 
 	// ggb fields
@@ -45,18 +57,17 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	private Kernel kernel;
 	private StatDialog statDialog;
 	private StatTable resultTable;
-
+	
 	// GUI
-	private JLabel lblHypParameter, lblTailType, lblNull, lblConfLevel;
+	private JLabel lblHypParameter, lblTailType, lblNull, lblConfLevel,lblSigma, lblResultHeader;
 	private JButton btnCalculate;
-	private MyTextField fldNullHyp;
-	private JPanel cardProcedure;
-	private JPanel resultPanel;
-	private MyTextField fldConfLevel, fldSigma;
-	private JLabel lblResultHeader;
+	private MyTextField fldNullHyp, fldConfLevel, fldSigma;
 	private JRadioButton btnLeft, btnRight, btnTwo;
 	private JComboBox cbAltHyp;
-
+	private JPanel testPanel, intPanel, mainPanel, resultPanel;
+	private Box sigmaPanel;
+	private int fieldWidth = 6;
+	
 	// test type (tail)
 	private static final String tail_left = "<";
 	private static final String tail_right = ">";
@@ -70,15 +81,17 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 	double testStat, P, df, lower, upper, mean, se, me, N;
 	private TTestImpl tTestImpl;
 	private TDistributionImpl tDist;
-
-
-	private int selectedPlot = StatComboPanel.PLOT_TINT;
-	private boolean isIniting;
-	private JLabel lblSigma;
 	private NormalDistributionImpl normalDist;
 
+	// flags
+	private boolean isIniting;
+	private boolean isTest = true;
+	private boolean isZProcedure;
+	
+	private int selectedPlot = StatisticsPanel.INFER_TINT;
 
-	/**
+	
+	/***************************************
 	 * Construct a OneVarInference panel
 	 */
 	public OneVarInferencePanel(Application app, StatDialog statDialog){
@@ -87,27 +100,23 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		this.app = app;
 		this.kernel = app.getKernel();
 		this.statDialog = statDialog;
-
+		
 		this.setLayout(new BorderLayout());
-		this.add(createMainPanel(), BorderLayout.CENTER);
-
-		this.setMinimumSize(new Dimension(50,50));
+		this.createGUIElements();
+		this.updateGUI();
 		this.setLabels();
+
 		isIniting = false;
-
 	}
-	/***********************************/
-
+	
 
 
 	//============================================================
 	//           Create GUI 
 	//============================================================
 
+	private void createGUIElements(){
 
-	private JPanel createMainPanel(){
-
-		// components
 
 		btnLeft = new JRadioButton(tail_left);
 		btnRight = new JRadioButton(tail_right);
@@ -130,197 +139,216 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		lblTailType = new JLabel();
 
 		fldNullHyp = new MyTextField(app);
-		fldNullHyp.setColumns(4);
+		fldNullHyp.setColumns(fieldWidth);
 		fldNullHyp.setText("" + 0);
 		fldNullHyp.addActionListener(this);
 		fldNullHyp.addFocusListener(this);
 
 		lblConfLevel = new JLabel();
 		fldConfLevel = new MyTextField(app);
-		fldConfLevel.setColumns(4);
+		fldConfLevel.setColumns(fieldWidth);
 		fldConfLevel.addActionListener(this);
 		fldConfLevel.addFocusListener(this);
 
-
 		lblSigma = new JLabel();
 		fldSigma = new MyTextField(app);
-		fldSigma.setColumns(4);
+		fldSigma.setColumns(fieldWidth);
 		fldSigma.addActionListener(this);
 		fldSigma.addFocusListener(this);
 
-
-
 		btnCalculate = new JButton();
+		lblResultHeader = new JLabel();
 
 
+		sigmaPanel = hBox(lblSigma, fldSigma);
 
-		// Result panel
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx=0;
+		c.weightx=1;
+		c.insets = new Insets(4,0,0,0);
+		c.anchor=GridBagConstraints.WEST;
+
+		GridBagConstraints tab = new GridBagConstraints();
+		tab.gridx=0;
+		tab.gridy = c.gridy;
+		tab.weightx=1;
+		tab.insets = new Insets(4,20,0,0);
+		tab.anchor=GridBagConstraints.WEST;
+
+		// test panel	
+		testPanel = new JPanel(new GridBagLayout());
+		c.gridy = GridBagConstraints.RELATIVE;
+		testPanel.add(lblNull, c);
+		testPanel.add(flowPanel(lblHypParameter, fldNullHyp), tab);
+		testPanel.add(lblTailType, c);
+		testPanel.add(cbAltHyp, tab);
+
+
+		// CI panel	
+		intPanel = new JPanel(new GridBagLayout());
+		c.gridy = GridBagConstraints.RELATIVE;
+		intPanel.add(lblConfLevel, c);
+		intPanel.add(fldConfLevel, tab);	
+
+		// result panel	
 		resultTable = new StatTable();
 		setResultTable();
-		resultTable.setBorder(BorderFactory.createEtchedBorder());
-		lblResultHeader = new JLabel();
+
 		resultPanel = new JPanel(new BorderLayout());
-		resultPanel.add(resultTable, BorderLayout.NORTH);
-		resultPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		c.gridy = GridBagConstraints.RELATIVE;
+		resultPanel.add(lblResultHeader, BorderLayout.NORTH);
+		resultPanel.add(resultTable, BorderLayout.CENTER);
+		c.weightx =0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		//resultPanel.add(resultTable, c);
 
 
-		// Test panel	
-		Box testPanel =  boxYPanel(
-				flowPanel(lblNull), 
-				flowPanel(Box.createRigidArea(new Dimension(10,0)), lblHypParameter, fldNullHyp),
-				flowPanel(lblTailType),
-				flowPanel(Box.createRigidArea(new Dimension(10,0)), cbAltHyp)
-		);
+
+		// main panel
+		mainPanel = new JPanel(new GridBagLayout());
+		this.add(mainPanel, BorderLayout.NORTH);
+		//	this.add(resultPanel, BorderLayout.CENTER);
+	}
 
 
-		// CI panel		
-		Box intPanel = boxYPanel(
-				flowPanel(lblConfLevel, fldConfLevel)
-		);
+	private void updateMainPanel(){
 
-		// sigma panel		
-		Box sigmaPanel = boxYPanel(
-				flowPanel(lblSigma, fldSigma)
-		);
+		mainPanel.removeAll();
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx=0;
+		c.weightx=1;
+		c.insets = new Insets(4,0,0,0);
+		c.anchor=GridBagConstraints.WEST;
 
-		cardProcedure = new JPanel(new CardLayout());
-		cardProcedure.add("testPanel", testPanel);
-		cardProcedure.add("intervalPanel", flowPanel(lblConfLevel, fldConfLevel));
+		GridBagConstraints tab = new GridBagConstraints();
+		tab.gridx=0;
+		tab.gridy = c.gridy;
+		tab.weightx=1;
+		tab.insets = new Insets(4,20,0,0);
+		tab.anchor=GridBagConstraints.WEST;
 
-		((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "testPanel");
+		c.gridy = GridBagConstraints.RELATIVE;
+		if(isZProcedure)
+			mainPanel.add(sigmaPanel,tab);
 
-		JPanel procedurePanel = blPanel(cardProcedure, sigmaPanel, null, null, null);
-		procedurePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		if(isTest)
+			mainPanel.add(testPanel,c);
+		else
+			mainPanel.add(intPanel,c);
 
+		c.weightx=0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		mainPanel.add(resultPanel,c);
 
-		//	Box subMainPanel = boxYPanel(procedurePanel,resultPanel);
-
-		//	subMainPanel.add(procedurePanel, BorderLayout.NORTH);
-		//	subMainPanel.add(resultPanel, BorderLayout.CENTER);
-
-		//	JPanel mainPanel = new JPanel(new BorderLayout());
-		//	mainPanel.add(procedurePanel, BorderLayout.WEST);
-		//	mainPanel.add(resultPanel, BorderLayout.EAST);
-
-		JPanel mainPanel = flowPanel(procedurePanel, resultPanel);
-
-		return mainPanel;
 
 	}
 
 
+
 	private void  setResultTable(){
 
+		ArrayList<String> nameList = new ArrayList<String>();
+
 		switch (selectedPlot){
-		case StatComboPanel.PLOT_ZTEST:
-		{
-			String[] rowNames = 
-			{
-					app.getMenu("PValue"),
-					app.getMenu("ZStatistic"),   
-					
-			};
+		case StatisticsPanel.INFER_ZTEST:
+			nameList.add(app.getMenu("PValue"));
+			nameList.add(app.getMenu("ZStatistic")); 
+			nameList.add(app.getMenu(""));
+			nameList.add(app.getMenu("Length.short"));
+			nameList.add(app.getMenu("Mean"));
 
-			resultTable.setStatTable(rowNames.length, rowNames, 1, null);
-		}
-		break;
-		case StatComboPanel.PLOT_TTEST:
-		{
-			String[] rowNames = 
-			{
-					app.getMenu("PValue"),
-					app.getMenu("TStatistic"),
-					"",
-					app.getMenu("StandardError.short")
-			};
+			break;
 
-			resultTable.setStatTable(rowNames.length, rowNames, 1, null);
-		}
-		break;
+		case StatisticsPanel.INFER_TTEST:
+			nameList.add(app.getMenu("PValue"));
+			nameList.add(app.getMenu("TStatistic"));
+			nameList.add(app.getMenu("DegreesOfFreedom.short"));
+			nameList.add(app.getMenu("StandardError.short"));
+			nameList.add(app.getMenu(""));
+			nameList.add(app.getMenu("Length.short"));
+			nameList.add(app.getMenu("Mean"));
+			break;
 
-		case StatComboPanel.PLOT_ZINT:
-		{
-			String[] rowNames2 = 
-			{
-					app.getMenu("LowerLimit"),
-					app.getMenu("LowerLimit"),
-					app.getMenu("Mean"),
-					app.getMenu("MarginOfError"),
-					
-			};
-			resultTable.setStatTable(rowNames2.length, rowNames2, 1, null);
+		case StatisticsPanel.INFER_ZINT:
+			nameList.add(app.getMenu("Interval"));
+			nameList.add(app.getMenu("LowerLimit"));
+			nameList.add(app.getMenu("UpperLimit"));
+			nameList.add(app.getMenu("MarginOfError"));
+			nameList.add(app.getMenu(""));
+			nameList.add(app.getMenu("Length.short"));
+			nameList.add(app.getMenu("Mean"));
+			break;
+
+		case StatisticsPanel.INFER_TINT:
+			nameList.add(app.getMenu("Interval"));
+			nameList.add(app.getMenu("LowerLimit"));
+			nameList.add(app.getMenu("UpperLimit"));
+			nameList.add(app.getMenu("MarginOfError"));
+			nameList.add(app.getMenu("DegreesOfFreedom.short"));
+			nameList.add(app.getMenu("StandardError.short"));
+			nameList.add(app.getMenu(""));
+			nameList.add(app.getMenu("Length.short"));
+			nameList.add(app.getMenu("Mean"));
 			break;
 		}
-		
-		case StatComboPanel.PLOT_TINT:
-		{
-			String[] rowNames2 = 
-			{
-					app.getMenu("LowerLimit"),
-					app.getMenu("LowerLimit"),
-					app.getMenu("Mean"),
-					app.getMenu("MarginOfError"),
-					"",
-					app.getMenu("StandardError.short")
-			};
-			resultTable.setStatTable(rowNames2.length, rowNames2, 1, null);
-			break;
-		}
-		
-		};
+
+		String[] rowNames = new String[nameList.size()];
+		nameList.toArray(rowNames);
+		resultTable.setStatTable(rowNames.length, rowNames, 1, null);
 
 	}
 
 
 	private void updateResultTable(){
 
-		
 		DefaultTableModel model = resultTable.getModel();
 
-
 		evaluate();
-
+		String cInt = statDialog.format(mean) + " \u00B1 "  + statDialog.format(me);
+		
 		switch (selectedPlot){
-		case StatComboPanel.PLOT_ZTEST:
-
-			model.setValueAt(statDialog.format(P),0,0);
-			model.setValueAt(statDialog.format(testStat), 1, 0);
-			
-			break;
-
-		case StatComboPanel.PLOT_TTEST:
-
+		case StatisticsPanel.INFER_ZTEST:
 			model.setValueAt(statDialog.format(P),0,0);
 			model.setValueAt(statDialog.format(testStat), 1, 0);
 			model.setValueAt("", 2, 0);
+			model.setValueAt(statDialog.format(N), 3, 0);
+			model.setValueAt(statDialog.format(mean), 4, 0);
+			break;
+
+		case StatisticsPanel.INFER_TTEST:
+			model.setValueAt(statDialog.format(P),0,0);
+			model.setValueAt(statDialog.format(testStat), 1, 0);
+			model.setValueAt(statDialog.format(df), 2, 0);
 			model.setValueAt(statDialog.format(se), 3, 0);
+			model.setValueAt("", 4, 0);
+			model.setValueAt(statDialog.format(N), 5, 0);
+			model.setValueAt(statDialog.format(mean), 6, 0);	
 			break;
-			
-			
-		case StatComboPanel.PLOT_ZINT:
 
-			model.setValueAt(statDialog.format(lower),0,0);
-			model.setValueAt(statDialog.format(upper), 1, 0);
-			model.setValueAt(statDialog.format(mean), 2, 0);
-			model.setValueAt(statDialog.format(me), 3, 0);
-
-			break;
-			
-		case StatComboPanel.PLOT_TINT:
-
-			model.setValueAt(statDialog.format(lower),0,0);
-			model.setValueAt(statDialog.format(upper), 1, 0);
-			model.setValueAt(statDialog.format(mean), 2, 0);
+		case StatisticsPanel.INFER_ZINT:
+			model.setValueAt(cInt,0,0);
+			model.setValueAt(statDialog.format(lower),1,0);
+			model.setValueAt(statDialog.format(upper), 2, 0);
 			model.setValueAt(statDialog.format(me), 3, 0);
 			model.setValueAt("", 4, 0);
-			model.setValueAt(statDialog.format(se), 5, 0);
+			model.setValueAt(statDialog.format(N), 5, 0);
+			model.setValueAt(statDialog.format(mean), 6, 0);
+			break;
 
+		case StatisticsPanel.INFER_TINT:
+			model.setValueAt(cInt,0,0);
+			model.setValueAt(statDialog.format(lower),1,0);
+			model.setValueAt(statDialog.format(upper), 2, 0);
+			model.setValueAt(statDialog.format(me), 3, 0);
+			model.setValueAt(statDialog.format(df), 4, 0);
+			model.setValueAt(statDialog.format(se), 5, 0);
+			model.setValueAt("", 6, 0);
+			model.setValueAt(statDialog.format(N), 7, 0);
+			model.setValueAt(statDialog.format(mean), 8, 0);
 			break;
 		};
 
-
 	}
-
 
 
 
@@ -340,73 +368,61 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		lblNull.setText(app.getMenu("NullHypothesis") + ": ");
 		lblTailType.setText(app.getMenu("AlternativeHypothesis") + ": ");
 		lblConfLevel.setText(app.getMenu("ConfidenceLevel") + ": ");
-		lblResultHeader.setText(app.getMenu("Result"));
-		lblSigma.setText(app.getMenu("StandardDeviation.short") + ": ");
+		lblResultHeader.setText(app.getMenu("Result") + ": ");
+		lblSigma.setText(app.getMenu("StandardDeviation.short") + " = ");
 		btnCalculate.setText(app.getMenu("Calculate"));
-		//resultPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Result")));
 		repaint();
 	}
 
 
 	/** Helper method for updateGUI() */
 	private void updateNumberField(JTextField fld,  double n){
-		
+
 		fld.removeActionListener(this);
 		fld.setText(statDialog.format(n));
 		//fld.setCaretPosition(0);
 		fld.addActionListener(this);
-		
+
 	}
 
 	private void updateGUI(){
 
-		// swap card panels
-		switch (selectedPlot){
-		case StatComboPanel.PLOT_ZTEST:
-		case StatComboPanel.PLOT_TTEST:
-			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "testPanel");
-			break;
+		isTest = (selectedPlot == StatisticsPanel.INFER_ZTEST
+				|| selectedPlot == StatisticsPanel.INFER_TTEST);
 
-		case StatComboPanel.PLOT_ZINT:
-		case StatComboPanel.PLOT_TINT:	
-			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "intervalPanel");
-			break;
-		}
-
-		boolean isZ = selectedPlot == StatComboPanel.PLOT_ZTEST
-		|| selectedPlot == StatComboPanel.PLOT_ZINT;
-		fldSigma.setVisible(isZ);
-		lblSigma.setVisible(isZ);
+		isZProcedure = selectedPlot == StatisticsPanel.INFER_ZTEST
+		|| selectedPlot == StatisticsPanel.INFER_ZINT;
 
 		updateNumberField(fldNullHyp, hypMean);
 		updateNumberField(fldConfLevel, confLevel);
 		updateNumberField(fldSigma, sigma);
 		updateCBAlternativeHyp();
 		setResultTable();
-		updateResultTable();		
+		updateResultTable();	
+		updateMainPanel();
 	}
 
 
 	private void updateCBAlternativeHyp(){
-	
+
 		cbAltHyp.removeActionListener(this);
 		cbAltHyp.removeAllItems();
 		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_right + " " + statDialog.format(hypMean));
 		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_left + " " + statDialog.format(hypMean));
 		cbAltHyp.addItem(app.getMenu("HypothesizedMean.short") + " " + tail_two + " " + statDialog.format(hypMean));
-		
+
 		if(tail == tail_right)
 			cbAltHyp.setSelectedIndex(0);
 		else if(tail == tail_left)
 			cbAltHyp.setSelectedIndex(1);
 		else
 			cbAltHyp.setSelectedIndex(2);
-		
+
 		cbAltHyp.addActionListener(this);
-		
+
 	}
 
-	
+
 
 	public void actionPerformed(ActionEvent e) {
 		if(isIniting) return;
@@ -495,8 +511,8 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		try {
 			switch (selectedPlot){
 
-			case StatComboPanel.PLOT_ZTEST:
-			case StatComboPanel.PLOT_ZINT:
+			case StatisticsPanel.INFER_ZTEST:
+			case StatisticsPanel.INFER_ZINT:
 				normalDist = new NormalDistributionImpl(0,1);
 				se = sigma/Math.sqrt(N);
 				testStat = (mean - hypMean)/se;
@@ -508,9 +524,9 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 				upper = mean + me;
 				lower = mean - me;
 				break;
-				
-			case StatComboPanel.PLOT_TTEST:
-			case StatComboPanel.PLOT_TINT:
+
+			case StatisticsPanel.INFER_TTEST:
+			case StatisticsPanel.INFER_TINT:
 				if(tTestImpl == null)
 					tTestImpl = new TTestImpl();
 				se = Math.sqrt(StatUtils.variance(sample)/N);
@@ -581,7 +597,15 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		return p;
 	}
 
-	private Box boxYPanel(JComponent... comp){
+	private Box hBox(Component... comp){
+		Box b = Box.createHorizontalBox();
+		for(int i = 0; i<comp.length; i++){
+			b.add(comp[i]);
+		}
+		return b;
+	}
+
+	private Box vBox(Component... comp){
 		Box p = Box.createVerticalBox();
 		for(int i = 0; i<comp.length; i++){
 			p.add(Box.createVerticalGlue());

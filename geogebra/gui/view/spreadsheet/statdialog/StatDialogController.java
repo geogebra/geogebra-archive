@@ -21,7 +21,7 @@ import org.apache.commons.math.stat.descriptive.SummaryStatistics;
 
 public class StatDialogController {
 
-	
+
 	private Application app;
 	private Kernel kernel; 
 	private Construction cons;
@@ -29,11 +29,11 @@ public class StatDialogController {
 	private SpreadsheetView spView;
 	private StatDialog sd;	
 	private StatGeo statGeo; 
-	
+
 	private Object dataSource;
 	private GeoList dataAll, dataSelected;
-	
-	
+
+
 	public GeoList getDataAll() {
 		return dataAll;
 	}
@@ -43,24 +43,24 @@ public class StatDialogController {
 	}
 
 	protected GeoElement geoRegression;
-	
+
 	private int mode;
 	private boolean leftToRight = true;
 	public void setLeftToRight(boolean leftToRight) {
 		this.leftToRight = leftToRight;
 	}
-	
+
 	public GeoElement getRegressionModel() {
 		return geoRegression;
 	}
 	public void setRegressionModel(GeoFunction regressionModel) {
 		this.geoRegression = regressionModel;
 	}
-	
-	
-	
+
+
+
 	public StatDialogController(Application app, SpreadsheetView spView, StatDialog statDialog){
-		
+
 		this.app = app;
 		this.kernel = app.getKernel();
 		this.cons = kernel.getConstruction();
@@ -69,17 +69,17 @@ public class StatDialogController {
 		this.sd = statDialog;
 		this.mode = sd.getMode();
 		this.statGeo = sd.getStatGeo();
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Sets the data source. Returns false if data is invalid. Data may come
 	 * from either a selected GeoList or the currently selected spreadsheet cell
 	 * range.
 	 */
 	protected boolean setDataSource(){
-		
+
 		dataSource = null;
 		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		boolean success = true;
@@ -113,15 +113,15 @@ public class StatDialogController {
 		return success;
 	}
 
-	
-	
+
+
 	/**
 	 * Returns true if the current data source contains the specified GeoElement
 	 */
 	protected boolean isInDataSource(GeoElement geo){
-		
+
 		if(dataSource == null) return false;
-		
+
 		// TODO handle case of GeoList data source
 		if(dataSource instanceof GeoList){
 			return geo.equals(((GeoList)dataSource));
@@ -141,7 +141,7 @@ public class StatDialogController {
 
 		return false;
 	}
-	
+
 
 	/**
 	 * Copies values from the current DataSource into the GeoList dataListAll
@@ -150,7 +150,7 @@ public class StatDialogController {
 	protected void loadDataLists(){
 
 		if(dataSource == null) return;
-		
+
 		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		String text = "";
 
@@ -159,11 +159,11 @@ public class StatDialogController {
 		boolean copyByValue = true;
 		boolean doStoreUndo = false;
 
-		
+
 		//=======================================
 		// create/update dataListAll 
 		if(dataAll != null) dataAll.remove();
-		
+
 		if(dataSource instanceof GeoList){
 			//dataListAll = dataSource;
 			text = ((GeoList)dataSource).getLabel();
@@ -198,28 +198,28 @@ public class StatDialogController {
 
 				//TODO: dataListAll needs to be created as copy by value ?
 			case StatDialog.MODE_MULTIVAR:
-				
+
 				cons.setSuppressLabelCreation(true);
 
 				dataAll = cr.createCollectionList((ArrayList<CellRange>)dataSource, true); 
 				cons.setSuppressLabelCreation(false);
-				
+
 				//System.out.println("dataAll: ========> " + dataAll.toDefinedValueString());
-				
+
 				/*
 				text = cr.createColumnMatrixExpression((ArrayList<CellRange>)dataSource, copyByValue); 							
 				dataAll = new GeoList(cons);
 				try {
 					//GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
 					//dataAll = (GeoList) geos[0];
-					
+
 					dataAll = (GeoList) kernel.getAlgebraProcessor()
 					.changeGeoElementNoExceptionHandling((GeoElement)dataAll, text, true, false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}	
-				*/
-							
+				 */
+
 				break;
 
 			}
@@ -291,10 +291,10 @@ public class StatDialogController {
 	public String[] getDataTitles(){
 
 		if(dataSource == null) return null;
-		
+
 		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		String[] title = null;
-		
+
 		switch(mode){
 
 		case StatDialog.MODE_ONEVAR:
@@ -351,19 +351,19 @@ public class StatDialogController {
 		updateDialog(false);
 	}
 
-	
+
 
 	public void updateDialog(boolean doSetDataSource){
 
 		removeStatGeos();
 		boolean hasValidDataSource = doSetDataSource? setDataSource() : true;
 		if(dataSource == null) return;
-		
+
 		if(hasValidDataSource){
 			loadDataLists();
 
 			updateAllStatPanels(true);
-			
+
 			if(mode == StatDialog.MODE_REGRESSION){
 				setRegressionGeo();
 				if(sd.regressionPanel != null)
@@ -376,35 +376,30 @@ public class StatDialogController {
 	}
 
 	public void updateAllStatPanels(boolean doCreateGeo){
-		
-		sd.comboStatPanel.updatePlot(doCreateGeo);
-		sd.comboStatPanel2.updatePlot(doCreateGeo);
 
-		if(mode == sd.MODE_ONEVAR){
-			sd.statisticsPanel.updatePanel();
-		}
-		else if(mode == sd.MODE_REGRESSION){
-			sd.statisticsPanel.updatePanel();
-		}
-		
+		sd.comboStatPanel.updatePlot(doCreateGeo);
+		if(sd.comboStatPanel2 != null)
+			sd.comboStatPanel2.updatePlot(doCreateGeo);
+		sd.statisticsPanel.updatePanel();
+
 	}
 
-	
-	
-	
+
+
+
 	protected void handleRemovedDataGeo(GeoElement geo){
-		
+
 		//System.out.println("removed: " + geo.toString());
 		if (isInDataSource(geo)) {	
-			System.out.println("stat dialog removed: " + geo.toString());
+			//System.out.println("stat dialog removed: " + geo.toString());
 			//removeStatGeos();
 			dataSource = null;
 			updateDialog(false);
 		}
-		
+
 	}
-	
-	
+
+
 	public void setRegressionGeo(){
 
 		if(geoRegression != null){
@@ -443,10 +438,10 @@ public class StatDialogController {
 			statGeo = null;
 		}
 	}
-	
-	
+
+
 	public SummaryStatistics getSummaryStatistics(GeoList dataList){
-		
+
 		SummaryStatistics stats = new SummaryStatistics();
 		for (int i=0; i < dataList.size(); i++) {
 			GeoElement geo = dataList.get(i);
@@ -457,9 +452,9 @@ public class StatDialogController {
 		}   				
 		return stats;
 	}
-	
-	
-	
+
+
+
 	public double[] getValueArray(GeoList dataList){
 		ArrayList<Double> list = new ArrayList<Double>();
 		for (int i=0; i < dataList.size(); i++) {
@@ -472,12 +467,12 @@ public class StatDialogController {
 		double[] val = new double[list.size()];
 		for (int i=0; i < list.size(); i++) 
 			val[i] = list.get(i);
-		
+
 		return val;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

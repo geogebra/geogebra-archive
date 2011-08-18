@@ -13,9 +13,9 @@ import javax.swing.table.DefaultTableModel;
  * @author G. Sturr
  *
  */
-public class MultiVarStatPanel extends BasicStatTable {
+public class MinimalMultiVarStatPanel extends BasicStatTable {
 
-	public MultiVarStatPanel(Application app, StatDialog statDialog){
+	public MinimalMultiVarStatPanel(Application app, StatDialog statDialog){
 		super(app,statDialog, -1);			
 	}
 
@@ -66,15 +66,7 @@ public class MultiVarStatPanel extends BasicStatTable {
 		String[][] map = { 
 				{app.getMenu("Length.short") ,"Length"},
 				{app.getMenu("Mean") ,"Mean"},
-				{app.getMenu("StandardDeviation.short") ,"SD"},
-				{app.getMenu("SampleStandardDeviation.short") ,"SampleSD"},
-				{app.getMenu("Minimum.short") ,"Min"},
-				{app.getMenu("LowerQuartile.short") ,"Q1"},
-				{app.getMenu("Median") ,"Median"},
-				{app.getMenu("UpperQuartile.short") ,"Q3"},
-				{app.getMenu("Maximum.short") ,"Max"},
-				{app.getMenu("Sum") ,"Sum"},
-				{app.getMenu("Sum2") ,"SigmaXX"}
+				{app.getMenu("SampleStandardDeviation.short") ,"SampleSD"}
 		};
 		return map;
 	}

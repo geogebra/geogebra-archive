@@ -71,7 +71,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	private MyTextField fldConfLevel;
 
 
-	private int selectedPlot = StatComboPanel.PLOT_TINT_2MEANS;
+	private int selectedPlot = StatisticsPanel.INFER_TINT_2MEANS;
 
 	// test type (tail)
 	private static final String tail_left = "<";
@@ -217,22 +217,22 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 		// swap card panels
 		switch (selectedPlot){
-		case StatComboPanel.PLOT_TTEST_2MEANS:
-		case StatComboPanel.PLOT_TTEST_PAIRED:
+		case StatisticsPanel.INFER_TTEST_2MEANS:
+		case StatisticsPanel.INFER_TTEST_PAIRED:
 			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "testPanel");
 			lblHypParameter.setText(getNullHypName() + " = " );
 			break;
 
-		case StatComboPanel.PLOT_TINT_2MEANS:
-		case StatComboPanel.PLOT_TINT_PAIRED:	
+		case StatisticsPanel.INFER_TINT_2MEANS:
+		case StatisticsPanel.INFER_TINT_PAIRED:	
 			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "intPanel");
 			break;
 		}
 
 		ckEqualVariances.removeActionListener(this);
 		ckEqualVariances.setVisible(
-				selectedPlot == StatComboPanel.PLOT_TINT_2MEANS
-				|| selectedPlot == StatComboPanel.PLOT_TTEST_2MEANS);
+				selectedPlot == StatisticsPanel.INFER_TINT_2MEANS
+				|| selectedPlot == StatisticsPanel.INFER_TTEST_2MEANS);
 		ckEqualVariances.setSelected(pooled);
 		ckEqualVariances.addActionListener(this);
 
@@ -316,9 +316,9 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 	private String getNullHypName(){
 
-		if(selectedPlot == StatComboPanel.PLOT_TTEST_2MEANS)
+		if(selectedPlot == StatisticsPanel.INFER_TTEST_2MEANS)
 			return app.getMenu("DifferenceOfMeans.short");
-		else if(selectedPlot == StatComboPanel.PLOT_TTEST_PAIRED)
+		else if(selectedPlot == StatisticsPanel.INFER_TTEST_PAIRED)
 			return app.getMenu("MeanDifference");
 		else
 			return "";
@@ -409,8 +409,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 
 		switch (selectedPlot){
-		case StatComboPanel.PLOT_TTEST_2MEANS:
-		case StatComboPanel.PLOT_TTEST_PAIRED:
+		case StatisticsPanel.INFER_TTEST_2MEANS:
+		case StatisticsPanel.INFER_TTEST_PAIRED:
 		{
 			String[] columnNames = 
 			{
@@ -425,8 +425,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		}
 		break;
 
-		case StatComboPanel.PLOT_TINT_2MEANS:
-		case StatComboPanel.PLOT_TINT_PAIRED:
+		case StatisticsPanel.INFER_TINT_2MEANS:
+		case StatisticsPanel.INFER_TINT_PAIRED:
 		{
 			String[] columnNames2 = 
 			{
@@ -454,8 +454,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		evaluate();
 
 		switch (selectedPlot){
-		case StatComboPanel.PLOT_TTEST_2MEANS:
-		case StatComboPanel.PLOT_TTEST_PAIRED:
+		case StatisticsPanel.INFER_TTEST_2MEANS:
+		case StatisticsPanel.INFER_TTEST_PAIRED:
 
 			model.setValueAt(statDialog.format(P),0,0);
 			model.setValueAt(statDialog.format(t), 0,1);
@@ -464,8 +464,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 			model.setValueAt(statDialog.format(df), 0,4);
 			break;
 
-		case StatComboPanel.PLOT_TINT_2MEANS:
-		case StatComboPanel.PLOT_TINT_PAIRED:
+		case StatisticsPanel.INFER_TINT_2MEANS:
+		case StatisticsPanel.INFER_TINT_PAIRED:
 
 			String cInt = statDialog.format(mean) + " \u00B1 "  + statDialog.format(me);
 			model.setValueAt(cInt,0,0);
@@ -516,8 +516,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		try {
 
 			switch (selectedPlot){
-			case StatComboPanel.PLOT_TTEST_2MEANS:
-			case StatComboPanel.PLOT_TINT_2MEANS:
+			case StatisticsPanel.INFER_TTEST_2MEANS:
+			case StatisticsPanel.INFER_TINT_2MEANS:
 
 				// get statistics
 				mean1 = StatUtils.mean(sample1);
@@ -557,8 +557,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 				break;
 
 
-			case StatComboPanel.PLOT_TTEST_PAIRED:
-			case StatComboPanel.PLOT_TINT_PAIRED:
+			case StatisticsPanel.INFER_TTEST_PAIRED:
+			case StatisticsPanel.INFER_TINT_PAIRED:
 
 				// get statistics
 				n1 = sample1.length;

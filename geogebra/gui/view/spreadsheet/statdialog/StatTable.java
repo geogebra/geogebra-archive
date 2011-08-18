@@ -54,6 +54,11 @@ public class StatTable extends JScrollPane {
 		((JPanel)this.getCorner(ScrollPaneConstants.UPPER_LEFT_CORNER)).
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1,TABLE_GRID_COLOR));
 		
+		
+        myTable.setPreferredScrollableViewportSize(myTable.getPreferredSize());
+
+		
+		
 	} 
 
 	public JTable getTable(){
@@ -109,6 +114,9 @@ public class StatTable extends JScrollPane {
 	
 	public void setStatTable(int rows, String[] rowNames, int columns, String[] columnNames){
 
+		//TODO: cannot remove columns ... call this again with fewer columns
+		// and the older columns persist ????
+		
 		tableModel = new DefaultTableModel(rows,columns);
 		myTable.setModel(tableModel);
 
