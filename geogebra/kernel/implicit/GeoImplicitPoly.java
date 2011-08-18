@@ -541,7 +541,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 	
 	/**
-	 * Plugs in two rational polynomials for x and y, x|->pX/qX and y|->pX/qX in the curve 
+	 * Plugs in two rational polynomials for x and y, x|->pX/qX and y|->pY/qY in the curve 
 	 * (replacing the current coefficients with the new ones)
 	 * [not yet tested for qX!=qY]
 	 * @param pX
@@ -688,7 +688,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		}
 		
 		//maybe we made the degree larger than necessary, so we try to get it down.
-		double[][] newCoeffMinDeg=null;
+		/*double[][] newCoeffMinDeg=null;
 //	Application.debug("old degX="+newDegX+"; old degY="+newDegY);
 		degX=0;
 		degY=0;
@@ -717,7 +717,11 @@ Dilateable, Transformable, EuclidianViewCE {
 			newCoeffMinDeg[0][0]=0;
 		}
 //		Application.debug("new degX="+degX+"; new degY="+degY);
-		coeff=newCoeffMinDeg;
+ * 
+ */
+		//coeff=newCoeffMinDeg; //TODO: this is only a quick fix for #1226.
+		//Need to reconsider the purpose of newCoeffMinDeg to avoid ArrayIndexOutOfBoundsException.
+		coeff = newCoeff;
 		setValidInputForm(false); //we changed the polynomial => not the same as the userInput
 		updatePath();
 		if (algoUpdateSet!=null){
