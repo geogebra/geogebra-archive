@@ -10882,7 +10882,7 @@ class CmdFrequency extends CommandProcessor {
 
 			} 
 			// arg[0] = class list, arg[1] = data list, arg[2] = useDensity
-			else if ((ok[0] = arg[1].isGeoList())
+			else if ((ok[0] = arg[0].isGeoList())
 					&& (ok[1] = arg[1].isGeoList())
 					&& (ok[2] = arg[2].isGeoBoolean())) {
 				GeoElement[] ret = { kernel.Frequency(c.getLabel(), (GeoList) arg[0],
@@ -11031,7 +11031,7 @@ class CmdFrequencyTable extends CommandProcessor {
 
 			} 
 			// arg[0] = class list, arg[1] = data list, arg[2] = useDensity
-			else if ((ok[0] = arg[1].isGeoList())
+			else if ((ok[0] = arg[0].isGeoList())
 					&& (ok[1] = arg[1].isGeoList())
 					&& (ok[2] = arg[2].isGeoBoolean())) {
 				GeoElement[] ret = { kernel.FrequencyTable(c.getLabel(), (GeoList) arg[0],
