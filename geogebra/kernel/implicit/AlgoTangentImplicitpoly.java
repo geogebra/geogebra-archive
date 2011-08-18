@@ -147,6 +147,19 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 			if(Kernel.isEqual(ip[i].inhomX, R.inhomX, 1E-2) 
 					&& Kernel.isEqual(ip[i].inhomY, R.inhomY, 1E-2))
 				continue;
+			
+			//normal vector does not exist, therefore tangent is not defined
+			//We need to check if F1 :=dF/dx and F2 :=dF/dy are both zero when eval at ip[i]
+			//The error of F1 is dF1/dx * err(x) + dF1/dy * err(y), where err(x) and err(y) satisfies
+			//| (dF/dx) err(x) + (dF/dy) err(y) | < EPSILON
+			//So |dF/dx|<= |dF1/dx * err(x) + dF1/dy * err(y)| <= Max(dF1/dx / dF/dx, dF1/dy / dF/dy) * EPSILON
+			//A convenient necessary condition of this is  (dF/dx)^2 <= |dF1/dx| * EPSILON.
+			//Not very reasonably, now we use (dF/dx)^2 <= EPSILON only, to avoid evaluation of dF1/dx 
+			//TODO: have a more reasonable choice
+			if(Kernel.isEqual(0, this.p.evalDiffXPolyAt(ip[i].inhomX, ip[i].inhomY), Kernel.EPSILON_SQRT)
+					&& Kernel.isEqual(0, this.p.evalDiffXPolyAt(ip[i].inhomX, ip[i].inhomY), Kernel.EPSILON_SQRT))
+				continue;
+			
 			tangents.adjustOutputSize(tangents.size() + 1);
 			tangents.getElement(n).setCoords(ip[i].getY() - this.R.getY(), this.R.getX() - ip[i].getX(), 
 				ip[i].getX() * this.R.getY() - this.R.getX() * ip[i].getY());
