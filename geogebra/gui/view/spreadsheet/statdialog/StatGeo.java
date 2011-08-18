@@ -12,6 +12,7 @@ import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.AlgoListMax;
 import geogebra.kernel.AlgoListMin;
 import geogebra.kernel.AlgoNormalQuantilePlot;
+import geogebra.kernel.AlgoPolyLine;
 import geogebra.kernel.AlgoResidualPlot;
 import geogebra.kernel.AlgoStemPlot;
 import geogebra.kernel.AlgoText;
@@ -239,7 +240,8 @@ public class StatGeo   {
 
 		geo = al2.getGeoElements()[0];
 		if(isFrequencyPolygon){
-			geo.setObjColor(Color.BLACK);
+			geo.setObjColor(StatDialog.OVERLAY_COLOR);
+			geo.setLineThickness(StatDialog.thicknessCurve);
 		}else{
 			geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
 			geo.setAlphaValue(StatDialog.opacityBarChart);
@@ -500,14 +502,33 @@ public class StatGeo   {
 	}
 
 
+	
+	
+	public GeoElement createScatterPlotLine(GeoList points){
 
+		AlgoPolyLine polyLine = new AlgoPolyLine(cons, null, points);
+		cons.removeFromConstructionList(polyLine);
+		GeoElement geo = polyLine.getGeoElements()[0];
+
+		// set visibility
+		geo.setEuclidianVisible(true);	
+		geo.setAuxiliaryObject(true);
+		geo.setLabelVisible(false);	
+		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
+		geo.setAlphaValue(StatDialog.opacityBarChart);
+
+		return geo;
+
+
+	}
+	
+	
 
 	public GeoElement createScatterPlot(GeoList dataList){
 
 		// copy the dataList geo
 		GeoList geo = new GeoList(cons);
 		geo.setAuxiliaryObject(true);
-		//geo.setLabel("scatterPlotPointList");
 
 		for(int i=0; i<dataList.size(); ++i)
 			geo.add(dataList.get(i));	
@@ -520,8 +541,6 @@ public class StatGeo   {
 		geo.setAlphaValue(StatDialog.opacityBarChart);
 
 		return geo;
-
-
 	}
 
 	public void getScatterPlotSettings(GeoList dataList, StatPanelSettings settings){

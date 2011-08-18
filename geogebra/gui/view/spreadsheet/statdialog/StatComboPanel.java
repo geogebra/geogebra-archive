@@ -88,17 +88,18 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	// geos
 	private GeoList regressionAnalysisList;
 	private ArrayList<GeoElement> plotGeoList;
-	private GeoElement histogram, dotPlot, boxPlotTitles[], frequencyPolygon, normalCurve;
+	private GeoElement histogram, dotPlot, boxPlotTitles[], frequencyPolygon, normalCurve, 
+	scatterPlot, scatterPlotLine;
 
 
 	// display panels 	
 	private JPanel displayCardPanel;
 	private JPanel metaPlotPanel, plotPanelNorth, plotPanelSouth;
 	private PlotPanelEuclidianView plotPanel;
-	
+
 
 	private JLabel imageContainer;
-	
+
 
 	// control panel
 	private JPanel controlPanel;
@@ -140,6 +141,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private JLabel lblTitleX, lblTitleY;
 	private MyTextField fldTitleX, fldTitleY;
 	private FrequencyTable frequencyTable;
+
 
 
 
@@ -600,22 +602,26 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 					histogram.remove();
 				histogram = statGeo.createHistogram( dataListSelected, numClasses, settings, false);
 				plotGeoList.add(histogram);
-			}
-			if(frequencyPolygon != null)
-				frequencyPolygon.remove();
-			if(settings.hasOverlayPolygon){
-				frequencyPolygon = statGeo.createHistogram( dataListSelected, numClasses, settings, true);
-				plotGeoList.add(frequencyPolygon);
-			}
-			if(normalCurve != null)
-				normalCurve.remove();
-			if(settings.hasOverlayNormal){
-				normalCurve = statGeo.createNormalCurveOverlay(dataListSelected);
-				plotGeoList.add(normalCurve);
+
+				if(frequencyPolygon != null)
+					frequencyPolygon.remove();
+				if(settings.hasOverlayPolygon){
+					frequencyPolygon = statGeo.createHistogram( dataListSelected, numClasses, settings, true);
+					plotGeoList.add(frequencyPolygon);
+				}
+				if(normalCurve != null)
+					normalCurve.remove();
+				if(settings.hasOverlayNormal){
+					normalCurve = statGeo.createNormalCurveOverlay(dataListSelected);
+					plotGeoList.add(normalCurve);
+				}
 			}
 
+			// update the frequency table
 			AlgoHistogram algo = (AlgoHistogram) histogram.getParentAlgorithm();
 			frequencyTable.setTable(algo.getLeftBorder(), algo.getYValue(), settings);
+
+			// update settings
 			statGeo.getHistogramSettings( dataListSelected, histogram, settings);
 			plotPanel.updateSettings(settings);
 
@@ -632,6 +638,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		case PLOT_BOXPLOT:
 			if(doCreate)
 				plotGeoList.add(statGeo.createBoxPlot( dataListSelected));
+
 			statGeo.getBoxPlotSettings( dataListSelected, settings);
 			plotPanel.updateSettings(settings);
 			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
@@ -644,6 +651,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 				dotPlot = statGeo.createDotPlot( dataListSelected);
 				plotGeoList.add(dotPlot);
 			}
+
 			statGeo.updateDotPlot(dataListSelected, dotPlot, settings);
 			plotPanel.updateSettings(settings);
 			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
@@ -670,17 +678,28 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			break;
 
 		case PLOT_SCATTERPLOT:
-			if(doCreate)
-				plotGeoList.add(statGeo.createScatterPlot(dataListSelected));
-			statGeo.getScatterPlotSettings(dataListSelected, settings);
-			plotPanel.updateSettings(settings);
+			if(doCreate){
+				scatterPlot = statGeo.createScatterPlot(dataListSelected);
+				plotGeoList.add(scatterPlot);
 
+				if(statDialog.getRegressionModel()!=null){
+					plotGeoList.add(statDialog.getRegressionModel());  
+				}
+
+				if(settings.showScatterplotLine){
+					scatterPlotLine = statGeo.createScatterPlotLine((GeoList) scatterPlot);
+					plotGeoList.add(scatterPlotLine);
+				}
+			}
+			
+			// update xy title fields
 			fldTitleX.setText(statDialog.getDataTitles()[0]);
 			fldTitleY.setText(statDialog.getDataTitles()[1]);
 
-			if(statDialog.getRegressionModel()!=null){
-				plotGeoList.add(statDialog.getRegressionModel());  
-			}
+			// update settings
+			statGeo.getScatterPlotSettings(dataListSelected, settings);
+			plotPanel.updateSettings(settings);
+
 			((CardLayout)displayCardPanel.getLayout()).show(displayCardPanel, "plotPanel");
 
 			break;

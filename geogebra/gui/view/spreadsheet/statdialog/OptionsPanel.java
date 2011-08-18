@@ -598,6 +598,11 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 			settings.isLeftRule = rbLeftRule.isSelected();
 			firePropertyChange("settings", true, false);
 		}
+		else if(source == this.ckShowLines){
+			settings.showScatterplotLine = ckShowLines.isSelected();
+			firePropertyChange("settings", true, false);
+		}
+		
 		else{
 			firePropertyChange("settings", true, false);
 		}
