@@ -1281,6 +1281,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		setComboDistribution();
 
 		table.setLabels();
+		if(styleBar != null)
+			styleBar.setLabels();
 
 	}
 
@@ -1836,7 +1838,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 		try {
 			app.storeUndoInfo();
-			
+
 			//create low point
 			expr = "Point[" + app.getPlain("xAxis") + "]";
 			GeoPoint lowPointCopy = (GeoPoint) createGeoFromString(expr,null,false);

@@ -32,13 +32,20 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 
 		this.probCalc = probCalc;
 		this.app = app;
-
 		this.setFloatable(false);
-		buildOptionsButton();
-		add(btnOptions); 
+		createGUI();
 
 	}
 
+	private void createGUI(){
+		this.removeAll();	
+		buildOptionsButton();
+		add(btnOptions); 
+	}
+	
+	public void setLabels(){
+		createGUI();
+	}
 
 
 	/** 
@@ -52,12 +59,10 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 		btnOptions.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(iconHeight));
 		btnOptions.setDownwardPopup(true);
 		btnOptions.setText(app.getMenu("Options"));
-
-
+		
 		JMenuItem menuItem;
 
 		btnOptions.addPopupMenuItem(this.createMenuDecimalPlaces());
-
 
 		menuItem = new JCheckBoxMenuItem(app.getMenu("Cumulative"));
 		menuItem.setSelected(probCalc.isCumulative());
