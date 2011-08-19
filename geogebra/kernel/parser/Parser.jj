@@ -376,7 +376,7 @@ TOKEN: {
 |	< ARBCONST:  "arbconst("  >  // arbitrary constant by MPreduce
 |	< ARBINT:  "arbint("  >  // may be returned by MPreduce
 |	< ARBCOMPLEX:  "arbcomplex("  >  // may be returned by MPreduce
-|   < POLAR: "polartopoint(" > // may be returned by MPreduce
+|   < POLAR: "polartopoint§(" > // may be returned by MPreduce
 | 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 

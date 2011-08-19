@@ -41,8 +41,8 @@ public class CASmpreduce extends CASgeneric {
 
 			// the first command sent to mpreduce produces an error
 			try {
-				initMyMPReduceFunctions();
 				loadMyMPReduceFunctions();
+				initMyMPReduceFunctions();
 			} catch (Throwable e)
 			{}
 			
@@ -60,7 +60,7 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
-		sb.append("<<numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ on pri, combinelogs$ ");
+		sb.append("<<numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ combinelogs$ ");
 		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
 		sb.append(">>");
 
@@ -234,12 +234,11 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("load_package defint;");
 		mpreduce.evaluate("load_package linalg;");
 		mpreduce.evaluate("load_package reset;");
-		mpreduce.evaluate("load_package randpoly;");
 		mpreduce.evaluate("load_package taylor;");
-//      due to performance reasons this package is not loaded
-//		mpreduce.evaluate("load_package assist;");
 		mpreduce.evaluate("load_package groebner;");		
-		mpreduce.evaluate("load_package trigsimp;");		
+		mpreduce.evaluate("load_package trigsimp;");	
+		mpreduce.evaluate("load_package polydiv;");	
+		
 		
 	}
 
@@ -248,7 +247,7 @@ public class CASmpreduce extends CASgeneric {
 			
 		// ARBVARS introduces arbitrary new variables when solving singular systems of equations
 		mpreduce.evaluate("off arbvars;");
-
+		mpreduce.evaluate("off pri");
 
 		mpreduce.evaluate("off numval;");
 		mpreduce.evaluate("linelength 50000;");
@@ -336,7 +335,7 @@ public class CASmpreduce extends CASgeneric {
 				"   else arg(x!!) >>" +
 				" else myatan2(impart(x),repart(x));");
 		mpreduce.evaluate("procedure polartocomplex(r,phi); r*(cos(phi)+i*sin(phi));");
-		mpreduce.evaluate("procedure polartopoint(r,phi); list(r*cos(phi),r*sin(phi));");
+		mpreduce.evaluate("procedure polartopoint!§(r,phi); list(r*cos(phi),r*sin(phi));");
 		mpreduce.evaluate("procedure complexexponential(r,phi); r*(cos(phi)+i*sin(phi));");
 		mpreduce.evaluate("procedure conjugate(x); conj(x);");
 		mpreduce.evaluate("procedure myrandom(); <<on rounded; random(100000001)/(random(100000000)+1)>>;");
@@ -383,8 +382,8 @@ public class CASmpreduce extends CASgeneric {
 				+ "  let solverules;"
 				+ "  if arglength(eqn)>-1 and part(eqn,0)='list then"
 				+ "    eqn:=for each x in eqn collect"
-				+ "      if freeof(x,=) then x else lhs(x)-rhs(x)"
-				+ "  else if freeof(eqn,=) then 1 else eqn:=lhs(eqn)-rhs(eqn);"
+				+ "      if freeof(x,=) then x else subtraction(lhs(x),rhs(x))"
+				+ "  else if freeof(eqn,=) then 1 else eqn:=subtraction(lhs(eqn),rhs(eqn));"
 				+ "  solutions!!:=solve(eqn,var);"
 				+ "	 if depth(solutions!!)<2 then"
 				+ "		solutions!!:=for each x in solutions!! collect {x};"
@@ -415,8 +414,8 @@ public class CASmpreduce extends CASgeneric {
 				"  let solverules;" +
 				"  if arglength(eqn)>-1 and part(eqn,0)='list then" +
 				"    eqn:=for each x in eqn collect" +
-				"      if freeof(x,=) then x else lhs(x)-rhs(x)" +
-				"  else if freeof(eqn,=) then 1 else eqn:=lhs(eqn)-rhs(eqn);" +
+				"      if freeof(x,=) then x else subtraction(lhs(x),rhs(x))" +
+				"  else if freeof(eqn,=) then 1 else eqn:=subtraction(lhs(eqn),rhs(eqn));" +
 				"    solutions!!:=solve(eqn,var);" +
 				"    if depth(solutions!!)<2 then" +
 				"      solutions!!:=for each x in solutions!! collect {x};" +
@@ -725,7 +724,7 @@ public class CASmpreduce extends CASgeneric {
 				"  >> else << " +
 				"    if numeric!!=0 then" +
 				"      off rounded, roundall, numval;" +
-				"    part(divpol(a*b*a,b*a*b),1)>>" +
+				"    part(divide(a,b),1)>>" +
 				" end;");
 		
 		// to avoid using the package assist
