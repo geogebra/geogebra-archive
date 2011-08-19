@@ -424,6 +424,7 @@ GeoPointND, Animatable, Transformable  {
 		if (ev.isLeaf()) {
 			GeoElement geo = kernel.lookupLabel(ev.toString(), false);
 			if (geo.isGeoNumeric()) return (GeoNumeric) geo;
+			else return null;
 		}
 		
 		// are expressions like "a + x(A)" allowed?
