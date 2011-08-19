@@ -433,8 +433,9 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		if(multiVarStatDialog != null)
 			multiVarStatDialog.setVisible(false);
 
-		table.getCellFormatHandler().clearAll();
-		settingsChanged(settings);
+		// clear the formats and call settingsChanged 
+		settings.setCellFormat(null);
+		
 	}	
 
 	/** Resets spreadsheet after undo/redo call. */
