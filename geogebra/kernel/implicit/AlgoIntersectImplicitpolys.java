@@ -116,7 +116,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 
 	@Override
 	protected void compute() {
-				if (c1!=null){
+		if (c1!=null){
 			p2=new GeoImplicitPoly(c1);
 		}
 		

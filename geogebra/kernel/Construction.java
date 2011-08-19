@@ -659,7 +659,7 @@ public class Construction {
 	 * Unregisters an algorithm that wants to be notified when setEuclidianViewBounds() is called.	 
 	 * @param elem construction element to be unregistered
 	 */
-	void unregisterEuclidianViewCE(EuclidianViewCE elem) {		
+	public final void unregisterEuclidianViewCE(EuclidianViewCE elem) {		
 		euclidianViewCE.remove(elem);
 	}
 	

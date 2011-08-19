@@ -32,9 +32,11 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 	private GeoPoint[] ip; //tangent points.
 	private OutputHandler<GeoLine> tangents;
 	
+	private AlgoIntersectImplicitpolys algoIntersect;
+	
 	private String[] labels;
 	
-	private final static double EPS_ANGLE=1E-3;
+//	private final static double EPS_ANGLE=1E-3;
 	
 
 	protected AlgoTangentImplicitpoly(Construction c) {
@@ -45,12 +47,22 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 		this(c);
 		this.labels=labels;
 		this.p=p;
+
 	}
 	 
 	
 	public AlgoTangentImplicitpoly(Construction c,String[] labels,GeoImplicitPoly p,GeoPoint R) {
 		this(c,labels,p);
 		this.R=R;
+		
+		AlgoImplicitPolyTangentCurve algoTangentPoly=
+			new AlgoImplicitPolyTangentCurve(c, p, R, null,false,false);
+		
+		GeoImplicitPoly tangentCurve=algoTangentPoly.getTangentCurve();
+		algoIntersect = new AlgoIntersectImplicitpolys(cons, p,tangentCurve);
+		cons.removeFromConstructionList(algoIntersect);
+		ip = algoIntersect.getIntersectionPoints();
+		
 		setInputOutput();
 	}
 	
@@ -92,7 +104,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 	@Override
 	protected void compute() {
 		// idea: find intersection points between given curve and
-		// curve dF/dx * x_p + dF/dy * y_p + u_{n-1} + 2*u_{n-2} + ... + n*u_0
+		// tangent curve
 		// and construct lines through (x_p, y_p) and intersection points, 
 		// where (x_p, y_p) is given point.
 		
@@ -101,42 +113,9 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
         	return;
         }   
 		
-        tangents.adjustOutputSize(0);
+        ip = algoIntersect.getIntersectionPoints();
         
-		double [][] matrix = this.p.getCoeff();
-		
-		double x = this.R.getX();
-		double y = this.R.getY();
-		
-		int degX = this.p.getDegX();
-		int degY = this.p.getDegY();
-		
-		double [][] matrixx = new double[degX+1][degY+1];
-		double [][] matrixy = new double[degX+1][degY+1];
-		
-		for(int i=1; i<degX+1; i++)
-			for(int j=0; j<degY+1; j++)
-				matrixx[i-1][j] = x*i*matrix[i][j];
-		
-		for(int i=0; i<degX+1; i++)
-			for(int j=1; j<degY+1; j++)
-				matrixy[i][j-1] = y*j*matrix[i][j];
-	
-		double [][] newMatrix = new double[degX+1][degY+1];
-		
-		int maxDeg = (degX > degY) ? degX : degY;
-		for(int i=0; i<degX+1; i++)
-			for(int j=0; j<degY+1; j++)
-				newMatrix[i][j] = (maxDeg - (i+j) + 1) * matrix[i][j] + matrixx[i][j] + matrixy[i][j];
-		
-		GeoImplicitPoly newPoly = new GeoImplicitPoly(cons, "", newMatrix);
-		newPoly.remove();
-		
-		AlgoIntersectImplicitpolys algo = new AlgoIntersectImplicitpolys(cons, this.p, newPoly);
-		algo.compute();
-		algo.remove();
-		GeoPoint[] ip = algo.getIntersectionPoints();
-		this.ip=ip;
+        tangents.adjustOutputSize(0);
 		
 		int n=0;
 		for(int i=0; i<ip.length; i++)

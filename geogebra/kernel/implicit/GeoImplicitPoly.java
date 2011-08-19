@@ -76,6 +76,7 @@ Dilateable, Transformable, EuclidianViewCE {
 
 	private boolean defined = true;
 	private boolean isConstant;
+	private boolean calcPath;
 	
 	private boolean trace; //for traceable interface
 	
@@ -94,20 +95,58 @@ Dilateable, Transformable, EuclidianViewCE {
 		pointsOnCurve = null;
 		locus=new GeoLocus(c);
 		locus.setDefined(true);
+		calcPath=true;
 		c.registerEuclidianViewCE(this);
 	}
 	
-	protected GeoImplicitPoly(Construction c, String label,double[][] coeff){
+	private GeoImplicitPoly(Construction c, String label,double[][] coeff,boolean calcPath){
 		this(c);
 		setLabel(label);
-		setCoeff(coeff,true);
+		this.calcPath=calcPath;
+		setCoeff(coeff,calcPath);
+		if (!calcPath)
+			c.unregisterEuclidianViewCE(this);
 	}
 	
-	public GeoImplicitPoly(Construction c, String label,Polynomial poly){
+	protected GeoImplicitPoly(Construction c, String label,double[][] coeff){
+		this(c,label,coeff,true);
+	}
+	
+	private GeoImplicitPoly(Construction c, String label,Polynomial poly,boolean calcPath){
 		this(c);
 		this.poly = poly;
 		setLabel(label);
-		setCoeff(poly.getCoeff());
+		this.calcPath=calcPath;
+		setCoeff(poly.getCoeff(),calcPath);
+		if (!calcPath)
+			c.unregisterEuclidianViewCE(this);
+	}
+	
+	public GeoImplicitPoly(Construction c, String label,Polynomial poly){
+		this(c,label,poly,true);
+	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param coeff
+	 * @return a GeoImplicitPoly witch doesn't calculate it's path.
+	 */
+	public static GeoImplicitPoly createImplicitPolyWithoutPath(Construction c,double[][] coeff){
+		return new GeoImplicitPoly(c,null,coeff,false);
+	}
+	
+	/**
+	 * The curve will no longer update the Path and won't receive updates
+	 * when the euclidian View changes.
+	 * Useful if the curve is used as a container for helper algorithms.
+	 * This method should be called directly after instantiation, via the one
+	 * argument constructor, if the coefficients are present already
+	 * {@link #createImplicitPolyWithoutPath}
+	 */
+	public void preventPathCreation(){
+		calcPath=false;
+		cons.unregisterEuclidianViewCE(this);
 	}
 	
 	
@@ -147,6 +186,8 @@ Dilateable, Transformable, EuclidianViewCE {
 		degY=2;
 //		Application.debug("Conic -> "+this);
 	}
+	
+	
 	
 	public Coords[] getpointsOnCurve() {
 		return pointsOnCurve;
@@ -418,7 +459,7 @@ Dilateable, Transformable, EuclidianViewCE {
 					isConstant=isConstant&&(c[i][j]==0||(i==0&&j==0));	
 				}
 			}
-			if (calcPath)
+			if (calcPath&&this.calcPath)
 				updatePath();
 		} catch (Exception e) {
 			setUndefined();
@@ -430,6 +471,14 @@ Dilateable, Transformable, EuclidianViewCE {
 	 * @param ev assigns given coefficient-array to be the coefficients of this Polynomial.
 	 */
 	public void setCoeff(ExpressionValue[][] ev){
+		setCoeff(ev,true);
+	}
+	
+	/**
+	 * @param ev assigns given coefficient-array to be the coefficients of this Polynomial.
+	 * @param calcPath 
+	 */
+	public void setCoeff(ExpressionValue[][] ev,boolean calcPath){
 		try {
 			isConstant=true;
 			degX=-1;
@@ -451,7 +500,8 @@ Dilateable, Transformable, EuclidianViewCE {
 				}
 			}
 			getFactors();
-			updatePath();
+			if (calcPath&&this.calcPath)
+				updatePath();
 		} catch (Exception e) {
 			setUndefined();
 			e.printStackTrace();
@@ -688,7 +738,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		}
 		
 		//maybe we made the degree larger than necessary, so we try to get it down.
-		/*double[][] newCoeffMinDeg=null;
+		double[][] newCoeffMinDeg=null;
 //	Application.debug("old degX="+newDegX+"; old degY="+newDegY);
 		degX=0;
 		degY=0;
@@ -717,11 +767,8 @@ Dilateable, Transformable, EuclidianViewCE {
 			newCoeffMinDeg[0][0]=0;
 		}
 //		Application.debug("new degX="+degX+"; new degY="+degY);
- * 
- */
-		//coeff=newCoeffMinDeg; //TODO: this is only a quick fix for #1226.
-		//Need to reconsider the purpose of newCoeffMinDeg to avoid ArrayIndexOutOfBoundsException.
-		coeff = newCoeff;
+
+		coeff=newCoeffMinDeg;
 		setValidInputForm(false); //we changed the polynomial => not the same as the userInput
 		updatePath();
 		if (algoUpdateSet!=null){
@@ -1234,6 +1281,8 @@ Dilateable, Transformable, EuclidianViewCE {
 		 * @param resolution gives the area covered by one "pixel" of the screen
 		 */
 		public void updatePath(double rectX,double rectY,double rectW,double rectH,double resolution){
+			if (!calcPath) //important for helper curves, which aren't visible
+				return;
 			try{
 				locus.clearPoints();
 				singularitiesCollection=new ArrayList<Double[]>();
