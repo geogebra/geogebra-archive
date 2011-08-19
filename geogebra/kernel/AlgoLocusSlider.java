@@ -357,7 +357,7 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
     	    	    
     	// update Pcopy to compute Qcopy      	
     	pcopyUpdateCascade();    	    	    
-   		prevQcopyDefined = Qcopy.isDefined();   	
+   		prevQcopyDefined = Qcopy.isDefined() && !Qcopy.isInfinite();   	
     	
     	// move Pcopy along the path
     	// do this until Qcopy comes back to its start position
@@ -385,11 +385,11 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
 	        	pcopyUpdateCascade();
 	        	
 	       		// Qcopy DEFINED
-	       		if (Qcopy.isDefined()) {		       				       			
+	       		if (Qcopy.isDefined() && !Qcopy.isInfinite()) {		       				       			
 	       			// STANDARD CASE: no parameter jump
 	       			if (!parameterJump) {	       					   				       			      		
 	   					// make steps smaller until distance ok to connect with last point
-	       				while (Qcopy.isDefined() && !distanceOK(Qcopy) && !maxTimeExceeded)
+	       				while (Qcopy.isDefined() && !Qcopy.isInfinite() && !distanceOK(Qcopy) && !maxTimeExceeded)
 	       				{			
 	       					//go back and try smaller step	  
 	       		        	boolean smallerStep = sliderMover.smallerStep();	   
@@ -403,7 +403,7 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
 	       		        	pcopyUpdateCascade();	               		
 	       				}	       					       					       			
 	       				
-	       				if (Qcopy.isDefined()) {
+	       				if (Qcopy.isDefined() && !Qcopy.isInfinite()) {
 	       					// draw point
 	       					insertPoint(Qcopy.inhomX, Qcopy.inhomY, distanceSmall(Qcopy));	
 	       					prevQcopyDefined = true;
@@ -550,7 +550,7 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
 	    	}    	   
     	}	    	    
 
-//    	if (Qcopy.isDefined()) {
+//    	if (Qcopy.isDefined() && !Qcopy.isInfinite()) {
 //    		if (!foundDefined)
 //    			System.out.print(locus.label + " FIRST DEFINED param: " + Pcopy.getPathParameter().t);
 //    		else
@@ -562,7 +562,7 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
 //    	}
       	
     	// check found defined
-    	if (!foundDefined && Qcopy.isDefined()) {
+    	if (!foundDefined && Qcopy.isDefined() && !Qcopy.isInfinite()) {
     		sliderMover.init(Pcopy);
     		PstartPos.set((GeoElement) Pcopy);
         	QstartPos.set((GeoElement) Qcopy);
