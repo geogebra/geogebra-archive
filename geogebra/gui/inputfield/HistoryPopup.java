@@ -233,14 +233,12 @@ public class HistoryPopup implements ListSelectionListener{
 		}
 		switch(keyEvent.getKeyCode()) {
 		case VK_ESCAPE:			// [ESC] cancel the popup and undo any changes
-			System.out.println("esc");
 			undoPopupChange();
 			hidePopup();
 			keyEvent.consume();
 			break;
 
 		case VK_ENTER:
-			System.out.println("enter");
 			hidePopup();
 			keyEvent.consume();
 			break;
