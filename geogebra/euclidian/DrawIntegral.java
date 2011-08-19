@@ -15,6 +15,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.cas.AlgoIntegralDefinite;
 
@@ -67,7 +68,8 @@ public class DrawIntegral extends Drawable {
 		// init gp
 		double aRW = a.getDouble();
 		double bRW = b.getDouble();
-
+		
+		
 		double ax = view.toScreenCoordXd(aRW);
 		double bx = view.toScreenCoordXd(bRW);
 		float y0 = (float) view.yZero;
@@ -76,7 +78,16 @@ public class DrawIntegral extends Drawable {
 		if (gp == null)
 			gp = new GeneralPathClipped(view);
 		else
-			gp.reset(); 				
+			gp.reset(); 	
+		
+		if (Kernel.isEqual(aRW, bRW)) {
+			gp.moveTo(ax, y0); 
+			gp.lineTo(ax, view.toScreenCoordYd(f.evaluate(aRW)));
+			gp.lineTo(ax, y0); 						
+			return;
+		}
+
+		
 		gp.moveTo(ax, y0); 
 		DrawParametricCurve.plotCurve(f, aRW, bRW, view, gp, false, DrawParametricCurve.GAP_LINE_TO);
 		gp.lineTo(bx, y0);
