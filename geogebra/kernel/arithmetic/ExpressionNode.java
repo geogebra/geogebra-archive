@@ -24,6 +24,7 @@ import geogebra.gui.DynamicTextInputPane;
 import geogebra.gui.TextInputDialog;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
@@ -3285,6 +3286,9 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 					&& (leftEval = left.evaluate()).isVector3DValue()) {
 				sb.append(kernel.format(((Vector3DValue) leftEval)
 						.getPointAsDouble()[0]));
+			} else if (valueForm
+					&& (leftEval = left.evaluate()) instanceof GeoLine) {
+				sb.append(kernel.format(((GeoLine) leftEval).x));
 			} else {
 				switch (STRING_TYPE) {
 				case STRING_TYPE_LATEX:
@@ -3320,6 +3324,9 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 					&& (leftEval = left.evaluate()).isVector3DValue()) {
 				sb.append(kernel.format(((Vector3DValue) leftEval)
 						.getPointAsDouble()[1]));
+			} else if (valueForm
+					&& (leftEval = left.evaluate()) instanceof GeoLine) {
+				sb.append(kernel.format(((GeoLine) leftEval).y));
 			} else {
 				switch (STRING_TYPE) {
 				case STRING_TYPE_LATEX:
@@ -3351,6 +3358,9 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			if (valueForm && (leftEval = left.evaluate()).isVector3DValue()) {
 				sb.append(kernel.format(((Vector3DValue) leftEval)
 						.getPointAsDouble()[2]));
+			} else if (valueForm
+					&& (leftEval = left.evaluate()) instanceof GeoLine) {
+				sb.append(kernel.format(((GeoLine) leftEval).z));
 			} else {
 				switch (STRING_TYPE) {
 				case STRING_TYPE_LATEX:
