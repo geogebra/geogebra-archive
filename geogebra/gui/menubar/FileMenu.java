@@ -125,8 +125,7 @@ class FileMenu extends BaseMenu {
 			mi = submenu.add(exportPgfAction);
 			mi = submenu.add(exportAsymptoteAction);
 
-			submenu.addSeparator();
-			mi = submenu.add(exportGeoGebraTubeAction);
+			
 
 			addSeparator();
 			
