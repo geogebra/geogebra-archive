@@ -2538,8 +2538,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_POINT:
 		case EuclidianView.MODE_COMPLEX_NUMBER:
 		case EuclidianView.MODE_POINT_ON_OBJECT:
-		case EuclidianView.MODE_INTERSECT:
-		case EuclidianView.MODE_INTERSECTION_CURVE:
+		// removed: polygons can still be selected if they are the only object clicked on
+		//case EuclidianView.MODE_INTERSECT:
+		//case EuclidianView.MODE_INTERSECTION_CURVE:
 			break;
 		default:
 			hits.removePolygons();	
@@ -4537,14 +4538,23 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			//goodHits.add(selectedGeos);
 			hits.getHits(GeoLine.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoConic.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoFunction.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoPolygon.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoPolyLine.class, tempArrayList);
-			goodHits.addAll(tempArrayList);		
+			
+			if (goodHits.size() < 2) {
+				hits.getHits(GeoConic.class, tempArrayList);
+				goodHits.addAll(tempArrayList);
+			}
+			if (goodHits.size() < 2) {
+				hits.getHits(GeoFunction.class, tempArrayList);
+				goodHits.addAll(tempArrayList);
+			}
+			if (goodHits.size() < 2) {
+				hits.getHits(GeoPolygon.class, tempArrayList);
+				goodHits.addAll(tempArrayList);
+			}
+			if (goodHits.size() < 2) {
+				hits.getHits(GeoPolyLine.class, tempArrayList);
+				goodHits.addAll(tempArrayList);		
+			}
 			
 			//if (goodHits.size() > 2 - selGeos()) {
 			//	//  choose one geo, and select only this one
