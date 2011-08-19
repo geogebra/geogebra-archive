@@ -25,7 +25,7 @@ import geogebra.util.MyMath;
  * @author Michael Borcherds
  * @version
  */
-public class AlgoRandomPoisson extends AlgoElement {
+public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 	
 	protected NumberValue a;  // input
     protected GeoNumeric num;     // output           
@@ -143,4 +143,13 @@ public class AlgoRandomPoisson extends AlgoElement {
 		return halflog2pi + (k+0.5) * Math.log(k+1) - (k+1) + (1/12.0 - (1/360.0 - 1/1260.0/(k+1)/(k+1))/(k+1)/(k+1))/(k+1);
 	}
 
+	public void setRandomValue(double d) {
+		d = Math.round(kernel.checkInteger(d));
+		
+		if (d >= 0) {
+			num.setValue(d);
+			num.updateRepaint();
+		}
+			
+	}
 }

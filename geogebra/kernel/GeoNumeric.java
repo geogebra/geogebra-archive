@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -270,6 +271,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void set(GeoElement geo) {
 		NumberValue num = (NumberValue) geo;
 		setValue(num.getDouble());
+		Application.debug(value);
 	}
 
 	final public void setUndefined() {

@@ -23,7 +23,7 @@ import geogebra.util.MyMath;
  * @author Michael Borcherds
  * @version
  */
-public class AlgoRandomBinomial extends AlgoTwoNumFunction {
+public class AlgoRandomBinomial extends AlgoTwoNumFunction implements SetRandomValue {
 
 	public AlgoRandomBinomial(Construction cons, String label, NumberValue a,
 			NumberValue b) {
@@ -57,6 +57,16 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 			num.setUndefined();
 	}
 
+	public void setRandomValue(double d) {
+		d = Math.round(kernel.checkInteger(d));
+		
+		if (d >= 0 && d <= a.getDouble()) {
+			num.setValue(d);
+			num.updateRepaint();
+		}
+			
+	}
+	
 	/*
 	 * The generation of binomial random variates (1993) 
 	 * by Wolfgang Hormann, Inst Statistik, Wirtschaftuniv Wien, A- Wien

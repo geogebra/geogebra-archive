@@ -22,7 +22,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author Michael Borcherds
  * @version
  */
-public class AlgoRandomNormal extends AlgoTwoNumFunction {
+public class AlgoRandomNormal extends AlgoTwoNumFunction implements SetRandomValue {
 
 	public AlgoRandomNormal(Construction cons, String label, NumberValue a,
 			NumberValue b) {
@@ -60,4 +60,9 @@ public class AlgoRandomNormal extends AlgoTwoNumFunction {
 
 	}
 
+	public void setRandomValue(double d) {
+		num.setValue(d);
+		num.updateRepaint();
+			
+	}
 }

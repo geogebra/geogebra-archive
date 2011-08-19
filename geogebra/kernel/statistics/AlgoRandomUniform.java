@@ -22,7 +22,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author Michael Borcherds
  * @version
  */
-public class AlgoRandomUniform extends AlgoTwoNumFunction {
+public class AlgoRandomUniform extends AlgoTwoNumFunction implements SetRandomValue {
 
 	public AlgoRandomUniform(Construction cons, String label, NumberValue a,
 			NumberValue b) {
@@ -42,6 +42,14 @@ public class AlgoRandomUniform extends AlgoTwoNumFunction {
 		} else
 			num.setUndefined();
 		
+	}
+	public void setRandomValue(double d) {
+		
+		if (d >= a.getDouble() && d <= b.getDouble()) {
+			num.setValue(d);
+			num.updateRepaint();
+		}
+			
 	}
 
 }

@@ -19,6 +19,7 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.RenameInputHandler;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
+import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -59,6 +60,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Variable;
 import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.statistics.SetRandomValue;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 import geogebra.main.MyError;
@@ -8023,6 +8025,22 @@ class CmdSetValue extends CommandProcessor {
 					arg[0].set(arg[1]);
 				}
 				arg[0].updateRepaint();
+			} else if (arg[1].isNumberValue() && arg[0].isGeoNumeric() && arg[0].getParentAlgorithm() instanceof SetRandomValue) {
+				// eg a = RandomBetween[0,10]
+				SetRandomValue algo = (SetRandomValue) arg[0].getParentAlgorithm();
+				algo.setRandomValue(((NumberValue)arg[1]).getDouble());
+			} else if (arg[1].isNumberValue() && arg[0].getParentAlgorithm() instanceof AlgoDependentNumber) {
+				// eg a = random()
+				double val = ((NumberValue)arg[1]).getDouble();
+				if (val >= 0 && val <= 1) {
+					AlgoDependentNumber al = (AlgoDependentNumber)arg[0].getParentAlgorithm();
+					ExpressionNode en = al.getExpression();
+					if (en.getOperation() == ExpressionNode.RANDOM) {
+						GeoNumeric num = ((GeoNumeric)al.getOutput()[0]);
+						num.setValue(val);
+						num.updateRepaint();
+					}
+				}
 			}
 			return ret;
 		case 3:
