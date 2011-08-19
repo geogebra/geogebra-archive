@@ -6,6 +6,7 @@ import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.main.Application;
+import geogebra.util.Validation;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -306,7 +307,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
 
 		optionsPanel.setLabels();
-		optionsButton.setToolTipText(app.getPlain("Options"));
+		optionsButton.setToolTipText(app.getMenu("Options"));
 
 	}
 
@@ -797,12 +798,10 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	private void doTextFieldActionPerformed(Object source){
 
 		if(source == fldStart){
-			double val = Double.parseDouble(fldStart.getText());
-			settings.classStart = val;
+			settings.classStart = Validation.validateDouble(fldStart, settings.classStart);
 		}
 		else if(source == fldWidth){
-			double val = Double.parseDouble(fldWidth.getText());
-			settings.classWidth = val;
+			settings.classWidth = Validation.validateDoublePositive(fldWidth, settings.classWidth);			
 		}
 		updatePlot(true);
 	}
