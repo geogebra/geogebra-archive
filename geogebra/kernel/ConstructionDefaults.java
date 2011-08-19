@@ -80,6 +80,9 @@ public class ConstructionDefaults {
 	// angles
 	private static final Color colAngle = new Color(0, 100, 0);
 	public static final float DEFAULT_ANGLE_ALPHA = 0.1f;
+	
+	// numbers eg integrals, barcharts
+	public static final float DEFAULT_NUMBER_ALPHA = 0.1f;
 
 	// locus lines	
 	private static final Color colLocus = Color.black;
@@ -269,6 +272,7 @@ public class ConstructionDefaults {
 		number.setIntervalMin(GeoNumeric.DEFAULT_SLIDER_MIN);
 		number.setAnimationStep(GeoNumeric.DEFAULT_SLIDER_INCREMENT);
 		number.setAnimationSpeed(GeoNumeric.DEFAULT_SLIDER_SPEED);
+		number.setAlphaValue(DEFAULT_NUMBER_ALPHA);
 		defaultGeoElements.put(DEFAULT_NUMBER, number);
 				
 		// angle
