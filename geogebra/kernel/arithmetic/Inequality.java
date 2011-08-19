@@ -23,7 +23,6 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.implicit.GeoImplicitPoly;
-import geogebra.main.Application;
 
 /**
  * stores left and right hand side of an inequality as Expressions
@@ -121,7 +120,6 @@ public class Inequality {
 					ExpressionNode.PLUS, fv[1]);
 			m.simplifyLeafs();
 			fun = new Function(m, fv[0]);
-			Application.debug("par y");
 			type = INEQUALITY_PARAMETRIC_Y;
 		} else if (coefX != null && !Kernel.isZero(coefX)
 				&& !Double.isNaN(coefX)) {
@@ -185,7 +183,6 @@ public class Inequality {
 		if (type == INEQUALITY_PARAMETRIC_X || type == INEQUALITY_PARAMETRIC_Y) {
 			funBorder = new GeoFunction(kernel.getConstruction());
 			funBorder.setFunction(fun);
-			Application.debug(funBorder);
 			if (type == INEQUALITY_PARAMETRIC_X) {
 				funBorder.swapEval();
 			}

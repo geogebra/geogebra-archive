@@ -516,7 +516,7 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 		return ((BooleanValue) expression.evaluate()).getBoolean();
 	}
 
-	public HashSet getVariables() {
+	public HashSet<GeoElement> getVariables() {
 		return expression.getVariables();
 	}
 
@@ -828,7 +828,19 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 					&& initIneqs(rightTree, functional, tree.right,negate);
 		} else if (op == ExpressionNode.NOT) {
 			return initIneqs(leftTree, functional, tree,!negate);
-		} else
+		}else if (op == ExpressionNode.FUNCTION_NVAR) {
+			FunctionalNVar nv = (FunctionalNVar)leftTree.getLeft();
+			IneqTree otherTree = nv.getIneqs();
+			if(otherTree == null || otherTree.getSize()==0){
+				return false;
+			}
+			tree.left = otherTree.left;
+			tree.right = otherTree.right;
+			tree.operation =otherTree.operation;
+			tree.ineq =otherTree.ineq;
+			return true;
+		} 
+		else
 			return false;
 
 	}
