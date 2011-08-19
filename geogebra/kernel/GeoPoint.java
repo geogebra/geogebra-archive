@@ -422,7 +422,8 @@ GeoPointND, Animatable, Transformable  {
 	private GeoNumeric getCoordNumber(ExpressionValue ev, boolean allowPlusNode) throws Throwable {
 		// simple variable "a"
 		if (ev.isLeaf()) {
-			return (GeoNumeric) kernel.lookupLabel(ev.toString(), false);
+			GeoElement geo = kernel.lookupLabel(ev.toString(), false);
+			if (geo.isGeoNumeric()) return (GeoNumeric) geo;
 		}
 		
 		// are expressions like "a + x(A)" allowed?
