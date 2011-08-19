@@ -82,6 +82,7 @@ public class AlgoAnglePolygon extends AlgoElement {
             //  this is only an internal Algorithm that shouldn't be in the construction list
             cons.removeFromConstructionList(algos[i]);
             angles[i] = algos[i].getAngle();
+            angles[i].algoParent = this;
         }
         
         // the angles of a triangle should not become reflex
@@ -103,13 +104,12 @@ public class AlgoAnglePolygon extends AlgoElement {
 		cons.setSuppressLabelCreation(sup);
 		return points;
 	}
-		
-    // calc all angles of the polygon
-    // this is done by the algorithms created in createAngles()
-    // so nothing has to be done here
-    public void update() {}
 
-    protected final void compute() {}
+    protected final void compute() {
+    	for (int i = 0; i < algos.length; i++) {
+    		algos[i].compute();
+    	}
+    }
 
     public void remove() {
         // clear algoAnglePoly in all algos to avoid null pointer exception
