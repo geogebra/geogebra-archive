@@ -46,7 +46,9 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 
 
 	private EuclidianController ec;
-	PlotPanelEuclidianView plotPanelEV;
+	private PlotPanelEuclidianView plotPanelEV;
+	
+	public int viewID;
 
 	private static boolean[] showAxes = { true, true };
 	private static boolean showGrid = false;
@@ -58,6 +60,9 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 	private MyMouseListener myMouseListener;
 
 	private boolean enableContextMenu;
+	
+	
+	
 	public PlotSettings getPlotSettings() {
 		return plotSettings;
 	}
@@ -84,6 +89,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 	protected static Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
 	protected static Cursor grabbingCursor, grabCursor; 
 	
+	
 
 	/*************************************************
 	 * Construct the panel
@@ -93,6 +99,9 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 
 		plotPanelEV = this;
 		this.ec = this.getEuclidianController();
+		
+		viewID = kernel.getApplication().getGuiManager().assignPlotPanelID(this);
+			
 		
 		grabCursor = getCursorForImage(app.getImageIcon("cursor_grab.gif").getImage());
 		grabbingCursor = getCursorForImage(app.getImageIcon("cursor_grabbing.gif").getImage());
@@ -496,7 +505,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 	}
 
 	public int getViewID() {
-		return Application.VIEW_PLOT_PANEL;
+		return viewID;
 	}
 
 	

@@ -34,6 +34,7 @@ import geogebra.gui.view.functioninspector.FunctionInspector;
 import geogebra.gui.view.probcalculator.ProbabilityCalculator;
 import geogebra.gui.view.probcalculator.ProbabilityManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
 import geogebra.kernel.Construction;
@@ -83,6 +84,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
@@ -481,8 +483,43 @@ public class GuiManager {
 			probCalculator.getXML(sb);
 	}
 	
-	//=====================================================
+	//==================================
 	// End XML
+	
+	
+	
+	//==================================
+	// PlotPanel ID handling
+	// =================================
+	
+	
+	private HashMap< Integer, PlotPanelEuclidianView > plotPanelIDMap;
+	private int lastUsedPlotPanelID = -Application.VIEW_PLOT_PANEL;
+	
+	private HashMap<Integer, PlotPanelEuclidianView> getPlotPanelIDMap(){
+		if(plotPanelIDMap == null)
+			plotPanelIDMap = new HashMap<Integer, PlotPanelEuclidianView>();
+		return plotPanelIDMap;
+	}
+	
+	/**
+	 * Adds the given PlotPanelEuclidianView instance to the plotPanelIDMap and
+	 * returns a unique viewID
+	 * 
+	 * @param plotPanel
+	 * @return
+	 */
+	public int assignPlotPanelID(PlotPanelEuclidianView plotPanel){
+		lastUsedPlotPanelID-- ;
+		int viewID = lastUsedPlotPanelID;
+		getPlotPanelIDMap().put(viewID, plotPanel);
+		Application.debug(viewID);
+		return viewID;
+	}
+	
+	public PlotPanelEuclidianView getPlotPanelView(int viewID){
+		return getPlotPanelIDMap().get(viewID);
+	}
 	
 	
 	
