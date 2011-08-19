@@ -1,7 +1,9 @@
 package geogebra.gui.layout.panels;
 
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.main.Application;
+import geogebra.main.settings.ConstructionProtocolSettings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -62,8 +64,11 @@ public class EuclidianDockPanel extends EuclidianDockPanelAbstract {
 			panel.add(app.getEuclidianView(), BorderLayout.CENTER);
 			
 			consProtNav = app.getGuiManager().getConstructionProtocolNavigation();
-		
-			
+
+			ConstructionProtocolSettings cps = app.getSettings().getConstructionProtocol();
+			((ConstructionProtocolNavigation) consProtNav).settingsChanged(cps);
+			cps.addListener((ConstructionProtocolNavigation)consProtNav);
+				
 			if (app.getShowCPNavNeedsUpdate()){
 				app.setShowConstructionProtocolNavigation(app.showConsProtNavigation());
 			}
