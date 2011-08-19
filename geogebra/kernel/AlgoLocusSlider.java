@@ -627,9 +627,20 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewCE {
     	
     	if (lastFarAway && isFarAway(Q.inhomX, Q.inhomY)) {
 			// if last point Q' was far away and Q is far away
-    		// let's check whether the line Q'Q intersects the
-    		// near to screen rectangle    	        		    	
-    		distanceOK = !nearToScreenRect.intersects(lastX, lastY, Q.inhomX, Q.inhomY);
+    		// then the distance is probably OK (return true),
+    		// so we probably don't need smaller step,
+    		// except if the rectangle of the segment Q'Q
+    		// intersects the near to screen rectangle
+    		// (it will probably not be on the screen anyway)
+    		double minX = lastX;
+    		double minY = lastY;
+    		double lengthX = Q.inhomX - lastX;
+    		double lengthY = Q.inhomY - lastY;
+    		if (Q.inhomX < minX) minX = Q.inhomX;
+    		if (Q.inhomY < minY) minY = Q.inhomY;
+    		if (lengthX < 0) lengthX = -lengthX;
+    		if (lengthY < 0) lengthY = -lengthY;
+    		distanceOK = !nearToScreenRect.intersects(minX, minY, lengthX, lengthY);
     	} else {
     		distanceOK = distanceSmall(Q);             		    		
     	}
