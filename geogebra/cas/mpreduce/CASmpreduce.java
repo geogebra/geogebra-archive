@@ -633,7 +633,11 @@ public class CASmpreduce extends CASgeneric {
 				+ "    map(~w!!+b,a)"
 				+ "  else if arglength(b)>-1 and part(b,0)='list then" 
 				+ "    map(a+~w!!,b)"
-				+ "  else" 
+				+ "  else if (a=infinity and b neq -infinity) or (b=infinity and a neq -infinity) then"
+				+ "    infinity" 
+				+ "  else if (a=-infinity and b neq infinity) or (b=-infinity and a neq infinity) then"
+				+ "    -infinity"
+				+ "  else"
 				+ "    a+b;");
 		
 		mpreduce.evaluate("operator addition;");
@@ -645,7 +649,11 @@ public class CASmpreduce extends CASgeneric {
 				+ "    map(~w!!-b,a)"
 				+ "  else if arglength(b)>-1 and part(b,0)='list then" 
 				+ "    map(a-~w!!,b)"
-				+ "  else" 
+				+ "  else if (a=infinity and b neq infinity) or (b=-infinity and a neq -infinity) then "
+				+ "    infinity"
+				+ "  else if (a=-infinity and b neq -infinity) or (b=infinity and a neq infinity) then "
+				+ "    -infinity"
+				+ "  else"
 				+ "    a-b;");
 		
 		mpreduce.evaluate("operator subtraction;");
@@ -747,9 +755,61 @@ public class CASmpreduce extends CASgeneric {
 				" return a " +
 				"end;");
 		
-		//TODO: write function
-		mpreduce.evaluate("procedure listofliststomat(a);" +
-				"a;");
+		mpreduce.evaluate("procedure listofliststomat(a); " +
+				" begin scalar length!!, bool!!, i!!, elem!!;" +
+				"  return" +
+				"  if arglength(a)>-1 and part(a,0)='list then <<" +
+				"    length!!:=-1;" +
+				"    bool!!:=1;" +
+				"    i!!:=0;" +
+				"    while i!!<length(a) and bool!!=1 do <<" +
+				"      i!!:=i!!+1;" +
+				"      elem!!:=part(a,i!!);" +
+				"      if arglength(elem!!)<0 or part(elem!!,0) neq 'list or (length(elem!!) neq length!! and length!! neq -1) then" +
+				"        bool!!:=0" +
+				"      else <<" +
+				"        length!!:=length(elem!!);" +
+				"        if 0=(for i:=1:length(elem!!) product if freeof(elem!!,=) then 1 else 0) then" +
+				"          bool!!:=0;" +
+				"      >>" +
+				"    >>;" +
+				"    if bool!!=0 or length(a)=0 then a" +
+				"    else <<" +
+				"      matrix matrix!!(length(a),length(part(a,1)));" +
+				"      for i:=1:length(a) do" +
+				"        for j!!:=1:length(part(a,1)) do" +
+				"          matrix!!(i,j!!):=part(part(a,i),j!!);" +
+				"      matrix!!>>" +
+				"    >>" +
+				" else" +
+				"    a;" +
+				" end;");
+		
+		mpreduce.evaluate("procedure mysort a;" +
+				"begin scalar leftlist, rightlist, eqlist;" +
+				" leftlist:=list();" +
+				" rightlist:=list();" +
+				" eqlist:=list();" +
+				" return" +
+				" if length(a)<2 then a" +
+				" else <<" +
+				"  for each elem in a do" +
+				"    if elem<part(a,1) then" +
+				"     leftlist:=elem . leftlist" +
+				"    else if elem=part(a,1) then" +
+				"     eqlist:=elem . eqlist" +
+				"    else" +
+				"     rightlist:=elem . rightlist;" +
+				"  if length(leftlist)=0 and length(rightlist)=0 then" +
+				"    eqlist" +
+				"  else if length(leftlist)=0 then" +
+				"    append(eqlist, mysort(rightlist))" +
+				"  else if length(rightlist)=0 then" +
+				"    append(mysort(leftlist), eqlist)" +
+				"  else" +
+				"    append(append(mysort(leftlist),eqlist),mysort(rightlist))" +
+				" >> " +
+				"end;");
 		
 	}
 
