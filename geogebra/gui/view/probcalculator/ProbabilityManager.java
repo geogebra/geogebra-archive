@@ -139,13 +139,13 @@ public class ProbabilityManager {
 		parameterLabels[DIST_EXPONENTIAL][0] = app.getMenu("Mean");
 
 		parameterLabels[DIST_CAUCHY][0] = app.getMenu("Median");
-		parameterLabels[DIST_CAUCHY][1] = app.getMenu("Scale");
+		parameterLabels[DIST_CAUCHY][1] = app.getMenu("Distribution.Scale");
 
-		parameterLabels[DIST_WEIBULL][0] = app.getMenu("Shape");
-		parameterLabels[DIST_WEIBULL][1] = app.getMenu("Scale");
+		parameterLabels[DIST_WEIBULL][0] = app.getMenu("Distribution.Shape");
+		parameterLabels[DIST_WEIBULL][1] = app.getMenu("Distribution.Scale");
 		
 		parameterLabels[DIST_LOGISTIC][0] = app.getMenu("Mean");
-		parameterLabels[DIST_LOGISTIC][1] = app.getMenu("Scale");
+		parameterLabels[DIST_LOGISTIC][1] = app.getMenu("Distribution.Scale");
 		
 		parameterLabels[DIST_LOGNORMAL][0] = app.getMenu("Mean");
 		parameterLabels[DIST_LOGNORMAL][1] = app.getMenu("StandardDeviation.short");
