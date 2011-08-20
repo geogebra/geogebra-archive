@@ -113,7 +113,7 @@ public class AlgoFrequencyTable extends AlgoElement {
 		// =======================================================
 		sb.setLength(0);
 		GeoList fr = freq.getResult();
-		sb.append("\\begin{array}{r|r}");
+		sb.append("\\begin{array}{c|c}");
 		int length = fr.size();
 		if (classList == null) {
 			GeoList va = freq.getValue();
@@ -121,7 +121,7 @@ public class AlgoFrequencyTable extends AlgoElement {
 			sb.append("&");
 			sb.append(useDens ? app
 					.getCommand("Frequency") : app.getMenu("Count"));
-			sb.append("\\\\\\hline");
+			sb.append(" \\\\\\hline ");
 			for (int i = 0; i < length; i++) {
 				sb.append(va.get(i).toValueString());
 				sb.append("&");
@@ -138,7 +138,7 @@ public class AlgoFrequencyTable extends AlgoElement {
 			sb.append("&");
 			sb.append(useDens ? app
 					.getCommand("Frequency") : app.getMenu("Count"));
-			sb.append("\\\\\\hline");
+			sb.append(" \\\\\\hline ");
 			for (int i = 0; i < length; i++) {
 				sb.append(classList.get(i).toValueString());
 				sb.append("\\text{ :) }");
