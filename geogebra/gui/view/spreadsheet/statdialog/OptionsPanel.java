@@ -432,7 +432,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		
 		// graph options
 		ckAutoWindow.setText(app.getMenu("AutoDimension"));
-		ckShowGrid.setText(app.getMenu("ShowGridlines"));
+		ckShowGrid.setText(app.getPlain("ShowGrid"));
 		lblXMin.setText(app.getPlain("xmin") + ":");
 		lblXMax.setText(app.getPlain("xmax") + ":");
 		lblYMin.setText(app.getPlain("ymin") + ":");
