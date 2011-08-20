@@ -15,6 +15,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -223,7 +224,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener, Se
 	 * Update the GUI to take care of new settings which were applied.
 	 */
 	public void updateGUI() {
-		
+		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
 	/**
