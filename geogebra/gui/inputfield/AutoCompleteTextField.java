@@ -59,8 +59,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * Pattern to find an argument description as found in the syntax information
 	 * of a command.
 	 */
-	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *(?:<[\\(\\) \\-\\w]*>|\\.\\.\\.) *(?=[,\\]])");
-
+	// private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *(?:<[\\(\\) \\-\\p{L}]*>|\\.\\.\\.) *(?=[,\\]])");
+	// Simplified to this as there are too many non-alphabetic character in parameter descriptions:
+	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *(?:<.*?>|\\.\\.\\.) *(?=[,\\]])");
+	
 	/**
 	 * Constructs a new AutoCompleteTextField that uses the dictionary of the
 	 * given Application for autocomplete look up.
@@ -558,7 +560,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// search to the left
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
-				isLetterOrDigitOrOpenBracket( text.charAt(curWordStart))) {
+				isLetterOrDigit( text.charAt(curWordStart))) {
 			--curWordStart;     
 		}
 		curWordStart++;
@@ -631,7 +633,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		int caretPos = getCaretPosition();
 		
 		// make sure it works if caret is just after [
-		if (caretPos > 0 && text.charAt(caretPos - 1) == '[') caretPos--;
+		// if (caretPos > 0 && text.charAt(caretPos - 1) == '[') caretPos--;
 		
 		Matcher argMatcher = syntaxArgPattern.matcher(text);
 		boolean hasNextArgument = argMatcher.find(caretPos);
@@ -729,7 +731,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		sb.append(command);
 		sb.append(text.substring(curWordStart + curWord.length()));
 		setText(sb.toString());
-		int bracketIndex = command.indexOf('[') + 1;
+		int bracketIndex = command.indexOf('[');// + 1;
 		
 		setCaretPosition(curWordStart + bracketIndex);
 		moveToNextArgument(false);
