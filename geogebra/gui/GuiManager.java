@@ -102,6 +102,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
@@ -3319,6 +3320,30 @@ public class GuiManager {
 				com.setFont(font);
 				if(com instanceof Container) 
 					setFontRecursive((Container) com, font);
+			}
+		}
+
+		public static void setLabelsRecursive(Container c) {
+			Component[] components = c.getComponents();
+			for(Component com : components) {
+				//com.setl(font);
+				//((Panel)com).setLabels();
+				if(com instanceof Container) {
+					//Application.debug("container"+com.getClass());
+					setLabelsRecursive((Container) com);
+				}
+				
+				if(com instanceof SetLabels) {
+					//Application.debug("container"+com.getClass());
+					((SetLabels)com).setLabels();
+				}
+				
+				/* for debugging, to show classes that might benefit from implementing SetLabels
+				if (com instanceof JPanel && !(com instanceof SetLabels) &&!(com.getClass().toString().startsWith("class java"))) {
+					//((JPanel)com).setla
+					System.err.println(com.getClass().toString()+" panel "+com);
+				}//*/
+				
 			}
 		}
 

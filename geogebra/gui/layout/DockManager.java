@@ -1,6 +1,7 @@
 package geogebra.gui.layout;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.SetLabels;
 import geogebra.gui.layout.panels.ErrorDockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.toolbar.ToolbarContainer;
@@ -25,7 +26,7 @@ import javax.swing.SwingUtilities;
  * 
  * @author Florian Sonner
  */
-public class DockManager implements AWTEventListener {
+public class DockManager implements AWTEventListener, SetLabels {
 	private Application app;
 	private Layout layout;
 	

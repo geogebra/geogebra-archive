@@ -26,7 +26,7 @@ import javax.swing.JTabbedPane;
 /**
  * A central dialog with all important options.
  */
-public class OptionsDialog extends JDialog implements WindowListener {
+public class OptionsDialog extends JDialog implements WindowListener, SetLabels {
 	/** */
 	private static final long serialVersionUID = 1L;
 
@@ -264,6 +264,8 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		spreadsheetPanel.setLabels();
 		casPanel.setLabels();
 		advancedPanel.setLabels();
+		
+		GuiManager.setLabelsRecursive(this);
 	}
 
 	/**

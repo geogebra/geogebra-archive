@@ -1,5 +1,6 @@
 package geogebra.gui.inputbar;
 
+import geogebra.gui.SetLabels;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.TableSymbols;
@@ -56,7 +57,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, ActionListener, FocusListener {
+public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, ActionListener, FocusListener, SetLabels {
 
 	private Application app;
 	private InputBarHelpPanel thisPanel;

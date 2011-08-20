@@ -5,6 +5,7 @@ import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.util.Hashtable;
@@ -23,7 +24,7 @@ import javax.swing.tree.DefaultTreeModel;
 /**
  * Options with the default settings of objects.
  */
-public class OptionsDefaults extends JPanel implements TreeSelectionListener {
+public class OptionsDefaults extends JPanel implements TreeSelectionListener, SetLabels {
 	/** */
 	private static final long serialVersionUID = 1L;
 	
@@ -252,7 +253,8 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		booleanNode.setUserObject(app.getPlain("Boolean"));
 		listNode.setUserObject(app.getPlain("List"));
 		
-		propPanel.setLabels();
+		GuiManager.setLabelsRecursive((Container)propPanel);
+		//propPanel.setLabels();
 	}
 
 	/**

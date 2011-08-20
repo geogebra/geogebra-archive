@@ -22,7 +22,7 @@ import javax.swing.SpringLayout;
  * 
  * @author Florian Sonner
  */
-class OptionsFont extends JPanel implements ActionListener {
+class OptionsFont extends JPanel implements ActionListener, SetLabels {
 	/** */
 	private static final long serialVersionUID = 1L;
 	

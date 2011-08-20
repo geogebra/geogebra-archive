@@ -117,7 +117,7 @@ import javax.swing.event.ChangeListener;
 	 * PropertiesPanel
 	 * @author Markus Hohenwarter
 	 */
-public	class PropertiesPanel extends JPanel {
+public	class PropertiesPanel extends JPanel implements SetLabels {
 		private static final int MAX_COMBOBOX_ENTRIES = 200;
 		
 		private Application app;
@@ -629,7 +629,7 @@ public	class PropertiesPanel extends JPanel {
 		/**
 		 * panel with show/hide object checkbox
 		 */
-		private class ShowObjectPanel extends JPanel implements ItemListener, UpdateablePanel {
+		private class ShowObjectPanel extends JPanel implements ItemListener, UpdateablePanel, SetLabels {
 		
 			private static final long serialVersionUID = 1L;
 			private Object[] geos; // currently selected geos
@@ -724,7 +724,7 @@ public	class PropertiesPanel extends JPanel {
 		/**
 		 * panel with show/hide object checkbox
 		 */
-		private class SelectionAllowedPanel extends JPanel implements ItemListener, UpdateablePanel {
+		private class SelectionAllowedPanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		
 			private static final long serialVersionUID = 1L;
 			private Object[] geos; // currently selected geos
@@ -805,7 +805,7 @@ public	class PropertiesPanel extends JPanel {
 		/**
 		 * panel with show/hide trimmed intersection lines
 		 */
-		private class ShowTrimmedIntersectionLines extends JPanel implements ItemListener, UpdateablePanel {
+		private class ShowTrimmedIntersectionLines extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		
 			private static final long serialVersionUID = 1L;
 			private Object[] geos; // currently selected geos
@@ -893,7 +893,7 @@ public	class PropertiesPanel extends JPanel {
 	/**
 	 * panel to fix checkbox (boolean object)
 	 */
-	private class CheckBoxFixPanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class CheckBoxFixPanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
@@ -977,7 +977,7 @@ public	class PropertiesPanel extends JPanel {
 	/**
 	 * panel color chooser and preview panel
 	 */
-	private class ColorPanel extends JPanel implements UpdateablePanel, ChangeListener {
+	private class ColorPanel extends JPanel implements UpdateablePanel, ChangeListener, SetLabels {
 
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos		
@@ -1174,7 +1174,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class LabelPanel
 		extends JPanel
-		implements ItemListener, ActionListener , UpdateablePanel {
+		implements ItemListener, ActionListener , UpdateablePanel, SetLabels {
 		/**
 		 * 
 		 */
@@ -1214,7 +1214,7 @@ public	class PropertiesPanel extends JPanel {
 			labelModeCB.addItem(app.getPlain("Caption")); // index 3 Michael Borcherds
 			
 			labelModeCB.setSelectedIndex(selectedIndex);
-			labelModeCB.removeActionListener(this);
+			labelModeCB.addActionListener(this);
 			
 			// change "Show Label:" to "Show Label" if there's no menu
 			// Michael Borcherds 2008-02-18
@@ -1336,7 +1336,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class TooltipPanel
 		extends JPanel
-		implements ItemListener, ActionListener , UpdateablePanel {
+		implements ItemListener, ActionListener , UpdateablePanel, SetLabels {
 		/**
 		 * 
 		 */
@@ -1375,7 +1375,7 @@ public	class PropertiesPanel extends JPanel {
 			tooltipModeCB.addItem(app.getPlain("NextCell")); // index 4 Michael Borcherds
 			
 			tooltipModeCB.setSelectedIndex(selectedIndex);
-			tooltipModeCB.removeActionListener(this);
+			tooltipModeCB.addActionListener(this);
 			
 
 		}
@@ -1453,7 +1453,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class LayerPanel
 		extends JPanel
-		implements ItemListener, ActionListener , UpdateablePanel {
+		implements ItemListener, ActionListener , UpdateablePanel, SetLabels {
 		/**
 		 * 
 		 */
@@ -1556,7 +1556,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel for trace
 	 * @author Markus Hohenwarter
 	 */
-	private class TracePanel extends JPanel implements ItemListener,  UpdateablePanel {
+	private class TracePanel extends JPanel implements ItemListener,  UpdateablePanel, SetLabels {
 		/**
 		 * 
 		 */
@@ -1637,7 +1637,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel for trace
 	 * @author adapted from TracePanel
 	 */
-	private class AnimatingPanel extends JPanel implements ItemListener,  UpdateablePanel {
+	private class AnimatingPanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1728,7 +1728,7 @@ public	class PropertiesPanel extends JPanel {
 	/**
 	 * panel to say if an image is to be interpolated
 	 */
-	private class CheckBoxInterpolateImage extends JPanel implements ItemListener, UpdateablePanel {
+	private class CheckBoxInterpolateImage extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
@@ -1809,7 +1809,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel for fixing an object
 	 * @author Markus Hohenwarter
 	 */
-	private class FixPanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class FixPanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1887,7 +1887,7 @@ public	class PropertiesPanel extends JPanel {
 		}
 	}
 
-	private class IneqStylePanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class IneqStylePanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -1981,7 +1981,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to set object's absoluteScreenLocation flag
 	 * @author Markus Hohenwarter
 	 */
-	private class AbsoluteScreenLocationPanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class AbsoluteScreenLocationPanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2085,7 +2085,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel for angles to set whether reflex angles are allowed 
 	 * @author Markus Hohenwarter
 	 */
-	private class AllowReflexAnglePanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class AllowReflexAnglePanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2210,7 +2210,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel for limted paths to set whether outlying intersection points are allowed 
 	 * @author Markus Hohenwarter
 	 */
-	private class AllowOutlyingIntersectionsPanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class AllowOutlyingIntersectionsPanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2292,7 +2292,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to set a background image (only one checkbox)
 	 * @author Markus Hohenwarter
 	 */
-	private class BackgroundImagePanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class BackgroundImagePanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2371,7 +2371,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel for making an object auxiliary 
 	 * @author Markus Hohenwarter
 	 */
-	private class AuxiliaryObjectPanel extends JPanel implements ItemListener, UpdateablePanel {
+	private class AuxiliaryObjectPanel extends JPanel implements ItemListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2452,7 +2452,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class StartPointPanel
 		extends JPanel
-		implements ActionListener, FocusListener, UpdateablePanel {
+		implements ActionListener, FocusListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -2588,7 +2588,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class CornerPointsPanel
 		extends JPanel
-		implements ActionListener, FocusListener, UpdateablePanel {
+		implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 		/**
 		 * 
 		 */
@@ -2749,7 +2749,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class TextEditPanel
 		extends JPanel
-		implements ActionListener, UpdateablePanel {
+		implements ActionListener, UpdateablePanel, SetLabels {
 		/**
 		 * 
 		 */
@@ -2816,7 +2816,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class ScriptEditPanel
 		extends JPanel
-		implements ActionListener, UpdateablePanel {
+		implements ActionListener, UpdateablePanel, SetLabels {
 		/**
 		 * 
 		 */
@@ -2896,7 +2896,7 @@ public	class PropertiesPanel extends JPanel {
 	 *  for GeoPoint and GeoVector
 	 * @author Markus Hohenwarter
 	 */
-	private class CoordPanel extends JPanel implements ActionListener, UpdateablePanel {
+	private class CoordPanel extends JPanel implements ActionListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -3025,7 +3025,7 @@ public	class PropertiesPanel extends JPanel {
 	 *  for GeoLine 
 	 * @author Markus Hohenwarter
 	 */
-	private class LineEqnPanel extends JPanel implements ActionListener, UpdateablePanel {
+	private class LineEqnPanel extends JPanel implements ActionListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -3155,7 +3155,7 @@ public	class PropertiesPanel extends JPanel {
 	 *  for GeoConic 
 	 * @author Markus Hohenwarter
 	 */
-	private class ConicEqnPanel extends JPanel implements ActionListener, UpdateablePanel {
+	private class ConicEqnPanel extends JPanel implements ActionListener, SetLabels, UpdateablePanel {
 		/**
 		 * 
 		 */
@@ -3312,7 +3312,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the size of a GeoPoint
 	 * @author Markus Hohenwarter
 	 */
-	private class PointSizePanel extends JPanel implements ChangeListener, UpdateablePanel {
+	private class PointSizePanel extends JPanel implements ChangeListener, SetLabels, UpdateablePanel {
 
 		/**
 		 * 
@@ -3410,7 +3410,7 @@ public	class PropertiesPanel extends JPanel {
 	 * @author Florian Sonner
 	 * @version 2008-07-17
 	 */
-	private class PointStylePanel extends JPanel implements UpdateablePanel, ActionListener {
+	private class PointStylePanel extends JPanel implements UpdateablePanel, SetLabels, ActionListener {
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
 		private JRadioButton[] buttons;
@@ -3569,7 +3569,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the size of a GeoText
 	 * @author Markus Hohenwarter
 	 */
-	private class TextOptionsPanel extends JPanel implements ActionListener, UpdateablePanel {
+	private class TextOptionsPanel extends JPanel implements ActionListener, SetLabels, UpdateablePanel {
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
 		
@@ -3821,7 +3821,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class SlopeTriangleSizePanel
 		extends JPanel
-		implements ChangeListener, UpdateablePanel {
+		implements ChangeListener, UpdateablePanel, SetLabels {
 
 		/**
 		 * 
@@ -3925,7 +3925,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the size of a GeoAngle's arc
 	 * @author Markus Hohenwarter
 	 */
-	private class ArcSizePanel extends JPanel implements ChangeListener, UpdateablePanel {
+	private class ArcSizePanel extends JPanel implements ChangeListener, SetLabels, UpdateablePanel {
 
 		/**
 		 * 
@@ -4050,7 +4050,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the filling of a polygon or conic section
 	 * @author Markus Hohenwarter
 	 */
-	private class FillingPanel extends JPanel implements ChangeListener, UpdateablePanel, ActionListener {
+	private class FillingPanel extends JPanel implements ChangeListener, SetLabels, UpdateablePanel, ActionListener {
 
 		/**
 		 * 
@@ -4228,7 +4228,7 @@ public	class PropertiesPanel extends JPanel {
 			cbFillType.addItem(app.getMenu("Filling.Image")); // index 2
 			
 			cbFillType.setSelectedIndex(selectedIndex);
-			cbFillType.removeActionListener(this);
+			cbFillType.addActionListener(this);
 				
 			
 		}
@@ -4456,7 +4456,7 @@ public	class PropertiesPanel extends JPanel {
 	 */
 	private class LineStylePanel
 		extends JPanel
-		implements ChangeListener, ActionListener, UpdateablePanel {
+		implements ChangeListener, ActionListener, UpdateablePanel, SetLabels {
 
 		/**
 		 * 
@@ -4651,7 +4651,7 @@ public	class PropertiesPanel extends JPanel {
 	 * @author matthieu
 	 *
 	 */
-	private class LineStyleHiddenPanel extends JPanel implements UpdateablePanel, ActionListener {
+	private class LineStyleHiddenPanel extends JPanel implements UpdateablePanel, SetLabels, ActionListener {
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
 		private JRadioButton[] buttons;
@@ -4752,7 +4752,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the fading for endings of a surface
 	 * @author mathieu
 	 */
-	private class FadingPanel extends JPanel implements ChangeListener, UpdateablePanel {
+	private class FadingPanel extends JPanel implements ChangeListener, SetLabels, UpdateablePanel {
 
 		/**
 		 * 
@@ -4839,7 +4839,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the level of detail of surfaces
 	 * @author mathieu
 	 */
-	private class LodPanel extends JPanel implements ChangeListener, UpdateablePanel {
+	private class LodPanel extends JPanel implements ChangeListener, SetLabels, UpdateablePanel {
 
 		/**
 		 * 
@@ -4927,7 +4927,7 @@ public	class PropertiesPanel extends JPanel {
 	 * Panel for segment decoration
 	 * @author Loic
 	 */
-	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {
+	private class DecoSegmentPanel extends JPanel implements ActionListener, SetLabels, UpdateablePanel {
 		private static final long serialVersionUID = 1L;
 		private JComboBox decoCombo;
 		private JLabel decoLabel;
@@ -4994,7 +4994,7 @@ public	class PropertiesPanel extends JPanel {
 		}
 	}
 	
-	private class DecoAnglePanel extends JPanel implements ActionListener , UpdateablePanel{
+	private class DecoAnglePanel extends JPanel implements ActionListener, SetLabels, UpdateablePanel{
 		private JComboBox decoCombo;
 		private JLabel decoLabel;
 		private Object[] geos;
@@ -5064,7 +5064,7 @@ public	class PropertiesPanel extends JPanel {
 	}
 	
 	// added 3/11/06
-	private class RightAnglePanel extends JPanel implements ActionListener , UpdateablePanel {
+	private class RightAnglePanel extends JPanel implements ActionListener, SetLabels, UpdateablePanel {
 		private JCheckBox emphasizeRightAngle;
 		private Object[] geos;
 		RightAnglePanel(){
@@ -5151,7 +5151,7 @@ public	class PropertiesPanel extends JPanel {
  */
 class SliderPanel
 	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
+	implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 	/**
 	 * 
 	 */
@@ -5508,7 +5508,7 @@ class SliderPanel
  */
 class AnimationStepPanel
 	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
+	implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -5651,7 +5651,7 @@ class AnimationStepPanel
  */
 class TextfieldSizePanel
 	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
+	implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -5767,7 +5767,7 @@ class TextfieldSizePanel
  */
 class AnimationSpeedPanel
 	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
+	implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -5955,7 +5955,7 @@ class AnimationSpeedPanel
  */
 class ShowConditionPanel
 	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
+	implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -6098,7 +6098,7 @@ class ShowConditionPanel
  */
 class ColorFunctionPanel
 	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
+	implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -6431,7 +6431,7 @@ class ColorFunctionPanel
  */
 class GraphicsViewLocationPanel
 	extends JPanel
-	implements ActionListener, UpdateablePanel {
+	implements ActionListener, UpdateablePanel, SetLabels {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -6572,7 +6572,7 @@ class GraphicsViewLocationPanel
  */
 class NamePanel
 	extends JPanel
-	implements ActionListener, FocusListener, UpdateablePanel {
+	implements ActionListener, FocusListener, UpdateablePanel, SetLabels {
 	
 	private static final long serialVersionUID = 1L;
 		

@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 /**
  * Options for the CAS view.
  */
-public class OptionsCAS  extends JPanel implements ActionListener {
+public class OptionsCAS  extends JPanel implements ActionListener, SetLabels {
 	/** */
 	private static final long serialVersionUID = 1L;
 	

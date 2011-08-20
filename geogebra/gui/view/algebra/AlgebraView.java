@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.gui.view.algebra;
 
 import geogebra.euclidian.Drawable;
+import geogebra.gui.SetLabels;
 import geogebra.gui.inputfield.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -54,7 +55,7 @@ import javax.swing.tree.TreePath;
  * @author  Markus
  * @version 
  */
-public class AlgebraView extends JTree implements View, Printable{	
+public class AlgebraView extends JTree implements View, Printable, SetLabels{	
 		
 	private static final long serialVersionUID = 1L;
 	

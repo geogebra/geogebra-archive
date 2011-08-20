@@ -11,6 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui.view.consprotocol;
 
+import geogebra.gui.SetLabels;
 import geogebra.main.Application;
 import geogebra.main.settings.AbstractSettings;
 import geogebra.main.settings.ConstructionProtocolSettings;
@@ -43,7 +44,7 @@ import javax.swing.event.ChangeListener;
 /**
  * Navigation buttons for the construction protocol
  */
-public class ConstructionProtocolNavigation extends JPanel implements ActionListener, SettingListener {
+public class ConstructionProtocolNavigation extends JPanel implements ActionListener, SettingListener, SetLabels {
 
 	/**
 	 * 

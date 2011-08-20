@@ -21,7 +21,7 @@ import javax.swing.plaf.basic.BasicCheckBoxUI;
  * 
  * @author Florian Sonner
  */
-public class OptionsGeneral extends JPanel {
+public class OptionsGeneral extends JPanel implements SetLabels {
 	/** */
 	private static final long serialVersionUID = 1L;
 	

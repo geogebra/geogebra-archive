@@ -69,7 +69,7 @@ public class PropertiesDialog
 		WindowFocusListener,
 		TreeSelectionListener,
 		KeyListener,
-		GeoElementSelectionListener {
+		GeoElementSelectionListener, SetLabels {
 			
 	//private static final int MAX_OBJECTS_IN_TREE = 500;
 	private static final int MAX_GEOS_FOR_EXPAND_ALL = 15;
@@ -511,7 +511,7 @@ public class PropertiesDialog
 	 * @see GeoTreeCellRenderer
 	 * @author Markus Hohenwarter
 	 */
-	private class JTreeGeoElements extends JTree implements View, MouseMotionListener, MouseListener {
+	private class JTreeGeoElements extends JTree implements View, MouseMotionListener, MouseListener, SetLabels {
 	
 		private static final long serialVersionUID = 1L;
 		private DefaultTreeModel treeModel;

@@ -38,7 +38,7 @@ import javax.swing.event.ChangeListener;
 /**
  * Advanced options for the options dialog.
  */
-public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeListener, FocusListener {
+public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeListener, FocusListener, SetLabels {
 	/** */
 	private static final long serialVersionUID = 1L;
 	

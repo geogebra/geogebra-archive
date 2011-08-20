@@ -14,6 +14,7 @@ the Free Software Foundation.
 
 package geogebra.gui.virtualkeyboard;
 
+import geogebra.gui.SetLabels;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 import geogebra.main.settings.AbstractSettings;
@@ -60,7 +61,7 @@ import javax.swing.UIManager;
  * (based loosely on http://sourceforge.net/projects/virtualkey/ )
  *
  */
-public class VirtualKeyboard extends JFrame implements ActionListener, SettingListener {
+public class VirtualKeyboard extends JFrame implements ActionListener, SettingListener, SetLabels {
 
 	private static final long serialVersionUID = 1L;
 	

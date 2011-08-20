@@ -19,6 +19,7 @@ import geogebra.gui.util.TableSymbols;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -42,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 /**
  * Panel with options for the euclidian view.
@@ -50,7 +52,7 @@ import javax.swing.JTextField;
  * revised by G.Sturr 2010-8-15
  * 
  */
-class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener, ItemListener {	
+class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener, ItemListener, SetLabels {	
 	private static final long serialVersionUID = 1L;
 
 	private static final String PI_STR = "\u03c0";
@@ -77,6 +79,22 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private JLabel gridLabel1, gridLabel2, gridLabel3;
 	
 	private boolean isIniting;
+
+	private JPanel stylePanel;
+
+	private JLabel lblColor;
+
+	private JPanel typePanel;
+
+	private JLabel tooltips;
+
+	private JLabel backgroundColor;
+
+	private JLabel color;
+
+	private JLabel lineStyle;
+
+	private JPanel axesOptionsPanel;
 	
 	
 	/**
@@ -166,8 +184,6 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	
 	private JPanel buildBasicPanel() {
 		
-		JLabel label;		
-			
 		//===================================
 		// create sub panels
 		
@@ -230,7 +246,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
         //-------------------------------------
 		// axes options panel
-		JPanel axesOptionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		axesOptionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		axesOptionsPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Axes")));
 		
 		// show axes
@@ -239,22 +255,22 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		axesOptionsPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		
         // color
-        label = new JLabel(app.getPlain("Color") + ":");
-        label.setLabelFor(btAxesColor);
-        axesOptionsPanel.add(label);
+        color = new JLabel(app.getPlain("Color") + ":");
+        color.setLabelFor(btAxesColor);
+        axesOptionsPanel.add(color);
         axesOptionsPanel.add(btAxesColor);
         axesOptionsPanel.add(Box.createRigidArea(new Dimension(10,0)));
         
         // axes style
         cbAxesStyle = new JComboBox();
-        label = new JLabel(app.getPlain("LineStyle") + ":");    
-        label.setLabelFor(cbAxesStyle);
+        lineStyle = new JLabel(app.getPlain("LineStyle") + ":");    
+        lineStyle.setLabelFor(cbAxesStyle);
         cbAxesStyle.addItem("\u2014"); // line       
         cbAxesStyle.addItem("\u2192"); // arrow
         cbAxesStyle.addItem("\u2014" + " " + app.getPlain("Bold")); // bold line 
         cbAxesStyle.addItem("\u2192" + " " + app.getPlain("Bold")); // bold arrow
         cbAxesStyle.setEditable(false); 
-        axesOptionsPanel.add(label);   
+        axesOptionsPanel.add(lineStyle);   
         axesOptionsPanel.add(cbAxesStyle);   
        
         
@@ -262,10 +278,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
        //-------------------------------------
 		// background color panel
 		JPanel bgPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		label = new JLabel(app.getPlain("BackgroundColor") + ":");
-		bgPanel.add(label);
+		backgroundColor = new JLabel(app.getPlain("BackgroundColor") + ":");
+		bgPanel.add(backgroundColor);
 		bgPanel.add(btBackgroundColor);
-		label.setLabelFor(btBackgroundColor);
+		backgroundColor.setLabelFor(btBackgroundColor);
 		
 		bgPanel.add(Box.createHorizontalStrut(5));
 		
@@ -275,12 +291,13 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
 		bgPanel.add(Box.createHorizontalStrut(5));
 		
-		label = new JLabel(app.getPlain("Tooltips")+":");
-		bgPanel.add(label);
+		tooltips = new JLabel(app.getPlain("Tooltips")+":");
+		bgPanel.add(tooltips);
 		
 		// TODO implement
 		cbTooltips = new JComboBox(new String[] { app.getPlain("On"), app.getPlain("Automatic"), app.getPlain("Off") });
 		bgPanel.add(cbTooltips);
+		cbTooltips.addActionListener(this);
 		
 		
 		
@@ -318,7 +335,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		//-------------------------------------
 		// show grid panel            
 		JPanel showGridPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));
-        cbShowGrid = new JCheckBox(app.getPlain("ShowGrid"));  
+        cbShowGrid = new JCheckBox(app.getPlain("ShowGrid")); 
         cbShowGrid.addActionListener(this);        
         showGridPanel.add(cbShowGrid, BorderLayout.NORTH); 
        
@@ -326,7 +343,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         //-------------------------------------
         // grid type panel
         
-        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));    
+        typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));    
         typePanel.setBorder(BorderFactory.createTitledBorder((app.getPlain("GridType"))));
         
         // type
@@ -350,13 +367,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		ncbGridTickY.addItemListener(this);
 		
 		// angleStep intervals for polar grid lines
-		String PI_STRING = "\u03c0";
 		String [] angleOptions =  {
-				PI_STRING + "/12",
-				PI_STRING + "/6",
-				PI_STRING + "/4",
-				PI_STRING + "/3",
-				PI_STRING + "/2",	
+				Unicode.PI_STRING + "/12",
+				Unicode.PI_STRING + "/6",
+				Unicode.PI_STRING + "/4",
+				Unicode.PI_STRING + "/3",
+				Unicode.PI_STRING + "/2",	
 		};
 		
 		cbGridTickAngle = new JComboBox(angleOptions);
@@ -383,7 +399,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
 		//-------------------------------------
 		// style panel
-		JPanel stylePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));
+		stylePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));
 		stylePanel.setBorder(BorderFactory.createTitledBorder((app.getPlain("LineStyle"))));
 		
 		//line style
@@ -396,7 +412,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		stylePanel.add(cbGridStyle);
         
         // color   
-        JLabel lblColor = new JLabel(app.getPlain("Color") + ":");
+        lblColor = new JLabel(app.getPlain("Color") + ":");
         lblColor.setLabelFor(btGridColor);
         // bold
         cbBoldGrid = new JCheckBox(app.getMenu("Bold"));  
@@ -560,9 +576,27 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	
 	
 	public void setLabels() {
-	
-		//TODO --- finish set labels
-		
+        typePanel.setBorder(BorderFactory.createTitledBorder((app.getPlain("GridType"))));
+        
+        int index = cbGridType.getSelectedIndex();
+        cbGridType.removeActionListener(this);         
+        cbGridType.removeAllItems();
+        cbGridType.addItem(app.getMenu("Cartesian"));
+        cbGridType.addItem(app.getMenu("Isometric"));
+        cbGridType.addItem(app.getMenu("Polar"));
+        cbGridType.setSelectedIndex(index);
+        cbGridType.addActionListener(this);         
+        
+        cbGridManualTick.setText(app.getPlain("TickDistance") +  ":");        
+		stylePanel.setBorder(BorderFactory.createTitledBorder((app.getPlain("LineStyle"))));
+		       
+        // color   
+        lblColor.setText(app.getPlain("Color") + ":");
+        cbBoldGrid.setText(app.getMenu("Bold"));  
+ 
+        //TODO --- finish set labels
+        cbShowGrid.setText(app.getPlain("ShowGrid"));
+
 		
 		// tab titles
 		tabbedPane.setTitleAt(0,app.getMenu("Properties.Basic"));
@@ -588,9 +622,26 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		cbView.addItem(app.getPlain("DrawingPad2")); 
 		cbView.removeActionListener(this);
 		
+		backgroundColor.setText(app.getPlain("BackgroundColor") + ":");
 		cbShowMouseCoords.setText(app.getMenu("ShowMouseCoordinates"));
+		tooltips.setText(app.getPlain("Tooltips")+":");
 
+        color.setText(app.getPlain("Color") + ":");
+        lineStyle.setText(app.getPlain("LineStyle") + ":");  
+        
+        index = cbTooltips.getSelectedIndex();
+        cbTooltips.removeActionListener(this);
+        cbTooltips.removeAllItems();// = new JComboBox(new String[] { app.getPlain("On"), app.getPlain("Automatic"), app.getPlain("Off") });
+		cbTooltips.addItem(app.getPlain("On"));
+		cbTooltips.addItem(app.getPlain("Automatic"));
+		cbTooltips.addItem(app.getPlain("Off"));
+		cbTooltips.setSelectedIndex(index);
+		cbTooltips.addActionListener(this);
 		
+        dimPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Dimensions")));
+		axesOptionsPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Axes")));
+		cbShowAxes.setText(app.getPlain("ShowAxes")); 						
+
 		
 	}
 	
@@ -765,7 +816,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	//=======================================================
 	
 	
-	private class AxisPanel extends JPanel implements ActionListener, ItemListener, FocusListener {		
+	private class AxisPanel extends JPanel implements ActionListener, ItemListener, FocusListener, SetLabels {		
 		/**
 		 * 
 		 */
@@ -776,6 +827,18 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		private NumberComboBox ncbTickDist;	
 		private JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;
 		private JTextField tfCross;
+
+		private JLabel crossAt;
+
+		private JLabel axisTicks;
+
+		private TitledBorder title;
+
+		private JLabel axisLabel;
+
+		private JLabel axisUnitLabel;
+
+		private JLabel stickToEdge;
 		
 		
 		// axis: 0 = x, 1 = y
@@ -785,8 +848,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			
-			String strAxisEn = (axis == 0) ? "xAxis" : "yAxis";			
-			this.setBorder(BorderFactory.createTitledBorder(app.getPlain(strAxisEn)));		
+			String strAxisEn = (axis == 0) ? "xAxis" : "yAxis";		
+			title = BorderFactory.createTitledBorder(app.getPlain(strAxisEn));
+			this.setBorder(title);		
 			
 			
 			cbShowAxis = new JCheckBox(app.getPlain("Show"+strAxisEn));		
@@ -839,7 +903,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			
 			
 			JPanel showTicksPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));	
-			showTicksPanel.add(new JLabel(app.getPlain("AxisTicks") + ":"));			
+			axisTicks = new JLabel(app.getPlain("AxisTicks") + ":");
+			showTicksPanel.add(axisTicks);			
 			showTicksPanel.add(cbTickStyle);	
 			
 			
@@ -858,24 +923,28 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			distancePanel.add(ncbTickDist);		
 					
 			
-			JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));				
-			labelPanel.add(new JLabel(app.getPlain("AxisLabel") + ":"));
+			JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));	
+			axisLabel = new JLabel(app.getPlain("AxisLabel") + ":");
+			labelPanel.add(axisLabel);
 			labelPanel.add(cbAxisLabel);
 			labelPanel.add(Box.createRigidArea(new Dimension(10,0)));
-			labelPanel.add(new JLabel(app.getPlain("AxisUnitLabel") + ":"));
+			axisUnitLabel = new JLabel(app.getPlain("AxisUnitLabel") + ":"); 
+			labelPanel.add(axisUnitLabel);
 			labelPanel.add(cbUnitLabel);
 			
 			
 			JPanel crossPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));	
 			tfCross = new MyTextField(app,6);
 			tfCross.addActionListener(this);
-			crossPanel.add(new JLabel(app.getPlain("CrossAt") + ":"));
+			crossAt = new JLabel(app.getPlain("CrossAt") + ":");
+			crossPanel.add(crossAt);
 			crossPanel.add(tfCross);
 			
 			cbDrawAtBorder = new JCheckBox();
 			cbDrawAtBorder.addActionListener(this);
 			crossPanel.add(cbDrawAtBorder);
-			crossPanel.add(new JLabel(app.getPlain("StickToEdge")));
+			stickToEdge = new JLabel(app.getPlain("StickToEdge"));
+			crossPanel.add(stickToEdge);
 			
 			
 						
@@ -1050,6 +1119,22 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		public void focusLost(FocusEvent e) {
 			// (needed for textfields)
 			doActionPerformed(e.getSource());
+		}
+
+		public void setLabels() {
+			String strAxisEn = (axis == 0) ? "xAxis" : "yAxis";		
+			title.setTitle(app.getPlain(strAxisEn));
+			
+			cbShowAxis.setText(app.getPlain("Show"+strAxisEn));		
+			cbAxisNumber.setText(app.getPlain("ShowAxisNumbers"));					
+			cbManualTicks.setText(app.getPlain("TickDistance") + ":");
+			axisTicks.setText(app.getPlain("AxisTicks") + ":");
+			cbPositiveAxis.setText(app.getPlain("PositiveDirectionOnly"));
+			axisLabel.setText(app.getPlain("AxisLabel") + ":");
+			axisUnitLabel.setText(app.getPlain("AxisUnitLabel") + ":"); 
+			crossAt.setText(app.getPlain("CrossAt") + ":");
+			stickToEdge.setText(app.getPlain("StickToEdge"));
+			
 		}
 
 		
