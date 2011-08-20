@@ -11,6 +11,7 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.autocompletion.AutoCompletion;
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.inputbar.InputBarHelpPanel;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.layout.panels.AlgebraDockPanel;
 import geogebra.gui.layout.panels.CasDockPanel;
@@ -102,7 +103,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
@@ -3354,6 +3354,14 @@ public class GuiManager {
 		public GeoGebraFileChooser getFileChooser() {
 			return fileChooser;
 		}		
+		
+		private InputBarHelpPanel inputHelpPanel;
+		public InputBarHelpPanel getInputHelpPanel() {
+			if (inputHelpPanel == null) inputHelpPanel = new InputBarHelpPanel(app);
+			return inputHelpPanel;
+		}
+		
+
 
 
 

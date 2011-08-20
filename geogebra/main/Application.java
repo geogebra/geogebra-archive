@@ -438,11 +438,6 @@ public class Application implements KeyEventDispatcher {
 	// GUI elements to support a sidebar help panel for the input bar.
 	// The help panel slides open on a button press from the input bar.
 	private JSplitPane applicationSplitPane;
-	private InputBarHelpPanel inputHelpPanel;
-	public InputBarHelpPanel getInputHelpPanel() {
-		return inputHelpPanel;
-	}
-	
 
 	public Application(CommandLineArguments args, JFrame frame, boolean undoActive) {
 		this(args, frame, null, null, undoActive);
@@ -929,7 +924,6 @@ public class Application implements KeyEventDispatcher {
 			// Create a help panel for the input bar and a JSplitPane to contain it.
 			// The splitPane defaults with the application on the left and null on the right. 
 			// Our help panel will be added/removed as needed by the input bar.
-			inputHelpPanel = new InputBarHelpPanel(this);
 			applicationSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, null);
 			applicationSplitPane.setBorder(BorderFactory.createEmptyBorder());
 			// help panel is on the right, so set all resize weight to the left pane
@@ -970,10 +964,10 @@ public class Application implements KeyEventDispatcher {
 	 */
 	public void setShowInputHelpPanel(boolean isVisible){
 		if(isVisible){
-			applicationSplitPane.setRightComponent(inputHelpPanel);
+			applicationSplitPane.setRightComponent(getGuiManager().getInputHelpPanel());
 			if(applicationSplitPane.getLastDividerLocation()<=0)
 				applicationSplitPane.setLastDividerLocation(
-						applicationSplitPane.getWidth() - inputHelpPanel.getMinimumSize().width);
+						applicationSplitPane.getWidth() - getGuiManager().getInputHelpPanel().getMinimumSize().width);
 			applicationSplitPane.setDividerLocation(applicationSplitPane.getLastDividerLocation());
 			applicationSplitPane.setDividerSize(8);
 
