@@ -59,10 +59,10 @@ public class AlgoAnglePolygon extends AlgoElement {
         poly.addAlgorithm(this);
     }
 
-    GeoAngle[] getAngles() {
+    public GeoAngle[] getAngles() {
         return angles;
     }
-    GeoPolygon getPolygon() {
+    public GeoPolygon getPolygon() {
         return poly;
     }
 

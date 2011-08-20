@@ -15,6 +15,7 @@ package geogebra.euclidian;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoAngleLines;
 import geogebra.kernel.AlgoAnglePoints;
+import geogebra.kernel.AlgoAnglePolygon;
 import geogebra.kernel.AlgoAngleVector;
 import geogebra.kernel.AlgoAngleVectors;
 import geogebra.kernel.AlgoElement;
@@ -23,10 +24,12 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -166,8 +169,8 @@ public class DrawAngle extends Drawable implements Previewable {
 		}
 		// angle of a single vector or a single point
 		else if (algo instanceof AlgoAngleVector) {
-			AlgoAngleVector va = (AlgoAngleVector) algo;
-			GeoVec3D vec = va.getVec3D();
+			AlgoAngleVector av = (AlgoAngleVector) algo;
+			GeoVec3D vec = av.getVec3D();
 			if (vec instanceof GeoVector) {
 				angleDrawMode = DRAW_MODE_SINGLE_VECTOR;
 				vector = (GeoVector) vec;
@@ -178,7 +181,27 @@ public class DrawAngle extends Drawable implements Previewable {
 			}
 			firstVec[0] = 1;
 			firstVec[1] = 0;
-		}
+		} else if (algo instanceof AlgoAnglePolygon) {
+			AlgoAnglePolygon va = (AlgoAnglePolygon) algo;
+
+			GeoAngle[] angles = va.getAngles();
+			
+			GeoPoint[] points = va.getPolygon().getPoints();
+			
+			int l = points.length;		
+			
+			for (int i = 0 ; i < angles.length ; i++) {
+				if (angles[i] == angle) {
+					point2 = points[(i - 1 + l) % l];
+					vertex = points[i];
+					point = points[(i + 1) % l];
+					break;
+				}
+			}
+			
+			angleDrawMode = DRAW_MODE_POINTS;
+		
+		} else Application.debug("missing case in DrawAngle");
 	}
 	
 	final public void update() {
@@ -556,6 +579,7 @@ public class DrawAngle extends Drawable implements Previewable {
 	}
 
 	final public void draw(Graphics2D g2) {
+		
 		if (isVisible) {
 			if (!show90degrees || view.getRightAngleStyle() != EuclidianView.RIGHT_ANGLE_STYLE_L) {
 					fill(g2, shape, false); // fill using default/hatching/image as appropriate
