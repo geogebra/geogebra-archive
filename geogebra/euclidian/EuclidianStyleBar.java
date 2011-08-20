@@ -1,6 +1,5 @@
 package geogebra.euclidian;
 
-import geogebra.gui.SetLabels;
 import geogebra.gui.color.ColorPopupMenuButton;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
@@ -37,7 +36,7 @@ import javax.swing.JToolBar;
  * @author G. Sturr 
  *
  */
-public class EuclidianStyleBar extends JToolBar implements ActionListener, SetLabels {
+public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 	/***/
 	private static final long serialVersionUID = 1L;

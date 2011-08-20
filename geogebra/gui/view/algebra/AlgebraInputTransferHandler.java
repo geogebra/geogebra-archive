@@ -3,6 +3,7 @@ package geogebra.gui.view.algebra;
 
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
+import geogebra.util.AlgebraViewTransferHandler;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

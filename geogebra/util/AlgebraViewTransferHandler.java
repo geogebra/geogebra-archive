@@ -1,6 +1,7 @@
-package geogebra.gui.view.algebra;
+package geogebra.util;
 
 
+import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 

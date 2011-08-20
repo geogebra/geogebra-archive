@@ -1,10 +1,10 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.view.algebra.AlgebraView;
-import geogebra.gui.view.algebra.AlgebraViewTransferHandler;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.main.Application;
+import geogebra.util.AlgebraViewTransferHandler;
 
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;

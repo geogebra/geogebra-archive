@@ -13,7 +13,6 @@
 package geogebra.euclidian;
 
 import geogebra.Matrix.Coords;
-import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
@@ -62,7 +61,6 @@ import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
@@ -81,7 +79,6 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.text.JTextComponent;
 
@@ -1017,11 +1014,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void mousePressed(MouseEvent e) {
-		// determine parent panel to change focus
-		EuclidianDockPanelAbstract panel = (EuclidianDockPanelAbstract)SwingUtilities.getAncestorOfClass(EuclidianDockPanelAbstract.class, (Component)e.getSource());
 		
-		if(panel != null) {
-			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(panel);
+		if (app.useFullGui()) {
+			// determine parent panel to change focus
+			//EuclidianDockPanelAbstract panel = (EuclidianDockPanelAbstract)SwingUtilities.getAncestorOfClass(EuclidianDockPanelAbstract.class, (Component)e.getSource());
+			
+			//if(panel != null) {
+			//	app.getGuiManager().getLayout().getDockManager().setFocusedPanel(panel);
+			//}
+			app.getGuiManager().setFocusedPanel(e);
 		}
 		
 		setMouseLocation(e);

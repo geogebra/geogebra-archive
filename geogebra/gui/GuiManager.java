@@ -73,6 +73,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -3368,6 +3369,16 @@ public class GuiManager {
 		public Component getInputHelpPanel() {
 			if (inputHelpPanel == null) inputHelpPanel = new InputBarHelpPanel(app);
 			return inputHelpPanel;
+		}
+
+		public void setFocusedPanel(MouseEvent e) {
+			// determine parent panel to change focus
+			EuclidianDockPanelAbstract panel = (EuclidianDockPanelAbstract)SwingUtilities.getAncestorOfClass(EuclidianDockPanelAbstract.class, (Component)e.getSource());
+			
+			if(panel != null) {
+				app.getGuiManager().getLayout().getDockManager().setFocusedPanel(panel);
+			}
+			
 		}
 		
 

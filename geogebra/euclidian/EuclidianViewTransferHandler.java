@@ -1,13 +1,13 @@
 package geogebra.euclidian;
 
 
-import geogebra.gui.view.algebra.AlgebraViewTransferHandler;
 import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;
+import geogebra.util.AlgebraViewTransferHandler;
 
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
@@ -44,12 +44,31 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 
 
 	// supported data flavors
-	private static final DataFlavor supportedFlavors[] = { 
-		DataFlavor.imageFlavor,
-		DataFlavor.stringFlavor,
-		DataFlavor.javaFileListFlavor,
-		AlgebraViewTransferHandler.algebraViewFlavor,
-		PlotPanelEuclidianView.plotPanelFlavor};
+	private static DataFlavor supportedFlavors[] = null;//{
+		//null,//DataFlavor.imageFlavor,
+		//null,//DataFlavor.stringFlavor,
+		//null,//DataFlavor.javaFileListFlavor,
+		//null,//AlgebraViewTransferHandler.algebraViewFlavor,
+		//null};//PlotPanelEuclidianView.plotPanelFlavor};
+	
+	private void setSupportedFlavours() {
+		if (supportedFlavors == null) {
+			if (app.useFullGui()) {
+				supportedFlavors = new DataFlavor[5];
+				supportedFlavors[0] = DataFlavor.imageFlavor;
+				supportedFlavors[1] = DataFlavor.stringFlavor;
+				supportedFlavors[2] = DataFlavor.javaFileListFlavor;
+				supportedFlavors[3] = AlgebraViewTransferHandler.algebraViewFlavor;
+				supportedFlavors[4] = PlotPanelEuclidianView.plotPanelFlavor;
+			} else {
+				supportedFlavors = new DataFlavor[3];
+				supportedFlavors[0] = DataFlavor.imageFlavor;
+				supportedFlavors[1] = DataFlavor.stringFlavor;
+				supportedFlavors[2] = DataFlavor.javaFileListFlavor;				
+			}
+			
+		}
+	}
 
 	private boolean debug  = true;
 
@@ -75,7 +94,9 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 	 * Returns true if any element of the DataFlavor parameter array is a supported flavor.
 	 */
 	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
-
+		
+		setSupportedFlavours();
+		
 		for (int i = 0, n = flavor.length; i < n; i++) {
 			//System.out.println(flavor[i].getMimeType());
 			for (int j = 0, m = supportedFlavors.length; j < m; j++) {

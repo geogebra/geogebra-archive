@@ -5685,6 +5685,9 @@ public class Application implements KeyEventDispatcher {
 	
 	public void checkCommands(HashMap<String,CommandProcessor>map){
 		initTranslatedCommands();
+		
+		if (rbcommand == null) return; // eg applet with no properties jar
+		
 		Enumeration<String> e= rbcommand.getKeys();
 		while(e.hasMoreElements()){
 			String s = e.nextElement();			
