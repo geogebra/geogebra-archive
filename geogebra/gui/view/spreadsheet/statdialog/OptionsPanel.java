@@ -426,7 +426,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		ckOverlayPolygon.setText(app.getMenu("FrequencyPolygon"));
 		ckShowFrequencyTable.setText(app.getMenu("FrequencyTable"));
 
-		lblClassRule.setText(app.getMenu("  " + "ClassRule") + ":");
+		lblClassRule.setText(app.getMenu("ClassRule") + ":");
 		rbRightRule.setText(app.getMenu("RightClassRule"));
 		rbLeftRule.setText(app.getMenu("LeftClassRule"));
 		
