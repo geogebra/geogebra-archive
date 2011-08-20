@@ -3637,7 +3637,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void setActiveView(int view) {
-		if (useFullGui())
+		if (getGuiManager() != null)
 			getGuiManager().getLayout().getDockManager().setFocusedPanel(view);
 	}
 
