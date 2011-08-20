@@ -734,6 +734,11 @@ public class GuiManager {
 		return layout;
 	}
 
+	public Container getToolbarPanelContainer() {
+		
+		return (Container)getToolbarPanel();
+	}
+	
 	public ToolbarContainer getToolbarPanel() {
 		if (toolbarPanel == null) {
 			toolbarPanel = new ToolbarContainer(app, true);

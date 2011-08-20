@@ -908,13 +908,13 @@ public class Application implements KeyEventDispatcher {
 			}
 			
 			// initialize toolbar panel even if it's not used (hack)
-			getGuiManager().getToolbarPanel();
+			getGuiManager().getToolbarPanelContainer();
 			
 			if(showToolBar) {
 				if(showToolBarTop) {
-					topPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+					topPanel.add(getGuiManager().getToolbarPanelContainer(), BorderLayout.NORTH);
 				} else {
-					bottomPanel.add(getGuiManager().getToolbarPanel(), BorderLayout.NORTH);
+					bottomPanel.add(getGuiManager().getToolbarPanelContainer(), BorderLayout.NORTH);
 				}
 			}
 			
