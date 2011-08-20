@@ -10,11 +10,11 @@ import java.util.HashMap;
 
 import javax.swing.SwingUtilities;
 
-import org.concord.framework.data.stream.DataListener;
-import org.concord.framework.data.stream.DataStreamEvent;
-import org.concord.sensor.SensorDataProducer;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
+//import org.concord.framework.data.stream.DataListener;
+//import org.concord.framework.data.stream.DataStreamEvent;
+//import org.concord.sensor.SensorDataProducer;
+//import org.mozilla.javascript.Context;
+//import org.mozilla.javascript.Scriptable;
 
 
 public class ScriptManager {
@@ -52,39 +52,9 @@ public class ScriptManager {
 		
 		// call only if libraryJavaScript is not the default (ie do nothing)
 		if (!app.getKernel().getLibraryJavaScript().equals(app.getKernel().defaultLibraryJavaScript))
-				evalScript("ggbOnInit();", null);
+				CallJavaScript.evalScript(app, "ggbOnInit();", null);
 	}
 	
-
-	public void evalScript(String script, String arg) {
-			//Application.debug(app.getKernel().getLibraryJavaScript() + script);
-	        Context cx = Context.enter();
-	            // Initialize the standard objects (Object, Function, etc.)
-	            // This must be done before scripts can be executed. Returns
-	            // a scope object that we use in later calls.
-	            Scriptable scope = cx.initStandardObjects();
-
-	            // initialise the JavaScript variable applet so that we can call
-	            // GgbApi functions, eg ggbApplet.evalCommand()
-	            GeoGebraGlobal.initStandardObjects(app, scope, arg, false);
-
-	            // JavaScript to execute
-	            //String s = "ggbApplet.evalCommand('F=(2,3)')";
-	            
-	            // No class loader for unsigned applets so don't try and optimize.
-	            // http://www.mail-archive.com/batik-dev@xmlgraphics.apache.org/msg00108.html
-	            if (!app.hasFullPermissions()) {
-	            	cx.setOptimizationLevel(-1);
-	            	Context.setCachingEnabled(false);
-	            }
-	            // Now evaluate the string we've collected.
-	            Object result = cx.evaluateString(scope, app.getKernel().getLibraryJavaScript() + script , app.getPlain("ErrorAtLine"), 1, null);
-
-	            // Convert the result to a string and print it.
-	            //Application.debug("script result: "+(Context.toString(result)));
-	        
-			
-	}
 
 
 
@@ -96,7 +66,7 @@ public class ScriptManager {
 	
 	// maps between GeoElement and JavaScript function names
 	private HashMap updateListenerMap;
-	private ArrayList<String> addListeners, removeListeners, renameListeners, updateListeners, clearListeners, loggerListenerMap;
+	private ArrayList<String> addListeners, removeListeners, renameListeners, updateListeners, clearListeners;
 	private JavaToJavaScriptView javaToJavaScriptView;
 	
 	/**
@@ -300,112 +270,6 @@ public class ScriptManager {
 		}
 	}			
 	
-	USBLogger logger = null;
-	
-	/**
-	 * Registers a listener to listen for events from a data logger
-	 * eg Go!Motion	
-	 */
-	public synchronized void registerLoggerListener(String JSFunctionName) {
-		if (JSFunctionName == null || JSFunctionName.length() == 0)
-			return;		
-				
-		// init view
-		initJavaScriptView();
-		
-		// init map and view
-		if (loggerListenerMap == null) {
-			loggerListenerMap = new ArrayList<String>();			
-		}
-		
-		if (logger == null) logger = new USBLogger(LoggerListener);
-		
-		// add map entry
-		loggerListenerMap.add(JSFunctionName);		
-		Application.debug("registerLoggerListener: function: " + JSFunctionName);
-		
-		SensorDataProducer sDataProducer = logger.sDataProducer;
-		
-		if (sDataProducer != null)
-			sDataProducer.start();
-	}
-	
-	DataListener LoggerListener = new DataListener(){
-		public void dataReceived(DataStreamEvent dataEvent)
-		{
-			int numSamples = dataEvent.getNumSamples();
-			float [] data = dataEvent.getData();
-			if(numSamples > 0) {
-				//System.out.println("" + numSamples + " " + data[0]);
-				//System.out.flush();
-
-				Object [] args = { data[0] };
-
-				if (listenersEnabled) 
-				{
-					int size = loggerListenerMap.size();
-					for (int i=0; i < size; i++) {
-						String jsFunction = (String) loggerListenerMap.get(i);
-						Application.debug(jsFunction);
-						callJavaScript(jsFunction, args);					
-					}			
-				}
-			} 
-			else {
-				Application.debug("no sample");
-			}
-		}
-
-		public void dataStreamEvent(DataStreamEvent dataEvent)
-		{				
-			String eventString;
-			int eventType = dataEvent.getType();
-			
-			if(eventType == 1001) return;
-			
-			switch(eventType) {
-				case DataStreamEvent.DATA_DESC_CHANGED:
-					eventString = "Description changed";
-				break;
-				default:
-					eventString = "Unknown event type";					
-			}
-			
-			System.out.println("Data Event: " + eventString); 
-			
-		
-			
-		}
-	};
-	
-	/**
-	 * Removes a previously set change listener for the given object.
-	 * @see setChangeListener
-	 */
-	public synchronized void unregisterLoggerListener(String JSFunctionName) {
-		if (loggerListenerMap != null) {
-			
-			loggerListenerMap.remove(JSFunctionName);		
-			Application.debug("unregisterLoggerListener for object: " + JSFunctionName);
-			
-			//Application.debug(loggerListenerMap.size()+"",1);
-			
-			// stop events from logging device
-			if (loggerListenerMap.size() == 0 && logger != null) {
-				final SensorDataProducer sDataProducer = logger.sDataProducer;
-				
-				if (sDataProducer != null) {
-		            SwingUtilities.invokeLater( new Runnable(){ public void
-		            	run() { 					
-			            	Application.debug("stopping logging",1);
-							sDataProducer.stop();
-		            	} });
-				}
-				
-			}
-			
-		}
-	}					
 	/**
 	 * Implements the View interface for
 	 * Java to JavaScript communication, see
@@ -582,7 +446,7 @@ public class ScriptManager {
 			
 			//Application.debug(sb.toString());
 			
-			evalScript(sb.toString(), null);
+			CallJavaScript.evalScript(app, sb.toString(), null);
 
 		}
 	}
@@ -593,6 +457,14 @@ public class ScriptManager {
 
 	public void enableListeners() {
 		listenersEnabled = true;
+	}
+	
+	USBFunctions usb = null;
+	
+	public USBFunctions getUSBFunctions() {
+		if (usb == null) usb = new USBFunctions(this, app);
+		
+		return usb;
 	}
 
 

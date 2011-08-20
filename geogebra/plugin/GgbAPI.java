@@ -1123,11 +1123,11 @@ public class GgbAPI {
 	
 	
 	public synchronized void registerLoggerListener(String JSFunctionName) {
-		app.getScriptManager().registerLoggerListener(JSFunctionName);
+		app.getScriptManager().getUSBFunctions().registerLoggerListener(JSFunctionName);
 	}
 
 	public synchronized void unregisterLoggerListener(String JSFunctionName) {
-		app.getScriptManager().unregisterLoggerListener(JSFunctionName);
+		app.getScriptManager().getUSBFunctions().unregisterLoggerListener(JSFunctionName);
 	}
 	
 	public synchronized void registerAddListener(String JSFunctionName) {

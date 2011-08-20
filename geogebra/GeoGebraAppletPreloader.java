@@ -31,6 +31,8 @@ public class GeoGebraAppletPreloader extends JApplet {
 					System.out.println("done");
 				} catch (Exception e) {
 					System.out.println("failed");
+				} catch (Throwable e) {
+					System.out.println("failed");
 				}
 				System.out.flush();
 				
@@ -42,6 +44,8 @@ public class GeoGebraAppletPreloader extends JApplet {
 					System.out.println("done");
 				} catch (Exception e) {
 					System.out.println("failed");
+				} catch (Throwable e) {
+					System.out.println("failed");
 				}
 				System.out.flush();
 				
@@ -52,6 +56,8 @@ public class GeoGebraAppletPreloader extends JApplet {
 					geogebra.gui.GuiManager.class.getClass();
 					System.out.println("done");
 				} catch (Exception e) {
+					System.out.println("failed");
+				} catch (Throwable e) {
 					System.out.println("failed");
 				}
 				System.out.flush();
@@ -67,6 +73,8 @@ public class GeoGebraAppletPreloader extends JApplet {
 						System.out.println("not found");
 				} catch (Exception e) {
 					System.out.println("not found");
+				} catch (Throwable e) {
+					System.out.println("not found");
 				}
 				System.out.flush();
 				
@@ -77,6 +85,8 @@ public class GeoGebraAppletPreloader extends JApplet {
 					geogebra.export.WorksheetExportDialog.class.getClass();
 					System.out.println("done");
 				} catch (Exception e) {
+					System.out.println("failed");
+				} catch (Throwable e) {
 					System.out.println("failed");
 				}
 				System.out.flush();

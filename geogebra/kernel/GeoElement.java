@@ -34,6 +34,7 @@ import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.plugin.CallJavaScript;
 import geogebra.util.ImageManager;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
@@ -5438,7 +5439,7 @@ public abstract class GeoElement
 					app.getApplet().callJavaScript("ggb"+getLabel(), args);
 				}
 			} else {
-				app.getScriptManager().evalScript(update ? updateScript:clickScript, arg);
+				CallJavaScript.evalScript(app, update ? updateScript:clickScript, arg);
 			}
 			//there have been no errors
 			if(update)app.setBlockUpdateScripts(false);
