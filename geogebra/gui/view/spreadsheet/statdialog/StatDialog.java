@@ -289,7 +289,7 @@ SpecialNumberFormatInterface {
 		}else{
 			displayPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 					plotComboPanel, statDataPanel);
-			displayPanel.setResizeWeight(0.5);
+			displayPanel.setResizeWeight(1);
 
 
 		}

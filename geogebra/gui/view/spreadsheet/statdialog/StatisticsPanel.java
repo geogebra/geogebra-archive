@@ -5,6 +5,9 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -136,10 +139,19 @@ public class StatisticsPanel extends JPanel implements StatPanelInterface, Actio
 			break;
 
 		case INFER_ANOVA:
-			Box vBox = Box.createVerticalBox();
-			vBox.add(getAnovaTable());
-			vBox.add(getMinMVStatPanel());
-			inferencePanel.add(vBox, BorderLayout.CENTER);
+			
+			GridBagConstraints tab = new GridBagConstraints();
+			tab.gridx=0;
+			tab.gridy = GridBagConstraints.RELATIVE;
+			tab.weightx=1;
+			tab.insets = new Insets(4,20,0,20);
+			tab.fill = GridBagConstraints.HORIZONTAL;
+			tab.anchor=GridBagConstraints.NORTHWEST;
+			
+			JPanel p = new JPanel(new GridBagLayout());
+			p.add(getAnovaTable(),tab);
+			p.add(getMinMVStatPanel(),tab);
+			inferencePanel.add(p, BorderLayout.CENTER);
 			
 			break;
 
@@ -296,7 +308,7 @@ public class StatisticsPanel extends JPanel implements StatPanelInterface, Actio
 		case INFER_TTEST_PAIRED:
 		case INFER_TINT_2MEANS:
 		case INFER_TINT_PAIRED:		
-			getTwoVarInferencePanel().setSelectedPlot(selectedMode);
+			getTwoVarInferencePanel().setSelectedInference(selectedMode);
 			getTwoVarInferencePanel().updatePanel();
 			break;
 

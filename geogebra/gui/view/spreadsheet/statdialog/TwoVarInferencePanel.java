@@ -11,12 +11,16 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -45,7 +49,6 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	private StatDialog statDialog;
 	private StatTable resultTable;
 
-
 	private JList dataSourceList;
 	private DefaultListModel model;
 
@@ -58,8 +61,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	private JCheckBox ckEqualVariances;
 	private MyTextField fldConfLevel;
 
-
-	private int selectedPlot = StatisticsPanel.INFER_TINT_2MEANS;
+	private int selectedInference = StatisticsPanel.INFER_TINT_2MEANS;
 
 	// test type (tail)
 	private static final String tail_left = "<";
@@ -79,7 +81,14 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	private boolean pooled = false;
 
 	private boolean isIniting;
-
+	private JPanel testPanel;
+	private JPanel intPanel;
+	private JPanel mainPanel;
+	private boolean isTest;
+	private JPanel samplePanel;
+	private TwoVarStatPanel twoStatPanel;
+	private double meanDifference;
+	
 
 	/**
 	 * Construct a TwoVarInference panel
@@ -88,11 +97,17 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		isIniting = true;
 		this.app = app;
 		this.statDialog = statDialog;
+
+		//this.setMinimumSize(new Dimension(50,50));
+
 		this.setLayout(new BorderLayout());
-		this.add(createMainPanel(), BorderLayout.NORTH);
-		this.setMinimumSize(new Dimension(50,50));
+		this.createGUIElements();
+		this.updateGUI();
 		this.setLabels();
+
 		isIniting = false;
+
+
 	}
 
 
@@ -104,8 +119,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	//============================================================
 
 
-
-	private JPanel createMainPanel(){
+	private void createGUIElements(){
 
 		// components
 		cbTitle1 = new JComboBox();
@@ -138,60 +152,111 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		fldConfLevel.addActionListener(this);
 		fldConfLevel.addFocusListener(this);
 
-		//??????????
-		lblCI = new JLabel();
-
-		btnCalc = new JButton();
-
-
 		lblResultHeader = new JLabel();
+
+
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx=0;
+		c.weightx=1;
+		c.insets = new Insets(4,0,0,0);
+		c.anchor=GridBagConstraints.NORTHWEST;
+
+		GridBagConstraints tab = new GridBagConstraints();
+		tab.gridx=0;
+		tab.gridy = c.gridy;
+		tab.weightx=1;
+		tab.insets = new Insets(4,20,0,0);
+		tab.anchor=GridBagConstraints.NORTHWEST;
+
+		// test panel	
+		testPanel = new JPanel(new GridBagLayout());
+		c.gridy = GridBagConstraints.RELATIVE;
+		testPanel.add(flowPanel(lblNull, lblHypParameter), tab);
+		testPanel.add(flowPanel(lblTailType, cbAltHyp), tab);
+		//	testPanel.setBorder(BorderFactory.createEtchedBorder());
+
+		// CI panel	
+		intPanel = new JPanel(new GridBagLayout());
+		c.gridy = GridBagConstraints.RELATIVE;
+		intPanel.add(flowPanel(lblConfLevel, fldConfLevel), tab);	
+
+
+		// sample panel	
+
+		twoStatPanel = new TwoVarStatPanel(app, statDialog, isPairedData(), this);
+		
+		samplePanel = new JPanel(new GridBagLayout());
+		c.gridy = GridBagConstraints.RELATIVE;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		//samplePanel.add(flowPanel(lblTitle1, cbTitle1), c);
+		//samplePanel.add(flowPanel(lblTitle2, cbTitle2), c);
+		//samplePanel.add(ckEqualVariances, c);
+		samplePanel.add(twoStatPanel, c);
+
+
 
 		// Result panel
 		resultTable = new StatTable();
 		setResultTable();
-		resultTable.setBorder(BorderFactory.createEtchedBorder());
-		lblResultHeader = new JLabel();
-		resultPanel = new JPanel(new BorderLayout());
-		resultPanel.add(resultTable, BorderLayout.WEST);
-		resultPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		//		resultTable.setBorder(BorderFactory.createEtchedBorder());
 
+		resultPanel = new JPanel(new GridBagLayout());
+		c.gridy = GridBagConstraints.RELATIVE;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		//resultPanel.add(lblResultHeader, c);
+		resultPanel.add(resultTable, c);
 
-		// Test panel	
-		Box testPanel =  boxYPanel(
-				flowPanel(lblNull, lblHypParameter, fldNullHyp),
-				flowPanel(lblTailType, cbAltHyp)
-		);
-
-		//CI panel		
-		Box intPanel = boxYPanel(
-				flowPanel(lblConfLevel, fldConfLevel) 
-		);
-
-		cardProcedure = new JPanel(new CardLayout());
-		cardProcedure.add("testPanel", testPanel);
-		cardProcedure.add("intPanel", intPanel);
-
-		JPanel calcPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		calcPanel.add(btnCalc);
-
-		Box samplePanel =  boxYPanel(
-				flowPanel(lblTitle1,cbTitle1, lblTitle2,cbTitle2)
-		);
-
-
-		Box procedurePanel =  boxYPanel(
-				samplePanel,
-				cardProcedure,
-				flowPanel(ckEqualVariances),
-				resultPanel);
 
 		// main panel
-		JPanel mainPanel = blPanel(null,procedurePanel,null,null,null);
-		//JPanel mainPanel = blPanel(resultPanel, null, null, procedurePanel,null);
-		//	mainPanel.setBorder(BorderFactory.createEtchedBorder());
-		return mainPanel;
+		mainPanel = new JPanel(new GridBagLayout());
+		this.add(mainPanel, BorderLayout.NORTH);
 
 	}
+
+
+	private void updateMainPanel(){
+
+		mainPanel.removeAll();
+
+		// constraints
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = GridBagConstraints.RELATIVE;
+		c.gridx=0;
+		c.weightx=1;
+		c.insets = new Insets(0,0,4,0);
+		c.anchor=GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.HORIZONTAL;
+
+		GridBagConstraints tab = new GridBagConstraints();
+		tab.gridx=0;
+		tab.gridy = c.gridy;
+		tab.weightx=1;
+		tab.insets = new Insets(4,20,0,20);
+		tab.fill = GridBagConstraints.HORIZONTAL;
+		tab.anchor=GridBagConstraints.NORTHWEST;
+
+
+		//layout
+		if(isTest)
+			mainPanel.add(testPanel,c);
+		else
+			mainPanel.add(intPanel,c);
+
+		mainPanel.add(samplePanel,tab);
+		//mainPanel.add(ckEqualVariances,c);
+		mainPanel.add(resultPanel,tab);
+
+		resultTable.getTable().setRowHeight(twoStatPanel.getTable().getRowHeight());
+
+	}
+
+
+
+	private boolean isPairedData(){
+		return (selectedInference == StatisticsPanel.INFER_TINT_PAIRED
+				|| selectedInference == StatisticsPanel.INFER_TTEST_PAIRED);
+	}
+
 
 
 
@@ -202,39 +267,38 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 	private void updateGUI(){
 
+	
+		isTest = (selectedInference == StatisticsPanel.INFER_TTEST_2MEANS
+				|| selectedInference == StatisticsPanel.INFER_TTEST_PAIRED);
 
-		// swap card panels
-		switch (selectedPlot){
-		case StatisticsPanel.INFER_TTEST_2MEANS:
-		case StatisticsPanel.INFER_TTEST_PAIRED:
-			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "testPanel");
-			lblHypParameter.setText(getNullHypName() + " = " );
-			break;
-
-		case StatisticsPanel.INFER_TINT_2MEANS:
-		case StatisticsPanel.INFER_TINT_PAIRED:	
-			((CardLayout)cardProcedure.getLayout()).show(cardProcedure, "intPanel");
-			break;
-		}
+		if(isTest)
+			lblHypParameter.setText(getNullHypName() + " = 0" );
 
 		ckEqualVariances.removeActionListener(this);
-		ckEqualVariances.setVisible(
-				selectedPlot == StatisticsPanel.INFER_TINT_2MEANS
-				|| selectedPlot == StatisticsPanel.INFER_TTEST_2MEANS);
+		//	ckEqualVariances.setVisible(
+		//			selectedPlot == StatisticsPanel.INFER_TINT_2MEANS
+		//			|| selectedPlot == StatisticsPanel.INFER_TTEST_2MEANS);
 		ckEqualVariances.setSelected(pooled);
 		ckEqualVariances.addActionListener(this);
 
 		updateNumberField(fldNullHyp, hypMean);
 		updateNumberField(fldConfLevel, confLevel);
 		updateCBAlternativeHyp();
+
+		//setResultTable();
 		updateResultTable();
+
+		updateMainPanel();
+
+		
+		twoStatPanel.updatePanel();
 
 	}
 
 
 	/** Helper method for updateGUI() */
 	private void updateNumberField(JTextField fld,  double n){
-		
+
 		fld.removeActionListener(this);
 		fld.setText(statDialog.format(n));
 		//fld.setCaretPosition(0);
@@ -269,7 +333,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	private void updateCBAlternativeHyp(){
 
 		int selectedIndex = cbAltHyp.getSelectedIndex();
-			
+
 		cbAltHyp.removeActionListener(this);
 		cbAltHyp.removeAllItems();
 		cbAltHyp.addItem(getNullHypName() + " " + tail_right + " " + statDialog.format(hypMean));
@@ -282,31 +346,29 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		else
 			cbAltHyp.setSelectedIndex(2);
 		cbAltHyp.addActionListener(this);
-		
+
 	}
 
-
-
-
-	public void setSelectedPlot(int selectedPlot){
-		this.selectedPlot = selectedPlot;
+	public void setSelectedInference(int selectedPlot){
+		this.selectedInference = selectedPlot;
 		if(!isIniting){
 			this.setResultTable();
+			this.twoStatPanel.setTable(isPairedData());
 		}
 		updateGUI();
 	}
 
 	public void updateFonts(Font font) {
-		// TODO Auto-generated method stub
+		twoStatPanel.updateFonts(font);
 
 	}
 
 
 	private String getNullHypName(){
 
-		if(selectedPlot == StatisticsPanel.INFER_TTEST_2MEANS)
+		if(selectedInference == StatisticsPanel.INFER_TTEST_2MEANS)
 			return app.getMenu("DifferenceOfMeans.short");
-		else if(selectedPlot == StatisticsPanel.INFER_TTEST_PAIRED)
+		else if(selectedInference == StatisticsPanel.INFER_TTEST_PAIRED)
 			return app.getMenu("MeanDifference");
 		else
 			return "";
@@ -317,16 +379,18 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 	public void setLabels() {
 
+		lblResultHeader.setText(app.getMenu("Result") + ": ");
+
 		lblTitle1.setText(app.getMenu("Sample1") + ": ");
 		lblTitle2.setText(app.getMenu("Sample2") + ": ");		
 
 		lblNull.setText(app.getMenu("NullHypothesis") + ": ");
 		lblTailType.setText(app.getMenu("AlternativeHypothesis") + ": ");
 
-		lblCI.setText("Interval Estimate");
+		//lblCI.setText("Interval Estimate");
 		lblConfLevel.setText(app.getMenu("ConfidenceLevel") + ": ");
 
-		btnCalc.setText(app.getMenu("Calculate"));
+		//btnCalc.setText(app.getMenu("Calculate"));
 
 		ckEqualVariances.setText(app.getMenu("EqualVariance"));
 
@@ -336,11 +400,18 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	public void updatePanel(){
 
 		updateGUI();
-		//updateResultTable();
+		updateResultTable();
+
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
+
+		// handle update event from table
+		if(e.getActionCommand().equals("updateTable")){
+			this.updatePanel();
+		}
 
 		if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
@@ -391,46 +462,48 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	}
 
 
+	//=======================================
+	//  Result Table
+	//=======================================
+
 	private void  setResultTable(){
 
-		setTitleComboBoxes();
+		ArrayList<String>list = new ArrayList<String>();
 
-
-		switch (selectedPlot){
+		switch (selectedInference){
 		case StatisticsPanel.INFER_TTEST_2MEANS:
 		case StatisticsPanel.INFER_TTEST_PAIRED:
-		{
-			String[] columnNames = 
-			{
-					app.getMenu("PValue"),
-					app.getMenu("TStatistic"),
-					"",
-					app.getMenu("StandardError.short"),
-					app.getMenu("DegreesOfFreedom.short")
-			};
 
-			resultTable.setStatTable(1, null, columnNames.length, columnNames);
-		}
-		break;
+			if(selectedInference == StatisticsPanel.INFER_TTEST_PAIRED)
+				list.add(app.getMenu("MeanDifference"));
+			else
+				list.add(app.getMenu("Difference"));
+
+			list.add(app.getMenu("PValue"));
+			list.add(app.getMenu("TStatistic"));
+			list.add(app.getMenu("StandardError.short"));
+			list.add(app.getMenu("DegreesOfFreedom.short"));
+			break;
 
 		case StatisticsPanel.INFER_TINT_2MEANS:
 		case StatisticsPanel.INFER_TINT_PAIRED:
-		{
-			String[] columnNames2 = 
-			{
-					app.getMenu("ConfidenceInterval"),
-					app.getMenu("LowerLimit"),
-					app.getMenu("UpperLimit"),
 
-					"",
-					app.getMenu("StandardError.short"),
-					app.getMenu("DegreesOfFreedom.short")
+			if(selectedInference == StatisticsPanel.INFER_TINT_PAIRED)
+				list.add(app.getMenu("MeanDifference"));
+			else
+				list.add(app.getMenu("Difference"));
 
-			};
-			resultTable.setStatTable(1, null, columnNames2.length, columnNames2);
+			list.add(app.getMenu("MarginOfError.short"));
+			list.add(app.getMenu("LowerLimit"));
+			list.add(app.getMenu("UpperLimit"));
+			list.add(app.getMenu("StandardError.short"));
+			list.add(app.getMenu("DegreesOfFreedom.short"));
 			break;
 		}
-		};
+
+		String[] columnNames = new String[list.size()];
+		list.toArray(columnNames);
+		resultTable.setStatTable(1, null, columnNames.length, columnNames);
 
 	}
 
@@ -439,15 +512,25 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 		DefaultTableModel model = resultTable.getModel();
 
-		evaluate();
+		boolean ok = evaluate();
 
-		switch (selectedPlot){
+		if(!ok){
+			//resultTable.clear();
+			return;
+		}
+		
+		
+		switch (selectedInference){
 		case StatisticsPanel.INFER_TTEST_2MEANS:
 		case StatisticsPanel.INFER_TTEST_PAIRED:
 
-			model.setValueAt(statDialog.format(P),0,0);
-			model.setValueAt(statDialog.format(t), 0,1);
-			model.setValueAt("", 0,2);
+			if(selectedInference == StatisticsPanel.INFER_TTEST_PAIRED)
+				model.setValueAt(statDialog.format(meanDifference),0,0);
+			else 
+				model.setValueAt(statDialog.format(diffMeans),0,0);
+
+			model.setValueAt(statDialog.format(P),0,1);
+			model.setValueAt(statDialog.format(t), 0,2);
 			model.setValueAt(statDialog.format(se), 0,3);
 			model.setValueAt(statDialog.format(df), 0,4);
 			break;
@@ -455,11 +538,17 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		case StatisticsPanel.INFER_TINT_2MEANS:
 		case StatisticsPanel.INFER_TINT_PAIRED:
 
-			String cInt = statDialog.format(mean) + " \u00B1 "  + statDialog.format(me);
-			model.setValueAt(cInt,0,0);
-			model.setValueAt(statDialog.format(lower), 0, 1);
-			model.setValueAt(statDialog.format(upper), 0, 2);
-			model.setValueAt("", 0, 3);
+			//String cInt = statDialog.format(mean) + " \u00B1 "  + statDialog.format(me);
+			//model.setValueAt(cInt,0,0);
+			
+			if(selectedInference == StatisticsPanel.INFER_TINT_PAIRED)
+				model.setValueAt(statDialog.format(meanDifference),0,0);
+			else 
+				model.setValueAt(statDialog.format(diffMeans),0,0);
+			
+			model.setValueAt(statDialog.format(me), 0, 1);
+			model.setValueAt(statDialog.format(lower), 0, 2);
+			model.setValueAt(statDialog.format(upper), 0, 3);
 			model.setValueAt(statDialog.format(se), 0, 4);
 			model.setValueAt(statDialog.format(df), 0, 5);
 
@@ -470,40 +559,48 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	}
 
 
+	private Integer[] selectedDataIndex(){
+		return twoStatPanel.getSelectedDataIndex();
+	}
+
 
 
 	//============================================================
 	//          Evaluate 
 	//============================================================
 
-	private void evaluate(){
-
+	private boolean evaluate(){
+		
 		// get the sample data
 
 		GeoList dataCollection = statDialog.getStatDialogController().getDataSelected();
 
-		GeoList dataList1 = (GeoList) dataCollection.get(cbTitle1.getSelectedIndex());
+		GeoList dataList1 = (GeoList) dataCollection.get(selectedDataIndex()[0]);
 		double[] sample1 = statDialog.getStatDialogController().getValueArray(dataList1);
 		SummaryStatistics stats1 = new SummaryStatistics();
 		for (int i = 0; i < sample1.length; i++) {
 			stats1.addValue(sample1[i]);
 		}
 
-		GeoList dataList2 = (GeoList) dataCollection.get(cbTitle2.getSelectedIndex());
+		GeoList dataList2 = (GeoList) dataCollection.get(selectedDataIndex()[1]);
 		double[] sample2 = statDialog.getStatDialogController().getValueArray(dataList2);
 		SummaryStatistics stats2 = new SummaryStatistics();
 		for (int i = 0; i < sample2.length; i++) {
 			stats2.addValue(sample2[i]);
 		}
 
-
+		// exit if paired data is expected and sample sizes are unequal
+		if(isPairedData() && stats1.getN() != stats2.getN())
+			return false;
+		
+		
 		if(tTestImpl == null)
 			tTestImpl = new TTestImpl();
 		double tCritical;
 
 		try {
 
-			switch (selectedPlot){
+			switch (selectedInference){
 			case StatisticsPanel.INFER_TTEST_2MEANS:
 			case StatisticsPanel.INFER_TINT_2MEANS:
 
@@ -511,8 +608,8 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 				mean1 = StatUtils.mean(sample1);
 				mean2 = StatUtils.mean(sample2);
 				diffMeans = mean1 - mean2;
-				n1 = sample1.length;
-				n2 = sample2.length;
+				n1 = stats1.getN();
+				n2 = stats2.getN();
 				double v1 = stats1.getVariance();
 				double v2 = stats2.getVariance();
 				df =  getDegreeOfFreedom( v1, v2, n1, n2, pooled);
@@ -550,15 +647,15 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 				// get statistics
 				n1 = sample1.length;
-				double meanDifference = StatUtils.meanDifference(sample1, sample2);
+				meanDifference = StatUtils.meanDifference(sample1, sample2);
 				se = Math.sqrt(StatUtils.varianceDifference(sample1, sample2, meanDifference)/n1);
 				df = n1 - 1;
 
 				tDist = new TDistributionImpl(df);
 				tCritical = tDist.inverseCumulativeProbability((confLevel + 1d)/2);
 				me = tCritical*se;
-				upper = diffMeans + me;
-				lower = diffMeans - me;
+				upper = meanDifference + me;
+				lower = meanDifference - me;
 
 				// get test results
 				t = meanDifference/se;    
@@ -571,9 +668,13 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
+			return false;
 		} catch (MathException e) {
 			e.printStackTrace();
+			return false;
 		}
+		
+		return true;
 
 	}
 
@@ -672,35 +773,6 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		return p;
 	}
 
-	private Box boxYPanel(JComponent... comp){
-		Box p = Box.createVerticalBox();
-		for(int i = 0; i<comp.length; i++){
-			p.add(Box.createVerticalGlue());
-			p.add(comp[i]);
-		}
-		return p;
-	}
-
-
-	private JPanel blPanel(Component center){
-		return blPanel( center, null, null, null, null);
-	}
-	private JPanel blPanel(Component center, Component north, Component south, Component west, Component east){
-		JPanel p = new JPanel(new BorderLayout());
-		if(center != null)
-			p.add(center, BorderLayout.CENTER);
-		if(north != null)
-			p.add(north, BorderLayout.NORTH);
-		if(south != null)
-			p.add(south, BorderLayout.SOUTH);
-		if(west != null)
-			p.add(west, BorderLayout.WEST);
-		if(east != null)
-			p.add(east, BorderLayout.EAST);
-
-		//	p.setBackground(Color.white);
-		return p;
-	}
 
 
 
@@ -735,17 +807,6 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 	}
 
 
-
-	private void updateDataSourceList(){
-
-		model.removeAllElements();
-
-		model.addElement(new CheckListItem("apple"));
-		model.addElement(new CheckListItem("apple"));
-		model.addElement(new CheckListItem("apple"));
-		model.addElement(new CheckListItem("apple"));
-
-	}
 
 
 	// Represents items in the list that can be selected
