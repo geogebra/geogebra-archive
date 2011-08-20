@@ -134,7 +134,7 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 		kernel=f.getKernel();
 		FunctionVariable fvar=f.getFunctionVariable();
 
-		java.util.HashSet<GeoNumeric> hash= f.getVariables();		//Get a,b,c,... to array
+		java.util.HashSet<GeoElement> hash= f.getVariables();		//Get a,b,c,... to array
 		if(hash==null){	
 			throw(new Exception("No gliders/parameters in fit-function..."));	
 		}else{	
