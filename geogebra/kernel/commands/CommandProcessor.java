@@ -9350,8 +9350,6 @@ class CmdSetActiveView extends CommandProcessor {
 
 		if (!app.useFullGui()) return ret;
 			
-		GuiManager guiManager = app.getGuiManager();
-
 		switch (n) {
 		case 1:
 			arg = resArgs(c);
@@ -9363,24 +9361,24 @@ class CmdSetActiveView extends CommandProcessor {
 				// ignore all errors (eg when a view is not available etc)
 				switch (view) {
 				case 1:
-					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN);
+					app.setActiveView(Application.VIEW_EUCLIDIAN);
 					 break;
 				case 2:
-					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN2);
+					app.setActiveView(Application.VIEW_EUCLIDIAN2);
 					 break;
 				case 3:
-					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN3D);
+					app.setActiveView(Application.VIEW_EUCLIDIAN3D);
 					 break;
 				case -1:
-					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
+					app.setActiveView(Application.VIEW_SPREADSHEET);
 					 break;
 				case -2:
-					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_ALGEBRA);
+					app.setActiveView(Application.VIEW_ALGEBRA);
 					 break;
 				case -3:
-					guiManager.getLayout().getDockManager().setFocusedPanel(Application.VIEW_CAS);
+					app.setActiveView(Application.VIEW_CAS);
 					 break;
-				// default: // might be needed when support for more than 2 Eucldian Views added 
+				// default: // might be needed when support for more than 2 Euclidian Views added 
 				}
 				
 				return ret;

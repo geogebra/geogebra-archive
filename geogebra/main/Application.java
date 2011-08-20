@@ -3512,7 +3512,7 @@ public class Application implements KeyEventDispatcher {
 	 */
 	final public boolean loadXML(File file, boolean isMacroFile) {
 		try {
-
+			
 			FileInputStream fis = null;
 			fis = new FileInputStream(file);
 			boolean success = loadXML(fis, isMacroFile);
@@ -3562,6 +3562,10 @@ public class Application implements KeyEventDispatcher {
 	
 	public boolean loadXML(byte [] zipFile) {
 		try {
+
+			// make sure objects are displayed in the correct View
+			setActiveView(Application.VIEW_EUCLIDIAN);
+
 			myXMLio.readZipFromString(zipFile);
 			
 			kernel.initUndoInfo();
@@ -3583,6 +3587,10 @@ public class Application implements KeyEventDispatcher {
 	 */
 	public boolean loadXML(String xml) {
 		try {
+
+			// make sure objects are displayed in the correct View
+			setActiveView(Application.VIEW_EUCLIDIAN);
+
 			myXMLio.processXMLString(xml, true, false);
 			
 			kernel.initUndoInfo();
@@ -3606,6 +3614,9 @@ public class Application implements KeyEventDispatcher {
 				setMoveMode();
 			}
 
+			// make sure objects are displayed in the correct View
+			setActiveView(Application.VIEW_EUCLIDIAN);
+
 			BufferedInputStream bis = new BufferedInputStream(is);
 			myXMLio.readZipFromInputStream(bis, isMacroFile);
 			is.close();
@@ -3627,6 +3638,12 @@ public class Application implements KeyEventDispatcher {
 			return false;
 		}
 	}
+
+	public void setActiveView(int view) {
+		if (useFullGui())
+			getGuiManager().getLayout().getDockManager().setFocusedPanel(view);
+	}
+
 
 	/**
 	 * Saves all objects.
@@ -3683,6 +3700,10 @@ public class Application implements KeyEventDispatcher {
 			setCurrentFile(null);
 
 		try {
+
+			// make sure objects are displayed in the correct View
+			setActiveView(Application.VIEW_EUCLIDIAN);
+
 			myXMLio.processXMLString(xml, clearAll, false);
 		} catch (MyError err) {
 			err.printStackTrace();
