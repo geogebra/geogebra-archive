@@ -31,6 +31,8 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 	private CellFormat formatHandler;
 	private ArrayList<CellRange> selectedCells;
 
+	
+	private MyToggleButton btnFormulaBar;
 	private MyToggleButton btnLeftAlign, btnCenterAlign, btnRightAlign;
 	private ColorPopupMenuButton btnBgColor;
 	private MyToggleButton btnBold, btnItalic;
@@ -39,8 +41,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 	protected int iconHeight = 18;
 	private Dimension iconDimension = new Dimension(16, iconHeight);
-	private MyToggleButton btnFormulaBar;
-
+	
 
 
 	public SpreadsheetStyleBar(SpreadsheetView view){
@@ -235,7 +236,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		
 		else if (source == btnFormulaBar){
-			view.setShowFormulaBar(btnFormulaBar.isSelected());
+			app.getSettings().getSpreadsheet().setShowFormulaBar(btnFormulaBar.isSelected());
 			if(view.getTable().isSelectNone())
 				view.getTable().setSelection(0,0);
 			view.updateFormulaBar();
