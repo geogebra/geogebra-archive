@@ -863,9 +863,9 @@ public class AlgebraView extends JTree implements View, Printable, SetLabels{
 	
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
-		Drawable.exporting=true;
+		app.exporting=true;
 		tree.print(graphics);
-		Drawable.exporting=false;
+		app.exporting=false;
 		int r=(pageIndex==0)? 0:1;
 		return r;
 	}

@@ -1836,10 +1836,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	 * 
 	 */
 	public void exportPaint(Graphics2D g2d, double scale, boolean transparency) {
-		Drawable.exporting = true;
+		app.exporting = true;
 		exportPaintPre(g2d,scale, transparency);
 		drawObjects(g2d);
-		Drawable.exporting = false;
+		app.exporting = false;
 	}
 	
 	public void exportPaintPre(Graphics2D g2d, double scale) {

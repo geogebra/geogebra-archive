@@ -532,9 +532,9 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
-		Drawable.exporting=true;
+		app.exporting=true;
 		int r=consoleTable.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
-		Drawable.exporting=false;
+		app.exporting=false;
 		return r;
 	}
 

@@ -54,7 +54,7 @@ public class LaTeXPanel extends JPanel {
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 							RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		FormulaDimension fd =  Drawable.drawEquation(app, null, g2image, 0, 0, latex, app.getPlainFont(), false, getForeground(), getBackground(), true);	
+		FormulaDimension fd =  app.getDrawEquation().drawEquation(app, null, g2image, 0, 0, latex, app.getPlainFont(), false, getForeground(), getBackground(), true);	
 
 		return new Dimension(fd.width, fd.height + fd.depth);
 	}
@@ -69,9 +69,9 @@ public class LaTeXPanel extends JPanel {
 	}
 	
 	public void paint(Graphics g) {
-		if (Drawable.exporting){
+		if (app.exporting){
 			//draw full resolution image directly on g
-			Drawable.drawEquation(app, null, (Graphics2D) g, 0, 0, latex, app.getPlainFont(), false, getForeground(), getBackground(), true);
+			app.getDrawEquation().drawEquation(app, null, (Graphics2D) g, 0, 0, latex, app.getPlainFont(), false, getForeground(), getBackground(), true);
 		}else{
 			// draw part of image that contains equation
 			if (image != null && equSize != null)

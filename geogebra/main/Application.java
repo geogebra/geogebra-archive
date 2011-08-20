@@ -19,6 +19,7 @@ package geogebra.main;
 
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
+import geogebra.euclidian.DrawEquation;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
@@ -5761,6 +5762,21 @@ public class Application implements KeyEventDispatcher {
 
 		return null;
 	}
+
+	DrawEquation drawEquation;
+	
+	public DrawEquation getDrawEquation() {
+		if (drawEquation == null) drawEquation = new DrawEquation();
+		return drawEquation;
+	}
+	public boolean useJavaFontsForLaTeX = false;
+	
+	public boolean useJavaFontsForLaTeX() {
+		return useJavaFontsForLaTeX;
+		
+	}
+	/** flag to test whether to draw Equations full resolution */
+	public boolean exporting = false;
 
 	
 	

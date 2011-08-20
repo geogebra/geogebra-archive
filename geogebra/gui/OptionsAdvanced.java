@@ -594,7 +594,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			if (index == -1) app.setTooltipLanguage(null);
 			else app.setTooltipLanguage(Application.supportedLocales.get(index));
 		} else if(source == cbUseJavaFonts) {
-			Drawable.setUseJavaFontsForLaTeX(app, cbUseJavaFonts.isSelected());
+			app.getDrawEquation().setUseJavaFontsForLaTeX(app, cbUseJavaFonts.isSelected());
 		} else if(source == cbReverseMouseWheel) {
 			app.reverseMouseWheel(cbReverseMouseWheel.isSelected());
 		} else if(source == cbUseLocalDigits) {
@@ -813,7 +813,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbEnableScripting.setText(app.getPlain("EnableScripting"));
 		//cbEnableScripting.setSelected(b)
 		cbUseJavaFonts.setText(app.getPlain("UseJavaFontsForLaTeX"));	
-		cbUseJavaFonts.setSelected(Drawable.useJavaFontsForLaTeX());
+		cbUseJavaFonts.setSelected(app.useJavaFontsForLaTeX());
 		cbReverseMouseWheel.setText(app.getPlain("ReverseMouseWheel"));	
 		cbReverseMouseWheel.setSelected(app.isMouseWheelReversed());
 		cbReturnAngleInverseTrig.setText(app.getMenu("ReturnAngleInverseTrig"));

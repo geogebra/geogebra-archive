@@ -35,6 +35,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.plugin.CallJavaScript;
+import geogebra.util.GeoLaTeXCache;
 import geogebra.util.ImageManager;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
@@ -56,8 +57,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.scilab.forge.jlatexmath.ParseException;
-import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.cache.JLaTeXMathCache;
 
 
@@ -2880,11 +2879,19 @@ public abstract class GeoElement
 		labelSet = false;
 		labelWanted = false;
 		
-		if (keyLaTeX != null) {
+		if (latexCache != null) {
 			// remove old key from cache
-			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			//JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			latexCache.remove();
 		}
 
+	}
+	
+	GeoLaTeXCache latexCache = null;
+	
+	public GeoLaTeXCache getLaTeXCache() {
+		if (latexCache == null) latexCache = new GeoLaTeXCache();
+		return latexCache;
 	}
 
 	final public void notifyAdd() {
@@ -5783,30 +5790,6 @@ public abstract class GeoElement
 			return getXmax();
 	}
 
-	// used by Captions, GeoText and DrawParametricCurve to cache LaTeX formulae
-	Object keyLaTeX = null;
-
-	public Object getCachedLaTeXKey(String latex, int fontSize, int style, Color fgColor) {
-		Object newKey;
-		try {
-		newKey = JLaTeXMathCache.getCachedTeXFormula(latex, TeXConstants.STYLE_DISPLAY, style, fontSize, 1 /* inset around the label*/, fgColor);
-		} catch (ParseException e) {
-			if (keyLaTeX != null) {
-				// remove old key from cache
-				JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
-			}
-			throw e;
-		}
-		if (keyLaTeX != null && !keyLaTeX.equals(newKey)) {
-			// key has changed, remove old key from cache
-			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
-			//Application.debug("removing");
-		}
-
-		keyLaTeX = newKey;
-		return keyLaTeX;
-
-	}
 
 	public boolean canHaveClickScript() {
 		return true;

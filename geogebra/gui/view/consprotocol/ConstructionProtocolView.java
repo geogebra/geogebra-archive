@@ -1553,9 +1553,9 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
-		Drawable.exporting=true;
+		app.exporting=true;
 		int r=table.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
-		Drawable.exporting=false;
+		app.exporting=false;
 		return r;
 	}
 	

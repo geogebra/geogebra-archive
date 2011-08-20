@@ -319,7 +319,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		FormulaDimension d = new FormulaDimension();
-		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
+		d = app.getDrawEquation().drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor, true);
 
 		// Now use this size and draw again to get the final image
@@ -331,7 +331,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
+		d = app.getDrawEquation().drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor, true);
 
 		latexIcon.setImage(image);
