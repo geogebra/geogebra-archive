@@ -1612,6 +1612,7 @@ GeoPointND, Animatable, Transformable  {
 		// lines: line by two point, intersect lines, line/conic, point on line
 		//TODO: parallel line, perpenticular line
 		private ArrayList<GeoElement> incidenceList;
+		public ArrayList<GeoElement> nonIncidenceList;
 		
 		public ArrayList<GeoElement> getIncidenceList(){
 			return incidenceList;
@@ -1628,7 +1629,9 @@ GeoPointND, Animatable, Transformable  {
 			incidenceList = new ArrayList<GeoElement>();
 			incidenceList.add(this);
 		}
-		
+		public void createNonIncidenceList(){
+			nonIncidenceList = new ArrayList<GeoElement>();
+		}	
 		/**
 		 * add geo to incidenceList of this, and also
 		 * add this to pointsOnConic (when geo is a conic) or
@@ -1647,6 +1650,13 @@ GeoPointND, Animatable, Transformable  {
 			else if (geo instanceof GeoLine)
 				((GeoLine)geo).addPointOnLine(this);
 			//TODO: if geo instanceof GeoPoint...
+		}
+		
+		public void addNonIncidence(GeoElement geo) {
+			if (nonIncidenceList==null)
+				createNonIncidenceList();
+			if (!nonIncidenceList.contains(geo))
+				nonIncidenceList.add(geo);
 		}
 		
 		public final void removeIncidence(GeoElement geo) {
@@ -1704,8 +1714,13 @@ GeoPointND, Animatable, Transformable  {
 
 				// recover parameters of current construction
 				it = pred.iterator();
+				GeoElement lastIndepGeo = null;
 				while (it.hasNext()) {
 					GeoElement predGeo = (GeoElement) it.next();
+					if (predGeo.isIndependent())
+						lastIndepGeo = predGeo;
+					else
+						lastIndepGeo.updateCascade();
 					predGeo.recoverFromClone();
 				}
 				if (!this.isFixed())
@@ -1716,6 +1731,8 @@ GeoPointND, Animatable, Transformable  {
 				// if all of the cases are good, add incidence
 				if (incident)
 					addIncidence(geo);
+				else
+					addNonIncidence(geo);
 			}
 			
 			return incident;

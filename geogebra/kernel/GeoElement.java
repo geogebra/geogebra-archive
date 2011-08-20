@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -5859,16 +5860,17 @@ public abstract class GeoElement
 		//in general case do nothing; overriden in GeoPoint, GeoNumeric and GeoBoolean		
 	}
 	
-	private GeoElement tempClone;
+	
+	private Stack<GeoElement> tempClone;
 	public void storeClone() {
 		if (tempClone==null)
-			tempClone = this.copy();
-		else
-			tempClone.set(this);
+			tempClone = new Stack<GeoElement>();
+		
+		tempClone.push(this.copy());
 	}
 	public void recoverFromClone() {
 		if (tempClone!=null)
-			this.set(tempClone);
+			this.set(tempClone.pop());
 	}
 	public void randomizeForProbabilisticChecking(){
 		//overode by subclasses

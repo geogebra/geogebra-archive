@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 
@@ -239,13 +240,13 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     	} */
     	
     	GeoPoint existingIntersection = null;    	
-    	
+
     	//find a point from conic c on line g
     	ArrayList pointsOnConic = c.getPointsOnConic();
 		if (pointsOnConic != null) {
 			//get a point from pointsOnConic to see if it is on g.
 	    	for (int i=0; i < pointsOnConic.size(); ++i ) {
-	    		GeoPoint p = (GeoPoint) pointsOnConic.get(i);	    
+	    		GeoPoint p = (GeoPoint) pointsOnConic.get(i);	 
 	    		if (p.isLabelSet()) { //an existing intersection should be a labeled one
 	    			if (p.getIncidenceList()!=null && 
 	    				p.getIncidenceList().contains(g)) {
@@ -257,7 +258,8 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	    					
 	    				//existingIntersection = p;
     					break;
-    				} else if (p.addIncidenceWithProbabilisticChecking(g)) {
+    				} else if ( !(p.nonIncidenceList!=null && p.nonIncidenceList.contains(g))
+    						&& p.addIncidenceWithProbabilisticChecking(g)) {
     					existingIntersection = p;
     					break;
     				}
@@ -286,6 +288,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
 	    					break;
 	    				} else if (p.addIncidenceWithProbabilisticChecking(c)) {
 	    					existingIntersection = p;
+	    					Application.debug(p);
 	    					break;
 	    				}
 	    			}
