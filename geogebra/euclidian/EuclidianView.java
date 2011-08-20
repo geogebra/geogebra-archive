@@ -165,11 +165,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 
 	public static final int AXES_LINE_TYPE_ARROW_BOLD = 3;
 
-	public static final int AXES_TICK_STYLE_MAJOR_MINOR = 0;
 
-	public static final int AXES_TICK_STYLE_MAJOR = 1;
-
-	public static final int AXES_TICK_STYLE_NONE = 2;
 
 	public static final int POINT_STYLE_DOT = 0;
 	public static final int POINT_STYLE_CROSS = 1;

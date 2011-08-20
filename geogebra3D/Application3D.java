@@ -20,6 +20,7 @@ package geogebra3D;
 import geogebra.CommandLineArguments;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.main.AppletImplementation;
@@ -230,14 +231,10 @@ public class Application3D extends Application{
 		cb.setSelected(p.isGridVisible());
 	}
 	
-    
-	protected void initGuiManager() {
-		setWaitCursor();
-		guiManager = new GuiManager3D(this);
-		setDefaultCursor();
-		guiManager.initialize();
-	}
 	
+	protected GuiManager newGuiManager(){
+		return new GuiManager3D(this);
+	}
 	
 	public void updateFonts() {
 

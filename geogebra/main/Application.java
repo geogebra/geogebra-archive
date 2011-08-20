@@ -655,11 +655,15 @@ public class Application implements KeyEventDispatcher {
 	 * Initialize the gui manager. Needs to be in a separate method to allow the 3D application
 	 * to load its own gui manager. 
 	 */
-	protected void initGuiManager() {
+	final protected void initGuiManager() {
 		setWaitCursor();
-		guiManager = new GuiManager(Application.this);
+		guiManager = newGuiManager();
 		guiManager.initialize();
 		setDefaultCursor();
+	}
+	
+	protected GuiManager newGuiManager(){
+		return new GuiManager(Application.this);
 	}
 	
 	/**

@@ -122,16 +122,24 @@ implements ActionListener {
         	miShowAllObjectsView.setEnabled(false);
         	miStandardView.setEnabled(false);
         }
+        
         if(ev.isUnitAxesRatio()){
         	yaxisMenu.setEnabled(false);
         }
+   
+        addMiProperties();
+         
+    }
+    
+    protected void addMiProperties(){
         JMenuItem miProperties = new JMenuItem(app.getPlain("DrawingPad") + " ...");
         miProperties.setIcon(app.getImageIcon("document-properties.png"));
         miProperties.setActionCommand("properties");
         miProperties.addActionListener(this);
         miProperties.setBackground(bgColor);
-        add(miProperties);                 
+        add(miProperties); 
     }
+    
     
     protected void addAxesAndGridCheckBoxes(){
 
@@ -159,9 +167,13 @@ implements ActionListener {
     		app.setViewShowAllObjects();
     	}
     	else if (cmd.equals("properties")) {
-    		app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_EUCLIDIAN);
-    		//app.getGuiManager().showDrawingPadPropertiesDialog();
+    		showOptionsDialog();
     	}
+    }
+    
+    protected void showOptionsDialog(){
+    	app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_EUCLIDIAN);
+		//app.getGuiManager().showDrawingPadPropertiesDialog();
     }
     
     private void addZoomItems(JMenu menu) {	  

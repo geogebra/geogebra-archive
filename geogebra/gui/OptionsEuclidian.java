@@ -52,30 +52,43 @@ import javax.swing.border.TitledBorder;
  * revised by G.Sturr 2010-8-15
  * 
  */
-class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener, ItemListener, SetLabels {	
+public class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener, ItemListener, SetLabels {	
+
 	private static final long serialVersionUID = 1L;
 
 	private static final String PI_STR = "\u03c0";
 	private static final String DEGREE_STR = "\u00b0";
 	
-	private Application app;
+	protected Application app;
 	private Kernel kernel;
-	private EuclidianViewInterface view;
+	protected EuclidianViewInterface view;
 	
 	// GUI
-	private JTabbedPane tabbedPane;
+	protected JTabbedPane tabbedPane;
 	private JLabel[] dimLabel;
 	private JLabel axesRatioLabel;
 	private JPanel dimPanel; 
 	
-	private JButton btBackgroundColor, btAxesColor, btGridColor;
-	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick, cbShowMouseCoords;
-	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle, cbView, cbTooltips;
+	protected JButton btBackgroundColor;
+
+	protected JButton btAxesColor;
+
+	protected JButton btGridColor;
+	protected JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick;
+
+	protected JCheckBox cbShowMouseCoords;
+	protected JComboBox cbAxesStyle;
+
+	protected JComboBox cbGridType, cbGridStyle, cbGridTickAngle;
+
+	protected JComboBox cbView;
+
+	protected JComboBox cbTooltips;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
-	private NumberComboBox ncbGridTickX, ncbGridTickY; 
-	private JTextField tfMinX, tfMaxX, tfMinY, tfMaxY;	
-	private AxisPanel xAxisPanel, yAxisPanel;
+	protected NumberComboBox ncbGridTickX, ncbGridTickY; 
+	protected JTextField tfMinX, tfMaxX, tfMinY, tfMaxY;	
+	protected AxisPanel xAxisPanel, yAxisPanel;
 	private JLabel gridLabel1, gridLabel2, gridLabel3;
 	
 	private boolean isIniting;
@@ -101,7 +114,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	 * Creates a new dialog for the properties of the Euclidian view.
 	 * @param app: parent frame
 	 */
-	public OptionsEuclidian(Application app, EuclidianView view) {
+	public OptionsEuclidian(Application app, EuclidianViewInterface view) {
 		
 		isIniting = true;
 		this.app = app;	
@@ -120,6 +133,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			updateGUI();
 	}
 
+	
+	protected void initAxisPanels(){
+
+        xAxisPanel = new AxisPanel(0);
+        yAxisPanel = new AxisPanel(1);
+	}
 	
 	/**
 	 * inits GUI with labels of current language	 
@@ -142,19 +161,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
 		
 		// create panels for the axes
-        xAxisPanel = new AxisPanel(0);
-        yAxisPanel = new AxisPanel(1);
+		initAxisPanels();
 
         // create panel with comboBox to switch between Euclidian views
-        cbView = new JComboBox();
-        cbView.addItem(""); //ev
-        cbView.addItem(""); //ev2
-        cbView = new JComboBox();
-        
-        cbView.addActionListener(this);       
-        
-        JPanel selectViewPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        selectViewPanel.add(cbView);
+        createCbView();
      
         
         // create tabbed pane for basic, axes, and grid options
@@ -165,21 +175,46 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         axesPanel.add(xAxisPanel);
         axesPanel.add(Box.createRigidArea(new Dimension(16,0)));
       	*/
-       
-        tabbedPane.addTab("", buildBasicPanel());
-        tabbedPane.addTab("" , xAxisPanel);
-        tabbedPane.addTab("", yAxisPanel);   
-        tabbedPane.addTab("", buildGridPanel());	
+		 addTabs();	
         
         
         // put it all together
 		removeAll();	
 		setLayout(new BorderLayout());
-		add(selectViewPanel, BorderLayout.NORTH);	
+		addCbView();
 		add(tabbedPane, BorderLayout.CENTER);			
          
 	}
 	
+	private JPanel selectViewPanel;
+	
+	protected void createCbView(){
+		cbView = new JComboBox();
+        cbView.addItem(""); //ev
+        cbView.addItem(""); //ev2
+        cbView = new JComboBox();
+        
+        cbView.addActionListener(this);       
+        
+        selectViewPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectViewPanel.add(cbView);
+	}
+	
+	protected void addCbView(){
+		add(selectViewPanel, BorderLayout.NORTH);	
+	}
+
+	protected void addTabs(){
+		tabbedPane.addTab("", buildBasicPanel());
+		addAxisTabs();   
+		tabbedPane.addTab("", buildGridPanel());	
+	}
+	
+	protected void addAxisTabs(){
+		tabbedPane.addTab("" , xAxisPanel);
+        tabbedPane.addTab("", yAxisPanel); 	
+        
+	}
 	
 	
 	private JPanel buildBasicPanel() {
@@ -445,6 +480,37 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	
 	
 	
+	protected void updateMinMax(){
+
+        tfMinX.removeActionListener(this);
+	 	tfMaxX.removeActionListener(this);
+        tfMinY.removeActionListener(this);
+	 	tfMaxY.removeActionListener(this);	
+	 		view.updateBoundObjects();
+	 		tfMinX.setText(view.getXminObject().getLabel());
+	 		tfMaxX.setText(view.getXmaxObject().getLabel());
+	 		tfMinY.setText(view.getYminObject().getLabel());
+	 		tfMaxY.setText(view.getYmaxObject().getLabel());
+	 	tfMinX.addActionListener(this);
+	 	tfMaxX.addActionListener(this);
+	 	tfMinY.addActionListener(this);
+	 	tfMaxY.addActionListener(this);
+ 
+	}
+	
+	
+	protected void setCbViewSelectedIndex(){
+		if(view == app.getEuclidianView())
+    		cbView.setSelectedIndex(0);
+		else
+			cbView.setSelectedIndex(1);
+	}
+	
+	protected void updateGUIforCbView(){
+		cbView.removeActionListener(this);
+        setCbViewSelectedIndex();
+    	cbView.addActionListener(this);
+	}
 	
 	public void updateGUI() {
 		
@@ -470,28 +536,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         cbShowMouseCoords.addActionListener(this);      
         
         
-        cbView.removeActionListener(this);
-    	if(view == app.getEuclidianView())
-    		cbView.setSelectedIndex(0);
-		else
-			cbView.setSelectedIndex(1);
-    	cbView.addActionListener(this);
+        updateGUIforCbView();
+        
     	tfAxesRatioX.setEnabled(view.isZoomable());
 		tfAxesRatioY.setEnabled(view.isZoomable());
         
-        tfMinX.removeActionListener(this);
-	 	tfMaxX.removeActionListener(this);
-        tfMinY.removeActionListener(this);
-	 	tfMaxY.removeActionListener(this);	
-	 		((EuclidianView)view).updateBoundObjects();
-	 		tfMinX.setText(view.getXminObject().getLabel());
-	 		tfMaxX.setText(view.getXmaxObject().getLabel());
-	 		tfMinY.setText(view.getYminObject().getLabel());
-	 		tfMaxY.setText(view.getYmaxObject().getLabel());
-	 	tfMinX.addActionListener(this);
-	 	tfMaxX.addActionListener(this);
-	 	tfMinY.addActionListener(this);
-	 	tfMaxY.addActionListener(this);
+		updateMinMax();
         
         
         cbGridType.removeActionListener(this);
@@ -599,10 +649,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 
 		
 		// tab titles
-		tabbedPane.setTitleAt(0,app.getMenu("Properties.Basic"));
-        tabbedPane.setTitleAt(1, app.getPlain("xAxis"));
-        tabbedPane.setTitleAt(2, app.getPlain("yAxis"));   
-        tabbedPane.setTitleAt(3, app.getMenu("Grid"));	
+		setTabLabels();
+		
 		
 
         // window dimension panel
@@ -616,6 +664,22 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
 		
 
+		setLabelsForCbView();
+		
+		
+		cbShowMouseCoords.setText(app.getMenu("ShowMouseCoordinates"));
+		
+	}
+	
+	protected void setTabLabels(){
+		tabbedPane.setTitleAt(0,app.getMenu("Properties.Basic"));
+        tabbedPane.setTitleAt(1, app.getPlain("xAxis"));
+        tabbedPane.setTitleAt(2, app.getPlain("yAxis"));   
+        tabbedPane.setTitleAt(3, app.getMenu("Grid"));	
+	}
+	
+	
+	protected void setLabelsForCbView(){
 		cbView.removeActionListener(this);
 		cbView.removeAllItems();
 		cbView.addItem(app.getPlain("DrawingPad")); 
@@ -629,7 +693,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         color.setText(app.getPlain("Color") + ":");
         lineStyle.setText(app.getPlain("LineStyle") + ":");  
         
-        index = cbTooltips.getSelectedIndex();
+        int index = cbTooltips.getSelectedIndex();
         cbTooltips.removeActionListener(this);
         cbTooltips.removeAllItems();// = new JComboBox(new String[] { app.getPlain("On"), app.getPlain("Automatic"), app.getPlain("Off") });
 		cbTooltips.addItem(app.getPlain("On"));
@@ -652,7 +716,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		doActionPerformed(e.getSource());		
 	}
 	
-	private void doActionPerformed(Object source) {				
+	protected void doActionPerformed(Object source) {				
 		if (source == btBackgroundColor) {
 			view.setBackground(
 					app.getGuiManager().showColorChooser(view.getBackground()));			
@@ -711,10 +775,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 
 		else if (source == cbView) {
 			
-			if(cbView.getSelectedIndex() == 0)
-				setView(app.getEuclidianView());
-			else
-				setView(app.getEuclidianView2());
+			setViewFromIndex(cbView.getSelectedIndex());
+
 		}
 
 		
@@ -730,18 +792,18 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			}
 			else {
 				if(source == tfMinX){
-					((EuclidianView)view).setXminObject(minMax);				
+					view.setXminObject(minMax);				
 				}else if(source== tfMaxX){
-					((EuclidianView)view).setXmaxObject(minMax);						
+					view.setXmaxObject(minMax);						
 				}else if(source == tfMinY){
-					((EuclidianView)view).setYminObject(minMax);				
+					view.setYminObject(minMax);				
 				}else if(source== tfMaxY){
-					((EuclidianView)view).setYmaxObject(minMax);					
+					view.setYmaxObject(minMax);					
 				}	
-				((EuclidianView)view).setXminObject(view.getXminObject());
+				view.setXminObject(view.getXminObject());
 				tfAxesRatioX.setEnabled(view.isZoomable() && !view.isUnitAxesRatio());
 				tfAxesRatioY.setEnabled(view.isZoomable() && !view.isUnitAxesRatio());
-				((EuclidianView)view).updateBounds();
+				view.updateBounds();
 			}
 		}
 
@@ -749,6 +811,15 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 
 		view.updateBackground();		
 		updateGUI();		
+	}
+	
+	protected void setViewFromIndex(int index){
+		
+		if(index == 0)
+			setView(app.getEuclidianView());
+		else
+			setView(app.getGuiManager().getEuclidianView2());
+		
 	}
 	
 	private double parseDouble(String text) {	
@@ -816,17 +887,18 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	//=======================================================
 	
 	
-	private class AxisPanel extends JPanel implements ActionListener, ItemListener, FocusListener, SetLabels {		
+	protected class AxisPanel extends JPanel implements ActionListener, ItemListener, FocusListener, SetLabels {		
+
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private int axis;		
-		private JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks, cbPositiveAxis, cbDrawAtBorder;
-		private NumberComboBox ncbTickDist;	
-		private JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;
-		private JTextField tfCross;
+		protected int axis;		
+		protected JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks, cbPositiveAxis, cbDrawAtBorder;
+		protected NumberComboBox ncbTickDist;	
+		protected JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;
+		protected JTextField tfCross;
 
 		private JLabel crossAt;
 
@@ -840,17 +912,19 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 
 		private JLabel stickToEdge;
 		
+		final static protected int AXIS_X = 0;
+		final static protected int AXIS_Y = 1;
 		
-		// axis: 0 = x, 1 = y
 		public AxisPanel(int axis) {
 			
 			this.axis = axis;			
 				
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			
-			String strAxisEn = (axis == 0) ? "xAxis" : "yAxis";		
+			String strAxisEn = getString();		
 			title = BorderFactory.createTitledBorder(app.getPlain(strAxisEn));
 			this.setBorder(title);		
+
 			
 			
 			cbShowAxis = new JCheckBox(app.getPlain("Show"+strAxisEn));		
@@ -960,6 +1034,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			updatePanel();
 		}
 		
+		protected String getString(){
+			return  (axis == AXIS_X) ? "xAxis" : "yAxis";
+		}
+		
 		public void actionPerformed(ActionEvent e) {	
 			doActionPerformed(e.getSource());		
 		}
@@ -1053,7 +1131,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		}
 				
 		
-		void updatePanel() {		
+		public void updatePanel() {		
 			cbAxisNumber.removeActionListener(this);
 		 	cbAxisNumber.setSelected(view.getShowAxesNumbers()[axis]);
 		 	cbAxisNumber.addActionListener(this);
@@ -1075,18 +1153,22 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		 	cbUnitLabel.removeActionListener(this);
 		 	cbUnitLabel.setSelectedItem(view.getAxesUnitLabels()[axis]);
 		 	cbUnitLabel.addActionListener(this);
-		 				
+		 
+		 	/*
 		    cbShowAxis.removeActionListener(this);
 	        cbShowAxis.setSelected(view.getShowXaxis());
 	        cbShowAxis.addActionListener(this);	        
-	        
+	        */
+		 	
 	        cbTickStyle.removeActionListener(this);
 	        int type = view.getAxesTickStyles()[axis];
 	        cbTickStyle.setSelectedIndex(type);	        
 	        cbTickStyle.addActionListener(this);
 	        
+	        
 	        cbShowAxis.removeActionListener(this);
-	        cbShowAxis.setSelected(axis == 0 ? view.getShowXaxis() : view.getShowYaxis());
+	        //cbShowAxis.setSelected(axis == 0 ? view.getShowXaxis() : view.getShowYaxis());
+	        cbShowAxis.setSelected(view.getShowAxis(axis));
 	        cbShowAxis.addActionListener(this);
 	        
 	       

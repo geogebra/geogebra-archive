@@ -305,9 +305,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		point.setWillingCoords(o);
 		
-		//TODO do this once
-		//GgbVector v = new GgbVector(new double[] {0,0,1,0});
-		//view3D.toSceneCoords3D(v);			
+			
 		point.setWillingDirection(view3D.getViewDirection());
 	}
 	

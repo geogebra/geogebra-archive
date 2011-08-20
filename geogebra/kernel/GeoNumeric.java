@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -894,7 +895,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			}					
 		}
 		if(evListeners != null)
-			for(EuclidianView ev:evListeners)ev.updateBounds();			
+			for(EuclidianViewInterface ev:evListeners)ev.updateBounds();			
     }	
 	
 	private void resolveMinMax() {
@@ -1134,21 +1135,21 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	final public boolean isCasEvaluableObject() {
 		return true;
 	}
-	private List<EuclidianView> evListeners = null;
+	private ArrayList<EuclidianViewInterface> evListeners = null;
 	
 	/**
 	 * @param ev
 	 */
-	public void addEVSizeListener(EuclidianView ev){
+	public void addEVSizeListener(EuclidianViewInterface ev){
 		if(evListeners==null)
-			evListeners = new ArrayList<EuclidianView>();
+			evListeners = new ArrayList<EuclidianViewInterface>();
 		evListeners.add(ev);
 	}
 
 	/**
 	 * @param ev
 	 */
-	public void removeEVSizeListener(EuclidianView ev) {
+	public void removeEVSizeListener(EuclidianViewInterface ev) {
 		if(evListeners!=null)
 			evListeners.remove(ev);	
 	}
@@ -1160,7 +1161,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if(num.evListeners != null) {
 
 			evListeners = num.evListeners;
-			for (EuclidianView ev : num.evListeners){ 	
+			for (EuclidianViewInterface ev : num.evListeners){ 	
 				ev.replaceBoundObject(num,this);				
 			}
 			

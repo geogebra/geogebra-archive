@@ -150,7 +150,9 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		// grid
 		removeGeometryIndex(gridIndex);
 		
-		if (Kernel.isZero(coordsys.getNormal().dotproduct(getView3D().getViewDirection()))){
+		//if (Kernel.isZero(coordsys.getNormal().dotproduct(getView3D().getViewDirection()))){
+		//Application.debug("v=\n"+coordsys.getEquationVector()+"\neye=\n"+getView3D().getEyePosition());
+		if (Kernel.isZero(coordsys.getEquationVector().dotproduct(getView3D().getEyePosition()))){
 			viewDirectionIsParallel = true;
 		}else{
 			viewDirectionIsParallel = false;

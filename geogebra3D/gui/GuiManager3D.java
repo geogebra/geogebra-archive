@@ -4,6 +4,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputDialogCirclePointRadius;
+import geogebra.gui.OptionsDialog;
 import geogebra.gui.GuiManager.NumberInputHandler;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.layout.panels.Euclidian2DockPanel;
@@ -225,6 +226,12 @@ public class GuiManager3D extends GuiManager {
 		InputDialog id = new InputDialogSpherePointRadius(app, title, handler, geoPoint, kernel);
 		id.setVisible(true);
 
+	}
+	
+	
+
+	protected OptionsDialog newOptionsDialog(){
+		return new OptionsDialog3D(app);
 	}
 
 

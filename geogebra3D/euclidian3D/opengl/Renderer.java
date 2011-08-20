@@ -356,7 +356,7 @@ public class Renderer implements GLEventListener {
         }
         */
         
-        if (view3D.hasAnaglyph()){
+        if (view3D.getProjection()==EuclidianView3D.PROJECTION_ANAGLYPH){
         	//clear all
         	gl.glColorMask(true,true,true,true);
         	gl.glClear(GLlocal.GL_COLOR_BUFFER_BIT | GLlocal.GL_DEPTH_BUFFER_BIT);
@@ -675,7 +675,7 @@ public class Renderer implements GLEventListener {
       //Application.debug("reshape\n x = "+x+"\n y = "+y+"\n w = "+w+"\n h = "+h);
       
 
-      viewOrtho(x,y,w,h);
+      setView(x,y,w,h);
 
       
       view3D.reset();
@@ -773,7 +773,8 @@ public class Renderer implements GLEventListener {
     	
     	// 0<=l<10
     	// l2-l1>=1 to see something
-    	gl.glPolygonOffset(-l*0.05f, -l*10);
+       	gl.glPolygonOffset(-l*0.05f, -l*10);
+       	//gl.glPolygonOffset(-l, 0);
     }
     
     
@@ -904,6 +905,7 @@ public class Renderer implements GLEventListener {
      * @param type
      */
     public void drawViewInFrontOf(){
+    	//Application.debug("ici");
     	initMatrix();
     	setBlending(false);
     	geometryManager.draw(geometryManager.getViewInFrontOf().getIndex());
@@ -1572,9 +1574,10 @@ public class Renderer implements GLEventListener {
 	int left = 0; int right = 640;
 	int bottom = 0; int top = 480;
 	int front = -1000; int back = 1000;
+	int frontExtended;
 	
 	/** factor for drawing more than between front and back */
-	private final static float DEPTH_FACTOR = 4f;
+	private final static int DEPTH_FACTOR = 4;
 	
 	
 	public int getLeft(){ return left;	}
@@ -1585,7 +1588,7 @@ public class Renderer implements GLEventListener {
 	public int getHeight(){return top - bottom;}
 	public float getFront(boolean extended){ 
 		if (extended)
-			return front*DEPTH_FACTOR;
+			return frontExtended;
 		else
 			return front;	
 	}
@@ -1671,21 +1674,30 @@ public class Renderer implements GLEventListener {
 
 	
 	private void setProjectionMatrix(){
-		if (view3D.hasProjectionPerspective()){
-			if (near==0)
-				viewOrtho();
-			else{
-				if (view3D.hasAnaglyph())
-					viewEye();
-				else
-					viewPersp();
-			}
-		}else
+		
+		switch(view3D.getProjection()){
+		case EuclidianView3D.PROJECTION_ORTHOGRAPHIC:
 			viewOrtho();
+			break;
+		case EuclidianView3D.PROJECTION_PERSPECTIVE:
+			viewPersp();
+			break;
+		case EuclidianView3D.PROJECTION_ANAGLYPH:
+			viewAnaglyph();
+			break;
+		case EuclidianView3D.PROJECTION_CAV:
+			viewCav();
+			break;
+		}
+		
 		
 		//viewEye();
 	}
    
+	public void updateOrthoValues(){
+		frontExtended = front*DEPTH_FACTOR;
+	}
+	
 	
     /**
      * Set Up An Ortho View regarding left, right, bottom, front values
@@ -1703,72 +1715,84 @@ public class Renderer implements GLEventListener {
     
     public void setNear(double val){
     	near = val;
+    	updatePerspValues();
     	
     }
     
+    private double perspLeft, perspRight, perspBottom, perspTop, perspFar, perspNear, perspDistratio, perspFocus;
+    private Coords perspEye;
+    
+    private void updatePerspValues(){
+    	
+    	//distance camera-near plane
+    	perspNear = 10; //TODO set this to avoid z-buffer issues
+    	//distance near plane-origin
+    	double d1 = near;
+    	frontExtended = (int) -d1; //front clipping plane
+    	
+    	perspFocus = -perspNear-near;
+    	
+    	//Application.debug(near+"\nleft="+getLeft()+"\nd1="+d1);
+    	//if (near<0.01)
+    	//	near=0.01;
+    	//ratio so that distance on origin plane are not changed
+    	perspDistratio = perspNear/(perspNear+d1);
+    	//frustum    	
+    	perspLeft = getLeft()*perspDistratio;
+    	perspRight = getRight()*perspDistratio;
+    	perspBottom = getBottom()*perspDistratio;
+    	perspTop = getTop()*perspDistratio;
+    	//distance camera-far plane
+    	perspFar = perspNear+getBack(true)-getFront(true);
+    	
+    	perspEye = new Coords(0,0,-perspFocus,1);
+    	
+    }
+    
+    /**
+     * 
+     * @return coords of the eye (in real coords) when perspective projection
+     */
+    public Coords getPerspEye(){
+    	return perspEye;
+    }
     
     private void viewPersp(){
     	
-    	//distance near plane-origin
-    	double d1 = -getFront(false);
-       	//distance camera-near plane
-    	double near = -d1-getLeft()*this.near;
-    	//Application.debug(near+"\nleft="+getLeft()+"\nd1="+d1);
-    	//ratio so that distance on origin plane are not changed
-    	double distratio = near/(near+d1);
-    	//frustum    	
-    	double left = getLeft()*distratio;
-    	double right = getRight()*distratio;
-    	double bottom = getBottom()*distratio;
-    	double top = getTop()*distratio;
-    	//distance camera-far plane
-    	double far = near+getBack(true)-getFront(true);
-    	gl.glFrustum(left,right,bottom,top,near,far);
-    	gl.glTranslated(0, 0, getFront(false)-near);       
+    	gl.glFrustum(perspLeft,perspRight,perspBottom,perspTop,perspNear,perspFar);
+    	gl.glTranslated(0, 0, perspFocus);       
     	
     }
      
-    private static final double fo = 500;//1000;
-    private static final double cameraZ = 1000;
-    private static final double aperture = 0.7*Math.PI;
-    private static final double EYE_SEP = fo/30;
     
     
-    private void viewEye(){
-    	
-    	
-    	
-
-    	
-
-    	//distance near plane-origin
-    	double d1 = -getFront(false);
-       	//distance camera-near plane
-    	double near = -d1-getLeft()*this.near;
-    	//Application.debug(near+"\nleft="+getLeft()+"\nd1="+d1);
-    	//ratio so that distance on origin plane are not changed
-    	double distratio = near/(near+d1);
-    	//frustum    	
-    	double left = getLeft()*distratio;
-    	double right = getRight()*distratio;
-    	double bottom = getBottom()*distratio;
-    	double top = getTop()*distratio;
-    	//distance camera-far plane
-    	double far = near+getBack(true)-getFront(true);
- 
-    	//focus
-    	double fo = -d1-near;
+    private double anaglyphEyeSep, anaglyphEyeSep1;
+    
+    public void updateAnaglyphValues(){
     	//eye separation
-    	double eyesep;
-    	if(eye==EYE_LEFT)
-    		eyesep= -fo*view3D.getEyeSepFactor();
-    	else
-    		eyesep= fo*view3D.getEyeSepFactor();
+    	anaglyphEyeSep= perspFocus*view3D.getEyeSepFactor();
     	//eye separation for frustum
-    	double e1 = eyesep*distratio;//(1-distratio);    	
+    	anaglyphEyeSep1 = anaglyphEyeSep*perspDistratio;//(1-distratio);    
+    	//Application.debug("eyesep="+eyesep+"\ne1="+e1);
+    }
+    
+    private void viewAnaglyph(){
     	
-    	gl.glFrustum(left+e1,right+e1,bottom,top,near,far);
-    	gl.glTranslated(eyesep, 0, -d1-near);   
+    	
+    	//eye separation
+    	double eyesep, eyesep1;
+    	if(eye==EYE_LEFT){
+    		eyesep=-anaglyphEyeSep;
+    		eyesep1=-anaglyphEyeSep1;
+    	}else{
+    		eyesep=anaglyphEyeSep;
+    		eyesep1=anaglyphEyeSep1;
+    	}
+ 
+    	
+       	gl.glFrustum(perspLeft+eyesep1,perspRight+eyesep1,perspBottom,perspTop,perspNear,perspFar);
+    	gl.glTranslated(eyesep, 0, perspFocus);       
+ 
     	
     	
     }
@@ -1780,7 +1804,7 @@ public class Renderer implements GLEventListener {
     private int eye = EYE_ONE;
     
     private void setColorMask(){
-    	if (view3D.hasAnaglyph()){
+    	if (view3D.getProjection()==EuclidianView3D.PROJECTION_ANAGLYPH){
     		if (eye==EYE_LEFT)
     			gl.glColorMask(true,false,false,true);
     		else
@@ -1790,6 +1814,33 @@ public class Renderer implements GLEventListener {
     	
     }
 	
+    private double cavX, cavY;
+    private Coords cavOrthoDirection; //direction "orthogonal" to the screen (i.e. not visible)
+    
+    public void updateCavValues(){
+    	updateOrthoValues();
+    	double angle = Math.toRadians(view3D.getCavAngle());
+    	cavX = -view3D.getCavFactor()*Math.cos(angle);
+    	cavY = -view3D.getCavFactor()*Math.sin(angle);
+    	cavOrthoDirection = new Coords(-cavX, -cavY, 1, 0);
+    }
+    
+    private void viewCav(){
+    	viewOrtho();
+    	
+    	gl.glMultMatrixd(new double[] {
+    			1,0,0,0,
+    			0,1,0,0,
+    			cavX,cavY,1,0, 
+    			0,0,0,1
+    	}, 0);
+    	
+    }
+    
+    public Coords getCavOrthoDirection(){
+    	return cavOrthoDirection;
+    }
+    
     /**
      * Set Up An Ortho View after setting left, right, bottom, front values
      * @param x left
@@ -1798,7 +1849,7 @@ public class Renderer implements GLEventListener {
      * @param h height
      * 
      */
-    private void viewOrtho(int x, int y, int w, int h){
+    private void setView(int x, int y, int w, int h){
     	left=x-w/2;
     	bottom=y-h/2;
     	right=left+w;
@@ -1806,15 +1857,24 @@ public class Renderer implements GLEventListener {
     	
     	//sets depth equals width
     	front = -w/2;
-    	back = w/2;
     	
-    	/*
-    	Application.debug("viewOrtho:"+
-    			"\n left="+left+"\n right="+right+
-    			"\n top="+top+"\n bottom="+bottom+
-    			"\n front="+front+"\n back="+back
-    	);
-    	*/
+    	back = w/2;
+
+
+    	switch (view3D.getProjection()){
+    	case EuclidianView3D.PROJECTION_ORTHOGRAPHIC:
+    		updateOrthoValues();
+    		break;
+    	case EuclidianView3D.PROJECTION_PERSPECTIVE:
+    		updatePerspValues();
+    		break;
+    	case EuclidianView3D.PROJECTION_ANAGLYPH:
+    		updatePerspValues();
+    		updateAnaglyphValues();
+    		break;
+
+    	}
+    	
     	
     	setView();
     }

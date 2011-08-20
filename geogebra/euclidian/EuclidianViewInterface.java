@@ -4,7 +4,11 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+
+import geogebra.kernel.arithmetic.NumberValue;
+
 import geogebra.kernel.kernelND.GeoLineND;
+
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
@@ -25,6 +29,14 @@ import java.util.ArrayList;
 
 public interface EuclidianViewInterface {
 
+	
+	public static final String PI_STRING = "\u03c0";
+	
+	public static final int AXES_TICK_STYLE_MAJOR_MINOR = 0;
+
+	public static final int AXES_TICK_STYLE_MAJOR = 1;
+
+	public static final int AXES_TICK_STYLE_NONE = 2;
 	
 	/** reference to x axis*/
 	public static final int AXIS_X = 0; 
@@ -414,6 +426,16 @@ public interface EuclidianViewInterface {
 	public boolean isMoveable(GeoElement geo);
 
 	public ArrayList<GeoPointND> getStickyPointList();
+
+	
+	public void updateBoundObjects();
+	public void setXminObject(NumberValue minMax);
+	public void setXmaxObject(NumberValue minMax);
+	public void setYminObject(NumberValue minMax);
+	public void setYmaxObject(NumberValue minMax);
+	public void updateBounds();
+	public boolean getShowAxis(int axis);
+
 	
 	/**
 	 * returns true if the axes ratio is 1
@@ -421,4 +443,5 @@ public interface EuclidianViewInterface {
 	 */
 	public boolean isUnitAxesRatio();
 	public int getViewID();
+	public void replaceBoundObject(GeoNumeric num, GeoNumeric geoNumeric);
 }

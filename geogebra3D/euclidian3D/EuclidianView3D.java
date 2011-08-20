@@ -11,6 +11,7 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
+import geogebra.io.layout.Perspective;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
@@ -22,6 +23,7 @@ import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -84,6 +86,36 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private EuclidianController3D euclidianController3D;
 	private Renderer renderer;
 	
+	
+	
+	// distances between grid lines
+	protected boolean automaticGridDistance = true;
+	// since V3.0 this factor is 1, before it was 0.5
+	final public static double DEFAULT_GRID_DIST_FACTOR = 1;
+	public static double automaticGridDistanceFactor = DEFAULT_GRID_DIST_FACTOR;
+
+	double[] gridDistances = { 2, 2, 2 };
+	
+
+	protected boolean[] showAxesNumbers = { true, true, true };
+	protected String[] axesLabels = { "x", "y", "z" };
+	protected String[] axesUnitLabels = { null, null, null };
+
+	protected boolean[] piAxisUnit = { false, false, false };
+	
+	
+	protected double[] axesNumberingDistances = { 2, 2, 2 };
+	protected boolean[] automaticAxesNumberingDistances = { true, true, true };
+
+
+	protected int[] axesTickStyles = { AXES_TICK_STYLE_MAJOR,
+			AXES_TICK_STYLE_MAJOR, AXES_TICK_STYLE_MAJOR };
+	
+
+	private double[] axisCross = {0,0,0};
+	private boolean[] positiveAxes = {false, false, false};
+	private boolean[] drawBorderAxes = {false,false, false};
+	
 	//viewing values
 	private double XZero = 0;
 	private double YZero = -117;
@@ -142,6 +174,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	/** direction of view */
 	private Coords viewDirection = vz.copyVector();
+	private Coords eyePosition = new Coords(4);
 
 	
 	//axis and xOy plane
@@ -321,6 +354,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//point decorations
 		initPointDecorations();
 		
+		//x, y, min, max
+		xminObject = new GeoNumeric(kernel3D.getConstruction());
+		xmaxObject = new GeoNumeric(kernel3D.getConstruction());
+		yminObject = new GeoNumeric(kernel3D.getConstruction());
+		ymaxObject = new GeoNumeric(kernel3D.getConstruction());
 		
 		
 		
@@ -664,24 +702,49 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		mInv.set(m.inverse());
 		
-		
-		//update view direction
-		viewDirection = vz.copyVector();
-		toSceneCoords3D(viewDirection);	
-		viewDirection.normalize();
-		
+		updateEye();
+			
 		//Application.debug("Zero = ("+getXZero()+","+getYZero()+","+getZZero()+")");
 		
 	}
 	
+	private void updateEye(){
+
+		//update view direction
+		if (projection==PROJECTION_CAV)
+			viewDirection=renderer.getCavOrthoDirection().copyVector();
+		else
+			viewDirection = vz.copyVector();
+		toSceneCoords3D(viewDirection);	
+		viewDirection.normalize();
+		
+		//update eye position
+		if (projection==PROJECTION_ORTHOGRAPHIC || projection==PROJECTION_CAV)
+			eyePosition=viewDirection;
+		else{
+			eyePosition=renderer.getPerspEye().copyVector();
+			toSceneCoords3D(eyePosition);	
+		}
+	}
+	
 	/**
 	 * 
-	 * @return direction of the eye
+	 * @return ortho direction of the eye
 	 */
 	public Coords getViewDirection(){
-		return viewDirection;
+		if (projection==PROJECTION_ORTHOGRAPHIC || projection==PROJECTION_CAV)
+			return viewDirection;
+		else
+			return viewDirectionPersp;
 	}
 
+	/**
+	 * 
+	 * @return eye position
+	 */
+	public Coords getEyePosition(){
+		return eyePosition;
+	}
 	
 	/**
 	 * sets the rotation matrix
@@ -737,13 +800,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	/** set the x-coord of the origin 
 	 * @param val */
-	public void setXZero(double val) { XZero=val; }
+	public void setXZero(double val) { 
+		XZero=val; 
+	}
+	
 	/** set the y-coord of the origin 
 	 * @param val */
-	public void setYZero(double val) { YZero=val; }
+	public void setYZero(double val) { 
+		YZero=val; 
+	}
+	
 	/** set the z-coord of the origin 
 	 * @param val */
-	public void setZZero(double val) { ZZero=val; }
+	public void setZZero(double val) { 
+		ZZero=val; 
+	}
 	
 	
 	public double getXRot(){ return a;}
@@ -937,6 +1008,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	/** sets EuclidianController3D mode */
 	public void setMode(int mode){
+		if (mode == euclidianController3D.getMode()) return;
 		euclidianController3D.setMode(mode);
 		getStyleBar().setMode(mode);
 	}
@@ -951,6 +1023,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//////////////////////////////////////
 	// picking
 	
+	private Coords pickPoint = new Coords(0,0,0,1);
+	private Coords viewDirectionPersp = new Coords(4);
 	
 	/** (x,y) 2D screen coords -> 3D physical coords 
 	 * @param x 
@@ -964,13 +1038,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		if (d!=null){
 			
-			Coords ret = new Coords(
-					new double[] {
-							(double) x+renderer.getLeft(),
-							(double) -y+renderer.getTop(),
-							0, 1.0});
+			pickPoint.setX(x+renderer.getLeft());
+			pickPoint.setY(-y+renderer.getTop());
+
+			if (projection==PROJECTION_PERSPECTIVE||projection==PROJECTION_ANAGLYPH){
+				viewDirectionPersp = pickPoint.sub(renderer.getPerspEye());
+				toSceneCoords3D(viewDirectionPersp);
+				viewDirectionPersp.normalize();
+			}
 			
-			return ret;
+			return pickPoint;
 		}else
 			return null;
 		
@@ -984,18 +1061,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param dy 
 	 * @return 3D physical coords  */
 	public Coords getPickFromScenePoint(Coords p, int dx, int dy){
-		/*
-		Coords point = p.copyVector();
-		toScreenCoords3D(point);
-		*/
+		
 		Coords point = getToScreenMatrix().mul(p);
-		Coords ret = new Coords(
-				new double[] {
-						point.get(1)+dx,
-						point.get(2)-dy,
-						0, 1.0});
 
-		return ret;
+		pickPoint.setX(point.get(1)+dx);
+		pickPoint.setY(point.get(2)-dy);
+		
+		if (projection==PROJECTION_PERSPECTIVE||projection==PROJECTION_ANAGLYPH){
+			viewDirectionPersp = pickPoint.sub(renderer.getPerspEye());
+			toSceneCoords3D(viewDirectionPersp);
+			viewDirectionPersp.normalize();
+		}
+
+		return pickPoint;
 		
 	}
 	
@@ -2492,8 +2570,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawCursor(Renderer renderer){
 
 		
-		//Application.debug("hasMouse="+hasMouse+"\n!getEuclidianController().mouseIsOverLabel() "+!getEuclidianController().mouseIsOverLabel() +"\ngetEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())" + getEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())+
-		//"\ncursor="+cursor+"\ngetCursor3DType()="+getCursor3DType());		
+		//Application.debug("hasMouse="+hasMouse+"\n!getEuclidianController().mouseIsOverLabel() "+!getEuclidianController().mouseIsOverLabel() +"\ngetEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())" + getEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())+"\ncursor="+cursor+"\ngetCursor3DType()="+getCursor3DType());		
 		
 		if (hasMouse 
 				&& !getEuclidianController().mouseIsOverLabel() 
@@ -3004,45 +3081,64 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	//////////////////////////////////////////////////////
 
 	public String[] getAxesLabels(){
-		return null;
+		return axesLabels;
 	}
-	public void setAxesLabels(String[] labels){
-		
+	
+	public void setAxesLabels(String[] axesLabels){
+		this.axesLabels = axesLabels;
+		for (int i = 0; i < 3; i++) {
+			if (axesLabels[i] != null && axesLabels[i].length() == 0) {
+				axesLabels[i] = null;
+			}
+		}
 	}
 	
 	public void setAxisLabel(int axis, String axisLabel){
-		
+		if (axisLabel != null && axisLabel.length() == 0) 
+			axesLabels[axis] = null;
+		else
+			axesLabels[axis] = axisLabel;
 	}
 	
 	public String[] getAxesUnitLabels(){
-		return null;
+		return axesUnitLabels;
 	}
-	public void setShowAxesNumbers(boolean[] showNums){
-		
+	public void setShowAxesNumbers(boolean[] showAxesNumbers){
+		this.showAxesNumbers = showAxesNumbers;
 	}
 	
-	public void setAxesUnitLabels(String[] unitLabels){
-		
+	public void setAxesUnitLabels(String[] axesUnitLabels){
+		this.axesUnitLabels = axesUnitLabels;
+
+		// check if pi is an axis unit
+		for (int i = 0; i < 3; i++) {
+			piAxisUnit[i] = axesUnitLabels[i] != null
+					&& axesUnitLabels[i].equals(PI_STRING);
+		}
+		setAxesIntervals(getXscale(), 0);
+		setAxesIntervals(getYscale(), 1);
+		setAxesIntervals(getZscale(), 2);
 	}
 	
 	public boolean[] getShowAxesNumbers(){
-		return null;
+		return showAxesNumbers;
 	}
 	
 	public void setShowAxisNumbers(int axis, boolean showAxisNumbers){
-		
+		showAxesNumbers[axis]=showAxisNumbers;
 	}
 	
-	public void setAxesNumberingDistance(double tickDist, int axis){
-		
+	public void setAxesNumberingDistance(double dist, int axis){
+		axesNumberingDistances[axis] = dist;
+		setAutomaticAxesNumberingDistance(false, axis);
 	}
 	
 	public int[] getAxesTickStyles(){
-		return null;
+		return axesTickStyles;
 	}
 
 	public void setAxisTickStyle(int axis, int tickStyle){
-		
+		axesTickStyles[axis]=tickStyle;
 	}
 
 
@@ -3119,33 +3215,28 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	public void setAxisCross(int axis, double cross) {
-		// TODO Auto-generated method stub
+		axisCross[axis] = cross;
 		
 	}
 
-	public void setPositiveAxis(int axis, boolean isPositive) {
-		// TODO Auto-generated method stub
-		
+	public void setPositiveAxis(int axis, boolean isPositiveAxis) {
+		positiveAxes[axis] = isPositiveAxis;
 	}
 
 	public double[] getAxesCross() {
-		// TODO Auto-generated method stub
-		return null;
+		return axisCross;
 	}
 
 	public void setAxesCross(double[] axisCross) {
-		// TODO Auto-generated method stub
-		
+		this.axisCross = axisCross;
 	}
 
 	public boolean[] getPositiveAxes() {
-		// TODO Auto-generated method stub
-		return null;
+		return positiveAxes;
 	}
 
 	public void setPositiveAxes(boolean[] positiveAxis) {
-		// TODO Auto-generated method stub
-		
+		this.positiveAxes = positiveAxis;
 	}
 
 
@@ -3215,14 +3306,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public boolean isAutomaticGridDistance() {
-		// TODO Auto-generated method stub
-		return false;
+		return automaticGridDistance;
 	}
 
 
 	public double[] getGridDistances() {
-		// TODO Auto-generated method stub
-		return null;
+		return gridDistances;
 	}
 
 
@@ -3274,8 +3363,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 
-	public void setAutomaticGridDistance(boolean b) {
-		// TODO Auto-generated method stub
+	public void setAutomaticGridDistance(boolean flag) {
+		automaticGridDistance = flag;
+		setAxesIntervals(getXscale(), 0);
+		setAxesIntervals(getYscale(), 1);
+		setAxesIntervals(getZscale(), 1);
+		
+	}
+
+
+	private void setAxesIntervals(double yscale, int i) {
+		Application.printStacktrace("TODO");
 		
 	}
 
@@ -3293,9 +3391,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 
-	public void setGridDistances(double[] ticks) {
-		// TODO Auto-generated method stub
-		
+	public void setGridDistances(double[] dist) {
+		gridDistances = dist;
+		setAutomaticGridDistance(false);
 	}
 
 
@@ -3312,26 +3410,23 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public boolean[] getDrawBorderAxes() {
-		// TODO Auto-generated method stub
-		return null;
+		return drawBorderAxes;
 	}
 
 
-	public void setDrawBorderAxes(boolean[] border) {
-		// TODO Auto-generated method stub
+	public void setDrawBorderAxes(boolean[] drawBorderAxes) {
+		this.drawBorderAxes = drawBorderAxes;
 		
 	}
 
 
 	public boolean[] isAutomaticAxesNumberingDistance() {
-		// TODO Auto-generated method stub
-		return null;
+		return automaticAxesNumberingDistances;
 	}
 
 
 	public double[] getAxesNumberingDistances() {
-		// TODO Auto-generated method stub
-		return null;
+		return axesNumberingDistances;
 	}
 
 	
@@ -3386,29 +3481,85 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 
+	NumberValue xminObject, xmaxObject, yminObject, ymaxObject;
+	/**
+	 * @return the xminObject
+	 */
 	public GeoNumeric getXminObject() {
-		// TODO Auto-generated method stub
-		return null;
+		return (GeoNumeric) xminObject;
 	}
 
+	/**
+	 * @param xminObjectNew the xminObject to set
+	 */
+	public void setXminObject(NumberValue xminObjectNew) {
+		if(xminObjectNew == null) return;
+		if(xminObject !=null)
+		((GeoNumeric)xminObject).removeEVSizeListener(this);
+		this.xminObject = xminObjectNew;
+		setSizeListeners();	
+	}
 
+	/**
+	 * @return the xmaxObject
+	 */
 	public GeoNumeric getXmaxObject() {
-		// TODO Auto-generated method stub
-		return null;
+		return (GeoNumeric) xmaxObject;
 	}
 
+	/**
+	 * @param xmaxObjectNew the xmaxObject to set
+	 */
+	public void setXmaxObject(NumberValue xmaxObjectNew) {
+		if(xmaxObjectNew == null) return;
+		if(xmaxObject !=null)
+		((GeoNumeric)xmaxObject).removeEVSizeListener(this);
+		this.xmaxObject = xmaxObjectNew;
+		setSizeListeners();	
+	}
 
+	/**
+	 * @return the yminObject
+	 */
 	public GeoNumeric getYminObject() {
-		// TODO Auto-generated method stub
-		return null;
+		return (GeoNumeric) yminObject;
 	}
 
+	/**
+	 * @param yminObjectNew the yminObject to set
+	 */
+	public void setYminObject(NumberValue yminObjectNew) {
+		if(yminObjectNew == null) return;
+		if(yminObject !=null)
+		((GeoNumeric)yminObject).removeEVSizeListener(this);
+		this.yminObject = yminObjectNew;
+		setSizeListeners();		
+	}
 
+	private void setSizeListeners() {		
+		((GeoNumeric)xminObject).addEVSizeListener(this);
+		((GeoNumeric)yminObject).addEVSizeListener(this);
+		((GeoNumeric)xmaxObject).addEVSizeListener(this);
+		((GeoNumeric)ymaxObject).addEVSizeListener(this);
+	}
+
+	/**
+	 * @return the ymaxObject
+	 */
 	public GeoNumeric getYmaxObject() {
-		// TODO Auto-generated method stub
-		return null;
+		return (GeoNumeric) ymaxObject;
 	}
 
+	/**
+	 * @param ymaxObjectNew the ymaxObject to set
+	 */
+	public void setYmaxObject(NumberValue ymaxObjectNew) {
+		if(ymaxObjectNew == null) return;
+		if(ymaxObject !=null)
+			((GeoNumeric)ymaxObject).removeEVSizeListener(this);
+		this.ymaxObject = ymaxObjectNew;
+		setSizeListeners();
+	}
 
 	public void setResizeXAxisCursor() {
 		// TODO Auto-generated method stub
@@ -3538,52 +3689,87 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/////////////////////////////////////////////////
-	// PROJECTION (ORTHO/PERSPECTIVE)
+	// PROJECTION (ORTHO/PERSPECTIVE/...)
 	/////////////////////////////////////////////////
 	
-	private boolean projectionPerspective = false;
+	
+	final static public int PROJECTION_ORTHOGRAPHIC = 0;
+	final static public int PROJECTION_PERSPECTIVE = 1;
+	final static public int PROJECTION_ANAGLYPH = 2;
+	final static public int PROJECTION_CAV = 3;
+	
+	private int projection = PROJECTION_ORTHOGRAPHIC;
 	
 	
-	public void setProjectionPerspective(boolean flag){
-		projectionPerspective = flag;
+	public void setProjection(int projection){
+		if(this.projection!=projection){
+			this.projection=projection;
+			updateEye();
+			setViewChanged();
+			setWaitForUpdate();
+		}
 	}
 	
-	public boolean hasProjectionPerspective(){
-		return projectionPerspective;
+	public int getProjection(){
+		return projection;
 	}
+	
+	
+	public void setProjectionOrthographic(){
+		renderer.updateOrthoValues();
+		setProjection(PROJECTION_ORTHOGRAPHIC);
+	}
+	
+	
+	private double projectionPerspectiveValue = 1500;
+	
+
+	public void setProjectionPerspective(){
+		updateProjectionPerspectiveValue();
+		setProjection(PROJECTION_PERSPECTIVE);
+	}
+	
 	
 	/**
 	 * set the near distance regarding the angle (in degrees)
 	 * @param angle
 	 */
 	public void setProjectionPerspectiveValue(double angle){
-		if (angle<5)
-			renderer.setNear(0);
-		else
-			renderer.setNear(1/Math.tan(Math.toRadians(angle/2)));
+		projectionPerspectiveValue = angle;
+		if (projection!=PROJECTION_PERSPECTIVE && projection!=PROJECTION_ANAGLYPH)
+			projection=PROJECTION_PERSPECTIVE;
+		updateProjectionPerspectiveValue();
 	}
 	
+	private void updateProjectionPerspectiveValue(){
+		/*
+		if (projectionPerspectiveValue<0)
+			renderer.setNear(0);
+		else
+		*/
+		renderer.setNear(projectionPerspectiveValue);
+	}
 	
 	/**
 	 * 
-	 * @return if anaglyph glasses are used
+	 * @return angle for perspective projection
 	 */
-	public boolean hasAnaglyph(){
-		return anaglyph;
+	public double getProjectionPerspectiveValue(){
+		return projectionPerspectiveValue;
 	}
 	
-	private boolean anaglyph = false;
 	
-	public void setAnaglyph(boolean flag){
-		anaglyph = flag;
-		if (anaglyph)
-			setProjectionPerspective(true);
+	public void setAnaglyph(){
+		updateProjectionPerspectiveValue();
+		renderer.updateAnaglyphValues();
+		setProjection(PROJECTION_ANAGLYPH);
 	}
 	
-	private double eyeSepFactor;
+	private double eyeSepFactor = 0.03;
 	
 	public void setEyeSepFactor(double val){
 		eyeSepFactor = val;
+		renderer.updateAnaglyphValues();
 	}
 	
 	public double getEyeSepFactor(){
@@ -3599,5 +3785,63 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return Application.VIEW_EUCLIDIAN3D;
 	}
 	
+	private double cavAngle = 30;
+	private double cavFactor = 0.5;
+	
+	public void setCav(){
+		renderer.updateCavValues();
+		setProjection(PROJECTION_CAV);
+	}
+	
+	public void setCavAngle(double angle){
+		cavAngle = angle;
+		renderer.updateCavValues();
+	}
+	
+	public double getCavAngle(){
+		return cavAngle;
+	}
+	
+	public void setCavFactor(double factor){
+		cavFactor = factor;
+		renderer.updateCavValues();
+	}
+	
+	public double getCavFactor(){
+		return cavFactor;
+	}
+
+	
+
+	//////////////////////////////////////////////////////
+	//
+	//////////////////////////////////////////////////////
+
+
+	public void updateBoundObjects() {
+		if(isZoomable()){
+			((GeoNumeric)xminObject).setValue(getXmin());
+			((GeoNumeric)xmaxObject).setValue(getXmax());
+			((GeoNumeric)yminObject).setValue(getYmin());
+			((GeoNumeric)ymaxObject).setValue(getYmax());
+		}
+	}
+
+
+
+	public void updateBounds() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public boolean getShowAxis(int axis) {
+		return this.axis[axis].isEuclidianVisible();
+	}
+	
+
+	public void replaceBoundObject(GeoNumeric num, GeoNumeric geoNumeric){
+		
+	}
 	
 }

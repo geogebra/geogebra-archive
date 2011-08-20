@@ -1144,7 +1144,7 @@ public class GuiManager {
 	 */
 	public void showOptionsDialog(int tabIndex)	{
 		if(optionsDialog == null)
-			optionsDialog = new OptionsDialog(app);
+			optionsDialog = newOptionsDialog();
 		else
 			optionsDialog.updateGUI();
 		
@@ -1152,6 +1152,10 @@ public class GuiManager {
 			optionsDialog.showTab(tabIndex);
 		
 		optionsDialog.setVisible(true);
+	}
+	
+	protected OptionsDialog newOptionsDialog(){
+		return new OptionsDialog(app);
 	}
 
 	/**
