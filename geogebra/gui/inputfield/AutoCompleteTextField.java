@@ -560,7 +560,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// search to the left
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
-				isLetterOrDigit( text.charAt(curWordStart))) {
+				// isLetterOrDigitOrOpenBracket so that F1 works
+				isLetterOrDigitOrOpenBracket( text.charAt(curWordStart))) {
 			--curWordStart;     
 		}
 		curWordStart++;
