@@ -366,6 +366,7 @@ office@geogebra.org
 					geogebra/export/**, 
 					geogebra/cas/**,
 					geogebra/kernel/discrete/**,
+			geogebra/sound/**,
 					jasymca/**,		
 					geogebra3D/**,			
 					3D/**,	
@@ -381,6 +382,7 @@ office@geogebra.org
 					edu/uci/**,
 					org/apache/**,
 					org/apache/log4j/**, 
+			com/bric/**,
 				    tutor/**,
 					meta-inf/**"		
 		/>
@@ -433,6 +435,7 @@ office@geogebra.org
 		<jar jarfile="${build.dir}/geogebra_algos.jar"
 			basedir="${src.dir}"
 			includes="geogebra/kernel/discrete/**,
+			geogebra/sound/**,
 					edu/uci/**,
 					org/jfugue/**,
 					org/apache/**"
