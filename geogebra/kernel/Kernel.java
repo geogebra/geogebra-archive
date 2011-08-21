@@ -1580,6 +1580,7 @@ public class Kernel {
 			double x = Double.parseDouble((String) attrs.get("x"));
 			double y = Double.parseDouble((String) attrs.get("y"));
 			double z = Double.parseDouble((String) attrs.get("z"));
+			v.hasUpdatePrevilege = true;
 			v.setCoords(x, y, z);
 			return true;
 		} catch (Exception e) {

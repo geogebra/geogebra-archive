@@ -32,6 +32,7 @@ implements Traceable {
        
     public double x, y, z = Double.NaN;
 	public boolean trace, spreadsheetTrace;		 
+	public boolean hasUpdatePrevilege = false;
     
     public GeoVec3D(Construction c) {
     	super(c);

@@ -153,11 +153,17 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 
 		parentOutput = algo.getIntersectionPoints();
 		
-		if (point!=null && kernel.isContinuous()) {
-			int cpi = algo.getClosestPointIndex(point);
-			if (cpi != index)
-				algo.setIntersectionPoint(index, parentOutput[cpi]);
+		if (point!=null) {
+			if (app.isFileLoading() && point.hasUpdatePrevilege) { //for backward compatability
+				algo.setIntersectionPoint(index, point);
+				point.hasUpdatePrevilege = false;
+			} else if (kernel.isContinuous()) {
+				int cpi = algo.getClosestPointIndex(point);
+				if (cpi != index)
+					algo.setIntersectionPoint(index, parentOutput[cpi]);
+			}
 		}
+		
 		
 		//update index if reference point has been defined
 		if (refPoint!=null)

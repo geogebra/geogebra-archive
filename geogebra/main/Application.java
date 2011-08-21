@@ -2514,6 +2514,8 @@ public class Application implements KeyEventDispatcher {
 
 	private boolean showConstProtNavigationNeedsUpdate=false;
 
+	private boolean isFileLoading;
+
 	final public String getMenu(String key) {
 		
 		if (tooltipFlag) return getMenuTooltip(key);
@@ -3490,7 +3492,9 @@ public class Application implements KeyEventDispatcher {
 				return false;
 			}										     
 	        
-	 	   setWaitCursor();  
+	 	   setWaitCursor();
+	 	   setIsFileLoading(true);
+	 	   
 		   if (!isMacroFile) {
 				// hide navigation bar for construction steps if visible
 				setShowConstructionProtocolNavigation(false);
@@ -3505,9 +3509,16 @@ public class Application implements KeyEventDispatcher {
 				e.printStackTrace();
 			}
 			
+			setIsFileLoading(false);
 			return success;
 	}
 	
+	private void setIsFileLoading(boolean b) {
+		isFileLoading = b;
+	}
+	public boolean isFileLoading() {
+		return isFileLoading;
+	}
 	/**
 	 * Loads construction file
 	 * 
