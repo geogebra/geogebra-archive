@@ -187,10 +187,11 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		// create options button
 		optionsButton = new JToggleButton();
 		optionsButton.setIcon(app.getImageIcon("document-properties.png"));
-		optionsButton.setIcon(app.getImageIcon("inputhelp_left_20x20.png"));
-		optionsButton.setSelectedIcon(app.getImageIcon("inputhelp_right_20x20.png"));
+		optionsButton.setIcon(app.getImageIcon("inputhelp_left_18x18.png"));
+		optionsButton.setSelectedIcon(app.getImageIcon("inputhelp_right_18x18.png"));
 		optionsButton.setBorderPainted(false);
 		optionsButton.setFocusPainted(false);
+		optionsButton.setContentAreaFilled(false);
 		optionsButton.addActionListener(this);
 
 
