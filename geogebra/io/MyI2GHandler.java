@@ -440,12 +440,12 @@ debug("endElements", eName);
 						v = (GeoVec3D) geo;
 					}
 					if (coords.length == 3) {
-						if (!kernel.isReal(coords[2])) {
+						if (!isReal(coords[2])) {
 							coords[0] = coords[0].divide(coords[2]);
 							coords[1] = coords[1].divide(coords[2]);
 							coords[2] = coords[2].divide(coords[2]);
 						}
-			            if (kernel.isReal(coords[0]) && kernel.isReal(coords[1]) && kernel.isReal(coords[2])) {
+			            if (isReal(coords[0]) && isReal(coords[1]) && isReal(coords[2])) {
 							v.setCoords(coords[0].getReal(), coords[1].getReal(), coords[2].getReal());
 			            } else {
 			            	Application.debug("could not import complex coordinates");
@@ -492,6 +492,12 @@ debug("endElements", eName);
     			break;
     	}
     }
+    
+	final public boolean isReal(Complex c) {
+		return Kernel.isZero(c.getImaginary());
+	}
+
+
     
     //====================================
     // <constraints>    

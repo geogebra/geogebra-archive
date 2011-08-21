@@ -95,9 +95,6 @@ import java.util.Locale;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import org.apache.commons.math.complex.Complex;
-
-
 public class Kernel {
 
 	/** standard precision */ 
@@ -7880,10 +7877,6 @@ public class Kernel {
 			return x;
 	}
 	
-	final public boolean isReal(Complex c) {
-		return isZero(c.getImaginary());
-	}
-
 	/** is abs(x) < epsilon ? */
 	final public static boolean isZero(double x) {
 		return -EPSILON < x && x < EPSILON;
