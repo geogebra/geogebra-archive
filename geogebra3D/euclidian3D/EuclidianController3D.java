@@ -2167,8 +2167,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				//remove it if it is "transparent"
 				if (!found) {
 					GeoElement geo = (GeoElement) hits.get(i);
-					if (geo.isPath() && geo.getLineThickness() < 0.5f ||
-							geo.isRegion() && geo.getAlphaValue() < 0.1f)
+					//if (geo.isPath() && geo.getLineThickness() < 0.5f ||   //no need for "transparent curve"
+						if(	geo.isRegion() && geo.getAlphaValue() < 0.5f)
 						hits.remove(i);
 					else
 						++i;
