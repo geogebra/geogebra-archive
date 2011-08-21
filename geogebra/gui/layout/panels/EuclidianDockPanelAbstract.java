@@ -25,8 +25,6 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 	
 	
 	private boolean hasEuclidianFocus;
-	
-	private JLabel euclidianFocus;
 
 	/**
 	 * default constructor
@@ -61,7 +59,6 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 	 */
 	public final void setEuclidianFocus(boolean hasFocus) {
 		hasEuclidianFocus = hasFocus;
-		euclidianFocus.setVisible(hasEuclidianFocus);
 	}
 	
 	/**
@@ -74,12 +71,6 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 		
 		//add title label
 		panel.add(super.createFocusPanel(), BorderLayout.WEST);
-		
-		//euclidian focus
-		euclidianFocus = new JLabel(" \u2219"); // filled dot
-		euclidianFocus.setForeground(Color.darkGray);
-		euclidianFocus.setVisible(false);
-		panel.add(euclidianFocus, BorderLayout.EAST);
 		
 		return panel;
 	}
