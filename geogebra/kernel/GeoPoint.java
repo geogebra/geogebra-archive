@@ -1719,8 +1719,9 @@ GeoPointND, Animatable, Transformable  {
 					GeoElement predGeo = (GeoElement) it.next();
 					if (predGeo.isIndependent())
 						lastIndepGeo = predGeo;
-					else
-						lastIndepGeo.updateCascade();
+					else {
+						if (lastIndepGeo != null) lastIndepGeo.updateCascade();
+					}
 					predGeo.recoverFromClone();
 				}
 				if (!this.isFixed())
