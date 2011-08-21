@@ -74,6 +74,20 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 			}
 		});
 		btnOptions.addPopupMenuItem(menuItem);
+		
+		
+		menuItem = new JCheckBoxMenuItem(app.getPlain("Lines"));
+		menuItem.setSelected(probCalc.isCumulative());
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				probCalc.setBarGraph(!probCalc.isBarGraph());
+				probCalc.updateDistribution();
+				probCalc.updatePlotSettings();
+			}
+		});
+		btnOptions.addPopupMenuItem(menuItem);
+		
+		
 
 
 		menuItem = new JCheckBoxMenuItem(app.getPlain("ShowGrid"));

@@ -393,7 +393,14 @@ implements EuclidianViewCE, AlgoDrawInformation{
 	 * @param list2
 	 * @param width
 	 */
+	
 	public AlgoFunctionAreaSums(Construction cons, String label,  
+			   GeoList list1, GeoList list2, NumberValue width) {
+		this(cons, list1, list2, width);
+		sum.setLabel(label);
+	}
+	
+	public AlgoFunctionAreaSums(Construction cons,  
 			   GeoList list1, GeoList list2, NumberValue width) {
 
 		super(cons);
@@ -409,7 +416,6 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		sum = new GeoNumeric(cons); // output
 		setInputOutput(); // for AlgoElement	
 		compute();
-		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
 	/**
@@ -640,6 +646,7 @@ implements EuclidianViewCE, AlgoDrawInformation{
 		
 	}
 
+	
 	public boolean isRight(){
 		return histogramRight;
 	}

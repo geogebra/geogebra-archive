@@ -16,7 +16,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  * Bar chart algorithm. See AlgoFunctionAreaSums for implementation.
- * @author George Sturr
+ * @author M. Borcherds
  *
  */
 public class AlgoBarChart extends AlgoFunctionAreaSums {
@@ -97,7 +97,11 @@ public class AlgoBarChart extends AlgoFunctionAreaSums {
 			GeoList discreteProbList) {
 		super(cons, discreteValueList, discreteProbList);
 	}
-
+	public AlgoBarChart(Construction cons, GeoList discreteValueList,
+			GeoList discreteProbList, NumberValue width) {
+		super(cons, discreteValueList, discreteProbList, width);
+	}
+	
 	public String getClassName() {
 		return "AlgoBarChart";
 	}

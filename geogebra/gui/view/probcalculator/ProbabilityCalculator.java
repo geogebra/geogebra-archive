@@ -7,15 +7,19 @@ import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoDependentNumber;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoLineBisector;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.AlgoPointOnPath;
 import geogebra.kernel.AlgoSequence;
 import geogebra.kernel.AlgoTake;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -33,6 +37,7 @@ import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.kernel.statistics.AlgoPoisson;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
+import geogebra.main.settings.EuclidianSettings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -97,6 +102,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	private final static int maxParameterCount = 3; // maximum number of parameters allowed for a distribution
 	private double[] parameters;
 	private boolean isCumulative = false;
+	private boolean isBarGraph = false;
 
 	// maps for the distribution ComboBox 
 	private HashMap<Integer, String> distributionMap;
@@ -131,10 +137,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	private JPanel controlPanel, distPanel, probPanel, tablePanel;
 	private JSplitPane mainSplitPane, plotSplitPane;;	
 	private int defaultDividerSize;  
-
 	private PlotPanelEuclidianView plotPanel;
 	private PlotSettings plotSettings;
-
 	private ProbabilityTable table;
 
 
@@ -173,6 +177,10 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	private static final float opacityDiscreteInterval = 0.6f; // bar chart interval
 	private static final int thicknessCurve = 4;
 	private static final int thicknessBarChart = 3;
+
+
+	private boolean removeFromConstruction = true;
+
 
 
 
@@ -260,6 +268,15 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	public void setCumulative(boolean isCumulative) {
 		this.isCumulative = isCumulative;
 	}
+
+	public boolean isBarGraph() {
+		return isBarGraph;
+	}
+	public void setBarGraph(boolean isBarGraph) {
+		this.isBarGraph = isBarGraph;
+	}
+
+
 	public int getPrintDecimals() {
 		return printDecimals;
 	}
@@ -545,6 +562,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		lowPoint.setObjColor(COLOR_POINT);
 		lowPoint.setPointSize(4);
 		lowPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
+		lowPoint.setLayer(5);
 		plotGeoList.add(lowPoint);
 
 
@@ -558,6 +576,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		highPoint.setObjColor(COLOR_POINT);
 		highPoint.setPointSize(4);
 		highPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
+		highPoint.setLayer(5);
 		plotGeoList.add(highPoint);
 
 		pointList = new ArrayList<GeoElement>();
@@ -578,14 +597,23 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			createDiscreteLists();
 			//expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
 
-			AlgoBarChart algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList);
+
+			AlgoBarChart algoBarChart;
+			if(isBarGraph){
+				NumberValue width = new GeoNumeric(cons, 0);
+				algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList, width);
+			}else{
+				algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList);
+			}
 			cons.removeFromConstructionList(algoBarChart);
+
 
 			//discreteGraph = createGeoFromString(expr);
 			discreteGraph = algoBarChart.getGeoElements()[0];
 			discreteGraph.setObjColor(COLOR_PDF);
 			discreteGraph.setAlphaValue(opacityDiscrete);
 			discreteGraph.setLineThickness(thicknessBarChart);
+			discreteGraph.setLayer(1);
 			discreteGraph.setFixed(true);
 			discreteGraph.setEuclidianVisible(true);
 			plotGeoList.add(discreteGraph);
@@ -636,19 +664,45 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			//expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
 			//discreteIntervalGraph  = createGeoFromString(expr);
 
-			AlgoBarChart barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList);
+
+			AlgoBarChart barChart;
+			if(isBarGraph){
+				NumberValue width2 = new GeoNumeric(cons, 0);
+				barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList, width2);
+			}else{
+				barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList);
+			}
 			cons.removeFromConstructionList(barChart);
+
 
 			discreteIntervalGraph = barChart.getGeoElements()[0];
 
 			//System.out.println(text);
-			discreteIntervalGraph.setObjColor(COLOR_PDF_FILL);
-			discreteIntervalGraph.setAlphaValue(opacityDiscreteInterval);
-			discreteIntervalGraph.setLineThickness(thicknessBarChart);
+			if(isBarGraph){
+				discreteIntervalGraph.setObjColor(this.COLOR_PDF_FILL);
+				discreteIntervalGraph.setLineThickness(thicknessBarChart+2);
+			}
+			else{
+				discreteIntervalGraph.setObjColor(this.COLOR_PDF_FILL);
+				discreteIntervalGraph.setAlphaValue(opacityDiscreteInterval);
+				discreteIntervalGraph.setLineThickness(thicknessBarChart);
+			}
+
 			discreteIntervalGraph.setEuclidianVisible(true);
+			discreteIntervalGraph.setLayer(discreteGraph.getLayer()+1);
+			discreteIntervalGraph.setFixed(true);
 			discreteIntervalGraph.updateCascade();
 			plotGeoList.add(discreteIntervalGraph);
-
+			
+			
+			GeoLine axis = new GeoLine(cons);		
+			axis.setCoords(0, 1, 0);
+			axis.setLayer(4);
+			axis.setObjColor(app.getEuclidianView().getAxesColor());
+			axis.setLineThickness(discreteIntervalGraph.lineThickness);
+			axis.setFixed(true);
+			axis.updateCascade();
+			plotGeoList.add(axis);
 
 		}else{ 
 
@@ -1519,7 +1573,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			GeoElement n2Geo = n2.getGeoElements()[0];
 
 			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)n2Geo, null);
-			cons.removeFromAlgorithmList(algoSeq);
+			removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
 			algo = new AlgoListElement(cons, discreteValueList, k2);
@@ -1562,7 +1616,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			k2 = new GeoNumeric(cons);
 
 			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
-			cons.removeFromAlgorithmList(algoSeq);
+			removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
 			algo = new AlgoListElement(cons, discreteValueList, k2);
@@ -1621,7 +1675,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 			algoSeq = new AlgoSequence(cons, k, k, (NumberValue)lowGeo, (NumberValue)highGeo, null);
-			cons.removeFromAlgorithmList(algoSeq);
+			removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
 			algo = new AlgoListElement(cons, discreteValueList, k2);
@@ -1807,6 +1861,23 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 
+	public boolean doRemoveFromConstruction() {
+		return removeFromConstruction;
+	}
+	public void setRemoveFromConstruction(boolean removeFromConstruction) {
+		this.removeFromConstruction = removeFromConstruction;
+	}
+
+	private void removeFromConstructionList(ConstructionElement ce){
+		if(removeFromConstruction)
+			cons.removeFromConstructionList(ce);
+	}
+
+	private void removeFromAlgorithmList(AlgoElement algo){
+		if(removeFromConstruction)
+			cons.removeFromAlgorithmList(algo);
+	}
+
 
 	//============================================================
 	//           Export
@@ -1821,7 +1892,10 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				exportGeosToEV(2);	
+				if(app.getShiftDown())
+					exportGeosToEV(Application.VIEW_EUCLIDIAN2);
+				else
+					exportGeosToEV(Application.VIEW_EUCLIDIAN);
 			}
 		};
 
@@ -1831,7 +1905,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 
-	public void exportGeosToEV(int evNo){
+	public void exportGeosToEV(int viewID){
 
 		app.setWaitCursor();
 		ArrayList<GeoElement> newGeoList = new ArrayList<GeoElement>();
@@ -1839,6 +1913,58 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 		try {
 			app.storeUndoInfo();
+
+
+			/*
+
+			// update the plot to get a new set of geos that exist in the construction
+			removeFromConstruction = false;
+			this.updateDistribution();
+
+			// set the EV location and auxiliary = false for all of the new geos
+			for(GeoElement geo: plotGeoList){
+				geo.setLabel(null);
+				geo.setAuxiliaryObject(false);
+				if(viewID == Application.VIEW_EUCLIDIAN){
+					geo.addView(Application.VIEW_EUCLIDIAN);
+					geo.removeView(Application.VIEW_EUCLIDIAN2);
+					geo.update();
+				}
+				if(viewID == Application.VIEW_EUCLIDIAN2){
+					geo.addView(Application.VIEW_EUCLIDIAN2);
+					geo.removeView(Application.VIEW_EUCLIDIAN);
+					geo.update();
+				}
+
+			}
+
+
+			// set the window dimensions of the target EV to match the plotPanel dimensions
+			if(viewID == Application.VIEW_EUCLIDIAN)
+				app.getEuclidianView().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
+						plotSettings.yMin, plotSettings.yMax);
+			else if(viewID == Application.VIEW_EUCLIDIAN2)
+				app.getEuclidianView2().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
+						plotSettings.yMin, plotSettings.yMax);
+
+
+			// null our display geos and clear the plotGeoList to unlink the new geos
+			lowPoint = null;
+			highPoint = null;
+			densityCurve = null; integral = null;
+			discreteGraph = null; discreteIntervalGraph = null;
+			discreteValueList = null; discreteProbList = null; intervalProbList=null; intervalValueList=null;
+
+			pointList.clear();
+			plotGeoList.clear();
+
+
+			//update the plot in removeFromConstruction mode to get a new set of geos for our plot
+			removeFromConstruction = true;
+			this.updateDistribution();
+
+			 */
+
 
 			//create low point
 			expr = "Point[" + app.getPlain("xAxis") + "]";
@@ -1869,7 +1995,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				GeoElement discreteValueListCopy = discreteValueList.copy();
 				newGeoList.add(discreteValueList);
 
-				expr = "BarChart[" + discreteValueListCopy.getLabel() + "," + discreteProbListCopy.getLabel() + "]";
+				expr = "BarChart[" + discreteValueListCopy.getLabel() + "," + discreteProbListCopy.getLabel() + ",0]";
 				GeoElement discreteGraphCopy = createGeoFromString(expr,null,false);
 				discreteGraphCopy.setLabel(null);
 				discreteGraphCopy.setVisualStyle(discreteGraph);
@@ -1890,7 +2016,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				GeoElement intervalValueList  = (GeoList) createGeoFromString(expr, null, false);
 				newGeoList.add(intervalValueList);
 
-				expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
+				expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + ",0]";
 				GeoElement discreteIntervalGraphCopy  = createGeoFromString(expr, null, false);
 				discreteIntervalGraphCopy.setLabel(null);
 				discreteIntervalGraphCopy.setVisualStyle(discreteIntervalGraph);
@@ -1921,7 +2047,12 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			// set the EV location and auxiliary = false for all of the new geos
 			for(GeoElement geo: newGeoList){
 				geo.setAuxiliaryObject(false);
-				if(evNo == 2){
+				if(viewID == Application.VIEW_EUCLIDIAN){
+					geo.addView(Application.VIEW_EUCLIDIAN);
+					geo.removeView(Application.VIEW_EUCLIDIAN2);
+					geo.update();
+				}
+				else if(viewID == Application.VIEW_EUCLIDIAN2){
 					geo.addView(Application.VIEW_EUCLIDIAN2);
 					geo.removeView(Application.VIEW_EUCLIDIAN);
 					geo.update();
@@ -1929,13 +2060,14 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			}
 
 			// set the window dimensions of the target EV to match the prob calc dimensions
-			if(evNo == 1)
+			if(viewID == Application.VIEW_EUCLIDIAN){
 				app.getEuclidianView().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
 						plotSettings.yMin, plotSettings.yMax);
-			else
+			}
+			else if(viewID == Application.VIEW_EUCLIDIAN2){
 				app.getEuclidianView2().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
 						plotSettings.yMin, plotSettings.yMax);
-
+			}
 
 			// remove the new geos from our temporary list
 			newGeoList.clear();
