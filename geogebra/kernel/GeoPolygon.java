@@ -1006,7 +1006,10 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		for (int i=0;i<numPoints;i++){
 			x2=getPointX(i)-x0;
 			y2=getPointY(i)-y0;
-			ret = ret ^ intersectOx(x1, y1, x2, y2);
+			int inter = intersectOx(x1, y1, x2, y2);
+			if (inter==2)
+				return true; //point on an edge
+			ret = ret ^ (inter==1);
 			x1=x2;
 			y1=y2;
 		}
@@ -1159,24 +1162,30 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	
 	
 	/** returns true if the segment ((x1,y1),(x2,y2)) intersects [Ox) */
-	private boolean intersectOx(double x1, double y1, double x2, double y2){
-		if (y1*y2>0) //segment totally above or under
-			return false;
+	private int intersectOx(double x1, double y1, double x2, double y2){
+		
+		double eps = Kernel.MAX_PRECISION;
+		
+		if (y1*y2>eps) //segment totally above or under
+			return -1;
 		else{ 
 			if (y1>y2){ //first point under (Ox)
 				double y=y1; y1=y2; y2=y;
 				double x=x1; x1=x2; x2=x;
 			}
-			if (y2==0) //half-plane
-				return false;
-			else if ((x1<0) && (x2<0)) //segment totally on the left
-				return false;
-			else if ((x1>0) && (x2>0)) //segment totally on the right
-				return true;
-			else if (x2*y1<=x1*y2) //angle >= 0�
-				return true;
+			/*
+			if (y2<-eps) //half-plane
+				return -1;				
+			else*/ if ((x1+eps<0) && (x2+eps<0)) //segment totally on the left
+				return -1;
+			else if ((x1>eps) && (x2>eps)) //segment totally on the right
+				return 1;
+			else if (x1*y2>x2*y1+eps) //angle > 0
+				return 1;
+			else if (x1*y2+eps<x2*y1) //angle < 0
+				return -1;
 			else
-				return false;
+				return 2; //angle ~ 0
 		}
 	}
 	
