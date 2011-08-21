@@ -11,7 +11,6 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
-import geogebra.io.layout.Perspective;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
@@ -32,6 +31,7 @@ import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 import geogebra3D.euclidian3D.opengl.PlotterCursor;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoAxis3D;
@@ -3113,7 +3113,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		// check if pi is an axis unit
 		for (int i = 0; i < 3; i++) {
 			piAxisUnit[i] = axesUnitLabels[i] != null
-					&& axesUnitLabels[i].equals(PI_STRING);
+					&& axesUnitLabels[i].equals(Unicode.PI_STRING);
 		}
 		setAxesIntervals(getXscale(), 0);
 		setAxesIntervals(getYscale(), 1);

@@ -28,9 +28,6 @@ import java.util.ArrayList;
  */
 
 public interface EuclidianViewInterface {
-
-	
-	public static final String PI_STRING = "\u03c0";
 	
 	public static final int AXES_TICK_STYLE_MAJOR_MINOR = 0;
 
