@@ -2168,8 +2168,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				if (!found) {
 					GeoElement geo = (GeoElement) hits.get(i);
 					if (geo.isPath() && geo.getLineThickness() < 0.5f ||
-							geo.isRegion() && geo.getLineThickness() < 0.5f && geo.getAlphaValue() < 0.1f)
-						hits.remove(0);
+							geo.isRegion() && geo.getAlphaValue() < 0.1f)
+						hits.remove(i);
 					else
 						++i;
 				}
