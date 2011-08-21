@@ -735,11 +735,6 @@ public class MyXMLio {
 		// save construction
 		cons.getConstructionXML(sb);
 		
-		// save cas session
-		if (app.useFullGui() && app.getGuiManager().hasCasView()) {
-			app.getGuiManager().getCasView().getSessionXML(sb);
-		}
-		
 		sb.append("</geogebra>");
 		return sb.toString();
 	}
@@ -834,10 +829,10 @@ public class MyXMLio {
 		// save construction
 		c.getConstructionXML(sb);
 
-		// save cas session
-		if (app.useFullGui() && app.getGuiManager().hasCasView()) {
-			app.getGuiManager().getCasView().getSessionXML(sb);
-		}
+//		// save cas session
+//		if (app.useFullGui() && app.getGuiManager().hasCasView()) {
+//			app.getGuiManager().getCasView().getSessionXML(sb);
+//		}
 		
 		// save spreadsheetView settings
 	//	if (app.useFullGui() && app.getGuiManager().hasSpreadsheetView())

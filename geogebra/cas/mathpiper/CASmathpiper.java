@@ -156,7 +156,7 @@ public class CASmathpiper extends CASgeneric {
 		               timer.cancel();
 		           }
 
-		       }, GeoGebraCAS.getTimeout() * 1000);
+		       }, getTimeout() * 1000);
 		       
 		       response = mathpiper.evaluate(exp);
 		       timer.cancel();

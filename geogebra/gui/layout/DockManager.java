@@ -695,12 +695,15 @@ public class DockManager implements AWTEventListener, SetLabels {
 	public void eventDispatched(AWTEvent event) {
 		// we also get notified about other mouse events, but we want to ignore them
 		if(event.getID() != MouseEvent.MOUSE_CLICKED) {
+//			System.out.println(event);
 			return;
 		}
 		
 		// determine ancestor element of the event source which is of type
 		// dock panel
-		DockPanel dp = (DockPanel)SwingUtilities.getAncestorOfClass(DockPanel.class, (Component)event.getSource());
+		Component source = (Component)event.getSource();
+//		System.out.println("    source: " + source);
+		DockPanel dp = (DockPanel)SwingUtilities.getAncestorOfClass(DockPanel.class, source);
 		
 		// ignore this if we didn't hit a dock panel at all or if we hit the euclidian
 		// view, they are always handled by their own mouse event (see doc comment above)

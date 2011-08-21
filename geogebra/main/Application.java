@@ -3798,10 +3798,10 @@ public class Application implements KeyEventDispatcher {
 		else
 			sb.append(600);
 		
-		sb.append("\" />");
+		sb.append("\" />\n");
 		
 		getGuiManager().getLayout().getXml(sb, asPreference);
-
+		
 		// labeling style
 		// default changed so we need to always save this now
 		//if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {

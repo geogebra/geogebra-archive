@@ -71,7 +71,7 @@ public class OptionsCAS  extends JPanel implements ActionListener, SetLabels {
 	 * @remark Do not call setLabels() here
 	 */
 	public void updateGUI() {
-		int timeout = GeoGebraCAS.getTimeout();
+		int timeout = app.getKernel().getGeoGebraCAS().getTimeout();
 		cbTimeout.setSelectedItem(timeout);
 	}
 
@@ -81,7 +81,7 @@ public class OptionsCAS  extends JPanel implements ActionListener, SetLabels {
 	public void actionPerformed(ActionEvent e) {
 		// change timeout
 		if(e.getSource() == cbTimeout) {
-			GeoGebraCAS.setTimeout((Integer)cbTimeout.getSelectedItem());
+			app.getKernel().getGeoGebraCAS().setTimeout((Integer)cbTimeout.getSelectedItem());
 		}
 	}
 

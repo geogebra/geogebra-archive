@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
 import geogebra.cas.CASgeneric;
+import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
@@ -30,6 +31,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
@@ -414,6 +416,7 @@ public abstract class GeoElement
 	public int layer=0; 	// Michael Borcherds 2008-02-23
 	private NumberValue animationIncrement;
 	private NumberValue animationSpeedObj;
+	private GeoCasCell correspondingCasCell; // used by GeoCasCell
 	private boolean animating = false;
 
 	public final static double MAX_ANIMATION_SPEED = 100;
@@ -461,8 +464,11 @@ public abstract class GeoElement
 
 	// spreadsheet specific properties
 	private Point spreadsheetCoords, oldSpreadsheetCoords;
-	private int cellRangeUsers = 0; // number of AlgoCellRange using this cell: don't allow renaming when greater 0
-
+	// number of AlgoCellRange using this cell: don't allow renaming when greater 0
+	private int cellRangeUsers = 0; 
+	// number of AlgoDependentCasCell using this cell: send updates to CAS
+	private int casAlgoUsers = 0; 
+	
 	// condition to show object
 	protected GeoBoolean condShowObject;
 
@@ -523,7 +529,7 @@ public abstract class GeoElement
 	protected AlgoElement algoParent = null;
 	/** draw algorithm */
 	protected AlgoElement algoDraw = null;
-	private ArrayList<ConstructionElement> algorithmList; 	// directly dependent algos
+	private ArrayList<AlgoElement> algorithmList; 	// directly dependent algos
 
 	/**	set of all dependent algos sorted in topological order */
 	protected AlgorithmSet algoUpdateSet;
@@ -1657,9 +1663,9 @@ public abstract class GeoElement
 		return algoDraw;
 	}
 
-	final public ArrayList<ConstructionElement> getAlgorithmList() {
+	final public ArrayList<AlgoElement> getAlgorithmList() {
 		if (algorithmList == null)
-			algorithmList = new ArrayList<ConstructionElement>();
+			algorithmList = new ArrayList<AlgoElement>();
 		return algorithmList;
 	}
 
@@ -2037,6 +2043,41 @@ public abstract class GeoElement
     	// don't allow renaming when this object is used in
 		// cell ranges, see AlgoCellRange
     	return cellRangeUsers == 0;
+    }
+    
+    /**
+     * Tells this GeoElement that one more CAS algorithm
+     * is using it as input. 
+     */
+    public void addCasAlgoUser() {
+    	++casAlgoUsers;
+    }
+
+    /**
+     * Tells this GeoElement that one CAS algorithm that had been
+     * using it as input has been removed. If there are no more
+     * using algorithms we call unbindVariableInCAS().
+     */
+    public void removeCasAlgoUser() {  
+    	if (casAlgoUsers > 1) {
+    		--casAlgoUsers;
+    	} else {
+    		unbindVariableInCAS();
+    		casAlgoUsers = 0;
+    	}    	
+    }
+    
+    /**
+     * Removes label from underlying CAS.
+     */
+    public void unbindVariableInCAS() {
+    	if (isSendingUpdatesToCAS() && isLabelSet()) {
+    		kernel.unbindVariableInGeoGebraCAS(label);
+    	}
+    }
+
+    public boolean isSendingUpdatesToCAS() {
+    	return casAlgoUsers > 0;
     }
 
 	/**
@@ -2829,6 +2870,8 @@ public abstract class GeoElement
 			algoParent.remove(this);
 		} else {
 			doRemove();
+			if (correspondingCasCell != null)
+				correspondingCasCell.doRemove();
 		}
 	}
 
@@ -2878,6 +2921,7 @@ public abstract class GeoElement
 
 		labelSet = false;
 		labelWanted = false;
+		correspondingCasCell = null;
 		
 		if (latexCache != null) {
 			// remove old key from cache
@@ -2978,6 +3022,46 @@ public abstract class GeoElement
 		algorithmList.remove(algorithm);
 		removeFromUpdateSets(algorithm);
 	}
+	
+//	/**
+//	 * Removes all algorithms from algoUpdateSet that cannot be reached
+//	 * through the algorithmList - input - output graph. This method should
+//	 * be called when an algorithm removes its input but keeps its output,
+//	 * see AlgoDependentCasCell.removeInputButKeepOutput().
+//	 */
+//	final public void removeUnreachableAlgorithmsFromUpdateSet() {
+//		if (algorithmList == null || algorithmList.isEmpty()) return;
+//		
+//		// create set of reachable algorithms
+//		HashSet<AlgoElement> reachableAlgos = new HashSet<AlgoElement>();
+//		addReachableAlgorithms(algorithmList, reachableAlgos);
+//		
+//		// remove algorithms from updateSet that are not reachable
+//		Iterator<AlgoElement> it = algoUpdateSet.getIterator();
+//		while (it.hasNext()) {
+//			AlgoElement updateAlgo = it.next();
+//			if (!reachableAlgos.contains(updateAlgo)) {
+//				it.remove();
+//			}
+//		}		
+//	}
+//	
+//	/**
+//	 * Adds all algorithms that can be reached through the output graph from startList to
+//	 * reachableAlgorithmList
+//	 * @param startList 
+//	 * @param reachableAlgorithmList
+//	 */
+//	private void addReachableAlgorithms(ArrayList<AlgoElement> startList, HashSet<AlgoElement> reachableAlgorithmList) {
+//		if (startList != null && !startList.isEmpty()) {
+//			reachableAlgorithmList.addAll(startList);		
+//			for (AlgoElement algo : startList) {
+//				for (GeoElement output : algo.getOutput()) {
+//					addReachableAlgorithms(output.algorithmList, reachableAlgorithmList);
+//				}
+//			}
+//		}
+//	}
 
 	protected AlgorithmSet getAlgoUpdateSet() {
 		if (algoUpdateSet == null)
@@ -2990,7 +3074,7 @@ public abstract class GeoElement
 	/**
 	 * add algorithm to update sets up the construction graph
 	 */
-	private void addToUpdateSets(AlgoElement algorithm) {
+	public void addToUpdateSets(AlgoElement algorithm) {
 		boolean added = getAlgoUpdateSet().add(algorithm);
 
 		if (added) {
@@ -3008,7 +3092,7 @@ public abstract class GeoElement
 	 * remove algorithm from update sets  up the construction graph
 	 * @param algorithm 
 	 */
-	final public void removeFromUpdateSets(AlgoElement algorithm) {
+	public void removeFromUpdateSets(AlgoElement algorithm) {
 		boolean removed = algoUpdateSet != null && algoUpdateSet.remove(algorithm);
 
 		if (removed) {
@@ -3037,17 +3121,52 @@ public abstract class GeoElement
 				setLabel(label);
 		}
 
+		if (correspondingCasCell != null) {
+			correspondingCasCell.setInputFromTwinGeo();
+		}
+		
 		//G.Sturr 2010-6-26
 		if(getSpreadsheetTrace() && app.useFullGui()){
 			app.getGuiManager().traceToSpreadsheet(this);
 
 		}
-		//END G.Sturr
-
+		//END G.Sturr		
+		
 		// texts need updates
-		algebraStringsNeedUpdate();
+		algebraStringsNeedUpdate();	
+		
+		// send update to underlying CAS if necessary
+		sendValueToCAS();
 
 		kernel.notifyUpdate(this);
+	}
+	
+	/**
+	 * Sends geo's value in the current CAS, e.g. a := 5;
+	 * @param geo
+	 * @return whether an assignment was evaluated
+	 */
+	final public boolean sendValueToCAS() {
+		if (!isSendingUpdatesToCAS() || 
+			!isCasEvaluableObject()  ||
+			!isLabelSet()) 
+		{ 
+			return false;
+		}
+		
+		try {
+			GeoGebraCAS cas = kernel.getGeoGebraCAS();
+			String geoStr = toCasAssignment(cas.getCurrentCASstringType());
+			if (geoStr != null) {
+				// TODO: remove
+				System.out.println("sendValueToCAS: " + geoStr);
+				cas.evaluateRaw(geoStr);
+				return true;
+			}
+		} catch (Throwable e) {
+			System.err.println("GeoElement.sendValueToCAS: " + this + "\n\t" + e.getMessage());
+		}
+		return false;		
 	}
 
 	private void algebraStringsNeedUpdate() {
@@ -3062,13 +3181,46 @@ public abstract class GeoElement
 	 * Updates this object and all dependent ones. Note: no repainting is done afterwards!
 	 * 	 synchronized for animation
 	 */
-	final public void updateCascade() {
+	 public void updateCascade() {
 		update();
 
-		// update all algorithms in the algorithm set of this GeoElement
-		if (algoUpdateSet != null) {
+		if (correspondingCasCell != null && isIndependent()) {
+			updateAlgoUpdateSetWith(correspondingCasCell);
+		}				
+		else if (algoUpdateSet != null) {
+			// update all algorithms in the algorithm set of this GeoElement
 			algoUpdateSet.updateAll();
 		}
+	}
+	
+	/**
+	 * Updates algoUpdateSet and secondGeo.algoUpdateSet together efficiently.
+	 */
+	protected void updateAlgoUpdateSetWith(GeoElement secondGeo) {	
+		if (algoUpdateSet == null) {
+			if (secondGeo.algoUpdateSet == null) {
+				// both null
+				return;
+			} else {
+				// update second only
+				secondGeo.algoUpdateSet.updateAll();
+			}			
+		} else {
+			if (secondGeo.algoUpdateSet == null) {
+				// update first only
+				algoUpdateSet.updateAll();
+			} 
+			else {
+				// join both algoUpdateSets and update all algorithms	
+				TreeSet<AlgoElement> tempAlgoSet = getTempSet();
+				tempAlgoSet.clear();
+				algoUpdateSet.addAllToCollection(tempAlgoSet);
+				secondGeo.algoUpdateSet.addAllToCollection(tempAlgoSet);
+				for (AlgoElement algo : tempAlgoSet) {
+					algo.update();
+				}		
+			}
+		}			
 	}
 
 	/**
@@ -3256,7 +3408,6 @@ public abstract class GeoElement
 
 		return false;
 	}
-
 
 	/**
 	 * Returns whether this object is parent of other geos.
@@ -4036,24 +4187,31 @@ public abstract class GeoElement
 
 		// make sure numbers are not put in XML in eg Arabic
 		boolean oldI8NValue = kernel.internationalizeDigits;
-		kernel.internationalizeDigits = false;
+		kernel.internationalizeDigits = false;	
 
+		getElementOpenTagXML(sb);
+		
+		getXMLtags(sb);
+		sb.append(getCaptionXML());
+
+		getElementCloseTagXML(sb);
+
+		kernel.setPrintLocalizedCommandNames(oldValue);
+		kernel.internationalizeDigits = oldI8NValue;
+	}
+	
+	protected void getElementOpenTagXML(StringBuilder sb) {
 		String type = getXMLtypeString();
-
 		sb.append("<element");
 		sb.append(" type=\"");
 		sb.append(type);
 		sb.append("\" label=\"");
 		sb.append(Util.encodeXML(label));
 		sb.append("\">\n");
-		getXMLtags(sb);
-
-		sb.append(getCaptionXML());
-
+	}
+	
+	protected void getElementCloseTagXML(StringBuilder sb) {
 		sb.append("</element>\n");
-
-		kernel.setPrintLocalizedCommandNames(oldValue);
-		kernel.internationalizeDigits = oldI8NValue;
 	}
 
 	public void getScriptTags(StringBuilder sb) {
@@ -4652,6 +4810,10 @@ public abstract class GeoElement
 	}
 
 	public boolean isGeoPoint() {
+		return false;
+	}
+	
+	public boolean isGeoCasCell() {
 		return false;
 	}
 
@@ -5863,4 +6025,20 @@ public abstract class GeoElement
 	public boolean isRandomizable() {
 		return false;
 	}
+	
+	/**
+	 * Returns corresponding GeoCasCell. See GeoCasCell.setTwinGeo().
+	 * @return twin GeoElement
+	 */
+	final public GeoCasCell getCorrespondingCasCell() {
+		return correspondingCasCell;
+	}
+	
+	/**
+	 * Sets corresponding GeoCasCell for this GeoElement. See GeoCasCell.getTwinGeo().
+	 */
+	final public void setCorrespondingCasCell(GeoCasCell correspondingCasCell) {
+		this.correspondingCasCell = correspondingCasCell;
+	}
+
 }

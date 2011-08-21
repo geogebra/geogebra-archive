@@ -153,7 +153,7 @@ public class CASmpreduce extends CASgeneric {
 		}
 		exp = sb.toString();
 
-		long timeout = GeoGebraCAS.getTimeout()*1000;
+		long timeout = getTimeout()*1000;	
 		System.out.println("eval with MPReduce: " + exp);
 		String result = mpreduce.evaluate(exp, timeout);
 
@@ -220,7 +220,15 @@ public class CASmpreduce extends CASgeneric {
 	@Override
 	public void unbindVariable(String var) {
 		try {
-			mpreduce.evaluate("clear(" + ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX + var + ");");
+			StringBuilder sb = new StringBuilder();
+			sb.append("clear(");
+			sb.append(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX);
+			sb.append(var);
+			sb.append(");");
+			mpreduce.evaluate(sb.toString());
+			
+			// TODO: remove
+			System.out.println("Cleared variable: " + sb.toString());
 		} catch (Throwable e) {
 			System.err.println("Failed to clear variable from MPReduce: " + var);
 		}

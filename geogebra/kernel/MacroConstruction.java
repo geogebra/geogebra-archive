@@ -66,7 +66,7 @@ class MacroConstruction extends Construction {
     	if (label == null) return null;
     	
     	// local var handling
-        if (!localVariableTable.isEmpty()) {        	
+		if (localVariableTable != null) {        	
         	GeoElement localGeo = (GeoElement) localVariableTable.get(label);        
             if (localGeo != null) return localGeo;
         }

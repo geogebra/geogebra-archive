@@ -1,17 +1,25 @@
 package geogebra.kernel.cas;
 
 import geogebra.cas.view.CASInputHandler;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgorithmSet;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.parser.ParseException;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 import geogebra.util.Util;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -29,8 +37,20 @@ public class GeoCasCell extends GeoElement {
 	private Locale currentLocale;
 	private boolean suppressOutput = false;
 	
-	// input and output variables of this cell expression
+	// input variables of this cell
 	private TreeSet <String> invars;
+	// defined input GeoElements of this cell
+	private TreeSet<GeoElement> inGeos;
+	private boolean isCircularDefinition;	
+
+	// twin geo, e.g. GeoCasCell m := 8 creates GeoNumeric m = 8
+	private GeoElement twinGeo;
+	private GeoElement lastOutputEvaluationGeo;
+	private boolean firstComputeOutput;
+	private boolean useGeoGebraFallback;
+	private boolean ignoreTwinGeoUpdate;
+
+
 	// internal command names used in the input expression
 	private HashSet <String> cmdNames;
 	private String assignmentVar;
@@ -38,7 +58,7 @@ public class GeoCasCell extends GeoElement {
 	private boolean includesNumericCommand;
 		
 	private String evalCmd, evalComment;
-	private int row = -1;
+	private int row = -1; // for CAS view, set by Construction
 
 	public GeoCasCell(Construction c) {
 		super(c);
@@ -52,17 +72,51 @@ public class GeoCasCell extends GeoElement {
 		postfix = "";
 		evalCmd = "";
 		evalComment = "";
+	}		
+	
+	/**
+	 * Sets this GeoCasCell to the current state of geo which also needs to be a GeoCasCell.
+	 * Note that twinGeo is kept null.
+	 */
+	@Override
+	public void set(GeoElement geo) {
+//		GeoCasCell casCell = (GeoCasCell) geo;
+//				
+//		inputVE = casCell.inputVE;
+//		evalVE = casCell.evalVE;
+//		outputVE = casCell.outputVE;
+//		
+//		input = casCell.input;
+//		prefix = casCell.prefix;
+//		postfix = casCell.postfix;
+//		error = casCell.error;
+//		latex = casCell.latex;
+//		localizedInput = casCell.localizedInput;
+//		currentLocale = casCell.currentLocale;
+//		suppressOutput = casCell.suppressOutput;
+//		
+//		// input variables of this cell
+//		invars = casCell.invars;
+//		// defined input GeoElements of this cell
+//		inGeos = casCell.inGeos;
+//		isCircularDefinition = casCell.isCircularDefinition;	
+//
+//		// twin geo, e.g. GeoCasCell m := 8 creates GeoNumeric m = 8
+////		twinGeo = casCell.twinGeo;		
+////		firstComputeOutput = casCell.firstComputeOutput;
+////		useGeoGebraFallback = casCell.useGeoGebraFallback;
+////		ignoreTwinGeoUpdate = casCell.ignoreTwinGeoUpdate;
+//
+//		// internal command names used in the input expression
+//		cmdNames = casCell.cmdNames;
+//		assignmentVar = casCell.assignmentVar;
+//		includesRowReferences = casCell.includesRowReferences;
+//		includesNumericCommand = casCell.includesNumericCommand;
+//			
+//		evalCmd = casCell.evalCmd;
+//		evalComment = casCell.evalCmd;
 	}
 	
-	// TODO do we need to keep row numbers here?
-	public void setRow(int row) {
-		this.row = row;		
-	}
-	
-	public int getRow() {
-		return row;
-	}
-
 	/** 
 	 * Returns the input of this row. Command names are localized when 
 	 * kernel.isPrintLocalizedCommandNames() is true, otherwise internal command 
@@ -168,6 +222,35 @@ public class GeoCasCell extends GeoElement {
 	private boolean suppressOutput() {
 		return suppressOutput && !isError();
 	}
+	
+	/**
+	 * Returns false as we don't want CAS cells to send
+	 * their values to the CAS in update(). This is done in
+	 * computeOutput() anyway.
+	 */
+    public boolean isSendingUpdatesToCAS() {
+    	return false;
+    }
+	
+	/**
+	 * Sets the input of this row using the current casTwinGeo.
+	 */
+	public void setInputFromTwinGeo() {
+		if (ignoreTwinGeoUpdate) 
+			return;
+	
+		if (twinGeo != null && twinGeo.isIndependent() && twinGeo.isLabelSet()) {	
+			// check if twin geo has same value as last output evaluation
+			if (lastOutputEvaluationGeo != null && lastOutputEvaluationGeo.isEqual(twinGeo))
+				return;
+			
+			// Update ASSIGNMENT of twin geo
+			// e.g. m = 8 changed in GeoGebra should set cell to m := 8	
+			String assignmentStr = twinGeo.toCasAssignment(ExpressionNode.STRING_TYPE_GEOGEBRA);				
+			setInput(assignmentStr);
+			computeOutput(false);		
+		} 
+	}
 
 	/**
 	 * Sets the input of this row. 
@@ -176,7 +259,7 @@ public class GeoCasCell extends GeoElement {
 	 */
 	public void setInput(String inValue) {
 		suppressOutput = inValue.endsWith(";");
-
+				
 		// parse input into valid expression
 		inputVE = parseGeoGebraCASInputAndResolveDummyVars(inValue);
 				
@@ -188,14 +271,22 @@ public class GeoCasCell extends GeoElement {
 		evalComment = "";
 		
 		// update input and output variables
-		updateInOutVars(inputVE);
-		
+		updateInputVariables(inputVE);	
+
 		// input should have internal command names
-		input = internalizeInput(input);
+		internalizeInput();
 		
 		// for efficiency: input with localized command names
-		updateLocalizedInput();					
-	}
+		updateLocalizedInput();
+		
+		// make sure cmputeOutput() knows that input has changed
+		firstComputeOutput = true;
+		
+		if (!isEmpty()) {
+			// make sure we put this casCell into the construction set
+			cons.addToGeoSetWithCasCells(this);			
+		}
+	}	
 	
 	private void updateLocalizedInput() {
 		// for efficiency: localized input with local command names
@@ -203,7 +294,41 @@ public class GeoCasCell extends GeoElement {
 		localizedInput = localizeInput(input);
 	}
 	
+	/**
+	 * Sets row number for CAS view. 
+	 * This method should only be called by Construction.updateCasCellRows().
+	 */
+	final public void setRowNumber(int row) {
+		this.row = row;	
+	}
 	
+	/***
+	 * Returns position of the given GeoCasCell object (free or dependent) in the construction list.
+	 * This is the row number used in the CAS view.
+	 * 
+	 * @return row number of casCell for CAS view or -1 if casCell is not in construction list
+	 */
+	final public int getRowNumber() {
+		return row;
+	}
+	
+	
+	/**
+	 * Updates row references strings in input by setting
+	 * input = inputVE.toString()
+	 */
+	public void updateInputStringWithRowReferences() {
+		if (!includesRowReferences) return;
+		
+		// inputVE will print the correct label, e.g. $4 for
+		// the row reference
+		boolean oldValue = kernel.isPrintLocalizedCommandNames();
+		kernel.setPrintLocalizedCommandNames(false);
+		input = inputVE.toAssignmentString();
+		kernel.setPrintLocalizedCommandNames(oldValue);
+		
+		updateLocalizedInput();
+	}
 	
 	/**
 	 * Sets how this row should be evaluated. Note that the input
@@ -217,6 +342,8 @@ public class GeoCasCell extends GeoElement {
 	public void setProcessingInformation(String prefix, String eval, String postfix) {
 		setEvalCommand("");
 		evalComment = "";
+		if (prefix == null) prefix = "";
+		if (postfix == null) postfix = "";
 		
 		// stop if input is assignment
 		if (inputVE != null && inputVE.getLabel() != null) {
@@ -229,6 +356,7 @@ public class GeoCasCell extends GeoElement {
 		// parse eval text into valid expression
 		evalVE = parseGeoGebraCASInputAndResolveDummyVars(eval);
 		if (evalVE != null) {
+			evalVE = resolveInputReferences(evalVE, inGeos);
 			if (evalVE.isTopLevelCommand()) {
 				// extract command from eval
 				setEvalCommand(evalVE.getTopLevelCommand().getName());
@@ -273,11 +401,10 @@ public class GeoCasCell extends GeoElement {
 	}
 	
 	/**
-	 * Updates the sets of
-	 * input and output variables. For example, the input "b := a + 5"
-	 * has the 
+	 * Updates the set of input variables and array of input GeoElements. 
+	 * For example, the input "b := a + 5" has the input variable "a" 
 	 */
-	private void updateInOutVars(ValidExpression ve) {		
+	private void updateInputVariables(ValidExpression ve) {		
 		// clear var sets
 		clearInVars();
 
@@ -294,32 +421,43 @@ public class GeoCasCell extends GeoElement {
 		}
 		
 		// get all used GeoElement variables
-		try {
-			// check for function
-			boolean isFunction = ve instanceof FunctionNVar;
-				
-			// outvar of assignment b := a + 5 is "b"
-			setAssignmentVar(ve.getLabel());
+		// check for function
+		boolean isFunction = ve instanceof FunctionNVar;
+			
+		// outvar of assignment b := a + 5 is "b"
+		setAssignmentVar(ve.getLabel());
 
-			// get input vars:
-			HashSet geoVars = ve.getVariables();
-			if (geoVars != null) {
-				Iterator it = geoVars.iterator();
-				while (it.hasNext()) {
-					GeoElement geo = (GeoElement) it.next();
-					String var = geo.getLabel();
-					
-					// local function variables are NOT input variables
-					// e.g. f(k) := k^2 + 3 does NOT depend on k
-					if (!(isFunction && ((Function) ve).isFunctionVariable(var))) {
-						addInVar(var);
-					}
+		// get input vars:
+		HashSet<GeoElement> geoVars = ve.getVariables();
+		if (geoVars != null) {
+			for( GeoElement geo : geoVars) {
+				String var = geo.getLabel();
+				
+				// local function variables are NOT input variables
+				// e.g. f(k) := k^2 + 3 does NOT depend on k
+				if (!(isFunction && ((FunctionNVar) ve).isFunctionVariable(var))) {
+					addInVar(var);
 				}
 			}
-		} 
-		catch (Throwable th) {
 		}
 
+		// create Array of defined input GeoElements
+		inGeos = updateInputGeoElements(invars);
+		
+		// replace GeoDummyVariable objects in inputVE by the found inGeos
+		// This is important for row references and renaming of inGeos to work
+		inputVE = resolveInputReferences(inputVE, inGeos);		
+		
+		// check for circular definition
+		isCircularDefinition = false;
+		if (inGeos != null) {
+			for (GeoElement inGeo : inGeos) {
+				if (inGeo.isChildOf(this)) {
+					isCircularDefinition = true;
+					setError("CircularDefinition");
+				}
+			}
+		}
 	}
 	
 	/**
@@ -327,9 +465,9 @@ public class GeoCasCell extends GeoElement {
 	 * to use localized command names. As a side effect, all command
 	 * names are added as input variables as they could be function names.
 	 */
-	private String internalizeInput(String input) {	
+	private void internalizeInput() {	
 		// local commands -> internal commands
-		return translate(input, false); 
+		input = translate(input, false); 
 	}
 	
 	/** 
@@ -406,16 +544,62 @@ public class GeoCasCell extends GeoElement {
 	 * @param var
 	 */
 	private void setAssignmentVar(String var) {
-		assignmentVar = var;
+		if (assignmentVar != null && assignmentVar.equals(var))
+			return;
 		
-		// TODO store CasCell assignment name in kernel 
+		if (assignmentVar != null)
+			// remove old label from construction
+			cons.removeCasCellLabel(assignmentVar);
+		
+		// make sure we are using an unused label
+		if (var == null || cons.isFreeLabel(var)) {
+			assignmentVar = var;
+		} else {
+			changeAssignmentVar(var, getDefaultLabel());						
+		}
+			
+		// store label of this CAS cell in Construction
+		if (assignmentVar != null) {
+			if (twinGeo != null)
+				twinGeo.rename(assignmentVar);		
+			cons.putCasCellLabel(this, assignmentVar);
+		} else {
+			// remove twinGeo if we had one
+			setTwinGeo(null);
+		}
+		
 		//view.setAssignment(var, this);
+	}		
+	
+	/**
+	 * Removes assignment variable from CAS.
+	 */
+    public void unbindVariableInCAS() {
+    	// remove assignment variable
+    	if (isAssignment()) {
+    		kernel.unbindVariableInGeoGebraCAS(assignmentVar);
+    	}   
+    }
+	
+	/**
+	 * Replace old assignment var in input, e.g. "m := 8" becomes "a := 8"
+	 * @param oldLabel
+	 * @param newLabel
+	 */
+	private void changeAssignmentVar(String oldLabel, String newLabel) {
+		if (newLabel.equals(oldLabel))
+			return;
+		
+		inputVE.setLabel(newLabel);
+		if (oldLabel != null) {
+			input = input.replaceFirst(oldLabel, newLabel);
+			localizedInput = localizedInput.replaceFirst(oldLabel, newLabel);
+		}
+		assignmentVar = newLabel;
 	}
 	
 	private void addInVar(String var) {
-		invars.add(var);
-		includesRowReferences = includesRowReferences || 
-			var.indexOf(CASInputHandler.ROW_REFERENCE_DYNAMIC) > -1;
+		getInVars().add(var);
 	}
 	
 	private TreeSet<String> getInVars() {
@@ -449,15 +633,104 @@ public class GeoCasCell extends GeoElement {
 		return null;
 	}
 	
-//	/**
-//	 * Replaces all row references from by to in input.
-//	 * @param from
-//	 * @param to
-//	 */
-//	public void replaceRowReferences(String from, String to) {
-//		if (includesRowReferences)
-//			setInput(input.replaceAll(from, to));
-//	}
+	/**
+	 * Returns all GeoElement input variables including
+	 * GeoCasCell objects and row references in construction order.
+	 * 
+	 * @return input GeoElements including GeoCasCell objects
+	 */
+	public TreeSet<GeoElement> getGeoElementVariables() {
+		if (inGeos == null) {
+			inGeos = updateInputGeoElements(invars);
+		}
+		return inGeos;		
+	}
+	
+	private TreeSet<GeoElement> updateInputGeoElements(TreeSet<String> invars) {
+		if (invars == null || invars.isEmpty())
+			return null;
+		
+		// list to collect geo variables
+		TreeSet<GeoElement> geoVars = new TreeSet<GeoElement>();
+			
+		// go through all variables
+		for (String varLabel : invars) {
+			// lookup GeoCasCell first
+			GeoElement geo = kernel.lookupCasCellLabel(varLabel);
+			
+			if (geo == null) {
+				// try row reference lookup
+				// $ for previous row
+				if (varLabel.equals(ExpressionNode.CAS_ROW_REFERENCE_PREFIX)) {			
+					geo = row > 0 ? cons.getCasCell(row-1) : cons.getLastCasCell();
+				} else {
+					geo = kernel.lookupCasRowReference(varLabel);
+				}
+				if (geo != null)
+					includesRowReferences = true;
+			}
+									
+			if (geo == null) {
+				// now lookup other GeoElements
+				 geo = kernel.lookupLabel(varLabel);
+			}
+
+			if (geo != null) {
+				// add found GeoElement to variable list
+				geoVars.add(geo);
+			}
+		}
+		
+		if (geoVars.size() == 0)
+			return null;
+		else 
+			return geoVars;				
+	}
+	
+	/**
+	 * Replaces GeoDummyVariable objects in inputVE by the found inGeos.
+	 * This is important for row references and renaming of inGeos to work.
+	 */
+	private ValidExpression resolveInputReferences(ValidExpression inputVE, TreeSet<GeoElement> inGeos) {
+		if (inputVE == null || inGeos == null) return inputVE;
+		
+		// make sure we have an expression node
+		ExpressionNode node;
+		if (inputVE instanceof ExpressionNode) {
+			node = (ExpressionNode) inputVE;
+		} else {
+			node = new ExpressionNode(kernel, inputVE);
+			node.setLabel(inputVE.getLabel());
+			inputVE = node;
+		}
+		
+		// replace GeoDummyVariable occurances for each geo
+		for (GeoElement inGeo : inGeos) {
+			boolean success = node.replaceGeoDummyVariables(inGeo.getLabel(), inGeo);
+			if (!success) {
+				// try $ row reference
+				node.replaceGeoDummyVariables(ExpressionNode.CAS_ROW_REFERENCE_PREFIX, inGeo);
+			}
+		}
+		
+		return node;
+	}
+
+	
+	/**
+	 * Returns whether this object only depends on GeoElements
+	 * where kernel.lookupLabel() != null. 
+	 * @return
+	 */
+	final public boolean includesOnlyDefinedVariables() {
+		if (invars == null) return true;
+		
+		for (String varLabel : invars) {
+			if (kernel.lookupLabel(varLabel) == null)
+				return false;
+		}
+		return true;
+	}
 	
 	/**
 	 * Returns whether var is an input variable of this cell. For example,
@@ -501,19 +774,16 @@ public class GeoCasCell extends GeoElement {
 	}
 	
 	/**
-	 * Returns whether this cell has no inputVariables and no row references.
-	 */
-	final public boolean isIndependent() {
-		return !includesRowReferences && (invars == null || invars.isEmpty()); 
-	}
-	
-	/**
 	 * Returns the assignment variable of this cell. For example,
 	 * "c" is the assignment variable of "c := a + b"
 	 * @return may be null
 	 */
 	final public String getAssignmentVariable() {
 		return assignmentVar;
+	}
+	
+	final public boolean isAssignment() {
+		return assignmentVar != null;
 	}
 	
 	final public String getEvalCommand() {
@@ -557,17 +827,309 @@ public class GeoCasCell extends GeoElement {
 		outputVE = parseGeoGebraCASInputAndResolveDummyVars(output);	
 		
 		kernel.setKeepCasNumbers(oldValue);
+	}	
+	
+	/**
+	 * Updates the given GeoElement using the given casExpression.
+	 */
+	public void updateTwinGeo() {			
+		ignoreTwinGeoUpdate = true;		
+		
+		if (firstComputeOutput && twinGeo == null) {
+			// create twin geo
+			createTwinGeo();				
+		} else {
+			// input did not change: just do a simple update
+			simpleUpdateTwinGeo();
+		}
+
+		ignoreTwinGeoUpdate = false;
+	}
+	
+	/**
+	 * Creates a twinGeo using the current output
+	 */
+	private void createTwinGeo() {
+		if (!isAssignment() || isError() || !includesOnlyDefinedVariables()) 
+			return;
+		
+		// try to create twin geo for assignment, e.g. m := c + 3
+		GeoElement newTwinGeo = silentEvalInGeoGebra(outputVE);		
+		if (newTwinGeo != null) {
+			setTwinGeo(newTwinGeo);
+		}				
+	}
+	
+	/**
+	 * Sets the label of twinGeo.
+	 * @return whether label was set
+	 */
+	public boolean setLabelOfTwinGeo() {
+		if (twinGeo == null || twinGeo.isLabelSet() || !isAssignment()) return false;		
+		
+		// allow GeoElement to get same label as CAS cell, so we temporarily remove the label
+		// but keep it in the underlying CAS
+		cons.removeCasCellLabel(assignmentVar, false);
+		// set Label of twinGeo
+		twinGeo.setLabel(assignmentVar);
+		// set back CAS cell label
+		cons.putCasCellLabel(this, assignmentVar);
+		
+		return true;
+	}
+	
+//	/**
+//	 * Redefine twinGeo using current output
+//	 */
+//	private void redefineTwinGeo() {
+//		if (!isAssignment()) {
+//			// remove twinGeo when we no longer have an assignment
+//			setTwinGeo(null);
+//			return;
+//		}
+//		else if (isError() || !includesOnlyDefinedVariables()) {
+//			if (twinGeo.hasChildren()) {
+//				// set twinGeo to undefined
+//				twinGeo.setUndefined();
+//			} else {
+//				// remove twinGeo when we no longer have an assignment
+//				setTwinGeo(null);
+//			}
+//			return;
+//		}
+//		
+//		// try simple evaluation of independent output first
+//		if (twinGeo.isIndependent() && getGeoElementVariables() == null) {
+//			simpleUpdateTwinGeo();
+//			if (twinGeo.isDefined()) 
+//				return; // success
+//		}
+//		
+//		// redefine twinGeo using outputVE
+//		GeoElement newTwinGeo = kernel.getAlgebraProcessor().changeGeoElement(twinGeo, outputVE, true, false);   
+//		if (newTwinGeo != null) {
+//			// redefinition successful
+//			app.doAfterRedefine(newTwinGeo);	
+//			setTwinGeo(newTwinGeo);
+//		} 
+//		else {
+//			// redefinition failed
+//			twinGeo.setUndefined();
+//		}						
+//	}
+	
+	/**
+	 * Sets twinGeo using current output
+	 */
+	private void simpleUpdateTwinGeo() {
+		if (twinGeo == null) 
+			return;		
+		else if (isError()) {
+			twinGeo.setUndefined();
+			return;
+		}
+		
+		// silent evaluation of output in GeoGebra
+		lastOutputEvaluationGeo = silentEvalInGeoGebra(outputVE);
+		if (lastOutputEvaluationGeo != null) {
+			twinGeo.set(lastOutputEvaluationGeo);
+		} else {
+			twinGeo.setUndefined();
+		}		
+	}
+	
+	 public void updateCascade() {
+		update();
+
+		if (twinGeo != null) {
+			ignoreTwinGeoUpdate = true;
+			twinGeo.update();
+			ignoreTwinGeoUpdate = false;
+			updateAlgoUpdateSetWith(twinGeo);
+		}
+		else if (algoUpdateSet != null) {
+			// update all algorithms in the algorithm set of this GeoElement
+			algoUpdateSet.updateAll();
+		}
+	}
+	
+//	/**
+//	 * Evaluates the given expression in GeoGebra and returns one GeoElement or null.
+//	 * 
+//	 * @param ve
+//	 * @return result GeoElement or null
+//	 */
+//	private GeoElement silentEvalInGeoGebra(String exp) {
+//		ValidExpression ve;
+//	
+//		try {
+//			ve = kernel.getParser().parseGeoGebraExpression(exp);
+//		} catch (Throwable e) {
+//			System.err.println("GeoCasCell.silentEvalInGeoGebra: " + exp + "\n\terror: " + e.getMessage());
+//			return null;
+//		}	
+//		
+//		return silentEvalInGeoGebra(ve);
+//	}
+	
+	/**
+	 * Evaluates ValidExpression in GeoGebra and returns one GeoElement or null.
+	 * 
+	 * @param ve
+	 * @return result GeoElement or null
+	 */
+	private GeoElement silentEvalInGeoGebra(ValidExpression ve) {
+		boolean oldValue = kernel.isSilentMode();
+		kernel.setSilentMode(true);
+
+		try {
+			// evaluate in GeoGebra
+			GeoElement [] ggbEval = kernel.getAlgebraProcessor().processValidExpression(ve);
+			if (ggbEval != null) {
+				return ggbEval[0];
+			} else {
+				return null;
+			}
+		} 
+		catch (Throwable e) {
+			System.err.println("GeoCasCell.silentEvalInGeoGebra: " + ve + "\n\terror: " + e.getMessage());
+			return null;
+		}
+		finally {
+			kernel.setSilentMode(oldValue);
+		}							
+	}
+	
+	/**
+	 * Computes the output of this CAS cell based on its current 
+	 * input settings. Note that this will also change a corresponding twinGeo.
+	 * 
+	 * @return success
+	 */
+	final public boolean computeOutput() {		
+		return computeOutput(true);
+	}		
+		
+	/**
+	 * Computes the output of this CAS cell based on its current 
+	 * input settings. 
+	 * @param doTwinGeoUpdate whether twin geo should be updated or not
+	 * 
+	 * @return success
+	 */
+	private boolean computeOutput(boolean doTwinGeoUpdate) {
+		// check for circular definition before we do anything
+		if (isCircularDefinition) {			
+			setError("CircularDefinition");
+			if (doTwinGeoUpdate)
+				updateTwinGeo();
+			return false;
+		}		
+		
+		String result = null;
+		boolean success = false;
+
+		if (firstComputeOutput) {
+			useGeoGebraFallback = false;
+		}
+		
+		if (!useGeoGebraFallback) {
+			// CAS EVALUATION		
+			try {
+				result = kernel.getGeoGebraCAS().evaluateGeoGebraCAS(evalVE);
+				success = result != null;
+			} 
+			catch (Throwable th1) {
+				System.err.println("GeoCasCell.computeOutput(), CAS eval: " + evalVE + "\n\terror: " + th1.getMessage());
+				success = false;						
+			}			
+			useGeoGebraFallback = !success && includesOnlyDefinedVariables();
+		}
+		
+		// GEOGEBRA FALLBACK
+		if (useGeoGebraFallback) {
+			// EVALUATE evalVE in GeoGebra
+			try {
+				// process inputExp in GeoGebra					
+				GeoElement evalGeo = silentEvalInGeoGebra(evalVE);
+				if (evalGeo != null) {
+					success = true;
+					kernel.setTemporaryPrintFigures(15);
+					result = evalGeo.toString();
+					kernel.restorePrintAccuracy();
+					AlgoElement parentAlgo = evalGeo.getParentAlgorithm();
+					if (parentAlgo != null) {
+						parentAlgo.remove();
+					}						
+				}				
+			} catch (Throwable th2) {
+				System.err.println("GeoCasCell.computeOutput(), GeoGebra eval: " + evalVE + "\n error: " + th2.getMessage());
+				success = false;
+			}
+		}		
+		
+		// set Output
+		if (success) {
+			if (prefix.length() == 0 && postfix.length() == 0) {
+				// no prefix, no postfix: just evaluation
+				setOutput(result);
+			} else {
+				// make sure that evaluation is put into parentheses
+				StringBuilder sb = new StringBuilder();
+				sb.append(prefix);
+				sb.append(" (");
+				sb.append(result);
+				sb.append(") ");
+				sb.append(postfix);
+				setOutput(sb.toString());
+			}
+		} else {
+			setError("CAS.GeneralErrorMessage");
+		}
+		
+		// update twinGeo
+		if (doTwinGeoUpdate)
+			updateTwinGeo();
+		
+		// set back firstComputeOutput, see setInput()
+		firstComputeOutput = false;
+		return success;
 	}
 	
 	public void setError(String error) {
 		this.error = error;
 		latex = null;
+		outputVE = null;
 	}
 	
 	public boolean isError() {
 		return error != null;
 	}
+	
+	public boolean isCircularDefinition() {
+		return isCircularDefinition;
+	}
+	
+	/**
+	 * Appends <cascell caslabel="m"> XML tag to StringBuilder.
+	 */
+	protected void getElementOpenTagXML(StringBuilder sb) {		
+		sb.append("<cascell");
+		if (assignmentVar != null) {
+			sb.append(" caslabel=\"");
+			sb.append(Util.encodeXML(assignmentVar));
+			sb.append("\" ");
+		}
+		sb.append(">\n");
+	}
 
+	/**
+	 * Appends </cascell> XML tag to StringBuilder.
+	 */
+	protected void getElementCloseTagXML(StringBuilder sb) {
+		sb.append("</cascell>\n");	
+	}
+	
 	/**
 	 * Appends <cellPair> XML tag to StringBuilder.
 	 */
@@ -651,32 +1213,26 @@ public class GeoCasCell extends GeoElement {
 
 	@Override
 	public GeoElement copy() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void set(GeoElement geo) {
-		// TODO Auto-generated method stub
-		
+		GeoCasCell casCell = new GeoCasCell(cons);
+		casCell.set(this);
+		return casCell;
 	}
 
 	@Override
 	public boolean isDefined() {
-		// TODO Auto-generated method stub
-		return false;
+		return !isError();
 	}
 
 	@Override
 	public void setUndefined() {
-		// TODO Auto-generated method stub
-		
+		setError("CAS.GeneralErrorMessage");
+		if (twinGeo != null)
+			twinGeo.setUndefined();
 	}
 
 	@Override
 	public String toValueString() {
-		// TODO Auto-generated method stub
-		return null;
+		return toString();
 	}
 
 	@Override
@@ -703,5 +1259,107 @@ public class GeoCasCell extends GeoElement {
 	public String getClassName() {
 		return "GeoCasCell";
 	}
+	
+	/**
+	 * Returns assignment variable, e.g. "a" for "a := 5"
+	 * or row reference, e.g. "$5$". Note that kernel.getCASPrintForm()
+	 * is taken into account, e.g. row references return the output of this cell
+	 * (instead of the label) for the underlying CAS. 
+	 */
+	public String getLabel() {
+		// standard case: assignment
+		if (assignmentVar != null)
+			return kernel.printVariableName(assignmentVar);
 
+		// row reference like $5
+		StringBuilder sb = new StringBuilder();
+		switch (kernel.getCASPrintForm()) {
+		// send output to underlying CAS
+		case ExpressionNodeConstants.STRING_TYPE_MPREDUCE:
+		case ExpressionNodeConstants.STRING_TYPE_MAXIMA:
+			sb.append(" (");
+			sb.append(outputVE == null ? "?" : outputVE.toString());
+			sb.append(") ");
+			break;
+
+		default:
+			// standard case: return current row, e.g. $5
+			if (row >= 0) {
+				sb.append(ExpressionNode.CAS_ROW_REFERENCE_PREFIX);
+				sb.append(row + 1);
+			}
+			break;
+		}
+		return sb.toString();
+	}
+	
+	public String toString() {
+		return getInput();
+	}
+	
+	public boolean isGeoCasCell() {
+		return true;
+	}
+	
+	public void doRemove() {
+		if (assignmentVar != null) {
+			// remove variable name from Construction
+			cons.removeCasCellLabel(assignmentVar);
+			assignmentVar = null;
+		}		
+		
+		super.doRemove();	
+	    cons.removeFromGeoSetWithCasCells(this);
+		setTwinGeo(null);						
+	}	
+
+	/**
+	 * 
+	 * @param newTwinGeo
+	 */
+	private void setTwinGeo(GeoElement newTwinGeo) {
+		if (newTwinGeo == null && twinGeo != null) {
+			GeoElement oldTwinGeo = twinGeo;
+			twinGeo = null;			
+			oldTwinGeo.setCorrespondingCasCell(null);
+			oldTwinGeo.remove();
+		}
+		
+		twinGeo = newTwinGeo;
+		
+		if (twinGeo != null) {
+			twinGeo.setCorrespondingCasCell(this);
+		}
+	}
+	
+	public GeoElement getTwinGeo() {
+		return twinGeo;
+	}
+	
+	/**
+	 * Adds algorithm to update set of this GeoCasCell
+	 * and also to the update set of an independent twinGeo.
+	 */
+	public void addToUpdateSets(AlgoElement algorithm) {
+	     super.addToUpdateSets(algorithm);
+	     if (twinGeo != null && twinGeo.isIndependent()) {
+	         twinGeo.addToUpdateSets(algorithm);
+	     }
+	}
+
+	/**
+	 * s algorithm from update set of this GeoCasCell
+	 * and also from the update set of an independent twinGeo.
+	 */
+	public void removeFromUpdateSets(AlgoElement algorithm) {
+	     super.removeFromUpdateSets(algorithm);
+	     if (twinGeo != null && twinGeo.isIndependent()) {
+	         twinGeo.removeFromUpdateSets(algorithm);
+	     }
+	}
+
+//	public void setIgnoreTwinGeoUpdate(boolean ignoreTwinGeoUpdate) {
+//		this.ignoreTwinGeoUpdate = ignoreTwinGeoUpdate;
+//	}
+	
 }

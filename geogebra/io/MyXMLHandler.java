@@ -55,6 +55,7 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.kernel.kernelND.GeoConicND;
@@ -99,8 +100,8 @@ public class MyXMLHandler implements DocHandler {
 	protected static final int MODE_EUCLIDIAN_VIEW3D = 101; //only for 3D
 	private static final int MODE_SPREADSHEET_VIEW = 150;
 	private static final int MODE_ALGEBRA_VIEW = 151;
-	private static final int MODE_CAS_VIEW = 160;
-	private static final int MODE_CAS_SESSION = 161;
+	//private static final int MODE_CAS_VIEW = 160;
+	private static final int MODE_CONST_CAS_CELL = 161;
 	private static final int MODE_CAS_CELL_PAIR = 162;
 	private static final int MODE_CAS_INPUT_CELL = 163;
 	private static final int MODE_CAS_OUTPUT_CELL = 164;
@@ -118,13 +119,10 @@ public class MyXMLHandler implements DocHandler {
 
 	private int mode;
 	private int constMode; // submode for <construction>
-	private int casSessionMode; // submode for <casSession>
-
-	// avoid import geogebra.cas.view.CASTableCellValue as this is in cas jar
-	// file
-	private Object casTableCellValueElement;
+	private int casMode; // submode for <cascell>
 
 	protected GeoElement geo;
+	private GeoCasCell geoCasCell;
 	private Command cmd;
 	private Macro macro;
 	/** application */
@@ -256,8 +254,6 @@ public class MyXMLHandler implements DocHandler {
 
 		mode = MODE_INVALID;
 		constMode = MODE_CONSTRUCTION;
-
-		casSessionMode = MODE_CAS_SESSION;
 	}
 
 	private void reset(boolean start) {
@@ -320,8 +316,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case MODE_EUCLIDIAN_VIEW:
 			startEuclidianViewElement(eName, attrs);
-			break;
-			
+			break;			
 			
 		case MODE_EUCLIDIAN_VIEW3D:
 			startEuclidianView3DElement(eName, attrs);
@@ -338,10 +333,6 @@ public class MyXMLHandler implements DocHandler {
 //		case MODE_CAS_VIEW:
 //			startCASViewElement(eName, attrs);
 //			break;
-
-		case MODE_CAS_SESSION:
-			startCASSessionElement(eName, attrs);
-			break;
 			
 		case MODE_PROBABILITY_CALCULATOR:
 			startProbabilityCalculatorElement(eName, attrs);
@@ -469,14 +460,10 @@ public class MyXMLHandler implements DocHandler {
 				mode = MODE_GEOGEBRA;
 			break;
 			
-		case MODE_CAS_VIEW:
-			if (eName.equals("casView"))
-				mode = MODE_GEOGEBRA;
-			break;
-
-		case MODE_CAS_SESSION:
-			endCASSessionElement(eName);
-			break;
+//		case MODE_CAS_VIEW:
+//			if (eName.equals("casView"))
+//				mode = MODE_GEOGEBRA;
+//			break;
 
 		case MODE_KERNEL:
 			if (eName.equals("kernel"))
@@ -541,37 +528,6 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private void endCASSessionElement(String eName) {
-		switch (casSessionMode) {
-		case MODE_CAS_SESSION:
-			if (eName.equals("casSession")) {
-				mode = MODE_GEOGEBRA;
-				app.getGuiManager().getCasView().repaintView();
-			}
-			break;
-
-		case MODE_CAS_CELL_PAIR:
-			if (eName.equals("cellPair"))
-				casSessionMode = MODE_CAS_SESSION;
-			break;
-
-		case MODE_CAS_INPUT_CELL:
-			if (eName.equals("inputCell"))
-				casSessionMode = MODE_CAS_CELL_PAIR;
-			break;
-
-		case MODE_CAS_OUTPUT_CELL:
-			if (eName.equals("outputCell"))
-				casSessionMode = MODE_CAS_CELL_PAIR;
-			break;
-
-		default:
-			casSessionMode = MODE_CAS_SESSION; // set back mode
-			System.err.println("unknown cas session mode:" + constMode);
-		}
-
-	}
-
 	// ====================================
 	// <geogebra>
 	// ====================================
@@ -587,15 +543,11 @@ public class MyXMLHandler implements DocHandler {
 				mode = MODE_KERNEL;
 		} else if (eName.equals("spreadsheetView")) {
 			mode = MODE_SPREADSHEET_VIEW;
-		} else if (eName.equals("casView")) {
-			mode = MODE_CAS_VIEW;		
+//		} else if (eName.equals("casView")) {
+//			mode = MODE_CAS_VIEW;		
 		} else if (eName.equals("scripting")) {
 			startScriptingElement(eName,attrs);
-		} 
-		else if (eName.equals("casSession")) {
-			mode = MODE_CAS_SESSION;
-			app.getGuiManager().getCasView().clearView();
-		} 
+		}  
 		else if (eName.equals("probabilityCalculator")) {
 			mode = MODE_PROBABILITY_CALCULATOR;
 		} 
@@ -611,6 +563,12 @@ public class MyXMLHandler implements DocHandler {
 		} else if (eName.equals("construction")) {
 			mode = MODE_CONSTRUCTION;
 			handleConstruction(attrs);
+		}
+		else if (eName.equals("casSession")) {
+			// old <casSession> is now <cascell> in <construction>
+			// not used anymore after 2011-08-16
+			mode = MODE_CONSTRUCTION;
+			constMode = MODE_CONST_CAS_CELL;
 		}
 		else if (eName.equals("keyboard")) {
 			handleKeyboard(attrs);
@@ -2177,16 +2135,15 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	// ====================================
-	// <CAS Session>
+	// <cascell>
 	// ====================================
-	private void startCASSessionElement(String eName, LinkedHashMap<String, String> attrs) {
+	private void startCasCell(String eName, LinkedHashMap<String, String> attrs) {
 		// handle cas session mode
-		switch (casSessionMode) {
-		case MODE_CAS_SESSION:
+		switch (casMode) {
+		case MODE_CONST_CAS_CELL:
 			if (eName.equals("cellPair")) {
-				casSessionMode = MODE_CAS_CELL_PAIR;
-				//TODO: store this information in kernel, not in view
-				casTableCellValueElement = app.getGuiManager().getCasView().createRow();
+				casMode = MODE_CAS_CELL_PAIR;
+				startCellPair();
 			} else {
 				System.err.println("unknown tag in <cellPair>: " + eName);
 			}
@@ -2194,9 +2151,9 @@ public class MyXMLHandler implements DocHandler {
 
 		case MODE_CAS_CELL_PAIR:
 			if (eName.equals("inputCell")) {
-				casSessionMode = MODE_CAS_INPUT_CELL;
+				casMode = MODE_CAS_INPUT_CELL;
 			} else if (eName.equals("outputCell")) {
-				casSessionMode = MODE_CAS_OUTPUT_CELL;
+				casMode = MODE_CAS_OUTPUT_CELL;
 			} else {
 				System.err.println("unknown tag in <cellPair>: " + eName);
 			}
@@ -2214,9 +2171,76 @@ public class MyXMLHandler implements DocHandler {
 			System.err.println("unknown cas session mode:" + constMode);
 		}
 	}
+	
+	private void endCasCell(String eName) {
+		switch (casMode) {
+		case MODE_CONST_CAS_CELL:
+			if (eName.equals("cascell")) {
+				mode = MODE_CONSTRUCTION;
+				constMode = MODE_CONSTRUCTION;
+				casMode = MODE_CONST_CAS_CELL;
+				geoCasCell = null;
+			}
+			break;
+
+		case MODE_CAS_CELL_PAIR:
+			if (eName.equals("cellPair")) {
+				casMode = MODE_CONST_CAS_CELL;
+				endCellPair(eName);
+			}
+			break;
+
+		case MODE_CAS_INPUT_CELL:
+			if (eName.equals("inputCell"))
+				casMode = MODE_CAS_CELL_PAIR;
+			break;
+
+		case MODE_CAS_OUTPUT_CELL:
+			if (eName.equals("outputCell"))
+				casMode = MODE_CAS_CELL_PAIR;
+			break;
+
+		default:
+			casMode = MODE_CONST_CAS_CELL; // set back mode
+			System.err.println("unknown cas session mode:" + constMode);
+		}
+
+	}
+	
+	private void startCellPair() {
+		geoCasCell = new GeoCasCell(cons);
+	}
+	
+	private void endCellPair(String eName) {
+		if (geoCasCell == null) {
+			System.err.println("no element set for <" + eName + ">");
+			return;
+		}
+		
+		try {
+			// create necessary algorithm and twinGeo	
+			boolean independentCell = geoCasCell.getGeoElementVariables() == null;	
+			if (independentCell) {
+				// free cell, e.g. m := 7  creates twinGeo m = 7
+				cons.addToConstructionList(geoCasCell, true);	
+				// create TwinGeo from previously set output
+				geoCasCell.updateTwinGeo();		    	        
+				geoCasCell.setLabelOfTwinGeo();
+			} else {
+				// create algorithm for dependent cell
+				// this also creates twinGeo if necessary
+				// output is not computed again, see AlgoDependenCasCell constructor
+				kernel.DependentCasCell(geoCasCell);
+			}
+		} catch (Exception e) {
+			System.err.println("error when processing <cellpair>: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void startCellOutputElement(String eName, LinkedHashMap<String, String> attrs) {
-		if (casTableCellValueElement == null) {
+		if (geoCasCell == null) {
 			System.err.println("no element set for <" + eName + ">");
 			return;
 		}
@@ -2225,7 +2249,7 @@ public class MyXMLHandler implements DocHandler {
 		switch (eName.charAt(0)) {
 		case 'e':
 			if (eName.equals("expression")) {
-				ok = handleOutExpression(attrs);
+				ok = handleCasCellOutput(attrs);
 				break;
 			}
 
@@ -2239,7 +2263,7 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private void startCellInputElement(String eName, LinkedHashMap<String, String> attrs) {
-		if (casTableCellValueElement == null) {
+		if (geoCasCell == null) {
 			System.err.println("no element set for <" + eName + ">");
 			return;
 		}
@@ -2248,7 +2272,7 @@ public class MyXMLHandler implements DocHandler {
 		switch (eName.charAt(0)) {
 		case 'e':
 			if (eName.equals("expression")) {
-				ok = handleInputExpression(attrs);
+				ok = handleCasCellInput(attrs);
 				break;
 			}
 
@@ -2281,9 +2305,13 @@ public class MyXMLHandler implements DocHandler {
 				cmd = getCommand(attrs);
 			} else if (eName.equals("expression")) {
 				startExpressionElement(eName, attrs);
+			} else if (eName.equals("cascell")) {
+				constMode = MODE_CONST_CAS_CELL;
+				casMode = MODE_CONST_CAS_CELL;
 			} else if (eName.equals("worksheetText")) {
 				handleWorksheetText(attrs);
-			} else {
+			}
+			else {
 				System.err.println("unknown tag in <construction>: " + eName);
 			}
 			break;
@@ -2294,6 +2322,10 @@ public class MyXMLHandler implements DocHandler {
 
 		case MODE_CONST_COMMAND:
 			startCommandElement(eName, attrs);
+			break;
+			
+		case MODE_CONST_CAS_CELL:
+			startCasCell(eName, attrs);
 			break;
 
 		default:
@@ -2328,11 +2360,15 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_CONST_GEO_ELEMENT:
 			if (eName.equals("element"))
 				constMode = MODE_CONSTRUCTION;
-			break;
+			break;						
 
 		case MODE_CONST_COMMAND:
 			if (eName.equals("command"))
 				constMode = MODE_CONSTRUCTION;
+			break;
+			
+		case MODE_CONST_CAS_CELL:
+			endCasCell(eName);			
 			break;
 
 		default:
@@ -3075,47 +3111,48 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleInputExpression(LinkedHashMap<String, String> attrs) {
+	private boolean handleCasCellInput(LinkedHashMap<String, String> attrs) {
 		try {
 			String input = (String) attrs.get("value");
-			((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setInput(input);
+			geoCasCell.setInput(input);
 			
 			String prefix = (String) attrs.get("prefix");
 			String eval = (String) attrs.get("eval");
 			String postfix = (String) attrs.get("postfix");
 			if (eval != null) {
-				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setProcessingInformation(prefix, eval, postfix);
+				geoCasCell.setProcessingInformation(prefix, eval, postfix);
 			}
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
 
-	private boolean handleOutExpression(LinkedHashMap<String, String> attrs) {
+	private boolean handleCasCellOutput(LinkedHashMap<String, String> attrs) {
 		try {
 			String output = (String) attrs.get("value");
 			boolean error = parseBoolean((String) attrs.get("error"));
 			
 			if (error) {
-				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setError(output);
+				geoCasCell.setError(output);
 			} else {
-				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setOutput(output);
+				geoCasCell.setOutput(output);
 			}
 			
 			String evalCommandComment = (String) attrs.get("evalCommand");
 			if (evalCommandComment != null) {
-				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setEvalCommand(evalCommandComment);
+				geoCasCell.setEvalCommand(evalCommandComment);
 			}
 			
 			String evalComment = (String) attrs.get("evalComment");
 			if (evalComment != null) {
-				((geogebra.kernel.cas.GeoCasCell) casTableCellValueElement).setEvalComment(evalComment);
-			}
-			
+				geoCasCell.setEvalComment(evalComment);
+			}			
 			
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

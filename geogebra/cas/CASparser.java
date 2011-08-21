@@ -51,6 +51,9 @@ public class CASparser {
 	 * The result is returned as a ValidExpression.
 	 */
 	public ValidExpression parseGeoGebraCASInputAndResolveDummyVars(String inValue) {
+		if (inValue == null || inValue.length() == 0)
+			return null;
+		
 		try {
 			// parse input into valid expression
 			ValidExpression ve = parseGeoGebraCASInput(inValue);
@@ -94,8 +97,7 @@ public class CASparser {
 		if (isFunction) {
 			Construction cmdCons = kernel.getConstruction();  
 			funVars = ((Function) ev).getFunctionVariables();
-			for (FunctionVariable funVar : funVars) {
-				GeoElement localVarGeo = new GeoDummyVariable(cmdCons, funVar.toString());
+			for (FunctionVariable funVar : funVars) {	
 				cmdCons.removeLocalVariable(funVar.toString());
 			}
 		}

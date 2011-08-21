@@ -17,7 +17,7 @@ import geogebra.main.Application;
 import java.util.TreeSet;
 
 public abstract class ConstructionElement 
-implements Comparable {
+implements Comparable<ConstructionElement> {
 	
 	// Added for Intergeo File Format (Yves Kreis) -->
 	// writes the <elements> part
@@ -208,7 +208,7 @@ implements Comparable {
 	 * Compares using creation ID. Older construction elements are larger.
 	 * Note: 0 is only returned for this == obj.
 	 */
-    public int compareTo( Object obj) {
+    public int compareTo(ConstructionElement obj) {
     	if (this == obj) return 0;
     	
     	ConstructionElement ce = (ConstructionElement) obj;   

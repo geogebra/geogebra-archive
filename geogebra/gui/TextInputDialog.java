@@ -812,7 +812,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 			// change existing text
 			try {           
-				GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(editGeo, inputValue, true);                         
+				GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(editGeo, inputValue, true, true);                         
 
 				// make sure newText is using correct LaTeX setting
 				newText.setLaTeX(isLaTeX, true);

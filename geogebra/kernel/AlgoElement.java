@@ -593,29 +593,66 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	return false;
     }
        
-    public void remove() {  
-    	
-        cons.removeFromConstructionList(this);        
+    /**
+     * Removes algorithm and all dependent objects from construction.
+     */
+    public void remove() {      	
+        cons.removeFromConstructionList(this);                
+        cons.removeFromAlgorithmList(this);        
         
-        cons.removeFromAlgorithmList(this);
-                        
-        // delete dependent objects        
+        // delete dependent objects          
         for (int i = 0; i < getOutputLength(); i++) {
             getOutput(i).doRemove();
         }
-                
+                              
         // delete from algorithm lists of input                
         for (int i = 0; i < input.length; i++) {
-            input[i].removeAlgorithm(this);
-        }          
+            input[i].removeAlgorithm(this);                                      
+        }    
         
-        if (efficientInput != null) {
-        	// delete from algorithm lists of input                
+    	// delete from algorithm lists of efficient input 
+        if (efficientInput != null) {        	
             for (int i = 0; i < efficientInput.length; i++) {
-            	efficientInput[i].removeAlgorithm(this);
+            	efficientInput[i].removeAlgorithm(this);            	
             }  
-        }
+        }                   
     }
+    
+//    /**
+//     * Removes algorithm from all updateSets and algorithm lists of
+//     * input objects and their predecessors. The algorithm itself
+//     * and its output are kept in the construction.
+//     */
+//    final public void removeInputDependencies() {
+//    	if (input == null) return;
+//    	
+//    	// we keep the output, so we need to remove
+//    	// the algorithm from all update sets of input predecessors     	 
+//    	TreeSet<GeoElement> inputPred = new TreeSet<GeoElement>();
+//
+//    	// delete from algorithm lists of input  
+//    	// collect all input predecessors 
+//    	for (int i = 0; i < input.length; i++) {
+//    		input[i].removeAlgorithm(this);    			
+//    		input[i].addPredecessorsToSet(inputPred, false);
+//    		inputPred.add(input[i]);    		                       
+//    	}    
+//
+//    	// delete from algorithm lists of efficient input 
+//    	// collect all input predecessors 
+//    	if (efficientInput != null) {        	
+//    		for (int i = 0; i < efficientInput.length; i++) {
+//    			efficientInput[i].removeAlgorithm(this);
+//    			efficientInput[i].addPredecessorsToSet(inputPred, false);
+//    			inputPred.add(efficientInput[i]);    			  
+//    		}  
+//    	}
+//
+//		// make sure that unreachable algos are removed from update sets
+//		for (GeoElement predGeo : inputPred) {
+//			predGeo.removeUnreachableAlgorithmsFromUpdateSet();
+//		}	         
+//    }
     
     /**
      * Tells this algorithm to react on the deletion
@@ -702,7 +739,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	 * Note: 0 is only returned for this == obj.
 	 * @overwrite ConstructionElement.compareTo()
 	 */
-    public int compareTo( Object obj) {
+    public int compareTo(ConstructionElement obj) {
     	if (this == obj) return 0;
     	
     	ConstructionElement ce = (ConstructionElement) obj;   
@@ -748,7 +785,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      */ 
     public int getMaxConstructionIndex() {            	
          // index is less than minimum of all dependent algorithm's index of all output
-         ArrayList<ConstructionElement> algoList;
+         ArrayList<AlgoElement> algoList;
          int size, index;
          int min = cons.steps();                        
          for (int k=0; k < getOutputLength(); ++k) {
@@ -1074,7 +1111,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 
     // Expressions should be shown as out = expression
     // e.g. <expression label="u" exp="a + 7 b"/>
-    private String getExpXML() {                
+    protected String getExpXML() {                
         StringBuilder sb = new StringBuilder();        
         sb.append("<expression");
         // add label

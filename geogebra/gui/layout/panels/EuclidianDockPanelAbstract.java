@@ -4,6 +4,7 @@ import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.layout.DockPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
@@ -75,7 +76,8 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 		panel.add(super.createFocusPanel(), BorderLayout.WEST);
 		
 		//euclidian focus
-		euclidianFocus = new JLabel(app.getImageIcon("view-euclidian-focus.png"));
+		euclidianFocus = new JLabel(" \u2219"); // filled dot
+		euclidianFocus.setForeground(Color.darkGray);
 		euclidianFocus.setVisible(false);
 		panel.add(euclidianFocus, BorderLayout.EAST);
 		

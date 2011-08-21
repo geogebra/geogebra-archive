@@ -3,6 +3,8 @@
  */
 package geogebra.cas.view;
 
+import geogebra.gui.layout.DockManager;
+import geogebra.gui.layout.DockPanel;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
@@ -13,14 +15,18 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.CellEditor;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
@@ -41,11 +47,12 @@ public class CASTable extends JTable {
 	
 	private CASTableCellEditor editor;
 	private CASTableCellRenderer renderer;
+	private int currentWidth;
 
 	public static final Color SELECTED_BACKGROUND_COLOR_HEADER = new Color(185,
 			185, 210);
 
-	public CASTable(CASView view) {
+	public CASTable(final CASView view) {
 		this.view = view;
 		app = view.getApp();
 		kernel = app.getKernel();
@@ -55,7 +62,7 @@ public class CASTable extends JTable {
 		setGridColor(GeoGebraColorConstants.TABLE_GRID_COLOR);
 		setBackground(Color.white);
 
-		tableModel = new CASTableModel(this, app);
+		tableModel = new CASTableModel();
 		this.setModel(tableModel);
 		this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		
@@ -65,40 +72,47 @@ public class CASTable extends JTable {
 		getColumnModel().getColumn(COL_CAS_CELLS).setCellEditor(editor);
 		getColumnModel().getColumn(COL_CAS_CELLS).setCellRenderer(renderer);				
 		setTableHeader(null); 
-		
-		// remove all default mouse listeners
-		MouseListener [] ml = getMouseListeners();
-		if (ml != null) {
-			for (int i=0; i < ml.length; i++) {
-				removeMouseListener(ml[i]);
-			}
-		}			
-		
-		addComponentListener(new ComponentListener() {
-
-			public void componentHidden(ComponentEvent e) {
+					
+		// listen to mouse pressed on table cells, make sure to start editing
+		// if we don't do this, we get
+		// Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
+		//  at javax.swing.plaf.basic.BasicTableUI$Handler.mousePressed(Unknown Source)
+		addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				int clickedRow = rowAtPoint(e.getPoint());
 				
-			}
-
-			public void componentMoved(ComponentEvent e) {
+				// make sure the CAS view gets the focus and its toolbar when clicked on the table
+				// for some reason this is not working out of the box as DockManager.eventDispatched()
+				// sometimes things that this click comes from the EuclidianView		
+				DockManager dockManager = app.getGuiManager().getLayout().getDockManager();
+				DockPanel panel = dockManager.getFocusedPanel();
+				if (panel == null || panel.getViewId() != Application.VIEW_CAS)
+					app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_CAS);
 				
-			}
-
-			public void componentResized(ComponentEvent e) {
-				if (isEditing()) return;
-				
-				// keep editor value after resizing
-				int row = editor.getEditingRow();
-				if (row >=0 && row < getRowCount()) {
-					editor.stopCellEditing();
-					updateRow(row);
+				if (clickedRow >= 0) {
+					//boolean undoNeeded = false;
+					startEditingRow(clickedRow);
 				}
 			}
-
-			public void componentShown(ComponentEvent e) {
+		});
+		
+		// keep editor value after changing width
+		addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
+				if (currentWidth == getWidth()) 
+					return; 
+				else 
+					currentWidth = getWidth();
 				
+				if (isEditing()) {					
+					// keep editor value after resizing
+					int row = editor.getEditingRow();
+					if (row >=0 && row < getRowCount()) {
+						editor.stopCellEditing();
+						updateRow(row);
+					}
+				}
 			}
-			
 		});
 
 		// tableModel listener to resize the column width after row updates
@@ -139,7 +153,12 @@ public class CASTable extends JTable {
 		return view;
 	}
 	
+	public boolean isEditing() {
+		return editor != null && editor.isEditing();		
+	}
+	
 	public void stopEditing() {
+		if (!isEditing()) return;
 		// stop editing 
 		CellEditor editor = (CellEditor) getEditorComponent();
 		if (editor != null) editor.stopCellEditing();
@@ -159,39 +178,69 @@ public class CASTable extends JTable {
 	public void insertRow(GeoCasCell newValue, boolean startEditing) {
 		int lastRow = tableModel.getRowCount()-1;
 		if (isRowEmpty(lastRow)) {
-			if (newValue == null)
+			if (newValue == null) {
 				newValue = new GeoCasCell(kernel.getConstruction());
-			tableModel.setValueAt(newValue, lastRow, COL_CAS_CELLS);
-			startEditingRow(lastRow);
+				//kernel.getConstruction().setCasCellRow(newValue, lastRow);
+			}
+			setRow(lastRow, newValue);
+			if (startEditing)
+				startEditingRow(lastRow);
 		} else {
-			insertRowAfter(lastRow, newValue, startEditing);	
+			insertRow(lastRow + 1, newValue, startEditing);	
 		}	
 	}
 	
 	/**
-	 * Inserts a row after selectedRow and starts editing
+	 * Inserts a row at selectedRow and starts editing
 	 * the new row.
 	 * @param selectedRow 
 	 * @param newValue 
 	 * @param startEditing 
 	 */
-	public void insertRowAfter(int selectedRow, GeoCasCell newValue, boolean startEditing) {							
-		if (newValue == null)
+	public void insertRow(final int selectedRow, GeoCasCell newValue,final  boolean startEditing) {	
+		if (newValue == null) {
 			newValue = new GeoCasCell(kernel.getConstruction());
-		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
-		// make sure the row is shown when at the bottom of the viewport
-		table.scrollRectToVisible(table.getCellRect(selectedRow+1, 0, false));
-		
-		int rowCount = tableModel.getRowCount();
-		if (selectedRow + 2 < rowCount)
-		{
-			CASInputHandler h = view.getInputHandler();
-			for (int i=0; i < rowCount; i++)
-				h.updateReferencesAfterRowInsert(selectedRow, i);
+			if (selectedRow != tableModel.getRowCount())
+				// tell construction about new GeoCasCell if it is not at the end
+				kernel.getConstruction().setCasCellRow(newValue, selectedRow);
 		}
+		
+		tableModel.insertRow(selectedRow,  new Object[] { newValue });
+		// make sure the row is shown when at the bottom of the viewport
+		table.scrollRectToVisible(table.getCellRect(selectedRow, 0, false));
+		
 		// update height of new row
 		if (startEditing)
-			startEditingRow(selectedRow  + 1);
+			startEditingRow(selectedRow);		
+	}	
+	
+	/**
+	 * Puts casCell into given row.
+	 * 
+	 * @param row 
+	 * @param casCell
+	 */
+	final public void setRow(final int row, final GeoCasCell casCell) {	
+		if (row < 0) return;
+		
+		// TODO: remove
+		System.out.println("setRow: " + row + ", " + casCell);
+		
+		int rowCount = tableModel.getRowCount();
+		if (row < rowCount) {
+			if (casCell == tableModel.getValueAt(row, COL_CAS_CELLS)) {
+				tableModel.fireTableRowsUpdated(row, row);
+			} else {
+				tableModel.setValueAt(casCell, row, COL_CAS_CELLS);
+			}
+		}
+		else  {
+			// add new rows
+			for (int pos = rowCount; pos <= row; pos++) {
+				tableModel.addRow(new Object[] {""});
+			}
+			tableModel.setValueAt(casCell, row, COL_CAS_CELLS);
+		}				
 	}	
 	
 	/**
@@ -243,35 +292,8 @@ public class CASTable extends JTable {
         }
     }
 
-    /**
-     * Creates a new row in the cas view.
-     * @return The new row.
-     */
-    public GeoCasCell createRow() {
-    	stopEditing();
-    	
-    	// make sure we have at least one row
-    	int rows = getRowCount();
-    	if (rows == 0) { 
-    		insertRow(new GeoCasCell(kernel.getConstruction()), false);
-    		rows = 1;
-    	} 
-    	
-    	GeoCasCell retRow;
-    	
-    	// check if last row is empty
-		if (isRowEmpty(rows-1)) {
-			// last row empty
-			retRow = getCASTableCellValue(rows-1);
-		}
-		else {
-			// last row is not empty
-			retRow = new GeoCasCell(kernel.getConstruction());
-			insertRow(retRow, false);
-		}
-    	
-    	return retRow;
-    }
+ 
+
 	
 	public void updateRow(int row) {
 		tableModel.fireTableRowsUpdated(row, row);	
@@ -283,7 +305,7 @@ public class CASTable extends JTable {
 			tableModel.fireTableRowsUpdated(0, rowCount - 1);
 	}
 	
-	public GeoCasCell getCASTableCellValue(int row) {
+	public GeoCasCell getGeoCasCell(int row) {
 		return (GeoCasCell) tableModel.getValueAt(row, COL_CAS_CELLS);
 	}
 	
@@ -299,36 +321,22 @@ public class CASTable extends JTable {
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteAllRows() {
-		stopEditing();
-		int row = tableModel.getRowCount();
-		for (int i = row - 1; i >= 0; i--)
-			tableModel.removeRow(i);
-		this.repaint();
-		// if (tableModel.getRowCount() == 0)
-		// insertRow(-1, CASPara.contCol);
-	}
+		tableModel.setRowCount(0);		
+	}	
 
 	/*
 	 * Function: Delete a rolw, and set the focus at the right position
 	 */
 	public void deleteRow(int row) {
-		stopEditing();
-		tableModel.removeRow(row);
+//		stopEditing();
+		if (row > -1 && row < tableModel.getRowCount())
+			tableModel.removeRow(row);
 
-		int rowCount = tableModel.getRowCount();
-		if (row < rowCount)
-		{
-			CASInputHandler h = view.getInputHandler();
-			for (int i= 0; i < rowCount; i++)
-				h.updateReferencesAfterRowDelete(row, i);
-		}
-
-		this.repaint();
-		
-		if (rowCount == 0)
-			insertRow(null, true);
-		else 
-			startEditingRow(Math.min(row, rowCount-1));
+//		int rowCount = tableModel.getRowCount();
+//		if (rowCount == 0)
+//			insertRow(null, true);
+//		else 
+//			startEditingRow(Math.min(row, rowCount-1));
 	}
 	
 //	/**
@@ -351,25 +359,24 @@ public class CASTable extends JTable {
 	/*
 	 * Function: Set the focus on the specified row
 	 */
-	public void startEditingRow(int editRow) {									
+	public void startEditingRow(final int editRow) {									
 		if (editRow >= tableModel.getRowCount()) {
 			// insert new row, this starts editing
 			insertRow(null, true);
 		}
 		else {		
-			// start editing
-			setRowSelectionInterval(editRow, editRow);	
-	        scrollRectToVisible(getCellRect( editRow, COL_CAS_CELLS, true ) );	
-			editCellAt(editRow, COL_CAS_CELLS);
+			// start editing				    	
+	        doEditCellAt(editRow, COL_CAS_CELLS);											
 		}
 	}
 	
-	public boolean editCellAt(int editRow, int editCol) {
-		boolean success = super.editCellAt(editRow, editCol);
+	private void doEditCellAt(final int editRow, final int editCol) {
+    	setRowSelectionInterval(editRow, editRow);	
+        scrollRectToVisible(getCellRect( editRow, COL_CAS_CELLS, true ) );
+    	boolean success = editCellAt(editRow, editCol);
 		if (success && editCol == COL_CAS_CELLS) {
 			editor.setInputAreaFocused();
-		}
-		return success;
+		}			
 	}
 
 	public void setFont(Font ft) {

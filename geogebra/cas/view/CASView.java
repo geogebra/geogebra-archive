@@ -7,6 +7,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.cas.AlgoDependentCasCell;
 import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
@@ -38,7 +39,7 @@ import javax.swing.event.ListSelectionListener;
  * 
  * @author Markus Hohenwarter, Quan Yuan
  */
-public class CASView extends JComponent implements FocusListener, View, Printable {
+public class CASView extends JComponent implements View, Printable {
 
 	private Kernel kernel;
 
@@ -49,9 +50,11 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 	private GeoGebraCAS cas;
 	private Application app;
 	private JPanel btPanel;
-	private HashMap<String, GeoCasCell> assignmentCellMap;
-	private HashSet<String> ignoreUpdateVars;
 	private final RowHeader rowHeader;
+	private boolean toolbarIsUpdatedByDockPanel;
+
+
+
 
 	public CASView(Application app) {
 		kernel = app.getKernel();
@@ -62,10 +65,6 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 
 		// CAS input/output cells
 		createCASTable();
-
-		// map for assignments to cell
-		assignmentCellMap = new HashMap<String, GeoCasCell>();
-		ignoreUpdateVars = new HashSet<String>();
 
 		// row header
 		//final JList rowHeader = new RowHeader(consoleTable);
@@ -110,7 +109,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 		scrollPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				int clickedRow = consoleTable.rowAtPoint(e.getPoint());
-				boolean undoNeeded = false;
+				//boolean undoNeeded = false;
 
 				if (clickedRow < 0) {
 					// clicked outside of console table
@@ -118,32 +117,30 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 					if (rows == 0) {
 						// insert first row
 						consoleTable.insertRow(null, true);
-						undoNeeded = true;
+						//undoNeeded = true;
 					} else {
 						GeoCasCell cellValue = consoleTable
-								.getCASTableCellValue(rows - 1);
+								.getGeoCasCell(rows - 1);
 						if (cellValue.isEmpty()) {
 							consoleTable.startEditingRow(rows - 1);
 						} else {
 							consoleTable.insertRow(null, true);
-							undoNeeded = true;
+							//undoNeeded = true;
 						}
 					}
 				}
 
-				if (undoNeeded) {
-					// store undo info
-					getApp().storeUndoInfo();
-				}
+//				if (undoNeeded) {
+//					// store undo info
+//					getApp().storeUndoInfo();
+//				}
 			}
-
 		});
 
 		// input handler
 		casInputHandler = new CASInputHandler(this);
 
-		addFocusListener(this);
-		attachView();
+		//addFocusListener(this);
 	}
 	
 	
@@ -169,12 +166,16 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 	 * e.g. "Integral", [ "x" ]
 	 */
 	public void processInput(String ggbcmd, String[] params) {
-		casInputHandler.processCurrentRow(ggbcmd, params);
-		getApp().storeUndoInfo();
+		if (consoleTable.isEditing()) {
+			casInputHandler.processCurrentRow(ggbcmd, params);
+			getApp().storeUndoInfo();
+		}
 	}
 	
-	public void processRow(int row) {
-		casInputHandler.processRow(row);
+	public void processRowThenEdit(int row, boolean flag) {
+		if (consoleTable.isEditing()) {
+			casInputHandler.processRowThenEdit(row, flag);
+		}
 	}
 	
 	public String resolveCASrowReferences(String inputExp, int row) {
@@ -204,8 +205,8 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 
 		// consoleTable.addKeyListener(new ConsoleTableKeyListener());
 
-		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(this);
-		consoleTable.addMouseListener(tableCellMouseListener);
+//		TableCellMouseListener tableCellMouseListener = new TableCellMouseListener(this);
+//		consoleTable.addMouseListener(tableCellMouseListener);
 		
 	}
 
@@ -247,44 +248,44 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 	// return sb.toString();
 	// }
 
-	public void getSessionXML(StringBuilder sb) {
-		// get the number of pairs in the view
-		int numOfRows = consoleTable.getRowCount();
-		
-		// don't save session if there is only one empty row
-		if (numOfRows == 0 || consoleTable.getCASTableCellValue(0).isEmpty()) 
-			return;				
-
-		// change kernel settings temporarily
-		int oldCoordStlye = kernel.getCoordStyle();
-		int oldPrintForm = kernel.getCASPrintForm();
-        boolean oldValue = kernel.isPrintLocalizedCommandNames();
-		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);	
-		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
-        kernel.setPrintLocalizedCommandNames(false); 
-
-		sb.append("<casSession>\n");		
-
-		// get the content of each pair in the table with a loop
-		// append the content to the string sb
-		for (int i = 0; i < numOfRows; ++i) {
-			GeoCasCell temp = consoleTable.getCASTableCellValue(i);
-			sb.append(temp.getXML());
-		}
-
-		sb.append("</casSession>\n");
-		
-		// set back kernel
-		kernel.setCoordStyle(oldCoordStlye);
-		kernel.setCASPrintForm(oldPrintForm);
-		kernel.setPrintLocalizedCommandNames(oldValue);      
-	}
+//	public void getSessionXML(StringBuilder sb) {
+//		// get the number of pairs in the view
+//		int numOfRows = consoleTable.getRowCount();
+//		
+//		// don't save session if there is only one empty row
+//		if (numOfRows == 0 || consoleTable.getGeoCasCell(0).isEmpty()) 
+//			return;				
+//
+//		// change kernel settings temporarily
+//		int oldCoordStlye = kernel.getCoordStyle();
+//		int oldPrintForm = kernel.getCASPrintForm();
+//        boolean oldValue = kernel.isPrintLocalizedCommandNames();
+//		kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);	
+//		kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
+//        kernel.setPrintLocalizedCommandNames(false); 
+//
+//		sb.append("<casSession>\n");		
+//
+//		// get the content of each pair in the table with a loop
+//		// append the content to the string sb
+//		for (int i = 0; i < numOfRows; ++i) {
+//			GeoCasCell temp = consoleTable.getGeoCasCell(i);
+//			sb.append(temp.getXML());
+//		}
+//
+//		sb.append("</casSession>\n");
+//		
+//		// set back kernel
+//		kernel.setCoordStyle(oldCoordStlye);
+//		kernel.setCASPrintForm(oldPrintForm);
+//		kernel.setPrintLocalizedCommandNames(oldValue);      
+//	}
 
 	/**
 	 * Returns the output string in the n-th row of this CAS view.
 	 */
 	public String getRowOutputValue(int n) {
-		return consoleTable.getCASTableCellValue(n).getOutput();
+		return consoleTable.getGeoCasCell(n).getOutput();
 	}
 
 	/**
@@ -292,7 +293,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 	 * cell has no output string, the input string of this cell is returned.
 	 */
 	public String getRowInputValue(int n) {
-		return consoleTable.getCASTableCellValue(n).getInput();
+		return consoleTable.getGeoCasCell(n).getInput();
 	}
 
 	/**
@@ -315,121 +316,74 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 		return app;
 	}
 
-	public void focusGained(FocusEvent arg0) {
-		// start editing last row
-		int lastRow = consoleTable.getRowCount() - 1;
-		if (lastRow >= 0)
-			consoleTable.startEditingRow(lastRow);
-	}
-
-	public void focusLost(FocusEvent arg0) {
-
-	}
+//	public void focusGained(FocusEvent arg0) {
+//		firstSetModeAfterFocusGained = true;
+//		
+////		// start editing last row
+////		int lastRow = consoleTable.getRowCount() - 1;
+////		if (lastRow >= 0)
+////			consoleTable.startEditingRow(lastRow);
+//	}
+//
+//	public void focusLost(FocusEvent arg0) {
+//		firstSetModeAfterFocusGained = true;
+//	}
 
 	/**
 	 * Defines new functions in the CAS
 	 */
-	public void add(GeoElement geo) {
-		updateInCAS(geo);
+	public void add(GeoElement geo) {		
+		// TODO: remove
+		System.out.println("CASView.ADD start: " + geo);
+		
+		update(geo);	
+		
+		// TODO: remove
+		System.out.println("CASView.ADD end: " + geo);
 	}
 	
-	/**
-	 * Updates geo's value in the current CAS, e.g. a := 5;
-	 * @param geo
-	 * @return whether an assignment was evaluated
-	 */
-	private boolean updateInCAS(GeoElement geo) {
-		if (ignoreUpdateVars.contains(geo.getLabel())) {
-			// TODO: remove
-			System.out.println("IGNORE updateInCAS: " + geo.getLabel());
-			return false;
-		}
-		try {
-			if (geo.isCasEvaluableObject()) {
-				String funStr = geo.toCasAssignment(cas.getCurrentCASstringType());
-				if (funStr != null) {
-					// System.out.println("updateInCAS: " + funStr);
-					cas.evaluateRaw(funStr);
-					return true;
-				}
-			}
-		} catch (Throwable e) {
-			System.err.println("CASView.updateInCAS: " + geo + ", " + e.getMessage());
-		}
-		return false;
-	}
-
 	/**
 	 * Removes function definitions from the CAS
 	 */
 	public void remove(GeoElement geo) {
-		if (geo.isLabelSet()) {
-			// remove variable name from CAS
-			getCAS().unbindVariable(geo.getLabel());
-		}
+		// TODO: remove
+		System.out.println("CASView.REMOVE start: " + geo);
+		
+		if (geo instanceof GeoCasCell) {
+			GeoCasCell casCell = (GeoCasCell) geo;
+			consoleTable.deleteRow(casCell.getRowNumber());
+		}						
+		
+		// TODO: remove
+		System.out.println("CASView.REMOVE end: " + geo);		
 	}
 
 	/**
-	 * Removes function definitions in the CAS
+	 * Handles updates of geo in CAS view.
 	 */
-	public void update(GeoElement geo) {		
+	public void update(GeoElement geo) {
 		// TODO: remove
-		System.out.println("CASView.update START: " + geo.getLabel());
+		System.out.println("CASView.update START: " + geo);			
 		
-		// check if update should be ignored
-		if (ignoreUpdateVars.contains(geo.getLabel())) {
-			// TODO: remove
-			System.out.println("    IGNORE update: " + geo.getLabel());
-			return;
-		}
-		
-		boolean isCASUpdateNeeded = true;
-		boolean isCASUpdateDone = false;
-		
-		int updateStartRow = 0;
-
-		// check if we have a cell with an assignment for geo
-		GeoCasCell cellValue = assignmentCellMap.get(geo.getLabel());
-		
-		if (cellValue != null && geo.isIndependent()) {
-			int row = cellValue.getRow();
-			updateStartRow = row + 1;
-
-			// set input of assignment row, e.g. a := 2;			
-			String assignmentStr = geo.toCasAssignment(ExpressionNode.STRING_TYPE_GEOGEBRA);
-			cellValue.setInput(assignmentStr);
-
-			casInputHandler.processRow(row);
-			isCASUpdateNeeded = false;
-			isCASUpdateDone = true;
-		}
-		
-		// make sure the value of geo is updated in the CAS
-		// e.g. a was 7 and is updated to 8
-		if (isCASUpdateNeeded)
-			isCASUpdateDone = updateInCAS(geo);
-
-		// update all dependent rows
-		if (isCASUpdateDone)
-			casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
-		
+		if (geo instanceof GeoCasCell) {
+			GeoCasCell casCell = (GeoCasCell) geo;			
+			consoleTable.setRow(casCell.getRowNumber(), casCell);
+		}	
+											
 		// TODO: remove
-		System.out.println("CASView.update END: " + geo.getLabel());
+		System.out.println("CASView.update END: " + geo);	
+	}
 	
-	}
 
-	void addToIgnoreUpdates(String var) {
-		ignoreUpdateVars.add(var);
-	}
 
-	void removeFromIgnoreUpdates(String var) {
-		ignoreUpdateVars.remove(var);
-	}
+
 	
 	/**
 	 * Handles toolbar mode changes
 	 */
-	public void setMode(int mode) {
+	public void setMode(int mode) {		
+		if (toolbarIsUpdatedByDockPanel) return;
+		
 		String command = kernel.getModeText(mode); // e.g. "Derivative"
 		
 		switch (mode) {		
@@ -440,6 +394,7 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 			case EuclidianConstants.MODE_CAS_FACTOR:
 			case EuclidianConstants.MODE_CAS_SUBSTITUTE:			
 				// no parameters
+				
 				processInput(command, null);
 				break;
 			
@@ -458,71 +413,51 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 	 * Renames function definitions in the CAS
 	 */
 	public void rename(GeoElement geo) {
-		if (geo.isLabelSet()) {
-			// remove old function name from MathPiper
-			getCAS().unbindVariable(geo.getOldLabel());
-	
-			// add new function name to MathPiper
-			add(geo);
-		}
+		update(geo);
 	}
 
 	public void clearView() {
-		cas.reset();
-
 		// delete all rows
 		consoleTable.deleteAllRows();
-
-		// insert one empty row
-		consoleTable.insertRow(new GeoCasCell(kernel.getConstruction()), false);
-		repaintView();
-	}
-
-	/**
-	 * Returns an empty row at the bottom of the cas view.
-	 */
-	public GeoCasCell createRow() {
-		return consoleTable.createRow();
+		ensureOneEmptyRow();
 	}
 
 	public void repaintView() {
-		consoleTable.updateAllRows();
-		validate();
+		repaint();	
+		//ensureOneEmptyRow();
 	}
 
 	public void reset() {
-		repaintView();
+		repaintView();		
 	}
 
 	public void updateAuxiliaryObject(GeoElement geo) {
 	}
 
 	public void attachView() {
-		//clearView();
+		clearView();
 		kernel.notifyAddAll(this);
-		kernel.attach(this);
+		kernel.attach(this);		
 	}
 
 	public void detachView() {
 		kernel.detach(this);
 		clearView();
 	}
-
-	public void setAssignment(String varLabel, GeoCasCell cellValue) {
-		assignmentCellMap.put(varLabel, cellValue);
-	}
 	
 	/**
-	 * Returns whether a variable is set (used) in the CAS. This is determined
-	 * efficiently by checking if the given label has been used in an assignment in the CAS
-	 * (e.g. x := 5) or is a defined variable name in GeoGebra itself.
-	 * @param varLabel name of the variable
-	 * @return whether a variable is bound (set) in the CAS
-	 */
-	final public boolean isVariableSet(String varLabel) {
-		return assignmentCellMap.get(varLabel) != null || 
-				kernel.lookupLabel(varLabel) != null;
-	}
+     * Makes sure we have an empty row at the end.
+     * @return The new row.
+     */
+    private void ensureOneEmptyRow() {
+    	int rows = getRowCount();
+    	//  add an empty one when we have no rows or last one is not empty 
+    	//if (rows == 0 || !consoleTable.isRowEmpty(rows-1)) {
+    	if (rows == 0) {
+    		GeoCasCell casCell = new GeoCasCell(kernel.getConstruction());
+    		consoleTable.insertRow(rows, casCell, false);
+    	}     	    	
+    }
 	
 	public CASInputHandler getInputHandler()
 	{
@@ -545,5 +480,13 @@ public class CASView extends JComponent implements FocusListener, View, Printabl
 
 	public int getViewID() {
 		return Application.VIEW_CAS;
+	}
+	
+	public boolean isToolbarIsUpdatedByDockPanel() {
+		return toolbarIsUpdatedByDockPanel;
+	}
+
+	public void setToolbarIsUpdatedByDockPanel(boolean toolbarIsUpdatedByDockPanel) {
+		this.toolbarIsUpdatedByDockPanel = toolbarIsUpdatedByDockPanel;
 	}
 }

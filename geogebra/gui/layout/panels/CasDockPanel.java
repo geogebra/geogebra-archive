@@ -36,4 +36,14 @@ public class CasDockPanel extends DockPanel {
 	private static String getDefaultToolbar() {
 		return "1001 | 1002 | 1003  || 1005 | 1004 || 1006 | 1007 || 1008 1009";		
 	}
+	
+	/**
+	 * Sets the active toolbar and tells the CAS view about this so it
+	 * can ignore mode changes which would otherwise result in cell computations.
+	 */
+	protected void setActiveToolBar(){		
+		app.getGuiManager().getCasView().setToolbarIsUpdatedByDockPanel(true);
+		super.setActiveToolBar();
+		app.getGuiManager().getCasView().setToolbarIsUpdatedByDockPanel(false);
+	}
 }

@@ -97,7 +97,7 @@ public abstract class CASTableCell extends JPanel{
 
 	
 	
-	public void setValue(GeoCasCell cellValue) {
+	public void setValue(GeoCasCell cellValue) {		
 		// set input panel
 		String input = cellValue.getInput();
 		inputPanel.setInput(input);

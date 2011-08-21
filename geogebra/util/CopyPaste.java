@@ -286,7 +286,7 @@ public class CopyPaste {
 		ArrayList<ConstructionElement> ret = new ArrayList<ConstructionElement>();
 		
 		GeoElement geo;
-		ArrayList<ConstructionElement> geoal;
+		ArrayList<AlgoElement> geoal;
 		AlgoElement ale;
 		ArrayList<ConstructionElement> ac;
 		GeoElement [] geos;

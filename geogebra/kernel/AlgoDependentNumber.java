@@ -22,15 +22,13 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
- *
- * @author  Markus
+ * Algorithm for dependent numbers, e.g. c = a + b.
+ * 
+ * @author Markus Hohenwarter
  * @version 
  */
 public class AlgoDependentNumber extends AlgoElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private ExpressionNode root;  // input
     private GeoNumeric number;     // output              
@@ -96,6 +94,7 @@ public class AlgoDependentNumber extends AlgoElement {
         // return 5a - 3b
         return root.toString();
     }
+    
     final public String toRealString() {        
         return root.toRealString();
     }

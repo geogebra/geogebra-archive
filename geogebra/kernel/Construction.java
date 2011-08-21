@@ -17,6 +17,8 @@ import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.cas.AlgoDependentCasCell;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
@@ -26,6 +28,7 @@ import geogebra.util.Util;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -61,16 +64,21 @@ public class Construction {
 	// AlgoElement List (for objects of type AlgoElement)
 	private ArrayList<AlgoElement> algoList; // used in updateConstruction()
 
-	/** Table for (label, GeoElement) pairs, contains global variables*/
+	/** Table for (label, GeoElement) pairs, contains global variables */
 	protected HashMap<String,GeoElement> geoTable;
+	
+	/** Table for (label, GeoCasCell) pairs, contains global variables used in CAS view */
+	protected HashMap<String,GeoCasCell> geoCasCellTable;
+	
 	/** Table for (label, GeoElement) pairs, contains local variables */
 	protected HashMap<String,GeoElement> localVariableTable;
-
+	
 	// set with all labeled GeoElements in ceList order
-	private TreeSet<GeoElement> geoSet; //generic Object replaced by GeoElement (Zbynek Konecny, 2010-06-14)
+	private TreeSet<GeoElement> geoSetConsOrder; //generic Object replaced by GeoElement (Zbynek Konecny, 2010-06-14)
 	private GeoPoint origin;
 	// set with all labeled GeoElements in alphabetical order
 	private TreeSet<GeoElement> geoSetLabelOrder;
+	private TreeSet<GeoElement> geoSetWithCasCells; 
 	
 	// list of random numbers or lists
 	private TreeSet<GeoElement> randomElements;
@@ -146,7 +154,8 @@ public class Construction {
 		algoList = new ArrayList<AlgoElement>();
 		step = -1;
 
-		geoSet = new TreeSet<GeoElement>();
+		geoSetConsOrder = new TreeSet<GeoElement>();
+		geoSetWithCasCells = new TreeSet<GeoElement>();
 		geoSetLabelOrder = new TreeSet<GeoElement>(new LabelComparator());
 		geoSetsTypeMap = new HashMap<Integer,TreeSet<GeoElement>>();
 		euclidianViewCE = new ArrayList<EuclidianViewCE>();
@@ -160,8 +169,7 @@ public class Construction {
 		initAxis();
 
 		geoTable = new HashMap<String,GeoElement>(200);
-		localVariableTable = new HashMap<String,GeoElement>();
-		initGeoTable();
+		initGeoTables();
 	}
 	
 	
@@ -186,8 +194,8 @@ public class Construction {
 	 * @return the last GeoElement object in the construction list.
 	 */
 	public GeoElement getLastGeoElement() {
-		if (geoSet.size() > 0)
-			return (GeoElement) geoSet.last();
+		if (geoSetWithCasCells.size() > 0)
+			return (GeoElement) geoSetWithCasCells.last();
 		else
 			return null;
 	}
@@ -211,8 +219,10 @@ public class Construction {
 	/**
 	 * Make geoTable contain only xAxis and yAxis
 	 */
-	protected void initGeoTable() {
-		geoTable.clear();		
+	protected void initGeoTables() {
+		geoTable.clear();
+		geoCasCellTable = null; 
+		localVariableTable = null;
 		
 		// add axes labels both in English and current language
 		geoTable.put("xAxis", xAxis);
@@ -339,8 +349,18 @@ public class Construction {
 	 * @return set with all labeled geos in construction order.
 	 */
 	final public TreeSet<GeoElement> getGeoSetConstructionOrder() {
-		return geoSet;
+		return geoSetConsOrder;
 	}
+	
+	/**
+	 * Returns a set with all labeled GeoElement and all GeoCasCell objects 
+	 * of this construction in construction order.
+	 * @return set with all labeled geos and CAS cells in construction order.
+	 */
+	final public TreeSet<GeoElement> getGeoSetWithCasCellsConstructionOrder() {
+		return geoSetWithCasCells;
+	}
+	
 
 	/**
 	 * Returns a set with all labeled GeoElement objects of this construction in
@@ -379,7 +399,7 @@ public class Construction {
 		TreeSet<GeoElement> sortedSet = new TreeSet<GeoElement>(new NameDescriptionComparator());
 
 		// get all GeoElements from construction and sort them
-		Iterator<GeoElement> it = geoSet.iterator();
+		Iterator<GeoElement> it = geoSetConsOrder.iterator();
 		while (it.hasNext()) {
 			GeoElement geo = (GeoElement) it.next();
 			// sorted inserting using name description of geo
@@ -421,10 +441,151 @@ public class Construction {
 	public void addToConstructionList(ConstructionElement ce, int index){
 		
 		++step;
-		updateAllConstructionProtocolAlgorithms();
 		ceList.add(index, ce);
 		updateConstructionIndex(index);
 		
+		// update cas row references
+		if (ce instanceof GeoCasCell)
+			updateCasCellRows();
+		
+		updateAllConstructionProtocolAlgorithms();
+	}
+	
+	/***
+	 * Returns the n-th GeoCasCell object (free or dependent) in the construction list.
+	 * This is the GeoCasCell in the n-th row of the CAS view.
+	 * 
+	 * @param row number starting at 0
+	 * @return cas cell or null if there are less cas cells in the construction list
+	 */
+	public GeoCasCell getCasCell(int row) {
+		if (row < 0) return null;
+		
+		int counter = 0;
+		for (ConstructionElement ce : ceList) {
+			if (ce instanceof GeoCasCell) {
+				if (counter == row)
+					return (GeoCasCell) ce;
+				++counter;
+			}
+			else if (ce instanceof AlgoDependentCasCell) {
+				if (counter == row)
+					return ((AlgoDependentCasCell) ce).getCasCell();
+				++counter;
+			}						
+		}
+		
+		// less than n casCell
+		return null;
+	}
+	
+	/***
+	 * Returns the last GeoCasCell object (free or dependent) in the construction list.
+	 * 
+	 * @return last cas cell
+	 */
+	public GeoCasCell getLastCasCell() {
+		GeoCasCell lastCell = null;
+		for (ConstructionElement ce : ceList) {
+			if (ce instanceof GeoCasCell) {			
+				lastCell = (GeoCasCell) ce;
+			}
+			else if (ce instanceof AlgoDependentCasCell) {			
+				lastCell = ((AlgoDependentCasCell) ce).getCasCell();
+			}						
+		}	
+		return lastCell;
+	}
+	
+	/***
+	 * Adds the given GeoCasCell object to the construction list so that
+	 * it becomes the n-th GeoCasCell in the list. Other cas cells are shifted right.
+	 * 
+	 * @param row number starting at 0
+	 * @return cas cell or null if there are less cas cells in the construction list
+	 */
+	public void setCasCellRow(GeoCasCell casCell, int n) {
+		GeoCasCell nthCasCell = getCasCell(n);
+		if (nthCasCell == null) {
+			addToConstructionList(casCell, false);			
+		} else {
+			addToConstructionList(casCell, nthCasCell.getConstructionIndex());			
+		}
+		
+		addToGeoSetWithCasCells(casCell);
+	}
+	
+//	/***
+//	 * Returns position of the given GeoCasCell object (free or dependent) in the construction list.
+//	 * This is the row number used in the CAS view.
+//	 * 
+//	 * @return row number of casCell for CAS view or -1 if casCell is not in construction list
+//	 */
+//	public int getCasCellRow(GeoCasCell casCell) {
+//		int counter = 0;
+//		for (ConstructionElement ce : ceList) {
+//			if (ce instanceof GeoCasCell) {
+//				if (ce == casCell)
+//					return counter;		
+//				else
+//					++counter;
+//			}
+//			else if (ce instanceof AlgoDependentCasCell) {
+//				if (ce == ((AlgoDependentCasCell) ce).getCasCell())
+//					return counter;
+//				else
+//					++counter;
+//			}					
+//		}
+//		
+//		// casCell not found
+//		return -1;
+//	}
+	
+	/**
+	 * Tells all GeoCasCells that the order of cas cells may have changed.
+	 * They can then update their row number and input strings with row references.
+	 */
+	public void updateCasCellRows() {
+		// update all row numbers first
+		int counter = 0;
+		for (ConstructionElement ce : ceList) {
+			if (ce instanceof GeoCasCell) {
+				((GeoCasCell) ce).setRowNumber(counter);
+				counter++;
+			}
+			else if (ce instanceof AlgoDependentCasCell) {
+				((AlgoDependentCasCell) ce).getCasCell().setRowNumber(counter);
+				counter++;
+			}					
+		}
+		
+		// now update all row references
+		for (ConstructionElement ce : ceList) {
+			if (ce instanceof GeoCasCell) {
+				((GeoCasCell) ce).updateInputStringWithRowReferences();
+			}
+			else if (ce instanceof AlgoDependentCasCell) {
+				((AlgoDependentCasCell) ce).getCasCell().updateInputStringWithRowReferences();				
+			}					
+		}						
+		
+		// TODO remove
+		System.out.println("*** updateCasCellRows() ***");
+		counter = 0;
+		for (ConstructionElement ce : ceList) {
+			if (ce instanceof GeoCasCell) {
+			    int row = ((GeoCasCell) ce).getRowNumber();
+				System.out.println("Row " + row + ": " + ((GeoCasCell) ce).toString());
+				counter++;
+			}
+			else if (ce instanceof AlgoDependentCasCell) {
+				int row = ((AlgoDependentCasCell) ce).getCasCell().getRowNumber();
+				System.out.println("Row " + row + ": " + (((AlgoDependentCasCell) ce).getCasCell()).toString());
+				counter++;
+			}					
+		}
+
 	}
 
 	/**
@@ -446,6 +607,11 @@ public class Construction {
 		}
 
 		updateConstructionIndex(pos);
+		
+		// update cas row references
+		if (ce instanceof GeoCasCell || ce instanceof AlgoDependentCasCell)
+			updateCasCellRows();
+		
 		updateAllConstructionProtocolAlgorithms(); // Michael Borcherds
 													// 2008-05-15
 		/*
@@ -479,7 +645,7 @@ public class Construction {
 	 * 
 	 * @return whether construction list was changed or not.
 	 */
-	private boolean moveInConstructionList(GeoElement geo, int toIndex) {
+	public boolean moveInConstructionList(GeoElement geo, int toIndex) {
 		AlgoElement algoParent = geo.getParentAlgorithm();
 		int fromIndex = (algoParent == null) ? ceList.indexOf(geo) : ceList
 				.indexOf(algoParent);
@@ -505,10 +671,10 @@ public class Construction {
 			// move the construction element
 			ceList.remove(fromIndex);
 			ceList.add(toIndex, ce);
-
+			
 			// update construction indices
 			updateConstructionIndex(Math.min(toIndex, fromIndex));
-
+			
 			// update construction step
 			if (fromIndex <= step && step < toIndex) {
 				--step;
@@ -518,10 +684,15 @@ public class Construction {
 				++step;
 
 				ce.notifyAdd();
-			}
-		}
-		updateAllConstructionProtocolAlgorithms(); // Michael Borcherds
-													// 2008-05-15
+			}					
+			
+			// update cas row references
+			if (ce instanceof GeoCasCell || ce instanceof AlgoDependentCasCell)
+				updateCasCellRows();
+			
+			updateAllConstructionProtocolAlgorithms(); // Michael Borcherds
+		}											// 2008-05-15
+		
 		return change;
 	}
 
@@ -553,15 +724,19 @@ public class Construction {
 	 * Calls remove() for every ConstructionElement in the construction list.
 	 * After this the construction list will be empty.
 	 */
-	public void clearConstruction() {
+	public void clearConstruction() {		
+		kernel.resetGeoGebraCAS();
+		
 		ceList.clear();
 		algoList.clear();
-		geoSet.clear();
+		
+		geoSetConsOrder.clear();
+		geoSetWithCasCells.clear();
 		geoSetLabelOrder.clear();
-		geoSetsTypeMap.clear();
-		localVariableTable.clear();
-		euclidianViewCE.clear();	
-		initGeoTable();
+		
+		geoSetsTypeMap.clear();		
+		euclidianViewCE.clear();			
+		initGeoTables();
 
 		// reinit construction step
 		step = -1;
@@ -712,30 +887,31 @@ public class Construction {
 	 * @return true iff there were any algos that wanted update
 	 */
 	final boolean updateAllConstructionProtocolAlgorithms() {
-		boolean didUpdate = false;
 		// Application.debug("updateAllConstructionProtocolAlgorithms");
 		// update all algorithms
 		int size = algoList.size();
+		ArrayList<AlgoElement> updateAlgos = null;
 		for (int i = 0; i < size; ++i) {
 			AlgoElement algo = (AlgoElement) algoList.get(i);
 			if (algo.wantsConstructionProtocolUpdate()) {
-				algo.compute();
-				// algo.euclidianViewUpdate();
-				algo.getGeoElements()[0].updateCascade();
-				didUpdate = true;
-				// Application.debug("  update algo: " + algo + " , kernel " +
-				// algo.getKernel() + ", ymin: " + algo.getKernel().getYmin());
-			}
-
+				if (updateAlgos == null)
+					updateAlgos = new ArrayList<AlgoElement>();
+				updateAlgos.add(algo);
+			}			
 		}
 		
-		if (didUpdate) {
+		// propagate update down all dependent GeoElements
+		if (updateAlgos != null) {
+			AlgoElement.updateCascadeAlgos(updateAlgos);
+		}
+		
+		if (updateAlgos != null) {
 			Application app = kernel.getApplication();
 			if (app.useFullGui())
 				app.getGuiManager().updateConstructionProtocol();
 		}
 
-		return didUpdate;
+		return updateAlgos != null;
 	}
 
 
@@ -851,12 +1027,91 @@ public class Construction {
 	 * @see #putLabel(GeoElement)
 	 */
 	public void removeLabel(GeoElement geo) {
+		geo.unbindVariableInCAS();		
 		geoTable.remove(geo.label);
 		removeFromGeoSets(geo);		
 	}
+	
+	/**
+	 * Adds given GeoCasCell to a table where (label, object) pairs 
+	 * of CAS view variables are stored.
+	 * @param geoCasCell GeoElement to be added, must have assignment variable
+	 * @see #removeCasCellLabel(GeoCasCell)
+	 * @see #lookupCasCellLabel(String)
+	 */
+	public void putCasCellLabel(GeoCasCell geoCasCell, String label) {
+		if (label == null) return;
+		
+		if (geoCasCellTable == null) 
+			geoCasCellTable = new HashMap<String,GeoCasCell>(); 
+		geoCasCellTable.put(label, geoCasCell);	
+	}
+	
+	/**
+	 * Removes given GeoCasCell from the CAS variable table
+	 * and from the underlying CAS.
+	 * 
+	 * @param variable to be removed	
+	 * @see #putCasCellLabel(GeoCasCell)
+	 */
+	public void removeCasCellLabel(String variable) {
+		removeCasCellLabel(variable, true);	
+	}		
+	
+	/**
+	 * Removes given GeoCasCell from the CAS variable table
+	 * and if wanted from the underlying CAS too.
+	 * 
+	 * @param geoCasCell GeoElement to be removed
+	 * @param unbindInCAS whether variable should be removed from underlying CAS too.
+	 * @see #putCasCellLabel(GeoCasCell)
+	 */
+	public void removeCasCellLabel(String variable, boolean unbindInCAS) {
+		if (geoCasCellTable != null) {
+			GeoCasCell geoCasCell = geoCasCellTable.remove(variable);			
+			if (unbindInCAS) 
+				geoCasCell.unbindVariableInCAS();			
+		}		
+	}		
+	
+	
+//	/**
+//	 * Adds the given GeoCasCell to this construction, i.e.
+//	 * to the construction list and the geoSetWithCasCells.
+//	 */
+//	public void addToConstruction(GeoCasCell geoCasCell) {
+//		addToConstructionList(geoCasCell, true);
+//		addToGeoSetWithCasCells(geoCasCell);
+//	}
+	
+//	/**
+//	 * Removes the given GeoCasCell from this construction, i.e.
+//	 * from the construction list and the geoSetWithCasCells.
+//	 */
+//	public void removeFromConstruction(GeoCasCell geoCasCell) {
+//		removeFromConstructionList(geoCasCell);
+//		removeFromGeoSetWithCasCells(geoCasCell);
+//	}
+	
+	/**
+	 * Adds the given GeoCasCell to a set with all
+	 * labeled GeoElements and CAS cells needed for notifyAll().
+	 */
+	public void addToGeoSetWithCasCells(GeoCasCell geoCasCell) {
+		geoSetWithCasCells.add(geoCasCell);
+	}
+	
+	/**
+	 * Removes the given GeoCasCell from a set with all
+	 * labeled GeoElements and CAS cells needed for notifyAll().
+	 */
+	public void removeFromGeoSetWithCasCells(GeoCasCell geoCasCell) {
+		geoSetWithCasCells.remove(geoCasCell);
+	}
 
 	private void addToGeoSets(GeoElement geo) {
-		geoSet.add(geo);
+		geoSetConsOrder.add(geo);
+		geoSetWithCasCells.add(geo);
 		geoSetLabelOrder.add(geo);
 
 		// get ordered type set
@@ -883,7 +1138,8 @@ public class Construction {
 	}
 
 	private void removeFromGeoSets(GeoElement geo) {
-		geoSet.remove(geo);
+		geoSetConsOrder.remove(geo);
+		geoSetWithCasCells.remove(geo);
 		geoSetLabelOrder.remove(geo);
 
 		// set ordered type set
@@ -899,6 +1155,26 @@ public class Construction {
 		 * Application.debug(g.getConstructionIndex() + ": " + g); }
 		 */
 	}
+//	
+//	private void fixOrderingInGeoSets(GeoElement geo) {
+//		fixOrderInSet(geo, geoSetConsOrder);
+//		fixOrderInSet(geo, geoSetWithCasCells);
+//		fixOrderInSet(geo, geoSetLabelOrder);
+//
+//		// set ordered type set
+//		int type = geo.getGeoClassType();
+//		TreeSet<GeoElement> typeSet = geoSetsTypeMap.get(type);
+//		if (typeSet != null)
+//			fixOrderInSet(geo, typeSet);
+//	}
+//	
+//	private void fixOrderInSet(GeoElement geo, TreeSet<GeoElement> set ) {
+//		// fix ordering by removing and adding again
+//		if (set.contains(geo)) {
+//			set.remove(geo);
+//			set.add(geo);
+//		}
+//	}
 
 	/**
 	 * Adds a geo to the list of local variables using the specified local variable name .
@@ -906,6 +1182,8 @@ public class Construction {
 	 * @param geo local variable object
 	 */
 	final public void addLocalVariable(String varname, GeoElement geo) {
+		if (localVariableTable == null)
+			localVariableTable = new HashMap<String,GeoElement>();
 		localVariableTable.put(varname, geo);
 		geo.setLocalVariableLabel(varname);
 	}
@@ -915,8 +1193,10 @@ public class Construction {
 	 * @param varname name of variable to be removed
 	 */
 	final public void removeLocalVariable(String varname) {
-		GeoElement geo = localVariableTable.remove(varname);
-		geo.undoLocalVariableLabel();		
+		if (localVariableTable != null) {
+			GeoElement geo = localVariableTable.remove(varname);
+			geo.undoLocalVariableLabel();
+		}
 	}
 
 	/**
@@ -928,11 +1208,55 @@ public class Construction {
 	GeoElement lookupLabel(String label) {
 		return lookupLabel(label, false);
 	}
+	
+	/**
+	 * Returns a GeoCasCell for the given label. Note: only objects with
+	 * construction index 0 to step are available.
+	 * @param label to be looked for
+	 * @return may return null
+	 */
+	GeoCasCell lookupCasCellLabel(String label) {
+		GeoCasCell geoCasCell = null;
+
+		// global var handling
+		if (geoCasCellTable != null)
+			geoCasCell = geoCasCellTable.get(label);
+		
+		// TODO add lookupCasCellLabel support for construction steps
+//		// STANDARD CASE: variable name found
+//		if (geoCasCell != null) {
+//			return (GeoCasCell) checkConstructionStep(geoCasCell);
+//		}
+		
+		return geoCasCell;
+	}
+	
+	/**
+	 * Returns GeoCasCell referenced by given row label.
+	 * 
+	 * @param label row reference label, e.g. $5 for 5th row or $ for current row
+	 * @param currentRow to know how to get the previous row for $
+	 * @return referenced row or null
+	 */
+	public GeoCasCell lookupCasRowReference(String label) {
+		if (!label.startsWith(ExpressionNode.CAS_ROW_REFERENCE_PREFIX)) return null;				
+			
+		// $5 for 5th row
+		int rowRef = -1;
+		try {
+			rowRef = Integer.parseInt(label.substring(1));
+		} catch (Exception e) {
+			System.err.println("Invalid CAS row reference: " + label);
+		}			
+		
+		// we start to count at 0 internally but at 1 in the user interface
+		return getCasCell(rowRef-1);			
+	}
 
 	/**
 	 * Returns a GeoElement for the given label. Note: only geos with
 	 * construction index 0 to step are available.
-	 * @param label label to be looked for
+	 * @param label to be looked for
 	 * @param allowAutoCreate
 	 *            : true = allow automatic creation of missing labels (e.g. for
 	 *            spreadsheet)
@@ -943,8 +1267,8 @@ public class Construction {
 			return null;
 		
 		// local var handling
-		if (!localVariableTable.isEmpty()) {
-			GeoElement localGeo = (GeoElement) localVariableTable.get(label);
+		if (localVariableTable != null) {
+			GeoElement localGeo = localVariableTable.get(label);
 			if (localGeo != null)
 				return localGeo;
 		}
@@ -1342,15 +1666,37 @@ public class Construction {
 	}
 
 	/**
-	 * Returns true if label is not occupied by any GeoElement.
+	 * Returns true if label is not occupied by any GeoElement including GeoCasCells.
 	 * @param label label to be checked
 	 * @return true iff label is not occupied by any GeoElement.
 	 */
 	public boolean isFreeLabel(String label) {
+		return isFreeLabel(label, true);
+	}
+	
+	/**
+	 * Returns true if label is not occupied by any GeoElement.
+	 * @param label label to be checked
+	 * @param includeCASvariables whether GeoCasCell labels should be checked too
+	 * @return true iff label is not occupied by any GeoElement.
+	 */
+	private boolean isFreeLabel(String label, boolean includeCASvariables) {
 		if (label == null)
 			return false;
-		else
-			return !geoTable.containsKey(label);
+		else {
+			// check standard geoTable
+			if (geoTable.containsKey(label))
+				return false;
+			
+			// optional: also check CAS variable table
+			if (includeCASvariables && 
+					geoCasCellTable != null && 
+					geoCasCellTable.containsKey(label)) {				
+				return false;
+			}
+			
+			return true;
+		}
 	}
 	
 	/**
@@ -1618,7 +1964,23 @@ public class Construction {
 		}
 	}
 	
-	
+	/**
+	 * Changes the given casCell taking care of necessary redefinitions.
+	 * This may change the logic of the construction and is a very powerful operation.
+	 * 
+	 * @param casCell casCell to be changed
+	 * @throws Exception 
+	 */
+	public void changeCasCell(GeoCasCell casCell) throws Exception {								
+		// move all predecessors of casCell to the left of casCell in construction list
+		boolean didReordering = updateConstructionOrder(casCell);			
+		
+		// get current construction XML
+		StringBuilder consXML = getCurrentUndoXML();
+						
+		// build new construction to make sure all ceIDs are correct after the redefine
+		buildConstruction(consXML);		
+	}
 
 	private GeoElement keepGeo;
 	public GeoElement getKeepGeo(){
@@ -1670,31 +2032,26 @@ public class Construction {
 	 * upon) to the left of oldGeo in the construction list
 	 */
 	private void updateConstructionOrder(GeoElement oldGeo, GeoElement newGeo) {
-		TreeSet<GeoElement> predList = newGeo.getAllPredecessors();
+		TreeSet<GeoElement> predSet = newGeo.getAllPredecessors();
 
 		// check if moving is needed
 		// find max construction index of newGeo's predecessors and newGeo
 		// itself
-		Iterator<GeoElement> it = predList.iterator();
 		int maxPredIndex = newGeo.getConstructionIndex();
-		while (it.hasNext()) {
-			GeoElement pred = (GeoElement) it.next();
+		for (GeoElement pred : predSet) {
 			int predIndex = pred.getConstructionIndex();
 			if (predIndex > maxPredIndex)
 				maxPredIndex = predIndex;
 		}
-
+		
 		// no reordering is needed
 		if (oldGeo.getConstructionIndex() > maxPredIndex)
 			return;
 
 		// reordering is needed
 		// move all predecessors of newGeo (i.e. all objects that geo depends
-		// upon) as
-		// far as possible to the left in the construction list
-		it = predList.iterator();
-		while (it.hasNext()) {
-			GeoElement pred = (GeoElement) it.next();
+		// upon) as far as possible to the left in the construction list
+		for (GeoElement pred: predSet) {
 			moveInConstructionList(pred, pred.getMinConstructionIndex());
 		}
 
@@ -1704,6 +2061,65 @@ public class Construction {
 
 		// move oldGeo to its maximum construction index
 		moveInConstructionList(oldGeo, oldGeo.getMaxConstructionIndex());
+	}
+	
+	/**
+	 * Makes sure that geoCasCell comes after all its predecessors 
+	 * in  the construction list.
+	 * @return whether construction list order was changed
+	 */
+	private boolean updateConstructionOrder(GeoCasCell casCell) {
+		// collect all predecessors of casCell
+		TreeSet<GeoElement> allPred = new TreeSet<GeoElement>();
+		for (GeoElement directInput : casCell.getGeoElementVariables()) {
+			allPred.addAll(directInput.getAllPredecessors());
+			allPred.add(directInput);
+		}
+		
+		// Find max construction index of casCell's predecessors 
+		int maxPredIndex = 0;
+		for (GeoElement pred : allPred) {
+			int predIndex = pred.getConstructionIndex();
+			if (predIndex > maxPredIndex)
+				maxPredIndex = predIndex;
+		}
+
+		// if casCell comes after all its new predecessors,
+		// no reordering is needed
+		if (casCell.getConstructionIndex() > maxPredIndex)
+			return false;
+		
+		// reordering is needed
+		// maybe we can move casCell down in the construction list
+		if (casCell.getMaxConstructionIndex() > maxPredIndex) {
+			moveInConstructionList(casCell, maxPredIndex + 1);
+			return true;
+		}
+
+		// reordering is needed but we cannot simply move down the casCell
+		// because it has dependent objects:
+		// move all predecessors of casCell up as far as possible
+		maxPredIndex = 0;
+		for (GeoElement pred: allPred) {
+			moveInConstructionList(pred, pred.getMinConstructionIndex());
+			maxPredIndex = Math.max(maxPredIndex, pred.getConstructionIndex());			
+		}
+		
+		// if casCell still comes before one of its predecessors
+		// we have to move casCell
+		if (casCell.getConstructionIndex() < maxPredIndex) {	
+			return true;
+		}
+
+		// maybe we can move casCell down in the construction list now
+		if (casCell.getMaxConstructionIndex() > maxPredIndex) {
+			moveInConstructionList(casCell, maxPredIndex+1);
+			return true;
+		}
+		else {
+			System.err.println("Construction.updateConstructionOrder(GeoCasCell) failed: " + casCell);
+			return false;
+		}			
 	}
 	
 	/**

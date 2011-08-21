@@ -22,6 +22,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.gui.DynamicTextInputPane;
 import geogebra.gui.TextInputDialog;
+import geogebra.kernel.GeoDummyVariable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
@@ -476,19 +477,36 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 	}
 
 	/**
-	 * Looks for Variable objects that hold String var in the tree and replaces
+	 * Looks for GeoDummyVariable objects that hold String var in the tree and replaces
 	 * them by their newOb.
-	 * 
-	 * public void replaceSpecificVariable(String var, ExpressionValue newOb) {
-	 * // left wing if (left.isVariable()) { if (var.equals(((Variable)
-	 * left).getName())) left = newOb; } else if (left.isExpressionNode()) {
-	 * ((ExpressionNode) left).replaceSpecificVariable(var, newOb); }
-	 * 
-	 * // right wing if (right != null) { if (right.isVariable()) { if
-	 * (var.equals(((Variable) right).getName())) right = newOb; } else if
-	 * (right.isExpressionNode()) { ((ExpressionNode)
-	 * right).replaceSpecificVariable(var, newOb); } } }
+	 * @return whether replacement was done
 	 */
+	public boolean replaceGeoDummyVariables(String var, ExpressionValue newOb) {
+		// left wing
+		if (left instanceof GeoDummyVariable) {
+			if (var.equals(((GeoDummyVariable) left).toString())) {
+				left = newOb;
+				return true;
+			}
+		} else if (left.isExpressionNode()) {
+			return ((ExpressionNode) left).replaceGeoDummyVariables(var, newOb);
+		}
+
+		// right wing
+		if (right != null) {
+			if (right instanceof GeoDummyVariable) {
+				if (var.equals(((GeoDummyVariable) right).toString())) {
+					right = newOb;
+					return true;
+				}
+			} else if (right.isExpressionNode()) {
+				return ((ExpressionNode) right).replaceGeoDummyVariables(var, newOb);
+			}
+		}
+		
+		return false;
+	}
+
 
 	/**
 	 * look for GeoFunction objects in the tree and replace them by FUNCTION

@@ -74,10 +74,8 @@ public class Construction3D extends Construction {
 	
 	
 	
-	protected void initGeoTable() {
-		
-
-		super.initGeoTable();
+	protected void initGeoTable() {		
+		super.initGeoTables();
 		
 				
 		// add axes labels both in English and current language

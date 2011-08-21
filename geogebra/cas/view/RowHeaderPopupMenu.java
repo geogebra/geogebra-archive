@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
@@ -65,18 +66,21 @@ public class RowHeaderPopupMenu extends JPopupMenu implements ActionListener {
 		
 		String ac = e.getActionCommand();
 		if (ac.equals("insertAbove")) {
-			table.insertRowAfter(selRows[0] - 1, null, true);
+			table.insertRow(selRows[0], null, true);
 			undoNeeded = true;
 		}
 		else if (ac.equals("insertBelow")) {
-			table.insertRowAfter(selRows[selRows.length-1], null, true);
+			table.insertRow(selRows[selRows.length-1]+1, null, true);
 			undoNeeded = true;
 		}
 		else if (ac.equals("delete")) {
 			for (int i=selRows.length-1; i >= 0; i--) {
-				table.deleteRow(selRows[i]);
-			}
-			undoNeeded = true;
+				GeoCasCell casCell = table.getGeoCasCell(selRows[i]);
+				if (casCell != null) {
+					casCell.remove();
+					undoNeeded = true;
+				}
+			}			
 		}
 		
 		if (undoNeeded) {

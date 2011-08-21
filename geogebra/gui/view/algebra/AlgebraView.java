@@ -187,7 +187,7 @@ public class AlgebraView extends JTree implements View, Printable, SetLabels{
         // enable drag n drop
 		algCtrl.enableDnD();
 			
-		attachView();						
+		//attachView();						
 	}
 	
 	/**
@@ -247,15 +247,14 @@ public class AlgebraView extends JTree implements View, Printable, SetLabels{
 	public void attachView() {
 		clearView();
 		kernel.notifyAddAll(this);
-		kernel.attach(this);	
+		kernel.attach(this);
 		attached = true;
 	}
 
 	public void detachView() {
 		kernel.detach(this);
 		clearView();
-		attached = false;
-		//kernel.notifyRemoveAll(this);		
+		attached = false;		
 	}
 	
 	public void updateFonts() {
@@ -797,7 +796,7 @@ public class AlgebraView extends JTree implements View, Printable, SetLabels{
 			// change without redefine
 			boolean redefine = !selectedGeoElement.isPointOnPath();
 			
-			GeoElement geo = kernel.getAlgebraProcessor().changeGeoElement(selectedGeoElement, newValue, redefine);			
+			GeoElement geo = kernel.getAlgebraProcessor().changeGeoElement(selectedGeoElement, newValue, redefine, true);			
 			if (geo != null) {				
 				selectedGeoElement = geo;
 				selectedNode.setUserObject(selectedGeoElement);

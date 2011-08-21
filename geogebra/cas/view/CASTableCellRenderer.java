@@ -29,7 +29,6 @@ public class CASTableCellRenderer extends CASTableCell implements
 			int oldCASPrintForm = kernel.getCASPrintForm();
 			kernel.setCASPrintForm(ExpressionNodeConstants.STRING_TYPE_LATEX);
 			
-			tempV.setRow(row);
 			setValue(tempV);
 
 			kernel.setCASPrintForm(oldCASPrintForm);

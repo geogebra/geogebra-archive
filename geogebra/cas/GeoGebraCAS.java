@@ -1,6 +1,7 @@
 package geogebra.cas;
 
 import geogebra.cas.mpreduce.CASmpreduce;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -18,17 +19,15 @@ import java.util.Map;
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
-	/**
-	 * Timeout for CAS in seconds.
-	 */
-	private static int timeout = 5;
 
 	private Application app;
+	private Kernel kernel;
 	private CASparser casParser;
 	private CASgeneric cas;
 	public int currentCAS = -1;
 
 	public GeoGebraCAS(Kernel kernel) {
+		this.kernel = kernel;
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
 		setCurrentCAS(Kernel.DEFAULT_CAS);
@@ -460,15 +459,15 @@ public class GeoGebraCAS {
 	/**
 	 * @return CAS timeout in seconds
 	 */
-	public static int getTimeout() {
-		return GeoGebraCAS.timeout;
+	public int getTimeout() {
+		return cas.getTimeout();
 	}
 	
 	/**
 	 * @param timeout Timeout in seconds
 	 */
-	public static void setTimeout(int timeout) {
-		GeoGebraCAS.timeout = timeout;
+	public void setTimeout(int timeout) {
+		cas.setTimeout(timeout);
 	}
 	
 }

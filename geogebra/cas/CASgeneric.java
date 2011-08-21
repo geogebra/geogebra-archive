@@ -11,6 +11,11 @@ import java.util.ResourceBundle;
 
 public abstract class CASgeneric {
 	
+	/**
+	 * Timeout for CAS in seconds.
+	 */
+	private int timeout = 5;
+	
 	protected CASparser casParser;
 	private ResourceBundle casTranslations;
 	private String translationResourcePath;
@@ -137,6 +142,21 @@ public abstract class CASgeneric {
 		// default implementation works for MPReduce and MathPiper
 		return label + " := " + body;
 	}
+	
+	/**
+	 * @return CAS timeout in seconds
+	 */
+	public int getTimeout() {
+		return timeout;
+	}
+	
+	/**
+	 * @param timeout Timeout in seconds
+	 */
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+	
 
 
 	/**

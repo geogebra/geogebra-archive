@@ -1,5 +1,6 @@
 package geogebra.kernel.commands;
 
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -35,6 +36,8 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic.TextValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.cas.AlgoDependentCasCell;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.implicit.GeoImplicitPoly;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.parser.ParseException;
@@ -44,6 +47,7 @@ import geogebra.main.MyError;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class AlgebraProcessor {
 	
@@ -100,16 +104,103 @@ public class AlgebraProcessor {
 	}
 	
 	/**
+	 * Processes the given casCell, i.e. compute its output depending on 
+	 * its input. Note that this may create an additional twin GeoElement.	 
+	 */
+	final public void processCasCell(GeoCasCell casCell) throws MyError {
+		// TODO: remove
+		System.out.println("*** processCasCell: " + casCell);
+		
+		// check for CircularDefinition
+		if (casCell.isCircularDefinition()) {
+			// set twin geo to undefined
+			casCell.computeOutput(); 
+			casCell.updateCascade();
+			app.showError("CircularDefinition");
+			return;
+		}		
+		
+		AlgoElement algoParent = casCell.getParentAlgorithm();		
+		boolean prevFree = algoParent == null;
+		boolean nowFree = casCell.getGeoElementVariables() == null;				
+		boolean needsRedefinition = false;
+
+		if (prevFree) {
+			if (nowFree) {
+				// free -> free, e.g. m := 7  ->  m := 8
+				cons.addToConstructionList(casCell, true);	
+				casCell.computeOutput(); // create twinGeo if necessary			    	        
+				casCell.setLabelOfTwinGeo();
+				needsRedefinition = false;
+			}
+			else {
+				// free -> dependent, e.g. m := 7  ->  m := c+2	
+				if (casCell.isOutputEmpty() && !casCell.hasChildren()) {
+					// this is a new casCell
+					cons.removeFromConstructionList(casCell);	
+					kernel.DependentCasCell(casCell);
+					needsRedefinition = false;
+				} else {
+					// existing casCell with possible twinGeo
+					needsRedefinition = true;
+				}
+			}			
+		} else {
+			if (nowFree) {
+				// dependent -> free, e.g. m := c+2  ->  m := 7
+				// algorithm will be removed through redefinition 				
+				needsRedefinition = true;
+			}
+			else {
+				// dependent -> dependent, e.g. m := c+2  ->  m := c+d	
+				// we already have an algorithm but need redefinition
+				// in order to move it to the right place in construction list
+				needsRedefinition = true;				
+			}		
+		}
+		
+		if (needsRedefinition) {
+			try {
+				// update construction order and
+				// rebuild construction using XML
+				cons.changeCasCell(casCell);
+			} catch (Exception e) {
+				casCell.setError("RedefinitionFailed");
+				//app.showError(e.getMessage());				
+			}	
+		} else {
+			casCell.updateCascade();
+		}
+	}
+	
+	/**
 	 * for AlgebraView changes in the tree selection and redefine dialog
 	 * @return changed geo
 	 */
 	public GeoElement changeGeoElement(
 			GeoElement geo,
 			String newValue,
-			boolean redefineIndependent) {
+			boolean redefineIndependent, boolean storeUndoInfo) {
 						
 			try {
-				return changeGeoElementNoExceptionHandling(geo, newValue, redefineIndependent, true);
+				return changeGeoElementNoExceptionHandling(geo, newValue, redefineIndependent, storeUndoInfo);
+			} catch (Exception e) {
+				app.showError(e.getMessage());
+				return null;
+			}						
+	}	
+	
+	/**
+	 * for AlgebraView changes in the tree selection and redefine dialog
+	 * @return changed geo
+	 */
+	public GeoElement changeGeoElement(
+			GeoElement geo,
+			ValidExpression newValueVE,
+			boolean redefineIndependent, boolean storeUndoInfo) {
+						
+			try {
+				return changeGeoElementNoExceptionHandling(geo, newValueVE, redefineIndependent, storeUndoInfo);
 			} catch (Exception e) {
 				app.showError(e.getMessage());
 				return null;
@@ -122,23 +213,44 @@ public class AlgebraProcessor {
 	 */
 	public GeoElement changeGeoElementNoExceptionHandling(GeoElement geo, String newValue, boolean redefineIndependent, boolean storeUndoInfo) 
 	throws Exception {
+		
+		try {
+			ValidExpression ve = parser.parseGeoGebraExpression(newValue);
+			return changeGeoElementNoExceptionHandling(geo, ve, redefineIndependent, storeUndoInfo);
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(app.getError("InvalidInput") + ":\n" + newValue);
+		} catch (MyError e) {
+			e.printStackTrace();
+			throw new Exception(e.getLocalizedMessage());
+		} catch (Error e) {
+			e.printStackTrace();
+			throw new Exception(app.getError("InvalidInput") + ":\n" + newValue);
+		}
+	}
+	
+	/**
+	 * for AlgebraView changes in the tree selection and redefine dialog
+	 * @return changed geo
+	 */
+	public GeoElement changeGeoElementNoExceptionHandling(GeoElement geo, ValidExpression newValue, boolean redefineIndependent, boolean storeUndoInfo) 
+	throws Exception {
 		String oldLabel, newLabel;
-		ValidExpression ve;
 		GeoElement[] result;
 
 		try {
-			ve = parser.parseGeoGebraExpression(newValue);
 			oldLabel = geo.getLabel();
-			newLabel = ve.getLabel();
+			newLabel = newValue.getLabel();
 
 			if (newLabel == null) {
 				newLabel = oldLabel;
-				ve.setLabel(newLabel);
+				newValue.setLabel(newLabel);
 			}
 			
 			// make sure that points stay points and vectors stay vectors
-			if (ve instanceof ExpressionNode) {
-				ExpressionNode n = (ExpressionNode) ve;
+			if (newValue instanceof ExpressionNode) {
+				ExpressionNode n = (ExpressionNode) newValue;
 				if (geo.isGeoPoint()) 
 					n.setForcePoint();
 				else if (geo.isGeoVector())
@@ -149,14 +261,14 @@ public class AlgebraProcessor {
 
 			if (newLabel.equals(oldLabel)) {
 				// try to overwrite                
-				result = processValidExpression(ve, redefineIndependent);
+				result = processValidExpression(newValue, redefineIndependent);
 				if (result != null && storeUndoInfo)
 					app.storeUndoInfo();
 				return result[0];
 			} else if (cons.isFreeLabel(newLabel)) {
-				ve.setLabel(oldLabel);
+				newValue.setLabel(oldLabel);
 				// rename to oldLabel to enable overwriting
-				result = processValidExpression(ve, redefineIndependent);
+				result = processValidExpression(newValue, redefineIndependent);
 				result[0].setLabel(newLabel); // now we rename	
 				if (storeUndoInfo)
 					app.storeUndoInfo();

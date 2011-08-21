@@ -1,11 +1,17 @@
 package geogebra.cas.view;
 
 import geogebra.kernel.cas.GeoCasCell;
+import geogebra.main.Application;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -39,14 +45,13 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			editingRow = row;
 
 			cellValue = (GeoCasCell) value;
-			cellValue.setRow(row);
 			casTable = (CASTable) table;
 
 			// fill input and output panel
 			setValue(cellValue);					
 		
 			// update row height
-			updateTableRowHeight(table, row);
+			updateTableRowHeight(table, row);			
 			
 			// Set width of editor to the width of the table column.
 			// This will allow scrolling of strings that are wider than the cell. 
@@ -97,7 +102,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		
 	public boolean stopCellEditing() {	
 		// update cellValue's input using editor content
-		if (editing) {
+		if (editing && cellValue != null) {
 			cellValue.setInput(getInput());
 			fireEditingStopped();
 		}
@@ -107,10 +112,14 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	
 	public void cancelCellEditing() {
 		// update cellValue's input using editor content
-		if (editing) {
+		if (editing && cellValue != null) {
 			cellValue.setInput(getInput());	
 			fireEditingCanceled();
 		}
+	}
+	
+	public boolean isEditing() {
+		return editing; //&& hasFocus();
 	}
 	
 	public Object getCellEditorValue() {		
@@ -192,7 +201,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			case '|':
 				// insert output of previous row (not in parentheses)
 				if (editingRow > 0 && text.length() == 0) {
-					GeoCasCell selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					GeoCasCell selCellValue = view.getConsoleTable().getGeoCasCell(editingRow - 1);				
 					inputArea.setText(selCellValue.getOutput() + " ");
 				}
 				break;
@@ -200,7 +209,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			case ')':
 				// insert output of previous row in parentheses		
 				if (editingRow > 0 && text.length() == 0) {
-					GeoCasCell selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					GeoCasCell selCellValue = view.getConsoleTable().getGeoCasCell(editingRow - 1);				
 					String prevOutput = selCellValue.getOutput();
 					inputArea.setText("(" +  prevOutput);
 				}
@@ -209,7 +218,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			case '=':
 				// insert input of previous row
 				if (editingRow > 0 && text.length() == 0) {
-					GeoCasCell selCellValue = view.getConsoleTable().getCASTableCellValue(editingRow - 1);				
+					GeoCasCell selCellValue = view.getConsoleTable().getGeoCasCell(editingRow - 1);				
 					inputArea.setText(selCellValue.getInput());
 					e.consume();
 				}

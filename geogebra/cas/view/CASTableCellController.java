@@ -47,7 +47,7 @@ public class CASTableCellController implements KeyListener {
 			} 
 			else if (table.isRowEmpty(0)) {
 				// insert empty row at beginning
-				table.insertRowAfter(-1, null, true);
+				table.insertRow(0, null, true);
 				needUndo = true;
 			}			
 			consumeEvent = true;

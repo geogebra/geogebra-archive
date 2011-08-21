@@ -34,6 +34,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.cas.AlgoCoefficients;
 import geogebra.kernel.cas.AlgoDegree;
+import geogebra.kernel.cas.AlgoDependentCasCell;
 import geogebra.kernel.cas.AlgoDerivative;
 import geogebra.kernel.cas.AlgoExpand;
 import geogebra.kernel.cas.AlgoFactor;
@@ -55,6 +56,7 @@ import geogebra.kernel.cas.AlgoSolveODECas;
 import geogebra.kernel.cas.AlgoTangentCurve;
 import geogebra.kernel.cas.AlgoTangentFunctionNumber;
 import geogebra.kernel.cas.AlgoTangentFunctionPoint;
+import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.discrete.AlgoConvexHull;
 import geogebra.kernel.discrete.AlgoDelauneyTriangulation;
@@ -383,6 +385,22 @@ public class Kernel {
 	}
 	
 	/**
+     * Returns a GeoCasCell for the given label. 
+     * @return may return null
+     */
+	final public GeoCasCell lookupCasCellLabel(String label) {		
+		return cons.lookupCasCellLabel(label);
+	}
+	
+	/**
+     * Returns a GeoCasCell for the given cas row. 
+     * @return may return null
+     */
+	final public GeoCasCell lookupCasRowReference(String label) {		
+		return cons.lookupCasRowReference(label);
+	}
+	
+	/**
 	 * Finds element with given the label and possibly creates it
 	 * @param label Label of element we are looking for
 	 * @param autoCreate true iff new geo should be created if missing
@@ -391,10 +409,14 @@ public class Kernel {
 	final public GeoElement lookupLabel(String label, boolean autoCreate) {	
 		GeoElement geo = cons.lookupLabel(label, autoCreate);
 				
-		if (geo == null && resolveUnkownVarsAsDummyGeos) {
+		if (geo == null && isResolveUnkownVarsAsDummyGeos()) {
+			// lookup CAS variables too
+			geo = lookupCasCellLabel(label);
+			
 			// resolve unknown variable as dummy geo to keep its name and 
 			// avoid an "unknown variable" error message
-			geo = new GeoDummyVariable(cons, label);
+			if (geo == null)
+				geo = new GeoDummyVariable(cons, label);
 		}
 		
 		return geo;
@@ -565,6 +587,32 @@ public class Kernel {
 		}			
 		
 		return ggbCAS;
+	}
+	
+	/**
+	 * Returns this kernel's GeoGebraCAS object.
+	 */
+	public void resetGeoGebraCAS() {
+		if (ggbCAS == null) return;
+		
+		// reset CAS
+		ggbCAS.reset();
+
+		// CAS reset may not clear user variables right now, 
+		// see http://www.geogebra.org/trac/ticket/1249 
+		// so we clear all user variable names individually from the CAS
+		for (GeoElement geo : cons.getGeoSetWithCasCellsConstructionOrder()) {
+			geo.unbindVariableInCAS();			
+		}
+	}
+	
+	/**
+	 * Removes the given variableName from ther underlying CAS.
+	 */
+	public void unbindVariableInGeoGebraCAS(String variableName) {
+		if (ggbCAS != null) {
+			ggbCAS.unbindVariable(variableName);
+		}
 	}
 	
 	/**
@@ -1875,10 +1923,7 @@ public class Kernel {
 	final public void notifyAddAll(View view, int consStep) {
 		if (!notifyViewsActive) return;
 				
-		Iterator it = cons.getGeoSetConstructionOrder().iterator();
-		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
-			
+		for (GeoElement geo : cons.getGeoSetWithCasCellsConstructionOrder()) {
 			// stop when not visible for current construction step
 			if (!geo.isAvailableAtConstructionStep(consStep))
 				break;
@@ -1961,25 +2006,11 @@ public class Kernel {
 				
 				// "attach" views again
 				viewCnt = oldViewCnt;		
-				
-				
+								
 				// add all geos to all views
-				Iterator it = cons.getGeoSetConstructionOrder().iterator();				
-				while (it.hasNext()) {	
-					GeoElement geo =  (GeoElement) it.next();					
-					notifyAdd(geo);									
-				}			
-				
-				/*
-				Object [] geos =
-					getConstruction().getGeoSetConstructionOrder().toArray();
-				for (int i = 0 ; i < geos.length ; i++) {
-					GeoElement geo =  (GeoElement) geos[i];					
-					notifyAdd(geo);														
-				}*/
-				
-				
-				//app.setMoveMode();
+				for(int i = 0; i < viewCnt; ++i) {
+					notifyAddAll(views[i]);					
+				}				
 				
 				notifyEuclidianViewCE();
 				notifyReset();					
@@ -2433,6 +2464,16 @@ public class Kernel {
 		else {
 			return new ExpressionNode(this, geo);
 		}		
+	}
+	
+	/** 
+	 * GeoCasCell dependent on other variables,
+	 * e.g. m := c + 3
+	 * @return resulting casCell created using geoCasCell.copy(). 
+	 */
+	final public GeoCasCell DependentCasCell(GeoCasCell geoCasCell) {
+		AlgoDependentCasCell algo = new AlgoDependentCasCell(geoCasCell);
+		return algo.getCasCell();
 	}
 	
 	/** Number dependent on arithmetic expression with variables,

@@ -26,7 +26,7 @@ public class RedefineInputHandler implements InputHandler {
 		if (inputValue.equals(this.oldString)) return true; // Michael Borcherds 2007-12-31
 		try {
 			GeoElement newGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(
-					geo, inputValue, true);
+					geo, inputValue, true, true);
 			app.getKernel().clearJustCreatedGeosInViews();
 			app.doAfterRedefine(newGeo);
 			

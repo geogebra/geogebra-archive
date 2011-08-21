@@ -90,7 +90,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		setTitle(app.getPlain("Substitute") + " - " + app.getCommand("Row") + " " + (editRow+1));
 		setResizable(true);
 		
-		GeoCasCell cell=casView.getConsoleTable().getCASTableCellValue(editRow);
+		GeoCasCell cell=casView.getConsoleTable().getGeoCasCell(editRow);
 		
 		HashSet<GeoElement> vars=cell.getInputVE().getVariables();
 		Vector<String> row;
@@ -307,7 +307,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		}
 
 		try {
-			GeoCasCell currCell = table.getCASTableCellValue(editRow);
+			GeoCasCell currCell = table.getGeoCasCell(editRow);
 			currCell.setProcessingInformation(prefix, subCmd, postfix);
 			currCell.setEvalCommand("Substitute");
 			currCell.setEvalComment(substComment.toString());
@@ -315,8 +315,8 @@ public class CASSubDialog extends JDialog implements ActionListener {
 			// make sure pure substitute is not evaluated 
 			currCell.setKeepInputUsed(keepInput);
 			
-			casView.processRow(editRow);
-			table.startEditingRow(editRow + 1);
+			casView.processRowThenEdit(editRow, true);
+			//table.startEditingRow(editRow + 1);
 			return true;
 		} catch (Throwable e) {
 			e.printStackTrace();
