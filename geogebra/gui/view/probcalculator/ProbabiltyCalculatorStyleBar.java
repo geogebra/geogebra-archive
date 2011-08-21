@@ -69,8 +69,9 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 		menuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				probCalc.setCumulative(!probCalc.isCumulative());
-				probCalc.updateDistribution();
-				probCalc.updatePlotSettings();
+				//probCalc.updateDistribution();
+				//probCalc.updatePlotSettings();
+				probCalc.updateAll();
 			}
 		});
 		btnOptions.addPopupMenuItem(menuItem);
@@ -81,8 +82,9 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 		menuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				probCalc.setBarGraph(!probCalc.isBarGraph());
-				probCalc.updateDistribution();
-				probCalc.updatePlotSettings();
+				//probCalc.updateDistribution();
+				//probCalc.updatePlotSettings();
+				probCalc.updateAll();
 			}
 		});
 		btnOptions.addPopupMenuItem(menuItem);
