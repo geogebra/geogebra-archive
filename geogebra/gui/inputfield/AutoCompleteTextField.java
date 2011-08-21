@@ -357,12 +357,15 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 					if (n == 1) app.getGuiManager().openHelp(Application.WIKI_MANUAL);
 
 				} else {
-
-					updateCurrentWord();
-					String lowerCurWord = curWord.toString().toLowerCase();
+					int pos = getCaretPosition();
+					while (pos > 0 && getText().charAt(pos - 1) == '[') {
+						pos--;
+					}
+					String word = getWordAtPos(getText(), pos);
+					String lowerCurWord = word.toLowerCase();
 					String closest = dict.lookup(lowerCurWord);
 					if (closest != null && lowerCurWord.equals(closest.toLowerCase()))		                
-						showCommandHelp(true);
+						showCommandHelp(word, true);
 					else
 						app.getGuiManager().openHelp(Application.WIKI_MANUAL);
 
@@ -561,7 +564,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
 				// isLetterOrDigitOrOpenBracket so that F1 works
-				isLetterOrDigitOrOpenBracket( text.charAt(curWordStart))) {
+				isLetterOrDigit( text.charAt(curWordStart))) {
 			--curWordStart;     
 		}
 		curWordStart++;
@@ -778,9 +781,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	/**
 	 * shows dialog with syntax info for current command
 	 */
-	private void showCommandHelp(boolean goToWebManual) {   
+	private void showCommandHelp(String cmd, boolean goToWebManual) {   
 		// show help for current command (current word)
-		String cmd = getCurrentWord();
+		// String cmd = getCurrentWord();
 		String help = getCmdSyntax(cmd);
 
 		// maybe this didn't work because we are between the parentheses [ ... ]
