@@ -1359,10 +1359,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// * user might do eg click then arrow keys
 		// * want drag with left button to work (eg tessellation)
 		
-		//if (drag)
+		// consider intersection of 2 circles.
+		// On drag, we want to be able to drag a circle
+		// on click, we want to be able to select the intersection point
+		if (drag)
 			moveableList = view.getHits().getMoveableHits(view);
-		//else
-		//	moveableList = view.getHits();
+		else
+			moveableList = view.getHits();
 
 		Hits hits = moveableList.getTopHits();
 		
