@@ -168,7 +168,6 @@ public class StatDialogController {
 			text = ((GeoList)dataSource).getLabel();
 			if(isSorted)
 				text = "Sort[" + text + "]";
-			//text = ((GeoList)dataSource).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 
 		}else{
 
@@ -195,43 +194,16 @@ public class StatDialogController {
 
 				break;
 
-				//TODO: dataListAll needs to be created as copy by value ?
 			case StatDialog.MODE_MULTIVAR:
-
 				cons.setSuppressLabelCreation(true);
-
 				dataAll = cr.createCollectionList((ArrayList<CellRange>)dataSource, true); 
 				cons.setSuppressLabelCreation(false);
-
-				//System.out.println("dataAll: ========> " + dataAll.toDefinedValueString());
-
-				/*
-				text = cr.createColumnMatrixExpression((ArrayList<CellRange>)dataSource, copyByValue); 							
-				dataAll = new GeoList(cons);
-				try {
-					//GeoElement geos[] = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
-					//dataAll = (GeoList) geos[0];
-
-					dataAll = (GeoList) kernel.getAlgebraProcessor()
-					.changeGeoElementNoExceptionHandling((GeoElement)dataAll, text, true, false);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}	
-				 */
-
 				break;
 
 			}
-
 		}	
 
-		//System.out.println(" dataAll text: " + text);
-		if(dataAll != null){
-			//dataAll.setAuxiliaryObject(true);
-			//dataAll.setLabel("dataListAll");
-		}
-
-
+		
 		//=======================================
 		// create/update dataListSelected
 
@@ -240,9 +212,7 @@ public class StatDialogController {
 			dataSelected = new GeoList(cons);			
 			cons.setSuppressLabelCreation(false);
 		}
-		//dataSelected.setAuxiliaryObject(true);
-		//dataSelected.setLabel("dataListSelected");
-
+		
 
 		try {			
 			dataSelected.clear();

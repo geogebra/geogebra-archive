@@ -17,6 +17,7 @@ import geogebra.kernel.AlgoResidualPlot;
 import geogebra.kernel.AlgoStemPlot;
 import geogebra.kernel.AlgoText;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -65,6 +66,11 @@ public class StatGeo   {
 	public static final int TABLE_REGRESSION = 2;
 
 	private boolean histogramRight;
+	private boolean removeFromConstruction = true;
+
+	
+
+
 
 	/*************************************************
 	 * Constructs a GeoPlot instance
@@ -132,8 +138,8 @@ public class StatGeo   {
 			GeoList list = (GeoList) le.getGeoElements()[0];
 			AlgoListMax maxAlgo = new AlgoListMax(cons, list);
 			AlgoListMin minAlgo = new AlgoListMin(cons, list);
-			cons.removeFromConstructionList(minAlgo);
-			cons.removeFromConstructionList(maxAlgo);
+			removeFromConstructionList(minAlgo);
+			removeFromConstructionList(maxAlgo);
 
 			GeoNumeric maxGeo = (GeoNumeric) maxAlgo.getGeoElements()[0];
 			GeoNumeric minGeo = (GeoNumeric) minAlgo.getGeoElements()[0];
@@ -171,12 +177,12 @@ public class StatGeo   {
 			AlgoListMin minX = new AlgoListMin(cons, (GeoList)listX.getGeoElements()[0]);
 			AlgoListMin minY = new AlgoListMin(cons, (GeoList)listY.getGeoElements()[0]);
 
-			cons.removeFromConstructionList(listX);
-			cons.removeFromConstructionList(listY);
-			cons.removeFromConstructionList(maxX);
-			cons.removeFromConstructionList(maxY);
-			cons.removeFromConstructionList(minX);
-			cons.removeFromConstructionList(minY);
+			removeFromConstructionList(listX);
+			removeFromConstructionList(listY);
+			removeFromConstructionList(maxX);
+			removeFromConstructionList(maxY);
+			removeFromConstructionList(minX);
+			removeFromConstructionList(minY);
 			dataBounds[0] = ((GeoNumeric)minX.getGeoElements()[0]).getDouble();
 			dataBounds[1] = ((GeoNumeric)maxX.getGeoElements()[0]).getDouble();
 			dataBounds[2] = ((GeoNumeric)minY.getGeoElements()[0]).getDouble();
@@ -189,8 +195,8 @@ public class StatGeo   {
 		}else{
 			AlgoListMax max = new AlgoListMax(cons, dataList);
 			AlgoListMin min = new AlgoListMin(cons, dataList);
-			cons.removeFromConstructionList(min);
-			cons.removeFromConstructionList(max);
+			removeFromConstructionList(min);
+			removeFromConstructionList(max);
 
 			dataBounds[0] = ((GeoNumeric)min.getGeoElements()[0]).getDouble();
 			dataBounds[1] = ((GeoNumeric)max.getGeoElements()[0]).getDouble();
@@ -222,7 +228,7 @@ public class StatGeo   {
 		}else{
 			al = new AlgoClasses(cons, dataList, null, null, new GeoNumeric(cons, numClasses));
 		}
-		cons.removeFromConstructionList(al);
+		removeFromConstructionList(al);
 
 		double density = -1;
 		if(settings.frequencyType == StatPanelSettings.TYPE_RELATIVE)
@@ -237,11 +243,11 @@ public class StatGeo   {
 		//else
 		al2 = new AlgoHistogram(cons, new GeoBoolean(cons, settings.isCumulative), 
 				(GeoList)al.getGeoElements()[0], dataList, new GeoBoolean(cons, true), new GeoNumeric(cons, density),histogramRight);
-		cons.removeFromConstructionList(al2);
+		removeFromConstructionList(al2);
 
 		if(isFrequencyPolygon){
 			AlgoPolyLine al3 = createFrequencyPolygon((AlgoHistogram) al2, settings.isCumulative);
-			cons.removeFromConstructionList(al3);
+			removeFromConstructionList(al3);
 			geo = al3.getGeoElements()[0];
 			geo.setObjColor(StatDialog.OVERLAY_COLOR);
 			geo.setLineThickness(StatDialog.thicknessCurve);
@@ -284,7 +290,7 @@ public class StatGeo   {
 		cons.setSuppressLabelCreation(suppressLabelCreation);
 
 		AlgoPolyLine polyLine = new AlgoPolyLine(cons, null, points);
-		cons.removeFromConstructionList(polyLine);
+		removeFromConstructionList(polyLine);
 		return polyLine;
 	}
 
@@ -299,8 +305,8 @@ public class StatGeo   {
 		AlgoMean mean = new AlgoMean(cons, dataList);
 		AlgoStandardDeviation sd = new AlgoStandardDeviation(cons, dataList);
 
-		cons.removeFromConstructionList(mean);
-		cons.removeFromConstructionList(sd);
+		removeFromConstructionList(mean);
+		removeFromConstructionList(sd);
 
 		GeoElement meanGeo = mean.getGeoElements()[0];
 		GeoElement sdGeo = sd.getGeoElements()[0];
@@ -366,7 +372,7 @@ public class StatGeo   {
 		//geo  = createGeoFromString(text);
 
 		AlgoBoxPlot boxPlot = new AlgoBoxPlot(cons, new MyDouble(kernel, 1d), new MyDouble(kernel, 0.5), dataList);
-		cons.removeFromConstructionList(boxPlot);
+		removeFromConstructionList(boxPlot);
 		geo = boxPlot.getGeoElements()[0];
 
 		geo.setObjColor(StatDialog.BOXPLOT_COLOR);
@@ -402,7 +408,7 @@ public class StatGeo   {
 
 		//AlgoListLength len = new AlgoListLength(cons, dataList);
 		//GeoNumeric num = (GeoNumeric) len.getGeoElements()[0];
-		//cons.removeFromConstructionList(len);
+		//removeFromConstructionList(len);
 
 		int length = dataList.size();
 
@@ -463,7 +469,7 @@ public class StatGeo   {
 		//geo  = createGeoFromString(text);
 
 		AlgoDotPlot dp = new AlgoDotPlot(cons, dataList);
-		cons.removeFromConstructionList(dp);
+		removeFromConstructionList(dp);
 		GeoElement geo = dp.getGeoElements()[0];
 
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
@@ -487,8 +493,8 @@ public class StatGeo   {
 			AlgoDependentListExpression list = new AlgoDependentListExpression(cons, en);
 			AlgoListMax max = new AlgoListMax(cons, (GeoList)list.getGeoElements()[0]);
 
-			cons.removeFromConstructionList(list);
-			cons.removeFromConstructionList(max);
+			removeFromConstructionList(list);
+			removeFromConstructionList(max);
 
 			settings.yMax = ((GeoNumeric)max.getGeoElements()[0]).getDouble() + 1;
 		}
@@ -508,7 +514,7 @@ public class StatGeo   {
 		//geo  = createGeoFromString(text);
 
 		AlgoNormalQuantilePlot qp = new AlgoNormalQuantilePlot(cons, dataList);
-		cons.removeFromConstructionList(qp);
+		removeFromConstructionList(qp);
 		GeoElement geo = qp.getGeoElements()[0];		
 
 		geo.setObjColor(StatDialog.NQPLOT_COLOR);
@@ -545,7 +551,7 @@ public class StatGeo   {
 	public GeoElement createScatterPlotLine(GeoList points){
 
 		AlgoPolyLine polyLine = new AlgoPolyLine(cons, null, points);
-		cons.removeFromConstructionList(polyLine);
+		removeFromConstructionList(polyLine);
 		GeoElement geo = polyLine.getGeoElements()[0];
 
 		// set visibility
@@ -633,7 +639,7 @@ public class StatGeo   {
 
 		}
 
-		cons.removeFromConstructionList(algo);
+		removeFromConstructionList(algo);
 		GeoElement geo = algo.getGeoElements()[0];
 
 		if (residual) {
@@ -750,12 +756,29 @@ public class StatGeo   {
 
 		AlgoStemPlot sp = new AlgoStemPlot(cons, dataList, new GeoNumeric(cons, adjustment));
 		GeoElement tempGeo = sp.getGeoElements()[0];
-		cons.removeFromConstructionList(sp);
+		removeFromConstructionList(sp);
 
 		String latex = tempGeo.getLaTeXdescription();
 		tempGeo.remove();
 
 		return latex;		
 	}
+
+	
+	
+	
+	public boolean doRemoveFromConstruction() {
+		return removeFromConstruction;
+	}
+	public void setRemoveFromConstruction(boolean removeFromConstruction) {
+		this.removeFromConstruction = removeFromConstruction;
+	}
+	
+	private void removeFromConstructionList(ConstructionElement ce){
+		if(removeFromConstruction)
+			cons.removeFromConstructionList(ce);
+	}
+
+
 
 }

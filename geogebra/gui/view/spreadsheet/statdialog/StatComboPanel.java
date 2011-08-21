@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -89,9 +90,11 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	// geos
 	private GeoList regressionAnalysisList;
 	private ArrayList<GeoElement> plotGeoList;
-	private GeoElement histogram, dotPlot, boxPlotTitles[], frequencyPolygon, normalCurve, 
+	
+	private GeoElement[] boxPlotTitles;
+	private GeoElement histogram, dotPlot, frequencyPolygon, normalCurve, 
 	scatterPlot, scatterPlotLine;
-
+	
 
 	// display panels 	
 	private JPanel displayCardPanel;
@@ -187,8 +190,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		optionsButton.setIcon(app.getImageIcon("inputhelp_left_20x20.png"));
 		optionsButton.setSelectedIcon(app.getImageIcon("inputhelp_right_20x20.png"));
 		optionsButton.setBorderPainted(false);
-		//optionsButton.setFocusPainted(false);
-		//optionsButton.setIcon(app.getImageIcon("tool.png"));
+		optionsButton.setFocusPainted(false);
 		optionsButton.addActionListener(this);
 
 
@@ -222,6 +224,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		// create display panels 
 
 		plotPanel = new PlotPanelEuclidianView(app.getKernel());
+		addPlotPanelExportMenu(plotPanel);
 		//plotPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		//settings.plotPanel = plotPanel;
 
@@ -580,10 +583,25 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	//              DISPLAY UPDATE
 	//==============================================
 
+	
 	public void updatePlot(boolean doCreate){
+		updatePlot(doCreate, true);
+	}
+	
+	public void updatePlot(boolean doCreate, boolean removeFromConstruction){
 
 		GeoList dataListSelected = statDialog.getStatDialogController().getDataSelected();
-
+		
+		statGeo.setRemoveFromConstruction(removeFromConstruction);
+		
+		if(!removeFromConstruction){
+			String text = statDialog.getStatDialogController().getDataSelected().toValueString();
+			GeoElement[] geos = app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
+			dataListSelected = (GeoList) geos[0];
+			dataListSelected.setLabel(null);
+		}
+	
+		
 		GeoElement geo;
 		String underConstruction = "\\text{" + app.getPlain("NotAvailable") + "}";
 		if(hasControlPanel)
@@ -692,7 +710,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 					plotGeoList.add(scatterPlotLine);
 				}
 			}
-			
+
 			// update xy title fields
 			fldTitleX.setText(statDialog.getDataTitles()[0]);
 			fldTitleY.setText(statDialog.getDataTitles()[1]);
@@ -739,7 +757,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		}
 
 
-		if(doCreate){
+		if(doCreate && removeFromConstruction){
 			for(GeoElement listGeo:plotGeoList){
 				// add the geo to our view and remove it from EV		
 				listGeo.addView(plotPanel.getViewID());
@@ -819,6 +837,8 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 		plotGeoList.clear();
 	}
 
+	
+	
 	public void removeGeos(){
 		clearPlotGeoList();
 	}
@@ -915,6 +935,100 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 			return this;
 		}
 	}
+
+
+
+	private void addPlotPanelExportMenu(PlotPanelEuclidianView plotPanel){
+
+		AbstractAction exportToEVAction = new AbstractAction(app
+				.getMenu("CopyToGraphics"), app
+				.getImageIcon("edit-copy.png")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				if(app.getShiftDown())
+					exportGeosToEV(Application.VIEW_EUCLIDIAN2);
+				else
+					exportGeosToEV(Application.VIEW_EUCLIDIAN);
+
+			}
+		};
+
+		plotPanel.appendActionList(exportToEVAction);
+	}
+
+
+	public void exportGeosToEV(int viewID){
+
+		app.setWaitCursor();
+		ArrayList<GeoElement> newGeoList = new ArrayList<GeoElement>();
+		String expr;
+
+		try {
+			app.storeUndoInfo();
+
+
+			// update the plot to get a new set of geos that exist in the construction
+			updatePlot(true, false);
+
+			// set the EV location and auxiliary = false for all of the new geos
+			for(GeoElement geo: plotGeoList){
+				geo.setLabel(null);
+				geo.setAuxiliaryObject(false);
+				if(viewID == Application.VIEW_EUCLIDIAN){
+					geo.addView(Application.VIEW_EUCLIDIAN);
+					geo.removeView(Application.VIEW_EUCLIDIAN2);
+					geo.update();
+				}
+				if(viewID == Application.VIEW_EUCLIDIAN2){
+					geo.addView(Application.VIEW_EUCLIDIAN2);
+					geo.removeView(Application.VIEW_EUCLIDIAN);
+					geo.update();
+				}
+				
+			}
+
+
+			// set the window dimensions of the target EV to match the plotPanel dimensions
+			if(viewID == Application.VIEW_EUCLIDIAN)
+				app.getEuclidianView().setRealWorldCoordSystem(settings.xMin, settings.xMax, 
+						settings.yMin, settings.yMax);
+			else if(viewID == Application.VIEW_EUCLIDIAN2)
+				app.getEuclidianView2().setRealWorldCoordSystem(settings.xMin, settings.xMax, 
+						settings.yMin, settings.yMax);
+
+
+			// null our display geos and clear the plotGeoList to unlink the new geos
+			boxPlotTitles = null;
+			histogram = null;
+			dotPlot = null;
+			frequencyPolygon = null;
+			normalCurve = null; 
+			scatterPlot = null;
+			scatterPlotLine = null;
+			
+			plotGeoList.clear();
+
+			
+			//update the plot in removeFromConstruction mode to get a new set of geos for our plot
+			updatePlot(true, true);
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			app.setDefaultCursor();
+		}
+
+		app.setDefaultCursor();
+	}
+
+
+
+
+
+
+
+
 
 
 
