@@ -141,7 +141,7 @@ public class AlgoFrequencyTable extends AlgoElement {
 			sb.append(" \\\\\\hline ");
 			for (int i = 0; i < length; i++) {
 				sb.append(classList.get(i).toValueString());
-				sb.append("\\text{ :) }");
+				sb.append("\\text{ -- }");
 				sb.append(classList.get(i + 1).toValueString());
 				sb.append("&");
 				sb.append(fr.get(i).toValueString());
