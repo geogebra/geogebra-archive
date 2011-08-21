@@ -592,7 +592,6 @@ public class Kernel {
 		else if (EPSILON < MAX_PRECISION)
 			EPSILON = MAX_PRECISION;
 		
-		getEquationSolver().setEpsilon(EPSILON);
 	}
 	
 	/**

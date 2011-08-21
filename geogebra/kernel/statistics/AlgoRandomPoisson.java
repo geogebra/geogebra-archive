@@ -17,7 +17,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.util.MyMath;
+import geogebra.util.MyMath2;
 
 /**
  * Computes RandomNormal[a, b]
@@ -135,7 +135,7 @@ public class AlgoRandomPoisson extends AlgoElement implements SetRandomValue {
 	
 	private double logOfKFactorial(int k) {
 		if (k<10) {
-			if (logtable[k] == 0) logtable[k] = Math.log(MyMath.factorial(k));
+			if (logtable[k] == 0) logtable[k] = Math.log(MyMath2.factorial(k));
 			return logtable[k];
 		}
 	

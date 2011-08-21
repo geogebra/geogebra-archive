@@ -23,6 +23,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.util.MyMath;
+import geogebra.util.MyMath2;
 import geogebra.util.Unicode;
 
 import java.util.HashSet;
@@ -251,7 +252,7 @@ implements NumberValue {
     
     final public MyDouble log() {  val = Math.log(val);  isAngle = false; return this; }
     final public MyDouble log(NumberValue base) {  val = Math.log(val) / Math.log(base.getDouble());  isAngle = false; return this; }
-    final public MyDouble erf() {  val = MyMath.erf(0.0, 1.0, val);  isAngle = false; return this; }
+    final public MyDouble erf() {  val = MyMath2.erf(0.0, 1.0, val);  isAngle = false; return this; }
     final public MyDouble log10() {  val = Math.log(val)/MyMath.LOG10;  isAngle = false; return this; }
     final public MyDouble log2() {  val = Math.log(val)/MyMath.LOG2;  isAngle = false; return this; }
     
@@ -394,13 +395,13 @@ implements NumberValue {
 	}
 	
 	final public MyDouble factorial() {
-		val = MyMath.factorial(val);
+		val = MyMath2.factorial(val);
 		isAngle = false;
 		return this;
 	}
 	
 	final public MyDouble gamma() {
-		val = MyMath.gamma(val, kernel);
+		val = MyMath2.gamma(val, kernel);
 		isAngle = false;
 		return this;
 	}	
@@ -575,33 +576,33 @@ implements NumberValue {
 	}
 
 	public ExpressionValue gammaIncompleteRegularized(NumberValue lt) {
-		val = MyMath.gammaIncompleteRegularized(lt.getDouble(), val);
+		val = MyMath2.gammaIncompleteRegularized(lt.getDouble(), val);
 		isAngle = false;
 		return this;
 	}
 
 	public ExpressionValue gammaIncomplete(NumberValue lt) {
-		val = MyMath.gammaIncomplete(lt.getDouble(), val, kernel);
+		val = MyMath2.gammaIncomplete(lt.getDouble(), val, kernel);
 		isAngle = false;
 		return this;
 	}
 
 	public ExpressionValue beta(NumberValue lt) {
-		val = MyMath.beta(val, lt.getDouble());
+		val = MyMath2.beta(val, lt.getDouble());
 		isAngle = false;
 		return this;
 	}
 
 	public ExpressionValue betaIncomplete(VectorValue lt) {
 		GeoVec2D vec = lt.getVector();
-		val = MyMath.betaIncomplete(vec.x, vec.y, val);
+		val = MyMath2.betaIncomplete(vec.x, vec.y, val);
 		isAngle = false;
 		return this;
 	}
 
 	public ExpressionValue betaIncompleteRegularized(VectorValue lt) {
 		GeoVec2D vec = lt.getVector();
-		val = MyMath.betaIncompleteRegularized(vec.x, vec.y, val);
+		val = MyMath2.betaIncompleteRegularized(vec.x, vec.y, val);
 		isAngle = false;
 		return this;
 	}

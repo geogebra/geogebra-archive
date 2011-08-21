@@ -118,8 +118,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	//private boolean defined = true;
 	protected ArrayList<GeoPoint> pointsOnConic;
 	
-	protected EquationSolver eqnSolver;
-	
 	
 	// for classification
 	transient protected double detS, length, temp, temp1, temp2, nx, ny, lambda;
@@ -189,7 +187,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 */
 	public GeoConicND(Construction c, int dimension) {
 		super(c, dimension);
-		eqnSolver = c.getEquationSolver();
 		toStringMode = EQUATION_IMPLICIT;
 	}
 
@@ -480,7 +477,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 					double[] eqn = { abspy, -p+px, 0, -p/2 };
 					double[] roots = {0, 0, 0};
-					eqnSolver.solveCubic(eqn,roots);
+					cons.getEquationSolver().solveCubic(eqn,roots);
 					if(roots[0]>0) {
 						pp.setT(roots[0]);
 					} else if (roots[1]>0) {
@@ -526,7 +523,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			double hc_2 = ha*ha + hb*hb;
 			eqn = new double[]{bpy*bpy, -2*bpy*hc_2, bpy*bpy+hc_2*hc_2-ha*ha*abspx*abspx, -2*bpy*hc_2, hc_2*hc_2 };
 		}
-			eqnSolver.solveQuartic(eqn,roots);
+			cons.getEquationSolver().solveQuartic(eqn,roots);
 			return roots;
 		}
 
@@ -2196,7 +2193,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			eigenval[0] = detS;
 			eigenval[1] = - (matrix[0] + matrix[1]); // -spurS
 			eigenval[2] = 1.0d;
-			eqnSolver.solveQuadratic(eigenval, eigenval);
+			cons.getEquationSolver().solveQuadratic(eigenval, eigenval);
 	
 			// set first eigenvector
 			eigenvecX = -matrix[3];

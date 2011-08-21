@@ -359,7 +359,6 @@ office@geogebra.org
 					  geogebra/main/*.png,
 			  edu/xtec/adapter/**,
 			  edu/xtec/adapter/impl/**,
-			org/apache/commons/**
 					  **/algo2command.properties,	
 					  **/algo2intergeo.properties"			
 			excludes="geogebra/*,
@@ -370,11 +369,7 @@ office@geogebra.org
 					jasymca/**,		
 					geogebra3D/**,			
 					3D/**,	
-			org/qtitools/**,
-			org/neuroph/**,
-			org/jfugue/**,
-			org/freehep/**,
-			org/apache/log4j/**,
+					org/**,
 					org/mathpiper/**,
 					org/mozilla/**,
 					org/freehep/**, 
@@ -384,6 +379,7 @@ office@geogebra.org
 					edu/mas/**,
 					edu/jas/**,
 					edu/uci/**,
+					org/apache/**,
 					org/apache/log4j/**, 
 				    tutor/**,
 					meta-inf/**"		
@@ -438,7 +434,8 @@ office@geogebra.org
 			basedir="${src.dir}"
 			includes="geogebra/kernel/discrete/**,
 					edu/uci/**,
-					org/jfugue/**,"
+					org/jfugue/**,
+					org/apache/**"
 			excludes="**/*.java,
 			**/*.html,
 			**/*.txt,
