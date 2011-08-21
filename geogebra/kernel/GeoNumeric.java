@@ -19,7 +19,6 @@
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -98,7 +97,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (setDefaults)
 			setConstructionDefaults(); // init visual settings
 		
-		setEuclidianVisible(isGeoAngle());
+		setEuclidianVisible(false);
 		//setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 		//setAnimationStep(DEFAULT_SLIDER_INCREMENT);					
 	}
