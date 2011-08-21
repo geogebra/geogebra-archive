@@ -7,7 +7,6 @@ import geogebra.kernel.AlgoConicFivePoints;
 import geogebra.kernel.AlgoEllipseFociLength;
 import geogebra.kernel.AlgoEllipseFociPoint;
 import geogebra.kernel.Construction;
-import geogebra.kernel.EquationSolver;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
@@ -278,6 +277,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		 * Edited by:  Kai Chung Tam
 		 * Date: 4/6/2011
 		 * Fixed case CONIC_ELLIPSE, CONIC_HYPERBOLA and CONIC_PARABOLA
+		 * @param P a point
+		 * @param pp path parameter of the point
 		 */
 	protected void pointChanged(Coords P, PathParameter pp) {
 		
@@ -365,9 +366,9 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				hb = halfAxes[1];
 				hc_2 = ha*ha - hb*hb;
 
-				if (abspx<kernel.EPSILON) {
+				if (abspx<Kernel.EPSILON) {
 					pp.setT(Math.asin(Math.max(-1,-hb*abspy/hc_2)));
-				} else if (abspy<kernel.EPSILON) {
+				} else if (abspy<Kernel.EPSILON) {
 					pp.setT(Math.acos(Math.min(1,ha*abspx/hc_2)));
 				} else {	
 					//To solve (1-u^2)*(b*py + (a^2-b^2)*u)^2-a^2*px^2*u^2 = 0, where u = sin(theta)
@@ -423,7 +424,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				hc_2 = ha*ha + hb*hb;
 				double s;
 
-				if (abspy<kernel.EPSILON) {
+				if (abspy<Kernel.EPSILON) {
 					s=MyMath.acosh(Math.max(1,ha*abspx/hc_2));
 				} else {	
 					//To solve (1+u^2)*(-(b^2+a^2)*u +b*py)^2 - a^2*px^2, where u=sinh(t)
@@ -552,14 +553,22 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		//Application.debug("after:\n"+P.getCoordsInD(3)+"\n2D:\n"+coords);
 		
 	}
-	
+	private boolean compatibleType(int t){
+		if(type == t)
+			return true;
+		//the conic type change temporarily to point or empty conic -- 
+		// once the conic returns back, we want the old parameter to be used
+		if(t == CONIC_EMPTY || t ==CONIC_SINGLE_POINT)
+			return true;
+		return false;
+	}
 
 	protected void pathChanged(Coords P, PathParameter pp) {
 		
 		
 		// if type of path changed (other conic) then we
 		// have to recalc the parameter with pointChanged()
-		if (pp.getPathType() != type || Double.isNaN(pp.getT())) {		
+		if (!compatibleType(pp.getPathType())  || Double.isNaN(pp.getT())) {		
 			pointChanged(P,pp);
 			return;
 		}
@@ -930,6 +939,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	/**
 	 * Adds a point to the list of points that this conic passes through.
+	 * @param p 
 	 */
 	public final void addPointOnConic(GeoPointND p) {
 		if (pointsOnConic == null)
@@ -1232,6 +1242,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	/**
 	 * returns some class-specific xml tags for getConstructionRegressionOut
+	 * @return  some class-specific xml tags for getConstructionRegressionOut
 	 */
 	protected String getXMLtagsMinimal() {
 		StringBuffer sb = new StringBuffer();
@@ -1766,6 +1777,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	/**
 	 * translate conic by vector v
+	 * @param v translation vector
 	 */
 	final public void translate(Coords v) {
 		doTranslate(v.getX(), v.getY());
@@ -1814,6 +1826,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	/**
 	 * rotate this conic by angle phi around (0,0)
+	 * @param phiVal angle
 	 */
 	 final public void rotate(NumberValue phiVal) {
     	double phi = phiVal.getDouble();
@@ -1825,6 +1838,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	/**
 	 * rotate this conic by angle phi around Q
+	 * @param phiVal angle
+	 * @param Q rotation center
 	 */
 	final public void rotate(NumberValue phiVal, GeoPoint Q) {
 		double phi = phiVal.getDouble();
@@ -1909,6 +1924,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	/**
 	 * dilate this conic from point S by factor r
+	 * @param rval ratio
+	 * @param S fixed point of dilation
 	 */
 	 final public void dilate(NumberValue rval, GeoPoint S) {  
 	    double r = rval.getDouble();		    	    	    
@@ -2929,7 +2946,9 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * are used directly to avoid rounding errors.
 	 * @author Michael Borcherds
 	 * @version 2010-05-17
-	 * Last change Zbynek Konecny 
+	 * @param x0 
+	 * @param y0 
+	 * @return true if point (x0,y0) is inside the connic
 	 */
 	public boolean isInRegion(double x0, double y0) {
 		if(type == CONIC_INTERSECTING_LINES)
@@ -2947,7 +2966,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	/**
 	 * Point's parameters are set to its EV coordinates
 	 * @version 2010-07-30
-	 * Last change: Zbynek Konecny
+	 * @param PI 
 	 */
 	public void pointChangedForRegion(GeoPointND PI) {
 		PI.updateCoords2D();
@@ -2991,7 +3010,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * When elipse is moved, the points moves as well
 	 * and its EV coordinates remain the same
 	 * @version 2010-07-30
-	 * Last change: Zbynek Konecny
+	 * @param PI point
 	 */
 	
 	public void regionChanged(GeoPointND PI) {
