@@ -1898,7 +1898,7 @@ public class Construction {
 	    // check for circular definition
 	    if (newGeo.isChildOf(oldGeo)) {
 
-	        // check for eg a = a + 1, A = A + (1,1)
+	        // check for eg a = a + 1, A = A + (1,1), a = !a
 	    	if (oldGeo.isIndependent() && oldGeo instanceof GeoNumeric) {
 
 	            ((GeoNumeric)oldGeo).setValue(((GeoNumeric)newGeo).getDouble());
@@ -1914,6 +1914,12 @@ public class Construction {
 	        } else if (oldGeo.isIndependent() && oldGeo instanceof GeoVector) {
 
 	            ((GeoVector)oldGeo).set(newGeo);
+	            oldGeo.updateRepaint();
+	            return;
+
+	        } else if (oldGeo.isIndependent() && oldGeo instanceof GeoBoolean) {
+
+	            ((GeoBoolean)oldGeo).set(newGeo);
 	            oldGeo.updateRepaint();
 	            return;
 
