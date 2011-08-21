@@ -236,6 +236,9 @@ public class UndoManager {
 					File tempFile = (File) info;
 					InputStream is = new FileInputStream(tempFile);	
 					
+					// make sure objects are displayed in the correct View
+					app.setActiveView(Application.VIEW_EUCLIDIAN);
+
 					// load undo info
 					app.getScriptManager().disableListeners();
 					xmlio.readZipFromMemory(is);					
