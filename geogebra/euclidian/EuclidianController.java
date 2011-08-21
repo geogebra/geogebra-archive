@@ -4528,6 +4528,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected GeoElement[] intersect(Hits hits) {
 		//Application.debug(selectedLines);
 		
+		// obscure bug: intersection of x=0 and (x-1)^2+(y-1)^=1 can intersect x=0 and y axis sometimes
+		if (hits.size() > 2) removeAxes(hits);
 		
 		if (hits.isEmpty())
 			return null;
@@ -7377,6 +7379,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected GeoElement chooseGeo(ArrayList<GeoElement> geos, boolean includeFixed) {
 		if (geos == null)
 			return null;
+		
+		if (geos.size() > 1) removeAxes(geos);
 
 		GeoElement ret = null;
 		GeoElement retFree = null;
@@ -7571,6 +7575,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return ret;	
 
 	}
+
+	private void removeAxes(ArrayList<GeoElement> geos) {
+
+		for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+			GeoElement geo = geos.get(i);
+			if (geo instanceof GeoAxis) {
+				geos.remove(i);
+			}
+		}
+	}
+
 
 	public void componentResized(ComponentEvent e) {
 		// tell the view that it was resized
