@@ -182,7 +182,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 				}	
 
 				// load all jar files in background
-				GeoGebraAppletPreloader.loadAllJarFiles();
+				GeoGebraAppletPreloader.loadAllJarFiles(!app.useBrowserForJavaScript());
 
 				System.gc();
 			}									

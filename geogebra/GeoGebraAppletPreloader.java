@@ -12,13 +12,13 @@ public class GeoGebraAppletPreloader extends JApplet {
 	public void init() {
 		setBackground(Color.white);
 		System.out.println("GeoGebraAppletPreloader " + GeoGebra.VERSION_STRING + " started");
-		loadAllJarFiles();
+		loadAllJarFiles(true);
 	}
 	
 	/**
 	 * Loads all jar files in a background task. 
 	 */
-	public static void loadAllJarFiles() {
+	public static void loadAllJarFiles(final boolean loadJavaScriptJAR) {
 		Thread jarLoader = new Thread() {
 			public void run() {
 				// touch on file in all jar files to force loading
@@ -28,6 +28,19 @@ public class GeoGebraAppletPreloader extends JApplet {
 				System.out.flush();
 				try {
 					geogebra.main.Application.class.getClass();
+					System.out.println("done");
+				} catch (Exception e) {
+					System.out.println("failed");
+				} catch (Throwable e) {
+					System.out.println("failed");
+				}
+				System.out.flush();
+				
+				// load main jar
+				System.out.print("loading geogebra_algos.jar... ");
+				System.out.flush();
+				try {
+					geogebra.kernel.discrete.AlgoVoronoi.class.getClass();
 					System.out.println("done");
 				} catch (Exception e) {
 					System.out.println("failed");
@@ -90,6 +103,73 @@ public class GeoGebraAppletPreloader extends JApplet {
 					System.out.println("failed");
 				}
 				System.out.flush();
+				
+				// load jlatexmath jar
+				System.out.print("loading jlatexmath.jar... ");
+				System.out.flush();
+				try {
+					org.scilab.forge.jlatexmath.TeXFormula.class.getClass();
+					System.out.println("done");
+				} catch (Exception e) {
+					System.out.println("failed");
+				} catch (Throwable e) {
+					System.out.println("failed");
+				}
+				System.out.flush();
+				
+				// load jlm_greek jar
+				System.out.print("loading jlm_greek.jar... ");
+				System.out.flush();
+				try {
+					org.scilab.forge.jlatexmath.greek.GreekRegistration.class.getClass();
+					System.out.println("done");
+				} catch (Exception e) {
+					System.out.println("failed");
+				} catch (Throwable e) {
+					System.out.println("failed");
+				}
+				System.out.flush();
+				
+				// load jlm_cyrillic jar
+				System.out.print("loading jlm_cyrillic.jar... ");
+				System.out.flush();
+				try {
+					org.scilab.forge.jlatexmath.cyrillic.CyrillicRegistration.class.getClass();
+					System.out.println("done");
+				} catch (Exception e) {
+					System.out.println("failed");
+				} catch (Throwable e) {
+					System.out.println("failed");
+				}
+				System.out.flush();
+				
+				// load usb jar
+				System.out.print("loading geogebra_usb.jar... ");
+				System.out.flush();
+				try {
+					geogebra.usb.USBLogger.class.getClass();
+					System.out.println("done");
+				} catch (Exception e) {
+					System.out.println("failed");
+				} catch (Throwable e) {
+					System.out.println("failed");
+				}
+				System.out.flush();
+				
+				if (loadJavaScriptJAR) {
+					// load javascript jar
+					System.out.print("loading geogebra_javascript.jar... ");
+					System.out.flush();
+					try {
+						org.mozilla.javascript.Context.class.getClass();
+						System.out.println("done");
+					} catch (Exception e) {
+						System.out.println("failed");
+					} catch (Throwable e) {
+						System.out.println("failed");
+					}
+					System.out.flush();
+				}
 			}
 		};
 		jarLoader.start();
