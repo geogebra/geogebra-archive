@@ -365,7 +365,8 @@ office@geogebra.org
 					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
-					geogebra/kernel/discrete/**,
+			geogebra/kernel/discrete/**,
+			geogebra/kernel/cas/**,
 			geogebra/sound/**,
 					jasymca/**,		
 					geogebra3D/**,			
@@ -423,6 +424,7 @@ office@geogebra.org
 			includes="geogebra/cas/**,
 					org/apache/log4j/**,
 					org/mathpiper/mpreduce/**,
+			geogebra/kernel/cas/**,
 					default.img"
 			excludes="**/*.java,
 			geogebra/cas/maxima/**,
