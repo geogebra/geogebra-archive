@@ -249,7 +249,7 @@ public class Application3D extends Application{
 	///////////////////////////////////////
 	
 	public String getCommandSyntax(String key) {
-		String key3D = key+"Syntax3D";
+		String key3D = key + syntax3D;
 		String command3D = getCommand(key3D);
 		if (!command3D.equals(key3D)) return command3D;
 		

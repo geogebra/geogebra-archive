@@ -701,7 +701,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			} else {
 				syntaxString = app.getCommandSyntax(cmd);
 			}
-			if (syntaxString.endsWith(isCASInput ? "SyntaxCAS" : "Syntax")) {
+			if (syntaxString.endsWith(isCASInput ? app.syntaxCAS : app.syntaxStr)) {
 				syntaxes.add(cmd + "[]");
 				continue;
 			}
@@ -836,7 +836,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		// check if we really found syntax information
 		//if (key.equals(syntax)) return null;
-		if (syntax.indexOf("Syntax") == -1) return null;
+		if (syntax.indexOf(app.syntaxStr) == -1) return null;
 
 		// build html tooltip
 		syntax = syntax.replaceAll("<", "&lt;");

@@ -659,8 +659,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	    doc.setParagraphAttributes(0,doc.getLength(),attrs, false);
 		
 		
-		if (!descriptionCAS.equals(cmd+"SyntaxCAS")){
-			if (!description.equals(cmd+"Syntax"))
+		if (!descriptionCAS.equals(cmd + app.syntaxCAS)){
+			if (!description.equals(cmd + app.syntaxStr))
 				try {
 					doc.insertString(doc.getLength(), description+"\n", doc.getStyle("regular"));
 				} catch (BadLocationException e) {

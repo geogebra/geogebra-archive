@@ -2111,6 +2111,10 @@ public class Application implements KeyEventDispatcher {
 		//	rbcolorsSecondary = MyResourceBundle.createBundle(RB_COLORS, currentLocale);
 	} //*/
 	
+	public final static String syntaxCAS = "SyntaxCAS";
+	public final static String syntax3D = "Syntax3D";
+	public final static String syntaxStr = "Syntax";
+	
 	private void fillCommandDict() {
 		if (rbcommand == rbcommandOld)
 			return;
@@ -2149,7 +2153,7 @@ public class Application implements KeyEventDispatcher {
 		while (e.hasMoreElements()) {
 			String internal = (String) e.nextElement();
 			// Application.debug(internal);
-			if (!internal.endsWith("Syntax") && !internal.endsWith("Syntax3D") && !internal.endsWith("SyntaxCAS") && !internal.equals("Command")) {
+			if (!internal.endsWith(syntaxStr) && !internal.endsWith(syntax3D) && !internal.endsWith(syntaxCAS) && !internal.equals("Command")) {
 				String local = rbcommand.getString((String) internal);
 				if (local != null) {
 					local = local.trim();
@@ -2178,10 +2182,11 @@ public class Application implements KeyEventDispatcher {
 		
 		Enumeration<String> keys=rbcommand.getKeys();
 		
+		
 		while (keys.hasMoreElements()){
 			String key=keys.nextElement();
-			if (key.endsWith("SyntaxCAS")){
-				casCommands.add(key.replaceAll("SyntaxCAS", ""));
+			if (key.endsWith(syntaxCAS)){
+				casCommands.add(key.substring(0, key.length() - syntaxCAS.length()));
 			}
 		}
 
@@ -2194,7 +2199,7 @@ public class Application implements KeyEventDispatcher {
 				if (local!=null)
 					commandDictCAS.addEntry(local);
 				else
-					commandDictCAS.addEntry(key.replaceAll("SyntaxCAS", ""));
+					commandDictCAS.addEntry(key.replaceAll(syntaxCAS, ""));
 			}
 		}
 
@@ -2226,7 +2231,7 @@ public class Application implements KeyEventDispatcher {
 		while (e.hasMoreElements()) {
 			String internal = (String) e.nextElement();
 			// Application.debug(internal);
-			if (!internal.endsWith("Syntax") && !internal.endsWith("Syntax3D") && !internal.endsWith("SyntaxCAS") && !internal.equals("Command")) {
+			if (!internal.endsWith(syntaxStr) && !internal.endsWith(syntax3D) && !internal.endsWith(syntaxCAS) && !internal.equals("Command")) {
 				String local = rbcommandScripting.getString((String) internal);
 				if (local != null) {
 					local = local.trim();
@@ -2576,7 +2581,7 @@ public class Application implements KeyEventDispatcher {
 		enume = rbcommand.getKeys();
 		while (enume.hasMoreElements()) {
 			s = enume.nextElement();
-			if (!s.endsWith("Syntax") && !s.endsWith("SyntaxCAS")) {
+			if (!s.endsWith("Syntax") && !s.endsWith(syntaxCAS)) {
 				if (getCommand(s).equals(cmd)) return s;
 			}
 		}
@@ -2647,12 +2652,12 @@ public class Application implements KeyEventDispatcher {
 	
 	public String getCommandSyntax(String key) {
 		
-		return getCommand(key+"Syntax");
+		return getCommand(key + syntaxStr);
 	}
 	
 	public String getCommandSyntaxCAS(String key) {
 		
-		return getCommand(key+"SyntaxCAS");
+		return getCommand(key + syntaxCAS);
 	}
 
 	final public String getSetting(String key) {
@@ -5692,10 +5697,10 @@ public class Application implements KeyEventDispatcher {
 		Enumeration<String> e= rbcommand.getKeys();
 		while(e.hasMoreElements()){
 			String s = e.nextElement();			
-			if(!s.contains("Syntax") && map.get(s)==null){
+			if(!s.contains(syntaxStr) && map.get(s)==null){
 				boolean write = true;
 				try{
-					rbcommand.getString(s+"Syntax");
+					rbcommand.getString(s + syntaxStr);
 				}catch(Exception ex){
 					write = false;
 				}
