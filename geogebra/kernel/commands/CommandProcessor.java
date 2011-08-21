@@ -3178,7 +3178,8 @@ class CmdDerivative extends CommandProcessor {
 		case 2:
 			arg = resArgs(c);
 			// Derivative[ f(x), 2]
-			if (arg[0].isGeoFunction() && arg[1].isNumberValue()) {
+			if ((arg[0].isGeoFunction()||arg[0].isGeoCurveCartesian())
+					&& arg[1].isNumberValue()) {
 				double order = ((NumberValue) arg[1]).getDouble();
 
 				CasEvaluableFunction f = (CasEvaluableFunction) arg[0];
@@ -3191,6 +3192,7 @@ class CmdDerivative extends CommandProcessor {
 				return ret;
 
 			}
+			
 			// Derivative[ f(a,b), a ]
 			try {
 				arg2 = resArgsLocalNumVar(c, 1, 1);
