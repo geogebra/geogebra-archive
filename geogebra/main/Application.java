@@ -5749,7 +5749,7 @@ public class Application implements KeyEventDispatcher {
 			case VIEW_ALGEBRA: return (View)getAlgebraView();
 			case VIEW_SPREADSHEET: return (View)getGuiManager().getSpreadsheetView();
 			case VIEW_CAS: return (View)getGuiManager().getCasView();
-			case VIEW_EUCLIDIAN2: return (View)getEuclidianView2();
+			case VIEW_EUCLIDIAN2: return hasEuclidianView2() ? (View)getEuclidianView2() : null;
 			case VIEW_CONSTRUCTION_PROTOCOL: return (View)getGuiManager().getConstructionProtocolView();
 			case VIEW_PROBABILITY_CALCULATOR: return (View)getGuiManager().getProbabilityCalculator();
 			//case VIEW_FUNCTION_INSPECTOR: return (View)getGuiManager()..
