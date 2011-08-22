@@ -5,6 +5,7 @@ import geogebra.cas.CASparser;
 import geogebra.cas.CasParserTools;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.cas.error.CASException;
+import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -60,27 +61,44 @@ public class CASmpreduce extends CASgeneric {
 	 * @throws CASException
 	 */
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws CASException {
+		
+		// KeepInput[] command should set flag keepinput!!:=1
+		// so that commands like Substitute can work accordingly
+		boolean keepInput = casInput.isKeepInputUsed();
+		if (keepInput) {
+			// remove KeepInput[] command and take argument	
+			Command cmd = casInput.getTopLevelCommand();
+			if (cmd != null && cmd.equals("KeepInput")) {
+				// return argument of KeepInput
+				if (cmd.getArgumentNumber() > 0)
+					casInput = cmd.getArgument(0);
+			}
+		}
+		
 		// convert parsed input to MathPiper string
+		String mpreduceInput = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE);
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append("<<numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ combinelogs$ ");
-		sb.append(translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE));
+		sb.append("<<keepinput!!:=");
+		sb.append(keepInput ? 1 : 0);
+		sb.append("$numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ combinelogs$ ");
+		sb.append(mpreduceInput);
 		sb.append(">>");
-
 		String result = evaluateMPReduce(sb.toString());
 
 		// convert result back into GeoGebra syntax
-		if (!(casInput instanceof FunctionNVar)) {
-			String ggbString;
-			ggbString = toGeoGebraString(result);
-			return ggbString;
-		}
-		else
-		{
+		if (casInput instanceof FunctionNVar) {
+			// function definition f(x) := x^2 should return x^2
 			int oldPrintForm = casParser.getKernel().getCASPrintForm();
 			casParser.getKernel().setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
 			String ret = casInput.toString();
 			casParser.getKernel().setCASPrintForm(oldPrintForm);
 			return ret;
+		}
+		else
+		{	
+			// standard case
+			return toGeoGebraString(result);
 		}
 	}
 
@@ -113,11 +131,10 @@ public class CASmpreduce extends CASgeneric {
 			ret = parserTools.convertScientificFloatNotation(ret);
 			
 			return ret;
-		} catch (TimeoutException toe)
-		{
+		} catch (TimeoutException toe) {
 			throw new geogebra.cas.error.TimeoutException(toe.getMessage());
-		}catch (Throwable e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			System.err.println("evaluateMPReduce: " + e.getMessage());
 			return "?";
 		}
 	}

@@ -4,6 +4,7 @@ import geogebra.cas.error.CASException;
 import geogebra.cas.mpreduce.CASmpreduce;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -153,24 +154,48 @@ public class GeoGebraCAS {
 	 * @throws CASException
 	 */
 	public String evaluateGeoGebraCAS(ValidExpression casInput) throws CASException {
-
 		Kernel kernel = app.getKernel();
 		boolean oldDigits = kernel.internationalizeDigits;
-		kernel.internationalizeDigits = false;
+		kernel.internationalizeDigits = false;			
 		
-		String ret = cas.evaluateGeoGebraCAS(casInput);
+		String result = null;
+		CASException exception = null;
+		try {		
+			result = cas.evaluateGeoGebraCAS(casInput);					
+		} 	
+		catch (CASException ce) {
+			exception = ce;			
+		}
+		finally  {
+			kernel.internationalizeDigits = oldDigits;
+		}
 		
-		// get names of escaped global variables right
-		// e.g. "ggbcasvara" needs to be changed to "a"
-		ret = ret.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
+		// check if keep input command was successful
+		// e.g. for KeepInput[Substitute[...]]
+		// otherwise return input
+		if (casInput.isKeepInputUsed() && 
+				(exception != null || "?".equals(result))) 
+		{			
+			// return original input
+			return casInput.toString();
+		}
 		
-		// get names of escaped temporary variables right
-		// e.g. "ggbtmpvara" needs to be changed to "a"
-		ret = ret.replaceAll(ExpressionNode.TMP_VARIABLE_PREFIX, "");	
+		// pass on exception
+		if (exception != null)
+			throw exception;
+					
+		// success
+		if (result != null) {
+			// get names of escaped global variables right
+			// e.g. "ggbcasvara" needs to be changed to "a"
+			result = result.replace(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
+			
+			// get names of escaped temporary variables right
+			// e.g. "ggbtmpvara" needs to be changed to "a"
+			result = result.replace(ExpressionNode.TMP_VARIABLE_PREFIX, "");	
+		}
 		
-		kernel.internationalizeDigits = oldDigits;
-		
-		return ret;
+		return result;
 	}
 	
 	/** 
@@ -274,7 +299,7 @@ public class GeoGebraCAS {
 			
 			// get names of escaped global variables right
 			// e.g. "ggbcasvara" needs to be changed to "a"
-			tmp = tmp.replaceAll(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
+			tmp = tmp.replace(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
 
 			tmp = tmp.substring(1, tmp.length()-1); // strip '{' and '}'
 			result = tmp.split(",");

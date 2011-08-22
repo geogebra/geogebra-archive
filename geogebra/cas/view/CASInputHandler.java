@@ -355,14 +355,14 @@ public class CASInputHandler {
 						case '}':
 							depth--;
 							if (depth==0){
-								if (inTheSelectedRow) references[counter]=cellText.substring(leftIndex, j).replaceAll(" ", "");
-								equations[counter++]=cellText.substring(leftIndex, j).replaceAll(" ", "");
+								if (inTheSelectedRow) references[counter]=cellText.substring(leftIndex, j).replace(" ", "");
+								equations[counter++]=cellText.substring(leftIndex, j).replace(" ", "");
 							}
 							break;
 						case ',':
 							if (depth==1){
-								if (inTheSelectedRow) references[counter]=cellText.substring(leftIndex, j).replaceAll(" ", "");
-								equations[counter++]=cellText.substring(leftIndex, j).replaceAll(" ", "");
+								if (inTheSelectedRow) references[counter]=cellText.substring(leftIndex, j).replace(" ", "");
+								equations[counter++]=cellText.substring(leftIndex, j).replace(" ", "");
 								leftIndex=j+1;
 							}
 							break;
