@@ -57,7 +57,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 			// This will allow scrolling of strings that are wider than the cell. 
 			this.setInputPanelWidth(table.getParent().getWidth());	
 			
-		}
+		} 
 		return this;
 	}	
 	

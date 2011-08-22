@@ -337,7 +337,7 @@ public class CASView extends JComponent implements View, Printable {
 		System.out.println("CASView.ADD start: " + geo);
 		
 		update(geo);	
-		
+
 		// TODO: remove
 		System.out.println("CASView.ADD end: " + geo);
 	}

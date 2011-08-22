@@ -10,6 +10,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.parser.ParseException;
 import geogebra.main.Application;
@@ -39,7 +40,7 @@ public class GeoCasCell extends GeoElement {
 	private boolean suppressOutput = false;
 	
 	// input variables of this cell
-	private TreeSet <String> invars;
+	private TreeSet <String> invars, functionvars;
 	// defined input GeoElements of this cell
 	private TreeSet<GeoElement> inGeos;
 	private boolean isCircularDefinition;	
@@ -240,16 +241,14 @@ public class GeoCasCell extends GeoElement {
 		if (ignoreTwinGeoUpdate) 
 			return;
 	
-		if (twinGeo != null && twinGeo.isIndependent() && twinGeo.isLabelSet()) {	
-			// check if twin geo has same value as last output evaluation
-			if (lastOutputEvaluationGeo != null && lastOutputEvaluationGeo.isEqual(twinGeo))
-				return;
-			
+		if (twinGeo != null && twinGeo.isIndependent() && twinGeo.isLabelSet()) {			
 			// Update ASSIGNMENT of twin geo
 			// e.g. m = 8 changed in GeoGebra should set cell to m := 8	
 			String assignmentStr = twinGeo.toCasAssignment(ExpressionNode.STRING_TYPE_GEOGEBRA);				
-			setInput(assignmentStr);
-			computeOutput(false);		
+			if (setInput(assignmentStr)) {
+				computeOutput(false);
+				update();
+			}
 		} 
 	}
 
@@ -258,7 +257,9 @@ public class GeoCasCell extends GeoElement {
 	 * @param inValue
 	 * @return success
 	 */
-	public void setInput(String inValue) {
+	public boolean setInput(String inValue) {
+		if (input.equals(inValue)) return false;
+		
 		suppressOutput = inValue.endsWith(";");
 				
 		// parse input into valid expression
@@ -287,6 +288,7 @@ public class GeoCasCell extends GeoElement {
 			// make sure we put this casCell into the construction set
 			cons.addToGeoSetWithCasCells(this);			
 		}
+		return true;
 	}	
 	
 	private void updateLocalizedInput() {
@@ -435,9 +437,12 @@ public class GeoCasCell extends GeoElement {
 				String var = geo.getLabel();
 				
 				// local function variables are NOT input variables
-				// e.g. f(k) := k^2 + 3 does NOT depend on k
-				if (!(isFunction && ((FunctionNVar) ve).isFunctionVariable(var))) {
-					addInVar(var);
+				if (isFunction && ((FunctionNVar) ve).isFunctionVariable(var)) {
+					// function variable, e.g. k in f(k) := k^2 + 3
+					getFunctionVars().add(var);					
+				} else {
+					// input variable, e.g. b in a + 3 b
+					getInVars().add(var);
 				}
 			}
 		}
@@ -598,19 +603,22 @@ public class GeoCasCell extends GeoElement {
 		}
 		assignmentVar = newLabel;
 	}
-	
-	private void addInVar(String var) {
-		getInVars().add(var);
-	}
-	
+		
 	private TreeSet<String> getInVars() {
 		if (invars == null)
 			invars = new TreeSet<String>();
 		return invars;
 	}
 	
+	private TreeSet<String> getFunctionVars() {
+		if (functionvars == null)
+			functionvars = new TreeSet<String>();
+		return functionvars;
+	}
+	
 	private void clearInVars() {
-		if (invars != null) invars.clear();
+		invars = null;
+		functionvars = null;
 		includesRowReferences = false;
 		includesNumericCommand = false;
 	}
@@ -716,7 +724,22 @@ public class GeoCasCell extends GeoElement {
 		
 		return node;
 	}
+	
+	/**
+	 * Replaces GeoDummyVariable objects in outputVE by the function inGeos.
+	 * This is important for row references and renaming of inGeos to work.
+	 */
+	private void resolveFunctionVariableReferences(ValidExpression outputVE) {
+		if (!(outputVE instanceof FunctionNVar)) return;
+		
+		FunctionNVar fun = (FunctionNVar) outputVE;
 
+		// replace function variables in tree
+		for (FunctionVariable fVar : fun.getFunctionVariables()) {			
+			// look for GeoDummyVariable objects with name of function variable and	replace them		
+			fun.getExpression().replaceVariables(fVar.getSetVarString(), fVar);		
+		}		
+	}
 	
 	/**
 	 * Returns whether this object only depends on GeoElements
@@ -746,8 +769,7 @@ public class GeoCasCell extends GeoElement {
 	 * "y" is a function variable of "f(y) := 2y + b"
 	 */
 	final public boolean isFunctionVariable(String var) {
-		return inputVE instanceof Function && 
-			((Function) inputVE).isFunctionVariable(var);
+		return functionvars != null && functionvars.contains(var);
 	}
 	
 	/**
@@ -755,9 +777,11 @@ public class GeoCasCell extends GeoElement {
 	 * For example, "m" is a function variable of "f(m) := 2m + b"
 	 */
 	final public String getFunctionVariable() {
-		return (inputVE instanceof Function) ? 
-				((Function) inputVE).getFunctionVariable().getLabel() 
-				: null;
+		if (functionvars != null && !functionvars.isEmpty()) {
+			return functionvars.first();
+		} else {
+			return null;
+		}
 	}
 	
 	/**
@@ -824,8 +848,26 @@ public class GeoCasCell extends GeoElement {
 		// make sure numbers and their precision are kept from Numeric[] commands
 		kernel.setKeepCasNumbers(includesNumericCommand);
 		
+		// when input is a function declaration, output also needs to become a function
+		// so we need to add f(x,y) := if it is missing
+		boolean isFunctionDeclaration = isAssignment() 
+			&& functionvars != null 
+			&& !output.startsWith(assignmentVar);
+		if (isFunctionDeclaration) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(inputVE.getLabelForAssignment());
+			sb.append(inputVE.getAssignmentOperator());
+			sb.append(output);
+			output = sb.toString();
+		}
+			
 		// parse output into valid expression
 		outputVE = parseGeoGebraCASInputAndResolveDummyVars(output);	
+		
+		if (isFunctionDeclaration) {
+			// replace GeoDummyVariable objects in outputVE by the function variables	
+			resolveFunctionVariableReferences(outputVE);	
+		}
 		
 		kernel.setKeepCasNumbers(oldValue);
 	}	
@@ -982,7 +1024,7 @@ public class GeoCasCell extends GeoElement {
 	private GeoElement silentEvalInGeoGebra(ValidExpression ve) {
 		boolean oldValue = kernel.isSilentMode();
 		kernel.setSilentMode(true);
-
+		
 		try {
 			// evaluate in GeoGebra
 			GeoElement [] ggbEval = kernel.getAlgebraProcessor().processValidExpression(ve);

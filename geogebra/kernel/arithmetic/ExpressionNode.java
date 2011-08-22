@@ -656,7 +656,14 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				left = fVar;
 				replacements++;
 			}
-		} else if (left instanceof FunctionVariable) {
+		}
+		if (left instanceof GeoDummyVariable) {
+			if (varName.equals(((GeoDummyVariable) left).toString())) {
+				left = fVar;
+				replacements++;
+			}
+		}  
+		else if (left instanceof FunctionVariable) {
 			if (varName.equals(((FunctionVariable) left).toString())) {
 				left = fVar;
 				replacements++;
@@ -673,6 +680,18 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 						.replaceVariables(varName, fVar);
 			} else if (right instanceof Variable) {
 				if (varName.equals(((Variable) right).getName())) {
+					right = fVar;
+					replacements++;
+				}
+			}  
+			else if (right instanceof GeoDummyVariable) {
+				if (varName.equals(((GeoDummyVariable) right).toString())) {
+					right = fVar;
+					replacements++;
+				}
+			}  
+			else if (right instanceof FunctionVariable) {
+				if (varName.equals(((FunctionVariable) right).toString())) {
 					right = fVar;
 					replacements++;
 				}

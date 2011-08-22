@@ -18,7 +18,7 @@ public class GeoDummyVariable extends GeoNumeric {
 	
 	public String toString() {
 		return kernel.printVariableName(varName);
-	}
+	}		
 	
 	public String toValueString() {
 		return toString();	
