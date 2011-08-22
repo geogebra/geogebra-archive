@@ -4117,7 +4117,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				&& mode != EuclidianView.MODE_COMPLEX_NUMBER
 				&& !hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
-
+		
 		Path path = null;	
 		Region region = null;
 		boolean createPoint = true;
@@ -4155,6 +4155,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// check for paths and regions
 		if (createPoint) {
+			
+			boolean createPointOnBoundary = false;
 
 			// check if point lies in a region and if we are allowed to place a point
 			// in a region
@@ -4182,10 +4184,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 								hits.remove(region); // if a polygon is a region, don't need it as a path
 								
 							} else {
-								createPoint = false;
-								hits.remove(region); // (OPTIONAL) if side is in hits, still don't need the polygon as a path
-								// if one wants a point on boundary of a polygon poly1, can input Point[poly1]
-								region = null;
+								if (mode==EuclidianView.MODE_POINT_ON_OBJECT){
+									// if one wants a point on boundary of a polygon
+									createPoint=false;
+									createPointOnBoundary = true;
+								}else{
+									createPoint = false;
+									hits.remove(region); // (OPTIONAL) if side is in hits, still don't need the polygon as a path
+									region = null;
+								}
 							}
 						}
 					}else
@@ -4199,17 +4206,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 			//check if point lies on path and if we are allowed to place a point
-			// on a path			
-			Hits pathHits = hits.getHits(Path.class, tempArrayList);
-			if (!pathHits.isEmpty()) {
-				if (onPathPossible) {
-					if (chooseGeo)
-						path = (Path) chooseGeo(pathHits, true);
-					else
-						path = (Path) pathHits.get(0);
-					createPoint = path != null;
-				} else {
-					createPoint = true; 
+			// on a path	
+			if (createPointOnBoundary){
+				//special case for MODE_POINT_ON_OBJECT : if an edge of a polygon is clicked, create Point[polygon]
+				path = (Path) region;
+				region = null;
+				createPoint = true;
+			}else{
+				Hits pathHits = hits.getHits(Path.class, tempArrayList);
+				if (!pathHits.isEmpty()) {
+					if (onPathPossible) {
+						if (chooseGeo)
+							path = (Path) chooseGeo(pathHits, true);
+						else
+							path = (Path) pathHits.get(0);
+						createPoint = path != null;
+					} else {
+						createPoint = true; 
+					}
 				}
 			}
 
