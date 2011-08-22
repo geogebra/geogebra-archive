@@ -108,6 +108,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
@@ -2179,30 +2180,20 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		//get CAS Commands
-		
+	
 		commandDictCAS=new LowerCaseDictionary();
-		HashSet<String> casCommands=new HashSet<String>();
-		
 		Enumeration<String> keys=rbcommand.getKeys();
-		
-		
-		while (keys.hasMoreElements()){
-			String key=keys.nextElement();
-			if (key.endsWith(syntaxCAS)){
-				casCommands.add(key.substring(0, key.length() - syntaxCAS.length()));
-			}
-		}
 
-		keys=rbcommand.getKeys();
-
-		while (keys.hasMoreElements()){
-			String key=keys.nextElement();
-			if (casCommands.contains(key)){
-				String local = rbcommand.getString(key);
-				if (local!=null)
+		// iterate through all available CAS commands, add them (translated if available, otherwise untranslated)
+		for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames()) {
+			try {
+				String local = rbcommand.getString(cmd + syntaxCAS);
+				if (local != null)
 					commandDictCAS.addEntry(local);
 				else
-					commandDictCAS.addEntry(key.replaceAll(syntaxCAS, ""));
+					commandDictCAS.addEntry(cmd);
+			} catch (MissingResourceException mre) {
+				commandDictCAS.addEntry(cmd);
 			}
 		}
 
