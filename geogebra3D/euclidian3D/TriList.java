@@ -145,6 +145,17 @@ public class TriList implements Iterable<TriListElem>{
 	protected float[] getVertices(TriListElem el) {
 		return getVertices(el.getIndex());
 	}
+	
+	/**
+	 * gets the vertices of an element
+	 * 
+	 * @param el
+	 *            the element
+	 * @return the vertices of the element
+	 */
+	protected float[] getNormals(TriListElem el) {
+		return getNormals(el.getIndex());
+	}
 
 	/**
 	 * sets the vertices of the specified element
@@ -225,6 +236,33 @@ public class TriList implements Iterable<TriListElem>{
 		count++;
 
 		return t;
+	}
+	
+	/**
+	 * Adds a triangle to the list.
+	 * 
+	 * @param vertices
+	 *            the tree vertices in the triangle stored as (chunkSize) floats
+	 * @param normals
+	 *            the normals of the vertices stored as (chunkSize) floats
+	 * @return a reference to the created triangle element
+	 */
+	public void add(TriListElem t, float[] vertices, float[] normals) {
+
+		t.setPrev(back);
+		if (front == null)
+			front = t;
+		if (back != null)
+			back.setNext(t);
+		back = t;
+
+		int index = chunkSize * count;
+
+		setFloats(vertices, normals, index);
+
+		t.setIndex(index);
+
+		count++;
 	}
 
 	private boolean inputValid(float[] vertices, float[] normals) {

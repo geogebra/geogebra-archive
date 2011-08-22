@@ -1,29 +1,26 @@
 package geogebra3D.euclidian3D.plots;
 
-import geogebra3D.euclidian3D.TriList;
-import geogebra3D.euclidian3D.TriListElem;
-
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.nio.FloatBuffer;
 
 /**
  * A triangle list for dynamic meshes
  * 
  * @author André Eriksson
  */
-abstract class DynamicMeshTriList2 extends TriList {
+public interface DynamicMeshTriList2 {
 
-	/**
-	 * @param capacity
-	 *            the maximum number of triangles
-	 * @param margin
-	 *            free triangle amount before considered full
-	 * @param trisInChunk
-	 *            amount of triangles in each chunk
-	 */
-	DynamicMeshTriList2(int capacity, int margin, int trisInChunk) {
-		super(capacity, margin, trisInChunk, true);
-	}
+	// /**
+	// * @param capacity
+	// * the maximum number of triangles
+	// * @param margin
+	// * free triangle amount before considered full
+	// * @param trisInChunk
+	// * amount of triangles in each chunk
+	// */
+	// protected DynamicMeshTriList2(int capacity, int margin, int trisInChunk)
+	// {
+	// super(capacity, margin, trisInChunk, true);
+	// }
 
 	/**
 	 * @param e
@@ -38,10 +35,10 @@ abstract class DynamicMeshTriList2 extends TriList {
 	 */
 	abstract public void add(DynamicMeshElement2 e, int i);
 
-//	/**
-//	 * @return the total visible error
-//	 */
-//	abstract public double getError();
+	// /**
+	// * @return the total visible error
+	// */
+	// abstract public double getError();
 
 	/**
 	 * @param e
@@ -72,23 +69,32 @@ abstract class DynamicMeshTriList2 extends TriList {
 	 */
 	abstract public boolean show(DynamicMeshElement2 t);
 
-	public void recalculate(int currentVersion) {
-		TriListElem e = front;
-		LinkedList<DynamicMeshElement2> list = new LinkedList<DynamicMeshElement2>();
-		DynamicMeshElement2 el;
-		int j = 0;
-		while (e != null) {
-			el = (DynamicMeshElement2) e.getOwner();
-			if(el.lastVersion!=currentVersion)
-				list.add(el);
-			e=e.getNext();
-		}
-		Iterator<DynamicMeshElement2> it = list.iterator();
-		while(it.hasNext()){
-			DynamicMeshElement2 a = it.next();
-			reinsert(a,currentVersion);
-		}
-	}
+	public void recalculate(int currentVersion);
 
-	abstract protected void reinsert(DynamicMeshElement2 a, int currentVersion);
+	// TriListElem e = front;
+	// LinkedList<DynamicMeshElement2> list = new
+	// LinkedList<DynamicMeshElement2>();
+	// DynamicMeshElement2 el;
+	// while (e != null) {
+	// el = (DynamicMeshElement2) e.getOwner();
+	// if(el.lastVersion!=currentVersion)
+	// list.add(el);
+	// e=e.getNext();
+	// }
+	// Iterator<DynamicMeshElement2> it = list.iterator();
+	// while(it.hasNext()){
+	// DynamicMeshElement2 a = it.next();
+	// reinsert(a,currentVersion);
+	// }
+	// }
+
+	abstract void reinsert(DynamicMeshElement2 a, int currentVersion);
+
+	public abstract FloatBuffer getTriangleBuffer();
+
+	public abstract FloatBuffer getNormalBuffer();
+
+	public abstract int getTriAmt();
+
+	public abstract int getChunkAmt();
 }

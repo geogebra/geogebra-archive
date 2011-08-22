@@ -3,17 +3,17 @@ package geogebra3D.euclidian3D;
 
 /**
  * A class representing a triangle in TriList
- * @author Andr� Eriksson
+ * @author André Eriksson
  */
 public class TriListElem{
-	private  int index;
-	private TriListElem next, prev;
+	protected  int index;
+	protected TriListElem next, prev;
 	
-	private  float[] vertices;
-	private float[] normals;
+	protected float[] vertices;
+	protected float[] normals;
 	
 	/** an (optional) reference to the object associated with the element*/
-	private Object owner;
+	protected Object owner;
 	
 	/** saves the specified vertices
 	 * @param vertices 

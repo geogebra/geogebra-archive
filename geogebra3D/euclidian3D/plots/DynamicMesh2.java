@@ -2,11 +2,7 @@ package geogebra3D.euclidian3D.plots;
 
 import java.nio.FloatBuffer;
 import java.util.Date;
-import java.util.Iterator;
 
-//TODO: make culling refresh the tree upwards?
-//TODO: ensure optimality by comparing error in merge and split queues
-//TODO: improve speed
 
 /**
  * An enum for describing the culling status of a diamond
@@ -530,14 +526,15 @@ public abstract class DynamicMesh2 {
 		for (int i = 0; i < nChildren; i++) {
 			DynamicMeshElement2 c = t.getChild(i);
 			if (!c.ignoreFlag) {
+
 				c.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
-
+				
 				// add child to drawing list
-
 				if (!c.isSplit()) {
 					drawList.add(c, (c.parents[0] == t ? 0 : 1));
 					splitQueue.add(c);
 				}
+
 			}
 		}
 

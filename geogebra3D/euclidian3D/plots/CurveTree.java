@@ -254,7 +254,7 @@ public class CurveTree {
 	
 	/** Tests if the segments defined by n1,n2,n3 are nearly in C1.
 	 * 
-	 * @param n1 
+	 * @param t1 
 	 * 			the "leftmost" node
 	 * @param n2 
 	 * 			the "middle" node

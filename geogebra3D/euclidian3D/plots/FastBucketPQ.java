@@ -103,6 +103,9 @@ public class FastBucketPQ{
 	 * @return false if the element is already in the queue. Otherwise true.
 	 */
 	public boolean add(DynamicMeshElement2 obj) {
+		
+		if(obj instanceof DynamicMeshElement2 && ((DynamicMeshElement2)obj).cullInfo==CullInfo2.OUT)
+			return addToZeroBucket(obj);
 
 		if (null == obj)
 			throw new NullPointerException();

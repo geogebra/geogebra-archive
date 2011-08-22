@@ -1,7 +1,12 @@
 package geogebra3D.euclidian3D.plots;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import geogebra.Matrix.Coords;
 import geogebra3D.euclidian3D.BucketAssigner;
+import geogebra3D.euclidian3D.SurfaceTriList;
+import geogebra3D.euclidian3D.TriList;
 import geogebra3D.euclidian3D.TriListElem;
 import geogebra3D.kernel3D.GeoSurfaceCartesian3D;
 
@@ -461,7 +466,7 @@ class ParametricSurfaceDiamond extends DynamicMeshElement2 {
  * 
  * @author André Eriksson
  */
-class ParametricSurfaceTriList extends DynamicMeshTriList2 {
+class ParametricSurfaceTriList extends TriList implements DynamicMeshTriList2 {
 	// private double totalError = 0;
 	// private double totalArea = 0;
 
@@ -472,22 +477,13 @@ class ParametricSurfaceTriList extends DynamicMeshTriList2 {
 	 *            extra triangle amount
 	 */
 	ParametricSurfaceTriList(int capacity, int marigin) {
-		super(capacity, marigin, 9);
+		super(capacity, marigin, 9, true);
 	}
-
-	// /**
-	// * @return the total error of the visible parts of the function
-	// */
-	// public double getError() {
-	// return totalError;
-	// }
-
-	// /**
-	// * @return the total length of the visible parts of the function
-	// */
-	// public double getArea() {
-	// return totalArea;
-	// }
+	
+	public void add(DynamicMeshElement2 e) {
+		add(e, 0);
+		add(e, 1);
+	}
 
 	/**
 	 * Adds a triangle to the list.
@@ -497,13 +493,12 @@ class ParametricSurfaceTriList extends DynamicMeshTriList2 {
 	 * @param j
 	 *            The index of the triangle within the diamond
 	 */
+
 	public void add(DynamicMeshElement2 e, int j) {
 		ParametricSurfaceDiamond s = (ParametricSurfaceDiamond) e;
 		// handle clipping
 		if (s.ignoreFlag || ((ParametricSurfaceDiamond) s.parents[j]).ignoreFlag)
 			return;
-
-		// totalError += s.getError();
 
 		if (s.isSingular()) {
 			// create an empty TriListElem to show that
@@ -513,8 +508,6 @@ class ParametricSurfaceTriList extends DynamicMeshTriList2 {
 			s.setTriangle(j, g);
 			return;
 		}
-
-		// totalArea += s.getArea();
 
 		float[] v = new float[9];
 		float[] n = new float[9];
@@ -548,26 +541,8 @@ class ParametricSurfaceTriList extends DynamicMeshTriList2 {
 		}
 	}
 
-	/**
-	 * Removes a segment if it is part of the function.
-	 * 
-	 * @param e
-	 *            the segment to remove
-	 * @return true if the segment was removed, false if it wasn't in the
-	 *         function in the first place
-	 */
-	public boolean remove(DynamicMeshElement2 e, int j) {
-		ParametricSurfaceDiamond d = (ParametricSurfaceDiamond) e;
-
-		// handle clipping
-		if (d.ignoreFlag || ((ParametricSurfaceDiamond) d.parents[j]).ignoreFlag)
-			return false;
-
-		boolean ret = hide(d, j);
-
-		// free triangle
-		d.freeTriangle(j);
-		return ret;
+	public boolean hide(DynamicMeshElement2 t) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -583,67 +558,15 @@ class ParametricSurfaceTriList extends DynamicMeshTriList2 {
 
 		if (d.isSingular() && d.getTriangle(j) != null
 				&& d.getTriangle(j).getIndex() != -1) {
-			// totalError -= d.getError();
 			return true;
 		} else if (hide(d.getTriangle(j))) {
-			// totalError -= d.getError();
-			// totalArea -= d.getArea();
 			return true;
 		}
 
 		return false;
 	}
 
-	/**
-	 * shows a triangle that has been hidden
-	 * 
-	 * @param e
-	 *            the diamond
-	 * @param j
-	 *            the index of the triangle
-	 * @return true if successful, otherwise false
-	 */
-	public boolean show(DynamicMeshElement2 e, int j) {
-		ParametricSurfaceDiamond d = (ParametricSurfaceDiamond) e;
-		if (d.isSingular() && d.getTriangle(j) != null
-				&& d.getTriangle(j).getIndex() == -1) {
-			// totalError += d.getError();
-			return true;
-		} else if (show(d.getTriangle(j))) {
-			// totalError += d.getError();
-			// totalArea += d.getArea();
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public void add(DynamicMeshElement2 e) {
-		add(e, 0);
-		add(e, 1);
-	}
-
-	@Override
-	public boolean hide(DynamicMeshElement2 t) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean remove(DynamicMeshElement2 e) {
-		boolean b = false;
-		b |= remove(e, 0);
-		b |= remove(e, 1);
-		return b;
-	}
-
-	@Override
-	public boolean show(DynamicMeshElement2 t) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void reinsert(DynamicMeshElement2 a, int currentVersion) {
+	public void reinsert(DynamicMeshElement2 a, int currentVersion) {
 		ParametricSurfaceDiamond s = (ParametricSurfaceDiamond) a;
 
 		s.recalculate(currentVersion, true);
@@ -666,6 +589,78 @@ class ParametricSurfaceTriList extends DynamicMeshTriList2 {
 		}
 
 		s.reinsertInQueue();
+	}
+
+	public boolean remove(DynamicMeshElement2 e) {
+		boolean b = false;
+		b |= remove(e, 0);
+		b |= remove(e, 1);
+		return b;
+	}
+
+	/**
+	 * Removes a segment if it is part of the function.
+	 * 
+	 * @param e
+	 *            the segment to remove
+	 * @return true if the segment was removed, false if it wasn't in the
+	 *         function in the first place
+	 */
+
+	public boolean remove(DynamicMeshElement2 e, int j) {
+		ParametricSurfaceDiamond d = (ParametricSurfaceDiamond) e;
+
+		// handle clipping
+		if (d.ignoreFlag || ((ParametricSurfaceDiamond) d.parents[j]).ignoreFlag)
+			return false;
+
+		boolean ret = hide(d, j);
+
+		// free triangle
+		d.freeTriangle(j);
+		return ret;
+	}
+
+	public boolean show(DynamicMeshElement2 t) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * shows a triangle that has been hidden
+	 * 
+	 * @param e
+	 *            the diamond
+	 * @param j
+	 *            the index of the triangle
+	 * @return true if successful, otherwise false
+	 */
+	public boolean show(DynamicMeshElement2 e, int j) {
+		ParametricSurfaceDiamond d = (ParametricSurfaceDiamond) e;
+		if (d.isSingular() && d.getTriangle(j) != null
+				&& d.getTriangle(j).getIndex() == -1) {
+			return true;
+		} else if (show(d.getTriangle(j))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public void recalculate(int currentVersion) {
+		TriListElem e = front;
+		LinkedList<DynamicMeshElement2> list = new LinkedList<DynamicMeshElement2>();
+		DynamicMeshElement2 el;
+		while (e != null) {
+			el = (DynamicMeshElement2) e.getOwner();
+			if (el.lastVersion != currentVersion)
+				list.add(el);
+			e = e.getNext();
+		}
+		Iterator<DynamicMeshElement2> it = list.iterator();
+		while (it.hasNext()) {
+			DynamicMeshElement2 elem = it.next();
+			reinsert(elem, currentVersion);
+		}
 	}
 }
 

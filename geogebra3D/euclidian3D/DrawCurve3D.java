@@ -4,6 +4,7 @@ import geogebra.Matrix.Coords;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.plots.CurveTree;
+import geogebra3D.euclidian3D.plots.CurveMesh;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 
 /**
@@ -13,9 +14,9 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
  *
  */
 public class DrawCurve3D extends Drawable3DCurves {
-	private final boolean useOldCurves = true;
+	private final boolean useOldCurves = false;
 
-//	private CurveMesh mesh;
+	private CurveMesh mesh;
 	private CurveTree tree;
 	
 	
@@ -39,7 +40,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 			tree = new CurveTree(curve, a_view3d);
 		else {
 			updateRadius();
-//			mesh = new CurveMesh(curve, savedRadius,(float)a_view3d.getScale());
+			mesh = new CurveMesh(curve, savedRadius,(float)a_view3d.getScale());
 		}
 	}
 	
@@ -160,7 +161,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 			
 			if(elementHasChanged){
 				elementHasChanged = false;
-//				mesh.updateParameters();
+				mesh.updateParameters();
 			}
 			
 			Renderer renderer = getView3D().getRenderer();
@@ -170,7 +171,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 		
 			PlotterBrush brush = renderer.getGeometryManager().getBrush();
 			brush.start(8);
-//			brush.draw(mesh,savedRadius);
+			brush.draw(mesh,savedRadius);
 
 			setGeometryIndex(brush.end());
 		}

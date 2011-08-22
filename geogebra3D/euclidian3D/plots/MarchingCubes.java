@@ -7,7 +7,6 @@ import geogebra3D.euclidian3D.TriList;
 import geogebra3D.euclidian3D.TriListElem;
 
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.ListIterator;
  * 
  * @author André Eriksson
  */
-
 class MCElement {
 
 	/** parameter values at the start and end of the segment */
@@ -36,16 +34,14 @@ class MCElement {
 	double[][] cz = new double[8][3];
 
 	/**
-	 * @param signs
-	 * @param c
-	 * @param vals
-	 * @param corner
+	 * @param signs the signs of the corners
+	 * @param c corner locations
+	 * @param vals values at corners
 	 */
 	public MCElement(int signs, double[][] c, double[] vals) {
 		this.signs = signs;
 
-		if (true) throw new RuntimeException("GeoGebra uses Java 1.5, see: http://www.geogebra.org/trac/wiki/SetUp");
-		//cornerVals = Arrays.copyOf(vals, 8);
+		cornerVals = new double[]{vals[0],vals[1],vals[2],vals[3],vals[4],vals[5],vals[6],vals[7]};
 
 		cz[0][0] = c[0][0];
 		cz[0][1] = c[1][0];
@@ -130,145 +126,190 @@ class MCElement {
 	}
 }
 
+/**
+ * A triangle in the marching cubes implementation
+ * @author André Eriksson
+ */
 class MCTriangle extends DynamicMeshElement2 {
+	
+	/** The three adjacent triangles in the mesh */
 	MCTriangle[] neighbors = new MCTriangle[3];
+	
+	/** Triangle corners */
 	Coords[] corners = new Coords[3];
+	
+	/** Coordinate of the midpoint of the triangle base */
 	Coords midpoint;
+	
+	/** Reference to the function being modeled*/
 	GeoFunctionNVar func;
-	
+
+	/** The error associated with the element */
 	double error;
+	/** The associated triangle list element */
 	public TriListElem triListElem;
-	
-	MCTriangle(double[][] cs, GeoFunctionNVar func){
-		super(2,1,0,false,0,null,null);
-		
+
+	/**
+	 * Standard constructor
+	 * @param cs corner coordinates
+	 * @param func the function being modeled
+	 */
+	MCTriangle(double[][] cs, GeoFunctionNVar func) {
+		super(2, 1, 0, false, 0, null, null);
+
 		this.func = func;
-		
+
 		Coords c0 = new Coords(cs[0]);
 		Coords c1 = new Coords(cs[1]);
 		Coords c2 = new Coords(cs[2]);
-		
+
 		double d0 = c0.distance(c1);
 		double d1 = c1.distance(c2);
 		double d2 = c2.distance(c0);
-		
-		if(d0>d1 && d0>d2){corners[0]=c0; corners[1]=c1; corners[2]=c2;}
-		if(d1>d2 && d1>d0){corners[0]=c1; corners[1]=c2; corners[2]=c0;}
-		else			  {corners[0]=c2; corners[1]=c0; corners[2]=c1;}
-		
-		//create the midpoint
-		midpoint = MarchingCubes.project(corners[0].add(corners[1]).mul(0.5), func);
-		
-		//calculate the error
+
+		if (d0 > d1 && d0 > d2) {
+			corners[0] = c0;
+			corners[1] = c1;
+			corners[2] = c2;
+		}
+		if (d1 > d2 && d1 > d0) {
+			corners[0] = c1;
+			corners[1] = c2;
+			corners[2] = c0;
+		} else {
+			corners[0] = c2;
+			corners[1] = c0;
+			corners[2] = c1;
+		}
+
+		// create the midpoint
+		midpoint = MarchingCubes.project(corners[0].add(corners[1]).mul(0.5),
+				func);
+
+		// calculate the error
 		calcError();
 	}
-	
-	private void calcError(){
+
+	/**
+	 * Calculates the error of the element.
+	 */
+	private void calcError() {
 		Coords a0 = corners[0].sub(midpoint);
 		Coords a1 = corners[1].sub(midpoint);
 		Coords a2 = corners[2].sub(midpoint);
-		
+
 		error = Math.abs(a0.dotproduct(a1.crossProduct(a2)));
 		System.out.print("");
 	}
-	
+
+	/**
+	 * Removes a link to a neighbor
+	 * @param a The neighbor to remove
+	 */
 	public void removeNeighbor(MCTriangle a) {
 		boolean f = false;
-		for(int i=0;i<4;i++)
-			if(f){
-				if(i==3)
-					neighbors[2]=null;
+		for (int i = 0; i < 4; i++)
+			if (f) {
+				if (i == 3)
+					neighbors[2] = null;
 				else
-					neighbors[i-1]=neighbors[i];
-			}
-			else if(i<3 && neighbors[i]==a)
-				f=true;
+					neighbors[i - 1] = neighbors[i];
+			} else if (i < 3 && neighbors[i] == a)
+				f = true;
 	}
 
+	/**
+	 * 
+	 */
 	public void resort() {
-		if (true) throw new RuntimeException("GeoGebra uses Java 1.5, see: http://www.geogebra.org/trac/wiki/SetUp");
-		MCTriangle[] tn = null; //Arrays.copyOf(neighbors,3);
-		neighbors[0]=neighbors[1]=neighbors[2]=null;
-		
-		for(int x=0;x<3;x++){
+		MCTriangle[] tn = new MCTriangle[]{neighbors[0],neighbors[1],neighbors[2]};
+		neighbors[0] = neighbors[1] = neighbors[2] = null;
+
+		for (int x = 0; x < 3; x++) {
 			MCTriangle temp = tn[x];
-			if(temp==null)
+			if (temp == null)
 				continue;
-			
-			//check for shared corners
-			int flags=0;
-			for(int i=0; i<3; i++)
-				for(int j=0; j<3; j++)
-					if(corners[i].equalsForKernel(temp.corners[j],1e-5)){
-						flags|=1<<i;
+
+			// check for shared corners
+			int flags = 0;
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < 3; j++)
+					if (corners[i].equalsForKernel(temp.corners[j], 1e-5)) {
+						flags |= 1 << i;
 						break;
 					}
-			switch(flags){
-			case 3: //base edge
-				neighbors[0]=temp;
+			switch (flags) {
+			case 3: // base edge
+				neighbors[0] = temp;
 				break;
-			case 6: //next edge
-				neighbors[1]=temp;
+			case 6: // next edge
+				neighbors[1] = temp;
 				break;
-			case 5: //final edge
-				neighbors[2]=temp;
+			case 5: // final edge
+				neighbors[2] = temp;
 				break;
 			}
 		}
 	}
 
 	public void addNeighbor(MCTriangle b) {
-		if(neighbors[0]==null)
-			neighbors[0]=b;
-		else if(neighbors[1]==null)
-			neighbors[1]=b;
-		else if(neighbors[2]==null)
-			neighbors[2]=b;
+		if (neighbors[0] == null)
+			neighbors[0] = b;
+		else if (neighbors[1] == null)
+			neighbors[1] = b;
+		else if (neighbors[2] == null)
+			neighbors[2] = b;
 		else
 			System.out.println("error");
-	}	
+	}
 
 	void setNeighbors(List<MCTriangle> tris) {
 		ListIterator<MCTriangle> it = tris.listIterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			MCTriangle temp = it.next();
-			if(temp!=this){
-				//check for shared corners
-				int flags=0;
-				for(int i=0; i<3; i++)
-					for(int j=0; j<3; j++)
-						if(corners[i].equalsForKernel(temp.corners[j],1e-5)){
-							flags|=1<<i;
+			if (temp != this) {
+				// check for shared corners
+				int flags = 0;
+				for (int i = 0; i < 3; i++)
+					for (int j = 0; j < 3; j++)
+						if (corners[i].equalsForKernel(temp.corners[j], 1e-5)) {
+							flags |= 1 << i;
 							break;
 						}
-				
-				switch(flags){
-				case 3: //base edge
-					neighbors[0]=temp;
+
+				switch (flags) {
+				case 3: // base edge
+					neighbors[0] = temp;
 					break;
-				case 6: //next edge
-					neighbors[1]=temp;
+				case 6: // next edge
+					neighbors[1] = temp;
 					break;
-				case 5: //final edge
-					neighbors[2]=temp;
+				case 5: // final edge
+					neighbors[2] = temp;
 					break;
 				}
 			}
 		}
-		if(neighbors[0]==null || neighbors[1]==null || neighbors[2]==null)
-			System.out.println("error");
 	}
 
 	@Override
 	protected void createChild(int i) {
-		if(i==0){
-			children[0]=new MCTriangle(new double[][]{{corners[0].getX(),corners[0].getY(),corners[0].getZ()},
-													   {midpoint.getX(), midpoint.getY(), midpoint.getZ()},
-													   {corners[2].getX(),corners[2].getY(),corners[2].getZ()}},func);
-		} else if(i==1) {
-			children[1]=new MCTriangle(new double[][]{{corners[2].getX(),corners[2].getY(),corners[2].getZ()},
-												      {midpoint.getX(), midpoint.getY(), midpoint.getZ()},
-												      {corners[1].getX(),corners[1].getY(),corners[1].getZ()}},func);
+		if (i == 0) {
+			children[0] = new MCTriangle(
+					new double[][] {
+							{ corners[0].getX(), corners[0].getY(),
+									corners[0].getZ() },
+							{ midpoint.getX(), midpoint.getY(), midpoint.getZ() },
+							{ corners[2].getX(), corners[2].getY(),
+									corners[2].getZ() } }, func);
+		} else if (i == 1) {
+			children[1] = new MCTriangle(
+					new double[][] {
+							{ corners[2].getX(), corners[2].getY(),
+									corners[2].getZ() },
+							{ midpoint.getX(), midpoint.getY(), midpoint.getZ() },
+							{ corners[1].getX(), corners[1].getY(),
+									corners[1].getZ() } }, func);
 		}
 	}
 
@@ -285,19 +326,19 @@ class MCTriangle extends DynamicMeshElement2 {
 	@Override
 	protected void setHidden(DynamicMeshTriList2 drawList, boolean val) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void reinsertInQueue() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void cullChildren(double radSq, DynamicMeshTriList2 drawList) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -308,17 +349,17 @@ class MCTriangle extends DynamicMeshElement2 {
 
 	public void switchNeighbor(MCTriangle a, MCTriangle d1) {
 		d1.addNeighbor(this);
-		for(int i=0;i<3;i++)
-			if(neighbors[i]==a){
-				neighbors[i]=d1;
+		for (int i = 0; i < 3; i++)
+			if (neighbors[i] == a) {
+				neighbors[i] = d1;
 				return;
 			}
 		System.out.println("error");
 	}
 
 	public boolean hasNeighbor(MCTriangle a) {
-		for(int i=0;i<3;i++)
-			if(a==neighbors[i])
+		for (int i = 0; i < 3; i++)
+			if (a == neighbors[i])
 				return true;
 		return false;
 	}
@@ -344,11 +385,11 @@ class MCTriList extends TriList {
 		super(capacity, margin, 9, true);
 		f = fcn;
 	}
-	
-	double errorSum(){
+
+	double errorSum() {
 		double sum = 0;
-		for(TriListElem elem: this)
-			sum+=((MCTriangle)elem.getOwner()).getError();
+		for (TriListElem elem : this)
+			sum += ((MCTriangle) elem.getOwner()).getError();
 		return sum;
 	}
 
@@ -381,28 +422,32 @@ class MCTriList extends TriList {
 				v[8] = (float) t[i][2][2];
 
 				calcNormals(v, n);
-				
-				Coords v1 = MarchingCubes.project(new Coords(v[0],v[1],v[2]),f);
-				Coords v2 = MarchingCubes.project(new Coords(v[3],v[4],v[5]),f);
-				Coords v3 = MarchingCubes.project(new Coords(v[6],v[7],v[8]),f);
 
-				v[0]=(float)v1.getX();
-				v[1]=(float)v1.getY();
-				v[2]=(float)v1.getZ();
-				v[3]=(float)v2.getX();
-				v[4]=(float)v2.getY();
-				v[5]=(float)v2.getZ();
-				v[6]=(float)v3.getX();
-				v[7]=(float)v3.getY();
-				v[8]=(float)v3.getZ();
-				
+				Coords v1 = MarchingCubes.project(new Coords(v[0], v[1], v[2]),
+						f);
+				Coords v2 = MarchingCubes.project(new Coords(v[3], v[4], v[5]),
+						f);
+				Coords v3 = MarchingCubes.project(new Coords(v[6], v[7], v[8]),
+						f);
 
-				MCTriangle tri = new MCTriangle(new double[][]{{v[0],v[1],v[2]},{v[3],v[4],v[5]},{v[6],v[7],v[8]}},f);
+				v[0] = (float) v1.getX();
+				v[1] = (float) v1.getY();
+				v[2] = (float) v1.getZ();
+				v[3] = (float) v2.getX();
+				v[4] = (float) v2.getY();
+				v[5] = (float) v2.getZ();
+				v[6] = (float) v3.getX();
+				v[7] = (float) v3.getY();
+				v[8] = (float) v3.getZ();
+
+				MCTriangle tri = new MCTriangle(new double[][] {
+						{ v[0], v[1], v[2] }, { v[3], v[4], v[5] },
+						{ v[6], v[7], v[8] } }, f);
 				tris.add(tri);
-				
+
 				TriListElem el = add(v, n);
 				el.setOwner(tri);
-				tri.triListElem=el;
+				tri.triListElem = el;
 			}
 		}
 	}
@@ -417,7 +462,7 @@ class MCTriList extends TriList {
 		double x = v[offset];
 		double y = v[offset + 1];
 		double z = v[offset + 2];
-		double val = f.evaluate(x,y,z);
+		double val = f.evaluate(x, y, z);
 		float dx = (float) (f.evaluate(x + delta, y, z) - val);
 		float dy = (float) (f.evaluate(x, y + delta, z) - val);
 		float dz = (float) (f.evaluate(x, y, z + delta) - val);
@@ -3203,7 +3248,7 @@ class MCTriList extends TriList {
 		v[3] = (float) c.corners[1].getX();
 		v[4] = (float) c.corners[1].getY();
 		v[5] = (float) c.corners[1].getZ();
-		
+
 		v[6] = (float) c.corners[2].getX();
 		v[7] = (float) c.corners[2].getY();
 		v[8] = (float) c.corners[2].getZ();
@@ -3212,17 +3257,17 @@ class MCTriList extends TriList {
 
 		TriListElem el = add(v, n);
 		el.setOwner(c);
-		c.triListElem=el;
+		c.triListElem = el;
 	}
 
 	public void remove(MCTriangle t) {
-		if(!remove(t.triListElem))
+		if (!remove(t.triListElem))
 			System.out.print("");
 	}
 
 }
 
-class MCAssigner implements BucketAssigner<DynamicMeshElement2>{
+class MCAssigner implements BucketAssigner<DynamicMeshElement2> {
 
 	public int getBucketIndex(Object o, int bucketAmt) {
 		MCTriangle d = (MCTriangle) o;
@@ -3236,32 +3281,48 @@ class MCAssigner implements BucketAssigner<DynamicMeshElement2>{
 	}
 }
 
-class MCROAM{
+/**
+ * 
+ * @author André Eriksson
+ */
+class MCROAM {
 	private MCTriList triList;
 	private FastBucketPQ pSplit = new FastBucketPQ(new MCAssigner(), false);
-	
-	
-	MCROAM(MCTriList triList){
+
+	MCROAM(MCTriList triList) {
 		this.triList = triList;
-		for(TriListElem t: triList){
-			MCTriangle tri = (MCTriangle)t.getOwner();
+		for (TriListElem t : triList) {
+			MCTriangle tri = (MCTriangle) t.getOwner();
 			pSplit.add(tri);
 		}
 	}
+
 	int cntr = 0;
-	public boolean refine(){
-		int i=0;
-		while(tooCoarse() && i<3){
-			split((MCTriangle)pSplit.poll(), null, null, null);
+
+	/**
+	 * Refines the mesh.
+	 * @return true if the mesh is at an optimal level of detail, otherwise false
+	 */
+	public boolean refine() {
+		int i = 0;
+		while (tooCoarse() && i < 3) {
+			split((MCTriangle) pSplit.poll(), null, null, null);
 			i++;
 		}
-		if(i<3)
+		if (i < 3)
 			return true;
 		return false;
 	}
-	
-	private void split(MCTriangle a, MCTriangle b, MCTriangle c0, MCTriangle c1){
-		
+
+	/**
+	 * Splits the triangle element
+	 * @param a 
+	 * @param b
+	 * @param c0
+	 * @param c1
+	 */
+	private void split(MCTriangle a, MCTriangle b, MCTriangle c0, MCTriangle c1) {
+
 		if (a == null)
 			return;
 
@@ -3274,156 +3335,161 @@ class MCROAM{
 
 		// mark as split
 		a.setSplit(true);
-		
-		MCTriangle d,d0,d1;
-		d=d0=d1=null;
 
-		//subdivide
-		if(b==a.neighbors[0] || b==null){
-			d0 = (MCTriangle)a.getChild(0);
-			d1 = (MCTriangle)a.getChild(1);
-		} else if(b==a.neighbors[1]){
-			Coords x1,x2,x3,x4;
+		MCTriangle d, d0, d1;
+		d = d0 = d1 = null;
+
+		// subdivide
+		if (b == a.neighbors[0] || b == null) {
+			d0 = (MCTriangle) a.getChild(0);
+			d1 = (MCTriangle) a.getChild(1);
+		} else if (b == a.neighbors[1]) {
+			Coords x1, x2, x3, x4;
 			x1 = a.corners[1];
 			x2 = a.corners[2];
 			x3 = a.midpoint;
-			x4 = MarchingCubes.project(x1.add(x2).mul(0.5),a.func);
-			d = (MCTriangle)a.getChild(0);
-			d0 = new MCTriangle(new double[][]{{x3.getX(),x3.getY(),x3.getZ()},
-											   {x1.getX(),x1.getY(),x1.getZ()},
-											   {x4.getX(),x4.getY(),x4.getZ()}},a.func);
-			d1 = new MCTriangle(new double[][]{{x3.getX(),x3.getY(),x3.getZ()},
-											   {x4.getX(),x4.getY(),x4.getZ()},
-											   {x2.getX(),x2.getY(),x2.getZ()}},a.func);
-		} else if(b==a.neighbors[2]){
-			Coords x1,x2,x3,x4;
+			x4 = MarchingCubes.project(x1.add(x2).mul(0.5), a.func);
+			d = (MCTriangle) a.getChild(0);
+			d0 = new MCTriangle(new double[][] {
+					{ x3.getX(), x3.getY(), x3.getZ() },
+					{ x1.getX(), x1.getY(), x1.getZ() },
+					{ x4.getX(), x4.getY(), x4.getZ() } }, a.func);
+			d1 = new MCTriangle(new double[][] {
+					{ x3.getX(), x3.getY(), x3.getZ() },
+					{ x4.getX(), x4.getY(), x4.getZ() },
+					{ x2.getX(), x2.getY(), x2.getZ() } }, a.func);
+		} else if (b == a.neighbors[2]) {
+			Coords x1, x2, x3, x4;
 			x1 = a.corners[0];
 			x2 = a.corners[2];
 			x3 = a.midpoint;
-			x4 = MarchingCubes.project(x1.add(x2).mul(0.5),a.func);
-			d = (MCTriangle)a.getChild(1);
-			MCTriangle d0p = (MCTriangle)a.getChild(0).getChild(0);
-			MCTriangle d1p = (MCTriangle)a.getChild(0).getChild(1);
-			d0 = new MCTriangle(new double[][]{{x4.getX(),x4.getY(),x4.getZ()},
-											   {x3.getX(),x3.getY(),x3.getZ()},
-											   {x2.getX(),x2.getY(),x2.getZ()}},a.func);
-			d1 = new MCTriangle(new double[][]{{x1.getX(),x1.getY(),x1.getZ()},
-											   {x3.getX(),x3.getY(),x3.getZ()},
-											   {x4.getX(),x4.getY(),x4.getZ()}},a.func);
-		} else{
+			x4 = MarchingCubes.project(x1.add(x2).mul(0.5), a.func);
+			d = (MCTriangle) a.getChild(1);
+			d0 = new MCTriangle(new double[][] {
+					{ x4.getX(), x4.getY(), x4.getZ() },
+					{ x3.getX(), x3.getY(), x3.getZ() },
+					{ x2.getX(), x2.getY(), x2.getZ() } }, a.func);
+			d1 = new MCTriangle(new double[][] {
+					{ x1.getX(), x1.getY(), x1.getZ() },
+					{ x3.getX(), x3.getY(), x3.getZ() },
+					{ x4.getX(), x4.getY(), x4.getZ() } }, a.func);
+		} else {
 			System.out.println("error");
 		}
-		if(d!=null){
+		if (d != null) {
 			triList.add(d);
 			pSplit.add(d);
 		}
-		triList.add(d0);triList.add(d1);
-		pSplit.add(d0);pSplit.add(d1);
-		
-		//link up
-		if(b!=null){
-			link(d0,c1);
-			link(d1,c0);
-			link(d1,d0);
-			if(b==a.neighbors[0]){
-				if(a.neighbors[1]!=null)
-					a.neighbors[1].switchNeighbor(a,d1);
-				if(a.neighbors[2]!=null)
-					a.neighbors[2].switchNeighbor(a,d0);
+		triList.add(d0);
+		triList.add(d1);
+		pSplit.add(d0);
+		pSplit.add(d1);
+
+		// link up
+		if (b != null) {
+			link(d0, c1);
+			link(d1, c0);
+			link(d1, d0);
+			if (b == a.neighbors[0]) {
+				if (a.neighbors[1] != null)
+					a.neighbors[1].switchNeighbor(a, d1);
+				if (a.neighbors[2] != null)
+					a.neighbors[2].switchNeighbor(a, d0);
 			} else {
-				if(b==a.neighbors[1]){
-					if(a.neighbors[2]!=null)
-						a.neighbors[2].switchNeighbor(a,d);
-					link(d1,d);
+				if (b == a.neighbors[1]) {
+					if (a.neighbors[2] != null)
+						a.neighbors[2].switchNeighbor(a, d);
+					link(d1, d);
 				} else {
-					if(a.neighbors[1]!=null)
-						a.neighbors[1].switchNeighbor(a,d);
-					link(d0,d);
+					if (a.neighbors[1] != null)
+						a.neighbors[1].switchNeighbor(a, d);
+					link(d0, d);
 				}
 			}
-			if(d!=null){
+			if (d != null)
 				d.resort();
-			}
-			d0.resort();
-			c0.resort();
-			d1.resort();
-			c1.resort();
+			if(d0!=null)
+				d0.resort();
+			if(c0!=null)
+				c0.resort();
+			if(d1!=null)
+				d1.resort();
+			if(c1!=null)
+				c1.resort();
 		} else {
-			if(a.neighbors[1]!=null)
-				a.neighbors[1].switchNeighbor(a,d1);
-			if(a.neighbors[2]!=null)
-				a.neighbors[2].switchNeighbor(a,d0);
-			link(d0,d1);
+			if (a.neighbors[1] != null)
+				a.neighbors[1].switchNeighbor(a, d1);
+			if (a.neighbors[2] != null)
+				a.neighbors[2].switchNeighbor(a, d0);
+			link(d0, d1);
 		}
-		
-		//assert
-		/*if(b==a.neighbors[0]){
-			verifyNeighbors(d0,a.neighbors[2]);
-			verifyNeighbors(d1,a.neighbors[1]);
-			verifyNeighbors(d1,c0);
-			verifyNeighbors(c1,d0);
-			verifyNeighbors(d1,d0);
-			if(a.neighbors[1].hasNeighbor(a))
-				System.out.println("error");
-			if(a.neighbors[2].hasNeighbor(a))
-				System.out.println("error");
-		} else if(b==a.neighbors[1]){
-			verifyNeighbors(d,d1);
-			verifyNeighbors(d1,d0);
-			verifyNeighbors(d0,c1);
-			verifyNeighbors(d1,c0);
-			if(!d0.hasNeighbor(c1));
-			if(a.neighbors[2]!=null){
-				verifyNeighbors(d,a.neighbors[2]);
-				if(a.neighbors[2].hasNeighbor(a))
-					System.out.println("error");
-			}
-		} else if(b==a.neighbors[2]){
-			verifyNeighbors(d,d0);
-			verifyNeighbors(d1,d0);
-			verifyNeighbors(d0,c1);
-			verifyNeighbors(d1,c0);
-			if(a.neighbors[1]!=null){
-				verifyNeighbors(d,a.neighbors[1]);
-				if(a.neighbors[1].hasNeighbor(a))
-					System.out.println("error");
-			}
-		}*/
 
-		//recurse
-		if(b!=a.neighbors[0]){
-			if(b==a.neighbors[1])
-				split(a.neighbors[0],a,d,d0);
-			else if (b==a.neighbors[2])
-				split(a.neighbors[0],a,d1,d);
+		// assert
+		/*
+		 * if(b==a.neighbors[0]){ verifyNeighbors(d0,a.neighbors[2]);
+		 * verifyNeighbors(d1,a.neighbors[1]); verifyNeighbors(d1,c0);
+		 * verifyNeighbors(c1,d0); verifyNeighbors(d1,d0);
+		 * if(a.neighbors[1].hasNeighbor(a)) System.out.println("error");
+		 * if(a.neighbors[2].hasNeighbor(a)) System.out.println("error"); } else
+		 * if(b==a.neighbors[1]){ verifyNeighbors(d,d1); verifyNeighbors(d1,d0);
+		 * verifyNeighbors(d0,c1); verifyNeighbors(d1,c0);
+		 * if(!d0.hasNeighbor(c1)); if(a.neighbors[2]!=null){
+		 * verifyNeighbors(d,a.neighbors[2]); if(a.neighbors[2].hasNeighbor(a))
+		 * System.out.println("error"); } } else if(b==a.neighbors[2]){
+		 * verifyNeighbors(d,d0); verifyNeighbors(d1,d0);
+		 * verifyNeighbors(d0,c1); verifyNeighbors(d1,c0);
+		 * if(a.neighbors[1]!=null){ verifyNeighbors(d,a.neighbors[1]);
+		 * if(a.neighbors[1].hasNeighbor(a)) System.out.println("error"); } }
+		 */
+
+		// recurse
+		if (b != a.neighbors[0]) {
+			if (b == a.neighbors[1])
+				split(a.neighbors[0], a, d, d0);
+			else if (b == a.neighbors[2])
+				split(a.neighbors[0], a, d1, d);
 			else
-				split(a.neighbors[0],a,d0,d1);
+				split(a.neighbors[0], a, d0, d1);
 		}
-		
+
 		// remove from drawing list
 		triList.remove(a);
 	}
-	
-	private void verifyNeighbors(MCTriangle t1, MCTriangle t2){
-		if(!t1.hasNeighbor(t2)||!t2.hasNeighbor(t1))
+
+	@SuppressWarnings("unused")
+	private void verifyNeighbors(MCTriangle t1, MCTriangle t2) {
+		if (!t1.hasNeighbor(t2) || !t2.hasNeighbor(t1))
 			System.out.println("error");
 	}
-	
-	private void link(MCTriangle a, MCTriangle b){
-		a.addNeighbor(b);
-		b.addNeighbor(a);
+
+	/**
+	 * Links the triangle to two neighbors
+	 * @param a
+	 * @param b
+	 */
+	private void link(MCTriangle a, MCTriangle b) {
+		if(a!=null)
+			a.addNeighbor(b);
+		if(b!=null)
+			b.addNeighbor(a);
 	}
-	
-	private boolean tooCoarse(){
-		return (triList.getTriAmt()<3000);
+
+	/**
+	 * Determines if the level of detail is sufficient
+	 * @return
+	 */
+	private boolean tooCoarse() {
+		return (triList.getTriAmt() < 3000);
 	}
 }
 
 /**
- * @author Andr� Eriksson Tree representing a parametric curve
+ * A variant of the Marching Cubes algorithm
+ * @author André Eriksson 
  */
 public class MarchingCubes {
-	private int nElems = 2;
+	private int INITIAL_ELEMENTS = 2;
+	private int REFINEMENTS = 3;
 
 	/** masks corresponding to the corners */
 	private final int C0 = 0x01;
@@ -3452,52 +3518,57 @@ public class MarchingCubes {
 	 * @param fcn
 	 * @param rad
 	 */
-
 	public MarchingCubes(GeoFunctionNVar fcn, double rad) {
 
 		this.rad = rad;
 		this.rad = 10;
 		drawList = new MCTriList(fcn, 10000, 100);
 		f = fcn;
-		long time = System.currentTimeMillis();
 		init();
-		// allelems.addAll(elems);
 
-		octreeRefine();
-//		octreeRefine();
-//		octreeRefine();
-//		octreeRefine();
-
-		//createSegments();
-		render();
+		//refine a few times to get correct topology
+		for(int i = 0; i < REFINEMENTS; i++)
+			octreeRefine();
 		
-		//link up triangles
-		for(MCTriangle t: tris){
+		render();
+
+		// link up triangles
+		for (MCTriangle t : tris) {
 			t.setNeighbors(tris);
 		}
-		
+
 		mcRoam = new MCROAM(drawList);
 		mcRoam.refine();
-		
-		System.out.println("Time: " + (System.currentTimeMillis()-time));
-		System.out.println("Error: " + drawList.errorSum());
-		System.out.println("Triangles: " + drawList.getTriAmt());
 	}
-	
+
 	private MCROAM mcRoam;
-	
-	public boolean update(){
-//		return true;
+
+	/**
+	 * Refines the mesh
+	 * 
+	 * @return false iff the desired LoD has been reached
+	 */
+	public boolean update() {
 		return mcRoam.refine();
 	}
 
+	/**
+	 * Projects a point onto the surface by using Newton's method in the
+	 * gradient direction
+	 * 
+	 * @param c
+	 *            the point to project
+	 * @param f
+	 *            the function used
+	 * @return the projected point
+	 */
 	public static Coords project(Coords c, GeoFunctionNVar f) {
-		//find the gradient direction
+		// find the gradient direction
 		double x = c.getX();
 		double y = c.getY();
 		double z = c.getZ();
 		double delta = 1e-8;
-		double val = f.evaluate(x,y,z);
+		double val = f.evaluate(x, y, z);
 		double dx = (f.evaluate(x + delta, y, z) - val);
 		double dy = (f.evaluate(x, y + delta, z) - val);
 		double dz = (f.evaluate(x, y, z + delta) - val);
@@ -3505,21 +3576,23 @@ public class MarchingCubes {
 		double gx = dx / sum;
 		double gy = dy / sum;
 		double gz = dz / sum;
-		
-		//find a root in the gradient direction
-		while(Math.abs(val)>0.1){
-			double der = (f.evaluate(x+gx*delta, y+gy*delta, z+gz*delta)-val)/delta;
-			double mult = val/der;
-			x -= gx*mult;
-			y -= gy*mult;
-			z -= gz*mult;
-			val=f.evaluate(x,y,z);
+
+		// find a root in the gradient direction
+		while (Math.abs(val) > 0.1) {
+			double der = (f.evaluate(x + gx * delta, y + gy * delta, z + gz
+					* delta) - val)
+					/ delta;
+			double mult = val / der;
+			x -= gx * mult;
+			y -= gy * mult;
+			z -= gz * mult;
+			val = f.evaluate(x, y, z);
 		}
-		
-		Coords temp = new Coords(x,y,z);
-		
+
+		Coords temp = new Coords(x, y, z);
+
 		return temp;
-		
+
 	}
 
 	Coords[][] t;
@@ -3528,6 +3601,10 @@ public class MarchingCubes {
 		return t;
 	}
 
+	/**
+	 * Generates a set of segments corresponding to the current octree. Useful
+	 * for visualization purposes.
+	 */
 	private void createSegments() {
 		ListIterator<MCElement> it = allelems.listIterator();
 		t = new Coords[allelems.size() * 12][2];
@@ -3561,9 +3638,13 @@ public class MarchingCubes {
 			i += 12;
 		}
 	}
-	
-	LinkedList<MCTriangle> tris = new LinkedList<MCTriangle>();
 
+	/** the triangles in the octree */
+	private LinkedList<MCTriangle> tris = new LinkedList<MCTriangle>();
+
+	/**
+	 * Generates triangles for the current octree
+	 */
 	private void render() {
 		Iterator<MCElement> it = elems.iterator();
 		while (it.hasNext()) {
@@ -3571,6 +3652,9 @@ public class MarchingCubes {
 		}
 	}
 
+	/**
+	 * Refines the octree one step (that is, splits each element once)
+	 */
 	private void octreeRefine() {
 		Iterator<MCElement> it = elems.iterator();
 
@@ -3897,29 +3981,29 @@ public class MarchingCubes {
 	 * generates the first few segments
 	 */
 	private void init() {
-		double d = (double) (2 * rad / nElems);
+		double d = (double) (2 * rad / INITIAL_ELEMENTS);
 		double[][] c = new double[3][2];
 		double x, y, z;
 		double r = rad;
 
 		// precalc a 2d array representing the bottom
-		double[][][] bottom = new double[nElems + 1][nElems + 1][2];
+		double[][][] bottom = new double[INITIAL_ELEMENTS + 1][INITIAL_ELEMENTS + 1][2];
 		x = -r;
-		for (int xi = 0; xi <= nElems; xi++, x += d) {
+		for (int xi = 0; xi <= INITIAL_ELEMENTS; xi++, x += d) {
 			y = -r;
-			for (int yi = 0; yi <= nElems; yi++, x += d)
+			for (int yi = 0; yi <= INITIAL_ELEMENTS; yi++, x += d)
 				bottom[xi][yi][0] = (double) f.evaluate(x, y, -r);
 		}
 
 		// calculate the initial division of squares
 		z = -r;
-		for (int zi = 0; zi < nElems; zi++, z += d) {
+		for (int zi = 0; zi < INITIAL_ELEMENTS; zi++, z += d) {
 			int s1 = zi % 2;
 			int s2 = (zi + 1) % 2;
 
 			// precalc first rows in x/y dirs
 			x = -r;
-			for (int xi = 0; xi <= nElems; xi++, x += d) {
+			for (int xi = 0; xi <= INITIAL_ELEMENTS; xi++, x += d) {
 				bottom[xi][0][s2] = f.evaluate(x, -r, z + d);
 				bottom[0][xi][s2] = f.evaluate(-r, x, z + d);
 			}
@@ -3927,11 +4011,11 @@ public class MarchingCubes {
 			c[2][0] = z;
 			c[2][1] = z + d;
 			y = -r;
-			for (int yi = 0; yi < nElems; yi++, y += d) {
+			for (int yi = 0; yi < INITIAL_ELEMENTS; yi++, y += d) {
 				c[1][0] = y;
 				c[1][1] = y + d;
 				x = -r;
-				for (int xi = 0; xi < nElems; xi++, x += d) {
+				for (int xi = 0; xi < INITIAL_ELEMENTS; xi++, x += d) {
 					bottom[xi + 1][yi + 1][s2] = f
 							.evaluate(x + d, y + d, z + d);
 
@@ -3990,10 +4074,16 @@ public class MarchingCubes {
 		return 3;
 	}
 
+	/**
+	 * @return a float buffer with all triangles
+	 */
 	public FloatBuffer getVertices() {
 		return drawList.getTriangleBuffer();
 	}
 
+	/**
+	 * @return the normals for all triangles
+	 */
 	public FloatBuffer getNormals() {
 		return drawList.getNormalBuffer();
 	}
