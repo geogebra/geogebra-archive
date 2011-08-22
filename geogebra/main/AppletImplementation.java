@@ -728,8 +728,8 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 */
 	public synchronized String evalGeoGebraCAS(final String cmdString, final boolean debugOutput) {				
 		// avoid security problems calling from JavaScript
-		return (String)AccessController.doPrivileged(new PrivilegedAction() {
-			public Object run() {
+		return (String)AccessController.doPrivileged(new PrivilegedAction<String>() {
+			public String run() {
 				return ggbApi.evalGeoGebraCAS(cmdString, debugOutput);
 			}
 		});		
@@ -872,7 +872,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 * 
 	 */
 	public synchronized String getIPAddress() {
-		return (String) AccessController.doPrivileged(new PrivilegedAction() {
+		return (String) AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			public Object run() {
 				try {
 					InetAddress addr = InetAddress.getLocalHost();
@@ -889,8 +889,8 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 * 
 	 */
 	public synchronized String getHostname() {
-		return (String) AccessController.doPrivileged(new PrivilegedAction() {
-			public Object run() {
+		return AccessController.doPrivileged(new PrivilegedAction<String>() {
+			public String run() {
 				try {
 					InetAddress addr = InetAddress.getLocalHost();
 					// Get host name
@@ -907,7 +907,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 */
 	public synchronized void openFile(final String strURL) {
 		// avoid security problems calling from JavaScript
-		AccessController.doPrivileged(new PrivilegedAction() {
+		AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			public Object run() {
 				// perform the security-sensitive operation here
 				// load file
@@ -1055,7 +1055,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 */
 	public synchronized String getGraphicsViewCheckSum(final String algorithm, final String format) {
 		// avoid security problems calling from JavaScript
-		return (String)AccessController.doPrivileged(new PrivilegedAction() {
+		return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			public Object run() {
 				// perform the security-sensitive operation here
 				return ggbApi.getGraphicsViewCheckSum(algorithm, format);
@@ -1285,7 +1285,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 */
 	public synchronized String getPNGBase64(final double exportScale, final boolean transparent, final double DPI) {
 		// avoid security problems calling from JavaScript
-		return AccessController.doPrivileged(new PrivilegedAction() {
+		return AccessController.doPrivileged(new PrivilegedAction<String>() {
 			public String run() {
 				// perform the security-sensitive operation here
 				return ggbApi.getPNGBase64(exportScale, transparent, DPI);
@@ -1298,14 +1298,14 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 */
 	public synchronized boolean writePNGtoFile(final String filename, final double exportScale, final boolean transparent, final double DPI) {
 		// avoid security problems calling from JavaScript
-		MyBoolean b = AccessController.doPrivileged(new PrivilegedAction() {
+		Boolean b = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
 			public Boolean run() {
 				// perform the security-sensitive operation here
 				return ggbApi.writePNGtoFile(filename, exportScale, transparent, DPI);
 			}
 		});
 		
-		return b.getBoolean();
+		return b.booleanValue();
 	}
 
 	/**
