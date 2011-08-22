@@ -4,7 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 
-class CmdSigmaXY extends CmdOneListFunction {
+class CmdSigmaXY extends CmdOneOrTwoListsFunction {
 
 	public CmdSigmaXY(Kernel kernel) {
 		super(kernel);
