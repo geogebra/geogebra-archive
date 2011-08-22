@@ -678,9 +678,6 @@ public class Application implements KeyEventDispatcher {
 	 *         in applets.
 	 */
 	final public synchronized GuiManager getGuiManager() {
-		if (guiManager == null) {
-			initGuiManager();
-		}
 		return guiManager;
 	}
 	
@@ -3694,6 +3691,9 @@ public class Application implements KeyEventDispatcher {
 
 	// FKH 20040826
 	public String getXML() {
+		if (guiManager == null) {
+			initGuiManager();
+		}
 		return myXMLio.getFullXML();
 	}
 	
