@@ -21,7 +21,7 @@ public abstract class CASgeneric {
 	private int timeout = 5;
 	
 	protected CASparser casParser;
-	private ResourceBundle rbCasTranslations;  // translates from GeogebraCAS syntax to the internal cas syntax.
+	private ResourceBundle rbCasTranslations;  // translates from GeogebraCAS syntax to the internal CAS syntax.
 	private String translationResourcePath;
 	
 	public CASgeneric(CASparser casParser, String translationResourcePath) {
@@ -80,18 +80,28 @@ public abstract class CASgeneric {
 	 */
 	public String getTranslatedCASCommand(String command)
 	{
-		if (rbCasTranslations == null) {
-			rbCasTranslations = MyResourceBundle.loadSingleBundleFile(translationResourcePath);
-		}
-
 		String ret;
 		try {
-			ret = rbCasTranslations.getString(command);
+			ret = getTranslationRessourceBundle().getString(command);
 		} catch (MissingResourceException e) {
 			ret = null;
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Returns the RessourceBundle that translates from GeogebraCAS commands to
+	 * their definition in the syntax of the current CAS. Loads this bundle if it
+	 * wasn't loaded yet.
+	 * 
+	 * @return The current ResourceBundle used for translations.
+	 * 
+	 */
+	private synchronized ResourceBundle getTranslationRessourceBundle() {
+		if (rbCasTranslations == null)
+			rbCasTranslations = MyResourceBundle.loadSingleBundleFile(translationResourcePath);
+		return rbCasTranslations;
 	}
 	
 	
@@ -188,7 +198,7 @@ public abstract class CASgeneric {
 	 */
 	public Set<String> getAvailableCommandNames() {
 		Set<String> cmdSet = new HashSet<String>();
-		for (Enumeration<String> e = rbCasTranslations.getKeys() ; e.hasMoreElements() ;) {
+		for (Enumeration<String> e = getTranslationRessourceBundle().getKeys() ; e.hasMoreElements() ;) {
 			String s = e.nextElement();
 			String cmd = s.substring(0, s.indexOf('.'));
 			cmdSet.add(cmd);
