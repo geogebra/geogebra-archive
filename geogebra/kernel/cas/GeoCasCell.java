@@ -1,5 +1,6 @@
 package geogebra.kernel.cas;
 
+import geogebra.cas.error.CASException;
 import geogebra.cas.view.CASInputHandler;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgorithmSet;
@@ -1033,15 +1034,17 @@ public class GeoCasCell extends GeoElement {
 			useGeoGebraFallback = false;
 		}
 		
+		CASException ce = null;
 		if (!useGeoGebraFallback) {
 			// CAS EVALUATION		
 			try {
 				result = kernel.getGeoGebraCAS().evaluateGeoGebraCAS(evalVE);
 				success = result != null;
 			} 
-			catch (Throwable th1) {
-				System.err.println("GeoCasCell.computeOutput(), CAS eval: " + evalVE + "\n\terror: " + th1.getMessage());
-				success = false;						
+			catch (CASException e) {
+				System.err.println("GeoCasCell.computeOutput(), CAS eval: " + evalVE + "\n\terror: " + e.getMessage());
+				success = false;	
+				ce = e;
 			}			
 			useGeoGebraFallback = !success && includesOnlyDefinedVariables();
 		}
@@ -1084,7 +1087,10 @@ public class GeoCasCell extends GeoElement {
 				setOutput(sb.toString());
 			}
 		} else {
-			setError("CAS.GeneralErrorMessage");
+			if (ce == null)
+				setError("CAS.GeneralErrorMessage");
+			else
+				setError(ce.getKey());
 		}
 		
 		// update twinGeo

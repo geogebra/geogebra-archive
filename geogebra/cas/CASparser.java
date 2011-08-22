@@ -12,6 +12,7 @@
 
 package geogebra.cas;
 
+import geogebra.cas.error.CASException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoDummyVariable;
 import geogebra.kernel.GeoElement;
@@ -21,6 +22,10 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.parser.ParseException;
+import geogebra.kernel.parser.Parser;
+import geogebra.main.Application;
+
 
 /**
  * Handles parsing and evaluating of input in the CAS view.
@@ -42,8 +47,12 @@ public class CASparser {
 	 * Parses the given expression and returns it as a ValidExpression.
 	 * @throws Throwable when something goes wrong
 	 */
-	public ValidExpression parseGeoGebraCASInput(String exp) throws Throwable {
-		return kernel.getParser().parseGeoGebraCAS(exp);
+	public ValidExpression parseGeoGebraCASInput(String exp) throws CASException {
+		try {
+			return kernel.getParser().parseGeoGebraCAS(exp);
+		} catch (ParseException e) {
+			throw new CASException(e);
+		}
 	}
 	
 	/**
@@ -108,15 +117,19 @@ public class CASparser {
 	/**
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
-	public String toGeoGebraString(ExpressionValue ev) throws Throwable {
-		return toString(ev, ExpressionNode.STRING_TYPE_GEOGEBRA);
+	public String toGeoGebraString(ExpressionValue ev) throws CASException {
+		try {
+			return toString(ev, ExpressionNode.STRING_TYPE_GEOGEBRA);
+		} catch (Throwable e) {
+			throw new CASException(e);
+		}
 	}
 	
 	/**
-	 * Tries to convert the given MathPiper string to the given syntax.
-	 * @param STRING_TYPE: one of ExpressionNode.STRING_TYPE_GEOGEBRA, STRING_TYPE_GEOGEBRA_XML
+	 * Tries to convert the given CAS string to the given syntax.
+	 * @param STRING_TYPE one of ExpressionNode.STRING_TYPE_GEOGEBRA, STRING_TYPE_GEOGEBRA_XML
 	 */
-	public String toString(ExpressionValue ev, int STRING_TYPE) throws Throwable {
+	public String toString(ExpressionValue ev, int STRING_TYPE) {
 		String GeoGebraString;
 		
 		if (!ev.isExpressionNode()) {
@@ -133,22 +146,34 @@ public class CASparser {
 	/**
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
-	public ValidExpression parseMathPiper(String MathPiperString) throws Throwable {
-		return kernel.getParser().parseMathPiper(MathPiperString);		
+	public ValidExpression parseMathPiper(String exp) throws CASException {
+		try {
+			return kernel.getParser().parseMathPiper(exp);
+		} catch (Throwable t) {
+			throw new CASException(t);
+		}
 	}
 	
 	/**
 	 * Tries to convert the given MPReduce string to GeoGebra syntax.
 	 */
-	public ValidExpression parseMPReduce(String MPReduceString) throws Throwable {
-		return kernel.getParser().parseMPReduce(MPReduceString);		
+	public ValidExpression parseMPReduce(String exp) throws CASException {
+		try {
+			return kernel.getParser().parseMPReduce(exp);
+		} catch (Throwable t) {
+			throw new CASException(t);
+		}		
 	}
 	
 	/**
-	 * Tries to convert the given MathPiper string to GeoGebra syntax.
+	 * Tries to convert the given Maxima string to GeoGebra syntax.
 	 */
-	public ValidExpression parseMaxima(String maximaString) throws Throwable {
-		return kernel.getParser().parseMaxima(maximaString);		
+	public ValidExpression parseMaxima(String exp) throws CASException {
+		try {
+			return kernel.getParser().parseMaxima(exp);
+		} catch (Throwable t) {
+			throw new CASException(t);
+		}	
 	}
 
 

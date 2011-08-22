@@ -1,5 +1,9 @@
 package geogebra.cas;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import geogebra.cas.error.CASException;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -29,9 +33,9 @@ public abstract class CASgeneric {
 	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
 	 * @param casInput in GeoGebraCAS syntax
 	 * @return evaluation result
-	 * @throws Throwable
+	 * @throws CASException
 	 */
-	protected abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable;
+	protected abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws CASException;
 	
 	/** 
 	 * Evaluates an expression in the syntax of the currently active CAS

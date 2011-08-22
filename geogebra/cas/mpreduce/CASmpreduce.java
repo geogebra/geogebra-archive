@@ -4,6 +4,7 @@ import geogebra.cas.CASgeneric;
 import geogebra.cas.CASparser;
 import geogebra.cas.CasParserTools;
 import geogebra.cas.GeoGebraCAS;
+import geogebra.cas.error.CASException;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -12,6 +13,7 @@ import geogebra.main.Application;
 
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,9 +57,9 @@ public class CASmpreduce extends CASgeneric {
 	 * Evaluates a valid expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra notation.
 	 * @param casInput in GeoGebraCAS syntax
 	 * @return evaluation result
-	 * @throws Throwable
+	 * @throws CASException
 	 */
-	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
+	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws CASException {
 		// convert parsed input to MathPiper string
 		StringBuilder sb = new StringBuilder();
 		sb.append("<<numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ combinelogs$ ");
@@ -68,7 +70,8 @@ public class CASmpreduce extends CASgeneric {
 
 		// convert result back into GeoGebra syntax
 		if (!(casInput instanceof FunctionNVar)) {
-			String ggbString = toGeoGebraString(result);
+			String ggbString;
+			ggbString = toGeoGebraString(result);
 			return ggbString;
 		}
 		else
@@ -85,10 +88,9 @@ public class CASmpreduce extends CASgeneric {
 	 * Tries to parse a given MPReduce string and returns a String in GeoGebra syntax.
 	 * @param mpreduceString String in MPReduce syntax
 	 * @return String in Geogebra syntax.
-	 * @throws Throwable Throws if the underlying CAS produces an error
+	 * @throws CASException Throws if the underlying CAS produces an error
 	 */
-	public synchronized String toGeoGebraString(String mpreduceString) throws Throwable {
-		// since casParserparse<CAS>() is basically the same for all CAS anyway, we use the MathPiper one
+	public synchronized String toGeoGebraString(String mpreduceString) throws CASException {
 		ValidExpression ve = casParser.parseMPReduce(mpreduceString);
 		return casParser.toGeoGebraString(ve);
 	}
@@ -99,8 +101,9 @@ public class CASmpreduce extends CASgeneric {
 	 * 
      * @param exp expression (with command names already translated to MPReduce syntax).
 	 * @return result string (null possible)
+	 * @throws CASException 
 	 */
-	public final String evaluateMPReduce(String exp) {
+	public final String evaluateMPReduce(String exp) throws CASException {
 		try {
 			exp = casParser.replaceIndices(exp);
 			String ret = evaluateRaw(exp);
@@ -110,7 +113,10 @@ public class CASmpreduce extends CASgeneric {
 			ret = parserTools.convertScientificFloatNotation(ret);
 			
 			return ret;
-		} catch (Throwable e) {
+		} catch (TimeoutException toe)
+		{
+			throw new geogebra.cas.error.TimeoutException(toe.getMessage());
+		}catch (Throwable e) {
 			e.printStackTrace();
 			return "?";
 		}

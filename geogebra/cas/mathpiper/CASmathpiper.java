@@ -4,6 +4,7 @@ import geogebra.cas.CASgeneric;
 import geogebra.cas.CASparser;
 import geogebra.cas.CasParserTools;
 import geogebra.cas.GeoGebraCAS;
+import geogebra.cas.error.CASException;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
@@ -82,9 +83,9 @@ public class CASmathpiper extends CASgeneric {
 	 * Evaluates a valid expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra notation.
 	 * @param casInput in GeoGebraCAS syntax
 	 * @return evaluation result
-	 * @throws Throwable
+	 * @throws CASException
 	 */
-	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
+	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws CASException {
 		// convert parsed input to MathPiper string
 		String MathPiperString = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MATH_PIPER);
 			
@@ -92,7 +93,8 @@ public class CASmathpiper extends CASgeneric {
 		String result = evaluateMathPiper(MathPiperString);
 
 		// convert MathPiper result back into GeoGebra syntax
-		String ggbString = toGeoGebraString(result);
+		String ggbString;
+		ggbString = toGeoGebraString(result);
 		
 		// TODO: remove
 		System.out.println("eval with MathPiper: " + MathPiperString);
@@ -116,9 +118,9 @@ public class CASmathpiper extends CASgeneric {
 	 * Tries to parse a given MathPiper string and returns a String in GeoGebra syntax.
 	 * @param MathPiperString String in MP syntax.
 	 * @return String in ggb syntax.
-	 * @throws Throwable 
+	 * @throws CASException 
 	 */
-	public synchronized String toGeoGebraString(String MathPiperString) throws Throwable {
+	public synchronized String toGeoGebraString(String MathPiperString) throws CASException {
 		ValidExpression ve = casParser.parseMathPiper(MathPiperString);
 		return casParser.toGeoGebraString(ve);
 	}

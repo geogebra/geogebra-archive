@@ -44,8 +44,7 @@ public class CASmaxima extends CASgeneric {
 //	}
 
 	@Override
-	protected String evaluateGeoGebraCAS(ValidExpression casInput)
-			throws Throwable {
+	protected String evaluateGeoGebraCAS(ValidExpression casInput) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -75,8 +74,7 @@ public class CASmaxima extends CASgeneric {
 	}
 
 	@Override
-	public String translateFunctionDeclaration(String label, String parameters,
-			String body) {
+	public String translateFunctionDeclaration(String label, String parameters, String body) {
 		// TODO Auto-generated method stub
 		return null;
 	}

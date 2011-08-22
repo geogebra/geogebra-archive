@@ -1,5 +1,6 @@
 package geogebra.cas;
 
+import geogebra.cas.error.CASException;
 import geogebra.cas.mpreduce.CASmpreduce;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -147,11 +148,11 @@ public class GeoGebraCAS {
 	
 	/**
 	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
-	 * @param casInput: in GeoGebraCAS syntax
+	 * @param casInput Input in GeoGebraCAS syntax
 	 * @return evaluation result
-	 * @throws Throwable
+	 * @throws CASException
 	 */
-	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
+	public String evaluateGeoGebraCAS(ValidExpression casInput) throws CASException {
 
 		Kernel kernel = app.getKernel();
 		boolean oldDigits = kernel.internationalizeDigits;
@@ -174,13 +175,19 @@ public class GeoGebraCAS {
 	
 	/** 
 	 * Evaluates an expression in GeoGebraCAS syntax.
-	 * 
+	 * @param exp 
      * @return result string in GeoGebra syntax (null possible)
-	 * @throws Throwable 
+	 * @throws CASException 
      */
-	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
-		ValidExpression inVE = casParser.parseGeoGebraCASInput(exp);
-		return evaluateGeoGebraCAS(inVE);
+	final public String evaluateGeoGebraCAS(String exp) throws CASException {
+		try
+		{
+			ValidExpression inVE = casParser.parseGeoGebraCASInput(exp);
+			return evaluateGeoGebraCAS(inVE);
+		} catch (Throwable t)
+		{
+			throw new CASException(t);
+		}
 	}
 	
 	/** 
@@ -216,9 +223,10 @@ public class GeoGebraCAS {
      *
 	final public String evaluateMaxima(String exp) {
 		return getMaxima().evaluateMaxima(exp);
-	}*/
+	}
+	 * @throws Throwable */
 	
-	final public String evaluateMPReduce(String exp)
+	final public String evaluateMPReduce(String exp) throws CASException
 	{
 		return getMPReduce().evaluateMPReduce(exp);
 	}
