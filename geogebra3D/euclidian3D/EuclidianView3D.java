@@ -2576,7 +2576,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				&& !getEuclidianController().mouseIsOverLabel() 
 				&& getEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())
 		){
-			
 			renderer.setMatrix(getCursor3D().getDrawingMatrix());
 			
 			switch(cursor){

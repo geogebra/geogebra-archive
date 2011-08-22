@@ -2533,6 +2533,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
 			case EuclidianView.MODE_PLANE_THREE_POINTS:
 			case EuclidianView.MODE_SPHERE_TWO_POINTS:
+				
+			case EuclidianView.MODE_VIEW_IN_FRONT_OF:
 				return true;
 
 			default:
