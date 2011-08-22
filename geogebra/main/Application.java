@@ -112,6 +112,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
@@ -2177,14 +2178,12 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		//get CAS Commands
-	
 		commandDictCAS=new LowerCaseDictionary();
-		Enumeration<String> keys=rbcommand.getKeys();
 
 		// iterate through all available CAS commands, add them (translated if available, otherwise untranslated)
 		for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames()) {
 			try {
-				String local = rbcommand.getString(cmd + syntaxCAS);
+				String local = rbcommand.getString(cmd);
 				if (local != null)
 					commandDictCAS.addEntry(local);
 				else
@@ -2193,6 +2192,10 @@ public class Application implements KeyEventDispatcher {
 				commandDictCAS.addEntry(cmd);
 			}
 		}
+		
+		System.out.println("#####\n#####\ncommand:\n######");
+		for (Entry<String, String> x : commandDictCAS.entrySet())
+			System.out.println(x.getKey() + " => " + x.getValue());
 
 		addMacroCommands();
 	}
