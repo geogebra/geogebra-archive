@@ -571,10 +571,12 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return getCoordSys().getNormal();
 	}
 	
+	/*
 	public void calcArea() {
 		
 		//TODO: non-simple case
 		area = Math.abs(calcAreaWithSign(points2D));
 	}
+	*/
 	
 }

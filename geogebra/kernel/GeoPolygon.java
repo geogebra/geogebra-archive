@@ -538,7 +538,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * its parent algorithm of type AlgoPolygon
 	 */
 	public void calcArea() {
-		area = calcAreaWithSign(getPointsND());	
+		area = calcAreaWithSign(getPoints());	
 		defined = !(Double.isNaN(area) || Double.isInfinite(area));
 	}
 	
