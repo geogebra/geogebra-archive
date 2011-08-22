@@ -133,7 +133,12 @@ public class AlgoText extends AlgoElement {
 		// standard case: set text
 		boolean bool = substituteVars == null ? true : substituteVars.getBoolean();
 		boolean formula = latex == null ? false : latex.getBoolean();
-		text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, bool));	
+		if (geo.isGeoText()) {
+			// needed for eg Text commands eg Text[Text[
+			text.setTextString(((GeoText)geo).getTextString());
+		} else {
+			text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, bool));				
+		}
 		text.setLaTeX(formula, false);
 		text.update();
 		

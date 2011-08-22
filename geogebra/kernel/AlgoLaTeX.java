@@ -121,7 +121,12 @@ public class AlgoLaTeX extends AlgoElement {
     				useLaTeX = false;
     			}
     		}else{
-    			text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substitute ));   
+    			if (geo.isGeoText()) {
+    				// needed for eg Text commands eg FormulaText[Text[
+    				text.setTextString(((GeoText)geo).getTextString());
+    			} else {
+    				text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substitute ));   
+    			}
     		}
 
     		text.restorePrintAccuracy();
