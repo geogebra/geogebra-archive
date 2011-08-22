@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.commands;
 
+import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -57,7 +58,7 @@ public class CommandDispatcher {
     public static final int TABLE_ENGLISH = 17;
     public static final int TABLE_CAS=18;
     
-    private int tableCount = 18;
+    private int tableCount = 19;
     
     
     public String getSubCommandSetName(int index){
@@ -763,20 +764,14 @@ public class CommandDispatcher {
     	
     	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
     	cmdTable.clear();
+  
+    	//=============================================================	
+      	// CAS
+    	//=============================================================
     	
-    	/* removed, see #668
-    	Enumeration<String> keyNames=app.getKeyNames();
-    	while (keyNames.hasMoreElements()){
-    		String key=keyNames.nextElement();
-    		if (key.contains("SyntaxCAS")) {
-    			String withoutCAS=key.replaceAll("CAS", "");
-    			if (withoutCAS.equals(app.getCommand(withoutCAS))){
-    				cmdTable.put(app.getCommand(key.replaceAll("SyntaxCAS", "")),null);
-    			}
-    		}
-    	}*/
-    	
-    	//cmdSubTable[TABLE_CAS].putAll(cmdTable);
+    	for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames())
+    		cmdTable.put(cmd, null);  	
+    	cmdSubTable[TABLE_CAS].putAll(cmdTable);
     	cmdTable.clear();
     	
     	
