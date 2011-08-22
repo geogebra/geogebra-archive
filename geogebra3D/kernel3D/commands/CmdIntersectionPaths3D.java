@@ -61,24 +61,24 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoPlane3D) arg[0],
                             (GeoPolygon) arg[1]);
         			else if (
-                            (ok[0] = (arg[1] .isGeoPlane()))
-                            && (ok[1] = (arg[0] .isGeoPolygon())))
+                            (ok[1] = (arg[1] .isGeoPlane()))
+                            && (ok[0] = (arg[0] .isGeoPolygon())))
         				return kernel.getManager3D().IntersectionSegment(
                             c.getLabels(),
                             (GeoPlane3D) arg[1],
                             (GeoPolygon) arg[0]);
-        		//intersection plane/plane
-            		else if (((GeoElement)arg[0]).isGeoPlane() && ((GeoElement)arg[0]).isGeoPlane()){
+                //intersection plane/plane
+        			else if (((GeoElement)arg[0]).isGeoPlane() && ((GeoElement)arg[1]).isGeoPlane()){
 
-            			GeoElement[] ret =
-            			{
-            					kernel.getManager3D().IntersectPlanes(
-            							c.getLabel(),
-            							(GeoCoordSys2D) arg[0],
-            							(GeoCoordSys2D) arg[1])};
-            			return ret;
+        				GeoElement[] ret =
+        				{
+        						kernel.getManager3D().IntersectPlanes(
+        								c.getLabel(),
+        								(GeoCoordSys2D) arg[0],
+        								(GeoCoordSys2D) arg[1])};
+        				return ret;
 
-            		}
+        			}
                 
         		//intersection plane/quadric
             		else if ((arg[0] instanceof GeoPlaneND) && (arg[1] instanceof GeoQuadricND)){
