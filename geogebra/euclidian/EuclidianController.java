@@ -2690,13 +2690,27 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 			
 		case EuclidianView.MODE_FITLINE:
+			
+			// check for list first
+			if (hits.size() == 1) {
+				if (hits.get(0).isGeoList()) {
+					selectedGeos.addAll(hits);
+					app.setSelectedGeos(hits);
+					processMode(hits, e);
+					view.setSelectionRectangle(null);
+					break;
+				}
+			}
+			
+			// remove non-Points
 			for (int i=0; i < hits.size(); i++) {
 				GeoElement geo = (GeoElement) hits.get(i);
 				if (!(GeoPoint.class.isInstance(geo))) {
 					hits.remove(i);
 				}
 			}
-			// Fit line makes sense only for more than 2 points
+			
+			// Fit line makes sense only for more than 2 points (or one list)
 			if (hits.size() < 3) { 
 				hits.clear();
 			} else {
