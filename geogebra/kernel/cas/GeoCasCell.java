@@ -1055,7 +1055,7 @@ public class GeoCasCell extends GeoElement {
 				if (evalGeo != null) {
 					success = true;
 					kernel.setTemporaryPrintFigures(15);
-					result = evalGeo.toString();
+					result = evalGeo.toValueString();
 					kernel.restorePrintAccuracy();
 					AlgoElement parentAlgo = evalGeo.getParentAlgorithm();
 					if (parentAlgo != null) {
