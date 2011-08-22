@@ -1822,7 +1822,7 @@ public class Renderer implements GLEventListener {
     	double angle = Math.toRadians(view3D.getCavAngle());
     	cavX = -view3D.getCavFactor()*Math.cos(angle);
     	cavY = -view3D.getCavFactor()*Math.sin(angle);
-    	cavOrthoDirection = new Coords(-cavX, -cavY, 1, 0);
+    	cavOrthoDirection = new Coords(cavX, cavY, -1, 0);
     }
     
     private void viewCav(){

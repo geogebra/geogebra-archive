@@ -294,7 +294,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * @param point a point
 	 */
 	protected void setMouseInformation(GeoPoint3D point){
-
+		
 		// Michael Borcherds
 		// move mouse fast, sometimes get mouseLoc = null
 		if (mouseLoc == null) return;
@@ -757,7 +757,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (hits.size() < 2)
 			return null;
 		
-		Application.debug(hits.toString());
+		//Application.debug(hits.toString());
 		GeoElement b = (GeoElement) hits.get(1);
 		GeoPoint3D point = null;
 
@@ -1071,7 +1071,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				if (view3D.hasMouse())
 					view3D.setRotAnimation(view3D.getCursor3D().getDrawingMatrix().getVz());
 				else {//doesn't come from 3D view
-					if (vn.dotproduct(view3D.getViewDirection())<0)
+					if (vn.dotproduct(view3D.getViewDirection())>0)
 						view3D.setRotAnimation(vn.mul(-1));
 					else
 						view3D.setRotAnimation(vn);

@@ -212,7 +212,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 							app.getMenu(getView3D().getKernel().getModeText(EuclidianView3D.MODE_RIGHT_PRISM)),
 							app.getPlain("Altitude"), null, 
 							//check basis direction / view direction to say if the sign has to be forced
-							basis.getMainDirection().dotproduct(getView3D().getViewDirection())<0,
+							basis.getMainDirection().dotproduct(getView3D().getViewDirection())>0,
 							app.getPlain("PositiveValuesFollowTheView"));
 				//if (num==null)//button cancel
 				//	selectedPolygons.clear();

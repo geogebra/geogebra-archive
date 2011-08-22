@@ -171,6 +171,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	static public Coords vy = new Coords(new double[] {0.0, 1.0, 0.0,  0.0});
 	/** vz vector */
 	static public Coords vz = new Coords(new double[] {0.0, 0.0, 1.0,  0.0});
+	/** vzNeg vector */
+	static public Coords vzNeg = new Coords(new double[] {0.0, 0.0, -1.0,  0.0});
 	
 	/** direction of view */
 	private Coords viewDirection = vz.copyVector();
@@ -714,7 +716,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (projection==PROJECTION_CAV)
 			viewDirection=renderer.getCavOrthoDirection().copyVector();
 		else
-			viewDirection = vz.copyVector();
+			viewDirection = vzNeg.copyVector();
 		toSceneCoords3D(viewDirection);	
 		viewDirection.normalize();
 		
@@ -2366,7 +2368,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				// use region drawing directions for the arrow
 				t = 1/getScale();
 				v = getCursor3D().getMoveNormalDirection();		
-				if (v.dotproduct(getViewDirection())<0)
+				if (v.dotproduct(getViewDirection())>0)
 					v=v.mul(-1);
 
 				matrix = new CoordMatrix4x4(getCursor3D().getDrawingMatrix().getOrigin(),v,CoordMatrix4x4.VZ);
@@ -2378,7 +2380,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				// use path drawing directions for the arrow
 				t = 1/getScale();
 				v = ((GeoElement)getCursor3D().getPath()).getMainDirection().normalized();
-				if (v.dotproduct(getViewDirection())<0)
+				if (v.dotproduct(getViewDirection())>0)
 					v=v.mul(-1);
 				
 				matrix = new CoordMatrix4x4(getCursor3D().getDrawingMatrix().getOrigin(),v,CoordMatrix4x4.VZ);

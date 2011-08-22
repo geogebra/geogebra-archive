@@ -726,7 +726,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		if (willingDirection==null)
 			willingDirection = getDirectionToCenter(willingCoords);
 		else{
-			willingDirection = willingDirection.mul(-1); //to get the point closest to the eye
+			//willingDirection = willingDirection.mul(-1); //to get the point closest to the eye
 			p.setWillingDirection(null);
 		}
 		//Application.debug("direction=\n"+willingDirection+"\ncoords=\n"+willingCoords);

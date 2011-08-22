@@ -152,9 +152,9 @@ public class EuclidianViewForPlane extends EuclidianView {
 		//front or back view
 		double p = plane.getCoordSys().getNormal().dotproduct(directionView3D);
 		double reverse = 1;
-		if (p>0)
+		if (p<0)
 			transform = CoordMatrix4x4.IDENTITY;
-		else if (p<0){
+		else if (p>0){
 			transform = CoordMatrix4x4.MIRROR_Y;
 			reverse = -1;
 		}
