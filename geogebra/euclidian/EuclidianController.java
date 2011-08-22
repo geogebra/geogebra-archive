@@ -1095,7 +1095,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_COMPLEX_NUMBER){//remove polygons : point inside a polygon is created free, as in v3.2
 			Application.debug("complex"+complex);
 			hits.removeAllPolygons();
-			//Application.debug("après:"+hits);
+			hits.removeConicsHittedOnFilling();
 			createNewPoint(hits, true, false, true, true, complex);
 		}else {// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
 			createNewPoint(hits, true, true,  true, true, complex);
@@ -4118,6 +4118,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				&& !hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
 		
+		//Application.debug(hits);
+		
 		Path path = null;	
 		Region region = null;
 		boolean createPoint = true;
@@ -4157,7 +4159,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (createPoint) {
 			
 			boolean createPointOnBoundary = false;
-
+			
 			// check if point lies in a region and if we are allowed to place a point
 			// in a region
 			if (!regionHits.isEmpty()) {
@@ -4193,6 +4195,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 									hits.remove(region); // (OPTIONAL) if side is in hits, still don't need the polygon as a path
 									region = null;
 								}
+							}
+						}else if (((GeoElement) region).isGeoConic()){
+							if (mode==EuclidianView.MODE_POINT_ON_OBJECT && ((GeoConicND) region).getLastHitType()==GeoConicND.HIT_TYPE_ON_FILLING){
+								createPoint = true;	
+								hits.remove(region); // conic won't be treated as a path
+							}else{
+								createPoint = true;
 							}
 						}
 					}else

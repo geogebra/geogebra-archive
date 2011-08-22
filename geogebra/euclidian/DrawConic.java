@@ -1066,6 +1066,8 @@ final public class DrawConic extends Drawable implements Previewable {
 	final public boolean hit(int x, int y) {   
 		if (!isVisible)
 			return false;
+		//set a flag that says if the point is on the filling
+		boolean isOnFilling = false;
 		if ((geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled()) 
 				&& type != GeoConic.CONIC_SINGLE_POINT && type != GeoConic.CONIC_DOUBLE_LINE){
 			double realX = view.toRealWorldCoordX(x);
@@ -1079,38 +1081,62 @@ final public class DrawConic extends Drawable implements Previewable {
 			(conic.isInRegion(realX-x3,realY+y3) ? 1:0) +
 			(conic.isInRegion(realX+x3,realY+y3) ? 1:0);
 			if(conic.isInverseFill())
-				return insideNeigbors < 5;
-			return  insideNeigbors > 0;
+				isOnFilling = (insideNeigbors < 5);
+			else
+				isOnFilling = (insideNeigbors > 0);
 		}
+		//set a flag to say if point is on the boundary
+		boolean isOnBoundary = false;
         switch (type) {
             case GeoConic.CONIC_SINGLE_POINT:                         
-                return drawPoint.hit(x, y);                                
-                
+                isOnBoundary = drawPoint.hit(x, y);                                
+                break;
             case GeoConic.CONIC_INTERSECTING_LINES:  
             case GeoConic.CONIC_DOUBLE_LINE: 
             case GeoConic.CONIC_PARALLEL_LINES:                
-                return drawLines[0].hit(x, y) || drawLines[1].hit(x, y);
-                                                
+            	isOnBoundary = drawLines[0].hit(x, y) || drawLines[1].hit(x, y);
+            	break;                              
             case GeoConic.CONIC_LINE:                
-                return drawLines[0].hit(x, y);
-                                                
+            	isOnBoundary = drawLines[0].hit(x, y);
+            	break;                               
             case GeoConic.CONIC_CIRCLE:  
             case GeoConic.CONIC_ELLIPSE:
             case GeoConic.CONIC_PARABOLA:
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-    			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);            	
-            	
+            	isOnBoundary = strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);            	
+            	break;
             case GeoConic.CONIC_HYPERBOLA: 
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(hypLeft);
         			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
-    			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold) || strokedShape2.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);              	                                                                                                          
-        }        
-        return false;
+            	isOnBoundary = strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold) || strokedShape2.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);              	                                                                                                          
+            	break;
+        }   
+        
+        
+        //Application.debug("isOnFilling="+isOnFilling+"\nisOnBoundary="+isOnBoundary);
+        if (isOnFilling){
+        	if (isOnBoundary){
+        		conic.setLastHitType(GeoConicND.HIT_TYPE_ON_BOUNDARY);
+        		return true;
+        	}else{
+        		conic.setLastHitType(GeoConicND.HIT_TYPE_ON_FILLING);
+        		return true;
+        	}
+        }else{
+        	if (isOnBoundary){
+        		conic.setLastHitType(GeoConicND.HIT_TYPE_ON_BOUNDARY);
+        		return true;
+        	}else{
+        		conic.setLastHitType(GeoConicND.HIT_TYPE_NONE);
+        		return false;
+        	}
+        }
     }
+	
 	
 	final public boolean isInside(Rectangle rect) {				
 		switch (type) {

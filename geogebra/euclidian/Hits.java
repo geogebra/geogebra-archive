@@ -2,8 +2,10 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -155,6 +157,21 @@ public class Hits extends ArrayList<GeoElement> {
 	final public void keepOnlyHitsForNewPointMode() {	
 		removePolygonsDependingSidePresent(true);
 	}
+
+	/**
+	 * remove all conics hitted on the filling, not on the boundary
+	 */
+	final public void removeConicsHittedOnFilling(){
+		Iterator<GeoElement> it = this.iterator();
+		while (it.hasNext()) {
+			GeoElement geo = it.next();
+			if (geo.isGeoConic()){
+				if (((GeoConicND) geo).getLastHitType()==GeoConicND.HIT_TYPE_ON_FILLING){
+					it.remove();
+				}
+			}
+		}
+	}
 	
 	final private void removePolygonsDependingSidePresent(boolean sidePresentWanted){
 	
@@ -171,8 +188,9 @@ public class Hits extends ArrayList<GeoElement> {
 					}
 				}
 				
-				if (sidePresent!=sidePresentWanted)
+				if (sidePresent!=sidePresentWanted){
 					it.remove();					
+				}
 			}				
 		}				
 				

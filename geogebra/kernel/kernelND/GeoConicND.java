@@ -2951,14 +2951,18 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * @return true if point (x0,y0) is inside the connic
 	 */
 	public boolean isInRegion(double x0, double y0) {
-		if(type == CONIC_INTERSECTING_LINES)
-				return evaluate(x0,y0)*evaluate(b.x+lines[0].x+lines[1].x,b.y+lines[0].y+lines[1].y) >= 0;
-		if(type == CONIC_HYPERBOLA)
-			return evaluate(x0,y0)*evaluate(b.x,b.y) <= 0;		
-		if(type == CONIC_PARABOLA)
+		
+		switch (type){
+		case CONIC_INTERSECTING_LINES:
+			return evaluate(x0,y0)*evaluate(b.x+lines[0].x+lines[1].x,b.y+lines[0].y+lines[1].y) >= 0;
+		case CONIC_HYPERBOLA:
+			return evaluate(x0,y0)*evaluate(b.x,b.y) <= 0;	
+		case CONIC_PARABOLA:
 			return evaluate(x0,y0)*evaluate(b.x + p * eigenvec[0].x,
-                    b.y + p * eigenvec[0].y) >= 0;		
-		return evaluate(x0,y0)*evaluate(b.x,b.y) >= 0; 
+					b.y + p * eigenvec[0].y)  >= 0;	
+		default:
+			return evaluate(x0,y0)*evaluate(b.x,b.y)  >= 0; 
+		}
 		
 	}
 	
@@ -3034,6 +3038,11 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			}
 			P.z = 1.0;
 			coordsEVtoRW(P);
+			}
+			
+			//in some cases (e.g. ellipse becomes an hyperbola), point goes outside
+			if (!isInRegion(PI)){
+				moveBackToRegion(PI,rp);
 			}
 		}
 	}
@@ -3288,6 +3297,26 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		}
 		
 		super.doRemove();
+	}
+	
+	
+
+	//////////////////////////////////////////////
+	// HIT STUFF
+	//////////////////////////////////////////////
+	
+
+	public static final int HIT_TYPE_NONE = 0;
+	public static final int HIT_TYPE_ON_BOUNDARY = 1;
+	public static final int HIT_TYPE_ON_FILLING = 2;
+	private int lastHitType = HIT_TYPE_NONE;
+	
+	final public void setLastHitType(int type){
+		lastHitType=type;
+	}
+	
+	final public int getLastHitType(){
+		return lastHitType;
 	}
 	
 }
