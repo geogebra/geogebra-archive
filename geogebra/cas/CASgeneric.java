@@ -1,8 +1,5 @@
 package geogebra.cas;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import geogebra.cas.error.CASException;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -10,8 +7,11 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.MyResourceBundle;
 
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public abstract class CASgeneric {
 	
@@ -21,7 +21,7 @@ public abstract class CASgeneric {
 	private int timeout = 5;
 	
 	protected CASparser casParser;
-	private ResourceBundle casTranslations;
+	private ResourceBundle rbCasTranslations;  // translates from GeogebraCAS syntax to the internal cas syntax.
 	private String translationResourcePath;
 	
 	public CASgeneric(CASparser casParser, String translationResourcePath) {
@@ -80,13 +80,13 @@ public abstract class CASgeneric {
 	 */
 	public String getTranslatedCASCommand(String command)
 	{
-		if (casTranslations == null) {
-			casTranslations = MyResourceBundle.loadSingleBundleFile(translationResourcePath);
+		if (rbCasTranslations == null) {
+			rbCasTranslations = MyResourceBundle.loadSingleBundleFile(translationResourcePath);
 		}
 
 		String ret;
 		try {
-			ret = casTranslations.getString(command);
+			ret = rbCasTranslations.getString(command);
 		} catch (MissingResourceException e) {
 			ret = null;
 		}
@@ -180,5 +180,20 @@ public abstract class CASgeneric {
 	 * @param significantNumbers
 	 */
 	public abstract void setSignificantFiguresForNumeric(int significantNumbers);
+	
+	
+	/**
+	 * Returns the internal names of all the commands available in the current CAS.
+	 * @return A Set of all internal CAS commands.
+	 */
+	public Set<String> getAvailableCommandNames() {
+		Set<String> cmdSet = new HashSet<String>();
+		for (Enumeration<String> e = rbCasTranslations.getKeys() ; e.hasMoreElements() ;) {
+			String s = e.nextElement();
+			String cmd = s.substring(0, s.indexOf('.'));
+			cmdSet.add(cmd);
+		}
+		return cmdSet;
+	}
 	
 }
