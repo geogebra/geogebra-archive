@@ -8,7 +8,6 @@ import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoElement;
-import geogebra.kernel.AlgoLineBisector;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.AlgoPointOnPath;
 import geogebra.kernel.AlgoSequence;
@@ -37,7 +36,6 @@ import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.kernel.statistics.AlgoPoisson;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
-import geogebra.main.settings.EuclidianSettings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -172,9 +170,9 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	private static final Color COLOR_PDF_FILL = GeoGebraColorConstants.BLUE;  
 	private static final Color COLOR_POINT = Color.BLACK;
 
-	private static final float opacityIntegral = 0.6f; 
+	private static final float opacityIntegral = 0.5f; 
 	private static final float opacityDiscrete = 0.0f; // entire bar chart
-	private static final float opacityDiscreteInterval = 0.6f; // bar chart interval
+	private static final float opacityDiscreteInterval = 0.5f; // bar chart interval
 	private static final int thicknessCurve = 4;
 	private static final int thicknessBarChart = 3;
 
@@ -2060,15 +2058,21 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			}
 
 			// set the window dimensions of the target EV to match the prob calc dimensions
-			if(viewID == Application.VIEW_EUCLIDIAN){
-				app.getEuclidianView().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
-						plotSettings.yMin, plotSettings.yMax);
+			EuclidianView ev  = (EuclidianView) app.getView(viewID);
+			ev.setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, plotSettings.yMin, plotSettings.yMax);
+			ev.setAutomaticAxesNumberingDistance(plotSettings.xAxesIntervalAuto, 0);
+			ev.setAutomaticAxesNumberingDistance(plotSettings.yAxesIntervalAuto, 1);
+			if(!plotSettings.xAxesIntervalAuto){
+				ev.setAxesNumberingDistance(plotSettings.xAxesInterval, 0);
 			}
-			else if(viewID == Application.VIEW_EUCLIDIAN2){
-				app.getEuclidianView2().setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, 
-						plotSettings.yMin, plotSettings.yMax);
+			if(!plotSettings.yAxesIntervalAuto){
+				ev.setAxesNumberingDistance(plotSettings.yAxesInterval, 1);
 			}
-
+			ev.updateBackground();		
+			
+			
+			
+			
 			// remove the new geos from our temporary list
 			newGeoList.clear();
 

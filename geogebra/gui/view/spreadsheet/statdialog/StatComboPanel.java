@@ -1,11 +1,13 @@
 package geogebra.gui.view.spreadsheet.statdialog;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.main.Application;
+import geogebra.main.settings.EuclidianSettings;
 import geogebra.util.Validation;
 
 import java.awt.BorderLayout;
@@ -991,13 +993,18 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 
 
 			// set the window dimensions of the target EV to match the plotPanel dimensions
-			if(viewID == Application.VIEW_EUCLIDIAN)
-				app.getEuclidianView().setRealWorldCoordSystem(settings.xMin, settings.xMax, 
-						settings.yMin, settings.yMax);
-			else if(viewID == Application.VIEW_EUCLIDIAN2)
-				app.getEuclidianView2().setRealWorldCoordSystem(settings.xMin, settings.xMax, 
-						settings.yMin, settings.yMax);
-
+			EuclidianView ev  = (EuclidianView) app.getView(viewID);
+			ev.setRealWorldCoordSystem(settings.xMin, settings.xMax, settings.yMin, settings.yMax);
+			ev.setAutomaticAxesNumberingDistance(settings.xAxesIntervalAuto, 0);
+			ev.setAutomaticAxesNumberingDistance(settings.yAxesIntervalAuto, 1);
+			if(!settings.xAxesIntervalAuto){
+				ev.setAxesNumberingDistance(settings.xAxesInterval, 0);
+			}
+			if(!settings.yAxesIntervalAuto){
+				ev.setAxesNumberingDistance(settings.yAxesInterval, 1);
+			}
+			ev.updateBackground();			
+						
 
 			// null our display geos and clear the plotGeoList to unlink the new geos
 			boxPlotTitles = null;
