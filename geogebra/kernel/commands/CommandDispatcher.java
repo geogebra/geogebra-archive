@@ -765,22 +765,34 @@ public class CommandDispatcher {
     	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
     	cmdTable.clear();
   
-    	//=============================================================	
-      	// CAS
-    	//=============================================================
-    	
-    	for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames())
-    		cmdTable.put(cmd, null);  	
-    	cmdSubTable[TABLE_CAS].putAll(cmdTable);
-    	cmdTable.clear();
-    	
     	
     	//=================================================================
       	// Put all of the sub Tables together to create cmdTable
     	
-    	for(int i = 0; i < tableCount; i++)
-    		cmdTable.putAll(cmdSubTable[i]);
-    		app.checkCommands(cmdTable);
+    	for(int i = 0; i < tableCount; i++) {
+    		if (i != TABLE_CAS) {
+	    		cmdTable.putAll(cmdSubTable[i]);
+	    		app.checkCommands(cmdTable);
+    		}
+    	}
+    	
+    	//=============================================================	
+      	// CAS
+    	// do *after* above loop as we must add only those CAS commands without a ggb equivalent
+    	//=============================================================
+    	
+    	if (app.useFullGui()) {
+	    	for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames()) {
+	    		
+	    		// add commands that are in the cas ONLY
+	    		if (cmdTable.get(cmd) == null) {
+	    			cmdSubTable[TABLE_CAS].put(cmd, null);  	
+	    		} else {
+	    		}
+	    	}
+    	}
+    	
+    	cmdTable.putAll(cmdSubTable[TABLE_CAS]);
     	
     	// internal command table for commands that should not be visible to the user
     	internalCmdTable = new HashMap<String,CommandProcessor>();
