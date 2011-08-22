@@ -7808,32 +7808,11 @@ class CmdCopyFreeObject extends CommandProcessor {
 		case 1:
 
 			String label = c.getLabel();
-			String command = label == null ? "" : label + "=";
+			GeoElement geo = arg[0].copy();
+			geo.setLabel(label);
+			GeoElement[] ret = { geo };
+			return ret;
 
-			kernel.setTemporaryPrintFigures(15);
-			command += arg[0].toOutputValueString();
-			kernel.restorePrintAccuracy();
-
-			try {
-
-				if (arg[0].isGeoImage()) {
-					GeoElement pic = (GeoImage) arg[0].copy();
-					pic.setLabel(label);
-					GeoElement[] ret = { pic };
-					return ret;
-				}
-
-				GeoElement[] ret = kernel.getAlgebraProcessor()
-						.processAlgebraCommandNoExceptions(command, true);
-
-				ret[0].setVisualStyle(arg[0]);
-
-				return ret;
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw argErr(app, c.getName(), arg[0]);
-			}
 
 			// more than one argument
 		default:
