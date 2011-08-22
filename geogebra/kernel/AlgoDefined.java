@@ -61,13 +61,21 @@ public class AlgoDefined extends AlgoElement {
     	if (inputGeo.isGeoPoint()) {
     		GeoPointND p = (GeoPointND)inputGeo;
     		outputBoolean.setValue(inputGeo.isDefined() && !p.isInfinite());
+    		return;
     	}
     	else if (inputGeo.isGeoPoint()) {
     		GeoVector v = (GeoVector)inputGeo;
     		outputBoolean.setValue(inputGeo.isDefined() && !v.isInfinite());
+    		return;
     	}
-    	else
-    		outputBoolean.setValue(inputGeo.isDefined());
+    	else if (inputGeo.isGeoFunction()) {
+    		if (inputGeo.toValueString().equals("?")){
+    			outputBoolean.setValue(false);
+        		return;
+    		}
+    	}
+
+    	outputBoolean.setValue(inputGeo.isDefined());
     }
   
 }
