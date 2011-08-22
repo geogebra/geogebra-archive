@@ -4168,6 +4168,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 
+		//Application.debug(hits+"\ncreatePoint="+createPoint+"\ninRegionPossible="+inRegionPossible+"\nchooseGeo="+chooseGeo);
 
 		// check for paths and regions
 		if (createPoint) {
@@ -4197,8 +4198,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 							
 							if (!sideInHits) {
 								createPoint = true;	
-								hits.remove(region); // if a polygon is a region, don't need it as a path
-								
+								hits.removePolygonsIfSideNotPresent(); // if a polygon is a region, need only polygons that should be a path
+								if (mode==EuclidianView.MODE_POINT_ON_OBJECT)
+									hits.removeSegmentsFromPolygons(); // remove polygon's segments to take the polygon for path
 							} else {
 								if (mode==EuclidianView.MODE_POINT_ON_OBJECT){
 									// if one wants a point on boundary of a polygon

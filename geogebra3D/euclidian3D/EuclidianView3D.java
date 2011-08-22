@@ -2189,6 +2189,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void setCursor3DType(int v){
 		cursor3DType = v;
+		//Application.debug(""+v);
 	}
 	
 

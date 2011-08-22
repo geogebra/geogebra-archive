@@ -448,12 +448,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected GeoPointND getNewPoint(Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
 			boolean doSingleHighlighting, boolean complex) {
-		
 				
 		GeoPoint3D point = view3D.getCursor3D();
 				
 		GeoPoint3D point3D;
 		GeoPointND ret;
+		
+		//Application.debug("view3D.getCursor3DType()="+view3D.getCursor3DType());
 		
 		switch(view3D.getCursor3DType()){		
 		case EuclidianView3D.PREVIEW_POINT_FREE:
@@ -489,6 +490,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;
 			
 		case EuclidianView3D.PREVIEW_POINT_REGION:
+			//Application.debug("inRegionPossible="+inRegionPossible);
+			//Application.printStacktrace("");
 			if (inRegionPossible){
 				Region region = point.getRegion();
 				if (((GeoElement) region).isGeoElement3D()){
@@ -754,7 +757,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (hits.size() < 2)
 			return null;
 		
-		Application.debug(hits);
+		Application.debug(hits.toString());
 		GeoElement b = (GeoElement) hits.get(1);
 		GeoPoint3D point = null;
 
@@ -1570,8 +1573,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// MOUSE PRESSED
 	
 	protected void createNewPointForModePoint(Hits hits, boolean complex){
-		super.createNewPointForModePoint(hits, false);
-		//createNewPoint(hits, true, true, true, true, false);
+		//super.createNewPointForModePoint(hits, false);
+		createNewPoint(hits, true, true, true, true, false);
 	}
 	
 	protected void createNewPointForModeOther(Hits hits){
@@ -2514,9 +2517,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//modes where point can be created on path/region
 			
 			case EuclidianView.MODE_POINT:
-				if (cursorType==EuclidianView3D.PREVIEW_POINT_REGION) //to be consistent with point tool in 2D
-					view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_FREE);
-					//return false;
 			case EuclidianView.MODE_POINT_ON_OBJECT:
 				
 			case EuclidianView.MODE_JOIN:

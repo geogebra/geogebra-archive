@@ -149,6 +149,10 @@ public class Hits extends ArrayList<GeoElement> {
 		removePolygonsDependingSidePresent(false);
 	}
 	
+	final public void removePolygonsIfSideNotPresent(){
+		removePolygonsDependingSidePresent(true);
+	}
+	
 	/**
 	 * Returns hits that are suitable for new point mode.
 	 * A polygon is only kept if one of its sides is also in
@@ -195,6 +199,32 @@ public class Hits extends ArrayList<GeoElement> {
 		}				
 				
 	}
+	
+	/**
+	 * remove segments from all present polygons
+	 */
+	final public void removeSegmentsFromPolygons(){
+		
+		ArrayList<GeoSegmentND> toRemove = new ArrayList<GeoSegmentND>();
+		
+		Iterator<GeoElement> it = this.iterator();
+		while (it.hasNext()) {
+			GeoElement geo = it.next();
+			if (geo.isGeoPolygon()) {
+				GeoSegmentND [] sides = ((GeoPolygon) geo).getSegments();
+				for (int k=0; k < sides.length; k++) {
+					toRemove.add(sides[k]);
+				}
+				
+			}				
+		}
+		
+		for (GeoSegmentND d : toRemove)
+			this.remove(d);
+				
+	}
+	
+	
 	
 	
 	/*
