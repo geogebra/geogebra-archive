@@ -677,6 +677,9 @@ public class Application implements KeyEventDispatcher {
 	 *         in applets.
 	 */
 	final public synchronized GuiManager getGuiManager() {
+		if (guiManager == null) {
+			initGuiManager();
+		}
 		return guiManager;
 	}
 	
