@@ -295,7 +295,7 @@ public class CASmpreduce extends CASgeneric {
 				"ggbcasvarq, ggbcasvarr, ggbcasvars, ggbcasvart, ggbcasvaru, " +
 				"ggbcasvarv, ggbcasvarw, ggbcasvary, ggbcasvarz, ggbcasvarx;");
 		
-		mpreduce.evaluate("let {" +
+		mpreduce.evaluate("intrules!!:={" +
 				"int(~w/~x,~x) => w*log(abs(x)) when freeof(w,x)," +
 				"int(~w/(~x+~a),~x) => w*log(abs(x+a)) when freeof(w,x) and freeof(a,x)," +
 				"int((~b*~x+~w)/(~x+~a),~x) => int((b*xw)/(x+a),x)+w*log(abs(x+a)) when freeof(w,x) and freeof(a,x) and freeof(b,x)," +
