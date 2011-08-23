@@ -3087,7 +3087,7 @@ class CmdRelation extends CommandProcessor {
 			if ((ok[0] = (arg[0].isGeoElement()))
 					&& (ok[1] = (arg[1].isGeoElement()))) {
 				app.showRelation((GeoElement) arg[0], (GeoElement) arg[1]);
-				return null;
+				return new GeoElement[] {};
 			}
 
 			// syntax error
