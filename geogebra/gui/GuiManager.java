@@ -383,7 +383,7 @@ public class GuiManager {
 
 	
 	
-	public JComponent getSpreadsheetView() {
+	public SpreadsheetView getSpreadsheetView() {
 		// init spreadsheet view
     	if (spreadsheetView == null) { 
     		spreadsheetView = new SpreadsheetView(app, SPREADSHEET_INI_COLS, SPREADSHEET_INI_ROWS);

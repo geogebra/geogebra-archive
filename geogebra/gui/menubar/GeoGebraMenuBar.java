@@ -166,9 +166,9 @@ public class GeoGebraMenuBar extends JMenuBar {
 		try {
 			Thread runner = new Thread() {
 				public void run() {
-					app.setWaitCursor();
 
 					try {
+						app.setWaitCursor();
 						// use reflection for
 						// new geogebra.export.PrintPreview(app,
 						// app.getEuclidianView(), PageFormat.LANDSCAPE);
@@ -203,11 +203,11 @@ public class GeoGebraMenuBar extends JMenuBar {
 						DockManager dm=app.getGuiManager().getLayout().getDockManager();
 						
 						if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_CAS))
-							new geogebra.export.PrintPreview(app, (Printable) app.getGuiManager().getCasView(), PageFormat.LANDSCAPE);
+							new geogebra.export.PrintPreview(app, app.getGuiManager().getCasView(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_CONSTRUCTION_PROTOCOL))
 							new geogebra.export.PrintPreview(app, app.getGuiManager().getConstructionProtocolView(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_SPREADSHEET))
-							new geogebra.export.PrintPreview(app, (Printable) app.getGuiManager().getSpreadsheetView(), PageFormat.LANDSCAPE);
+							new geogebra.export.PrintPreview(app, app.getGuiManager().getSpreadsheetView(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_EUCLIDIAN2))
 							new geogebra.export.PrintPreview(app, app.getEuclidianView2(), PageFormat.LANDSCAPE);
 						else if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_ALGEBRA))
@@ -218,9 +218,10 @@ public class GeoGebraMenuBar extends JMenuBar {
 						
 					} catch (Exception e) {
 						Application.debug("Print preview not available");
+					} finally{
+						app.setDefaultCursor();						
 					}
 
-					app.setDefaultCursor();
 				}
 			};
 			runner.start();

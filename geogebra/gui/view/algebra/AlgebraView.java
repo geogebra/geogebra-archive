@@ -18,19 +18,17 @@ the Free Software Foundation.
 
 package geogebra.gui.view.algebra;
 
-import geogebra.euclidian.Drawable;
 import geogebra.gui.SetLabels;
 import geogebra.gui.inputfield.MathTextField;
+import geogebra.gui.view.Gridable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 
+import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
+
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -47,6 +45,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 /**
@@ -55,7 +54,7 @@ import javax.swing.tree.TreePath;
  * @author  Markus
  * @version 
  */
-public class AlgebraView extends JTree implements View, Printable, SetLabels{	
+public class AlgebraView extends JTree implements View, Gridable, SetLabels{	
 		
 	private static final long serialVersionUID = 1L;
 	
@@ -857,20 +856,26 @@ public class AlgebraView extends JTree implements View, Printable, SetLabels{
 
 	}  // MyEditor
 
-	JTree tree=this;
-	
-	
-	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-			throws PrinterException {
-		app.exporting=true;
-		tree.print(graphics);
-		app.exporting=false;
-		int r=(pageIndex==0)? 0:1;
-		return r;
-	}
-
 	public int getViewID() {
 		return Application.VIEW_ALGEBRA;
+	}
+
+	public Application getApplication() {
+		return app;
+	}
+
+	public int[] getGridColwidths() {
+		return new int[]{getWidth()};
+	}
+
+	public int[] getGridRowHeights() {
+		TreeModel m=getModel();
+		m.getRoot();
+		return new int[]{getHeight()};
+	}
+
+	public Component[][] getPrintComponents() {
+		return new Component[][]{{this}};
 	}
 	
 	/**

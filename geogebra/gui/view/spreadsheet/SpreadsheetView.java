@@ -1,8 +1,8 @@
 
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.euclidian.Drawable;
 import geogebra.gui.inputfield.MyTextField;
+import geogebra.gui.view.Gridable;
 import geogebra.gui.view.spreadsheet.statdialog.StatDialog;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -14,6 +14,7 @@ import geogebra.main.settings.SpreadsheetSettings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -25,9 +26,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -39,12 +37,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JViewport;
-import javax.swing.JTable.PrintMode;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 public class SpreadsheetView extends JPanel implements 
-View, ComponentListener, FocusListener, Printable, SettingListener
+View, ComponentListener, FocusListener, Gridable, SettingListener
 {
 
 	private static final long serialVersionUID = 1L;
@@ -57,8 +54,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	protected MyTable table;
 	protected DefaultTableModel tableModel;
 	private SpreadsheetRowHeader rowHeader;
-	private SpreadsheetView view;
-
 
 	// if these are increased above 32000, you need to change traceRow to an int[]
 	public static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
@@ -67,7 +62,8 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	private static int DEFAULT_COLUMN_WIDTH = 70;
 	public static final int ROW_HEADER_WIDTH = 35; // wide enough for "9999"
 
-	public int highestUsedColumn = -1; // for trace
+	public int highestUsedColumn = -1; // for trace & print
+	public int highestUsedRow = -1; //for print
 
 
 	//TODO move this out
@@ -122,7 +118,6 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 		this.app = app;
 		kernel = app.getKernel();
-		view = this;
 
 		// Initialize settings and register listener
 		settings = app.getSettings().getSpreadsheet();
@@ -338,7 +333,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	private void doRemove(GeoElement geo, int row, int col) {
 
 		tableModel.setValueAt(null, row, col);
-		if (col <= highestUsedColumn) checkColumnEmpty(highestUsedColumn);
+		updateHighestUsedColAndRow(col,row);
 
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 	}
@@ -418,6 +413,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		//setDefaultLayout();
 		//setDefaultSelection();
 		highestUsedColumn = -1;
+		highestUsedRow = -1;
 		updateColumnWidths();
 		updateFonts(); //G.Sturr 2010-6-4
 		//table.changeSelection(0,0,false,false);
@@ -450,6 +446,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		if (location != null && location.x < MAX_COLUMNS && location.y < MAX_ROWS) {
 
 			if (location.x > highestUsedColumn) highestUsedColumn = location.x;
+			highestUsedRow=Math.max(highestUsedRow, location.y);
 
 			if (location.y >= tableModel.getRowCount()) {
 				tableModel.setRowCount(location.y + 1);		
@@ -482,26 +479,52 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 
 	/**
-	 * Updates highestUsedColumn when this is sent as a parameter
+	 * Updates highestUsedColumn
 	 */
-	private void checkColumnEmpty(int col) {
-
-		if (col == -1) return; // end recursion
-
-		// check if this was the last cell used in this column
-		boolean columnNotEmpty = false;
-		for (int r = 0 ; r < tableModel.getRowCount() ; r++) {
-			if (tableModel.getValueAt(r, col) != null) {
-				// column not empty
-				columnNotEmpty = true;
-				break;
+	private void updateHighestUsedColAndRow(int col, int row) {
+		
+		if (col==highestUsedColumn){
+			boolean updatedHighestUsedColumn=false;
+			for (int c=highestUsedColumn;c>=0;c--){
+				boolean columnEmpty = true;
+				for (int r = 0;r<=highestUsedRow; r++) {
+					if (tableModel.getValueAt(r, c) != null) {
+						// column not empty
+						columnEmpty = false;
+						break;
+					}
+				}
+				if (!columnEmpty){
+					highestUsedColumn=c;
+					updatedHighestUsedColumn=true;
+					break;
+				}
+			}
+			if (!updatedHighestUsedColumn){
+				highestUsedColumn=-1;
 			}
 		}
-		if (!columnNotEmpty) {
-			highestUsedColumn--;
-			checkColumnEmpty(highestUsedColumn);
+		if (row==highestUsedRow){
+			boolean updatedHighestUsedRow=false;
+			for (int r=highestUsedRow;r>=0;r--){
+				boolean rowEmpty = true;
+				for (int c = 0;c<=highestUsedColumn; c++) {
+					if (tableModel.getValueAt(r, c) != null) {
+						//row not empty
+						rowEmpty = false;
+						break;
+					}
+				}
+				if (!rowEmpty){
+					highestUsedRow=r;
+					updatedHighestUsedRow=true;
+					break;
+				}
+			}
+			if (!updatedHighestUsedRow){
+				highestUsedRow=-1;
+			}
 		}
-
 	}
 
 
@@ -551,7 +574,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		switch(mode){
 		case StatDialog.MODE_ONEVAR:
 			if(oneVarStatDialog == null){
-				oneVarStatDialog = new StatDialog(view, app, mode);
+				oneVarStatDialog = new StatDialog(this, app, mode);
 			}else{
 				oneVarStatDialog.setLeftToRight(true);
 				oneVarStatDialog.updateDialog(true);
@@ -561,7 +584,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 		case StatDialog.MODE_REGRESSION:
 			if(twoVarStatDialog == null){
-				twoVarStatDialog = new StatDialog(view, app, mode);
+				twoVarStatDialog = new StatDialog(this, app, mode);
 			}else{
 				twoVarStatDialog.updateDialog(true);
 			}
@@ -570,7 +593,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 
 		case StatDialog.MODE_MULTIVAR:
 			if(multiVarStatDialog == null){
-				multiVarStatDialog = new StatDialog(view, app, mode);
+				multiVarStatDialog = new StatDialog(this, app, mode);
 			}else{
 				multiVarStatDialog.updateDialog(true);
 			}
@@ -651,6 +674,10 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		//traceHandler.resetTraceRow(highestUsedColumn+1);
 		//traceHandler.resetTraceRow(highestUsedColumn+2);
 		return highestUsedColumn;
+	}
+	
+	public int getHighestUsedRow() {
+		return highestUsedRow;
 	}
 
 
@@ -1451,7 +1478,7 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 		boolean hasFocus = false;
 		try {
 			if(app.getGuiManager().getLayout().getDockManager().getFocusedPanel() != null)
-				hasFocus = app.getGuiManager().getLayout().getDockManager().getFocusedPanel().isAncestorOf(view);
+				hasFocus = app.getGuiManager().getLayout().getDockManager().getFocusedPanel().isAncestorOf(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1490,16 +1517,33 @@ View, ComponentListener, FocusListener, Printable, SettingListener
 	}
 
 
-	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-	throws PrinterException {
-		app.exporting=true;
-		int r=table.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
-		app.exporting=false;
-		return r;
-	}
-
 	public int getViewID() {
 		return Application.VIEW_SPREADSHEET;
+	}
+
+
+	public int[] getGridColwidths() {
+		int[] colWidths=new int[2+highestUsedColumn];
+		colWidths[0]=rowHeader.getWidth();
+		for (int c=0;c<=highestUsedColumn;c++){
+			colWidths[c+1]=table.getColumnModel().getColumn(c).getWidth();
+		}
+		return colWidths;
+	}
+
+
+	public int[] getGridRowHeights() {
+		int[] rowHeights=new int[2+highestUsedRow];
+		rowHeights[0]=table.getTableHeader().getHeight();
+		for (int r=0;r<=highestUsedRow;r++){
+			rowHeights[r+1]=table.getRowHeight(r);
+		}
+		return rowHeights;
+	}
+
+
+	public Component[][] getPrintComponents() {
+		return new Component[][]{{spreadsheet.getCorner(JScrollPane.UPPER_LEFT_CORNER), table.getTableHeader()},{rowHeader,table}};
 	}
 
 

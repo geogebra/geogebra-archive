@@ -14,6 +14,7 @@ package geogebra.export;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
+import geogebra.gui.view.Gridable;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 
@@ -70,6 +71,10 @@ public class PrintPreview extends JDialog {
 		BufferedImage img = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB);
 		tempGraphics = img.getGraphics(); 
 	}		
+	
+	public PrintPreview(Application app,Gridable target){
+		this(app,target,PageFormat.PORTRAIT);
+	}
 
 	public PrintPreview(Application app, Printable target) {
 		this(app, target, PageFormat.PORTRAIT);		
@@ -81,7 +86,11 @@ public class PrintPreview extends JDialog {
 		initPrintPreview(target, orientation);
 	}
 		
-	private void initPrintPreview(Printable target, int orientation) {	
+	public PrintPreview(Application app, Gridable target, int portrait) {
+		this(app,new PrintGridable(target),portrait);
+	}
+
+	private void initPrintPreview(Printable target, int orientation) {
 		m_target = target;
 		m_orientation = orientation;
 		m_scale = 75; // init scale to 75%		

@@ -1,36 +1,29 @@
 package geogebra.cas.view;
 
 import geogebra.cas.GeoGebraCAS;
-import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.gui.view.Gridable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.cas.AlgoDependentCasCell;
+
 import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable.PrintMode;
+
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -39,7 +32,7 @@ import javax.swing.event.ListSelectionListener;
  * 
  * @author Markus Hohenwarter, Quan Yuan
  */
-public class CASView extends JComponent implements View, Printable {
+public class CASView extends JComponent implements View, Gridable {
 
 	private Kernel kernel;
 
@@ -464,14 +457,14 @@ public class CASView extends JComponent implements View, Printable {
 		return casInputHandler;
 	}
 
-
-	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-			throws PrinterException {
-		app.exporting=true;
-		int r=consoleTable.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
-		app.exporting=false;
-		return r;
-	}
+//
+//	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+//			throws PrinterException {
+//		app.exporting=true;
+//		int r=consoleTable.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
+//		app.exporting=false;
+//		return r;
+//	}
 
 	public void setLabels() {
 		consoleTable.setLabels();
@@ -488,5 +481,30 @@ public class CASView extends JComponent implements View, Printable {
 
 	public void setToolbarIsUpdatedByDockPanel(boolean toolbarIsUpdatedByDockPanel) {
 		this.toolbarIsUpdatedByDockPanel = toolbarIsUpdatedByDockPanel;
+	}
+
+
+	public Application getApplication() {
+		return app;
+	}
+
+
+	public int[] getGridColwidths() {
+		return new int[]{rowHeader.getWidth()+consoleTable.getWidth()};
+	}
+
+
+	public int[] getGridRowHeights() {
+		int[] heights=new int[consoleTable.getRowCount()];
+		for (int i=0;i<heights.length;i++){
+			heights[i]=consoleTable.getRowHeight(i);
+		}
+		return heights;
+	}
+	
+
+
+	public Component[][] getPrintComponents() {
+		return new Component[][]{{rowHeader,consoleTable}};
 	}
 }
