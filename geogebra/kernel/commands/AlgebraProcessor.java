@@ -1440,6 +1440,11 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
+	/** Enables CAS specific behaviour */
+	public void enableCAS() {
+		cmdDispatcher.initCASCommands();
+	}
+
 //	/**
 //	 * Processes assignments, i.e. input of the form leftVar = geoRight where geoRight is an existing GeoElement.
 //	 */

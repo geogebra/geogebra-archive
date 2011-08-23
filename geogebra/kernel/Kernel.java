@@ -584,6 +584,8 @@ public class Kernel {
 	public synchronized GeoGebraCAS getGeoGebraCAS() {
 		if (ggbCAS == null) {
 			ggbCAS = new geogebra.cas.GeoGebraCAS(this);
+			app.enableCAS();
+			getAlgebraProcessor().enableCAS();
 		}			
 		
 		return ggbCAS;

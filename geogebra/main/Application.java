@@ -2178,23 +2178,11 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		//get CAS Commands
-		commandDictCAS=new LowerCaseDictionary();
-
-		// iterate through all available CAS commands, add them (translated if available, otherwise untranslated)
-		for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames()) {
-			try {
-				String local = rbcommand.getString(cmd);
-				if (local != null)
-					commandDictCAS.addEntry(local);
-				else
-					commandDictCAS.addEntry(cmd);
-			} catch (MissingResourceException mre) {
-				commandDictCAS.addEntry(cmd);
-			}
-		}
-
+		if (isCasLoaded)
+			fillCasCommandDict();
 		addMacroCommands();
 	}
+
 	private String oldScriptLanguage = null;
 
 	private String scriptingLanguage;
@@ -5788,8 +5776,36 @@ public class Application implements KeyEventDispatcher {
 	public boolean exporting = false;
 
 	
+
+	/** Enables the CAS in the GUI */
+	public void enableCAS() {
+		isCasLoaded = true;
+		fillCasCommandDict();
+	}
+	private boolean isCasLoaded = false;
+
 	
-	
+	private void fillCasCommandDict() {
+		// this method might get called during initialization, when we're not yet 
+		// ready to fill the casCommandDict. In that case, we will fill the 
+		// dict during  fillCommandDict :)
+		if (rbcommand == null)
+			return;
+		commandDictCAS=new LowerCaseDictionary();
+
+		// iterate through all available CAS commands, add them (translated if available, otherwise untranslated)
+		for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames()) {
+			try {
+				String local = rbcommand.getString(cmd);
+				if (local != null)
+					commandDictCAS.addEntry(local);
+				else
+					commandDictCAS.addEntry(cmd);
+			} catch (MissingResourceException mre) {
+				commandDictCAS.addEntry(cmd);
+			}
+		}
+	}
 
 	
 }

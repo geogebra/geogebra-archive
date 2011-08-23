@@ -33,6 +33,8 @@ public class CommandDispatcher {
     private Construction cons;
     private Application app;
     
+    private boolean isCasActive = false;
+    
     /** stores public (String name, CommandProcessor cmdProc) pairs*/   
     protected HashMap<String,CommandProcessor> cmdTable;
     
@@ -779,25 +781,33 @@ public class CommandDispatcher {
     	// do *after* above loop as we must add only those CAS commands without a ggb equivalent
     	//=============================================================
     	
-    	if (app.useFullGui()) {
-	    	for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames()) {
-	    		
-	    		// add commands that are in the cas ONLY
-	    		if (cmdTable.get(cmd) == null) {
-	    			cmdSubTable[TABLE_CAS].put(cmd, null);  	
-	    		} else {
-	    		}
-	    	}
-    	}
-    	
-    	cmdTable.putAll(cmdSubTable[TABLE_CAS]);
-    	
-    	// internal command table for commands that should not be visible to the user
-    	internalCmdTable = new HashMap<String,CommandProcessor>();
-    	// support parsing diff() results back from Maxima
-    	internalCmdTable.put("diff", new CmdDerivative(kernel));
+    	if (app.useFullGui() && isCasActive)
+    		initCASCommands();
+
     }
 
+    
+    public void initCASCommands() {
+    	isCasActive = true;
+    	
+    	// this method might get called during initialization. In that case
+    	// this method will be called again during the normal initCmdTable
+    	// since isCasActive is now true.
+    	if (cmdTable == null)
+    		return;
+    	for (String cmd : kernel.getGeoGebraCAS().getCurrentCAS().getAvailableCommandNames()) {
+    		
+    		// add commands that are in the cas ONLY
+    		if (cmdTable.get(cmd) == null)
+    			cmdSubTable[TABLE_CAS].put(cmd, null); 
+    	}
 
+		cmdTable.putAll(cmdSubTable[TABLE_CAS]);
+		
+		// internal command table for commands that should not be visible to the user
+		internalCmdTable = new HashMap<String,CommandProcessor>();
+		// support parsing diff() results back from Maxima
+		internalCmdTable.put("diff", new CmdDerivative(kernel));
+    }
 }
 
