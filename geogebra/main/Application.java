@@ -581,7 +581,8 @@ public class Application implements KeyEventDispatcher {
 		
 		isSaved = true;
 		
-		CASVersionString = getPlain("CASInitializing");
+		if (CASVersionString == "") // CAS might've been initialized already
+			CASVersionString = getPlain("CASInitializing");
 	}
 		
 	private void handleHelpVersionArgs(CommandLineArguments args) {
