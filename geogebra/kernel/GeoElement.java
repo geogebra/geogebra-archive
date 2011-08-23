@@ -3268,6 +3268,58 @@ public abstract class GeoElement
 	}
 
 	/**
+	 * Updates all GeoElements in the given ArrayList and all algorithms that depend on free GeoElements in that list.
+	 * Note: this method is more efficient than calling updateCascade() for all individual
+	 * GeoElements.
+	 * @param geos 
+	 *
+	 * @param tempSet a temporary set that is used to collect all algorithms that need to be updated
+	 */
+	final static public synchronized void updateCascadeUntil(ArrayList<?> geos, TreeSet<AlgoElement> tempSet, AlgoElement lastAlgo) {		
+				// only one geo: call updateCascade()
+		if (geos.size() == 1) {
+			ConstructionElement ce = (ConstructionElement) geos.get(0);
+			if (ce.isGeoElement()) {
+				((GeoElement) ce).updateCascade();
+			}
+			return;
+		}
+
+		// build update set of all algorithms in construction element order
+		// clear temp set
+		tempSet.clear();
+
+		int size = geos.size();
+		for (int i=0; i < size; i++) {
+			ConstructionElement ce = (ConstructionElement) geos.get(i);
+			if (ce.isGeoElement()) {
+				GeoElement geo = (GeoElement) geos.get(i);
+				geo.update();
+
+				if ((geo.isIndependent() || geo.isPointOnPath()) &&
+						geo.algoUpdateSet != null)
+				{
+					// add all dependent algos of geo to the overall algorithm set
+					geo.algoUpdateSet.addAllToCollection(tempSet);
+				}
+			}
+		}
+
+		// now we have one nice algorithm set that we can update
+		if (tempSet.size() > 0) {
+			Iterator<AlgoElement> it = tempSet.iterator();
+			while (it.hasNext()) {
+				AlgoElement algo = (AlgoElement) it.next();
+				
+				if (algo == lastAlgo)
+					return;
+				algo.update();
+			}
+		}
+	}
+
+	
+	/**
 	 * Updates this object and all dependent ones.
 	 * Notifies kernel to repaint views.
 	 */

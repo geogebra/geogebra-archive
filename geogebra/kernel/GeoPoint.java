@@ -1680,6 +1680,8 @@ GeoPointND, Animatable, Transformable  {
 				
 				//get all "randomizable" predecessors of this and geo
 				TreeSet<GeoElement> pred = this.getAllRandomizablePredecessors();
+				ArrayList<GeoElement> predList = new ArrayList<GeoElement>();
+				predList.addAll(pred);
 				pred.addAll(geo.getAllRandomizablePredecessors());
 				
 				// store parameters of current construction
@@ -1696,10 +1698,15 @@ GeoPointND, Animatable, Transformable  {
 						GeoElement predGeo = (GeoElement) it.next();
 						predGeo.randomizeForProbabilisticChecking();
 					}
+					
+					GeoElement.updateCascadeUntil(predList, new TreeSet<AlgoElement>(), this.algoParent);
+					GeoElement.updateCascadeUntil(predList, new TreeSet<AlgoElement>(), geo.algoParent);
+					/*
 					if (!this.isFixed())
 						this.updateCascade();
 					if (!geo.isFixed())
 						geo.updateCascade();
+						*/
 					
 					if (geo.isGeoPoint()) {
 						if (!this.isEqual(geo)) incident = false;
