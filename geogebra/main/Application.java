@@ -2192,10 +2192,6 @@ public class Application implements KeyEventDispatcher {
 				commandDictCAS.addEntry(cmd);
 			}
 		}
-		
-		System.out.println("#####\n#####\ncommand:\n######");
-		for (Entry<String, String> x : commandDictCAS.entrySet())
-			System.out.println(x.getKey() + " => " + x.getValue());
 
 		addMacroCommands();
 	}
@@ -5752,7 +5748,7 @@ public class Application implements KeyEventDispatcher {
 	public View getView(int viewID) {
 
 		// check for PlotPanel ID family first 
-		if(useFullGui() && (View)getGuiManager().getPlotPanelView(viewID) != null){
+		if(getGuiManager() != null && (View)getGuiManager().getPlotPanelView(viewID) != null){
 			return (View)getGuiManager().getPlotPanelView(viewID);
 		}
 
