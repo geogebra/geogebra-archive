@@ -25,11 +25,12 @@ import javax.swing.text.JTextComponent;
 //		TableCellEditor {
 public class CASTableCellEditor extends CASTableCell implements TableCellEditor, KeyListener {
 	
-	private CASTable casTable;
+	private JTable table;
 	private GeoCasCell cellValue;
 	
 	private boolean editing = false;
 	private int editingRow;
+	private String inputOnEditingStart;
 		
 	private ArrayList listeners = new ArrayList();
 
@@ -43,36 +44,25 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		if (value instanceof GeoCasCell) {						
 			editing = true;
 			editingRow = row;
-			
-			inputPanel.setFont(view.getFont());
-			dummyField.setFont(view.getFont());
-
-			cellValue = (GeoCasCell) value;
-			casTable = (CASTable) table;
-
-			// fill input and output panel
-			setValue(cellValue);					
-		
-			// update row height
-			updateTableRowHeight(table, row);			
+									
+			// set CASTableCell value
+			this.cellValue = (GeoCasCell) value;
+			this.table = table;
+			inputOnEditingStart = cellValue.getInput();
+			setValue(cellValue);				
+							
+			// update font and row height
+			setFont(view.getFont());
+			updateTableRowHeight(table, row);				
 			
 			// Set width of editor to the width of the table column.
 			// This will allow scrolling of strings that are wider than the cell. 
-			this.setInputPanelWidth(table.getParent().getWidth());	
-			
+			setInputPanelWidth(table.getParent().getWidth());				
 		} 
 		return this;
 	}	
 	
-	public void setFont(Font ft) {
-		super.setFont(ft);
-		if (inputPanel != null){
-			inputPanel.setFont(ft.deriveFont(Font.BOLD));
-		}
-		if (dummyField != null){
-			dummyField.setFont(ft.deriveFont(Font.BOLD));
-		}
-	}
+
 	
 	public String getInputText() {	
 		return getInputArea().getText();
@@ -106,17 +96,21 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	public boolean stopCellEditing() {	
 		// update cellValue's input using editor content
 		if (editing && cellValue != null) {
-			cellValue.setInput(getInput());
+			String newInput = getInput();
+			if (!newInput.equals(inputOnEditingStart))
+				cellValue.setInput(getInput());
 			fireEditingStopped();
-		}
-					
+		}				
+		
 		return true;
 	}
 	
 	public void cancelCellEditing() {
 		// update cellValue's input using editor content
 		if (editing && cellValue != null) {
-			cellValue.setInput(getInput());	
+			String newInput = getInput();
+			if (!newInput.equals(inputOnEditingStart))
+				cellValue.setInput(getInput());	
 			fireEditingCanceled();
 		}
 	}
@@ -131,7 +125,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 
 
 	protected void fireEditingCanceled() {				
-		if (editing && editingRow < casTable.getRowCount()) {	
+		if (editing && editingRow < table.getRowCount()) {	
 			ChangeEvent ce = new ChangeEvent(this);
 			for (int i=0; i < listeners.size(); i++) {
 				CellEditorListener l = (CellEditorListener) listeners.get(i);
@@ -143,7 +137,7 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 	}
 	
 	protected void fireEditingStopped() {		
-		if (editing && editingRow < casTable.getRowCount()) {	
+		if (editing && editingRow < table.getRowCount()) {	
 			ChangeEvent ce = new ChangeEvent(this);
 			for (int i=0; i < listeners.size(); i++) {
 				CellEditorListener l = (CellEditorListener) listeners.get(i);
@@ -180,10 +174,14 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 
 		switch (keyCode) {
 			case KeyEvent.VK_ESCAPE:
-				getInputArea().setText("");
 				e.consume();
+				getInputArea().setText("");				
 				break;
 				
+//			case KeyEvent.VK_ENTER:
+//				e.consume();
+//				stopCellEditing();				
+//				break;				
 		}
 	}
 

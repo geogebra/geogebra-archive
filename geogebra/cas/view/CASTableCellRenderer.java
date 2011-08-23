@@ -20,20 +20,11 @@ public class CASTableCellRenderer extends CASTableCell implements
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
 		if (value instanceof GeoCasCell) {
-			inputPanel.setFont(view.getFont());
-			dummyField.setFont(view.getFont());
-			
-			GeoCasCell tempV = (GeoCasCell) value;	
-			
-			Kernel kernel = tempV.getKernel();
-			int oldCASPrintForm = kernel.getCASPrintForm();
-			kernel.setCASPrintForm(ExpressionNodeConstants.STRING_TYPE_LATEX);
-			
-			setValue(tempV);
-
-			kernel.setCASPrintForm(oldCASPrintForm);
+			// set CASTableCell value
+			setValue((GeoCasCell) value);								
 							
-			// update row height
+			// update font and row height
+			setFont(view.getFont());
 			updateTableRowHeight(table, row);	
 			
 			// set inputPanel width to match table column width

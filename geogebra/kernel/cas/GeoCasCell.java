@@ -194,17 +194,23 @@ public class GeoCasCell extends GeoElement {
 		if (isError())
 			return null;
 		else if (latex == null) {
-			try {
-				latex = kernel.getGeoGebraCAS().convertGeoGebraToLaTeXString(outputVE);
-			} catch (Throwable th) {
-				Application.debug("no latex for: " + getOutput());
-				latex = "";
+			if (outputVE != null) {
+				// TODO Uncomment once support for latex line breaking is implemented.
+				// Kernel kernel = app.getKernel();
+				//boolean oldLineBreaks = kernel.isInsertLineBreaks();
+				//kernel.setInsertLineBreaks(true);
+				
+				// create LaTeX string
+				latex = outputVE.toAssignmentLaTeXString();
+				
+				// TODO Uncomment once support for latex line breaking is implemented.
+				//kernel.setInsertLineBreaks(oldLineBreaks);
 			}
 		}
 		
 		return latex;
 	}
-	
+		
 	public boolean isEmpty() {
 		return isInputEmpty() && isOutputEmpty();
 	}
@@ -334,11 +340,11 @@ public class GeoCasCell extends GeoElement {
 	/**
 	 * Sets how this row should be evaluated. Note that the input
 	 * is NOT changed by this method, so you need to call setInput()
-	 * first.
+	 * first. Make sure that input = prefix + eval without wrapper command + postfix. 
 	 * 
-	 * @param prefix: beginning part that should NOT be evaluated
-	 * @param eval: part of the input that needs to be evaluated
-	 * @param postfix: end part that should NOT be evaluated
+	 * @param prefix: beginning part that should NOT be evaluated, e.g. "25a +"
+	 * @param eval: part of the input that needs to be evaluated, e.g. "Expand[(a+b)^2]"
+	 * @param postfix: end part that should NOT be evaluated, e.g. " + "5 (c+d)"
 	 */
 	public void setProcessingInformation(String prefix, String eval, String postfix) {
 		setEvalCommand("");
@@ -347,11 +353,11 @@ public class GeoCasCell extends GeoElement {
 		if (postfix == null) postfix = "";
 		
 		// stop if input is assignment
-		if (inputVE != null && inputVE.getLabel() != null) {
+		if (isAssignment()) {						
 			if (eval.startsWith("KeepInput")) {
 				setEvalCommand("KeepInput");
 			}
-			return;
+			return;			
 		}
 		
 		// parse eval text into valid expression
@@ -371,6 +377,10 @@ public class GeoCasCell extends GeoElement {
 			this.postfix = "";
 		}
 	}
+	
+//	private boolean hasPrefixOrPostfix() {
+//		 return prefix.length() > 0 && postfix.length() > 0; 
+//	}
 	
 	/**
 	 * Checks if newInput is structurally equal to the current input String.

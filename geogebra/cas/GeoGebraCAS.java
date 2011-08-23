@@ -314,40 +314,6 @@ public class GeoGebraCAS {
 		
 		return null;
 	}
-
-
-	
-
-	
-	/**
-	 * Tries to convert an expression in GeoGebra syntax into a LaTeX string.
-	 * 
-	 * @return null if something went wrong or the resulting String doesn't contain
-	 * any LaTeX commands (i.e. no \).
-	 */
-	public synchronized String convertGeoGebraToLaTeXString(ValidExpression ggbExp) {
-		if (ggbExp == null)
-			return null;
-		
-		// TODO Uncomment once support for latex line breaking is implemented.
-		// Kernel kernel = app.getKernel();
-		//boolean oldLineBreaks = kernel.isInsertLineBreaks();
-		//kernel.setInsertLineBreaks(true);
-		
-		try {
-			String latex = ggbExp.toAssignmentLaTeXString();
-			// render in latex if necessary
-			// eg if contains ^2 or \frac
-			if (Application.isLaTeXneeded(latex)) return latex;
-			else return ggbExp.toString();
-		}
-		finally {
-			// TODO Uncomment once support for latex line breaking is implemented.
-			//kernel.setInsertLineBreaks(oldLineBreaks);
-		}	
-	}
-	
-	
 	
 	final private String toString(ExpressionValue ev, boolean symbolic) {
 		if (symbolic)

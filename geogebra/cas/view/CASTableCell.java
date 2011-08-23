@@ -101,9 +101,8 @@ public abstract class CASTableCell extends JPanel{
 		// set input panel
 		String input = cellValue.getInput();
 		inputPanel.setInput(input);
-		dummyField.setText(inputPanel.getInputArea().getText());
-		
-		
+		dummyField.setText(inputPanel.getInput());
+				
 		// set output panel
 		boolean showOutput = cellValue.showOutput();
 		outputPanel.setVisible(showOutput);

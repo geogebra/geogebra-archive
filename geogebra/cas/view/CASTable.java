@@ -15,6 +15,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -72,11 +73,18 @@ public class CASTable extends JTable {
 		getColumnModel().getColumn(COL_CAS_CELLS).setCellEditor(editor);
 		getColumnModel().getColumn(COL_CAS_CELLS).setCellRenderer(renderer);				
 		setTableHeader(null); 
-					
-		// listen to mouse pressed on table cells, make sure to start editing
-		// if we don't do this, we get
+		
+		// remove all mouse listeners to make sure they don't start editing cells
+		// when a row is clicked. This is need to be able to have full control over
+		// whether editing should be started or the output of a cell inserted into another one
+		// This also prevents
 		// Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
 		//  at javax.swing.plaf.basic.BasicTableUI$Handler.mousePressed(Unknown Source)
+		for (MouseListener ml : getMouseListeners()) {
+			removeMouseListener(ml);
+		}
+					
+		// listen to mouse pressed on table cells, make sure to start editing
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				int clickedRow = rowAtPoint(e.getPoint());
@@ -89,9 +97,17 @@ public class CASTable extends JTable {
 				if (panel == null || panel.getViewId() != Application.VIEW_CAS)
 					app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_CAS);
 				
-				if (clickedRow >= 0) {
-					//boolean undoNeeded = false;
-					startEditingRow(clickedRow);
+				if (clickedRow >= 0) {			
+					if (isEditing() && isOutputPanelClicked(e.getPoint())) {	
+						// currently editing and output clicked: insert into currently editing row
+						if (editor.getEditingRow() != clickedRow)
+							editor.insertText(view.getRowOutputValue(clickedRow));				
+					} 
+					else {						
+						// set clickedRow selected
+						getSelectionModel().setSelectionInterval(clickedRow, clickedRow);
+						startEditingRow(clickedRow);
+					}
 				}
 			}
 		});
@@ -148,9 +164,34 @@ public class CASTable extends JTable {
 		// this.sizeColumnsToFit(0);
 		//this.setSurrendersFocusOnKeystroke(true);
 	}
-	
+			
 	public CASView getCASView() {
 		return view;
+	}
+	
+	/**
+	 * Returns whether the output panel of a cell row was clicked.
+	 * @param p clicked position in table coordinates
+	 * @return
+	 */
+	private boolean isOutputPanelClicked(Point p) {
+		int row = rowAtPoint(p);
+		if (row < 0) return false;
+		
+		// calculate sum of row heights before
+		int rowHeightsAbove = 0;
+		for (int i=0; i < row; i++) {
+			rowHeightsAbove += getRowHeight(i);
+		}
+		
+		// get height of input panel in clicked row
+		TableCellRenderer renderer = getCellRenderer(row, 0);		
+		CASTableCell tableCell = (CASTableCell) prepareRenderer(renderer, row, 0);
+		int inputAreaHeight = tableCell.getInputPanelHeight();
+		
+		// check if we clicked below input area
+		boolean outputClicked = p.y > rowHeightsAbove + inputAreaHeight ;
+		return outputClicked;
 	}
 	
 	public boolean isEditing() {
