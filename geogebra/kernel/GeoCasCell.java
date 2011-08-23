@@ -1,11 +1,7 @@
-package geogebra.kernel.cas;
+package geogebra.kernel;
 
 import geogebra.cas.error.CASException;
 import geogebra.cas.view.CASInputHandler;
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.AlgorithmSet;
-import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.Function;

@@ -3,11 +3,11 @@ package geogebra.cas.view;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.view.Gridable;
+import geogebra.kernel.GeoCasCell;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 
-import geogebra.kernel.cas.GeoCasCell;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 

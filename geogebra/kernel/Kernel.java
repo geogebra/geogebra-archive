@@ -56,7 +56,6 @@ import geogebra.kernel.cas.AlgoSolveODECas;
 import geogebra.kernel.cas.AlgoTangentCurve;
 import geogebra.kernel.cas.AlgoTangentFunctionNumber;
 import geogebra.kernel.cas.AlgoTangentFunctionPoint;
-import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.discrete.AlgoConvexHull;
 import geogebra.kernel.discrete.AlgoDelauneyTriangulation;
@@ -581,7 +580,7 @@ public class Kernel {
 	/**
 	 * Returns this kernel's GeoGebraCAS object.
 	 */
-	public synchronized GeoGebraCAS getGeoGebraCAS() {
+	public synchronized GeoGebraCASInterface getGeoGebraCAS() {
 		if (ggbCAS == null) {
 			ggbCAS = new geogebra.cas.GeoGebraCAS(this);
 			app.enableCAS();

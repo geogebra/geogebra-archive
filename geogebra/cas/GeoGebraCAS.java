@@ -2,9 +2,8 @@ package geogebra.cas;
 
 import geogebra.cas.error.CASException;
 import geogebra.cas.mpreduce.CASmpreduce;
-import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoGebraCASInterface;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -20,7 +19,7 @@ import java.util.Map;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoGebraCAS {
+public class GeoGebraCAS implements GeoGebraCASInterface {
 
 	private Application app;
 	private Kernel kernel;

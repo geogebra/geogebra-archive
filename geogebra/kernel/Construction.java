@@ -18,7 +18,6 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.cas.AlgoDependentCasCell;
-import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
@@ -609,7 +608,7 @@ public class Construction {
 		updateConstructionIndex(pos);
 		
 		// update cas row references
-		if (ce instanceof GeoCasCell || ce instanceof AlgoDependentCasCell)
+		if (ce instanceof GeoCasCell || ce.isAlgoDependentCasCell())
 			updateCasCellRows();
 		
 		updateAllConstructionProtocolAlgorithms(); // Michael Borcherds

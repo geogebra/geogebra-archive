@@ -1,6 +1,7 @@
 package geogebra.kernel.cas;
 
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.GeoCasCell;
 import geogebra.kernel.GeoElement;
 
 import java.util.TreeSet;
@@ -182,5 +183,13 @@ public class AlgoDependentCasCell extends AlgoElement {
 //		// in  the construction list.
 //		updateConstructionOrder(oldPred);
 //	}
+    
+	/*
+	 * added for minimal applets
+	 */
+    @Override
+	public boolean isAlgoDependentCasCell() {
+		return true;
+	}   
 
 }

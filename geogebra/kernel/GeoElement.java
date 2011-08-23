@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
 import geogebra.cas.CASgeneric;
-import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
@@ -31,7 +30,6 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.cas.GeoCasCell;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
@@ -58,8 +56,6 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.scilab.forge.jlatexmath.cache.JLaTeXMathCache;
 
 
 /**
@@ -3155,7 +3151,7 @@ public abstract class GeoElement
 		}
 		
 		try {
-			GeoGebraCAS cas = kernel.getGeoGebraCAS();
+			GeoGebraCASInterface cas = kernel.getGeoGebraCAS();
 			String geoStr = toCasAssignment(cas.getCurrentCASstringType());
 			if (geoStr != null) {
 				// TODO: remove

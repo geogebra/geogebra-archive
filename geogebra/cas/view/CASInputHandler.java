@@ -2,13 +2,13 @@ package geogebra.cas.view;
 
 import geogebra.cas.CASparser;
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.GeoCasCell;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.cas.AlgoDependentCasCell;
-import geogebra.kernel.cas.GeoCasCell;
 
 import java.util.ArrayList;
 import java.util.HashSet;

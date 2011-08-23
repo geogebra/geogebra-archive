@@ -229,5 +229,12 @@ implements Comparable<ConstructionElement> {
 	public long getID() {
 		
 		return ceID;
+	}
+
+	/*
+	 * added for minimal applets
+	 */
+	public boolean isAlgoDependentCasCell() {
+		return false;
 	}   
 }
