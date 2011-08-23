@@ -801,8 +801,6 @@ public class CommandDispatcher {
     		if (cmdTable.get(cmd) == null)
     			cmdSubTable[TABLE_CAS].put(cmd, null); 
     	}
-
-		cmdTable.putAll(cmdSubTable[TABLE_CAS]);
 		
 		// internal command table for commands that should not be visible to the user
 		internalCmdTable = new HashMap<String,CommandProcessor>();
