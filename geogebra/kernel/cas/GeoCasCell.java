@@ -258,8 +258,6 @@ public class GeoCasCell extends GeoElement {
 	 * @return success
 	 */
 	public boolean setInput(String inValue) {
-		if (input.equals(inValue)) return false;
-		
 		suppressOutput = inValue.endsWith(";");
 				
 		// parse input into valid expression

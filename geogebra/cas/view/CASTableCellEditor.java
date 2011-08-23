@@ -43,6 +43,9 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		if (value instanceof GeoCasCell) {						
 			editing = true;
 			editingRow = row;
+			
+			inputPanel.setFont(view.getFont());
+			dummyField.setFont(view.getFont());
 
 			cellValue = (GeoCasCell) value;
 			casTable = (CASTable) table;
