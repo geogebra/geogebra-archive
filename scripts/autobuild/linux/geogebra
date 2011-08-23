@@ -31,20 +31,28 @@ Usage: $GG_SCRIPTNAME [Java-options] [GeoGebra-options] [FILE]
 GeoGebra - Dynamic mathematics software
 
 Java options:
-  -Xms<size>                       Set initial Java heap size
-  -Xmx<size>                       Set maximum Java heap size
+  -Xms<size>                        Set initial Java heap size
+  -Xmx<size>                        Set maximum Java heap size
 
 GeoGebra options:
-  --help                           Show this help message
-  --language=<iso_code>            Set language using locale code, e.g. en, de_AT
-  --showAlgebraInput=<boolean>     Show/hide algebra input field
-  --showAlgebraWindow=<boolean>    Show/hide algebra window
-  --showSpreadsheet=<boolean>      Show/hide spreadsheet
-  --fontSize=<number>              Set default font size
-  --showSplash=<boolean>           Enable/disable the splash screen
-  --enableUndo=<boolean>           Enable/disable Undo
-  --CAS=[Maxima|MathPiper]         Set Maxima/MathPiper as CAS engine
-  --maximaPath=<path>              Set path to locally installed version of Maxima
+  --help                            Show this help message
+  --v                               Show version information
+  --language=<iso_code>             Set language using locale code, e.g. en, de_AT
+  --showAlgebraInput=<boolean>      Show/hide algebra input field
+  --showAlgebraInputTop=<boolean>   Ahow algebra input field at top/bottom
+  --showAlgebraWindow=<boolean>     Show/hide algebra window
+  --showSpreadsheet=<boolean>       Show/hide spreadsheet
+  --showCAS=<boolean>               Show/hide CAS window
+  --showSplash=<boolean>            Enable/disable the splash screen
+  --enableUndo=<boolean>            Enable/disable Undo
+  --fontSize=<number>               Set default font size
+  --showAxes=<boolean>              Show/hide coordinate axes
+  --settingsFile=<path>|<filename>  Load/save settings from/in a local file
+  --resetSettings                   Reset current settings
+  --CAS=[MPREDUCE|MAXIMA|MATHPIPER] Select which CAS to use, default MPREDUCE
+  --maximaPath=<path>               Specify where Maxima is installed and select Maxima as current CAS
+  --antiAliasing=<boolean>          Turn anti-aliasing on/off
+  --regressionFile=<filename>       Export textual representations of dependent objects, then exit
 _USAGE
 }
 
