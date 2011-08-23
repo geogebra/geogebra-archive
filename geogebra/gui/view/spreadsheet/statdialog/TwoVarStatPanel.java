@@ -51,7 +51,7 @@ public class TwoVarStatPanel extends StatTable implements  ActionListener {
 
 
 	public TwoVarStatPanel(Application app, StatDialog statDialog, boolean isPairedData, ActionListener parentActionListener){
-		super();	
+		super(app);	
 
 		this.app = app;
 		this.statDialog = statDialog;

@@ -40,7 +40,7 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 		setLabels(); // need to do this before creating table
 
 		setLayout(new BorderLayout());
-		statTable = new StatTable();
+		statTable = new StatTable(app);
 		statTable.getTable().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		statTable.getTable().setColumnSelectionAllowed(false);
 		statTable.getTable().setRowSelectionAllowed(true);

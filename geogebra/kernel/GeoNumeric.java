@@ -271,7 +271,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void set(GeoElement geo) {
 		NumberValue num = (NumberValue) geo;
 		setValue(num.getDouble());
-		Application.debug(value);
 	}
 
 	final public void setUndefined() {

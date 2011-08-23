@@ -30,7 +30,7 @@ public class FrequencyTable extends JTable implements StatPanelInterface{
 		this.kernel = app.getKernel();				
 		this.statDialog = statDialog;
 
-		statTable = new StatTable();
+		statTable = new StatTable(app);
 
 		this.setLayout(new BorderLayout());
 		this.add(statTable, BorderLayout.CENTER);

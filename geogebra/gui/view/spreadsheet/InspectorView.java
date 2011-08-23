@@ -201,10 +201,10 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 	private void createGUIElements(){
 
 		columnNames = new String[4];
-		columnNames[COL_DERIVATIVE] =	app.getPlain("derivative");
-		columnNames[COL_DERIVATIVE2] =	app.getPlain("derivative2");
-		columnNames[COL_CURVATURE] =	app.getPlain("curvature");
-		columnNames[COL_DIFFERENCE] =	app.getPlain("difference");
+		columnNames[COL_DERIVATIVE] =	app.getPlain("fncInspector.Derivative");
+		columnNames[COL_DERIVATIVE2] =	app.getPlain("fncInspector.Derivative2");
+		columnNames[COL_CURVATURE] =	app.getPlain("fncInspector.Curvature");
+		columnNames[COL_DIFFERENCE] =	app.getPlain("fncInspector.Difference");
 
 		lblGeoName = new JLabel(getTitleString());
 		lblGeoName.setFont(app.getBoldFont());

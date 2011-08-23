@@ -184,7 +184,7 @@ public class OneVarInferencePanel extends JPanel implements ActionListener,  Foc
 		intPanel.add(fldConfLevel, tab);	
 
 		// result panel	
-		resultTable = new StatTable();
+		resultTable = new StatTable(app);
 		setResultTable();
 
 		resultPanel = new JPanel(new BorderLayout());

@@ -196,7 +196,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 
 		// Result panel
-		resultTable = new StatTable();
+		resultTable = new StatTable(app);
 		setResultTable();
 		//		resultTable.setBorder(BorderFactory.createEtchedBorder());
 
@@ -382,7 +382,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		lblResultHeader.setText(app.getMenu("Result") + ": ");
 
 		lblTitle1.setText(app.getMenu("Sample1") + ": ");
-		lblTitle2.setText(app.getMenu("Sample2") + ": ");		
+		lblTitle2.setText(app.getMenu("Sample2") + ": ");
 
 		lblNull.setText(app.getMenu("NullHypothesis") + ": ");
 		lblTailType.setText(app.getMenu("AlternativeHypothesis") + ": ");
@@ -477,7 +477,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 			if(selectedInference == StatisticsPanel.INFER_TTEST_PAIRED)
 				list.add(app.getMenu("MeanDifference"));
 			else
-				list.add(app.getMenu("Difference"));
+				list.add(app.getPlain("fncInspector.Difference"));
 
 			list.add(app.getMenu("PValue"));
 			list.add(app.getMenu("TStatistic"));
@@ -491,7 +491,7 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 			if(selectedInference == StatisticsPanel.INFER_TINT_PAIRED)
 				list.add(app.getMenu("MeanDifference"));
 			else
-				list.add(app.getMenu("Difference"));
+				list.add(app.getPlain("fncInspector.Difference"));
 
 			list.add(app.getMenu("MarginOfError.short"));
 			list.add(app.getMenu("LowerLimit"));
