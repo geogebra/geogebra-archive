@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.commands;
 
-import geogebra.cas.GeoGebraCAS;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -772,7 +771,6 @@ public class CommandDispatcher {
     	for(int i = 0; i < tableCount; i++) {
     		if (i != TABLE_CAS) {
 	    		cmdTable.putAll(cmdSubTable[i]);
-	    		app.checkCommands(cmdTable);
     		}
     	}
     	
