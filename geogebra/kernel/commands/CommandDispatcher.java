@@ -35,9 +35,18 @@ public class CommandDispatcher {
     
     private boolean isCasActive = false;
     
-    /** stores public (String name, CommandProcessor cmdProc) pairs*/   
+    /** stores public (String name, CommandProcessor cmdProc) pairs
+     * 
+     * NB: Do not put CAS-specific commands in this table! If you ever want to,
+     * call Markus, so he can give you one million reasons why this is a
+     * terribly bad idea!
+     **/   
     protected HashMap<String,CommandProcessor> cmdTable;
     
+    /**
+     * Same info as cmdTable, but separated for each command type.
+     * Used only in {@link geogebra.gui.inputbar.InputBarHelpPanel}
+     */
     protected HashMap<String,CommandProcessor>[] cmdSubTable;
     public static final int TABLE_GEOMETRY = 0;
     public static final int TABLE_ALGEBRA = 1;
@@ -786,7 +795,9 @@ public class CommandDispatcher {
 
     }
 
-    
+    /**
+     * Loads CAS commands into the cmdSubTable.
+     */
     public void initCASCommands() {
     	isCasActive = true;
     	
