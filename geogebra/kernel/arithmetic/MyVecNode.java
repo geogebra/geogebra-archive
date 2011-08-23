@@ -160,7 +160,7 @@ public class MyVecNode extends ValidExpression implements VectorValue, Replaceab
 				sb.append(")");
 				break;*/
 			    if (mode==Kernel.COORD_POLAR) {
-			    	sb.append("polartopoint(");
+			    	sb.append("polartopoint!\u00a7(");
 			    	sb.append(x.toString());
 			    	sb.append(", ");
 			    	sb.append(y.toString());

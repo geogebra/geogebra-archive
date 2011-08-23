@@ -400,7 +400,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	}
 	
 	public double getLimit(double x, int direction) {
-		if (evaluateCondition(x))
+		if (evaluateCondition(x-2*direction*Kernel.EPSILON))
 			return ifFun.getLimit(x, direction);
 			else if (elseFun != null) return elseFun.getLimit(x, direction);
 		return Double.NaN;
