@@ -1049,7 +1049,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				viewDirectionPersp.normalize();
 			}
 			
-			return pickPoint;
+			return pickPoint.copyVector();
 		}else
 			return null;
 		
@@ -1075,7 +1075,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			viewDirectionPersp.normalize();
 		}
 
-		return pickPoint;
+		return pickPoint.copyVector();
 		
 	}
 	
