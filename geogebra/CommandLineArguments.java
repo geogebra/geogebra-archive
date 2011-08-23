@@ -130,7 +130,7 @@ public class CommandLineArguments {
 	 * @return true for valid booleans
 	 */
 	public boolean isBoolean(String name) {
-		String strValue = args.get(name);
+		String strValue = args.get(name.toLowerCase(Locale.US));
 		
 		if(strValue == null) {
 			return false;
