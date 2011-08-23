@@ -81,7 +81,7 @@ public class CASmpreduce extends CASgeneric {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<<keepinput!!:=");
 		sb.append(keepInput ? 1 : 0);
-		sb.append("$numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ combinelogs$ ");
+		sb.append("$numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs$ on combinelogs$ ");
 		sb.append(mpreduceInput);
 		sb.append(">>");
 		String result = evaluateMPReduce(sb.toString());
@@ -288,13 +288,6 @@ public class CASmpreduce extends CASgeneric {
 		mpreduce.evaluate("on fullroots;");
 		mpreduce.evaluate("printprecision!!:=5");
 		
-		mpreduce.evaluate("korder ggbcasvarx, ggbcasvary, ggbcasvarz, ggbcasvara, " +
-				"ggbcasvarb, ggbcasvarc, ggbcasvard, ggbcasvare, ggbcasvarf, " +
-				"ggbcasvarg, ggbcasvarh, ggbcasvari, ggbcasvarj, ggbcasvark, " +
-				"ggbcasvarl, ggbcasvarm, ggbcasvarn, ggbcasvaro, ggbcasvarp, " +
-				"ggbcasvarq, ggbcasvarr, ggbcasvars, ggbcasvart, ggbcasvaru, " +
-				"ggbcasvarv, ggbcasvarw;");
-		
 		mpreduce.evaluate("order ggbcasvara, " +
 				"ggbcasvarb, ggbcasvarc, ggbcasvard, ggbcasvare, ggbcasvarf, " +
 				"ggbcasvarg, ggbcasvarh, ggbcasvari, ggbcasvarj, ggbcasvark, " +
@@ -360,7 +353,6 @@ public class CASmpreduce extends CASgeneric {
 
 		mpreduce.evaluate("procedure myround(x);" 
 				+ "floor(x+0.5);");
-		
 		
 		mpreduce.evaluate("procedure harmonic(n,m); for i:=1:n sum 1/(i**m);");
 		mpreduce.evaluate("procedure uigamma(n,m); gamma(n)-igamma(n,m);");
@@ -688,6 +680,7 @@ public class CASmpreduce extends CASgeneric {
 				+ "begin scalar a1!!, a2!!, a3!!, a4!!, a5!!, p!!, x!!, t!!, y!!, sign!!, result!!;"
 				+ "     on rounded;"
 				+ "		if numberp(x) then 1 else return !*hold(erf(x));"
+				+ "     if x=0 then return 0;"
 				+ "     a1!! :=  0.254829592; "
 				+ "     a2!! := -0.284496736; "
 				+ "     a3!! :=  1.421413741; "
