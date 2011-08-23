@@ -85,6 +85,8 @@ public class CASmpreduce extends CASgeneric {
 		sb.append(mpreduceInput);
 		sb.append(">>");
 		String result = evaluateMPReduce(sb.toString());
+		if (keepInput && ("?".equals(evaluateMPReduce("if keepinput!!=1 then '? else 0"))))
+				result="?";
 
 		// convert result back into GeoGebra syntax
 		if (casInput instanceof FunctionNVar) {
@@ -293,6 +295,13 @@ public class CASmpreduce extends CASgeneric {
 				"ggbcasvarq, ggbcasvarr, ggbcasvars, ggbcasvart, ggbcasvaru, " +
 				"ggbcasvarv, ggbcasvarw;");
 		
+		mpreduce.evaluate("order ggbcasvara, " +
+				"ggbcasvarb, ggbcasvarc, ggbcasvard, ggbcasvare, ggbcasvarf, " +
+				"ggbcasvarg, ggbcasvarh, ggbcasvari, ggbcasvarj, ggbcasvark, " +
+				"ggbcasvarl, ggbcasvarm, ggbcasvarn, ggbcasvaro, ggbcasvarp, " +
+				"ggbcasvarq, ggbcasvarr, ggbcasvars, ggbcasvart, ggbcasvaru, " +
+				"ggbcasvarv, ggbcasvarw, ggbcasvary, ggbcasvarz, ggbcasvarx;");
+		
 		mpreduce.evaluate("let {" +
 				"int(~w/~x,~x) => w*log(abs(x)) when freeof(w,x)," +
 				"int(~w/(~x+~a),~x) => w*log(abs(x+a)) when freeof(w,x) and freeof(a,x)," +
@@ -366,7 +375,7 @@ public class CASmpreduce extends CASgeneric {
 				"   else arg(x!!) >>" +
 				" else myatan2(impart(x),repart(x));");
 		mpreduce.evaluate("procedure polartocomplex(r,phi); r*(cos(phi)+i*sin(phi));");
-		mpreduce.evaluate("procedure polartopoint!§(r,phi); list(r*cos(phi),r*sin(phi));");
+		mpreduce.evaluate("procedure polartopoint!\u00a7(r,phi); list(r*cos(phi),r*sin(phi));");
 		mpreduce.evaluate("procedure complexexponential(r,phi); r*(cos(phi)+i*sin(phi));");
 		mpreduce.evaluate("procedure conjugate(x); conj(x);");
 		mpreduce.evaluate("procedure myrandom(); <<on rounded; random(100000001)/(random(100000000)+1)>>;");
@@ -385,23 +394,6 @@ public class CASmpreduce extends CASgeneric {
 				" else if freeof(x,i) then abs(x)" +
 				" else sqrt(repart(x)^2+impart(x)^2);");
 
-		mpreduce.evaluate("procedure mylog10 x;" +
-				"begin scalar x!!;" +
-				" x!!:=x;" +
-				" on rounded, roundall, numval;" +
-				" if numberp(x!!) then <<" +
-				"   x!!:=log10(x!!);" +
-				"   if floor(x!!)=x!! then <<" +
-				"     if numeric!!=0 then" +
-				"       off rounded, roundall, numval;" +
-				"     return x!!" +
-				"   >>" +
-				" >>;" +
-				" if numeric!!=0 then" +
-				"   off rounded, roundall, numval;" +
-				" return log10(x) " +
-				"end;");
-		
 		mpreduce.evaluate("procedure flattenlist a;" +
 				"if 1=for each elem!! in a product length(elem!!) then for each elem!! in a join elem!! else a;");
 		
