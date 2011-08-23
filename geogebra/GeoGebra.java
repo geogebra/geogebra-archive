@@ -56,6 +56,10 @@ public class GeoGebra extends Object {
     	if(args.containsArg("help")||args.containsArg("v")) {
     		showSplash = false;
     	}
+
+	if(args.containsArg("regressionFile")) {
+		showSplash = false;
+	}
     	
     	if (showSplash) {
     	  // Show splash screen
