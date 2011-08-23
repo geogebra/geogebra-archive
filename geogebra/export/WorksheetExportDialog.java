@@ -93,8 +93,8 @@ public class WorksheetExportDialog extends JDialog {
 	final private static int TYPE_SINGLE_FILE_TABS = 1;
 	final private static int TYPE_MULTIPLE_FILES = 2;
 
-	final private static int TYPE_HTMLFILE = 0;
-	final private static int TYPE_HTMLCLIPBOARD = 1;
+	final public static int TYPE_HTMLFILE = 0;
+	final public static int TYPE_HTMLCLIPBOARD = 1;
 	final private static int TYPE_MEDIAWIKI = 2;
 	final private static int TYPE_GOOGLEGADGET = 3;
 	final private static int TYPE_MOODLE = 4;

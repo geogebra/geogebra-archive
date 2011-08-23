@@ -21,6 +21,9 @@ import geogebra.util.Util;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -162,8 +165,34 @@ public class ConstructionProtocolExportDialog extends JDialog implements
 				runner.start();
 			}
 		});
+		
+		JButton clipboardButton = new JButton(app.getMenu("Clipboard"));
+		clipboardButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						dispose();
+						if (kernelChanged)
+							app.storeUndoInfo();
+						try {
+							Toolkit toolkit = Toolkit.getDefaultToolkit();
+							Clipboard clipboard = toolkit.getSystemClipboard();
+							StringSelection stringSelection = new StringSelection(prot.getHTML(null, null));
+							clipboard.setContents(stringSelection, null);
+						} catch (Exception e) {
+							app.showError("SaveFileFailed");
+							Application.debug(e.toString());
+						}	
+					}
+				};
+				runner.start();
+			}
+		});
+		
+		
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.add(exportButton);
+		buttonPanel.add(clipboardButton);
 		buttonPanel.add(cancelButton);
 
 		JPanel southPanel = new JPanel(new BorderLayout());

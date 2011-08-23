@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -1287,20 +1288,32 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 				 * to a different constant, recompile GeoGebra and try another
 				 * export. Then "go to 1" if your fix was not accurate.
 				 */
-
-				ImageIcon icon = app.getModeIcon(m);
-				String gifFileName = "m" + Integer.toString(m) + ".gif";
-
-				Image img1 = icon.getImage();
-				BufferedImage img2 = toBufferedImage(img1);
-
-				File gifFile = new File(thisPath + "/" + gifFileName);
-				try {
-					ImageIO.write(img2, "gif", gifFile);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				String gifFileName;
+				
+				if(thisPath != null){  //thisPath==null if we want to copy to the clipboard
+					
+					ImageIcon icon = app.getModeIcon(m);
+					gifFileName = "m" + Integer.toString(m) + ".gif";
+	
+					Image img1 = icon.getImage();
+					
+					BufferedImage img2 = toBufferedImage(img1);
+	
+					File gifFile = new File(thisPath + "/" + gifFileName);
+					try {
+						ImageIO.write(img2, "gif", gifFile);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}else{
+				
+					String modeText = app.getKernel().getModeText(m);
+					gifFileName = "http://www.geogebra.org/icons/mode_" + modeText.toLowerCase(Locale.US)
+							+ "_32.gif";
 				}
+				
 				return "<img src=\"" + gifFileName + "\">";
 			}
 			case 3:
@@ -1312,14 +1325,15 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			case 5:
 				return ((RowData) rowList.get(nRow)).geo
 						.getAlgebraDescriptionHTML(false);
-			case 7:
-				return ((RowData) rowList.get(nRow)).consProtocolVisible
-						.toString();
-			/*TODO			
+		
 			case 6:
 				return ((RowData) rowList.get(nRow)).geo
 						.getCaptionDescriptionHTML();			
-			*/
+				
+			case 7:
+				return ((RowData) rowList.get(nRow)).consProtocolVisible
+						.toString();
+				
 			}
 			
 			return "";
