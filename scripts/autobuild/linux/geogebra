@@ -39,7 +39,7 @@ GeoGebra options:
   --v                               Show version information
   --language=<iso_code>             Set language using locale code, e.g. en, de_AT
   --showAlgebraInput=<boolean>      Show/hide algebra input field
-  --showAlgebraInputTop=<boolean>   Ahow algebra input field at top/bottom
+  --showAlgebraInputTop=<boolean>   Show algebra input field at top/bottom
   --showAlgebraWindow=<boolean>     Show/hide algebra window
   --showSpreadsheet=<boolean>       Show/hide spreadsheet
   --showCAS=<boolean>               Show/hide CAS window
