@@ -20,7 +20,7 @@ import geogebra.main.Application;
  * AlgoOptimize: Abstract class for AlgoMaximize and AlgoMinimize
  * Command Minimize[ <dependent variable>, <independent variable> ] (and Minimize[] )
  * which searches for the independent variable which gives the 
- * smallest/laargest result for the dependent variable.
+ * smallest/largest result for the dependent variable.
  * 
  *  Packages the relationship as a RealRootFunction for the ExtremumFinder.
  *  
@@ -94,7 +94,11 @@ public abstract class AlgoOptimize extends AlgoElement{
    		old=indep.getValue();
    		counter++;														//debug(""+counter+" invocation: Executing!");
    		isrunning=true;
-   		
+   		if(indep.getIntervalMaxObject()==null||
+   				indep.getIntervalMinObject()==null){
+   			result.setUndefined();
+   			return;
+   		}
    		if(type==MINIMIZE){
    			res=extrFinder.findMinimum(indep.getIntervalMin(),indep.getIntervalMax(),
     									i_am_not_a_real_function,5.0E-8);	//debug("Minimize ("+counter+") found "+res);
