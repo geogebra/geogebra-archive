@@ -2914,7 +2914,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			sliderValue = null;
 			if (hits.size() == 1) {
 				GeoElement hit = ((GeoElement)hits.get(0));
-				if (hit.isGeoNumeric() && ((GeoNumeric)hit).isSlider()) {
+				int labelMode = hit.getLabelMode();
+				if (hit.isGeoNumeric() && ((GeoNumeric)hit).isSlider() && 
+						(labelMode == GeoElement.LABEL_NAME_VALUE || labelMode == GeoElement.LABEL_VALUE)) {
 
 					// only do this if we are not pasting something from the clipboard right now
 					// because moving on the label of a slider might move the pasted objects away otherwise 
