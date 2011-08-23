@@ -232,7 +232,7 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		// make sure AutoComplete works
 		if (this instanceof AutoCompleteTextField) {
 			AutoCompleteTextField tf = (AutoCompleteTextField)this;
-			tf.updateCurrentWord();
+			tf.updateCurrentWord(false);
 			tf.startAutoCompletion();
 		}
 

@@ -2569,12 +2569,27 @@ public class Application implements KeyEventDispatcher {
 		return null;
 	}
 
-	final public boolean isCommand(String key) {
-		initTranslatedCommands();		
+	final public String getReverseCommand(String key) {
+		initTranslatedCommands();	
+		
+		key = key.toLowerCase(Locale.US);
 		try{
-			return rbcommand.getString(key) != null;
+
+			Enumeration<String> enume = rbcommand.getKeys();
+			
+			while (enume.hasMoreElements()) {
+				String s = enume.nextElement();
+				
+				// check internal commands
+				if (s.toLowerCase(Locale.US).equals(key)) return s;
+				
+				// check localized commands
+				if (rbcommand.getString(s).toLowerCase(Locale.US).equals(key)) return s;
+			}
+			
+			return null;
 		} catch (Exception e) {
-			return false;
+			return null;
 		}
 	}	
 

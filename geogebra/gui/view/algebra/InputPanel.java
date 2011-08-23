@@ -172,7 +172,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		// make sure autocomplete works for the Virtual Keyboard
 		if (textComponent instanceof AutoCompleteTextField) {
 			((AutoCompleteTextField)textComponent).mergeKoreanDoubles();
-			((AutoCompleteTextField)textComponent).updateCurrentWord();
+			((AutoCompleteTextField)textComponent).updateCurrentWord(false);
 			((AutoCompleteTextField)textComponent).startAutoCompletion();
 		}
 		

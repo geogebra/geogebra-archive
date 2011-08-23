@@ -423,7 +423,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		mergeKoreanDoubles();
 
 		if (getAutoComplete()) {
-			updateCurrentWord();
+			updateCurrentWord(false);
 			startAutoCompletion();
 		}
 
@@ -556,10 +556,32 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 * Updates curWord to word at current caret position.
 	 * curWordStart, curWordEnd are set to this word's start and end position
 	 */
-	public void updateCurrentWord() {                    
+	public void updateCurrentWord(boolean searchRight) {                    
 		String text = getText();  
 		if (text == null) return;
-		int caretPos = getCaretPosition();          
+		int caretPos = getCaretPosition();   
+		
+		if (searchRight) {
+			// search to right first to see if we are inside [ ]
+			boolean insideBrackets = false;
+			curWordStart = caretPos;
+			
+			while (curWordStart < text.length()) {
+				char c = text.charAt(curWordStart);
+				if (c == '[') break;
+				if (c == ']') insideBrackets = true;
+				curWordStart++;
+			}
+			
+			// found [, so go back until we get a ]
+			if (insideBrackets) {
+				while (caretPos > 0 && text.charAt(caretPos) != '[') caretPos--;
+			}
+		}
+		
+		
+		
+		
 		// search to the left
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
@@ -655,7 +677,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	private List<String> resetCompletions() {
 		String text = getText();
-		updateCurrentWord();
+		updateCurrentWord(false);
 		completions = null;
 		if(isEqualsRequired && !text.startsWith("="))
 			return null;
@@ -858,12 +880,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */
 	public void showError(Exception e) {
 		if (e instanceof MyException) {
-			updateCurrentWord();
+			updateCurrentWord(true);
 			int err = ((MyException) e).getErrorType();
 			if (err == MyException.INVALID_INPUT) {
-				if (app.isCommand(getCurrentWord())) {
+				String command = app.getReverseCommand(getCurrentWord());
+				if (command != null) {
 
-					app.showError(new MyError(app, app.getError("InvalidInput")+"\n\n"+app.getPlain("Syntax")+":\n"+app.getCommandSyntax(getCurrentWord()),getCurrentWord()));					
+					app.showError(new MyError(app, app.getError("InvalidInput")+"\n\n"+app.getPlain("Syntax")+":\n"+app.getCommandSyntax(command),getCurrentWord()));					
 					return;
 				}			
 			} 
