@@ -74,7 +74,7 @@ public class Construction3D extends Construction {
 	
 	
 	
-	protected void initGeoTable() {		
+	protected void initGeoTables() {		
 		super.initGeoTables();
 		
 				
