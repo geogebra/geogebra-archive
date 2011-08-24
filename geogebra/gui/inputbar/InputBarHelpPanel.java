@@ -1,5 +1,6 @@
 package geogebra.gui.inputbar;
 
+import geogebra.GeoGebra;
 import geogebra.gui.SetLabels;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SelectionTable;
@@ -659,7 +660,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	    doc.setParagraphAttributes(0,doc.getLength(),attrs, false);
 		
 		
-		if (!descriptionCAS.equals(cmd + app.syntaxCAS)){
+		if (GeoGebra.CAS_VIEW_ENABLED && !descriptionCAS.equals(cmd + app.syntaxCAS)){
 			if (!description.equals(cmd + app.syntaxStr))
 				try {
 					doc.insertString(doc.getLength(), description+"\n", doc.getStyle("regular"));

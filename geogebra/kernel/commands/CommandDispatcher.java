@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.commands;
 
+import geogebra.GeoGebra;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -66,9 +67,9 @@ public class CommandDispatcher {
     public static final int TABLE_GEOGEBRA = 15;
     public static final int TABLE_OPTIMIZATION = 16;
     public static final int TABLE_ENGLISH = 17;
-    public static final int TABLE_CAS=18;
     
-    private int tableCount = 19;
+    public static final int TABLE_CAS=18;   
+    private int tableCount = GeoGebra.CAS_VIEW_ENABLED ? 19 : 18;
     
     
     public String getSubCommandSetName(int index){
@@ -790,7 +791,7 @@ public class CommandDispatcher {
     	// do *after* above loop as we must add only those CAS commands without a ggb equivalent
     	//=============================================================
     	
-    	if (app.useFullGui() && isCasActive)
+    	if (GeoGebra.CAS_VIEW_ENABLED && app.useFullGui() && isCasActive)
     		initCASCommands();
 
     }
@@ -799,6 +800,9 @@ public class CommandDispatcher {
      * Loads CAS commands into the cmdSubTable.
      */
     public void initCASCommands() {
+    	
+    	if (!GeoGebra.CAS_VIEW_ENABLED) return;
+    	
     	isCasActive = true;
     	
     	// this method might get called during initialization. In that case
