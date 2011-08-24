@@ -12,7 +12,9 @@ import geogebra.kernel.commands.CmdIntersect;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -144,6 +146,19 @@ public  GeoElement[] process(Command c) throws MyError {
         			return ret;
 
         		}
+        		
+        		//TODO remove this if conflicting another case
+        		else if ((arg[0] instanceof GeoPlaneND) && (arg[1] instanceof GeoQuadricND)){
+        			GeoElement[] ret =
+        			{
+        					kernel.getManager3D().Intersect(
+        							c.getLabel(),
+        							(GeoPlaneND) arg[0],
+        							(GeoQuadric3D) arg[1])};
+        			return ret;
+        		}
+        		
+        		
 
         	}
         	
