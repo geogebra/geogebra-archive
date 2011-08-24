@@ -2860,6 +2860,7 @@ public class Kernel {
 		GeoPoint p = algo.getP();        
 		if (complex) {
 			p.setMode(COORD_COMPLEX);
+			p.update();
 		}
 		if (!addToConstruction) {
 			cons.setSuppressLabelCreation(oldMacroMode);
