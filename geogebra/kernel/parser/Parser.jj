@@ -1365,37 +1365,73 @@ ExpressionValue enunary():
 ExpressionValue enpower():
 {
     ExpressionValue ret, f;
-    Token c;
+    Token c = null;
+    ArrayList<ExpressionValue> exponentList = null;
     
 }
 {	
     ret = enfactorial()         
-    (   
+    (      	(   
     	( c = <POWERN> )
         {            
             return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
             			 new MyDouble(kernel, c.image));  
-	    } 
-    |       
-    	(LOOKAHEAD(<POWER>) <POWER> f = enunary()
-        {            
+	    }
+	 	)     
+    |                   
+    	(
+    	  	<POWER> (c = <MINUS> | c = <PLUS>)? f = enfactorial()
+        {
+          	// -f  = -1*f
+			if (c != null && c.kind == MINUS)			{			  				
+         		f = new ExpressionNode(kernel, new MyDouble(kernel, -1.0d), ExpressionNode.MULTIPLY, f);
+         		c = null; // make sure we forget minus for next exponent
+            }
+        	
+			// collect exponents
+			if (exponentList == null)
+				exponentList = new ArrayList<ExpressionValue>();
+            exponentList.add(f);  
+
+           /*
         	// check if we have e^
         	if (ret.isExpressionNode()) {
         		ExpressionNode en = (ExpressionNode) ret;
 	        	if (en.isLeaf() &&  en.getLeft() instanceof MyDouble) {
 	        		MyDouble num = (MyDouble) en.getLeft();
 	        		if (num.getDouble() == Math.E) {      	
-	        	    	return new ExpressionNode(kernel, f, ExpressionNode.EXP, null);        		
+	        	    	ret = new ExpressionNode(kernel, f, ExpressionNode.EXP, null);        		
 	        		} 
 	        	}       
         	}
-        	
-        	// standard case ret^f
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, f);                              
-        }      
-    	)*
-    )     
-    { return ret; }    
+			*/			         	                           
+        }
+        )*                       
+   )
+    {
+		if (exponentList == null)
+			return ret;
+      
+      	if (MPReduceParsing)      	{      	 
+	        // MPReduce: left associative: a^b^c = (a^b)^c
+			for (int i=0; i< exponentList.size(); i++)			{				ExpressionValue exponent = exponentList.get(i);
+				ret = new ExpressionNode(kernel, ret, ExpressionNode.POWER, exponent);
+			}
+		}
+		else		{      		// GeoGebra: right associative: a^b^c = a^(b^c)
+      		int size = exponentList.size();
+      		ExpressionValue tempEV = exponentList.get(size-1); // last exponent, e.g. c
+      		for (int i=size-2; i >= 0; i--)
+			{
+				ExpressionValue prevExponent = exponentList.get(i);
+				tempEV = new ExpressionNode(kernel, prevExponent, ExpressionNode.POWER, tempEV);
+			}
+			ret = new ExpressionNode(kernel, ret, ExpressionNode.POWER, tempEV);
+		}
+  
+      	return ret;
+
+      }    
 }
 
 /**
