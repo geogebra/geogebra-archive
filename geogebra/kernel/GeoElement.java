@@ -668,10 +668,10 @@ public abstract class GeoElement
 	 * @param points
 	 * @return copy of points in construction cons
 	 */
-	public static GeoPoint [] copyPoints(Construction cons, GeoPoint [] points) {
+	public static GeoPoint [] copyPoints(Construction cons, GeoPointND [] points) {
 		GeoPoint [] pointsCopy = new GeoPoint[points.length];
 		for (int i=0; i < points.length; i++) {
-			pointsCopy[i] = (GeoPoint) points[i].copyInternal(cons);
+			pointsCopy[i] = (GeoPoint) ((GeoPoint) points[i]).copyInternal(cons);
 			pointsCopy[i].set((GeoElement) points[i]);
 		}
 		return pointsCopy;

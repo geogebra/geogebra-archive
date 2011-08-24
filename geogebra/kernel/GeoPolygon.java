@@ -434,12 +434,20 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	}    
 	
 	public GeoElement copyInternal(Construction cons) {						
-		GeoPolygon ret = new GeoPolygon(cons, null); 
-		ret.points = GeoElement.copyPointsND(cons, (GeoPointND[]) points);		
+		GeoPolygon ret = newGeoPolygon(cons);
+		ret.points = copyPoints(cons);		
 		ret.set(this);
 				
 		return ret;		
-	} 		
+	} 	
+	
+	protected GeoPolygon newGeoPolygon(Construction cons){
+		return new GeoPolygon(cons, null); 
+	}
+	
+	protected GeoPointND[] copyPoints(Construction cons){
+		return GeoElement.copyPoints(cons, points);
+	}
 	
 	/**
 	 * Returns new point in the same construction

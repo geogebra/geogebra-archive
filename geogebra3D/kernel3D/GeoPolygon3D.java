@@ -549,16 +549,15 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	}
 	
 	
-	public GeoElement copyInternal(Construction cons) {						
-		GeoPolygon3D ret = new GeoPolygon3D(cons, null); 
-		ret.points = GeoElement.copyPointsND(cons, points);		
-		ret.set(this);
-				
 
-		
-		
-		return ret;		
-	} 
+	
+	protected GeoPolygon newGeoPolygon(Construction cons){
+		return new GeoPolygon3D(cons, null); 
+	}
+	
+	protected GeoPointND[] copyPoints(Construction cons){
+		return GeoElement.copyPointsND(cons, points);
+	}
 	
 	protected GeoPointND newGeoPoint(){
 		return new GeoPoint3D(cons);
