@@ -3885,8 +3885,12 @@ public abstract class GeoElement
 
 	final public String getAlgebraDescriptionHTML(boolean addHTMLtag) {
 		if (strAlgebraDescriptionHTMLneedsUpdate) {
-			strAlgebraDescriptionHTML = indicesToHTML(getAlgebraDescription(), false);
-
+			
+			if(this instanceof GeoText){
+				strAlgebraDescriptionHTML = indicesToHTML(toValueString(),false);
+			} else {
+				strAlgebraDescriptionHTML = indicesToHTML(getAlgebraDescription(), false);
+			}
 			strAlgebraDescriptionHTMLneedsUpdate = false;
 		}
 
