@@ -1891,23 +1891,25 @@ class CmdConic extends CommandProcessor {
 			if (arg[0].isGeoList())
 				return kernel.Conic(c.getLabel(), (GeoList) arg[0]);
 		case 5:
-			if ((ok[0] = (arg[0].isGeoPoint()))
-					&& (ok[1] = (arg[1].isGeoPoint()))
-					&& (ok[2] = (arg[2].isGeoPoint()))
-					&& (ok[3] = (arg[3].isGeoPoint()))
-					&& (ok[4] = (arg[4].isGeoPoint()))) {
-				GeoPoint[] points = { (GeoPoint) arg[0], (GeoPoint) arg[1],
-						(GeoPoint) arg[2], (GeoPoint) arg[3], (GeoPoint) arg[4] };
-				GeoElement[] ret = { kernel.Conic(c.getLabel(), points) };
-				return ret;
-			} else {
-				if (!ok[0])
-					throw argErr(app, "Conic", arg[0]);
-				else
-					throw argErr(app, "Conic", arg[1]);
+			for (int i=0;i<5;i++){
+				if (!arg[i].isGeoPoint()){
+					throw argErr(app,"Conic",arg[i]);
+				}
 			}
-
+			GeoPoint[] points = { (GeoPoint) arg[0], (GeoPoint) arg[1],
+					(GeoPoint) arg[2], (GeoPoint) arg[3], (GeoPoint) arg[4] };
+			GeoElement[] ret = { kernel.Conic(c.getLabel(), points) };
+			return ret;
 		default:
+			if (arg[0].isNumberValue()) {
+				// try to create list of numbers
+				GeoList list = wrapInList(kernel, arg, arg.length,
+						GeoElement.GEO_CLASS_NUMERIC);
+				if (list != null) {
+					ret = kernel.Conic(c.getLabel(), list);
+					return ret;
+				}
+			}
 			throw argNumErr(app, "Conic", n);
 		}
 	}
