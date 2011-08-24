@@ -248,7 +248,7 @@ public class GuiManager {
 		layout.registerPanel(new AlgebraDockPanel(app));
 		
 		// register CAS view 
-		layout.registerPanel(new CasDockPanel(app));
+		if (GeoGebra.CAS_VIEW_ENABLED) layout.registerPanel(new CasDockPanel(app));
 		
 		// register EuclidianView2  
 		layout.registerPanel(newEuclidian2DockPanel());

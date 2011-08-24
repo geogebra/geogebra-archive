@@ -613,7 +613,7 @@ public class Application implements KeyEventDispatcher {
 							+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
 							+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
 							+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
-							+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
+							+ (GeoGebra.CAS_VIEW_ENABLED ? "  --showCAS=BOOLEAN\tshow/hide CAS window\n" : "")
 							+ "  --showSplash=BOOLEAN\tenable/disable the splash screen\n"
 							+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
 							+ "  --fontSize=NUMBER\tset default font size\n"

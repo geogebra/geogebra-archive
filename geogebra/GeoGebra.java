@@ -20,10 +20,14 @@ public class GeoGebra extends Object {
 	
 	// GeoGebra version
 	public static final String BUILD_DATE = "24 August 2011";
-	public static final String VERSION_STRING = "3.9.339.0";
+	public static final String VERSION_STRING = "3.9.339.0"; // 4.0
+	//public static final String VERSION_STRING = "4.1.0.0"; // 4.2
+	//public static final String VERSION_STRING = "4.9.0.0"; // 3D
 	public static final String SPLASH_STRING = "splash40RC.png";
 	public static final String SHORT_VERSION_STRING = "4.0"; // used for online archive
-
+	public static final boolean CAS_VIEW_ENABLED = true;
+	public static final boolean IS_PRE_RELEASE = true; //!VERSION_STRING.endsWith(".0");
+	
 	// File format versions
 	public static final String XML_FILE_FORMAT = "4.0";
 	public static final String GGB_XSD_FILENAME = "ggb.xsd"; // for ggb files
@@ -31,7 +35,6 @@ public class GeoGebra extends Object {
 	public static final String I2G_FILE_FORMAT = "0.1.20080731";
 	
 	// pre-releases and I2G
-	public static final boolean IS_PRE_RELEASE = false; //!VERSION_STRING.endsWith(".0");
 	public static final boolean DISABLE_I2G = !IS_PRE_RELEASE;	
 
 	// URLs
