@@ -109,10 +109,10 @@ public class EditMenu extends BaseMenu {
 		setMenuShortCutAccelerator(selectCurrentLayerItem, 'L');
 
 		selectAllDescendantsItem = add(selectAllDescendantsAction);
-		setMenuShortCutShiftAccelerator(selectAllDescendantsItem, 'Q');
+		setMenuShortCutShiftAccelerator(selectAllDescendantsItem, 'J');
 
 		selectAllAncestorsItem = add(selectAllAncestorsAction);
-		setMenuShortCutAccelerator(selectAllAncestorsItem, 'Q');
+		setMenuShortCutAccelerator(selectAllAncestorsItem, 'J');
 
 		selectionSeparator = new JSeparator();
 		add(selectionSeparator);

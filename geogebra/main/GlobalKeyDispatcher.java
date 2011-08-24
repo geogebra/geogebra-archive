@@ -440,8 +440,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 				break;
 				
-			// Ctrl-(shift)-Q
-			// (deprecated - doesn't work on MacOS)
+			// Ctrl-(shift)-Q (deprecated - doesn't work on MacOS)
+			// Ctrl-(shift)-J
+			case KeyEvent.VK_J:
 			case KeyEvent.VK_Q:
 				if (event.isShiftDown())
 					app.selectAllDescendants();
