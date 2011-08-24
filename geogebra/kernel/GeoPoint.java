@@ -1681,6 +1681,8 @@ GeoPointND, Animatable, Transformable  {
 				//get all "randomizable" predecessors of this and geo
 				TreeSet<GeoElement> pred = this.getAllRandomizablePredecessors();
 				ArrayList<GeoElement> predList = new ArrayList<GeoElement>();
+				TreeSet<AlgoElement> tempSet = new TreeSet<AlgoElement>();
+				
 				predList.addAll(pred);
 				pred.addAll(geo.getAllRandomizablePredecessors());
 				
@@ -1721,20 +1723,21 @@ GeoPointND, Animatable, Transformable  {
 
 				// recover parameters of current construction
 				it = pred.iterator();
-				GeoElement lastIndepGeo = null;
 				while (it.hasNext()) {
 					GeoElement predGeo = (GeoElement) it.next();
-					if (predGeo.isIndependent())
-						lastIndepGeo = predGeo;
-					else {
-						if (lastIndepGeo != null) lastIndepGeo.updateCascade();
+					if ( !predGeo.isIndependent()) {
+						GeoElement.updateCascadeUntil(predList, tempSet, predGeo.algoParent);
 					}
 					predGeo.recoverFromClone();
 				}
-				if (!this.isFixed())
-					this.updateCascade();
-				if (!geo.isFixed())
-					geo.updateCascade();
+				
+				//this does not work!
+				//if (!this.isFixed())
+				//this.updateCascade();
+				//if (!geo.isFixed())
+				//geo.updateCascade();
+				
+				GeoElement.updateCascade(predList, tempSet);
 				
 				// if all of the cases are good, add incidence
 				if (incident)

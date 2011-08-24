@@ -3275,7 +3275,7 @@ public abstract class GeoElement
 	 *
 	 * @param tempSet a temporary set that is used to collect all algorithms that need to be updated
 	 */
-	final static public synchronized void updateCascadeUntil(ArrayList<?> geos, TreeSet<AlgoElement> tempSet, AlgoElement lastAlgo) {		
+	final static public void updateCascadeUntil(ArrayList<?> geos, TreeSet<AlgoElement> tempSet, AlgoElement lastAlgo) {		
 				// only one geo: call updateCascade()
 		if (geos.size() == 1) {
 			ConstructionElement ce = (ConstructionElement) geos.get(0);
@@ -3311,9 +3311,12 @@ public abstract class GeoElement
 			while (it.hasNext()) {
 				AlgoElement algo = (AlgoElement) it.next();
 				
-				if (algo == lastAlgo)
-					return;
 				algo.update();
+				
+				if (algo == lastAlgo) {
+					return;
+				}
+					
 			}
 		}
 	}
@@ -3429,7 +3432,7 @@ public abstract class GeoElement
 	}
 	
 	final public void addRandomizablePredecessorsToSet(TreeSet<GeoElement> set) {
-		if (this.isRandomizable())
+		if (this.isRandomizable() && !cloneInUse)
 			set.add(this);
 		
 		if (algoParent!=null) { // parent algo
@@ -6056,15 +6059,18 @@ public abstract class GeoElement
 	
 	
 	private Stack<GeoElement> tempClone;
+	private boolean cloneInUse = false;
 	public void storeClone() {
 		if (tempClone==null)
 			tempClone = new Stack<GeoElement>();
 		
 		tempClone.push(this.copy());
+		this.cloneInUse = true;
 	}
 	public void recoverFromClone() {
 		if (tempClone!=null)
 			this.set(tempClone.pop());
+		this.cloneInUse = false;
 	}
 	public void randomizeForProbabilisticChecking(){
 		//overode by subclasses
