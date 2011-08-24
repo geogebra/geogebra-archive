@@ -71,14 +71,23 @@ public class TwoVarStatPanel extends StatTable implements  ActionListener {
 		this.isPairedData = isPairedData;
 		setStatTable( getRowCount(), getRowNames(), getColumnCount(), getColumnNames());
 
-		// set the comboboxes
+		// create an array of data titles for the table celll comboboxes
+		// the array includes and extra element to store the combo box label
 		String[] titles = statDialog.getDataTitles();
-
+		String[]titlesPlusLabel = new String[titles.length+1];
+		System.arraycopy(titles, 0, titlesPlusLabel, 0 , titles.length);
+			
+		//create hash maps for the table comboboxes: 
+		//   key = cell location for the combo box
+		//   value = String[] to hold menu items plus label
 		HashMap<Point, String[]> cellMap = new HashMap<Point, String[]>();
-		cellMap.put(new Point(0,0), titles);
-		cellMap.put(new Point(1,0), titles);
+		titlesPlusLabel[titlesPlusLabel.length-1] = app.getMenu("Sample1");
+		cellMap.put(new Point(0,0), titlesPlusLabel.clone());
+		titlesPlusLabel[titlesPlusLabel.length-1] = app.getMenu("Sample2");
+		cellMap.put(new Point(1,0), titlesPlusLabel.clone());
+		
+		// set the table combo boxes
 		setComboBoxCells(cellMap, this);
-
 		setComboCellSelectedIndex(selectedDataIndex[0], 0, 0);
 		setComboCellSelectedIndex(selectedDataIndex[1], 1, 0);
 		getModel().setValueAt(selectedDataIndex[0], 0, 0);

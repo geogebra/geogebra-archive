@@ -174,11 +174,20 @@ public class StatTable extends JScrollPane {
 			comboBoxRendererMap = new HashMap<Point,MyComboBoxRenderer>();
 		comboBoxRendererMap.clear();
 
-		int i = 0;
 		for(Point cell : cellMap.keySet()){
-			i++; // i should be just 1 or 2
-			comboBoxEditorMap.put(cell, new MyComboBoxEditor(cellMap.get(cell)));
-			comboBoxRendererMap.put(cell, new MyComboBoxRenderer(app.getMenu("Sample"+i)+":", cellMap.get(cell)));
+			
+			// get the String data for this combo box
+			String[] items = cellMap.get(cell);
+			
+			// extract the menu items and the combo box label
+			String comboBoxLabel = items[items.length-1];
+			String[] comboBoxItems = new String[items.length-1];
+			System.arraycopy(items, 0, comboBoxItems, 0 , comboBoxItems.length);
+			
+			// create the comboBox editors/renderers and map them   
+			comboBoxEditorMap.put(cell, new MyComboBoxEditor(comboBoxItems));
+			comboBoxRendererMap.put(cell, new MyComboBoxRenderer(comboBoxLabel, comboBoxItems));
+			
 		}
 	}
 
