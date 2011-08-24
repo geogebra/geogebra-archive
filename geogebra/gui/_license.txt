@@ -88,7 +88,8 @@ TRANSLATORS
   * Hebrew: Guy Hed (Israel)
   * Hungarian: Zsuzsanna Papp-Varga, Andras Hrasko, Peter Csiba,
       Zoltan Major, Maria Sz. Fekete, Ildiko Kezer, Viktoria Kmecs,
-      Szabolcs Sulik, Lajos Szilassi, Zoltan Kovacs (Hungary)
+      Szabolcs Sulik, Lajos Szilassi, Zoltan Kovacs, Agnes Tamcsu,
+      Tamas Kalcza (Hungary)
   * Icelandic: Freyja Hreinsdottir (Iceland)
   * Indonesian: Aam Sudrajat (Indonesia)
   * Italian: Alessandra Tomasi, Simona Riva (Italy)
