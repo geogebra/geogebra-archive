@@ -171,20 +171,25 @@ public class Application implements KeyEventDispatcher {
 	// supported GUI languages (from properties files)
 	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
 	static {
-		supportedLocales.add(new Locale("sq")); // Albanian
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("sq")); // Albanian
 		
-		supportedLocales.add(new Locale("ar")); // Arabic
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ar")); // Arabic
 		supportedLocales.add(new Locale("eu")); // Basque
 		supportedLocales.add(new Locale("bs")); // Bosnian
-		supportedLocales.add(new Locale("bg")); // Bulgarian
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("bg")); // Bulgarian
 		supportedLocales.add(new Locale("ca")); // Catalan
-		supportedLocales.add(new Locale("zh", "CN")); // Chinese (Simplified)
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("zh", "CN")); // Chinese (Simplified)
 		supportedLocales.add(new Locale("zh", "TW")); // Chinese (Traditional)
 		supportedLocales.add(new Locale("hr")); // Croatian
 		supportedLocales.add(new Locale("cs")); // Czech
 		supportedLocales.add(new Locale("da")); // Danish
 		supportedLocales.add(new Locale("nl")); // Dutch
-		supportedLocales.add(new Locale("en")); // English
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("en")); // English
 		supportedLocales.add(new Locale("en", "GB")); // English (UK)
 		supportedLocales.add(new Locale("en", "AU")); // English (Australia)
 		supportedLocales.add(new Locale("et")); // Estonian
@@ -197,20 +202,26 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("el")); // Greek
 		// supportedLocales.add(new Locale("gu")); // Gujarati
 		supportedLocales.add(new Locale("iw")); // Hebrew
-		supportedLocales.add(new Locale("hi")); // Hindi
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("hi")); // Hindi
 		supportedLocales.add(new Locale("hu")); // Hungarian
 		supportedLocales.add(new Locale("is")); // Icelandic
-		supportedLocales.add(new Locale("in")); // Indonesian
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("in")); // Indonesian
 		supportedLocales.add(new Locale("it")); // Italian
-		supportedLocales.add(new Locale("ja")); // Japanese
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ja")); // Japanese
 		supportedLocales.add(new Locale("kk")); // Kazakh
 		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("lt")); // Lithuanian
-		supportedLocales.add(new Locale("ml")); // Malayalam (Virtual Keyboard & numerals only)
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ml")); // Malayalam (Virtual Keyboard & numerals only)
 		supportedLocales.add(new Locale("mk")); // Macedonian
-		supportedLocales.add(new Locale("mr")); // Marathi
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("mr")); // Marathi
 		supportedLocales.add(new Locale("ms")); // Malay
-		supportedLocales.add(new Locale("ne")); // Nepalese
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ne")); // Nepalese
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
 		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian(Nynorsk)
 		// supportedLocales.add(new Locale("oc")); // Occitan
@@ -219,10 +230,12 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("pt", "BR")); // Portugese (Brazil)
 		supportedLocales.add(new Locale("pt", "PT")); // Portuguese (Portugal)
 		// supportedLocales.add(new Locale("pa")); // Punjabi
-		supportedLocales.add(new Locale("ro")); // Romanian
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("ro")); // Romanian
 		supportedLocales.add(new Locale("ru")); // Russian
 		supportedLocales.add(new Locale("sr")); // Serbian
-		supportedLocales.add(new Locale("si")); // Sinhala (Sri Lanka)
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("si")); // Sinhala (Sri Lanka)
 		
 		supportedLocales.add(new Locale("sk")); // Slovakian
 		supportedLocales.add(new Locale("sl")); // Slovenian
@@ -232,13 +245,16 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ta")); // Tamil
 		
 		// supportedLocales.add(new Locale("te")); // Telugu
-		supportedLocales.add(new Locale("th")); // Thai
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("th")); // Thai
 
 		supportedLocales.add(new Locale("tr")); // Turkish
-		 supportedLocales.add(new Locale("uk")); // Ukrainian
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("uk")); // Ukrainian
 		// supportedLocales.add(new Locale("ur")); // Urdu
 		supportedLocales.add(new Locale("vi")); // Vietnamese
-		supportedLocales.add(new Locale("cy")); // Welsh
+		if(GeoGebra.IS_PRE_RELEASE)
+			supportedLocales.add(new Locale("cy")); // Welsh
 		if(GeoGebra.IS_PRE_RELEASE){
 			supportedLocales.add(new Locale("ia")); // Interlingua
 		}
@@ -255,7 +271,7 @@ public class Application implements KeyEventDispatcher {
 	static {
 		specialLanguageNames.put("bs", "Bosnian");
 		specialLanguageNames.put("zhCN", "Chinese Simplified");
-		specialLanguageNames.put("zhTW", "Chinese Traditional");
+		//xspecialLanguageNames.put("zhTW", "Chinese Traditional");
 		specialLanguageNames.put("en", "English (US)");
 		specialLanguageNames.put("enGB", "English (UK)");
 		specialLanguageNames.put("enAU", "English (Australia)");
