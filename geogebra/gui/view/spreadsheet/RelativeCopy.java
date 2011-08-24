@@ -572,7 +572,7 @@ public class RelativeCopy {
 			
 			// check if text was the label of an existing geo 
 			// toLowerCase() added to fix bug A1=1, enter just 'a1' or 'A1' into cell B1 -> A1 disappears
-			if (text.toLowerCase(Locale.US).equals(newValues[0].getLabel().toLowerCase(Locale.US))) {
+			if (text.toUpperCase(Locale.US).equals(newValues[0].getLabel())) {
 				// make sure we create a copy of this existing or auto-created geo 
 				// by providing the new cell name in the beginning
 				text = name + " = " + text;		
