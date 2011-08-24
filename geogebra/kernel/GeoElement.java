@@ -2280,7 +2280,7 @@ public abstract class GeoElement
 		if (caption == null)
 			return "";
 		else
-			return caption;
+			return getCaption();
 	}
 
 
