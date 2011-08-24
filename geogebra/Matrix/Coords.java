@@ -146,7 +146,10 @@ public class Coords
 	/** returns v "z-coord"  
 	 * @return z-coord*/	
 	public double getZ(){
-		return val[2];
+		if (val.length > 2)
+			return val[2];
+		else
+			return 0; // z coord for 2D points
 	}	
 	
 	/** returns v "w-coord"  
