@@ -21,6 +21,7 @@ public class GeoGebra extends Object {
 	// GeoGebra version
 	public static final String BUILD_DATE = "24 August 2011";
 	public static final String VERSION_STRING = "3.9.339.0";
+	public static final String SPLASH_STRING = "splash40RC.png";
 	public static final String SHORT_VERSION_STRING = "4.0"; // used for online archive
 
 	// File format versions
@@ -63,7 +64,7 @@ public class GeoGebra extends Object {
     	
     	if (showSplash) {
     	  // Show splash screen
-		  URL imageURL = GeoGebra.class.getResource("/geogebra/splash.png");
+		  URL imageURL = GeoGebra.class.getResource("/geogebra/"+SPLASH_STRING);
 		  if (imageURL != null) {
 		      splashFrame = SplashWindow.splash(
 		          Toolkit.getDefaultToolkit().createImage(imageURL)
