@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraColorConstants;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -61,7 +62,7 @@ public class ConstructionDefaults {
 	// points
 	public static final Color colPoint = Color.blue;
 	public static final Color colDepPoint = Color.darkGray;
-	public static final Color colPathPoint = new Color(125, 125, 255);
+	public static final Color colPathPoint = GeoGebraColorConstants.LIGHTBLUE; //new Color(125, 125, 255);
 	public static final Color colRegionPoint = colPathPoint;
 	public static final Color colComplexPoint = colPoint;
 	
@@ -73,12 +74,12 @@ public class ConstructionDefaults {
 	private static final Color colConic = Color.black;
 
 	// polygons
-	protected static final Color colPolygon = new Color(153, 51, 0);	
+	protected static final Color colPolygon = GeoGebraColorConstants.BROWN; //new Color(153, 51, 0);	
 	public static final float DEFAULT_POLYGON_ALPHA = 0.1f;
 	public static final float DEFAULT_INEQUALITY_ALPHA = 0.25f;
 
 	// angles
-	private static final Color colAngle = new Color(0, 100, 0);
+	private static final Color colAngle = GeoGebraColorConstants.DARKGREEN; //new Color(0, 100, 0);
 	public static final float DEFAULT_ANGLE_ALPHA = 0.1f;
 	
 	// numbers eg integrals, barcharts
@@ -91,7 +92,7 @@ public class ConstructionDefaults {
 	private static final Color colFunction = Color.black;
 	
 	// lists
-	private static final Color colList = new Color(0, 110, 0);
+	private static final Color colList = GeoGebraColorConstants.DARKGREEN; //new Color(0, 110, 0);
 
 		
 	/** preview color */

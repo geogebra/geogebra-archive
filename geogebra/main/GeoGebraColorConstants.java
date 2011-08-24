@@ -34,12 +34,18 @@ public class GeoGebraColorConstants {
 	 public static final Color LIGHTPURPLE = new  Color(204, 204, 255); // wikipedia periwinkle 
 	 public static final Color LIGHTVIOLET = new  Color(224, 176, 255); // wikipedia mauve 
 	 public static final Color TURQUOISE = new  Color(175, 238, 238); // wikipedia pale turquoise 
-	 public static final Color LIGHTGREEN = new  Color(208, 240, 192); // wikipedia tea green 
-	 
+
 	 public static final Color MAROON = new  Color(128, 0, 0); 
-	 public static final Color BROWN = new  Color(150, 75, 0);
-	 public static final Color GOLD = new  Color(255, 215, 0); 
+	 
+	 // don't change: default Polygon color
+	 public static final Color BROWN = new Color(153, 51, 0);	
+	 // don't change: default Angle color
 	 public static final Color DARKGREEN = new  Color(0, 100, 0); 
+	 // don't change: default Point on Path color
+	 public static final Color LIGHTBLUE = new Color(125, 125, 255);
+	 
+	 
+	 public static final Color GOLD = new  Color(255, 215, 0); 
 	 public static final Color DARKBLUE = new  Color(28, 57, 187); // wikipedia persian blue 
 	 public static final Color INDIGO = new  Color(75,0,130);
 	 public static final Color PURPLE = new  Color(128,0,128);
@@ -64,9 +70,15 @@ public class GeoGebraColorConstants {
 	 * key = color name from colors.properties
 	 * value = RBG color 
 	 */
-	private static final HashMap<String, Color> geogebraColor = new HashMap<String, Color>();
-	static
+	private static HashMap<String, Color> geogebraColor = null;//new HashMap<String, Color>();
+	//static
+	private static HashMap<String, Color> getGeoGebraColors()
 	{
+		
+		if (geogebraColor != null) return geogebraColor;
+		
+		geogebraColor = new HashMap<String, Color>();
+		
 		// primary
 		geogebraColor.put("red", RED);
 		geogebraColor.put("orange", ORANGE);
@@ -86,14 +98,14 @@ public class GeoGebraColorConstants {
 		geogebraColor.put("lightpurple", LIGHTPURPLE);  
 		geogebraColor.put("lightviolet", LIGHTVIOLET);  
 		geogebraColor.put("turquoise", TURQUOISE); 
-		geogebraColor.put("lightgreen", LIGHTGREEN); 
+		geogebraColor.put("darkblue", DARKBLUE);
 
 		// dark primary
 		geogebraColor.put("maroon", MAROON); 
 		geogebraColor.put("brown", BROWN);
 		geogebraColor.put("gold",  GOLD);   
 		geogebraColor.put("darkgreen", DARKGREEN);   
-		geogebraColor.put("darkblue", DARKBLUE); 
+		geogebraColor.put("lightblue", LIGHTBLUE); 
 		geogebraColor.put("indigo", INDIGO);
 		geogebraColor.put("purple", PURPLE);
 		geogebraColor.put("crimson", CRIMSON);
@@ -113,6 +125,7 @@ public class GeoGebraColorConstants {
 		geogebraColor.put("lightgray", LIGHTGRAY);
 		geogebraColor.put("silver", SILVER);
 
+		return geogebraColor;
 	}
 
 	
@@ -131,10 +144,18 @@ public class GeoGebraColorConstants {
 	 * key = RBG color 
 	 * value = color name from colors.properties
 	 */
-	private static final HashMap<Color, String> geogebraColorReverse = new HashMap<Color, String>();
-	static
-	{	for (Entry<String, Color> entry : geogebraColor.entrySet())	
+	private static HashMap<Color, String> geogebraColorReverse = null;//new HashMap<Color, String>();
+	
+	private static HashMap<Color, String> getGeoGebraColorReverse() 
+	{	
+	if (geogebraColorReverse != null) return geogebraColorReverse;
+	
+	geogebraColorReverse = new HashMap<Color, String>();
+	
+	for (Entry<String, Color> entry : getGeoGebraColors().entrySet())	
 		geogebraColorReverse.put(entry.getValue(), entry.getKey());
+	
+	return geogebraColorReverse;
 	}
 
 	
@@ -145,7 +166,6 @@ public class GeoGebraColorConstants {
 	 * @return Color object corresponding with given GeoGebra color name string
 	 */
 	public static Color getGeogebraColor(Application app, String colorName){
-		
 		Color ret = geogebraColor.get(colorName.toLowerCase(Locale.US));
 		
 		if (ret == null){			
@@ -163,7 +183,7 @@ public class GeoGebraColorConstants {
 	 * @return GeoGebra color name string corresponding with given Color object
 	 */
 	public static String getGeogebraColorName(Application app, Color color){
-		return app.getColor(geogebraColorReverse.get(color));
+		return app.getColor(getGeoGebraColorReverse().get(color));
 	}
 
 	/**
@@ -185,8 +205,15 @@ public class GeoGebraColorConstants {
 
 
 
-	public static Color[] primaryColors = new Color[9];
-	static{
+	private static Color[] primaryColors = null;
+	private static Color[] getPrimaryColors() {
+		
+		if (primaryColors != null) return primaryColors;
+		
+		
+		getGeoGebraColors();
+		
+		primaryColors = new Color[9];
 		primaryColors[0] = geogebraColor.get("red");
 		primaryColors[1] = geogebraColor.get("orange");
 		primaryColors[2] = geogebraColor.get("yellow");
@@ -196,11 +223,19 @@ public class GeoGebraColorConstants {
 		primaryColors[6] = geogebraColor.get("violet");
 		primaryColors[7] = geogebraColor.get("magenta");
 		primaryColors[8] = geogebraColor.get("lime");
+		
+		return primaryColors;
 	}
 
 
-	public static Color[] lightPrimaryColors = new Color[9];
-	static{
+	private static Color[] lightPrimaryColors = null;
+	private static Color[] getLightPrimaryColors() {
+		
+		if (lightPrimaryColors != null) return lightPrimaryColors;
+		
+		getGeoGebraColors();
+
+		lightPrimaryColors = new Color[9];
 		lightPrimaryColors[0] = null;  // for the null icon symbol (for removing bgcolor)
 		lightPrimaryColors[1] = geogebraColor.get("pink");
 		lightPrimaryColors[2] = geogebraColor.get("lightorange");
@@ -211,26 +246,39 @@ public class GeoGebraColorConstants {
 		lightPrimaryColors[7] = geogebraColor.get("lightpurple");
 		lightPrimaryColors[8] = geogebraColor.get("lightviolet");
 		
+		return lightPrimaryColors;
 	}
 
 
-	public static Color[] darkPrimaryColors = new Color[9];
-	static{
+	private static Color[] darkPrimaryColors = null;
+	private static Color[] getDarkPrimaryColors() {
+		
+		if (darkPrimaryColors != null) return darkPrimaryColors;
+		
+		getGeoGebraColors();
+
+		darkPrimaryColors = new Color[9];
 		darkPrimaryColors[0] = geogebraColor.get("maroon");
 		darkPrimaryColors[1] = geogebraColor.get("brown");
 		darkPrimaryColors[2] = geogebraColor.get("gold");
 		darkPrimaryColors[3] = geogebraColor.get("darkgreen");
-		darkPrimaryColors[4] = geogebraColor.get("darkblue");
+		darkPrimaryColors[4] = geogebraColor.get("lightblue");
 		darkPrimaryColors[5] = geogebraColor.get("purple");
 		darkPrimaryColors[6] = geogebraColor.get("indigo");
 		darkPrimaryColors[7] = geogebraColor.get("crimson");
 		darkPrimaryColors[8] = geogebraColor.get("pink");
+		
+		return darkPrimaryColors;
 	}
 
 
-	public static Color[] grayColors = new Color[9];
-	static{
-		grayColors[0] = geogebraColor.get("white");
+	private static Color[] grayColors = null;
+	private static Color[] getGrayColors() {
+		
+		if (grayColors != null) return grayColors;
+		
+		grayColors = new Color[9];
+		grayColors[0] = getGeoGebraColors().get("white");
 		grayColors[1] = grayN(1);
 		grayColors[2] = grayN(2);
 		grayColors[3] = grayN(3);
@@ -238,7 +286,9 @@ public class GeoGebraColorConstants {
 		grayColors[5] = grayN(5);
 		grayColors[6] = grayN(6);
 		grayColors[7] = grayN(7);
-		grayColors[8] = geogebraColor.get("black");;
+		grayColors[8] = getGeoGebraColors().get("black");
+		
+		return grayColors;
 	}
 
 
@@ -255,20 +305,20 @@ public class GeoGebraColorConstants {
 		for(int i = 0; i< 9; i++){
 			if(colorSetType == COLORSET_STANDARD){
 				// first row
-				colors[i] = primaryColors[i];
+				colors[i] = getPrimaryColors()[i];
 				// second row
-				colors[i+9] = darkPrimaryColors[i];
+				colors[i+9] = getDarkPrimaryColors()[i];
 				// third row
-				colors[i+18] =grayColors[i];	
+				colors[i+18] = getGrayColors()[i];	
 			}
 			
 			if(colorSetType == COLORSET_BGCOLOR){
 				// first row
-				colors[i] = lightPrimaryColors[i];
+				colors[i] = getLightPrimaryColors()[i];
 				// second row
-				colors[i+9] = primaryColors[i];
+				colors[i+9] = getPrimaryColors()[i];
 				// third row
-				colors[i+18] =grayColors[i];	
+				colors[i+18] = getGrayColors()[i];	
 			}
 		}	
 
@@ -290,28 +340,31 @@ public class GeoGebraColorConstants {
 	}
 
 
+	private static HashMap<String, Color> colors = null;
 
 	public static final HashMap<String, Color> htmlColorMap() {
+		
+		if (colors != null) return colors;
 
-		HashMap<String, Color> colors = new HashMap<String, Color>();
+		colors = new HashMap<String, Color>();
 
 		// HTML 3.2
-		colors.put("AQUA", new Color(0x00FFFF));
-		colors.put("BLACK", new Color(0x000000));
-		colors.put("BLUE", new Color(0x0000FF));
+		//colors.put("AQUA", new Color(0x00FFFF));
+		//colors.put("BLACK", new Color(0x000000));
+		//colors.put("BLUE", new Color(0x0000FF));
 		colors.put("FUCHSIA", new Color(0xFF00FF));
-		colors.put("GRAY", new Color(0x808080));
-		colors.put("GREEN", new Color(0x008000));
-		colors.put("LIME", new Color(0x00FF00));
-		colors.put("MAROON", new Color(0x800000));
+		//colors.put("GRAY", new Color(0x808080));
+		//colors.put("GREEN", new Color(0x008000));
+		//colors.put("LIME", new Color(0x00FF00));
+		//colors.put("MAROON", new Color(0x800000));
 		colors.put("NAVY", new Color(0x000080));
 		colors.put("OLIVE", new Color(0x808000));
-		colors.put("PURPLE", new Color(0x800080));
-		colors.put("RED", new Color(0xFF0000));
-		colors.put("SILVER", new Color(0xC0C0C0));
+		//colors.put("PURPLE", new Color(0x800080));
+		//colors.put("RED", new Color(0xFF0000));
+		//colors.put("SILVER", new Color(0xC0C0C0));
 		colors.put("TEAL", new Color(0x008080));
-		colors.put("WHITE", new Color(0xFFFFFF));
-		colors.put("YELLOW", new Color(0xFFFF00));
+		//colors.put("WHITE", new Color(0xFFFFFF));
+		//colors.put("YELLOW", new Color(0xFFFF00));
 
 		colors.put("ALICEBLUE", new Color(0xEFF7FF));
 		colors.put("ANTIQUEWHITE", new Color(0xF9E8D2));
@@ -321,7 +374,7 @@ public class GeoGebraColorConstants {
 		colors.put("BISQUE", new Color(0xFDE0BC));
 		colors.put("BLANCHEDALMOND", new Color(0xFEE8C6));
 		colors.put("BLUEVIOLET", new Color(0x7931DF));
-		colors.put("BROWN", new Color(0x980516));
+		//colors.put("BROWN", new Color(0x980516));
 		colors.put("BURLYWOOD", new Color(0xEABE83));
 		colors.put("CADETBLUE", new Color(0x578693));
 		colors.put("CHARTREUSE", new Color(0x8AFB17));
@@ -329,13 +382,13 @@ public class GeoGebraColorConstants {
 		colors.put("CORAL", new Color(0xF76541));
 		colors.put("CORNFLOWERBLUE", new Color(0x151B8D));
 		colors.put("CORNSILK", new Color(0xFFF7D7));
-		colors.put("CRIMSON", new Color(0xE41B17));
+		//colors.put("CRIMSON", new Color(0xE41B17));
 		colors.put("CYAN", new Color(0x00FFFF));
-		colors.put("DARKBLUE", new Color(0x2F2F4F));
+		//colors.put("DARKBLUE", new Color(0x2F2F4F));
 		colors.put("DARKCYAN", new Color(0x57FEFF));
 		colors.put("DARKGOLDENROD", new Color(0xAF7817));
-		colors.put("DARKGRAY", new Color(0x7A7777));
-		colors.put("DARKGREEN", new Color(0x254117));
+		//colors.put("DARKGRAY", new Color(0x7A7777));
+		//colors.put("DARKGREEN", new Color(0x254117));
 		colors.put("DARKKHAKI", new Color(0xB7AD59));
 		colors.put("DARKMAGENTA", new Color(0xF43EFF));
 		colors.put("DARKOLIVEGREEN", new Color(0xCCFB5D));
@@ -357,34 +410,34 @@ public class GeoGebraColorConstants {
 		colors.put("FORESTGREEN", new Color(0x4E9258));
 		colors.put("GAINSBORO", new Color(0xD8D9D7));
 		colors.put("GHOSTWHITE", new Color(0xF7F7FF));
-		colors.put("GOLD", new Color(0xD4A017));
+		//colors.put("GOLD", new Color(0xD4A017));
 		colors.put("GOLDENROD", new Color(0xEDDA74));
 		colors.put("GREENYELLOW", new Color(0xB1FB17));
 		colors.put("HONEYDEW", new Color(0xF0FEEE));
 		colors.put("INDIANRED", new Color(0x5E2217));
-		colors.put("INDIGO", new Color(0x307D7E));
+		//colors.put("INDIGO", new Color(0x307D7E));
 		colors.put("IVORY", new Color(0xFFFFEE));
 		colors.put("KHAKI", new Color(0xADA96E));
 		colors.put("LAVENDER", new Color(0xE3E4FA));
 		colors.put("LAVENDERBLUSH", new Color(0xFDEEF4));
 		colors.put("LAWNGREEN", new Color(0x87F717));
 		colors.put("LEMONCHIFFON", new Color(0xFFF8C6));
-		colors.put("LIGHTBLUE", new Color(0xADDFFF));
+		//colors.put("LIGHTBLUE", new Color(0xADDFFF));
 		colors.put("LIGHTCORAL", new Color(0xE77471));
 		colors.put("LIGHTCYAN", new Color(0xE0FFFF));
 		colors.put("LIGHTGOLDENRODYELLOW", new Color(0xFAF8CC));
-		colors.put("LIGHTGREEN", new Color(0xCCFFCC));
-		colors.put("LIGHTGRAY", Color.LIGHT_GRAY);
+		//colors.put("LIGHTGREEN", new Color(0xCCFFCC));
+		//colors.put("LIGHTGRAY", Color.LIGHT_GRAY);
 		colors.put("LIGHTPINK", new Color(0xFAAFBA));
 		colors.put("LIGHTSALMON", new Color(0xF9966B));
 		colors.put("LIGHTSEAGREEN", new Color(0x3EA99F));
 		colors.put("LIGHTSKYBLUE", new Color(0x82CAFA));
 		colors.put("LIGHTSLATEGRAY", new Color(0x6D7B8D));
 		colors.put("LIGHTSTEELBLUE", new Color(0x728FCE));
-		colors.put("LIGHTYELLOW", new Color(0xFFFEDC));
+		//colors.put("LIGHTYELLOW", new Color(0xFFFEDC));
 		colors.put("LIMEGREEN", new Color(0x41A317));
 		colors.put("LINEN", new Color(0xF9EEE2));
-		colors.put("MAGENTA", new Color(0xFF00FF));
+		//colors.put("MAGENTA", new Color(0xFF00FF));
 		colors.put("MEDIUMAQUAMARINE", new Color(0x348781));
 		colors.put("MEDIUMBLUE", new Color(0x152DC6));
 		colors.put("MEDIUMORCHID", new Color(0xB048B5));
@@ -401,7 +454,7 @@ public class GeoGebraColorConstants {
 		colors.put("NAVAJOWHITE", new Color(0xFDDAA3));
 		colors.put("OLDLACE", new Color(0xFCF3E2));
 		colors.put("OLIVEDRAB", new Color(0x658017));
-		colors.put("ORANGE", new Color(0xF87A17));
+		//colors.put("ORANGE", new Color(0xF87A17));
 		colors.put("ORANGERED", new Color(0xF63817));
 		colors.put("ORCHID", new Color(0xE57DED));
 		colors.put("PALEGOLDENROD", new Color(0xEDE49E));
@@ -410,7 +463,7 @@ public class GeoGebraColorConstants {
 		colors.put("PAPAYAWHIP", new Color(0xFEECCF));
 		colors.put("PEACHPUFF", new Color(0xFCD5B0));
 		colors.put("PERU", new Color(0xC57726));
-		colors.put("PINK", new Color(0xFAAFBE));
+		//colors.put("PINK", new Color(0xFAAFBE));
 		colors.put("PLUM", new Color(0xB93B8F));
 		colors.put("POWDERBLUE", new Color(0xADDCE3));
 		colors.put("ROSYBROWN", new Color(0xB38481));
@@ -430,8 +483,8 @@ public class GeoGebraColorConstants {
 		colors.put("TAN", new Color(0xD8AF79));
 		colors.put("THISTLE", new Color(0xD2B9D3));
 		colors.put("TOMATO", new Color(0xF75431));
-		colors.put("TURQUOISE", new Color(0x43C6DB));
-		colors.put("VIOLET", new Color(0x8D38C9));
+		//colors.put("TURQUOISE", new Color(0x43C6DB));
+		//colors.put("VIOLET", new Color(0x8D38C9));
 		colors.put("WHEAT", new Color(0xF3DAA9));
 		colors.put("WHITESMOKE", new Color(0xFFFFFF));
 		colors.put("YELLOWGREEN", new Color(0x52D017));
