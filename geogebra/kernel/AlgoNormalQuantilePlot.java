@@ -107,7 +107,7 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 
 	}
 
-	private String getQQLineText(){
+	private GeoSegment getQQLineSegment(){
 
 		SummaryStatistics stats = new SummaryStatistics();
 		for (int i = 0; i < sortedData.length; i++) {
@@ -119,9 +119,15 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 		double max = stats.getMax();
 
 		// qq line: y = (1/sd)x - mean/sd 
-		String text = "Function[ 1/" + sd + " x - " + mean/sd + "," + min + "," + max + "]";
-
-		return text;
+		
+		GeoPoint startPoint = new GeoPoint(cons);
+		startPoint.setCoords(min, (min/sd) - mean/sd, 1.0);
+		GeoPoint endPoint = new GeoPoint(cons);
+		endPoint.setCoords(max, (max/sd) - mean/sd, 1.0);
+		GeoSegment seg = new GeoSegment(cons, startPoint, endPoint);
+		seg.calcLength();
+		
+		return seg;
 	}
 
 
@@ -180,12 +186,9 @@ public class AlgoNormalQuantilePlot extends AlgoElement {
 				outputList.add(new GeoPoint(cons, null, sortedData[i], zValues[i], 1.0));
 		}      
 
-		// create qq line and add it to the list
-		GeoElement[] geos = kernel.getAlgebraProcessor()
-		.processAlgebraCommandNoExceptions(getQQLineText(), false);
-		geos[0].setEuclidianVisible(true);
-		outputList.add(geos[0]);
-
+		// create qq line segment and add it to the list
+		outputList.add(getQQLineSegment());
+		
 		cons.setSuppressLabelCreation(suppressLabelCreation);
 
 	}
