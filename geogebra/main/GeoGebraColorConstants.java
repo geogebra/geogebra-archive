@@ -34,6 +34,7 @@ public class GeoGebraColorConstants {
 	 public static final Color LIGHTPURPLE = new  Color(204, 204, 255); // wikipedia periwinkle 
 	 public static final Color LIGHTVIOLET = new  Color(224, 176, 255); // wikipedia mauve 
 	 public static final Color TURQUOISE = new  Color(175, 238, 238); // wikipedia pale turquoise 
+	 public static final Color LIGHTGREEN = new  Color(208, 240, 192); // wikipedia tea green  
 
 	 public static final Color MAROON = new  Color(128, 0, 0); 
 	 
@@ -98,6 +99,7 @@ public class GeoGebraColorConstants {
 		geogebraColor.put("lightpurple", LIGHTPURPLE);  
 		geogebraColor.put("lightviolet", LIGHTVIOLET);  
 		geogebraColor.put("turquoise", TURQUOISE); 
+		geogebraColor.put("lightgreen", LIGHTGREEN); 
 		geogebraColor.put("darkblue", DARKBLUE);
 
 		// dark primary
