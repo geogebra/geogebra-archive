@@ -2671,7 +2671,9 @@ public class GuiManager {
 	public void updateActions() {
 		if (app.isUndoActive() && undoAction != null) {
 			undoAction.setEnabled(kernel.undoPossible());
-			redoAction.setEnabled(kernel.redoPossible());
+			
+			if (redoAction != null)
+				redoAction.setEnabled(kernel.redoPossible());
 		}
 	}
 	
