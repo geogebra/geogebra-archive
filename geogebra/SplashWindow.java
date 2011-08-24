@@ -52,7 +52,7 @@ import java.awt.event.MouseEvent;
  * <pre>
  *  new SplashWindow(
  *      this,
- *      getToolkit().createImage(getClass().getResource("splash.png"))
+ *      getToolkit().createImage(getClass().getResource(GeoGebra.SPLASH_STRING))
  * ).show();
  * </pre>
  *
