@@ -445,7 +445,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		// Object properties 
 		// ===============================================
 
-		if (app.selectedGeosSize() > 0) {
+		if (app.selectedGeosSize() > 0 && app.letShowPropertiesDialog()) {
 			addSeparator();
 			item = new JMenuItem(app.getMenu(app.getPlain("Properties"))+"...", app.getImageIcon("document-properties.png"));	 	
 			item.addActionListener(new ActionListener() {

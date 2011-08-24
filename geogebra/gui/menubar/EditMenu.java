@@ -94,10 +94,13 @@ public class EditMenu extends BaseMenu {
 		
 		addSeparator();
 
-		mi = add(propertiesAction);
-		setMenuShortCutAccelerator(mi, 'E');
+		
+		if (app.letShowPropertiesDialog()) {
+			mi = add(propertiesAction);
+			setMenuShortCutAccelerator(mi, 'E');
+			addSeparator();
+		}
 
-		addSeparator();
 
 		selectAllItem = add(selectAllAction);
 		setMenuShortCutAccelerator(selectAllItem, 'A');
