@@ -2206,8 +2206,15 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
 				sb.append('^');
+				
+
+				// add brackets for eg a^b^c -> a^(b^c)
+				boolean addParentheses = (right.isExpressionNode() && ((ExpressionNode)right).getOperation() == POWER);
+				
 				sb.append('{');
+				if (addParentheses) sb.append(leftBracket(STRING_TYPE));
 				sb.append(rightStr);
+				if (addParentheses) sb.append(rightBracket(STRING_TYPE));
 				sb.append('}');
 				break;
 
@@ -2763,8 +2770,14 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			// Application.debug("EXP");
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
+				
+				// add brackets for eg e^b^c -> e^(b^c)
+				boolean addParentheses = (left.isExpressionNode() && ((ExpressionNode)left).getOperation() == POWER);
+				
 				sb.append("e^{");
+				if (addParentheses) sb.append(leftBracket(STRING_TYPE));
 				sb.append(leftStr);
+				if (addParentheses) sb.append(rightBracket(STRING_TYPE));
 				sb.append('}');
 				break;
 
