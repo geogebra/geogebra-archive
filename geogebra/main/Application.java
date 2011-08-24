@@ -618,6 +618,7 @@ public class Application implements KeyEventDispatcher {
 							+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
 							+ "  --fontSize=NUMBER\tset default font size\n"
 							+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
+							+ "  --showGrid=BOOLEAN\tshow/hide grid\n"
 							+ "  --settingsFile=PATH|FILENAME\tload/save settings from/in a local file\n"
 							+ "  --resetSettings\treset current settings\n"
 							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n"
