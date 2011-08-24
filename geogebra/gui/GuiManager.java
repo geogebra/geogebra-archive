@@ -2351,6 +2351,8 @@ public class GuiManager {
 		boolean isMacroFile =  false;
 		app.setWaitCursor();
 		
+		String ggbTube = "http://www.geogebratube.org/student/";
+		
 		try {
 			// check first for ggb/ggt file
 			if (urlString.endsWith(".ggb") || urlString.endsWith(".ggt")) {
@@ -2358,7 +2360,24 @@ public class GuiManager {
 				isMacroFile = urlString.endsWith(".ggt");
 				success = app.loadXML(url, isMacroFile);
 					
-			// special case: urlString is actually a base64 encoded ggb file
+				// special case: urlString is from GeoGebraTube
+				// eg http://www.geogebratube.org/student/105 changed to
+				// http://www.geogebratube.org/files/material-105.ggb
+				
+			} else if (urlString.startsWith(ggbTube)) {
+
+				urlString = "http://www.geogebratube.org/files/material-"+
+				urlString.substring(ggbTube.length(), urlString.length())+
+				".ggb";
+				
+				Application.debug(urlString);
+				
+				URL url = getEscapedUrl(urlString);
+				success = app.loadXML(url, false);
+
+				
+				
+				// special case: urlString is actually a base64 encoded ggb file
 			} else if (urlString.startsWith("UEs")) {
 				byte[] zipFile = Base64.decode(urlString);
 				success = app.loadXML(zipFile);   

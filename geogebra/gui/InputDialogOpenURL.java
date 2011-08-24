@@ -19,7 +19,7 @@ public class InputDialogOpenURL extends InputDialog{
 		// check if there's a string starting http:// already on the clipboard
 		// (quite likely!!)
 		String clipboardString = app.getStringFromClipboard();
-		if (clipboardString != null && clipboardString.startsWith("http://"))
+		if (clipboardString != null && (clipboardString.startsWith("http://") || clipboardString.startsWith("www")))
 			initString = clipboardString;
 
 		createGUI(app.getMenu("OpenWebpage"), app.getMenu("EnterAppletAddress"), false, DEFAULT_COLUMNS, 1, false, false, true, false, false, false, false);
@@ -49,19 +49,20 @@ public class InputDialogOpenURL extends InputDialog{
 					setVisible(!processInput());
 				} else if (source == btApply) {
 					processInput();
+					//app.setDefaultCursor();
 				} else if (source == btCancel) {
 					setVisible(false);
 			} 
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
+			ex.printStackTrace();
 			setVisible(false);
+			app.setDefaultCursor();
 		}
 	}
 	
 	private boolean processInput() {
-		
 			return app.getGuiManager().loadURL(inputPanel.getText());
-		
 	}
 
 
