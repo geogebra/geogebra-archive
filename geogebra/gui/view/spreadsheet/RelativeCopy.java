@@ -569,10 +569,10 @@ public class RelativeCopy {
 			// make sure that an error dialog is not displayed for unquoted text
 			.processAlgebraCommandNoExceptionHandling(text, false, false, false);
 			//.processAlgebraCommandNoExceptionHandling(text, false);
-
+			
 			// check if text was the label of an existing geo 
-			// toLowerCase() added to fix bug A1=1, enter just 'a1' into cell B1 -> A1 disappears
-			if (text.equals(newValues[0].getLabel().toLowerCase(Locale.US))) {
+			// toLowerCase() added to fix bug A1=1, enter just 'a1' or 'A1' into cell B1 -> A1 disappears
+			if (text.toLowerCase(Locale.US).equals(newValues[0].getLabel().toLowerCase(Locale.US))) {
 				// make sure we create a copy of this existing or auto-created geo 
 				// by providing the new cell name in the beginning
 				text = name + " = " + text;		
