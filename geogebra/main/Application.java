@@ -271,7 +271,7 @@ public class Application implements KeyEventDispatcher {
 	static {
 		specialLanguageNames.put("bs", "Bosnian");
 		specialLanguageNames.put("zhCN", "Chinese Simplified");
-		//xspecialLanguageNames.put("zhTW", "Chinese Traditional");
+		specialLanguageNames.put("zhTW", "Chinese Traditional");
 		specialLanguageNames.put("en", "English (US)");
 		specialLanguageNames.put("enGB", "English (UK)");
 		specialLanguageNames.put("enAU", "English (Australia)");
