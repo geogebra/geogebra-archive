@@ -736,39 +736,15 @@ Dilateable, Transformable, EuclidianViewCE {
 				newCoeffDegY+=degYpX;
 			}
 		}
-		
 		//maybe we made the degree larger than necessary, so we try to get it down.
-		double[][] newCoeffMinDeg=null;
-//	Application.debug("old degX="+newDegX+"; old degY="+newDegY);
-		degX=0;
+		coeff=PolynomialUtils.coeffMinDeg(newCoeff);
+		//calculate new degree
+		degX=coeff.length-1;
 		degY=0;
-		for (int i=newDegX;i>=0;i--){
-			for (int j=newDegY;j>=0;j--){
-				if (Math.abs(newCoeff[i][j])>Kernel.EPSILON){
-					if (newCoeffMinDeg==null){
-						newCoeffMinDeg=new double[i+1][];
-						degX=i;
-					}
-					if (newCoeffMinDeg[i]==null){
-						newCoeffMinDeg[i]=new double[j+1];
-						if (j>degY)
-							degY=j;
-					}
-					newCoeffMinDeg[i][j]=newCoeff[i][j];
-				}
-			}
-			if (newCoeffMinDeg!=null&&newCoeffMinDeg[i]==null){
-				newCoeffMinDeg[i]=new double[1];
-				newCoeffMinDeg[i][0]=0;
-			}
+		for (int i=0;i<coeff.length;i++){
+			degY=Math.max(degY,coeff[i].length-1);
 		}
-		if (newCoeffMinDeg==null){
-			newCoeffMinDeg=new double[1][1];
-			newCoeffMinDeg[0][0]=0;
-		}
-//		Application.debug("new degX="+degX+"; new degY="+degY);
-
-		coeff=newCoeffMinDeg;
+		
 		setValidInputForm(false); //we changed the polynomial => not the same as the userInput
 		updatePath();
 		if (algoUpdateSet!=null){

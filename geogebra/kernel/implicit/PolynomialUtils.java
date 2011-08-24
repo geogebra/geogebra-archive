@@ -102,5 +102,31 @@ public class PolynomialUtils {
 		}
 		return s;
 	}
+	
+	public static double[][] coeffMinDeg(double[][] coeff){
+		double[][] newCoeffMinDeg=null;
+		for (int i=coeff.length-1;i>=0;i--){
+			for (int j=coeff[i].length-1;j>=0;j--){
+				if (!Kernel.isZero(coeff[i][j])){
+					if (newCoeffMinDeg==null){
+						newCoeffMinDeg=new double[i+1][];
+					}
+					if (newCoeffMinDeg[i]==null){
+						newCoeffMinDeg[i]=new double[j+1];
+					}
+					newCoeffMinDeg[i][j]=coeff[i][j];
+				}
+			}
+			if (newCoeffMinDeg!=null&&newCoeffMinDeg[i]==null){
+				newCoeffMinDeg[i]=new double[1];
+				newCoeffMinDeg[i][0]=0;
+			}
+		}
+		if (newCoeffMinDeg==null){
+			newCoeffMinDeg=new double[1][1];
+			newCoeffMinDeg[0][0]=0;
+		}
+		return newCoeffMinDeg;
+	}
 
 }
