@@ -188,8 +188,7 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("cs")); // Czech
 		supportedLocales.add(new Locale("da")); // Danish
 		supportedLocales.add(new Locale("nl")); // Dutch
-		if(GeoGebra.IS_PRE_RELEASE)
-			supportedLocales.add(new Locale("en")); // English
+		supportedLocales.add(new Locale("en")); // English
 		supportedLocales.add(new Locale("en", "GB")); // English (UK)
 		supportedLocales.add(new Locale("en", "AU")); // English (Australia)
 		supportedLocales.add(new Locale("et")); // Estonian
