@@ -35,6 +35,7 @@ import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -869,9 +870,21 @@ public class AlgebraView extends JTree implements View, Gridable, SetLabels{
 	}
 
 	public int[] getGridRowHeights() {
-		TreeModel m=getModel();
-		m.getRoot();
-		return new int[]{getHeight()};
+//		Object root=model.getRoot();
+//		ArrayList<Integer> heights=new ArrayList<Integer>();
+//		for (int i=0;i<model.getChildCount(root);i++){
+//			Object folder=model.getChild(root, i);
+//			if (model.)
+//		}
+////		m.getChildCount(root);
+//		
+//		return new int[]{getHeight()};
+		int[] heights=new int[getRowCount()];
+		for (int i=0;i<heights.length;i++){
+			heights[i]=getRowBounds(i).height;
+		}
+		heights[0]+=2;
+		return heights;
 	}
 
 	public Component[][] getPrintComponents() {

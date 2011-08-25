@@ -81,9 +81,10 @@ public class PrintPreview extends JDialog {
 	}
 
 	public PrintPreview(Application app, Printable target, int orientation) {
-		super(app.getFrame(), false);
+		super(app.getFrame(), true); //modal=true: user shouldn't be able to change anything before actual print happened.
 		this.app = app;
 		initPrintPreview(target, orientation);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 		
 	public PrintPreview(Application app, Gridable target, int portrait) {
@@ -579,7 +580,7 @@ public class PrintPreview extends JDialog {
 								
 			setBackground(Color.white);
 			setBorder(new MatteBorder(1, 1, 2, 2, Color.black));
-			update();
+//			update();
 		}		
 	
 		public void setPageFormat(PageFormat format) {
@@ -630,7 +631,13 @@ public class PrintPreview extends JDialog {
 		}
 		
 		public void update() {
-			updateBufferedImage();
+			try {
+				updateBufferedImage();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} catch (OutOfMemoryError e){
+				e.printStackTrace();
+			}
 			repaint();			
 		}
 
