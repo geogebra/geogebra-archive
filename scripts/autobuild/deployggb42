@@ -1,0 +1,109 @@
+#!/bin/sh
+# Deploys numbered version of GeoGebra into directory 4.2
+# @author Zoltan Kovacs <zoltan@geogebra.org>
+
+# 1. Start and loading configuration
+date
+echo "$0: start"
+
+test -r autobuild.conf || {
+ echo "$0: Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
+ exit 1
+ }
+. ./autobuild.conf
+cd $SVNDIR/geogebra
+
+# 2. Setting local variables
+MYVER=`cat build/unpacked/version.txt`
+MYDIR=4.2
+
+umask 0002 # trying to ensure g+w rights for all created files automatically
+
+# 3. (Re)creating $WWWDIR/$MYDIR directory
+if [ "$WWWDIR" = "" ]; then
+ echo "$0: Fatal error, WWWDIR=$WWWDIR, exiting for safety reasons"
+ exit 2
+ fi
+cd build
+echo "$0: (re)creating $WWWDIR/$MYDIR directory"
+mkdir -p $WWWDIR/$MYDIR || exit 3
+chmod g+rwx $WWWDIR/$MYDIR || exit 3
+
+# 4. Copying JAR files to 4.0 and history/$MYVER:
+rm -fR $WWWDIR/history/$MYVER || exit 4
+mkdir -p $WWWDIR/history/$MYVER || exit 4
+chmod g+rwx $WWWDIR/history/$MYVER || exit 4
+find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while read filename; do
+ directory=`dirname $filename`
+ mkdir -p $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
+ chmod g+rwx $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
+ cp $filename $WWWDIR/$MYDIR/$filename || exit 6
+ cp $filename $WWWDIR/history/$MYVER/$filename || exit 6
+ done
+
+# 4/1. Creating a jnlp file for webstart/history (implementing #692)
+MYVER_DASHED=`echo $MYVER | tr . -`
+for i in unpacked debug; do
+ cat $SVNDIR/geogebra/scripts/autobuild/history-template.jnlp |\
+  sed s/MYVER_DASHED/$MYVER_DASHED/g |\
+  sed s/MYVER/$MYVER/g |\
+  sed s/ENDDIR/$i/g \
+  > $WWWDIR/history/$MYVER/$i/geogebra-$MYVER_DASHED.jnlp
+ done
+
+echo "$0: JAR files copied to 4.2 and history/$MYVER"
+
+# 5. Finally, making sure that all files have group writable permissions:
+WARNINGS=`chmod -R g+rw $WWWDIR/$MYDIR $WWWDIR/history 2>&1 | wc -l | awk '{print $1}'`
+echo "$WARNINGS warnings during chmod'ing web files"
+
+# 6/1. Deploying ggb40maxima as well:
+if [ "$ENABLE_GGB40MAXIMA" = "1" ]; then # Currently we do not provide this package by default:
+ cd $SVNDIR/geogebra/scripts/autobuild/windows
+ ./ggb40maxima
+ fi
+
+# 6/2. Deploying ggb40 as well:
+cd $SVNDIR/geogebra/scripts/autobuild/windows
+./ggb40
+
+# 7. Deploying Linux/generic and Linux/portable as well:
+cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
+./create_geogebra_linux
+cd $SVNDIR/geogebra/scripts/autobuild/linux/portable
+./create_geogebra_portable
+
+# 8. Copying the Mac OS X and the Windows installer version to Google Code:
+if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
+ cd $SVNDIR/geogebra/build/installer
+ MACOSX_ZIP=GeoGebra_`echo $MYVER | tr . -`.zip
+ # GeoGebra_3-9-209-0.zip -> GeoGebra-MacOS-Installer-3-9-209-0.zip (GeoGebra for Mac OSX)
+ MACOSX_ZIP_FINAL=GeoGebra-MacOS-Installer-`echo $MYVER | tr . -`.zip
+ test -r $MACOSX_ZIP_FINAL || mv $MACOSX_ZIP $MACOSX_ZIP_FINAL
+ $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $MYVER for Mac OSX" \
+  -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $MACOSX_ZIP_FINAL
+
+ WINDOWS_INSTALLER_EXE=GeoGebra-Windows-Installer-`echo $MYVER | tr . -`.exe
+ $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $MYVER installer for Windows" \
+  -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $WINDOWS_INSTALLER_EXE
+ fi
+
+# 9. rsync-www on demand
+if [ "$WWW_REMOTEDIR" != "" ]; then
+ echo "$0: Copying all files to $WWW_REMOTEDIR"
+ cd $SVNDIR/geogebra/scripts/autobuild
+ ./rsync-www 2>&1 >.rsync-www
+ fi
+
+# 10. Sending an email to geogebra-dev:
+REVISION=`cat $SVNDIR/geogebra/scripts/autobuild/.revision`
+MAIL="New version of GeoGebra 4.2 has just been uploaded: $MYVER\n
+http://www.geogebra.org/trac/log/trunk?rev=$REVISION\n
+Automatic message, do not reply"
+echo -e $MAIL | mail -s "deployggb42 report" geogebra-dev@googlegroups.com 2>&1 | grep denied && {
+ # If not successful, we send it through ssh:
+ echo -e $MAIL | ssh www.geogebra.org mail -s "deployggb42 report" geogebra-dev@googlegroups.com
+ }
+
+date
+echo "$0: end"

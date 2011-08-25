@@ -44,16 +44,19 @@ GC_PASS=xxxxxxxx # This must be changed to the proper password
 # The Windows portable version is created based on a template.
 # It can be found in SVN branches/installer/winport/GeoGebra-Windows-Portable-3-9-x-x.zip.
 GGB40_ZIP=/home/kovzol/workspace/GeoGebra-Windows-Portable-3-9-x-x.zip # Linz server
+GGB42_ZIP=/home/kovzol/workspace/GeoGebra-Windows-Portable-3-9-x-x.zip # Linz server
 
 # Please change this if the original .zip file is changing:
 #GGB40MAXIMA_ZIP=/home/zoltan/ggb40maxima/ggb40maxima-3.9.245.0_5.24.0.zip # Linz server
 GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.245.0_5.24.0.zip # Luxembourg server
-# This file should be present to update ggb40maxima properly.
+GGB42MAXIMA_ZIP=/Users/mrb/ggb42maxima-3.9.245.0_5.24.0.zip # Luxembourg server
+# This file should be present to update ggb4?maxima properly.
 # You can download it (or a similar version) from Google Code Downloads as well,
-# or (preferred) SVN branches/installer/maxima/ggb40maxima*.zip.
+# or (preferred) SVN branches/installer/maxima/ggb4?maxima*.zip.
 
-# By default, we do not create a package for ggb40maxima (Maxima is not supported currently):
+# By default, we do not create a package for ggb4?maxima (Maxima is not supported currently):
 ENABLE_GGB40MAXIMA=0
+ENABLE_GGB42MAXIMA=0
 
 # To create this package, one should download the source version of Maxima
 # and compile it on a 32 bit machine (for compatibility reasons). Currently
@@ -63,7 +66,7 @@ ENABLE_GGB40MAXIMA=0
 LINUX_MAXIMA_TGZ=/home/kovzol/workspace/maxima-5.24.0-cmucl-linux-i686.tar.gz
 # Copy this file from SVN branches/installer/maxima*cmucl.tar.gz.
 # Important: currently (2011 July) there is no 64 bit version of cmucl.
-# On running the ggb40maxima script, the 32 bit version of Maxima will be used
+# On running the ggb4?maxima script, the 32 bit version of Maxima will be used
 # for the 64 bit Linux portable version as well.
 
 # If this is set, rsync-www will run:
