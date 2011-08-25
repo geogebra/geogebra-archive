@@ -259,6 +259,7 @@ public class CASInputHandler {
 	private void processMultipleRows(String ggbcmd, String[] params){
 
 		// get current row and input text
+		consoleTable.stopEditing();
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
 		boolean oneRowOnly=false;

@@ -582,7 +582,7 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 			 if (isMatrix())
 				 sb.append("mat(");
 			 else
-				 sb.append("list(");
+				 sb.append("listofliststomat(list(");
 		 }
 		 else
 			 sb.append("{");
@@ -609,9 +609,26 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 				 sb.append("]");
 		 } else if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MPREDUCE)
 		 {
-			 sb.append(")");
-			 if (isMatrix())
-			 	 return sb.toString().replaceAll("list", "");
+			 sb.append(')');
+			 if (isMatrix()){
+				 int index1;
+				 while ((index1=sb.indexOf("listofliststomat(list"))!=-1){
+					 sb.delete(index1, index1+21);
+					 int level=1;
+					 int index2=index1+2;
+					 do {
+						 if (sb.charAt(index2)=='(')
+							 level++;
+						 else if(sb.charAt(index2)==')')
+							 level--;
+						 index2++;
+					 } while(index2<sb.length() && level>0);
+					 if (sb.charAt(index2-1)==')')
+						 sb.deleteCharAt(index2-1);
+				 }
+			 	 return sb.toString().replaceAll("listofliststomat\\(list", "");
+			 } else
+				 sb.append(')');
 		 }
 		 else
 			 sb.append("}");

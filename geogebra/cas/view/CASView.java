@@ -159,16 +159,12 @@ public class CASView extends JComponent implements View, Gridable {
 	 * e.g. "Integral", [ "x" ]
 	 */
 	public void processInput(String ggbcmd, String[] params) {
-		if (consoleTable.isEditing()) {
-			casInputHandler.processCurrentRow(ggbcmd, params);
-			getApp().storeUndoInfo();
-		}
+		casInputHandler.processCurrentRow(ggbcmd, params);
+		getApp().storeUndoInfo();
 	}
 	
 	public void processRowThenEdit(int row, boolean flag) {
-		if (consoleTable.isEditing()) {
-			casInputHandler.processRowThenEdit(row, flag);
-		}
+		casInputHandler.processRowThenEdit(row, flag);
 	}
 	
 	public String resolveCASrowReferences(String inputExp, int row) {

@@ -278,8 +278,6 @@ public class CASmpreduce extends CASgeneric {
 	private synchronized void initMyMPReduceFunctions() throws Throwable {
 		mpreduce.evaluate("off nat;");
 			
-		// ARBVARS introduces arbitrary new variables when solving singular systems of equations
-		mpreduce.evaluate("off arbvars;");
 		mpreduce.evaluate("off pri");
 
 		mpreduce.evaluate("off numval;");
@@ -798,6 +796,18 @@ public class CASmpreduce extends CASgeneric {
 				"    >>" +
 				" else" +
 				"    a;" +
+				" end;");
+		
+		mpreduce.evaluate("procedure mattolistoflists(a);" +
+				" begin scalar list!!, j!!;" +
+				"  tmpmatrix!!:=a;" +
+				"  return" +
+				"  if arglength(a)<0 or part(a,0) neq 'mat then" +
+				"    tmpmatrix" +
+				"  else" +
+				"    for i:=1:part(length(a),1) collect" +
+				"      for j!!:=1:part(length(a),2) collect" +
+				"        tmpmatrix!!(i,j!!)" +
 				" end;");
 		
 		mpreduce.evaluate("procedure mysort a;" +

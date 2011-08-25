@@ -3527,7 +3527,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				// drop the curly braces { and }
 				// or list( and ) in case of mpreduce
 				if (STRING_TYPE == STRING_TYPE_MPREDUCE)
-					sb.append(rightStr.substring(5, rightStr.length() - 1));
+					sb.append(rightStr.substring(22, rightStr.length() - 2));
 				else
 					sb.append(rightStr.substring(1, rightStr.length() - 1));
 				sb.append(rightBracket(STRING_TYPE));

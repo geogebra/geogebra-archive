@@ -350,7 +350,7 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 							// is a list, remove { and }
 							// resp. list( ... ) in mpreduce
 							if (currentCAS==Application.CAS_MPREDUCE)
-								sbCASCommand.append(str.substring(5, str.length() - 1));
+								sbCASCommand.append(str.substring(22, str.length() - 2));
 							else
 								sbCASCommand.append(str.substring(1, str.length() - 1));
 						} else {
