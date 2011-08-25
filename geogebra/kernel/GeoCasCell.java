@@ -862,7 +862,8 @@ public class GeoCasCell extends GeoElement {
 		if (isFunctionDeclaration) {
 			// replace GeoDummyVariable objects in outputVE by the function variables	
 			resolveFunctionVariableReferences(outputVE);	
-		}
+		} else if (isAssignment())
+			outputVE.setLabel(assignmentVar);
 				
 		kernel.setKeepCasNumbers(oldValue);
 	}	
@@ -1399,6 +1400,10 @@ public class GeoCasCell extends GeoElement {
 	     if (twinGeo != null && twinGeo.isIndependent()) {
 	         twinGeo.removeFromUpdateSets(algorithm);
 	     }
+	}
+
+	public ValidExpression getOutputValidExpression() {
+		return outputVE;
 	}
 
 //	public void setIgnoreTwinGeoUpdate(boolean ignoreTwinGeoUpdate) {

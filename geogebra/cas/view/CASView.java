@@ -7,6 +7,8 @@ import geogebra.kernel.GeoCasCell;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.ValidExpression;
 
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
@@ -274,7 +276,13 @@ public class CASView extends JComponent implements View, Gridable {
 	 * Returns the output string in the n-th row of this CAS view.
 	 */
 	public String getRowOutputValue(int n) {
-		return consoleTable.getGeoCasCell(n).getOutput();
+		ValidExpression outVE = consoleTable.getGeoCasCell(n).getOutputValidExpression();
+		
+		// if we don't have an outputVE, we let GeoCasCell deal with it :)
+		if (outVE == null)
+			return consoleTable.getGeoCasCell(n).getOutput();
+		else
+			return outVE.toString();
 	}
 
 	/**
