@@ -48,6 +48,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,7 +190,7 @@ Dilateable, Transformable, EuclidianViewCE {
 	
 	
 	
-	public Coords[] getpointsOnCurve() {
+	public Coords[] getPointsOnCurve() {
 		return pointsOnCurve;
 	}
 	
@@ -1004,14 +1005,43 @@ Dilateable, Transformable, EuclidianViewCE {
 	}
 	
 
+	protected void polishPointOnPath(GeoPointND PI){
+		PI.updateCoords2D();
+		double x=PI.getX2D();
+		double y=PI.getY2D();
+		
+//		Application.debug("eval-1: "+evalPolyAt(x, y));
+		
+		double dx,dy;
+		dx=evalDiffXPolyAt(x,y);
+		dy=evalDiffYPolyAt(x,y);
+		double d=Math.abs(dx)+Math.abs(dy);
+		if (Kernel.isZero(d))
+			return;
+		dx/=d;
+		dy/=d;
+		double[] pair=new double[]{x,y};
+		double[] line=new double[]{y*dx-x*dy,dy,-dx};
+		if (PolynomialUtils.rootPolishing(pair, this, line)){
+//			Application.debug("x="+pair[0]+";y="+pair[1]);
+			PI.setCoords2D(pair[0], pair[1], 1);
+//			Application.debug("->"+isOnPath(PI));
+//			Application.debug("eval-2: "+evalPolyAt(pair[0], pair[1]));
+		}
+	}
+	
 	public void pointChanged(GeoPointND PI) {
-		if (locus.getPoints().size()>0)
+		if (locus.getPoints().size()>0){
 			locus.pointChanged(PI);
+			polishPointOnPath(PI);
+		}
 	}
 
 	public void pathChanged(GeoPointND PI) {
-		if (locus.getPoints().size()>0)
+		if (locus.getPoints().size()>0){
 			locus.pathChanged(PI);
+			polishPointOnPath(PI);
+		}
 	}
 
 	public boolean isOnPath(GeoPointND PI) {
@@ -1202,7 +1232,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		
 		/**
 		 * @param x
-		 * @return 0 if |x|<EPS, sgn(x) otherwise
+		 * @return 0 if |x| &lt EPS, sgn(x) otherwise
 		 */
 		public int epsSignum(double x){
 			if (x>EPS)
@@ -1638,6 +1668,9 @@ Dilateable, Transformable, EuclidianViewCE {
 				}
 				if (!reachedEnd||reachedSingularity){
 					if (reachedSingularity||((lx-sx)*(lx-sx)+(ly-sy)*(ly-sy)>minGap*minGap)){//(newPathX-pathX)*(newPathX-pathX)+(newPathY-pathY)*(newPathY-pathY)>MIN_PATH_GAP*MIN_PATH_GAP){
+						if (evalPolyAt(sx, sy)>0.01){
+							Application.debug("sx="+sx+";sy="+sy);
+						}
 						if (firstDirPoints!=null){
 							firstDirPoints.add(new MyPoint(sx,sy,true));
 						}else{
@@ -1715,7 +1748,7 @@ Dilateable, Transformable, EuclidianViewCE {
 					}
 				}
 //				Application.debug("leave bisec");
-				return a1;
+				return (a1+a2)/2;
 			}
 			return Double.NaN;
 		}

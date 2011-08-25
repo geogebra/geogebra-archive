@@ -83,11 +83,11 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 	@Override
 	protected void setInputOutput() {
 		input=new GeoElement[2];
-		input[0]=p;
+		input[1]=p;
 		if (g!=null)
-			input[1]=g;
+			input[0]=g;
 		else 
-			input[1]=R;
+			input[0]=R;
 		tangents=new OutputHandler<GeoLine>(new elementFactory<GeoLine>() {
 			public GeoLine newElement() {
 				GeoLine g=new GeoLine(cons);
@@ -118,8 +118,18 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
         tangents.adjustOutputSize(0);
 		
 		int n=0;
+		if(p.isOnPath(R))
+		{
+			tangents.adjustOutputSize(n+1);
+			double dfdx = this.p.evalDiffXPolyAt(R.inhomX, R.inhomY);
+			double dfdy = this.p.evalDiffYPolyAt(R.inhomX, R.inhomY);
+			tangents.getElement(n).setCoords(dfdx, dfdy, 
+					-dfdx*R.inhomX - dfdy*R.inhomY);
+			n++;
+		}
 		for(int i=0; i<ip.length; i++)
 		{
+			
 			if(Kernel.isEqual(ip[i].inhomX, R.inhomX, 1E-2) 
 					&& Kernel.isEqual(ip[i].inhomY, R.inhomY, 1E-2))
 				continue;
@@ -136,21 +146,13 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 					&& Kernel.isEqual(0, this.p.evalDiffXPolyAt(ip[i].inhomX, ip[i].inhomY), Kernel.EPSILON_SQRT))
 				continue;
 			
-			tangents.adjustOutputSize(tangents.size() + 1);
+			tangents.adjustOutputSize(n+1);
 			tangents.getElement(n).setCoords(ip[i].getY() - this.R.getY(), this.R.getX() - ip[i].getX(), 
 				ip[i].getX() * this.R.getY() - this.R.getX() * ip[i].getY());
 			ip[i].addIncidence(tangents.getElement(n));
 			n++;
 		}
 		
-		if(p.isOnPath(R))
-        {
-			tangents.adjustOutputSize(tangents.size() + 1);
-	        double dfdx = this.p.evalDiffXPolyAt(R.inhomX, R.inhomY);
-			double dfdy = this.p.evalDiffYPolyAt(R.inhomX, R.inhomY);
-			tangents.getElement(n).setCoords(dfdx, dfdy, 
-					-dfdx*R.inhomX - dfdy*R.inhomY);
-		}
 	}
 
 	@Override

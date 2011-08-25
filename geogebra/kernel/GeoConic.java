@@ -94,11 +94,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		
 		if (numberCount == 6) {
 			this.setCoeffs(((GeoNumeric)coeffList.get(0)).getDouble(),
-					((GeoNumeric)coeffList.get(3)).getDouble(),
 					((GeoNumeric)coeffList.get(1)).getDouble(),
+					((GeoNumeric)coeffList.get(2)).getDouble(),
+					((GeoNumeric)coeffList.get(3)).getDouble(),
 					((GeoNumeric)coeffList.get(4)).getDouble(),
-					((GeoNumeric)coeffList.get(5)).getDouble(),
-					((GeoNumeric)coeffList.get(2)).getDouble());
+					((GeoNumeric)coeffList.get(5)).getDouble());
 		} else {
 			this.setUndefined();
 		}

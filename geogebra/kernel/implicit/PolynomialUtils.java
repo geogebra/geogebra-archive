@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.implicit;
 
+import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
@@ -127,6 +128,69 @@ public class PolynomialUtils {
 			newCoeffMinDeg[0][0]=0;
 		}
 		return newCoeffMinDeg;
+	}
+	
+	/**
+	 * 
+	 * @param pair starting value for Newton's-Algorithm
+	 * @param p1 
+	 * @param line defined by line[0]+x*line[1]+y*line[2]=0
+	 * @return whether a common root of the polynomial and the line was found
+	 */
+	public static boolean rootPolishing(double[] pair,GeoImplicitPoly p1,double[] line){
+		return rootPolishing(pair, p1,null,line);
+	}
+	
+	public static boolean rootPolishing(double[] pair,GeoImplicitPoly p1,GeoImplicitPoly p2){
+		return rootPolishing(pair, p1, p2,null);
+	}
+	
+	private static boolean rootPolishing(double[] pair,GeoImplicitPoly p1,GeoImplicitPoly p2,double[] line){
+		double x=pair[0],y=pair[1];
+		double p,q;
+		if (p1==null){
+			return false;
+		}
+		if (p2==null&&(line==null||line.length!=3)){
+			return false;
+		}
+		p=p1.evalPolyAt(x, y);
+		if (p2!=null)
+			q=p2.evalPolyAt(x, y);
+		else
+			q=line[0]+x*line[1]+y*line[2];
+		double lastErr=Double.MAX_VALUE;
+		double err=Math.abs(p)+Math.abs(q);
+		while(err<lastErr&&err>Kernel.STANDARD_PRECISION){
+			double px,py;
+			double qx,qy;
+			px=p1.evalDiffXPolyAt(x, y);
+			py=p1.evalDiffYPolyAt(x, y);
+			if (p2!=null){
+				qx=p2.evalDiffXPolyAt(x, y);
+				qy=p2.evalDiffYPolyAt(x, y);
+			}else{
+				qx=line[1];
+				qy=line[2];
+			}
+			double det=px*qy-py*qx;
+			if (Kernel.isZero(det)){
+				break;
+			}
+			x-=(p*qy-q*py)/det;
+			y-=(q*px-p*qx)/det;
+			lastErr=err;
+			p=p1.evalPolyAt(x, y);
+			if (p2!=null){
+				q=p2.evalPolyAt(x, y);
+			}else{
+				q=line[0]+x*line[1]+y*line[2];
+			}
+			err=Math.abs(p)+Math.abs(q);
+		}
+		pair[0]=x;
+		pair[1]=y;
+		return err<Kernel.STANDARD_PRECISION;
 	}
 
 }

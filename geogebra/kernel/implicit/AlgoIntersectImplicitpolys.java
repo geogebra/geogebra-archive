@@ -22,8 +22,10 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.AlgoSimpleRootsPolynomial;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -47,6 +49,8 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 	private static final int PolyY=1;
 	
 	private int univarType;
+	
+	private List<GeoPoint> hints;
 
 	public AlgoIntersectImplicitpolys(Construction c) {
 		super(c);
@@ -78,35 +82,35 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
         compute();
 	}
 	
-	protected boolean rootPolishing(double[] pair){
-		double x=pair[0],y=pair[1];
-		double p,q;
-		p=p1.evalPolyAt(x, y);
-		q=p2.evalPolyAt(x, y);
-		double lastErr=Double.MAX_VALUE;
-		double err=Math.abs(p)+Math.abs(q);
-		while(err<lastErr&&err>Kernel.STANDARD_PRECISION){
-			double px,py;
-			double qx,qy;
-			px=p1.evalDiffXPolyAt(x, y);
-			py=p1.evalDiffYPolyAt(x, y);
-			qx=p2.evalDiffXPolyAt(x, y);
-			qy=p2.evalDiffYPolyAt(x, y);
-			double det=px*qy-py*qx;
-			if (Kernel.isZero(det)){
-				break;
-			}
-			x-=(p*qy-q*py)/det;
-			y-=(q*px-p*qx)/det;
-			lastErr=err;
-			p=p1.evalPolyAt(x, y);
-			q=p2.evalPolyAt(x, y);
-			err=Math.abs(p)+Math.abs(q);
-		}
-		pair[0]=x;
-		pair[1]=y;
-		return err<Kernel.STANDARD_PRECISION;
-	}
+//	protected boolean rootPolishing(double[] pair){
+//		double x=pair[0],y=pair[1];
+//		double p,q;
+//		p=p1.evalPolyAt(x, y);
+//		q=p2.evalPolyAt(x, y);
+//		double lastErr=Double.MAX_VALUE;
+//		double err=Math.abs(p)+Math.abs(q);
+//		while(err<lastErr&&err>Kernel.STANDARD_PRECISION){
+//			double px,py;
+//			double qx,qy;
+//			px=p1.evalDiffXPolyAt(x, y);
+//			py=p1.evalDiffYPolyAt(x, y);
+//			qx=p2.evalDiffXPolyAt(x, y);
+//			qy=p2.evalDiffYPolyAt(x, y);
+//			double det=px*qy-py*qx;
+//			if (Kernel.isZero(det)){
+//				break;
+//			}
+//			x-=(p*qy-q*py)/det;
+//			y-=(q*px-p*qx)/det;
+//			lastErr=err;
+//			p=p1.evalPolyAt(x, y);
+//			q=p2.evalPolyAt(x, y);
+//			err=Math.abs(p)+Math.abs(q);
+//		}
+//		pair[0]=x;
+//		pair[1]=y;
+//		return err<Kernel.STANDARD_PRECISION;
+//	}
 
 	@Override
 	protected double getYValue(double t) {
@@ -359,8 +363,18 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 					pair[0]=newCoeff[i];
 					pair[1]=t;
 				}
-				if (rootPolishing(pair))
+				if (PolynomialUtils.rootPolishing(pair,p1,p2))
 					insert(pair);
+			}
+		}
+		if (hints!=null){
+			for (int i=0;i<hints.size();i++){
+				double[] pair=new double[2];
+				GeoPoint g=hints.get(i);
+				if (g.isDefined()&&!Kernel.isZero(g.getZ())){
+					pair[0]=g.getX()/g.getZ();
+					pair[1]=g.getY()/g.getZ();
+				}
 			}
 		}
 		
@@ -421,5 +435,15 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
     	return EuclidianConstants.MODE_INTERSECT;
     }
     
+	/**
+	 * adds a point which will always be tested if it's a solution
+	 * @param point
+	 */
+	public void addSolutionHint(GeoPoint point){
+		if (hints==null){
+			hints=new ArrayList<GeoPoint>();
+		}
+		hints.add(point);
+	}
 
 }
