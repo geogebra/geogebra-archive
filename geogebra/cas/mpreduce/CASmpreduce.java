@@ -403,7 +403,7 @@ public class CASmpreduce extends CASgeneric {
 				+ "	 solutions!!:=for each sol in solutions!! join <<"
 				+ "    bool!!:=1;"
 				+ "    for each solution!! in sol do"
-				+ "      if freeof(solution!!,'root_of) then <<"
+				+ "      if freeof(solution!!,'root_of) and freeof(solution!!,'one_of) then <<"
 				+ "		   on rounded, roundall, numval, complex;"
 				+ "		   if freeof(solution!!,'i) or aeval(impart(rhs(solution!!)))=0 then 1 else bool!!:=0;"
 				+ "		   off complex;"
@@ -435,7 +435,7 @@ public class CASmpreduce extends CASgeneric {
 				"    solutions!!:= for each sol in solutions!! join <<" +
 				"      bool!!:=1;" +
 				"      for each solution!! in sol do" +
-				"        if freeof(solution!!,'root_of) then 1 else" +
+				"        if freeof(solution!!,'root_of) and freeof(solution!!,'one_of) then 1 else" +
 				"      		bool!!:=0;" +
 				"      if bool!!=1 then" +
 				"        {sol}" +
