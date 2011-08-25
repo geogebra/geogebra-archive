@@ -862,6 +862,14 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 				int column) {
 			setFont(table.getFont());
 			setText((value == null) ? "" : " " + value.toString());
+			
+			if((row==-1)&&(column==0)){  //No. column header
+				int width = getPreferredSize().width;
+				
+				tableColumns[0].setMaxWidth(width);
+				tableColumns[0].setMinWidth(width);
+			}	
+			
 			return this;
 		}
 	}
