@@ -1,23 +1,16 @@
 package geogebra.kernel;
 
 import geogebra.cas.error.CASException;
-import geogebra.cas.view.CASInputHandler;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.kernel.parser.ParseException;
-import geogebra.main.Application;
-import geogebra.main.MyError;
 import geogebra.util.Util;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -746,15 +739,13 @@ public class GeoCasCell extends GeoElement {
 	}
 	
 	/**
-	 * Returns whether this object only depends on GeoElements
-	 * where kernel.lookupLabel() != null. 
-	 * @return
+	 * Returns whether this object only depends on GeoElements that aren't GeoCasCells
 	 */
 	final public boolean includesOnlyDefinedVariables() {
-		if (invars == null) return true;
+		if (inGeos == null) return true;
 		
-		for (String varLabel : invars) {
-			if (kernel.lookupLabel(varLabel) == null)
+		for (GeoElement ge : inGeos) {
+			if (ge instanceof GeoCasCell)
 				return false;
 		}
 		return true;
@@ -872,7 +863,7 @@ public class GeoCasCell extends GeoElement {
 			// replace GeoDummyVariable objects in outputVE by the function variables	
 			resolveFunctionVariableReferences(outputVE);	
 		}
-		
+				
 		kernel.setKeepCasNumbers(oldValue);
 	}	
 	
