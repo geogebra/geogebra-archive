@@ -154,7 +154,7 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		parentOutput = algo.getIntersectionPoints();
 		
 		if (point!=null) {
-			if (app.isFileLoading() && point.hasUpdatePrevilege) { //for backward compatability
+			if (kernel.getLoadingMode() && point.hasUpdatePrevilege) { //for backward compatability
 				algo.setIntersectionPoint(index, point);
 				point.hasUpdatePrevilege = false;
 			} else if (kernel.isContinuous()) {

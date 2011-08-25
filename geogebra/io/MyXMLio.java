@@ -309,8 +309,10 @@ public class MyXMLio {
 		}
 
 		try {
+			kernel.setLoadingMode(true);
 			xmlParser.parse(handler, ir);
 			xmlParser.reset();
+			kernel.setLoadingMode(false);
 		} catch (Error e) {
 			// e.printStackTrace();
 			throw e;

@@ -250,6 +250,8 @@ public class Kernel {
 	private boolean continuous = false;
 	private MacroManager macroManager;
 	
+	// loading mode: true when a ggb file is being loaded. Devised for backward compatibility. 
+	private boolean loadingMode = false;
 	
 	/** Evaluator for ExpressionNode */
 	protected ExpressionNodeEvaluator expressionNodeEvaluator;
@@ -9331,5 +9333,13 @@ public class Kernel {
 		AlgoOrthoLinePointConic algo = new AlgoOrthoLinePointConic(cons, label, geoPoint, conic);
 		GeoElement[] lines = algo.getOutput();
 		return lines;
+	}
+
+
+	public void setLoadingMode(boolean b) {
+		loadingMode = b;
+	}
+	public boolean getLoadingMode() {
+		return loadingMode;
 	}
 }

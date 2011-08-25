@@ -3501,7 +3501,6 @@ public class Application implements KeyEventDispatcher {
 			}										     
 	        
 	 	   setWaitCursor();
-	 	   setIsFileLoading(true);
 	 	   
 		   if (!isMacroFile) {
 				// hide navigation bar for construction steps if visible
@@ -3517,16 +3516,10 @@ public class Application implements KeyEventDispatcher {
 				e.printStackTrace();
 			}
 			
-			setIsFileLoading(false);
 			return success;
 	}
 	
-	private void setIsFileLoading(boolean b) {
-		isFileLoading = b;
-	}
-	public boolean isFileLoading() {
-		return isFileLoading;
-	}
+
 	/**
 	 * Loads construction file
 	 * 
