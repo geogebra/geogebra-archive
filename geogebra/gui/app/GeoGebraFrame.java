@@ -55,7 +55,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 	private static final long serialVersionUID = 1L;
 	
 	private static final String VERSION_URL = "http://www.geogebra.org/download/version.txt";
-	private static final String INSTALLERS_URL = "http://www.geogebra.org/cms/installers";
+	private static final String INSTALLERS_URL = "http://www.geogebra.org/installers";
 
 	private static ArrayList<GeoGebraFrame> instances = new ArrayList<GeoGebraFrame>();
 	private static GeoGebraFrame activeInstance;
