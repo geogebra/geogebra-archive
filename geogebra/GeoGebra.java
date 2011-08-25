@@ -21,7 +21,9 @@ public class GeoGebra extends Object {
 	// GeoGebra version
 	public static final String BUILD_DATE = "24 August 2011";
 	public static final String VERSION_STRING = "4.1.0.0"; // 4.2
-	//public static final String VERSION_STRING = "4.9.0.0"; // 3D
+	//current 3D: "4.9.0.0"
+	//current ggb42: "4.1.0.0"
+	
 	public static final String PREFERENCES_ROOT = "/geogebra42";
 	public static final String SPLASH_STRING = "splash42beta.png";
 	public static final String SHORT_VERSION_STRING = "4.2"; // used for online archive
