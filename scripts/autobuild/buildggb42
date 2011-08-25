@@ -132,7 +132,7 @@ for i in *.html *.jnlp; do
 # 6/4. Copying unsigned geogebra.jar and geogebra_main.jar to $WWWDIR/$MYDIR/minimal:
 mkdir -p $WWWDIR/$MYDIR/minimal
 for i in geogebra geogebra_main; do
- cp $SVNDIR/build/unsigned/unpacked/$i.jar $WWWDIR/$MYDIR/minimal
+ cp $SVNDIR/geogebra/build/unsigned/unpacked/$i.jar $WWWDIR/$MYDIR/minimal
  done
 
 # 7. Finally, making sure that all files have group writable permissions
