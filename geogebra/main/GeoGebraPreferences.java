@@ -13,7 +13,6 @@
 package geogebra.main;
 
 import geogebra.GeoGebra;
-import geogebra3D.Application3D;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -264,7 +263,7 @@ public class GeoGebraPreferences {
     	
     	ggbPrefs.put(XML_USER_PREFERENCES, xml);
 
-        if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
+        //if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
         {
         	String xmlDef = app.getKernel().getConstruction().getConstructionDefaults().getCDXML();
 
@@ -411,7 +410,7 @@ public class GeoGebraPreferences {
     			app.updateRightAngleStyle();
     		}
 
-            if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
+            //if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
             {
             	String xmlDef = ggbPrefs.get(XML_DEFAULT_OBJECT_PREFERENCES, factoryDefaultXml);
             	if (!xmlDef.equals(factoryDefaultXml)) {
