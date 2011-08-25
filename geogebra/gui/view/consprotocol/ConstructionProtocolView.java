@@ -864,7 +864,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			setText((value == null) ? "" : " " + value.toString());
 			
 			if((row==-1)&&(column==0)){  //No. column header
-				int width = getPreferredSize().width;
+				int width = getPreferredSize().width + 2;
 				
 				tableColumns[0].setMaxWidth(width);
 				tableColumns[0].setMinWidth(width);
@@ -1018,7 +1018,7 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 		private static final long serialVersionUID = -6933858200673625046L;
 
 		final public ColumnData columns[] = {
-				new ColumnData("No.", 35, 35, SwingConstants.CENTER, true),
+				new ColumnData("No.", 35, 35, SwingConstants.RIGHT, true),
 				new ColumnData("Name", 80, 50, SwingConstants.LEFT, true),
 				new ColumnData("ToolbarIcon", 35, 35, SwingConstants.CENTER,
 						false),
