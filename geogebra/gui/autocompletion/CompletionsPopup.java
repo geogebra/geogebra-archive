@@ -10,6 +10,7 @@ import static java.awt.event.KeyEvent.VK_UP;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import geogebra.gui.inputfield.AutoCompleteTextField;
+import geogebra.main.Application;
 
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
@@ -116,7 +117,9 @@ public class CompletionsPopup {
 		};
 		// Hide popup when text field loses focus
 		textField.addFocusListener(new FocusAdapter() {
-			@Override public void focusLost(FocusEvent e) { hidePopup(); }
+			@Override public void focusLost(FocusEvent e) {
+				hidePopup();
+			}
 		});
 		// Allow the user click on an option for completion
 		list.addMouseListener(new MouseAdapter() {

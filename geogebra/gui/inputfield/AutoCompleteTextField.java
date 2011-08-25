@@ -61,7 +61,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */
 	// private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *(?:<[\\(\\) \\-\\p{L}]*>|\\.\\.\\.) *(?=[,\\]])");
 	// Simplified to this as there are too many non-alphabetic character in parameter descriptions:
-	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *(?:<.*?>|\\.\\.\\.) *(?=[,\\]])");
+	private static Pattern syntaxArgPattern = Pattern.compile("[,\\[] *(?:<.*?>|\"<.*?>\"|\\.\\.\\.) *(?=[,\\]])");
 	
 	/**
 	 * Constructs a new AutoCompleteTextField that uses the dictionary of the
