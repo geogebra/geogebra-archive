@@ -573,7 +573,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		ymaxObject = new GeoNumeric(kernel.getConstruction());
 		initView(false);
 		
-		updateRightAngleStyle(app.getLocale());
+		//updateRightAngleStyle(app.getLocale());
 		
 		// ggb3D 2009-02-05
 		hits=new Hits();
@@ -613,7 +613,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		// change rightAngleStyle for German to
         // EuclidianView.RIGHT_ANGLE_STYLE_DOT
         if (getRightAngleStyle() != RIGHT_ANGLE_STYLE_NONE) {
-	        if (locale.getLanguage().equals("de")) {
+	        if (locale.getLanguage().equals("de") ||
+	        	locale.getLanguage().equals("hu")) {
 	        	setRightAngleStyle(RIGHT_ANGLE_STYLE_DOT);
 	        } else {
 	        	setRightAngleStyle(RIGHT_ANGLE_STYLE_SQUARE);
@@ -637,7 +638,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		pointCapturingMode = POINT_CAPTURING_AUTOMATIC;
 
 		// added by Loic BEGIN
-		app.rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
+		//app.rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
 		// END
 			
 		showAxesNumbers[0] = true;

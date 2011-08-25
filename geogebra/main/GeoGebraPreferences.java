@@ -405,6 +405,10 @@ public class GeoGebraPreferences {
     		// load preferences xml
         	String xml = ggbPrefs.get(XML_USER_PREFERENCES, factoryDefaultXml);
     		app.setXML(xml, true);
+    		if (xml.equals(factoryDefaultXml)) {
+    			// temporary solution, may there be an auto rightAngleStyle in the future
+    			app.updateRightAngleStyle();
+    		}
 
             if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
             {

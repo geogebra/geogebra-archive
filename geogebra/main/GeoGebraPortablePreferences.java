@@ -282,7 +282,11 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    		// load preferences xml
     	initDefaultXML(app);			//This might not have been called before!
        	String xml = get(XML_USER_PREFERENCES, factoryDefaultXml);        
-   		app.setXML(xml, true);	   
+   		app.setXML(xml, true);
+		if (xml.equals(factoryDefaultXml)) {
+			// temporary solution, may there be an auto rightAngleStyle in the future
+			app.updateRightAngleStyle();
+		}
    	
         if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
         {

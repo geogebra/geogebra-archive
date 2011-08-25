@@ -1697,8 +1697,8 @@ public class Application implements KeyEventDispatcher {
 		setLocale(locale);
 		
 		// update right angle style in euclidian view (different for German)
-		if (euclidianView != null)
-			euclidianView.updateRightAngleStyle(locale);
+		//if (euclidianView != null)
+		//	euclidianView.updateRightAngleStyle(locale);
 				
 		// make sure digits are updated in all numbers
 		getKernel().updateConstruction();
@@ -1708,6 +1708,17 @@ public class Application implements KeyEventDispatcher {
 		setLabels(); // update display
 				
 		System.gc();
+	}
+	
+	public void updateRightAngleStyle() {
+        if (rightAngleStyle != EuclidianView.RIGHT_ANGLE_STYLE_NONE) {
+	        if (getLocale().getLanguage().equals("de") ||
+        		getLocale().getLanguage().equals("hu")) {
+	        	rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_DOT;
+	        } else {
+	        	rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
+	        }
+        }
 	}
 
 	/*
