@@ -5842,6 +5842,11 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	
+	
+	public boolean is3D(){
+		return false;
+	}
+	
 }
 
 

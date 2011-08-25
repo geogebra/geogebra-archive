@@ -313,4 +313,9 @@ public class Application3D extends Application{
 	}
 	
 	*/
+	
+	
+	public boolean is3D(){
+		return true;
+	}
 }
