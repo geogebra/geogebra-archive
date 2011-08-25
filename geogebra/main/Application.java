@@ -3888,7 +3888,7 @@ public class Application implements KeyEventDispatcher {
 //			sb.append(((geogebra.cas.view.CASView) casView).getGUIXML());
 //			sb.append(((geogebra.cas.view.CASView) casView).getSessionXML());
 //		}
-
+		
 		return sb.toString();
 	}
 

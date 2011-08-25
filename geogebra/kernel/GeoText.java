@@ -390,34 +390,38 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		else
 			return new MyStringBuffer(kernel, "");
 	}	
-		
-	/**
-	   * save object in XML format
-	   */ 
-	  public final void getXML(StringBuilder sb) {
-	 
-		 // an independent text needs to add
-		 // its expression itself
-		 // e.g. text0 = "Circle"
-		 if (isIndependent()) {
-			sb.append("<expression");
-				sb.append(" label=\"");
-				sb.append(Util.encodeXML(label));
-				sb.append("\" exp=\"");
-				sb.append(Util.encodeXML(toOutputValueString()));
-				// expression   
-			sb.append("\"/>\n");
-		 }
-  		  
-		  sb.append("<element"); 
-			  sb.append(" type=\"text\"");
-			  sb.append(" label=\"");
-			  sb.append(Util.encodeXML(label));
-		  sb.append("\">\n");
-		  getXMLtags(sb);
-		  sb.append("</element>\n");
 
-	  }
+	/**
+	  * save object in XML format
+	  */ 
+	public final void getXML(StringBuilder sb) {
+
+		// an independent text needs to add
+		// its expression itself
+		// e.g. text0 = "Circle"
+		if (isIndependent() && getDefaultGeoType() < 0) {
+			sb.append("<expression");
+			sb.append(" label=\"");
+			sb.append(Util.encodeXML(label));
+			sb.append("\" exp=\"");
+			sb.append(Util.encodeXML(toOutputValueString()));
+			// expression   
+			sb.append("\"/>\n");
+		}
+
+		sb.append("<element"); 
+		sb.append(" type=\"text\"");
+		sb.append(" label=\"");
+		sb.append(Util.encodeXML(label));
+		if (getDefaultGeoType() >= 0) {
+			sb.append("\" default=\"");
+			sb.append(getDefaultGeoType());
+		}
+		sb.append("\">\n");
+		getXMLtags(sb);
+		sb.append("</element>\n");
+
+	}
 
 	/**
 	* returns all class-specific xml tags for getXML

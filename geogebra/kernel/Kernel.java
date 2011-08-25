@@ -217,7 +217,7 @@ public class Kernel {
 	// this flag was introduced for Copy & Paste
 	private boolean saveScriptsToXML = true; 
 
-	
+	private boolean elementDefaultAllowed = false;
 	
 	// silentMode is used to create helper objects without any side effects	
 	// i.e. in silentMode no labels are created and no objects are added to views
@@ -1073,6 +1073,14 @@ public class Kernel {
 
 	public boolean getSaveScriptsToXML() {
 		return saveScriptsToXML;
+	}
+	
+	public void setElementDefaultAllowed(boolean flag) {
+		elementDefaultAllowed = flag;
+	}
+	
+	public boolean getElementDefaultAllowed() {
+		return elementDefaultAllowed;
 	}
 
 	/*

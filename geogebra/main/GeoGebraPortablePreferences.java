@@ -236,6 +236,10 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    	
    	set(XML_USER_PREFERENCES, xml);  
    	
+	String xmlDef = app.getKernel().getConstruction().getConstructionDefaults().getCDXML();
+
+	set(XML_DEFAULT_OBJECT_PREFERENCES, xmlDef);
+   	
    	byte[]	macrofile	=app.getMacroFileAsByteArray();
    	String	macrostring =geogebra.util.Base64.encode(macrofile,0);
    	
@@ -274,6 +278,14 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
     	initDefaultXML(app);			//This might not have been called before!
        	String xml = get(XML_USER_PREFERENCES, factoryDefaultXml);        
    		app.setXML(xml, true);	   
+   		
+    	String xmlDef = get(XML_DEFAULT_OBJECT_PREFERENCES, factoryDefaultXml);
+    	if (!xmlDef.equals(factoryDefaultXml)) {
+    		boolean eda = app.getKernel().getElementDefaultAllowed();
+    		app.getKernel().setElementDefaultAllowed(true);
+    		app.setXML(xmlDef, false);
+    		app.getKernel().setElementDefaultAllowed(eda);
+    	}
    	} catch (Exception e) {	    		
    		e.printStackTrace();
    	}//try-catch    	

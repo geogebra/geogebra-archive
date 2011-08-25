@@ -452,6 +452,16 @@ public abstract class GeoElement
 	public void setColorSpace(int colorSpace) {
 		this.colorSpace = colorSpace;
 	}
+	
+	private int defaultGeoType = -1;
+	
+	public int getDefaultGeoType() {
+		return defaultGeoType;
+	}
+	
+	public void setDefaultGeoType(int defaultGT) {
+		defaultGeoType = defaultGT;
+	}
 
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;
@@ -4262,6 +4272,10 @@ public abstract class GeoElement
 		sb.append(type);
 		sb.append("\" label=\"");
 		sb.append(Util.encodeXML(label));
+		if (defaultGeoType >= 0) {
+			sb.append("\" default=\"");
+			sb.append(defaultGeoType);
+		}
 		sb.append("\">\n");
 	}
 	

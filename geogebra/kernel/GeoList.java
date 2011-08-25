@@ -645,7 +645,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		// an independent list needs to add
 		// its expression itself
 		// e.g. {1,2,3}
-		if (isIndependent()) {
+		if (isIndependent() && getDefaultGeoType() < 0) {
 			sb.append("<expression");
 			sb.append(" label =\"");
 			sb.append(Util.encodeXML(label));
@@ -658,6 +658,10 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		sb.append(" type=\"list\"");
 		sb.append(" label=\"");
 		sb.append(label);
+		if (getDefaultGeoType() >= 0) {
+			sb.append("\" default=\"");
+			sb.append(getDefaultGeoType());
+		}
 		sb.append("\">\n");
 		getXMLtags(sb);
 

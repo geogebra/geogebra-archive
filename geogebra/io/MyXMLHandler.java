@@ -2409,35 +2409,46 @@ public class MyXMLHandler implements DocHandler {
 		GeoElement geo = null;
 		String label = (String) attrs.get("label");
 		String type = (String) attrs.get("type");
+		String defaultset = (String) attrs.get("default");
 		if (label == null || type == null) {
 			System.err.println("attributes missing in <element>");
 			return geo;
 		}
 
-		// does a geo element with this label exist?
-		geo = kernel.lookupLabel(label);
+		if (defaultset == null || !kernel.getElementDefaultAllowed()) {
+			// does a geo element with this label exist?
+			geo = kernel.lookupLabel(label);
+			//Application.debug(label+", geo="+geo);
+			if (geo == null) {
 		
-		//Application.debug(label+", geo="+geo);
-		
-		if (geo == null) {
+				// try to find an algo on which this label depends
+				//geo = cons.resolveLabelDependency(label, kernel.getClassType(type));
+				//if none, create new geo
+				if (geo==null){
+					geo = kernel.createGeoElement(cons, type);
+					geo.setLoadedLabel(label);
+				}
 			
-			//try to find an algo on which this label depends
-			//geo = cons.resolveLabelDependency(label, kernel.getClassType(type));
-			//if none, create new geo
-			if (geo==null){
-				geo = kernel.createGeoElement(cons, type);
-				geo.setLoadedLabel(label);
-			}
-			
-			//Application.debug(label+", "+geo.isLabelSet());
-			
-			
+				//Application.debug(label+", "+geo.isLabelSet());
 
-			// independent GeoElements should be hidden by default
-			// (as older versions of this file format did not
-			// store show/hide information for all kinds of objects,
-			// e.g. GeoNumeric)
-			geo.setEuclidianVisible(false);
+				// independent GeoElements should be hidden by default
+				// (as older versions of this file format did not
+				// store show/hide information for all kinds of objects,
+				// e.g. GeoNumeric)
+				geo.setEuclidianVisible(false);
+			}
+		} else {
+			int defset = Integer.parseInt(defaultset);
+			geo = kernel.getConstruction().getConstructionDefaults().getDefaultGeo(defset);
+			if (geo == null) {
+				// wrong default setting, act as if there were no default set
+				geo = kernel.lookupLabel(label);
+				if (geo == null) {
+					geo = kernel.createGeoElement(cons, type);
+					geo.setLoadedLabel(label);
+					geo.setEuclidianVisible(false);
+				}
+			}
 		}
 		
 		// use default point style on points

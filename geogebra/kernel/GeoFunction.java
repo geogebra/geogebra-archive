@@ -597,31 +597,35 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	/**
 	   * save object in xml format
 	   */ 
-	  public final void getXML(StringBuilder sb) {
+	public final void getXML(StringBuilder sb) {
 		 
-		 // an indpendent function needs to add
-		 // its expression itself
-		 // e.g. f(x) = x^2 - 3x
-		 if (isIndependent()) {
+		// an indpendent function needs to add
+		// its expression itself
+		// e.g. f(x) = x^2 - 3x
+		if (isIndependent() && getDefaultGeoType() < 0) {
 			sb.append("<expression");
-				sb.append(" label =\"");
-				sb.append(label);
-				sb.append("\" exp=\"");
-				sb.append(Util.encodeXML(toString()));
-				// expression   
+			sb.append(" label =\"");
+			sb.append(label);
+			sb.append("\" exp=\"");
+			sb.append(Util.encodeXML(toString()));
+			// expression   
 			sb.append("\"/>\n");
-		 }
+		}
 	  		  
-		  sb.append("<element"); 
-			  sb.append(" type=\"function\"");
-			  sb.append(" label=\"");
-			  sb.append(label);
-		  sb.append("\">\n");
-		  getXMLtags(sb);
-		  sb.append(getCaptionXML());
-		  sb.append("</element>\n");
+		sb.append("<element"); 
+		sb.append(" type=\"function\"");
+		sb.append(" label=\"");
+		sb.append(label);
+		if (getDefaultGeoType() >= 0) {
+			sb.append("\" default=\"");
+			sb.append(getDefaultGeoType());
+		}
+		sb.append("\">\n");
+		getXMLtags(sb);
+		sb.append(getCaptionXML());
+		sb.append("</element>\n");
 
-	  }
+	}
 	
 	/**
 	* returns all class-specific xml tags for getXML

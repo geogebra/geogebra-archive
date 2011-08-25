@@ -297,33 +297,36 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 	}
 		
 	/**
-	   * save object in xml format
-	   */ 
-	  public final void getXML(StringBuilder sb) {
-		 
-		 // an indpendent function needs to add
-		 // its expression itself
-		 // e.g. f(a,b) = a^2 - 3*b
-		 if (isIndependent()) {
-			sb.append("<expression");
-				sb.append(" label =\"");
-				sb.append(label);
-				sb.append("\" exp=\"");
-				sb.append(Util.encodeXML(toXMLString()));
-				// expression   
-			sb.append("\"/>\n");
-		 }
-	  		  
-		  sb.append("<element"); 
-			  sb.append(" type=\"functionNVar\"");
-			  sb.append(" label=\"");
-			  sb.append(label);
-		  sb.append("\">\n");
-		  getXMLtags(sb);
-		  sb.append(getCaptionXML());
-		  sb.append("</element>\n");
+	 * save object in xml format
+	 */ 
+	public final void getXML(StringBuilder sb) {
 
-	  }
+		// an indpendent function needs to add
+		// its expression itself
+		// e.g. f(a,b) = a^2 - 3*b
+		if (isIndependent() && getDefaultGeoType() < 0) {
+			sb.append("<expression");
+			sb.append(" label =\"");
+			sb.append(label);
+			sb.append("\" exp=\"");
+			sb.append(Util.encodeXML(toXMLString()));
+			// expression   
+			sb.append("\"/>\n");
+		}
+	  		  
+		sb.append("<element"); 
+		sb.append(" type=\"functionNVar\"");
+		sb.append(" label=\"");
+		sb.append(label);
+		if (getDefaultGeoType() >= 0) {
+			sb.append("\" default=\"");
+			sb.append(getDefaultGeoType());
+		}
+		sb.append("\">\n");
+		getXMLtags(sb);
+		sb.append(getCaptionXML());
+		sb.append("</element>\n");
+	}
 
 	final public boolean isCasEvaluableObject() {
 		return true;

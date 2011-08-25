@@ -89,6 +89,7 @@ public class GeoGebraPreferences {
      
     // special preference keys
 	protected final String XML_USER_PREFERENCES = "xml_user_preferences";
+	protected final String XML_DEFAULT_OBJECT_PREFERENCES = "xml_default_object_preferences";
 	protected final String XML_FACTORY_DEFAULT = "xml_factory_default"; 
 	protected final String TOOLS_FILE_GGT = "tools_file_ggt";	
 	protected final String APP_LOCALE = "app_locale";	
@@ -259,7 +260,11 @@ public class GeoGebraPreferences {
     	// preferences xml
     	String xml = app.getPreferencesXML();
     	
-    	ggbPrefs.put(XML_USER_PREFERENCES, xml);  
+    	ggbPrefs.put(XML_USER_PREFERENCES, xml);
+
+    	String xmlDef = app.getKernel().getConstruction().getConstructionDefaults().getCDXML();
+
+    	ggbPrefs.put(XML_DEFAULT_OBJECT_PREFERENCES, xmlDef);
     
     	// store current tools including icon images as ggt file (byte array)
     	putByteArray(ggbPrefs, TOOLS_FILE_GGT, app.getMacroFileAsByteArray());
@@ -394,9 +399,17 @@ public class GeoGebraPreferences {
         	app.loadMacroFileFromByteArray(ggtFile, true);
         	    		
     		// load preferences xml
-        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, factoryDefaultXml);        
-    		app.setXML(xml, true);	   
-    		
+        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, factoryDefaultXml);
+    		app.setXML(xml, true);
+
+        	String xmlDef = ggbPrefs.get(XML_DEFAULT_OBJECT_PREFERENCES, factoryDefaultXml);
+        	if (!xmlDef.equals(factoryDefaultXml)) {
+        		boolean eda = app.getKernel().getElementDefaultAllowed();
+        		app.getKernel().setElementDefaultAllowed(true);
+        		app.setXML(xmlDef, false);
+        		app.getKernel().setElementDefaultAllowed(eda);
+        	}
+
         	//String xml = ggbPrefs.get(XML_USER_PREFERENCES, "");        	
         	//if(xml.equals("")) {
         	//	initDefaultXML(app);

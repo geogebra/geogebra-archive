@@ -785,8 +785,8 @@ public class MyXMLio {
 		//				+ "\">\n");
 
 		// save gui settings
-		sb.append(app.getCompleteUserInterfaceXML(true));		
-
+		sb.append(app.getCompleteUserInterfaceXML(true));
+		
 		sb.append("</geogebra>");
 		return sb.toString();
 	}
