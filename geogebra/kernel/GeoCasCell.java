@@ -1086,7 +1086,7 @@ public class GeoCasCell extends GeoElement {
 				success = false;	
 				ce = e;
 			}			
-			useGeoGebraFallback = !success && includesOnlyDefinedVariables();
+			useGeoGebraFallback = !success && includesOnlyDefinedVariables() && ce == null;
 		}
 		
 		// GEOGEBRA FALLBACK
