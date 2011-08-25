@@ -18,7 +18,7 @@
 package geogebra.gui.app;
 
 import geogebra.CommandLineArguments;
-import geogebra.euclidian.Drawable;
+import geogebra.GeoGebra;
 import geogebra.gui.FileDropTargetListener;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
@@ -26,6 +26,7 @@ import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -34,8 +35,12 @@ import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.JFrame;
@@ -43,47 +48,49 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
- * GeoGebra's main window. 
+ * GeoGebra's main window.
  */
-public class GeoGebraFrame extends JFrame implements WindowFocusListener
-{
-	
+public class GeoGebraFrame extends JFrame implements WindowFocusListener {
+
 	private static final long serialVersionUID = 1L;
+	
+	private static final String VERSION_URL = "http://www.geogebra.org/download/version.txt";
+	private static final String INSTALLERS_URL = "http://www.geogebra.org/cms/installers";
 
 	private static ArrayList<GeoGebraFrame> instances = new ArrayList<GeoGebraFrame>();
 	private static GeoGebraFrame activeInstance;
 	private static FileDropTargetListener dropTargetListener;
-	
 
 	protected Application app;
-	
+
 	public GeoGebraFrame() {
 		instances.add(this);
-		activeInstance = this;			
-		
+		activeInstance = this;
+
 	}
-	
-//	public static void printInstances() {
-//		System.out.println("FRAMES: " + instances.size()); 
-//		for (int i=0; i < instances.size(); i++) {
-//			GeoGebraFrame frame = (GeoGebraFrame) instances.get(i);
-//			System.out.println(" " + (i+1) + ", applet: " + frame.app.isApplet() + ", "
-//					+ frame); 
-//		}				
-//	}
-	
+
+	// public static void printInstances() {
+	// System.out.println("FRAMES: " + instances.size());
+	// for (int i=0; i < instances.size(); i++) {
+	// GeoGebraFrame frame = (GeoGebraFrame) instances.get(i);
+	// System.out.println(" " + (i+1) + ", applet: " + frame.app.isApplet() +
+	// ", "
+	// + frame);
+	// }
+	// }
+
 	/**
 	 * Disposes this frame and removes it from the static instance list.
 	 */
 	public void dispose() {
 		instances.remove(this);
-		if (this == activeInstance) 
+		if (this == activeInstance)
 			activeInstance = null;
 	}
-	
+
 	public Application getApplication() {
 		return app;
-	}		
+	}
 
 	public void setApplication(Application app) {
 		this.app = app;
@@ -98,94 +105,96 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	}
 
 	public void windowGainedFocus(WindowEvent arg0) {
-		activeInstance = this;		
-		app.updateMenuWindow();		
+		activeInstance = this;
+		app.updateMenuWindow();
 	}
 
-	public void windowLostFocus(WindowEvent arg0) {	
+	public void windowLostFocus(WindowEvent arg0) {
 	}
-	
-	public Locale getLocale() {			
-		Locale defLocale = GeoGebraPreferences.getPref().getDefaultLocale();		
-		
+
+	public Locale getLocale() {
+		Locale defLocale = GeoGebraPreferences.getPref().getDefaultLocale();
+
 		if (defLocale == null)
 			return super.getLocale();
-		else 
-			return defLocale;		
+		else
+			return defLocale;
 	}
 
-	public void setVisible(boolean flag) {				
-		if (flag) {						
-			updateSize();									
-			
+	public void setVisible(boolean flag) {
+		if (flag) {
+			updateSize();
+
 			// set location
 			int instanceID = instances.size() - 1;
 			if (instanceID > 0) {
-				// move right and down of last instance		
+				// move right and down of last instance
 				GeoGebraFrame prevInstance = getInstance(instanceID - 1);
-				Point loc = prevInstance.getLocation();				
-				
+				Point loc = prevInstance.getLocation();
+
 				// make sure we stay on screen
-				Dimension d1 = getSize();	
+				Dimension d1 = getSize();
 				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 				loc.x = Math.min(loc.x + 20, dim.width - d1.width);
-				loc.y = Math.min(loc.y + 20, dim.height - d1.height - 25);									
+				loc.y = Math.min(loc.y + 20, dim.height - d1.height - 25);
 				setLocation(loc);
 			} else {
 				// center
 				setLocationRelativeTo(null);
 			}
-			
-			super.setVisible(true);	
+
+			super.setVisible(true);
 			app.getEuclidianView().requestFocusInWindow();
-		}
-		else {	
-			if (!isShowing()) return;
-			
+		} else {
+			if (!isShowing())
+				return;
+
 			instances.remove(this);
 			GeoGebraPreferences.getPref().saveFileList();
-			
-			if (instances.size() == 0) {				
+
+			if (instances.size() == 0) {
 				super.setVisible(false);
 				dispose();
-				
+
 				if (!app.isApplet()) {
 					System.exit(0);
 				}
 			} else {
 				super.setVisible(false);
 				updateAllTitles();
-			}		
-		}		
+			}
+		}
 	}
-	
+
 	public void updateSize() {
 		// get frame size from layout manager
 		Dimension size = app.getPreferredSize();
-		
+
 		// check if frame fits on screen
 		Rectangle screenSize = Application.getScreenSize();
 
-		if (size.width > screenSize.width || 
-				size.height > screenSize.height) {
+		if (size.width > screenSize.width || size.height > screenSize.height) {
 			size.width = screenSize.width;
 			size.height = screenSize.height;
-			setLocation(0,0);
-		} 
-				
+			setLocation(0, 0);
+		}
+
 		setSize(size);
 	}
 
-	/** 
+	/**
 	 * Main method to create inital GeoGebra window.
-	 * @param args file name parameter
+	 * 
+	 * @param args
+	 *            file name parameter
 	 */
-	public static synchronized void main(CommandLineArguments args) {		
+	public static synchronized void main(CommandLineArguments args) {
 
-		init(args,new GeoGebraFrame());
-	}	
-	
-	public static synchronized void init(CommandLineArguments args, GeoGebraFrame wnd){
+		init(args, new GeoGebraFrame());
+	}
+
+	public static synchronized void init(CommandLineArguments args,
+			GeoGebraFrame wnd) {
 		// check java version
 		double javaVersion = Util.getJavaVersion();
 		if (javaVersion < 1.42) {
@@ -197,39 +206,42 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 									+ "\nPlease visit http://www.java.com to get a newer version of Java.");
 			return;
 		}
-		    	
-     	if (Application.MAC_OS) 
-    		initMacSpecifics();
-				
-    	// set system look and feel
-		try {		
+
+		if (Application.MAC_OS)
+			initMacSpecifics();
+
+		// set system look and feel
+		try {
 			if (Application.MAC_OS || Application.WINDOWS)
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			else // Linux or others
-				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+				UIManager.setLookAndFeel(UIManager
+						.getSystemLookAndFeelClassName());
+			else
+				// Linux or others
+				UIManager.setLookAndFeel(UIManager
+						.getCrossPlatformLookAndFeelClassName());
 		} catch (Exception e) {
-			Application.debug(e+"");
+			Application.debug(e + "");
 		}
-		if(args.containsArg("resetSettings")){			
+		if (args.containsArg("resetSettings")) {
 			GeoGebraPreferences.getPref().clearPreferences();
 		}
 		// Set GeoGebraPreferences mode (system properties or property file)
 		// before it is called for the first time
 		String settingsFile = args.getStringValue("settingsfile");
-		if(settingsFile.length() > 0) {
+		if (settingsFile.length() > 0) {
 			GeoGebraPreferences.setPropertyFileName(settingsFile);
 		}
-		
-    	
+
 		// load list of previously used files
-		GeoGebraPreferences.getPref().loadFileList();	
-    	    			
-		// create first window and show it		
-		createNewWindow(args,wnd);	
+		GeoGebraPreferences.getPref().loadFileList();
+
+		// create first window and show it
+		createNewWindow(args, wnd);
 	}
-	
+
 	/**
 	 * Returns the active GeoGebra window.
+	 * 
 	 * @return the active GeoGebra window.
 	 */
 	public static synchronized GeoGebraFrame getActiveInstance() {
@@ -237,136 +249,226 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	}
 
 	/**
-	 * MacOS X specific initing. Note: this method can only be run
-	 * on a Mac!
+	 * MacOS X specific initing. Note: this method can only be run on a Mac!
 	 */
 	public static void initMacSpecifics() {
 		try {
 			// init mac application listener
 			MacApplicationListener.initMacApplicationListener();
-	
-			//mac menu bar	
-		    //System.setProperty("com.apple.macos.useScreenMenuBar", "true"); 	
-		    System.setProperty("apple.laf.useScreenMenuBar", "true"); 	
+
+			// mac menu bar
+			// System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
 		} catch (Exception e) {
-			Application.debug(e+"");
+			Application.debug(e + "");
 		}
 	}
-	
-	
-	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args){
-		return createNewWindow(args,new GeoGebraFrame());
+
+	public static synchronized GeoGebraFrame createNewWindow(
+			CommandLineArguments args) {
+		return createNewWindow(args, new GeoGebraFrame());
 	}
-	
+
 	/**
 	 * Creates new GeoGebra window
-	 * @param args Command line arguments
-	 * @param wnd 
+	 * 
+	 * @param args
+	 *            Command line arguments
+	 * @param wnd
 	 * @return the new window
 	 */
-	//public abstract GeoGebra buildGeoGebra();
-	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,GeoGebraFrame wnd){
-		return createNewWindow(args,null,wnd);
+	// public abstract GeoGebra buildGeoGebra();
+	public static synchronized GeoGebraFrame createNewWindow(
+			CommandLineArguments args, GeoGebraFrame wnd) {
+		return createNewWindow(args, null, wnd);
 	}
-	
-	
+
 	/**
 	 * return the application running geogebra
+	 * 
 	 * @param args
 	 * @param frame
 	 * @return the application running geogebra
 	 */
-	protected Application createApplication(CommandLineArguments args, JFrame frame){		
+	protected Application createApplication(CommandLineArguments args,
+			JFrame frame) {
 		return new Application(args, frame, true);
 	}
-	
-	
-	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,Macro macro) {	
-		return createNewWindow(args,macro,new GeoGebraFrame());
+
+	public static synchronized GeoGebraFrame createNewWindow(
+			CommandLineArguments args, Macro macro) {
+		return createNewWindow(args, macro, new GeoGebraFrame());
 	}
-	
+
 	/**
 	 * Creates new GeoGebra window
-	 * @param args Command line arguments
-	 * @param macro Macro to open (or null for file edit mode)
-	 * @param wnd 
+	 * 
+	 * @param args
+	 *            Command line arguments
+	 * @param macro
+	 *            Macro to open (or null for file edit mode)
+	 * @param wnd
 	 * @return the new window
 	 */
-	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,Macro macro,GeoGebraFrame wnd) {				
+	public static synchronized GeoGebraFrame createNewWindow(
+			CommandLineArguments args, Macro macro, GeoGebraFrame wnd) {
 		// set Application's size, position and font size
 		// TODO Add layout glass pane (F.S.)
-		
-		
-		Application app = wnd.createApplication(args,wnd);//new Application(args, wnd, true);		
-		
-		if(macro!=null)app.openMacro(macro);
-		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
+
+		Application app = wnd.createApplication(args, wnd);// new
+															// Application(args,
+															// wnd, true);
+
+		if (macro != null)
+			app.openMacro(macro);
+		// app.getApplicationGUImanager().setMenubar(new
+		// geogebra.gui.menubar.GeoGebraMenuBar(app));
 		app.getGuiManager().initMenubar();
-		
+
 		// init GUI
 		wnd.app = app;
 		wnd.getContentPane().add(app.buildApplicationPanel());
 		dropTargetListener = new geogebra.gui.FileDropTargetListener(app);
-		wnd.setDropTarget(new DropTarget(wnd, dropTargetListener));			
+		wnd.setDropTarget(new DropTarget(wnd, dropTargetListener));
 		wnd.addWindowFocusListener(wnd);
-		
-		updateAllTitles();		
+
+		updateAllTitles();
 		wnd.setVisible(true);
-		
+
 		// init some things in the background
-		if (!app.isApplet())
-		{
+		if (!app.isApplet()) {
 			/*
-			Thread runner = new Thread() {
-				public void run() {											
-					// init properties dialog
-					app.getGuiManager().initPropertiesDialog();		
-					
-					// init file chooser
-					app.getGuiManager().initFileChooser();	
-					
-					// init CAS
-					app.getKernel().getGeoGebraCAS();
-					
-					// init JLaTeXMath
-					Graphics2D g2d = app.getEuclidianView().g2Dtemp;
-					Drawable.drawEquation(app, app.getEuclidianView().g2Dtemp, 0, 0, "x^{2}", g2d.getFont(), false, Color.BLACK, Color.WHITE);
-				}
-			};
-			*/
+			 * Thread runner = new Thread() { public void run() { // init
+			 * properties dialog app.getGuiManager().initPropertiesDialog();
+			 * 
+			 * // init file chooser app.getGuiManager().initFileChooser();
+			 * 
+			 * // init CAS app.getKernel().getGeoGebraCAS();
+			 * 
+			 * // init JLaTeXMath Graphics2D g2d =
+			 * app.getEuclidianView().g2Dtemp; Drawable.drawEquation(app,
+			 * app.getEuclidianView().g2Dtemp, 0, 0, "x^{2}", g2d.getFont(),
+			 * false, Color.BLACK, Color.WHITE); } };
+			 */
 			Thread runner = wnd.createAppThread(app);
 			runner.start();
 		}
-				
+
 		return wnd;
 	}
-	
-	private AppThread createAppThread(Application app){
+
+	private AppThread createAppThread(Application app) {
 		return new AppThread(app);
 	}
-	
-	private class AppThread extends Thread{
-		
+
+	private class AppThread extends Thread {
+
 		Application app;
-		
-		public AppThread(Application app){
-			this.app=app;	
+
+		public AppThread(Application app) {
+			this.app = app;
 		}
-		
-		public void run() {											
+
+		public void run() {
 			// init properties dialog
-			this.app.getGuiManager().initPropertiesDialog();		
-			
+			this.app.getGuiManager().initPropertiesDialog();
+
 			// init file chooser
-			this.app.getGuiManager().initFileChooser();	
-			
+			this.app.getGuiManager().initFileChooser();
+
 			// init CAS
 			this.app.getKernel().getGeoGebraCAS();
-			
+
 			// init JLaTeXMath
 			Graphics2D g2d = this.app.getEuclidianView().g2Dtemp;
-			app.getDrawEquation().drawEquation(this.app, null, this.app.getEuclidianView().g2Dtemp, 0, 0, "x^{2}", g2d.getFont(), false, Color.BLACK, Color.WHITE, false);
+			app.getDrawEquation().drawEquation(this.app, null,
+					this.app.getEuclidianView().g2Dtemp, 0, 0, "x^{2}",
+					g2d.getFont(), false, Color.BLACK, Color.WHITE, false);
+
+			// check if newer version is available
+			if (!app.isApplet() && !app.isWebstart()) {
+				checkVersion();
+			}
 		}
+
+		/**
+		 * Checks if a newer version is available. 
+		 */
+		
+		private void checkVersion() {
+			String lastVersionCheck = GeoGebraPreferences.getPref()
+					.loadPreference(GeoGebraPreferences.VERSION_LAST_CHECK, "");
+			Long nowL = new Date().getTime();
+			String nowLS = nowL.toString();
+			boolean checkNeeded = false;
+			if (lastVersionCheck == null || lastVersionCheck.equals("")) {
+				checkNeeded = true;
+				app.debug("check needed: lastVersionCheck=0");
+			}
+
+			else {
+				Long lastVersionCheckL = Long.valueOf(lastVersionCheck);
+				if (lastVersionCheckL + 30 * 60 * 60 * 24 < nowL) {
+					checkNeeded = true;
+					app.debug("check needed: lastVersionCheck="
+							+ lastVersionCheckL + " nowL=" + nowL);
+				}
+				else {
+					app.debug("no check needed: lastVersionCheck="
+							+ lastVersionCheckL + " nowL=" + nowL);
+				}
+			}
+
+			if (checkNeeded) {
+				GeoGebraPreferences.getPref().savePreference(
+						GeoGebraPreferences.VERSION_LAST_CHECK, nowLS);
+				String newestVersion = null;
+				try {
+					URL u = new URL(VERSION_URL);
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(u.openStream()));
+					newestVersion = in.readLine();
+					app.debug("newestVersion=" + newestVersion);
+					Long newestVersionL = versionToLong(newestVersion);
+					Long currentVersionL = versionToLong(GeoGebra.VERSION_STRING);
+					app.debug("current=" + currentVersionL + " newest="
+							+ newestVersionL);
+					if (currentVersionL < newestVersionL) {
+						newestVersion = newestVersion.replaceAll("-", ".");
+						String q = app.getPlain("NewerVersionA").replaceAll(
+								"%0", newestVersion);
+						app.debug(q);
+						Object[] options = { app.getMenu("Cancel"),
+								app.getPlain("GoToDownloadPage") };
+						Component comp = app.getMainComponent();
+						int returnVal = JOptionPane.showOptionDialog(comp, q,
+								app.getPlain("GoToDownloadPage"),
+								JOptionPane.DEFAULT_OPTION,
+								JOptionPane.WARNING_MESSAGE, null, options,
+								options[0]);
+						if (returnVal == 1) {
+							app.getGuiManager().showURLinBrowser(INSTALLERS_URL);
+						}
+					}
+				} catch (Exception ex) {
+					System.err.println(ex);
+				}
+			}
+		}
+	}
+
+	private static Long versionToLong(String version) {
+		Long n = 0L;
+		int l = version.length();
+		for (int i = 0; i < l; ++i) {
+			String c = version.substring(i, i + 1);
+			if (".-".contains(c)) {
+				n *= 100; // this works only for subversions <= 999 (change 100 to 1000 for 9999) 
+			} else {
+				n = n * 10 + Integer.parseInt(c);
+			}
+		}
+		return n;
 	}
 
 	public static int getInstanceCount() {
@@ -404,7 +506,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 			for (int i = 0; i < instances.size(); i++) {
 				GeoGebraFrame inst = (GeoGebraFrame) instances.get(i);
 				Application app = inst.app;
-	
+
 				File currFile = app.getCurrentFile();
 				if (currFile != null) {
 					if (absPath.equals(currFile.getCanonicalPath()))
@@ -418,11 +520,12 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	}
 
 	public boolean isIconified() {
-		return getExtendedState() == JFrame.ICONIFIED;		
+		return getExtendedState() == JFrame.ICONIFIED;
 	}
-	
+
 	/**
 	 * Returns the dropTarget listener for this frame.
+	 * 
 	 * @return the dropTarget listener for this frame.
 	 */
 	public FileDropTargetListener getDropTargetListener() {
