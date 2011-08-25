@@ -56,6 +56,9 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 	
 	private static final String VERSION_URL = "http://www.geogebra.org/download/version.txt";
 	private static final String INSTALLERS_URL = "http://www.geogebra.org/installers";
+	private static final int VERSION_CHECK_DAYS = 30;
+	// This works only for subversion numbers <= 999 (change 1000 to 10000 for 9999):
+	private static final int VERSION_TO_LONG_MULTIPLIER = 1000;
 
 	private static ArrayList<GeoGebraFrame> instances = new ArrayList<GeoGebraFrame>();
 	private static GeoGebraFrame activeInstance;
@@ -392,7 +395,8 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 		}
 
 		/**
-		 * Checks if a newer version is available. 
+		 * Checks if a newer version is available.
+		 * It runs every month (30 days). 
 		 */
 		
 		private void checkVersion() {
@@ -403,49 +407,47 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 			boolean checkNeeded = false;
 			if (lastVersionCheck == null || lastVersionCheck.equals("")) {
 				checkNeeded = true;
-				app.debug("check needed: lastVersionCheck=0");
+				Application.debug("version check needed: no check was done yet");
 			}
 
 			else {
 				Long lastVersionCheckL = Long.valueOf(lastVersionCheck);
-				if (lastVersionCheckL + 30 * 60 * 60 * 24 < nowL) {
+				if (lastVersionCheckL + 1000L * 60 * 60 * 24 * VERSION_CHECK_DAYS < nowL) {
 					checkNeeded = true;
-					app.debug("check needed: lastVersionCheck="
+					Application.debug("version check needed: lastVersionCheckL="
 							+ lastVersionCheckL + " nowL=" + nowL);
 				}
 				else {
-					app.debug("no check needed: lastVersionCheck="
+					Application.debug("no version check needed: lastVersionCheck="
 							+ lastVersionCheckL + " nowL=" + nowL);
 				}
 			}
 
 			if (checkNeeded) {
-				GeoGebraPreferences.getPref().savePreference(
-						GeoGebraPreferences.VERSION_LAST_CHECK, nowLS);
 				String newestVersion = null;
 				try {
 					URL u = new URL(VERSION_URL);
 					BufferedReader in = new BufferedReader(
 							new InputStreamReader(u.openStream()));
 					newestVersion = in.readLine();
-					app.debug("newestVersion=" + newestVersion);
+					newestVersion = newestVersion.replaceAll("-", ".");
 					Long newestVersionL = versionToLong(newestVersion);
 					Long currentVersionL = versionToLong(GeoGebra.VERSION_STRING);
-					app.debug("current=" + currentVersionL + " newest="
+					Application.debug("current=" + currentVersionL + " newest="
 							+ newestVersionL);
 					if (currentVersionL < newestVersionL) {
-						newestVersion = newestVersion.replaceAll("-", ".");
 						String q = app.getPlain("NewerVersionA").replaceAll(
 								"%0", newestVersion);
-						app.debug(q);
-						Object[] options = { app.getMenu("Cancel"),
-								app.getPlain("GoToDownloadPage") };
+						String dl = app.getPlain("GoToDownloadPage"); 
+						Object[] options = { app.getMenu("Cancel"), dl };
 						Component comp = app.getMainComponent();
 						int returnVal = JOptionPane.showOptionDialog(comp, q,
-								app.getPlain("GoToDownloadPage"),
-								JOptionPane.DEFAULT_OPTION,
+								dl,	JOptionPane.DEFAULT_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, options,
 								options[0]);
+						// store date of current check only when notification has been shown: 
+						GeoGebraPreferences.getPref().savePreference(
+								GeoGebraPreferences.VERSION_LAST_CHECK, nowLS);
 						if (returnVal == 1) {
 							app.getGuiManager().showURLinBrowser(INSTALLERS_URL);
 						}
@@ -457,17 +459,20 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 		}
 	}
 
+	/**
+	 * Converts a version string to a long value (e.g. 4.1.2.3 to 4001002003)
+	 * @param version string
+	 * @return long value
+	 */
+	
 	private static Long versionToLong(String version) {
+		String[] subversions = version.split("\\.");
 		Long n = 0L;
-		int l = version.length();
+		int l = subversions.length;
 		for (int i = 0; i < l; ++i) {
-			String c = version.substring(i, i + 1);
-			if (".-".contains(c)) {
-				n *= 100; // this works only for subversions <= 999 (change 100 to 1000 for 9999) 
-			} else {
-				n = n * 10 + Integer.parseInt(c);
+			String c = subversions[i];
+			n = n * VERSION_TO_LONG_MULTIPLIER + Integer.parseInt(c);
 			}
-		}
 		return n;
 	}
 
