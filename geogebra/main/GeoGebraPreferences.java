@@ -41,6 +41,7 @@ public class GeoGebraPreferences {
 	public static final String AUTHOR = "author";
 	
 	public static final String VERSION = "version";
+	public static final String VERSION_LAST_CHECK = "version_last_check";
 	
 	// worksheet export dialog
 	public static final String EXPORT_WS_RIGHT_CLICK = "export_ws_right_click";
