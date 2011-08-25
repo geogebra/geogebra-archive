@@ -78,7 +78,7 @@ public class GeoGebraPreferences {
 	 private  Preferences ggbPrefs;
 	  {
 		  try {
-			  ggbPrefs = Preferences.userRoot().node("/geogebra");
+			  ggbPrefs = Preferences.userRoot().node(GeoGebra.PREFERENCES_ROOT);
 		  } catch (Exception e) {
 			  // thrown when running unsigned JAR
 			  ggbPrefs = null;
