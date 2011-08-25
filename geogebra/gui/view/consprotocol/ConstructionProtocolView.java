@@ -864,17 +864,21 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			setText((value == null) ? "" : " " + value.toString());
 			
 			if((row==-1)&&(column==0)){  //No. column header
-				int width = getPreferredSize().width + 2;
+				int width_header = getPreferredSize().width + 2;
+				int width_numbers = 25;
 				
 				if(data.getRowCount()>0){
 					TableCellRenderer r = table.getCellRenderer(data.getRowCount()-1, 0);
 					Component c = r.getTableCellRendererComponent(table, data.getValueAt(data.getRowCount()-1, 0), false, false,
 							data.getRowCount()-1, 0);
-					width = Math.max(width, c.getPreferredSize().width +2);
+					//width = Math.max(width, c.getPreferredSize().width +2);
+					width_numbers = Math.max(width_numbers, c.getPreferredSize().width +2);
 				}
 				
-				tableColumns[0].setMaxWidth(width);
-				tableColumns[0].setMinWidth(width);
+				//tableColumns[0].setMaxWidth(width);
+				tableColumns[0].setMinWidth(width_numbers);
+				tableColumns[0].setMaxWidth(Math.max(width_numbers, width_header));
+				//tableColumns[0].setPreferredWidth(width);
 			}	
 			
 			
