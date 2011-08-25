@@ -481,10 +481,9 @@ GeoSegmentND {
 			
 			//boolean oldSuppressLabelCreation = cons.isSuppressLabelsActive();
 			//cons.setSuppressLabelCreation(true);
-			GeoPoint [] points = {getStartPoint(), getEndPoint()};
-			points = t.transformPoints(points);	
+			
 			this.forceSimpleTransform = true;
-			GeoElement [] geos = {t.transform(this, label)[0], points[0], points[1]};
+			GeoElement [] geos = {t.transform(this, label)[0]};
 			return geos;	
 		} 
 		else {
