@@ -5,7 +5,7 @@
 This script builds several kinds of GeoGebra *.jar files,
 primarily for creating an official build for GeoGebra.
 It must be run using JDK 1.5 (NOT 1.6 or later).
-Note that GeoGebra itself needs to be compiled using Java 1.5
+Note that GeoGebra itself needs to be compiled using Java 1.5.
 
 To learn more on building GeoGebra by using this script, please
 read the following web pages:
@@ -39,7 +39,7 @@ office@geogebra.org
 
 <project default="geogebra">
 
-	<!-- GENERAL properties (equal for all os, platforms, users, ...) -->
+	<!-- GENERAL properties (equal for all OS, platforms, users, ...) -->
 	<property name="local.property.missing"
 		location="A build-local property was not specified. Did you create 'build-local.properties'?"/>
 	<property name="src.dir" location="."/>
@@ -126,25 +126,25 @@ office@geogebra.org
 	</target>
 
 	<target name="compile-grammar-clean">
-		<delete>
+		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
 			<fileset dir="./geogebra/kernel" includes="**/*.class" />
 		</delete>
-		<delete>
+		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
 			<fileset dir="./geogebra/kernel/parser" includes="**/*.java"/>
 		</delete>
 	</target>
 
 	<target name="delete-sources">
-		<delete>
+		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
 			<fileset dir="." includes="**/*.java" />
 		</delete>
-		<delete>
+		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
 			<fileset dir="." includes="geogebra/properties/*.properties" />
 		</delete>
 	</target>
 
 	<target name="delete-classes">
-		<delete>
+		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
 			<fileset dir="." includes="**/*.class" />
 		</delete>
 	</target>
@@ -186,7 +186,7 @@ office@geogebra.org
 	<target name="clean">
 		<!-- delete build directory -->
 		<mkdir dir="${build.dir}"/>
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" followsymlinks="false" removeNotFollowedSymlinks="true">
 			<fileset dir="${build.dir}" defaultexcludes="false">
 				<include name="**/*" />
 			</fileset>
@@ -205,7 +205,7 @@ office@geogebra.org
 	<target name="delete3D">
 		<!-- delete build directory -->
 		<mkdir dir="${build.dir}"/>
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" followsymlinks="false" removeNotFollowedSymlinks="true">
 			<fileset dir="${build.dir}" defaultexcludes="false">
 				<include name="**/geogebra_3d.jar" />
 			</fileset>
@@ -671,7 +671,7 @@ office@geogebra.org
 	<target name="installer" depends="installer-clean, installer-windows, installer-macosx"/>
 
 	<target name="installer-clean">
-		<delete dir="${build.dir}/installer"/>
+		<delete dir="${build.dir}/installer" followsymlinks="false" removeNotFollowedSymlinks="true"/>
 		<mkdir  dir="${build.dir}/installer"/>
 		<mkdir  dir="${build.dir}/installer/windows"/>
 		<mkdir  dir="${build.dir}/installer/windows/unsigned"/>
@@ -773,7 +773,7 @@ office@geogebra.org
 		<copy file="${build.dir}/installer/windows/unsigned/GeoGebra-Windows-Installer-${versionname}.exe" tofile="${build.dir}/installer/windows/GeoGebra-Windows-Installer-${versionname}.exe"/>
 		<antcall target="installer-windows-sign-installer"/>
 		<move file="${build.dir}/installer/windows/GeoGebra-Windows-Installer-${versionname}.exe" tofile="${build.dir}/installer/GeoGebra-Windows-Installer-${versionname}.exe"/>
-		<delete dir="${build.dir}/installer/windows"/>
+		<delete dir="${build.dir}/installer/windows" followsymlinks="false" removeNotFollowedSymlinks="true"/>
 	</target>
 	<target name="installer-windows-move-uninstaller-mac" if="installer-windows-osfamily-mac">
 		<move file="${workspace.dir}/wine/drive_c/uninstaller.exe" tofile="${build.dir}/installer/windows/unsigned/uninstaller.exe"/>
@@ -859,6 +859,6 @@ office@geogebra.org
 			<zipfileset dir="${build.dir}/installer/macosx" excludes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" />
 			<zipfileset dir="${build.dir}/installer/macosx" includes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
 		</zip>
-		<delete dir="${build.dir}/installer/macosx" />
+		<delete dir="${build.dir}/installer/macosx" followsymlinks="false" removeNotFollowedSymlinks="true"/>
 	</target>
 </project>
