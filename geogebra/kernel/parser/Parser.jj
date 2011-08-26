@@ -1372,10 +1372,13 @@ ExpressionValue enpower():
 {	
     ret = enfactorial()         
     (      	(   
-    	( c = <POWERN> )
+    	 c = <POWERN> 
         {            
-            return new ExpressionNode(kernel, ret, ExpressionNode.POWER, 
-            			 new MyDouble(kernel, c.image));  
+            f = new MyDouble(kernel, c.image);
+            // collect exponents
+			if (exponentList == null)
+				exponentList = new ArrayList<ExpressionValue>();
+            exponentList.add(f);  
 	    }
 	 	)     
     |                   
@@ -1406,8 +1409,8 @@ ExpressionValue enpower():
         	}
 			*/			         	                           
         }
-        )*                       
-   )
+        )                       
+    )*
     {
 		if (exponentList == null)
 			return ret;
