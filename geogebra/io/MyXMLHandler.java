@@ -117,6 +117,8 @@ public class MyXMLHandler implements DocHandler {
 	private static final int MODE_GUI_PERSPECTIVE_PANES = 403; // <perspective> <panes /> </perspective>
 	private static final int MODE_GUI_PERSPECTIVE_VIEWS = 404; // <perspective> <views /> </perspective>
 
+	final public static int[] menuFontSizes = {12, 14, 16, 18, 20, 24, 28, 32};
+
 	private int mode;
 	private int constMode; // submode for <construction>
 	private int casMode; // submode for <cascell>
@@ -1864,15 +1866,14 @@ public class MyXMLHandler implements DocHandler {
 			if (guiSize <= 0) {
 				app.setGUIFontSize(-1); // default
 			} else {
-				int[] fontSizes = {12, 14, 16, 18, 20, 24, 28, 32}; // The same as in OptionsAdvanced, TODO: refactor
-				for (int i = 0; i < fontSizes.length; i++) {
-					if (fontSizes[i] >= guiSize) {
-						guiSize = fontSizes[i];
+				for (int i = 0; i < menuFontSizes.length; i++) {
+					if (menuFontSizes[i] >= guiSize) {
+						guiSize = menuFontSizes[i];
 						break;
 					}
 				}
-				if (guiSize > fontSizes[fontSizes.length-1])
-					guiSize = fontSizes[fontSizes.length-1];
+				if (guiSize > menuFontSizes[menuFontSizes.length-1])
+					guiSize = menuFontSizes[menuFontSizes.length-1];
 				app.setGUIFontSize(guiSize);
 			}
 			return true;

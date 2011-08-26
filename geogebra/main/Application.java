@@ -3865,14 +3865,17 @@ public class Application implements KeyEventDispatcher {
 			sb.append(guiFontSize);
 			sb.append("\"/>\n");
 
-			sb.append("\t<tooltipSettings ");
-			if (getTooltipLanguage() != null)
+			if (getTooltipLanguage() != null) // or ...
 			{
-				sb.append(" language=\"");
-				sb.append(getTooltipLanguage());
-				sb.append("\"");
+				sb.append("\t<tooltipSettings ");
+				if (getTooltipLanguage() != null)
+				{
+					sb.append(" language=\"");
+					sb.append(getTooltipLanguage());
+					sb.append("\"");
+				}
+				sb.append("/>\n");
 			}
-			sb.append("/>\n");
 		}
 
 		sb.append(getConsProtocolXML());

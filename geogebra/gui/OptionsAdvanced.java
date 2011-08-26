@@ -1,8 +1,8 @@
 package geogebra.gui;
 
-import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.FullWidthLayout;
+import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.settings.KeyboardSettings;
@@ -92,8 +92,6 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		"60",
 		"-"
 	};
-
-	final public static int[] fontSizes = {12, 14, 16, 18, 20, 24, 28, 32};
 
 	/**
 	 * Construct advanced option panel.
@@ -577,19 +575,19 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	}
 
 	public void updateGUIFont() {
-		if (cbGUIFont.getItemCount() == fontSizes.length + 1) {
+		if (cbGUIFont.getItemCount() == MyXMLHandler.menuFontSizes.length + 1) {
 			int gfs = app.getGUIFontSize();
 			if (gfs <= -1) {
 				cbGUIFont.setSelectedIndex(0);
 			} else {
-				for (int j = 0; j < fontSizes.length; j++) {
-					if (fontSizes[j] >= gfs) {
+				for (int j = 0; j < MyXMLHandler.menuFontSizes.length; j++) {
+					if (MyXMLHandler.menuFontSizes[j] >= gfs) {
 						cbGUIFont.setSelectedIndex(j+1);
 						break;
 					}
 				}
-				if (fontSizes[fontSizes.length-1] < gfs) {
-					cbGUIFont.setSelectedIndex(fontSizes.length);
+				if (MyXMLHandler.menuFontSizes[MyXMLHandler.menuFontSizes.length-1] < gfs) {
+					cbGUIFont.setSelectedIndex(MyXMLHandler.menuFontSizes.length);
 				}
 			}
 		}
@@ -734,7 +732,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		} else if (source == cbGUIFont) {
 			int index = cbGUIFont.getSelectedIndex();
 			if (index == 0) app.setGUIFontSize(-1); // default
-			else app.setGUIFontSize(fontSizes[index - 1]);
+			else app.setGUIFontSize(MyXMLHandler.menuFontSizes[index - 1]);
 		} else if (source == cbKeyboardLanguage){			
 			int index = cbKeyboardLanguage.getSelectedIndex();
 			if(index==0)
@@ -918,11 +916,11 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		//String[] fsfi = { "12 pt", "14 pt", "16 pt", "18 pt", "20 pt", "24 pt",
 		//		"28 pt", "32 pt" };
 		
-		String[] fontSizesStr = new String[fontSizes.length + 1];
+		String[] fontSizesStr = new String[MyXMLHandler.menuFontSizes.length + 1];
 		fontSizesStr[0] = app.getPlain("Default");
 		
-		for (int i = 0 ; i < fontSizes.length ; i++) {
-			fontSizesStr[i + 1] = app.getPlain("Apt",fontSizes[i]+""); // eg "12 pt"
+		for (int i = 0 ; i < MyXMLHandler.menuFontSizes.length ; i++) {
+			fontSizesStr[i + 1] = app.getPlain("Apt",MyXMLHandler.menuFontSizes[i]+""); // eg "12 pt"
 		}
 				
 		int selectedIndex = cbGUIFont.getSelectedIndex();
