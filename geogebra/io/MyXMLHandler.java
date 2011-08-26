@@ -1427,7 +1427,7 @@ public class MyXMLHandler implements DocHandler {
 				ok = handleFont(app, attrs);
 				break;
 			}
-
+		
 		case 'm':
 			if (eName.equals("menuFont")) {
 				ok = handleMenuFont(app, attrs);
@@ -1464,6 +1464,9 @@ public class MyXMLHandler implements DocHandler {
 		case 't':
 			if (eName.equals("toolbar")) {
 				ok = handleToolbar(app, attrs);
+				break;
+			} else if (eName.equals("tooltipSettings")) {
+				ok = handleTooltipSettings(app, attrs);
 				break;
 			}
 			
@@ -1871,6 +1874,28 @@ public class MyXMLHandler implements DocHandler {
 				if (guiSize > fontSizes[fontSizes.length-1])
 					guiSize = fontSizes[fontSizes.length-1];
 				app.setGUIFontSize(guiSize);
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleTooltipSettings(Application app, LinkedHashMap<String, String> attrs) {
+		try {
+			String ttl = (String) attrs.get("language");
+			if (ttl != null) {
+				boolean found = false;
+				for (int i = 0; i < Application.supportedLocales.size(); i++) {
+					if (Application.supportedLocales.get(i).toString().equals(ttl)) {
+						app.setTooltipLanguage(Application.supportedLocales.get(i));
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					app.setTooltipLanguage(null);
+				}
 			}
 			return true;
 		} catch (Exception e) {

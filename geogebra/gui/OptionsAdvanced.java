@@ -572,7 +572,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbTooltipTimeout.setSelectedIndex(timeoutIndex);
 		cbTooltipTimeout.addActionListener(this);
 
-		// TODO update tooltip language
+		updateTooltipLanguages();
 		updateGUIFont();
 	}
 
@@ -590,6 +590,28 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 				}
 				if (fontSizes[fontSizes.length-1] < gfs) {
 					cbGUIFont.setSelectedIndex(fontSizes.length);
+				}
+			}
+		}
+	}
+
+	public void updateTooltipLanguages() {
+		if (cbTooltipLanguage.getItemCount() == Application.supportedLocales.size() + 1) {
+			Locale ttl = app.getTooltipLanguage();
+			if (ttl == null) {
+				cbTooltipLanguage.setSelectedIndex(0);
+			} else {
+				boolean found = false;
+				for (int i = 0; i < Application.supportedLocales.size(); i++) {
+					if (Application.supportedLocales.get(i).toString().equals(ttl.toString()))
+					{
+						cbTooltipLanguage.setSelectedIndex(i+1);
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					cbTooltipLanguage.setSelectedIndex(0);
 				}
 			}
 		}
@@ -939,6 +961,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbTooltipLanguage.setModel(new DefaultComboBoxModel(languages));
 		cbTooltipLanguage.setSelectedIndex(selectedIndex);
 		cbTooltipLanguage.addActionListener(this);
+		
+		updateTooltipLanguages();
 	}
 	
 	/**

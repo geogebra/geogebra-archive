@@ -1670,14 +1670,19 @@ public class Application implements KeyEventDispatcher {
 		rbplainTT = null;
 		rbmenuTT = null;
 		
-		if (currentLocale.toString().equals(locale.toString())) tooltipLocale = null;
+		if (locale == null) tooltipLocale = null;
+		else if (currentLocale.toString().equals(locale.toString())) tooltipLocale = null;
 		else tooltipLocale = locale;
 		
 		updateNeeded = updateNeeded || tooltipLocale != null;
 		
 		if (updateNeeded) setLabels(); // update eg Tooltips for Toolbar
 		
-	}	
+	}
+
+	public Locale getTooltipLanguage() {
+		return tooltipLocale;
+	}
 
 
 	/**
@@ -3859,6 +3864,15 @@ public class Application implements KeyEventDispatcher {
 			sb.append(" size=\"");
 			sb.append(guiFontSize);
 			sb.append("\"/>\n");
+
+			sb.append("\t<tooltipSettings ");
+			if (getTooltipLanguage() != null)
+			{
+				sb.append(" language=\"");
+				sb.append(getTooltipLanguage());
+				sb.append("\"");
+			}
+			sb.append("/>\n");
 		}
 
 		sb.append(getConsProtocolXML());
