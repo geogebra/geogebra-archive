@@ -8922,7 +8922,7 @@ public class Kernel {
 	/**
 	 * Returns the kernel settings in XML format.
 	 */
-	public void getKernelXML(StringBuilder sb) {
+	public void getKernelXML(StringBuilder sb, boolean asPreference) {
 	
 		// kernel settings
 		sb.append("<kernel>\n");
@@ -8960,6 +8960,13 @@ public class Kernel {
 		sb.append("\t<coordStyle val=\"");
 		sb.append(getCoordStyle());
 		sb.append("\"/>\n");
+		
+		// whether return angle from inverse trigonometric functions
+		if (!asPreference) {
+			sb.append("\t<angleFromInvTrig val=\"");
+			sb.append(getInverseTrigReturnsAngle());
+			sb.append("\"/>\n");
+		}
 		
 		// animation
 		if (isAnimationRunning()) {

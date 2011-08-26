@@ -628,9 +628,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			
 			// make sure all calculations fully updated
 			//app.getKernel().updateConstruction(); doesn't do what we want
-			app.getKernel().storeUndoInfo();
-			app.getKernel().undo();
-		
+			app.getKernel().getConstruction().getUndoManager().storeUndoInfo(true);
+
 		} else if(source == cbUseLocalLabels) {
 			app.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
 		} else if(source == cbShowTitleBar) {

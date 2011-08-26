@@ -976,6 +976,9 @@ public class MyXMLHandler implements DocHandler {
 				//ev.setRightAngleStyle(Integer.parseInt(strRightAngleStyle));
 				app.rightAngleStyle = Integer.parseInt(strRightAngleStyle);
 
+			if ("true".equals((String) attrs.get("javaLatexFonts")))
+				app.getDrawEquation().setUseJavaFontsForLaTeX(app, true);
+
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1306,6 +1309,8 @@ public class MyXMLHandler implements DocHandler {
 			handleAlgebraStyle(attrs);
 		} else if (eName.equals("coordStyle")) {
 			handleKernelCoordStyle(attrs);
+		} else if (eName.equals("angleFromInvTrig")) {
+			handleKernelInvTrig(attrs);
 		} else if (eName.equals("continuous")) {
 			handleKernelContinuous(attrs);
 		} else if (eName.equals("decimals")) {
@@ -1346,6 +1351,15 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleKernelCoordStyle(LinkedHashMap<String, String> attrs) {
 		try {
 			kernel.setCoordStyle(Integer.parseInt((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleKernelInvTrig(LinkedHashMap<String, String> attrs) {
+		try {
+			kernel.setInverseTrigReturnsAngle(parseBoolean((String) attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 			return false;

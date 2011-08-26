@@ -3899,7 +3899,7 @@ public class Application implements KeyEventDispatcher {
 		if(asPreference)
 			getKeyboardXML(sb);
 		// coord style, decimal places settings etc
-		kernel.getKernelXML(sb);
+		kernel.getKernelXML(sb, asPreference);
 		getScriptingXML(sb,asPreference);
 		// save cas view seeting and cas session
 //		if (casView != null) {

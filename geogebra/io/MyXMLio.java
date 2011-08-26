@@ -826,7 +826,7 @@ public class MyXMLio {
 		app.getEuclidianViewXML(sb,false);
 		
 		// save kernel settings
-		c.getKernel().getKernelXML(sb);
+		c.getKernel().getKernelXML(sb, false);
 
 		// save construction
 		c.getConstructionXML(sb);
