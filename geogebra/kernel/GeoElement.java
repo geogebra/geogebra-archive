@@ -5691,7 +5691,7 @@ public abstract class GeoElement
 
 
 	public void runScripts(String arg) {
-		if(!canHaveClickScript()||clickScript.length()==0)
+		if(!canHaveClickScript()||clickScript.length()==0 || app.isScriptingDisabled())
 			return;
 		if(clickJavaScript)
 			runJavaScript(arg,false);
@@ -5701,7 +5701,7 @@ public abstract class GeoElement
 
 
 	public void runUpdateScripts() {
-		if(!canHaveUpdateScript() || updateScript.length()==0 || app.isBlockUpdateScripts())
+		if(!canHaveUpdateScript() || updateScript.length()==0 || app.isBlockUpdateScripts() || app.isScriptingDisabled())
 			return;
 		app.setBlockUpdateScripts(true);
 		if(updateJavaScript)

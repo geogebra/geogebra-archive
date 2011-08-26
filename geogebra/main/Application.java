@@ -3854,6 +3854,13 @@ public class Application implements KeyEventDispatcher {
 		sb.append(appFontSize);
 		sb.append("\"/>\n");
 
+		if (asPreference) {
+			sb.append("\t<menuFont ");
+			sb.append(" size=\"");
+			sb.append(guiFontSize);
+			sb.append("\"/>\n");
+		}
+
 		sb.append(getConsProtocolXML());
 
 		sb.append("</gui>\n");
@@ -3893,7 +3900,7 @@ public class Application implements KeyEventDispatcher {
 			getKeyboardXML(sb);
 		// coord style, decimal places settings etc
 		kernel.getKernelXML(sb);
-		getScriptingXML(sb);
+		getScriptingXML(sb,asPreference);
 		// save cas view seeting and cas session
 //		if (casView != null) {
 //			sb.append(((geogebra.cas.view.CASView) casView).getGUIXML());
@@ -3903,7 +3910,7 @@ public class Application implements KeyEventDispatcher {
 		return sb.toString();
 	}
 
-	private void getScriptingXML(StringBuilder sb) {
+	private void getScriptingXML(StringBuilder sb, boolean asPreference) {
 		sb.append("<scripting");
 		if(getScriptingLanguage() != null){
 			sb.append(" language=\"");
@@ -3912,7 +3919,13 @@ public class Application implements KeyEventDispatcher {
 		}
 		sb.append(" blocked=\"");
 		sb.append(isBlockUpdateScripts());
-		sb.append("\"/>\n");		
+
+		if (!asPreference) {
+			sb.append("\" disabled=\"");
+			sb.append(isScriptingDisabled());
+		}
+
+		sb.append("\"/>\n");
 	}
 
 
@@ -5427,7 +5440,22 @@ public class Application implements KeyEventDispatcher {
 
 
 	private boolean blockUpdateScripts=false;
+
 	
+	/**
+	 * @return the scriptingDisabled
+	 */
+	public boolean isScriptingDisabled() {
+		return scriptingDisabled;
+	}
+	/**
+	 * @param sd the scriptingDisabled to set
+	 */
+	public void setScriptingDisabled(boolean sd) {
+		this.scriptingDisabled = sd;
+	}
+	private boolean scriptingDisabled=false;
+
 	
 	public void addToEuclidianView(GeoElement geo){
 		geo.addView(Application.VIEW_EUCLIDIAN);

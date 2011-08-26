@@ -419,8 +419,12 @@ public class MyXMLHandler implements DocHandler {
 		try{
 			String scriptingLanguage = attrs.get("language");
 			app.setScriptingLanguage(scriptingLanguage);
+			
 			boolean blockScripting = "true".equals(attrs.get("blocked"));
 			app.setBlockUpdateScripts(blockScripting);
+			
+			boolean scriptingDisabled = "true".equals(attrs.get("disabled"));
+			app.setScriptingDisabled(scriptingDisabled);
 		}catch(Exception e){
 			System.err.println("error in element <scripting>");
 		}
@@ -1411,7 +1415,10 @@ public class MyXMLHandler implements DocHandler {
 			}
 
 		case 'm':
-			if (eName.equals("mouse")) {
+			if (eName.equals("menuFont")) {
+				ok = handleMenuFont(app, attrs);
+				break;
+			} else if (eName.equals("mouse")) {
 				ok = handleMouse(app, attrs);
 				break;
 			}
@@ -1828,6 +1835,29 @@ public class MyXMLHandler implements DocHandler {
 //			}
 
 			app.setFontSize(guiSize); // set gui font size and update all fonts
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private boolean handleMenuFont(Application app, LinkedHashMap<String, String> attrs) {
+		try {			
+			int guiSize = Integer.parseInt((String) attrs.get("size"));
+			if (guiSize <= 0) {
+				app.setGUIFontSize(-1); // default
+			} else {
+				int[] fontSizes = {12, 14, 16, 18, 20, 24, 28, 32}; // The same as in OptionsAdvanced, TODO: refactor
+				for (int i = 0; i < fontSizes.length; i++) {
+					if (fontSizes[i] >= guiSize) {
+						guiSize = fontSizes[i];
+						break;
+					}
+				}
+				if (guiSize > fontSizes[fontSizes.length-1])
+					guiSize = fontSizes[fontSizes.length-1];
+				app.setGUIFontSize(guiSize);
+			}
 			return true;
 		} catch (Exception e) {
 			return false;

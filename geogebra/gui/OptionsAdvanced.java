@@ -490,6 +490,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 * @remark Do not call setLabels() here
 	 */
 	public void updateGUI() {
+
+		cbEnableScripting.setSelected(!app.isScriptingDisabled());
 		cbUseLocalDigits.setSelected(app.isUsingLocalizedDigits());
 		cbUseLocalLabels.setSelected(app.isUsingLocalizedLabels());
 
@@ -569,8 +571,28 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbTooltipTimeout.removeActionListener(this);
 		cbTooltipTimeout.setSelectedIndex(timeoutIndex);
 		cbTooltipTimeout.addActionListener(this);
-		
-		// TODO update tooltip language 
+
+		// TODO update tooltip language
+		updateGUIFont();
+	}
+
+	public void updateGUIFont() {
+		if (cbGUIFont.getItemCount() == fontSizes.length + 1) {
+			int gfs = app.getGUIFontSize();
+			if (gfs <= -1) {
+				cbGUIFont.setSelectedIndex(0);
+			} else {
+				for (int j = 0; j < fontSizes.length; j++) {
+					if (fontSizes[j] >= gfs) {
+						cbGUIFont.setSelectedIndex(j+1);
+						break;
+					}
+				}
+				if (fontSizes[fontSizes.length-1] < gfs) {
+					cbGUIFont.setSelectedIndex(fontSizes.length);
+				}
+			}
+		}
 	}
 
 	/**
@@ -593,6 +615,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			int index = cbTooltipLanguage.getSelectedIndex() - 1;
 			if (index == -1) app.setTooltipLanguage(null);
 			else app.setTooltipLanguage(Application.supportedLocales.get(index));
+		} else if(source == cbEnableScripting) {
+			app.setScriptingDisabled(!cbEnableScripting.isSelected());
 		} else if(source == cbUseJavaFonts) {
 			app.getDrawEquation().setUseJavaFontsForLaTeX(app, cbUseJavaFonts.isSelected());
 		} else if(source == cbReverseMouseWheel) {
@@ -887,6 +911,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbGUIFont.setModel(new DefaultComboBoxModel(fontSizesStr));
 		cbGUIFont.setSelectedIndex(selectedIndex);
 		cbGUIFont.addActionListener(this);
+		
+		updateGUIFont();
 	}
 	
 	/**
