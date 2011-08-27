@@ -36,8 +36,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import org.omg.CosNaming.IstringHelper;
-
 /**
  * Every object which should be dragged needs to be of type DockPanel.
  * A DockPanel will wrap around the component with the real contents
