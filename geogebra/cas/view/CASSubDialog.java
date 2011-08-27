@@ -298,7 +298,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		// substitute command
 		String subCmd = "Substitute[" + evalText + "," + substList + "]";
 		if (actionCommand.equals("Substitute")) {
-			subCmd = "SubstituteHold[" + evalText + "," + substList + "]"; 
+			subCmd = "Substitute[" + evalText + "," + substList + "]"; 
 			keepInput = false;
 		}
 		else if (actionCommand.equals("Numeric")) {
