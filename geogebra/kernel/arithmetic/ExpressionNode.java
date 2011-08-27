@@ -482,29 +482,33 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 	 * @return whether replacement was done
 	 */
 	public boolean replaceGeoDummyVariables(String var, ExpressionValue newOb) {
+		boolean didReplacement = false;
+		
 		// left wing
 		if (left instanceof GeoDummyVariable) {
 			if (var.equals(((GeoDummyVariable) left).toString())) {
 				left = newOb;
-				return true;
+				didReplacement = true;
 			}
-		} else if (left.isExpressionNode()) {
-			return ((ExpressionNode) left).replaceGeoDummyVariables(var, newOb);
 		}
-
+		else if (left.isExpressionNode()) {
+			didReplacement = ((ExpressionNode) left).replaceGeoDummyVariables(var, newOb);
+		} 
+		
 		// right wing
 		if (right != null) {
 			if (right instanceof GeoDummyVariable) {
 				if (var.equals(((GeoDummyVariable) right).toString())) {
 					right = newOb;
-					return true;
+					didReplacement = true;
 				}
-			} else if (right.isExpressionNode()) {
-				return ((ExpressionNode) right).replaceGeoDummyVariables(var, newOb);
+			} 
+			else if (right.isExpressionNode()) {
+				didReplacement = ((ExpressionNode) right).replaceGeoDummyVariables(var, newOb) || didReplacement;
 			}
 		}
 		
-		return false;
+		return didReplacement;
 	}
 
 

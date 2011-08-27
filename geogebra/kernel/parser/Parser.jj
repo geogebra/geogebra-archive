@@ -1649,9 +1649,10 @@ ExpressionValue numVecVariable():
 {
     c = <VARX>  
     {
+      
         if (GeoGebraCASParsing)
  			return new Variable(kernel, c.image);
-		else
+		else		
         	return new Polynomial(kernel, c.image);
     }
 |

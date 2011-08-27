@@ -140,7 +140,13 @@ public class Equation extends ValidExpression implements ReplaceableValue {
 //        boolean valid = lhs.includesPolynomial() || rhs.includesPolynomial();
 //
 //        if (!valid)            
-//			throw new MyError(kernel.getApplication(), "InvalidEquation");              
+//			throw new MyError(kernel.getApplication(), "InvalidEquation");      
+    	
+
+    	// replace GeoDummyVariables for "x", "y", "z" which may be coming from CAS view
+    	replaceGeoDummyVariables("x", new Polynomial(kernel, "x"));
+		replaceGeoDummyVariables("y", new Polynomial(kernel, "y"));
+		replaceGeoDummyVariables("z", new Polynomial(kernel, "z"));
            
         // resolve variables in lhs         
         if (lhs.isLeaf() && lhs.getLeft().isVariable()) {
@@ -424,6 +430,17 @@ public class Equation extends ValidExpression implements ReplaceableValue {
 		rhs = rhs.replaceAndWrap(oldOb, newOb);
         return this;
     }
+	
+	/**
+	 * Looks for GeoDummyVariable objects that hold String var in the tree and replaces
+	 * them by their newOb.
+	 * @return whether replacement was done
+	 */
+	public boolean replaceGeoDummyVariables(String var, ExpressionValue newOb) {
+		boolean didReplacement = lhs.replaceGeoDummyVariables(var, newOb);
+		didReplacement = rhs.replaceGeoDummyVariables(var, newOb) || didReplacement;
+		return didReplacement;
+	}
 	
 	public Kernel getKernel() {
 		return kernel;

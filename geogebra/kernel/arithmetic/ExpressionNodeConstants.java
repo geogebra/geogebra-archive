@@ -131,7 +131,8 @@ public interface ExpressionNodeConstants {
     // logarithm for arbitrary base log(b, x)
     public static final int LOGB = 580;
     
-    public static final Set<String> RESERVED_FUNCTION_NAMES = new HashSet<String>(Arrays.asList("abs",
+    public static final Set<String> RESERVED_FUNCTION_NAMES = new HashSet<String>(Arrays.asList(
+    		"x", "y", "abs",
 		"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan",
 		"acos", "arcos", "arccos", "asin", "arcsin", "atan", "arctan", 
 		"cosh", "sinh", "tanh", "acosh", "arcosh", "arccosh", "asinh",

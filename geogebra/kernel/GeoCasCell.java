@@ -5,6 +5,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.util.Util;
 
@@ -239,7 +240,9 @@ public class GeoCasCell extends GeoElement {
 		if (twinGeo != null && twinGeo.isIndependent() && twinGeo.isLabelSet()) {			
 			// Update ASSIGNMENT of twin geo
 			// e.g. m = 8 changed in GeoGebra should set cell to m := 8	
-			String assignmentStr = twinGeo.toCasAssignment(ExpressionNode.STRING_TYPE_GEOGEBRA);				
+			String assignmentStr = twinGeo.toCasAssignment(ExpressionNode.STRING_TYPE_GEOGEBRA);
+			if (suppressOutput)
+				assignmentStr = assignmentStr + ";";
 			if (setInput(assignmentStr)) {
 				computeOutput(false);
 				update();
@@ -697,27 +700,29 @@ public class GeoCasCell extends GeoElement {
 	 * Replaces GeoDummyVariable objects in inputVE by the found inGeos.
 	 * This is important for row references and renaming of inGeos to work.
 	 */
-	private ValidExpression resolveInputReferences(ValidExpression inputVE, TreeSet<GeoElement> inGeos) {
-		if (inputVE == null || inGeos == null) return inputVE;
+	private ValidExpression resolveInputReferences(ValidExpression ve, TreeSet<GeoElement> inGeos) {
+		if (ve == null) return ve;
 		
 		// make sure we have an expression node
 		ExpressionNode node;
-		if (inputVE instanceof ExpressionNode) {
-			node = (ExpressionNode) inputVE;
+		if (ve instanceof ExpressionNode) {
+			node = (ExpressionNode) ve;
 		} else {
-			node = new ExpressionNode(kernel, inputVE);
-			node.setLabel(inputVE.getLabel());
-			inputVE = node;
+			node = new ExpressionNode(kernel, ve);
+			node.setLabel(ve.getLabel());
+			ve = node;
 		}
 		
 		// replace GeoDummyVariable occurances for each geo
-		for (GeoElement inGeo : inGeos) {
-			boolean success = node.replaceGeoDummyVariables(inGeo.getLabel(), inGeo);
-			if (!success) {
-				// try $ row reference
-				node.replaceGeoDummyVariables(ExpressionNode.CAS_ROW_REFERENCE_PREFIX, inGeo);
-			}
-		}
+		if (inGeos != null) {
+			for (GeoElement inGeo : inGeos) {
+				boolean success = node.replaceGeoDummyVariables(inGeo.getLabel(), inGeo);
+				if (!success) {
+					// try $ row reference
+					node.replaceGeoDummyVariables(ExpressionNode.CAS_ROW_REFERENCE_PREFIX, inGeo);
+				}
+			}		
+		}		
 		
 		return node;
 	}
@@ -858,7 +863,7 @@ public class GeoCasCell extends GeoElement {
 			
 		// parse output into valid expression
 		outputVE = parseGeoGebraCASInputAndResolveDummyVars(output);	
-		
+
 		if (isFunctionDeclaration) {
 			// replace GeoDummyVariable objects in outputVE by the function variables	
 			resolveFunctionVariableReferences(outputVE);	
