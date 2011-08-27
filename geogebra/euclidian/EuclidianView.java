@@ -897,7 +897,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		fontLine = fontPoint;
 		fontVector = fontPoint;
 		fontConic = fontPoint;
-		fontCoords = app.getSmallFont();
+		fontCoords = app.getPlainFont().deriveFont(Font.PLAIN, fontSize - 2);
 		fontAxes = fontCoords;
 			
 		updateDrawableFontSize();
