@@ -29,7 +29,7 @@ echo "$0: (re)creating $WWWDIR/$MYDIR directory"
 mkdir -p $WWWDIR/$MYDIR || exit 3
 chmod g+rwx $WWWDIR/$MYDIR || exit 3
 
-# 4. Copying JAR files to 4.0 and history/$MYVER:
+# 4. Copying JAR files to 4.2 and history/$MYVER:
 rm -fR $WWWDIR/history/$MYVER || exit 4
 mkdir -p $WWWDIR/history/$MYVER || exit 4
 chmod g+rwx $WWWDIR/history/$MYVER || exit 4

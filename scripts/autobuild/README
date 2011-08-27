@@ -1,25 +1,20 @@
-These files are for automated server-side builds using Subversion via HTTP.
+These files are for automated server-side builds using Subversion via HTTP
+(or the local file system).
 
 Usage:
 
-1. Copy autobuild.conf.dist to autobuild.conf and edit as needed.
+1. Copy autobuild.conf.dist to autobuild.conf and edit the latter as needed.
 
 2. Run ./checkout to create a working copy of the repository (this step
-   is needed only once, but probably it is already done --- if yes,
-   make sure that all relevant steps are run from that script).
+   is needed only once, but probably it is already done --- if no,
+   make sure that all relevant steps are run from that script). On demand
+   another run can be done, it is harmless to do it again later.
 
-3. Run ./update every time you want to generate a fresh autobuild (it will
-   puts the output to the test40a directory).
-   
-   Alternatively, run ./buildggb40 or ./deployggb40 to create a fresh
-   numbered version build into the test40 or 4.0 directory, respectively.
+3. Run ./buildggb42 or ./deployggb42 to create a fresh numbered
+   version build into the test42 or 4.2 directory, respectively.
 
-4. (Optional.) Create a cronjob (using 'crontab -e') to periodically
-   create a build (currently not suggested). Make sure you are 'cd'ing
-   to this directory before running ./update.
-   Currently the cronjob is the following:
+For more details, please read this page:
 
-   */15 * * * * cd /Users/zoltan/svn/geogebra/scripts/autobuild; ./update 2>&1 \
-    >/tmp/autobuild.log && cp /tmp/autobuild.log /Users/zoltan/webstart/test40a   
+  http://www.geogebra.org/trac/wiki/Deploy
 
 Maintainer: Zoltan Kovacs <zoltan@geogebra.org>
