@@ -307,8 +307,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showInputTopAction = new AbstractAction(app.getMenu("ShowAtTop"), app
-				.getEmptyIcon()) {
+		showInputTopAction = new AbstractAction(app.getMenu("ShowAtTop")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
