@@ -125,7 +125,7 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 		public boolean updateCoef() {
 			if (ineq != null) {
 				ineq.updateCoef();
-				Application.debug(ineq.getType());
+				//Application.debug(ineq.getType());
 				return ineq.getType() != Inequality.INEQUALITY_INVALID;
 			}
 			if (left == null && right == null)
@@ -135,7 +135,7 @@ public class FunctionNVar extends ValidExpression implements ReplaceableValue,
 				b &= left.updateCoef();
 			if (right != null)
 				b &= right.updateCoef();
-			Application.debug("tree" + b);
+			//Application.debug("tree" + b);
 			return b;
 		}
 
