@@ -750,8 +750,11 @@ public class GeoCasCell extends GeoElement {
 		if (inGeos == null) return true;
 		
 		for (GeoElement ge : inGeos) {
-			if (ge instanceof GeoCasCell)
-				return false;
+			if (ge instanceof GeoCasCell) {
+				// check if twinGeo is present
+				if (((GeoCasCell) ge).getTwinGeo() == null)
+					return false;
+			}
 		}
 		return true;
 	}
@@ -1032,7 +1035,7 @@ public class GeoCasCell extends GeoElement {
 		
 		try {
 			// evaluate in GeoGebra
-			GeoElement [] ggbEval = kernel.getAlgebraProcessor().processValidExpression(ve);
+			GeoElement [] ggbEval = kernel.getAlgebraProcessor().doProcessValidExpression(ve);
 			if (ggbEval != null) {
 				return ggbEval[0];
 			} else {

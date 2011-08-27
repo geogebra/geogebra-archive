@@ -733,7 +733,7 @@ public class AlgebraProcessor {
 					replaceable.set(ret[0]);
 					replaceable.updateRepaint();
 					ret[0] = replaceable;
-				} catch (Exception e) {					
+				} catch (Exception e) {		
 					String errStr = app.getError("IllegalAssignment") + "\n" +
 						replaceable.getLongDescription() + "     =     " 
 						+

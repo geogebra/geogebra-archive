@@ -330,45 +330,27 @@ public class CASView extends JComponent implements View, Gridable {
 	 * Defines new functions in the CAS
 	 */
 	public void add(GeoElement geo) {		
-		// TODO: remove
-		System.out.println("CASView.ADD start: " + geo);
-		
 		update(geo);	
-
-		// TODO: remove
-		System.out.println("CASView.ADD end: " + geo);
 	}
 	
 	/**
 	 * Removes function definitions from the CAS
 	 */
 	public void remove(GeoElement geo) {
-		// TODO: remove
-		System.out.println("CASView.REMOVE start: " + geo);
-		
 		if (geo instanceof GeoCasCell) {
 			GeoCasCell casCell = (GeoCasCell) geo;
 			consoleTable.deleteRow(casCell.getRowNumber());
-		}						
-		
-		// TODO: remove
-		System.out.println("CASView.REMOVE end: " + geo);		
+		}							
 	}
 
 	/**
 	 * Handles updates of geo in CAS view.
 	 */
 	public void update(GeoElement geo) {
-		// TODO: remove
-		System.out.println("CASView.update START: " + geo);			
-		
 		if (geo instanceof GeoCasCell) {
-			GeoCasCell casCell = (GeoCasCell) geo;			
+			GeoCasCell casCell = (GeoCasCell) geo;	
 			consoleTable.setRow(casCell.getRowNumber(), casCell);
 		}	
-											
-		// TODO: remove
-		System.out.println("CASView.update END: " + geo);	
 	}
 	
 

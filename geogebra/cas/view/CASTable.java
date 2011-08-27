@@ -264,6 +264,10 @@ public class CASTable extends JTable {
 	final public void setRow(final int row, final GeoCasCell casCell) {	
 		if (row < 0) return;
 		
+		// cancel editing
+		if (editor.isEditing() && editor.getEditingRow() == row)
+			editor.cancelCellEditing();
+		
 		// TODO: remove
 		System.out.println("setRow: " + row + ", " + casCell);
 		
