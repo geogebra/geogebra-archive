@@ -50,7 +50,7 @@ public class USBFunctions {
 	}
 	
 	DataListener LoggerListener = new DataListener(){
-		private boolean listenersEnabled;
+		//private boolean listenersEnabled;
 
 		public void dataReceived(DataStreamEvent dataEvent)
 		{
@@ -62,7 +62,7 @@ public class USBFunctions {
 
 				Object [] args = { data[0] };
 
-				if (listenersEnabled) 
+				//if (listenersEnabled) 
 				{
 					int size = loggerListenerMap.size();
 					for (int i=0; i < size; i++) {
