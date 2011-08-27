@@ -607,6 +607,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		return styleBar;
 	}
 	
+	public boolean hasStyleBar() {
+		return styleBar != null;
+	}
+	
 	
 	
 	public void updateRightAngleStyle(Locale locale) {				

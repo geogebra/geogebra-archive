@@ -972,10 +972,10 @@ public class GuiManager {
 		if (algebraInput != null)
 			algebraInput.setLabels();
 
-		if(app.getEuclidianView() != null)
+		if(app.getEuclidianView() != null && app.getEuclidianView().hasStyleBar())
 			app.getEuclidianView().getStyleBar().setLabels();
 			
-		if(hasEuclidianView2() == true)
+		if(hasEuclidianView2() == true && app.getEuclidianView2().hasStyleBar())
 			getEuclidianView2().getStyleBar().setLabels();
 		
 		
