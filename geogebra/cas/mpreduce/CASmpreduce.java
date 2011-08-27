@@ -68,25 +68,35 @@ public class CASmpreduce extends CASgeneric {
 		if (keepInput) {
 			// remove KeepInput[] command and take argument	
 			Command cmd = casInput.getTopLevelCommand();
-			if (cmd != null && cmd.equals("KeepInput")) {
-				// return argument of KeepInput
+			if (cmd != null && cmd.getName().equals("KeepInput")) {
+				// use argument of KeepInput as casInput
 				if (cmd.getArgumentNumber() > 0)
 					casInput = cmd.getArgument(0);
 			}
 		}
 		
-		// convert parsed input to MathPiper string
+		// convert parsed input to MPReduce string
 		String mpreduceInput = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE);
 		
+		// tell MPReduce whether it should use the keep input flage, 
+		// e.g. important for Substitute
 		StringBuilder sb = new StringBuilder();
 		sb.append("<<keepinput!!:=");
 		sb.append(keepInput ? 1 : 0);
 		sb.append("$numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs, pri$on combinelogs$ ");
 		sb.append(mpreduceInput);
 		sb.append(">>");
-		String result = evaluateMPReduce(sb.toString());
-		if (keepInput && ("?".equals(evaluateMPReduce("if keepinput!!=1 then '? else 0"))))
-				result="?";
+		
+		// evaluate in MPReduce
+		String result = evaluateMPReduce(sb.toString());		
+		
+		if (keepInput) {
+			// when keepinput was treated in MPReduce, it is now > 1
+			String keepinputVal = evaluateMPReduce("keepinput!!;");
+			boolean keepInputUsed = !"1".equals(keepinputVal);
+			if (!keepInputUsed)
+				result =  casParser.toGeoGebraString(casInput);
+		}				
 
 		// convert result back into GeoGebra syntax
 		if (casInput instanceof FunctionNVar) {
