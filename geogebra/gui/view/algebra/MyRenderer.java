@@ -106,7 +106,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 
 			// if enabled, render with LaTeX
 			if(view.isRenderLaTeX()  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
-				latexFont = new Font(app.getBoldFont().getName(),app.getBoldFont().getStyle(),app.getBoldFont().getSize()-1);
+				latexFont = new Font(app.getBoldFont().getName(), app.getBoldFont().getStyle(), app.getFontSize() - 1);
 				latexStr = geo.getLaTeXAlgebraDescription(true);
 				if(latexStr != null && Application.isLaTeXneeded(latexStr)){
 					latexStr = "\\;" + latexStr; // add a little space for the icon
