@@ -36,6 +36,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import org.omg.CosNaming.IstringHelper;
+
 /**
  * Every object which should be dragged needs to be of type DockPanel.
  * A DockPanel will wrap around the component with the real contents
@@ -94,6 +96,11 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * If there is a style bar associated with this panel.
 	 */
 	private boolean hasStyleBar = false;
+	
+	/**
+	 * Style bar component.
+	 */
+	private JComponent styleBar;
 	
 	/**
 	 * If the style bar is visible.
@@ -559,8 +566,9 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			component = loadComponent();
 			add(component, BorderLayout.CENTER);
 			
-			if(hasStyleBar) {
-				styleBarPanel.add(loadStyleBar(), BorderLayout.CENTER);
+			if(hasStyleBar && isStyleBarVisible()) {
+				styleBar = loadStyleBar();
+				styleBarPanel.add(styleBar, BorderLayout.CENTER);
 			}
 			
 			// load toolbar if this panel has one
@@ -585,7 +593,12 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		// make panels visible if necessary
 		if(isVisible()) {
 			if(hasStyleBar) {
-				styleBarPanel.setVisible((isAlone || showStyleBar) && app.getSettings().getLayout().isAllowingStyleBar());
+				if(isStyleBarVisible() && styleBar == null) {
+					styleBar = loadStyleBar();
+					styleBarPanel.add(styleBar, BorderLayout.CENTER);
+				}
+				
+				styleBarPanel.setVisible(isStyleBarVisible());
 				toggleStyleBarButton.setVisible(app.getSettings().getLayout().isAllowingStyleBar());
 			} 
 			
@@ -760,6 +773,11 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	public void toggleStyleBar() {
 		if(!this.hasStyleBar) return;
 		
+		if(!showStyleBar && styleBar == null) {
+			styleBar = loadStyleBar();
+			styleBarPanel.add(styleBar, BorderLayout.CENTER);
+		}
+		
 		styleBarPanel.setVisible(!showStyleBar);
 		setShowStyleBar(!showStyleBar);
 	}
@@ -906,6 +924,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 				toggleStyleBarButton.setIcon(app.getImageIcon("triangle-down.png"));
 			}
 		}
+	}
+	
+	/**
+	 * @return If the style bar should be visible.
+	 */
+	private boolean isStyleBarVisible() {
+		return (isAlone || showStyleBar)  && app.getSettings().getLayout().isAllowingStyleBar();
 	}
 	
 	public void setFrameBounds(Rectangle frameBounds) {
