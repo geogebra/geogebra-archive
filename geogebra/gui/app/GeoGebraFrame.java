@@ -329,6 +329,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 		wnd.app = app;
 		wnd.getContentPane().add(app.buildApplicationPanel());
 		dropTargetListener = new geogebra.gui.FileDropTargetListener(app);
+		wnd.setGlassPane(app.getGuiManager().getLayout().getDockManager().getGlassPane());
 		wnd.setDropTarget(new DropTarget(wnd, dropTargetListener));
 		wnd.addWindowFocusListener(wnd);
 		updateAllTitles();
@@ -348,6 +349,8 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 			boolean showCAS = args.getBooleanValue("showCAS", true);
 			app.getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
 		}
+		
+		app.updateMenubar();
 		
 		wnd.setVisible(true);
 
