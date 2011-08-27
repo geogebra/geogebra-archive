@@ -897,6 +897,10 @@ public class GeoCasCell extends GeoElement {
 		if (!isAssignment() || isError() || !includesOnlyDefinedVariables()) 
 			return;
 		
+		// check that assignment variable is not a reserved name in GeoGebra
+		if (ExpressionNodeConstants.RESERVED_FUNCTION_NAMES.contains(assignmentVar))
+			return;
+		
 		// try to create twin geo for assignment, e.g. m := c + 3
 		GeoElement newTwinGeo = silentEvalInGeoGebra(outputVE);		
 		if (newTwinGeo != null) {
