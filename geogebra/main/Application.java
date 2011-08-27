@@ -581,7 +581,7 @@ public class Application implements KeyEventDispatcher {
 
 		setUndoActive(undoActive);
 		
-		// applet/command line options like file loading on startup
+		// applet/command line options
 		handleOptionArgs(args); 
 		
 		initing = false;
@@ -1095,7 +1095,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * Handles command line options (like -language).
+	 * Handles command line options
 	 */
 	private void handleOptionArgs(CommandLineArguments args) {		
 		//args.containsArg("help");
@@ -1108,29 +1108,16 @@ public class Application implements KeyEventDispatcher {
 			setLocale(getLocale(language));
 		}
 		
-		boolean showAlgebraInput = args.getBooleanValue("showAlgebraInput", true);
-		if(!showAlgebraInput) {
-			setShowAlgebraInput(false, false);
+		if(args.containsArg("showAlgebraInput")) {
+			boolean showAlgebraInput = args.getBooleanValue("showAlgebraInput", true);
+			if(!showAlgebraInput) {
+				setShowAlgebraInput(false, false);
+			}
 		}
 		
-		boolean showAlgebraInputTop = args.getBooleanValue("showAlgebraInputTop", true);
-		if(!showAlgebraInputTop) {
-			setShowInputTop(false, false);
-		}
-		
-		if(args.containsArg("showAlgebraWindow")) {
-			boolean showAlgebraWindow = args.getBooleanValue("showAlgebraWindow", true);
-			getGuiManager().setShowView(showAlgebraWindow, Application.VIEW_ALGEBRA);
-		}
-		
-		if(args.containsArg("showSpreadsheet")) {
-			boolean showSpreadsheet = args.getBooleanValue("showSpreadsheet", true);
-			getGuiManager().setShowView(showSpreadsheet, Application.VIEW_SPREADSHEET);
-		}
-		
-		if(args.containsArg("showCAS")) {
-			boolean showCAS = args.getBooleanValue("showCAS", true);
-			getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
+		if(args.containsArg("showAlgebraInputTop")) {
+			boolean showAlgebraInputTop = args.getBooleanValue("showAlgebraInputTop", true);
+			setShowInputTop(showAlgebraInputTop, false);
 		}
 		
 		String fontSize = args.getStringValue("fontSize");

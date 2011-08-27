@@ -316,11 +316,8 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 	public static synchronized GeoGebraFrame createNewWindow(
 			CommandLineArguments args, Macro macro, GeoGebraFrame wnd) {
 		// set Application's size, position and font size
-		// TODO Add layout glass pane (F.S.)
 
-		Application app = wnd.createApplication(args, wnd);// new
-															// Application(args,
-															// wnd, true);
+		Application app = wnd.createApplication(args, wnd);
 
 		if (macro != null)
 			app.openMacro(macro);
@@ -334,8 +331,24 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 		dropTargetListener = new geogebra.gui.FileDropTargetListener(app);
 		wnd.setDropTarget(new DropTarget(wnd, dropTargetListener));
 		wnd.addWindowFocusListener(wnd);
-
 		updateAllTitles();
+		
+		// handle application args visible
+		if(args.containsArg("showAlgebraWindow")) {
+			boolean showAlgebraWindow = args.getBooleanValue("showAlgebraWindow", true);
+			app.getGuiManager().setShowView(showAlgebraWindow, Application.VIEW_ALGEBRA);
+		}
+		
+		if(args.containsArg("showSpreadsheet")) {
+			boolean showSpreadsheet = args.getBooleanValue("showSpreadsheet", true);
+			app.getGuiManager().setShowView(showSpreadsheet, Application.VIEW_SPREADSHEET);
+		}
+		
+		if(args.containsArg("showCAS")) {
+			boolean showCAS = args.getBooleanValue("showCAS", true);
+			app.getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
+		}
+		
 		wnd.setVisible(true);
 
 		// init some things in the background
