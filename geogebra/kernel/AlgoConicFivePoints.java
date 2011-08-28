@@ -33,8 +33,7 @@ public class AlgoConicFivePoints extends AlgoElement {
 	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint[] P; // input  five points      
-	private GeoPoint[] Ppert;
-	private GeoConic conicpert; // output    
+	private GeoPoint[] Ppert;   
     private GeoConic conic; // output             
     private double delta;
     
@@ -185,17 +184,15 @@ public class AlgoConicFivePoints extends AlgoElement {
             linComb(A, B, l, m, Cpert);
             
             //calculate the estimation of error of detS
-            delta += Math.abs((C[0][0]*C[1][1] - (C[0][1]+C[1][0])*(C[0][1]+C[1][0])/4)
-            - (Cpert[0][0]*Cpert[1][1] - (Cpert[0][1]+Cpert[1][0])*(Cpert[0][1]+Cpert[1][0])/4));
+            delta = Math.min(delta, Math.abs(
+            		Cpert[0][0]*Cpert[1][1] - (Cpert[0][1]+Cpert[1][0])*(Cpert[0][1]+Cpert[1][0])/4));
         	for (int m=0; m<3; m++)
         		for (int n=0; n<3; n++)
         			Cmin[m][n]=Math.min(Cmin[m][n],Math.abs(Cpert[m][n]));
         	        
     	}
     
-    	delta = delta / repetition;
-    	
-        conic.errDetS = 3*delta;
+        conic.errDetS = delta;
         //TODO: this is not reasonable enough.
         if (Math.abs(C[0][0])< Math.abs(Cmin[0][0])/10)
         	C[0][0]=0;
