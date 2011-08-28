@@ -89,6 +89,13 @@ public abstract class CASgeneric {
 
 		return ret;
 	}
+	
+	/**
+	 * Returns whether the CAS command key is available, e.g. "Expand.1"
+	 */
+	final public boolean isCommandAvailable(String commandKey) {
+		return getTranslationRessourceBundle().containsKey(commandKey);
+	}
 
 	/**
 	 * Returns the RessourceBundle that translates from GeogebraCAS commands to

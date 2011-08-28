@@ -4,6 +4,7 @@ import geogebra.cas.error.CASException;
 import geogebra.cas.mpreduce.CASmpreduce;
 import geogebra.kernel.GeoGebraCASInterface;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -427,6 +428,29 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 		}
 
 		return sbCASCommand.toString();
+	}
+	
+	
+	/**
+	 * Returns whether the given command is available in the underlying CAS.
+	 * @param cmd command with name and number of arguments
+	 * @return whether command is available
+	 */
+	final public boolean isCommandAvailable(Command cmd) {
+		StringBuilder sbCASCommand = new StringBuilder();
+		sbCASCommand.append(cmd.getName());
+		sbCASCommand.append(".");
+		sbCASCommand.append(cmd.getArgumentNumber());
+		if (cas.isCommandAvailable(sbCASCommand.toString()))
+			return true;
+		
+		sbCASCommand.setLength(0);
+		sbCASCommand.append(cmd.getName());
+		sbCASCommand.append(".N");
+		if (cas.isCommandAvailable(sbCASCommand.toString()))
+			return true;
+		else
+			return false;
 	}
 	
 	/**

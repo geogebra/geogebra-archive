@@ -2,6 +2,7 @@ package geogebra.kernel;
 
 import geogebra.cas.CASgeneric;
 import geogebra.cas.CASparser;
+import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ValidExpression;
 
 /*
@@ -24,5 +25,7 @@ public interface GeoGebraCASInterface {
 	public boolean isStructurallyEqual(ValidExpression inputVE, String newInput);
 
 	public void setTimeout(int t);
+
+	public boolean isCommandAvailable(Command cmd);
 
 }

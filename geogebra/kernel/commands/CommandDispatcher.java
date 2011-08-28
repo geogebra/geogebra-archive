@@ -18,6 +18,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
@@ -127,6 +128,13 @@ public class CommandDispatcher {
     	return cmdTable.keySet();
     }
     
+	/**
+	 * Returns whether the given command name is supported in GeoGebra.
+	 */
+	public boolean isCommandAvailable(String cmd) {
+		return cmdTable.containsKey(cmd);
+	}
+    
     
     /**
      * Returns an array of sets containing the command names 
@@ -160,15 +168,13 @@ public class CommandDispatcher {
     	if (cmdTable == null) {
     		initCmdTable();
     	}    	        
-
-        // switch on macro mode to avoid labeling of output if desired
-        boolean oldMacroMode = cons.isSuppressLabelsActive();
-        if (!labelOutput)
-            cons.setSuppressLabelCreation(true);
-        
+  
         // cmdName
         String cmdName = c.getName();
         CommandProcessor cmdProc;
+//        
+//        // remove CAS variable prefix from command name if present
+//        cmdName = cmdName.replace(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
         
         // MACRO: is there a macro with this command name?        
         Macro macro = kernel.getMacro(cmdName);
@@ -181,25 +187,34 @@ public class CommandDispatcher {
         	// get CommandProcessor object for command name from command table
         	cmdProc = (CommandProcessor) cmdTable.get(cmdName);    
         	
-        	if (cmdProc == null)
+        	if (cmdProc == null) {
+        		// try internal command
         		cmdProc = internalCmdTable.get(cmdName);
+        	}
         }
+        
+        if(cmdProc == null)
+        	throw new MyError(app, app.getError("UnknownCommand") + " : " + 
+        		app.getCommand(c.getName()));
                 
+        // switch on macro mode to avoid labeling of output if desired
+        boolean oldMacroMode = cons.isSuppressLabelsActive();
+        if (!labelOutput)
+            cons.setSuppressLabelCreation(true);
+      
         GeoElement[] ret = null;
         try {            
-	        ret = cmdProc.process(c);	                       	        	        
+        	ret = cmdProc.process(c);	                       	        	        
         } 
         catch (MyError e) {
-        	cons.setSuppressLabelCreation(oldMacroMode);
             throw e;
         } catch (Exception e) {        	  
             cons.setSuppressLabelCreation(oldMacroMode);        	  
             e.printStackTrace();
-            if(cmdProc == null)
-            	throw new MyError(app, app.getError("UnknownCommand") + " : " + 
-            		app.getCommand(c.getName()));
-            else 
-            	throw new MyError(app, app.getError("CAS.GeneralErrorMessage"));
+           	throw new MyError(app, app.getError("CAS.GeneralErrorMessage"));
+        }
+        finally {
+        	cons.setSuppressLabelCreation(oldMacroMode);
         }
         
         // remember macro command used:
@@ -207,9 +222,6 @@ public class CommandDispatcher {
         // all other tools that are needed for A[]
         if (macro != null)
         	cons.addUsedMacro(macro);
-        
-              		
-        cons.setSuppressLabelCreation(oldMacroMode);        
         
         return ret;
     }

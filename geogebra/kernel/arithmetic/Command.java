@@ -288,7 +288,21 @@ implements ReplaceableValue {
         	args.get(i).replaceChildrenByValues(geo);                	                	
         }         
     }
-
+    
+	/**
+	 * Looks for GeoDummyVariable objects that hold String var in the tree and replaces
+	 * them by their newOb.
+	 * @return whether replacement was done
+	 */
+	public boolean replaceGeoDummyVariables(String var, ExpressionValue newOb) {
+		int size = args.size();
+		boolean didReplacement = false;
+        for (int i = 0 ; i < size; i++) {
+        	didReplacement = args.get(i).replaceGeoDummyVariables(var, newOb) || didReplacement;                	                	
+        }
+        return didReplacement;
+    }
+		
     public HashSet getVariables() {             
         HashSet set = new HashSet();
        int size = args.size();
@@ -299,12 +313,12 @@ implements ReplaceableValue {
         return set;
     }
 
-    public void addCommandNames(Set cmdNames) {
-    	cmdNames.add(name);
+    public void addCommands(Set commands) {
+    	commands.add(this);
     	
     	int size = args.size();
         for (int i=0; i < size; i++) {
-            ((ExpressionNode)args.get(i)).addCommandNames(cmdNames);
+            ((ExpressionNode)args.get(i)).addCommands(commands);
         } 
 	}
 

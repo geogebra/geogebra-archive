@@ -268,9 +268,6 @@ public class CASTable extends JTable {
 		if (editor.isEditing() && editor.getEditingRow() == row)
 			editor.cancelCellEditing();
 		
-		// TODO: remove
-		System.out.println("setRow: " + row + ", " + casCell);
-		
 		int rowCount = tableModel.getRowCount();
 		if (row < rowCount) {
 			if (casCell == tableModel.getValueAt(row, COL_CAS_CELLS)) {

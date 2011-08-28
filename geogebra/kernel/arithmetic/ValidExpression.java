@@ -159,7 +159,7 @@ public abstract class ValidExpression implements ExpressionValue {
 		 return " \\, :=  \\, ";
 	 }
 	 
-	  public void addCommandNames(Set<String> cmdNames) {
+	  public void addCommands(Set<Command> cmds) {
 		// do nothing, see Command, ExpressionNode classes
 	  }
 	  

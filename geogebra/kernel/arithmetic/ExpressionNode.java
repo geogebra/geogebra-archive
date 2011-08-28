@@ -491,6 +491,12 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 				didReplacement = true;
 			}
 		}
+		else if (left instanceof Command) {
+			didReplacement = ((Command) left).replaceGeoDummyVariables(var, newOb);
+		}
+		else if (left instanceof Equation) {
+			didReplacement = ((Equation) left).replaceGeoDummyVariables(var, newOb);
+		}
 		else if (left.isExpressionNode()) {
 			didReplacement = ((ExpressionNode) left).replaceGeoDummyVariables(var, newOb);
 		} 
@@ -503,6 +509,12 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 					didReplacement = true;
 				}
 			} 
+			else if (right instanceof Command) {
+				didReplacement = ((Command) right).replaceGeoDummyVariables(var, newOb);
+			}
+			else if (right instanceof Equation) {
+				didReplacement = ((Equation) right).replaceGeoDummyVariables(var, newOb);
+			}
 			else if (right.isExpressionNode()) {
 				didReplacement = ((ExpressionNode) right).replaceGeoDummyVariables(var, newOb) || didReplacement;
 			}
@@ -1054,17 +1066,17 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		}
 	}
 
-	public void addCommandNames(Set cmdNames) {
+	public void addCommands(Set commands) {
 		if (left instanceof Command) {
-			((Command) left).addCommandNames(cmdNames);
+			((Command) left).addCommands(commands);
 		} else if (left instanceof ExpressionNode) {
-			((ExpressionNode) left).addCommandNames(cmdNames);
+			((ExpressionNode) left).addCommands(commands);
 		}
 
 		if (right instanceof Command) {
-			((Command) right).addCommandNames(cmdNames);
+			((Command) right).addCommands(commands);
 		} else if (right instanceof ExpressionNode) {
-			((ExpressionNode) right).addCommandNames(cmdNames);
+			((ExpressionNode) right).addCommands(commands);
 		}
 	}
 

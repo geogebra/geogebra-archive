@@ -98,6 +98,13 @@ public class AlgebraProcessor {
 		return cmdDispatcher.getSubCommandSetName(index);
 	}
 	
+	/**
+	 * Returns whether the given command name is supported in GeoGebra.
+	 */
+	public boolean isCommandAvailable(String cmd) {
+		return cmdDispatcher.isCommandAvailable(cmd);
+	}
+	
 
 	final public GeoElement[] processCommand(Command c, boolean labelOutput) throws MyError {
 		return cmdDispatcher.processCommand(c, labelOutput);

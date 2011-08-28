@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 import geogebra.cas.error.CASException;
+import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -39,15 +40,15 @@ public class GeoCasCell extends GeoElement {
 	private GeoElement twinGeo;
 	private GeoElement lastOutputEvaluationGeo;
 	private boolean firstComputeOutput;
-	private boolean useGeoGebraFallback;
 	private boolean ignoreTwinGeoUpdate;
 
 
 	// internal command names used in the input expression
-	private HashSet <String> cmdNames;
+	private HashSet <Command> commands;
 	private String assignmentVar;
 	private boolean includesRowReferences;
 	private boolean includesNumericCommand;
+	private boolean useGeoGebraFallback;
 		
 	private String evalCmd, evalComment;
 	private int row = -1; // for CAS view, set by Construction
@@ -269,7 +270,7 @@ public class GeoCasCell extends GeoElement {
 		evalComment = "";
 		
 		// update input and output variables
-		updateInputVariables(inputVE);	
+		updateInputVariables(inputVE);
 
 		// input should have internal command names
 		internalizeInput();
@@ -352,6 +353,10 @@ public class GeoCasCell extends GeoElement {
 			return;			
 		}
 		
+		// nothing to do
+		if ("".equals(prefix) && "".equals(postfix) && localizedInput.equals(eval))
+			return;
+		
 		// parse eval text into valid expression
 		evalVE = parseGeoGebraCASInputAndResolveDummyVars(eval);
 		if (evalVE != null) {
@@ -414,13 +419,35 @@ public class GeoCasCell extends GeoElement {
 		if (ve == null) return;
 		
 		// get all command names
-		cmdNames = new HashSet<String>();
-		ve.addCommandNames(cmdNames);
-		if (cmdNames.isEmpty()) {
-			cmdNames = null;
+		commands = new HashSet<Command>();
+		ve.addCommands(commands);
+		if (commands.isEmpty()) {
+			commands = null;
 		} else {
-			includesNumericCommand = cmdNames.contains("Numeric");
-			getInVars().addAll(cmdNames);
+			for (Command cmd : commands) {
+				String cmdName = cmd.getName();
+				// Numeric used
+				includesNumericCommand = includesNumericCommand || "Numeric".equals(cmdName);
+				
+				// if command not known to CAS
+				if (!kernel.getGeoGebraCAS().isCommandAvailable(cmd)) {
+					if (kernel.lookupCasCellLabel(cmdName) != null ||
+						kernel.lookupLabel(cmdName) != null) 
+					{
+						// treat command name as defined user function name
+						getInVars().add(cmdName);
+					}
+					else if (kernel.getAlgebraProcessor().isCommandAvailable(cmdName)) {
+						// command is known to GeoGebra: use possible fallback
+						useGeoGebraFallback = true;
+					}
+					else {
+						// treat command name as undefined user function name
+						getInVars().add(cmdName);
+					}
+				}
+				
+			}
 		}
 		
 		// get all used GeoElement variables
@@ -452,7 +479,7 @@ public class GeoCasCell extends GeoElement {
 		
 		// replace GeoDummyVariable objects in inputVE by the found inGeos
 		// This is important for row references and renaming of inGeos to work
-		inputVE = resolveInputReferences(inputVE, inGeos);		
+		inputVE = resolveInputReferences(inputVE, inGeos);	
 		
 		// check for circular definition
 		isCircularDefinition = false;
@@ -496,12 +523,12 @@ public class GeoCasCell extends GeoElement {
 	 * @return translated expression
 	 */
 	private String translate(String exp, boolean toLocalCmd) {
-		if (cmdNames == null) return exp;
+		if (commands == null) return exp;
 		
 		String translatedExp = exp;
-		Iterator<String> it = cmdNames.iterator();
+		Iterator<Command> it = commands.iterator();
 		while (it.hasNext()) {
-			String internalCmd = it.next();
+			String internalCmd = it.next().getName();
 			String localCmd = cons.getApplication().getCommand(internalCmd);
 			
 			if (toLocalCmd) {
@@ -621,6 +648,7 @@ public class GeoCasCell extends GeoElement {
 		functionvars = null;
 		includesRowReferences = false;
 		includesNumericCommand = false;
+		useGeoGebraFallback = false;
 	}
 	
 	/**
@@ -723,6 +751,13 @@ public class GeoCasCell extends GeoElement {
 				}
 			}		
 		}		
+		
+		// handle GeoGebra Fallback
+		if (useGeoGebraFallback) {
+			if (!includesOnlyDefinedVariables()) {
+				useGeoGebraFallback = false;
+			}
+		}
 		
 		return node;
 	}
@@ -1079,12 +1114,8 @@ public class GeoCasCell extends GeoElement {
 		
 		String result = null;
 		boolean success = false;
-
-		if (firstComputeOutput) {
-			useGeoGebraFallback = false;
-		}
-		
 		CASException ce = null;
+		
 		if (!useGeoGebraFallback) {
 			// CAS EVALUATION		
 			try {
@@ -1098,28 +1129,37 @@ public class GeoCasCell extends GeoElement {
 				success = false;	
 				ce = e;
 			}			
-			useGeoGebraFallback = !success && includesOnlyDefinedVariables() && ce == null;
 		}
 		
+		// TODO make fallback more efficient to only use algebra processor once
+		// then just use output geos to set twin geo
 		// GEOGEBRA FALLBACK
-		if (useGeoGebraFallback) {
+		else {
 			// EVALUATE evalVE in GeoGebra
+			boolean oldValue = kernel.isSilentMode();
+			kernel.setSilentMode(true);
+			
 			try {
 				// process inputExp in GeoGebra					
-				GeoElement evalGeo = silentEvalInGeoGebra(evalVE);
-				if (evalGeo != null) {
+				GeoElement [] geos = kernel.getAlgebraProcessor().
+					processAlgebraCommandNoExceptionHandling( evalVE.toAssignmentString(), false, false, false );
+				
+				//GeoElement evalGeo = silentEvalInGeoGebra(evalVE);
+				if (geos != null) {
 					success = true;
 					kernel.setTemporaryPrintFigures(15);
-					result = evalGeo.toValueString();
+					result = geos[0].toValueString();
 					kernel.restorePrintAccuracy();
-					AlgoElement parentAlgo = evalGeo.getParentAlgorithm();
-					if (parentAlgo != null) {
+					AlgoElement parentAlgo = geos[0].getParentAlgorithm();
+					//cons.removeFromConstructionList(parentAlgo);		
+					if (parentAlgo != null)
 						parentAlgo.remove();
-					}						
 				}				
 			} catch (Throwable th2) {
 				System.err.println("GeoCasCell.computeOutput(), GeoGebra eval: " + evalVE + "\n error: " + th2.getMessage());
 				success = false;
+			} finally {
+				kernel.setSilentMode(oldValue);
 			}
 		}		
 		
