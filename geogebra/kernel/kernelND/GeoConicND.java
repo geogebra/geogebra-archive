@@ -125,7 +125,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	protected double[] mu = new double[2];
 	protected GeoVec2D c = new GeoVec2D(kernel);	
 	
-	
+	public double errDetS = Kernel.EPSILON;
 	
 	
 	
@@ -2181,13 +2181,14 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		// A[0] * A[1] = A[3] * A[3]  
 		// normalized: A[0]/maxAbs * A[1]/maxAbs = A[3]/maxAbs * A[3]/maxAbs 
 		// use precision: eps * maxAbs^2	
-		double eps;
+		/*double eps;
+		
 		if (maxAbs > 1) {
 			eps = kernel.getEpsilon() * maxAbs * maxAbs;
 		} else {
 			eps = kernel.getEpsilon() * maxAbs * maxAbs; //TODO: Also need to care for small coeff 
-		}
-		return Kernel.isEqual(matrix[0]*matrix[1], matrix[3]*matrix[3], eps);				
+		}*/
+		return Kernel.isEqual(matrix[0]*matrix[1], matrix[3]*matrix[3], this.errDetS);				
 	}
 
 	/*************************************

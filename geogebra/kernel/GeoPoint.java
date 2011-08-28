@@ -1756,4 +1756,9 @@ GeoPointND, Animatable, Transformable  {
 					y + (Math.random() *2 -1) *z,
 					z);
 		}		
+		public void randomizeForErrorEstimation(){
+			setCoords(x + (Math.random() *2 -1) *Kernel.EPSILON_SQRT *z,//TODO: record the error of the point
+					y + (Math.random() *2 -1) *Kernel.EPSILON_SQRT *z,
+					z);
+		}	
 }
