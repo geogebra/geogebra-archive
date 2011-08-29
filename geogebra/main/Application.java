@@ -3704,9 +3704,6 @@ public class Application implements KeyEventDispatcher {
 
 	// FKH 20040826
 	public String getXML() {
-		if (guiManager == null) {
-			initGuiManager();
-		}
 		return myXMLio.getFullXML();
 	}
 	
@@ -3823,6 +3820,9 @@ public class Application implements KeyEventDispatcher {
 		
 		sb.append("\" />\n");
 		
+		if (guiManager == null) {
+			initGuiManager();
+		}
 		getGuiManager().getLayout().getXml(sb, asPreference);
 		
 		// labeling style
