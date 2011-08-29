@@ -14,7 +14,7 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
  *
  */
 public class DrawCurve3D extends Drawable3DCurves {
-	private final boolean useOldCurves = false;
+	private final boolean useOldCurves = true;
 
 	private CurveMesh mesh;
 	private CurveTree tree;
