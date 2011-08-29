@@ -29,6 +29,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.Point2D;
@@ -807,6 +808,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 
 		P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
 		P.updateCoordsFrom2D(false,null);
+		
 	}
 		
 	public void doPointChanged(Coords coords, PathParameter pp) {

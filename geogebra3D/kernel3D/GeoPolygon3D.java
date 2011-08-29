@@ -10,9 +10,11 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.kernel.Region;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
 
@@ -465,6 +467,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		
 		Coords coordsOld = P.getInhomCoords();
 		
+		//prevent from region bad coords calculations
+		Region region = P.getRegion();
+		P.setRegion(null);
+		
 		double minDist = Double.POSITIVE_INFINITY;
 		Coords res = null;
 		double param=0;
@@ -479,15 +485,21 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 			double dist;// = P.getInhomCoords().sub(coordsOld).squareNorm();			
 			//double dist = 0;
-			if (P.getWillingCoords()!=null && P.getWillingDirection()!=null)
+			if (P.getWillingCoords()!=null && P.getWillingDirection()!=null){
 				dist=P.getInhomCoords().distLine(P.getWillingCoords(), P.getWillingDirection());
-			else{
+				/*
+				Application.debug("old=\n"+coordsOld+
+						"P=\n"+P.getInhomCoords()+
+						"\n\ndistance au segment "+i+" : "+dist);	
+						*/
+
+			}else{
 				dist = P.getInhomCoords().sub(coordsOld).squareNorm();
 				/*
 				Application.debug("old=\n"+coordsOld+
 						"P=\n"+P.getInhomCoords()+
 						"\n\ndistance au segment "+i+" : "+dist);
-						*/
+				 */
 			}
 			
 			
@@ -496,11 +508,14 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 				// remember closest point
 				res = P.getInhomCoords();
 				param = i + pp.getT();
+				//Application.debug(i);
 			}
 		}				
 			
 		P.setCoords(res,false);
 		pp.setT(param);	
+		
+		P.setRegion(region);
 	}	
 	
 	

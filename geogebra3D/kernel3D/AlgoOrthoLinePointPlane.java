@@ -26,7 +26,7 @@ import geogebra.main.Application;
 
 
 /**
- * Compute a plane through a point and orthogonal to a line (or segment, ...)
+ * Compute a line through a point and orthogonal to a plane (or polygon, ...)
  *
  * @author  matthieu
  * @version 

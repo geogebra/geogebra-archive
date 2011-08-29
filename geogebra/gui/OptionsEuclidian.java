@@ -923,9 +923,7 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 			
 			String strAxisEn = getString();		
 			title = BorderFactory.createTitledBorder(app.getPlain(strAxisEn));
-			this.setBorder(title);		
-
-			
+			this.setBorder(title);	
 			
 			cbShowAxis = new JCheckBox(app.getPlain("Show"+strAxisEn));		
 			cbAxisNumber = new JCheckBox(app.getPlain("ShowAxisNumbers"));					
@@ -1204,7 +1202,7 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		}
 
 		public void setLabels() {
-			String strAxisEn = (axis == 0) ? "xAxis" : "yAxis";		
+			String strAxisEn = getString();		
 			title.setTitle(app.getPlain(strAxisEn));
 			
 			cbShowAxis.setText(app.getPlain("Show"+strAxisEn));		

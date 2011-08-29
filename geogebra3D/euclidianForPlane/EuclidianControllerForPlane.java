@@ -14,6 +14,8 @@ import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 /**
  * Controler for 2D view created from a plane
@@ -38,6 +40,12 @@ public class EuclidianControllerForPlane extends EuclidianController {
 		
 		//Application.debug("xRW, yRW= "+xRW+", "+yRW+"\n3D coords:\n"+coords);
 		
+		//cancel 3D controller stuff
+		if (((GeoElement) movedGeoPoint).isGeoElement3D()){
+			((GeoPoint3D) movedGeoPoint).setWillingCoords(null);	
+			((GeoPoint3D) movedGeoPoint).setWillingDirection(null);
+		}
+		
 		movedGeoPoint.setCoords(coords, true);
 		((GeoElement) movedGeoPoint).updateCascade();
 		
@@ -49,7 +57,7 @@ public class EuclidianControllerForPlane extends EuclidianController {
 	
 	
 	
-	protected GeoPointND createNewPoint(boolean forPreviewable){
+	protected GeoPointND createNewPoint(boolean forPreviewable, boolean complex){
 	
 		Coords coords = getCoordsFromView(xRW,yRW);
 		
@@ -57,14 +65,14 @@ public class EuclidianControllerForPlane extends EuclidianController {
 		return ret;
 	}
 	
-	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, boolean complex){
 		Coords coords = getCoordsFromView(xRW,yRW);
-		return createNewPoint(forPreviewable, path, coords.getX(), coords.getY(), coords.getZ(), false);
+		return createNewPoint(forPreviewable, path, coords.getX(), coords.getY(), coords.getZ(), complex);
 	}
 	
-	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Region region, boolean complex){
 		Coords coords = getCoordsFromView(xRW,yRW);
-		return createNewPoint(forPreviewable, region, coords.getX(), coords.getY(), coords.getZ(), false);
+		return createNewPoint(forPreviewable, region, coords.getX(), coords.getY(), coords.getZ(), complex);
 	}
 	
 
@@ -92,7 +100,7 @@ public class EuclidianControllerForPlane extends EuclidianController {
 	}
 	
 	protected void processModeLock(Path path){
-		GeoPointND p = createNewPoint(true, path);
+		GeoPointND p = createNewPoint(true, path, false);
 		((GeoElement) p).update();
 		Coords coords = ((EuclidianView) view).getCoordsForView(p.getInhomCoordsInD(3));
 		xRW = coords.getX();

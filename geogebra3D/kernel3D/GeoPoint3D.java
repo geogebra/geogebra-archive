@@ -297,6 +297,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
 			}
 		}
 		
+		//Application.debug("v=\n"+v+"\ninhom="+inhom);
+		
 		//sets the drawing matrix to coords
 		getDrawingMatrix().setOrigin(getCoords());
 

@@ -1077,7 +1077,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		
 		//Application.debug("isInRegion : "+isInRegion(P));
 		
-		if (!isInRegion(P)){
+		if (!isInRegion(P)){		
 			pointChanged(P);
 			rp.setIsOnPath(true);
 		}else{

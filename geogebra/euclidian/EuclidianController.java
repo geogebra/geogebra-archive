@@ -4926,11 +4926,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// get point and line or vector;
 	// create line through point orthogonal to line or vector
-	final protected GeoElement[] orthogonal(Hits hits) {
+	protected GeoElement[] orthogonal(Hits hits) {
 		if (hits.isEmpty())
 			return null;
 		
 		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
+		
+		return orthogonal(hits, hitPoint);
+		
+	}
+	
+	protected GeoElement[] orthogonal(Hits hits, boolean hitPoint) {
+		
 		if (!hitPoint) {
 			if (selLines() == 0) {
 				addSelectedVector(hits, 1, false, GeoVector.class);
@@ -6193,45 +6200,64 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				Path paths[] = getSelectedPaths();
 				GeoPoint[] points = getSelectedPoints();
 				
-				if (!((GeoElement)paths[0]).isChildOf(points[0])) {
-					
-					try {
-						Construction cons = kernel.getConstruction();
-						boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
-						cons.setSuppressLabelCreation(true);
-						GeoPoint newPoint = kernel.Point(null, paths[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
-						cons.setSuppressLabelCreation(oldLabelCreationFlag);
-						kernel.getConstruction().replace(points[0], newPoint);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-						return false;
-					}
-
-					return true;
-				}
+				//Application.debug("path: "+paths[0]+"\npoint: "+points[0]);
 				
-			} else if (selRegions() == 1) {
+				if (((GeoElement)paths[0]).isChildOf(points[0]))
+					return false;
+				
+				if (((GeoElement)paths[0]).isGeoPolygon() 
+						||
+						(((GeoElement)paths[0]).isGeoConic()
+						&& ((GeoConicND) paths[0]).getLastHitType()==GeoConicND.HIT_TYPE_ON_FILLING))
+					return attach(points[0],(Region) paths[0]);
+				
+				
+				return attach(points[0],paths[0]);
+				
+				
+			}else if (selRegions() == 1) {
 				Region regions[] = getSelectedRegions();
 				GeoPoint[] points = getSelectedPoints();
 
 				if (!((GeoElement)regions[0]).isChildOf(points[0])) {
-					try {
-						Construction cons = kernel.getConstruction();
-						boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
-						cons.setSuppressLabelCreation(true);
-						GeoPoint newPoint = kernel.PointIn(null, regions[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
-						cons.setSuppressLabelCreation(oldLabelCreationFlag);
-						kernel.getConstruction().replace(points[0], newPoint);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-						return false;
-					}
-					return true;
+					return attach(points[0],regions[0]);
 				}
 				
 			} 
 		} 
 		return false;
+	}
+	
+	final protected boolean attach(GeoPoint point, Path path){
+
+		try {
+			Construction cons = kernel.getConstruction();
+			boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			GeoPoint newPoint = kernel.Point(null, path, view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
+			cons.setSuppressLabelCreation(oldLabelCreationFlag);
+			kernel.getConstruction().replace(point, newPoint);
+			return true;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return false;
+		}				
+	}
+	
+	final protected boolean attach(GeoPoint point, Region region){
+
+		try {
+			Construction cons = kernel.getConstruction();
+			boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			GeoPoint newPoint = kernel.PointIn(null, region, view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
+			cons.setSuppressLabelCreation(oldLabelCreationFlag);
+			kernel.getConstruction().replace(point, newPoint);
+			return true;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return false;
+		}		
 	}
 
 	// get Transformable and vector

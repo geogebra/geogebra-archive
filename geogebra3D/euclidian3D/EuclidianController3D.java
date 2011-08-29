@@ -2653,9 +2653,38 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 	
-
-
 	
+	final protected GeoElement[] orthogonal(Hits hits) {
+
+		if (hits.isEmpty())
+			return null;
+
+		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
+		
+		if (!hitPoint) {
+			if (selLines() == 0) 
+				addselectedCS2D(hits, 1, false);
+		}
+
+		if (selPoints() == 1) {
+			if (selCoordSys2D() == 1) {
+				// fetch selected point and plane
+				GeoPointND[] points = getSelectedPointsND();
+				GeoCoordSys2D[] cs = getselectedCS2D();
+				// create new line
+				return new GeoElement[] {(GeoElement) getKernel().getManager3D().OrthogonalLine3D(null, points[0], (GeoCoordSys2D) cs[0])};
+			}
+		}
+		
+		
+		if (selCoordSys2D() == 0)
+			return orthogonal(hits, hitPoint);
+		
+		return null;
+	}
+
+
+	//TODO remove ?
 	protected GeoElement[] orthogonal(GeoPointND point, GeoLineND line){
 		if (((GeoElement) point).isGeoElement3D() || ((GeoElement) line).isGeoElement3D())
 			return new GeoElement[] {(GeoElement) getKernel().getManager3D().OrthogonalLine3D(null,point, line)};		

@@ -1,12 +1,14 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.Drawable;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
@@ -111,19 +113,30 @@ public class DrawLabel3D {
 		int xMax = (int) rectangle.getMaxX()+1;
 		int yMin = (int) rectangle.getMinY()-1;
 		int yMax = (int) rectangle.getMaxY()+1;
+		if(text.contains("_")){ //text contains subscript
+			//Application.debug("yMin="+yMin+", yMax="+yMax);
+			Point p = 
+				Drawable.drawIndexedString(view.getApplication(), (new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)).createGraphics(), text, 0, 0);
+			yMax+=p.y; //use real index offset
+			this.yOffset-=p.y;
+		}
 		width=xMax-xMin;height=yMax-yMin;
 		
 		//creates a 2D image
 		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bimg.createGraphics();
+		
 		AffineTransform gt = new AffineTransform();
 		gt.scale(1, -1d);
-		gt.translate(0, -height-yMax);
+		gt.translate(0, -yMax); //put the baseline on the label anchor
 		g2d.transform(gt);
+		
 		g2d.setColor(Color.BLACK);
 		g2d.setFont(font);
-		g2d.drawString(text, 0, height);
+		//Point p = 
+			Drawable.drawIndexedString(view.getApplication(), g2d, text, 0, 0);
 
+		
 		//creates the texture
 		int[] intData = ((DataBufferInt) bimg.getRaster().getDataBuffer()).getData();
 		buffer = ByteBuffer.wrap(ARGBtoAlpha(intData));
