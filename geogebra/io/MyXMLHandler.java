@@ -1448,6 +1448,7 @@ public class MyXMLHandler implements DocHandler {
 		case 'p':
 			if(eName.equals("perspectives")) {
 				mode = MODE_GUI_PERSPECTIVES;
+				tmp_perspectives.clear();
 				break;
 			}
 			
@@ -1949,8 +1950,18 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			tmp_perspective = new Perspective((String)attrs.get("id"));
 			tmp_perspectives.add(tmp_perspective);
-			tmp_panes = new ArrayList<DockSplitPaneXml>();
-			tmp_views = new ArrayList<DockPanelXml>();
+			
+			if(tmp_panes == null) {
+				tmp_panes = new ArrayList<DockSplitPaneXml>();
+			} else {
+				tmp_panes.clear();
+			}
+			
+			if(tmp_views == null) {
+				tmp_views = new ArrayList<DockPanelXml>();
+			} else {
+				tmp_views.clear();
+			}
 			mode = MODE_GUI_PERSPECTIVE;
 			
 			return true;
@@ -1972,6 +1983,7 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 	private void startGuiPerspectiveElement(String eName, LinkedHashMap<String, String> attrs) {
 		boolean ok = true;
+		
 		switch (eName.charAt(0)) {
 		case 'i':
 			if(eName.equals("input")) {
