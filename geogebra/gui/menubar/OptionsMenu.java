@@ -135,6 +135,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		//String[] fsfi = { "12 pt", "14 pt", "16 pt", "18 pt", "20 pt", "24 pt",
 		//		"28 pt", "32 pt" };
 		String[] fsfi = new String[MyXMLHandler.menuFontSizes.length];
+		String[] fontActionCommands = new String[MyXMLHandler.menuFontSizes.length];
 
 		// find current pos
 		int fontSize = app.getFontSize();
@@ -144,9 +145,10 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 				pos = i;
 			}
 			fsfi[i] = app.getPlain("Apt",MyXMLHandler.menuFontSizes[i]+"");
+			fontActionCommands[i]=MyXMLHandler.menuFontSizes[i] + " pt";
 		}
 
-		addRadioButtonMenuItems(submenu, (ActionListener) this, fsfi, fsfi, pos);
+		addRadioButtonMenuItems(submenu, (ActionListener) this, fsfi, fontActionCommands, pos);
 		add(submenu);
 
 		/*
