@@ -560,7 +560,7 @@ public class Application implements KeyEventDispatcher {
 				setFrame(frame);
 			}
 			
-			if(tmpPerspectives != null) {
+			if(tmpPerspectives != null && !ggtloading) {
 				getGuiManager().getLayout().setPerspectives(tmpPerspectives);
 			}
 		}
@@ -573,10 +573,6 @@ public class Application implements KeyEventDispatcher {
 			
 			if (!fileLoaded && !ggtloading)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
-		}
-
-		if(useFullGui() && !fileLoaded && !ggtloading) {			
-			getGuiManager().getLayout().setPerspectives(tmpPerspectives);	
 		}
 
 		setUndoActive(undoActive);
@@ -3522,9 +3518,16 @@ public class Application implements KeyEventDispatcher {
 			FileInputStream fis = null;
 			fis = new FileInputStream(file);
 			
-			initing = true;
-			boolean success = loadXML(fis, isMacroFile);
-			initing = false;
+			boolean success = false;
+			
+			// pretend we're initializing the application to prevent unnecessary update
+			if(!initing) {
+				initing = true;
+				success = loadXML(fis, isMacroFile);
+				initing = false;
+			} else {
+				success = loadXML(fis, isMacroFile);
+			}
 
 			if (success && !isMacroFile) {
 				setCurrentFile(file);
