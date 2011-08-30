@@ -698,11 +698,6 @@ public class GuiManager {
 		return algebraInput.getTextField();
 	}
 	
-	public void updateAlgebraInput() {
-		if (algebraInput != null)
-			algebraInput.initGUI();
-	}
-
 	public synchronized void initPropertiesDialog() {
 		if (propDialog == null) {
 			propDialog = new PropertiesDialog(app);
@@ -2121,7 +2116,6 @@ public class GuiManager {
 		if (app.isSaved() || saveCurrentFile()) {
 			app.setWaitCursor();
 			File oldCurrentFile = app.getCurrentFile();
-			app.setCurrentFile(null);
 
 			initFileChooser();
 			getFileChooser().setMode(GeoGebraFileChooser.MODE_GEOGEBRA);
@@ -2191,10 +2185,6 @@ public class GuiManager {
 			}
 			// <-- Modified for Intergeo File Format (Yves Kreis)
 
-			
-			if (app.getCurrentFile() == null && !htmlLoaded) { //edited by Zbynek Konecny, 2010-05-28 (see #126)
-				app.setCurrentFile(oldCurrentFile);
-			}
 			getFileChooser().setMultiSelectionEnabled(false);
 		}
 	}

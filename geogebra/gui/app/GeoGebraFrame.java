@@ -335,19 +335,21 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 		updateAllTitles();
 		
 		// handle application args visible
-		if(args.containsArg("showAlgebraWindow")) {
-			boolean showAlgebraWindow = args.getBooleanValue("showAlgebraWindow", true);
-			app.getGuiManager().setShowView(showAlgebraWindow, Application.VIEW_ALGEBRA);
-		}
-		
-		if(args.containsArg("showSpreadsheet")) {
-			boolean showSpreadsheet = args.getBooleanValue("showSpreadsheet", true);
-			app.getGuiManager().setShowView(showSpreadsheet, Application.VIEW_SPREADSHEET);
-		}
-		
-		if(args.containsArg("showCAS")) {
-			boolean showCAS = args.getBooleanValue("showCAS", true);
-			app.getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
+		if (args != null) {
+			if(args.containsArg("showAlgebraWindow")) {
+				boolean showAlgebraWindow = args.getBooleanValue("showAlgebraWindow", true);
+				app.getGuiManager().setShowView(showAlgebraWindow, Application.VIEW_ALGEBRA);
+			}
+			
+			else if(args.containsArg("showSpreadsheet")) {
+				boolean showSpreadsheet = args.getBooleanValue("showSpreadsheet", true);
+				app.getGuiManager().setShowView(showSpreadsheet, Application.VIEW_SPREADSHEET);
+			}
+			
+			else if(args.containsArg("showCAS")) {
+				boolean showCAS = args.getBooleanValue("showCAS", true);
+				app.getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
+			}
 		}
 		
 		app.updateMenubar();

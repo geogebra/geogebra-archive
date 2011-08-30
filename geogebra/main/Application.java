@@ -2863,15 +2863,17 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void setCurrentFile(File file) {
+		if (currentFile == file) return;
+		
 		currentFile = file;
 		if (currentFile != null) {
 			currentPath = currentFile.getParentFile();
 			addToFileList(currentFile);
 		} 	
 		
-		if(!isIniting()) {
+		if(!isIniting() && useFullGui()) {
 			updateTitle();
-			updateMenubar();	
+			getGuiManager().updateMenuWindow();	
 		}
 	}
 
@@ -3136,15 +3138,6 @@ public class Application implements KeyEventDispatcher {
 	public boolean showCmdList() {
 		return showCmdList;
 	}
-
-	public void setShowCmdList(boolean flag) {
-		if (showCmdList == flag)
-			return;
-
-		showCmdList = flag;
-		getGuiManager().updateAlgebraInput();
-		updateMenubar();
-	}
 	
 	public boolean showToolBarTop() {
 		return showToolBarTop;
@@ -3311,7 +3304,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void updateToolBar() {
-		if (!showToolBar)
+		if (!showToolBar || isIniting())
 			return;
 
 		getGuiManager().updateToolbar();
@@ -3327,7 +3320,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void updateMenubar() {
-		if (!showMenuBar || !useFullGui())
+		if (!showMenuBar || !useFullGui() || isIniting())
 			return;
 
 		getGuiManager().updateMenubar();
@@ -3336,7 +3329,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void updateSelection() {
-		if (!showMenuBar || !useFullGui())
+		if (!showMenuBar || !useFullGui() || isIniting())
 			return;
 		
 		// put in to check possible bottleneck
@@ -3357,7 +3350,7 @@ public class Application implements KeyEventDispatcher {
 	
 	
 	public void updateStyleBars(){
-		if(!useFullGui()) {
+		if(!useFullGui() || isIniting()) {
 			return;
 		}
 		
@@ -3367,7 +3360,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void updateMenuWindow() {
-		if (!showMenuBar || !useFullGui())
+		if (!showMenuBar || !useFullGui() || isIniting())
 			return;
 
 		getGuiManager().updateMenuWindow();
@@ -3378,10 +3371,6 @@ public class Application implements KeyEventDispatcher {
 	public void updateCommandDictionary() {
 		// make sure all macro commands are in dictionary
 		fillCommandDict();
-
-		if (guiManager != null) {
-			getGuiManager().updateAlgebraInput();
-		}
 	}
 
 	/**
@@ -3530,10 +3519,13 @@ public class Application implements KeyEventDispatcher {
 	 */
 	final public boolean loadXML(File file, boolean isMacroFile) {
 		try {
-			
 			FileInputStream fis = null;
 			fis = new FileInputStream(file);
+			
+			initing = true;
 			boolean success = loadXML(fis, isMacroFile);
+			initing = false;
+
 			if (success && !isMacroFile) {
 				setCurrentFile(file);
 			}
@@ -3543,6 +3535,9 @@ public class Application implements KeyEventDispatcher {
 			e.printStackTrace();
 			showError(getError("LoadFileFailed") + ":\n" + file);
 			return false;
+		}
+		finally {
+			initing = false;
 		}
 	}
 	

@@ -296,17 +296,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showCmdListAction = new AbstractAction(app.getMenu("CmdList")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.setShowCmdList(!app.showCmdList());
-				if (app.getGuiManager().getAlgebraInput() != null)
-					SwingUtilities.updateComponentTreeUI(app.getGuiManager()
-							.getAlgebraInput());
-			}
-		};
-
 		showInputTopAction = new AbstractAction(app.getMenu("ShowAtTop")) {
 			private static final long serialVersionUID = 1L;
 
