@@ -244,6 +244,13 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 		//GeoElement geoRegression = statDialog.getRegressionModel();
 
 		try {
+			
+			// temporarily override the default decimal place setting
+			if(statDialog.getPrintDecimals() >= 0)
+				app.getKernel().setTemporaryPrintDecimals(statDialog.getPrintDecimals());
+			else
+				app.getKernel().setTemporaryPrintFigures(statDialog.getPrintFigures());
+			
 
 			// no regression 
 			if(statDialog.getRegressionMode() == StatDialog.REG_NONE || statDialog.getRegressionModel() == null){
@@ -260,6 +267,11 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 			else{
 				eqn = "y = " + statDialog.getRegressionModel().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);		
 			}
+			
+			
+			// restore the default decimal place setting
+			app.getKernel().restorePrintAccuracy();
+			
 		}
 
 		catch (Exception e) {
@@ -268,7 +280,7 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 
 		}
 
-		//System.out.println("============>" + eqn);
+	
 		// create an icon with the LaTeX string	
 		ImageIcon icon = (ImageIcon) lblRegEquation.getIcon();
 		if(icon == null)

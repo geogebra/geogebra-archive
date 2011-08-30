@@ -405,6 +405,13 @@ SpecialNumberFormatInterface {
 		return nf.format(x);
 	}
 
+	public int getPrintDecimals(){
+		return nf.getPrintDecimals();
+	}
+	
+	public int getPrintFigures(){
+		return nf.getPrintFigures();
+	}
 
 	public StatDialogController getStatDialogController() {
 		return sdc;
