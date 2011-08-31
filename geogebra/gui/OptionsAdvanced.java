@@ -316,7 +316,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		
 		cbReturnAngleInverseTrig = new JCheckBox();
 		cbReturnAngleInverseTrig.addActionListener(this);
-		guiPanelWest.add(cbReturnAngleInverseTrig);
+		guiPanelEast.add(cbReturnAngleInverseTrig);
 		
 		cbUseJavaFonts = new JCheckBox();
 		cbUseJavaFonts.addActionListener(this);
@@ -324,7 +324,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		
 		cbReverseMouseWheel = new JCheckBox();
 		cbReverseMouseWheel.addActionListener(this);
-		guiPanelEast.add(cbReverseMouseWheel);
+		guiPanelWest.add(cbReverseMouseWheel);
 		
 	
 	}	
