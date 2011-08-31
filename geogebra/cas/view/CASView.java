@@ -55,8 +55,13 @@ public class CASView extends JComponent implements View, Gridable {
 		kernel = app.getKernel();
 		this.app = app;
 
-		// init CAS
-		getCAS();
+		Thread initCAS = new Thread() {
+			public void run() {
+				// init CAS
+				getCAS();
+			}
+		};
+		initCAS.start();
 
 		// CAS input/output cells
 		createCASTable();
@@ -201,7 +206,7 @@ public class CASView extends JComponent implements View, Gridable {
 		
 	}
 
-	final public GeoGebraCAS getCAS() {
+	final public synchronized GeoGebraCAS getCAS() {
 		if (cas == null) {
 			cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();
 		}

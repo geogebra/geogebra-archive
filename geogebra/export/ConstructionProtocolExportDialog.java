@@ -256,7 +256,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements
 
 		try {
 			String thisPath = dir.getPath();
-			file = new File(thisPath + "/index.html");
+			file = new File(thisPath, "index.html");
 
 			BufferedImage img = null;
 
@@ -270,7 +270,8 @@ public class ConstructionProtocolExportDialog extends JDialog implements
 
 			// save image to PNG file
 			if (img != null) {
-				pngFile = new File(thisPath + "/image.png");
+				pngFile = new File(thisPath, "image.png");
+				pngFile.mkdirs();
 				ImageIO.write(img, "png", pngFile);
 			}
 
