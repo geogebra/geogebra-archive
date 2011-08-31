@@ -65,10 +65,6 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 public class GeoImplicitPoly extends GeoUserInputElement implements Path,
 Traceable, Mirrorable, ConicMirrorable, Translateable, PointRotateable,
 Dilateable, Transformable, EuclidianViewCE {
-	public static final int IMPLICIT_POLY_BY_EQUATION = 1;
-	public static final int IMPLICIT_POLY_THROUGH_POINTS = 2;
-	
-	private int type = IMPLICIT_POLY_BY_EQUATION;
 	
 	private double[][] coeff;
 	private double[][] coeffSquarefree;
@@ -81,8 +77,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	
 	private boolean trace; //for traceable interface
 	
-	private Coords [] pointsOnCurve;
-	
 	public GeoLocus locus;
 	public Polynomial poly;
 	
@@ -93,7 +87,6 @@ Dilateable, Transformable, EuclidianViewCE {
 		degX=-1;
 		degY=-1;
 		coeffSquarefree=null;
-		pointsOnCurve = null;
 		locus=new GeoLocus(c);
 		locus.setDefined(true);
 		calcPath=true;
@@ -154,12 +147,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	public GeoImplicitPoly(GeoImplicitPoly g){
 		this(g.cons);
 		set(g);
-		if(type == IMPLICIT_POLY_THROUGH_POINTS)
-		{
-			pointsOnCurve = new Coords[g.pointsOnCurve.length];
-	        for(int i=0; i<pointsOnCurve.length; i++)
-	        	pointsOnCurve[i] = new Coords(g.pointsOnCurve[i].get());
-		}
 	}
 	
 	/* 
@@ -188,11 +175,6 @@ Dilateable, Transformable, EuclidianViewCE {
 //		Application.debug("Conic -> "+this);
 	}
 	
-	
-	
-	public Coords[] getPointsOnCurve() {
-		return pointsOnCurve;
-	}
 	
 	
 //	/**
@@ -888,21 +870,6 @@ Dilateable, Transformable, EuclidianViewCE {
 			return;
 		}
 		
-		if(pointsOnCurve == null)
-			pointsOnCurve = new Coords[points.size()];
-		
-		for(int i=0; i<points.size(); i++)
-		{
-			if(pointsOnCurve[i] == null)
-				pointsOnCurve[i] = new Coords(points.get(i).x, points.get(i).y, points.get(i).z);
-			else
-			{
-				pointsOnCurve[i].setX(points.get(i).x);
-				pointsOnCurve[i].setY(points.get(i).y);
-				pointsOnCurve[i].setZ(points.get(i).z);
-			}
-		}
-		
 		int degree = (int)(0.5*Math.sqrt(8*(1+points.size()))) - 1;
 		int realDegree = degree;
 		
@@ -992,7 +959,7 @@ Dilateable, Transformable, EuclidianViewCE {
 					coeffMatrix[i][j] = partialSolution[k++];
 		
 		this.setCoeff(coeffMatrix,true);
-		this.update();
+		
 		this.defined = true;
 		for(int i=0; i<points.size(); i++)
 			if(!this.isOnPath(points.get(i),1)) //precision must not be too small, error can be > 0.01
@@ -1001,7 +968,6 @@ Dilateable, Transformable, EuclidianViewCE {
 				return;
 			}
 		
-		this.type = IMPLICIT_POLY_THROUGH_POINTS;
 	}
 	
 
