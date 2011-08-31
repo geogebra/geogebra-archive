@@ -285,12 +285,6 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 		tabbedPane.setTitleAt(TAB_CAS, app.getMenu("CAS")); 
 		tabbedPane.setTitleAt(TAB_ADVANCED, app.getMenu("Advanced"));
 		
-		euclidianPanel.setLabels();
-		defaultsPanel.setLabels();
-		spreadsheetPanel.setLabels();
-		casPanel.setLabels();
-		advancedPanel.setLabels();
-		
 		GuiManager.setLabelsRecursive(this);
 	}
 

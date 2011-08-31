@@ -571,10 +571,11 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbTooltipTimeout.addActionListener(this);
 
 		updateTooltipLanguages();
-		updateGUIFont();
 	}
 
 	public void updateGUIFont() {
+		cbGUIFont.removeActionListener(this);
+		
 		if (cbGUIFont.getItemCount() == MyXMLHandler.menuFontSizes.length + 1) {
 			int gfs = app.getGUIFontSize();
 			if (gfs <= -1) {
@@ -591,6 +592,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 				}
 			}
 		}
+		
+		cbGUIFont.addActionListener(this);
 	}
 
 	public void updateTooltipLanguages() {
