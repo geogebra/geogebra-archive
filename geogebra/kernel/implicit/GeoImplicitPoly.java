@@ -928,7 +928,7 @@ Dilateable, Transformable, EuclidianViewCE {
 						
 			results = extendMatrix.getColumn(solutionColumn);
 			
-			for(int i=0, j=0; i<noPoints;i++)
+			for(int i=0, j=0; i<noPoints+1;i++)
 				if(i==solutionColumn)
 					continue;
 				else
@@ -942,27 +942,27 @@ Dilateable, Transformable, EuclidianViewCE {
 			results[i] *= -1;
         		
 		double [] partialSolution = solver.solve(results);
-			               
-		for(int i=0; i<partialSolution.length; i++)
-			if(Kernel.isZero(partialSolution[i]))
-				partialSolution[i] = 0;
-			               
-		for(int i=0; i<partialSolution.length; i++)
-			if(Kernel.isZero(partialSolution[i]))
-				partialSolution[i] = 0;
+			 
+		double [] solution = new double[partialSolution.length+1];
 		
-		for(int i=0, k=0; i<realDegree+1; i++)
-			for(int j=0; j+i != realDegree+1; j++)
-				if(k==solutionColumn-1)
-					coeffMatrix[i][j] = 1;
-				else
-					coeffMatrix[i][j] = partialSolution[k++];
+		for(int i=0, j=0; i<solution.length; i++)
+			if(i == solutionColumn-1)
+				solution[i] = 1;
+			else
+			{
+				solution[i] = (Kernel.isZero(partialSolution[j])) ? 0 : partialSolution[j];
+				j++;
+			}
+			
+		for(int i=0, k=0; i < realDegree+1; i++)
+			for(int j=0; i+j < realDegree+1; j++)
+				coeffMatrix[i][j] = solution[k++];
 		
 		this.setCoeff(coeffMatrix,true);
 		
 		this.defined = true;
 		for(int i=0; i<points.size(); i++)
-			if(!this.isOnPath(points.get(i),1)) //precision must not be too small, error can be > 0.01
+			if(!this.isOnPath(points.get(i),1))
 			{
 				this.setUndefined();
 				return;
