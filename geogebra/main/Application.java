@@ -559,10 +559,6 @@ public class Application implements KeyEventDispatcher {
 			if (!isApplet && frame != null) {
 				setFrame(frame);
 			}
-			
-			if(tmpPerspectives != null && !ggtloading) {
-				getGuiManager().getLayout().setPerspectives(tmpPerspectives);
-			}
 		}
 
 		if (!isApplet) {			
@@ -573,6 +569,10 @@ public class Application implements KeyEventDispatcher {
 			
 			if (!fileLoaded && !ggtloading)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
+			
+			if(tmpPerspectives != null && !ggtloading) {
+				getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+			}
 		}
 
 		setUndoActive(undoActive);
