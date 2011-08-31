@@ -165,6 +165,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 		if(btnHelpToggle!=null)
 			btnHelpToggle.setToolTipText(app.getMenu("InputHelp"));
+	
+		inputField.setDictionary(app.getCommandDictionary());
 	}	
 
 

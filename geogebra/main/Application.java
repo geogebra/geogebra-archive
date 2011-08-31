@@ -2132,6 +2132,8 @@ public class Application implements KeyEventDispatcher {
 	public final static String syntaxStr = "Syntax";
 	
 	private void fillCommandDict() {
+		rbcommand = getCommandResourceBundle();
+		
 		if (rbcommand == rbcommandOld)
 			return;
 		rbcommandOld = rbcommand;
@@ -2561,6 +2563,14 @@ public class Application implements KeyEventDispatcher {
 			fillCommandDict();
 			kernel.updateLocalAxesNames();
 		}
+	}
+	
+	private ResourceBundle getCommandResourceBundle() {
+		if (rbcommand == null) {
+			rbcommand = MyResourceBundle
+					.createBundle(RB_COMMAND, currentLocale);
+		}
+		return rbcommand;
 	}
 	
 	final public Enumeration<String> getKeyNames(){
