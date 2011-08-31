@@ -46,18 +46,22 @@ public class CellRangeProcessor {
 
 	public boolean isCreatePointListPossible(ArrayList<CellRange> rangeList) {
 
+		// two adjacent rows or columns?
 		if (rangeList.size() == 1 && rangeList.get(0).is2D())
 			return true;
-		if (rangeList.size() == 2 && 
+		
+		// two non-adjacent rows or columns?
+		else if (rangeList.size() == 2 && 
 				rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1 )
 			return true;
 
-		if (rangeList.size() == 2 && 
-				rangeList.get(0).getHeight() == 1 && rangeList.get(1).getHeight() == 1 )
-			return true;
+		else if (rangeList.size() == 1)
+			return rangeList.get(0).isPointList();
 
 		return false;
 	}
+
+	
 
 	/*
 	 * top-left must be a function of 2 variables eg A4(x,y)=x y^2
@@ -458,6 +462,10 @@ public class CellRangeProcessor {
 
 		String[] title = new String[2];
 
+		// return null titles if data source is a point list
+		if(rangeList.size()==1 && rangeList.get(0).isPointList())
+			return title;
+		
 		// get the orientation and dimensions of the list
 		PointDimension pd = new PointDimension();
 		getPointListDimensions(rangeList, pd);

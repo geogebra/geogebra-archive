@@ -150,7 +150,7 @@ public class StatDialogController {
 
 		if(dataSource == null) return;
 
-		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
+		CellRangeProcessor crProcessor = spreadsheetTable.getCellRangeProcessor();
 		String text = "";
 
 		boolean scanByColumn = true;
@@ -171,11 +171,12 @@ public class StatDialogController {
 
 		}else{
 
+			ArrayList<CellRange> cellRangeList =  (ArrayList<CellRange>) dataSource;
 			switch (mode){
 
 			case StatDialog.MODE_ONEVAR:
-				dataAll = (GeoList) cr.createList(
-						(ArrayList<CellRange>) dataSource, 
+				dataAll = (GeoList) crProcessor.createList(
+						cellRangeList, 
 						scanByColumn,
 						copyByValue, 
 						isSorted, 
@@ -185,25 +186,37 @@ public class StatDialogController {
 				break;
 
 			case StatDialog.MODE_REGRESSION:
-				dataAll = (GeoList) cr.createPointList(
-						(ArrayList<CellRange>) dataSource, 
-						copyByValue, 
-						leftToRight,
-						isSorted, 
-						doStoreUndo);
-
+				
+				if( cellRangeList.size()==1 && cellRangeList.get(0).isPointList()){
+					dataAll = (GeoList) crProcessor.createList(
+							cellRangeList, 
+							scanByColumn,
+							copyByValue, 
+							isSorted, 
+							doStoreUndo, 
+							GeoElement.GEO_CLASS_POINT, false);
+				}
+				
+				else{
+					dataAll = (GeoList) crProcessor.createPointList(
+							cellRangeList, 
+							copyByValue, 
+							leftToRight,
+							isSorted, 
+							doStoreUndo);
+				}
 				break;
 
-			case StatDialog.MODE_MULTIVAR:
-				cons.setSuppressLabelCreation(true);
-				dataAll = cr.createCollectionList((ArrayList<CellRange>)dataSource, true); 
-				cons.setSuppressLabelCreation(false);
-				break;
+				case StatDialog.MODE_MULTIVAR:
+					cons.setSuppressLabelCreation(true);
+					dataAll = crProcessor.createCollectionList((ArrayList<CellRange>)dataSource, true); 
+					cons.setSuppressLabelCreation(false);
+					break;
 
 			}
 		}	
 
-		
+
 		//=======================================
 		// create/update dataListSelected
 
@@ -212,7 +225,7 @@ public class StatDialogController {
 			dataSelected = new GeoList(cons);			
 			cons.setSuppressLabelCreation(false);
 		}
-		
+
 
 		try {			
 			dataSelected.clear();

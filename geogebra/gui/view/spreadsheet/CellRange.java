@@ -126,11 +126,10 @@ public class CellRange {
 	}
 
 	/**
-	 * Returns true if cell range is 1xn or nx1
+	 * Returns true if cell range is 1xn, nx1, a row or a column
 	 */
 	public boolean is1D() {
-		return !isSingleCell() && !isRow() && !isColumn() && 
-		((maxColumn - minColumn == 0) || (maxRow - minRow == 0));
+		return ((maxColumn - minColumn == 0) || (maxRow - minRow == 0));
 	}
 	
 	public boolean isPartialRow() {
@@ -150,6 +149,23 @@ public class CellRange {
 	public boolean isEmptyRange(){
 		return (minColumn == -1 && maxColumn == -1 && minRow == -1 && maxRow == -1) ;
 	}
+	
+	
+	/**
+	 * Returns true if all non-empty cells in the given range are GeoPoint 
+	 */
+	public boolean isPointList() {
+		for (int col = minColumn; col <= maxColumn; ++col) {
+			for (int row = minRow; row <= maxRow; ++row) {
+				GeoElement geo = RelativeCopy.getValue(table, col, row);
+				
+				if (geo != null && !geo.isGeoPoint())
+					return false;
+			}
+		}
+		return true;
+	}
+	
 	
 	
 	/**
