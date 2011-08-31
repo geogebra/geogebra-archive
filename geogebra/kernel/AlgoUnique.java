@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.MyDouble;
+
 import java.util.Iterator;
 
 import org.apache.commons.math.stat.Frequency;
@@ -89,7 +91,7 @@ public class AlgoUnique extends AlgoElement {
 			if(dataList.getElementType() == GeoElement.GEO_CLASS_TEXT)
 				f.addValue(((GeoText)dataList.get(i)).toValueString());
 			if(dataList.getElementType() == GeoElement.GEO_CLASS_NUMERIC)
-				f.addValue(((GeoNumeric)dataList.get(i)).getDouble());
+				f.addValue(new MyDouble(kernel, ((GeoNumeric)dataList.get(i)).getDouble()));
 		}
 
 
@@ -97,7 +99,7 @@ public class AlgoUnique extends AlgoElement {
 		// Get the unique value list 	
 		if(dataList.getElementType() == GeoElement.GEO_CLASS_TEXT){
 			// handle string data
-			Iterator itr = f.valuesIterator();
+			Iterator<Comparable<?>> itr = f.valuesIterator();
 			while(itr.hasNext()) {		
 				String s = (String) itr.next();
 				GeoText text = new GeoText(cons);
@@ -106,10 +108,10 @@ public class AlgoUnique extends AlgoElement {
 			}
 		}else{
 			// handle numeric data
-			Iterator itr = f.valuesIterator();
+			Iterator<Comparable<?>> itr = f.valuesIterator();
 			while(itr.hasNext()) {		
-				Double n = (Double) itr.next();
-				uniqueList.add(new GeoNumeric(cons,n));
+				MyDouble n = (MyDouble) itr.next();
+				uniqueList.add(new GeoNumeric(cons,n.getDouble()));
 			}
 		} 
 	}

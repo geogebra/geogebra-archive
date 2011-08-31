@@ -34,7 +34,7 @@ import java.util.HashSet;
  * @version 
  */
 public class MyDouble  extends ValidExpression 
-implements NumberValue {
+implements NumberValue, Comparable {
 
     private double val;
     private boolean isAngle = false;    
@@ -613,5 +613,18 @@ implements NumberValue {
 	
 	public Kernel getKernel() {
 		return kernel;
+	}
+
+	/*
+	 * needed for AlgoUnique (non-Javadoc)
+	 * so that Kernel.isZero() is used
+	 */
+	public int compareTo(Object arg0) {
+		if (arg0 instanceof MyDouble) {
+			MyDouble d = (MyDouble)arg0;
+			if (Kernel.isEqual(val, d.getDouble())) return 0;
+			return val - d.getDouble() < 0 ? -1 : 1;
+		}
+		return 0;
 	}
 }
