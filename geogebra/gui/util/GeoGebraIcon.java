@@ -18,9 +18,12 @@ import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -266,79 +269,59 @@ public class GeoGebraIcon {
 	
 	public static ImageIcon createSymbolTableIcon(Font font, boolean isRollOver){
 
+		int s = 14;
+		String alpha = "\u03B1";
 		
-
-		Color bgColor = GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER;
-		font = font.deriveFont(Font.BOLD);
-		ImageIcon icon;
-		if(isRollOver)
-			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
-				13, Color.black, bgColor.darker()));
-		else
-			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
-					13, Color.black, bgColor));
-			
-		BufferedImage alphaImage = (BufferedImage) icon.getImage();
-		
-		int w = alphaImage.getWidth() + 1;
-		int h = alphaImage.getHeight() + 1;
-		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);	 		
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setPaint(Color.DARK_GRAY);
+		
+		Color bgColor = GeoGebraColorConstants.TABLE_BACKGROUND_COLOR_HEADER;
+		font = font.deriveFont(Font.BOLD, s);
+		g2.setFont(font);	
+		g2.setColor(Color.DARK_GRAY);
+		drawCenteredText(g2, alpha, s/2-1, s/2);
 
-		
-		g2.drawImage(alphaImage, null, 0, 0);
-		
 		g2.setColor(Color.GRAY);
-		g2.drawRect(0, 0, w-2, h-2);
+		g2.drawRect(0, 0, s-2, s-2);
 		g2.setColor(Color.LIGHT_GRAY);
-		g2.drawLine(w-1,1, w-1, h-1);
-		g2.drawLine(1,h-1, w-1, h-1);
+		g2.drawLine(s-1,1, s-1, s-1);
+		g2.drawLine(1,s-1, s-1, s-1);
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
 	
-		/*
 		
 		
-		Color bgColor = null;     //MyTable.BACKGROUND_COLOR_HEADER;
-		font = font.deriveFont(Font.BOLD);
-		ImageIcon icon;
-		if(isRollOver)
-			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
-				13, Color.WHITE, bgColor));
-		else
-			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
-					13, Color.DARK_GRAY, bgColor));
-			
-		BufferedImage alphaImage = (BufferedImage) icon.getImage();
+	}
+	
+	
+	private static void drawCenteredText(Graphics2D graphics, String text, int centerX, int centerY){
 		
-		
-		int w = alphaImage.getWidth() + 1;
-		int h = alphaImage.getHeight() + 1;
-		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = image.createGraphics();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		// get the visual center of the component.
+		//int centerX = getWidth()/2;
+		//int centerY = getHeight()/2;
 
-		if(isRollOver){
-		g2.setColor(Color.GRAY);
-		g2.fillOval(0, 0, w-1, h-1);
-		}else{
-			g2.setColor(Color.GRAY);
-			//g2.drawOval(0, 0, w-1, h-1);
-		}
-		
-		g2.drawImage(alphaImage, null, 0, 0);
-		
-		
-		g2.setColor(Color.GRAY);
-		g2.drawRect(0, 0, w-2, h-2);
-		g2.setColor(Color.LIGHT_GRAY);
-		g2.drawLine(w-1,1, w-1, h-1);
-		g2.drawLine(1,h-1, w-1, h-1);
-		
-		ImageIcon ic = new ImageIcon(image);
-		return ic;
-	*/
+		// get the bounds of the string to draw.
+		FontMetrics fontMetrics = graphics.getFontMetrics();
+		Rectangle stringBounds = fontMetrics.getStringBounds(text, graphics).getBounds();
+
+		// get the visual bounds of the text using a GlyphVector.
+		Font font = graphics.getFont();
+		FontRenderContext renderContext = graphics.getFontRenderContext();
+		GlyphVector glyphVector = font.createGlyphVector(renderContext, text);
+		Rectangle visualBounds = glyphVector.getVisualBounds().getBounds();
+
+		// calculate the lower left point at which to draw the string. note that this we
+		// give the graphics context the y coordinate at which we want the baseline to
+		// be placed. use the visual bounds height to center on in conjunction with the
+		// position returned in the visual bounds. the vertical position given back in the
+		// visualBounds is a negative offset from the baseline of the text.
+		int textX = centerX - stringBounds.width/2;
+		int textY = centerY - visualBounds.height/2 - visualBounds.y;
+
+		graphics.drawString(text, textX, textY);
+
 		
 	}
 	
