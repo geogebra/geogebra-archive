@@ -54,6 +54,7 @@ public class CompletionsPopup {
 	private DocumentListener textFieldDocListener;
 	private KeyListener keyListener;
 	private KeyListener[] textFieldKeyListeners;
+	private int current_length;
 	
 	/**
 	 * Initializes components and registers event listeners.
@@ -77,6 +78,7 @@ public class CompletionsPopup {
 		popup.add(new JScrollPane(list));
 		popup.setBorder(BorderFactory.createEmptyBorder());
 		popup.setFocusable(false);
+		current_length=-1;// current length of sentence
 		registerListeners();
 	}
 	
@@ -106,19 +108,32 @@ public class CompletionsPopup {
 	private void registerListeners() {
 		// Suggest completions on text changes, store reference to listener object
 		textFieldDocListener = new DocumentListener() {
-			public void removeUpdate(DocumentEvent e) { hidePopup(); }
-			public void insertUpdate(DocumentEvent e) { /*showCompletions();*/ }
-			public void changedUpdate(DocumentEvent e) { hidePopup(); }
+			public void removeUpdate(DocumentEvent e) {
+			}
+			
+			public void insertUpdate(DocumentEvent e) { /*showCompletions();*/ 
+				if(current_length!=e.getOffset())
+				{
+					hidePopup();
+					current_length=e.getOffset();				
+				}
+			}
+			public void changedUpdate(DocumentEvent e) { 
+				}
 		};
+		
 		textField.getDocument().addDocumentListener(textFieldDocListener);
 		// Handle special keys (e.g. navigation)
 		keyListener = new KeyAdapter() {
-			@Override public void keyPressed(KeyEvent e) { handleSpecialKeys(e); }
+			@Override public void keyPressed(KeyEvent e) { 
+				handleSpecialKeys(e); 
+				}			
 		};
 		// Hide popup when text field loses focus
 		textField.addFocusListener(new FocusAdapter() {
 			@Override public void focusLost(FocusEvent e) {
 				hidePopup();
+				current_length=-1;
 			}
 		});
 		// Allow the user click on an option for completion
@@ -198,7 +213,7 @@ public class CompletionsPopup {
 		if (!isPopupVisible()) {
 			return;
 		}
-
+		
 		switch(keyEvent.getKeyCode()) {
 		case VK_ESCAPE:			// [ESC] cancels the popup
 			textField.cancelAutoCompletion();
@@ -229,9 +244,12 @@ public class CompletionsPopup {
 			break;
 		default:
 			hidePopup();
+			current_length=-1;
 			textField.processKeyEvent(keyEvent);
 		}
 	}
+	
+	
 
 	private void navigateRelative(int offset) {
 		boolean up = offset < 0;
@@ -260,6 +278,7 @@ public class CompletionsPopup {
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			textField.validateAutoCompletion(list.getSelectedIndex());
 			hidePopup();
+			current_length=-1;
 		} 
 	}
 
