@@ -25,6 +25,8 @@ public class Settings {
 	
 	private final KeyboardSettings keyboardSettings;
 	
+	private final CASSettings casSettings;
+	
 	/**
 	 * Initialize settings using the constructors of the setting container classes.
 	 */
@@ -41,6 +43,7 @@ public class Settings {
 		layoutSettings = new LayoutSettings();
 		applicationSettings = new ApplicationSettings();
 		keyboardSettings = new KeyboardSettings();
+		casSettings = new CASSettings();
 	}
 	
 	/**
@@ -60,6 +63,7 @@ public class Settings {
 		layoutSettings.beginBatch();
 		applicationSettings.beginBatch();
 		keyboardSettings.beginBatch();
+		casSettings.beginBatch();
 	}
 	
 	/**
@@ -79,6 +83,7 @@ public class Settings {
 		layoutSettings.endBatch();
 		applicationSettings.endBatch();
 		keyboardSettings.endBatch();
+		casSettings.endBatch();
 	}
 	
 	/** 
@@ -123,5 +128,9 @@ public class Settings {
 	
 	public final KeyboardSettings getKeyboard() {
 		return keyboardSettings;
+	}
+	
+	public final CASSettings getCasSettings() {
+		return casSettings;
 	}
 }

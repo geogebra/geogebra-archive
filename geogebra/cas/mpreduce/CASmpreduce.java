@@ -188,9 +188,8 @@ public class CASmpreduce extends CASgeneric {
 		}
 		exp = sb.toString();
 
-		long timeout = getTimeout()*1000;	
 		System.out.println("eval with MPReduce: " + exp);
-		String result = mpreduce.evaluate(exp, timeout);
+		String result = mpreduce.evaluate(exp, getTimeoutMilliseconds());
 
 		sb.setLength(0);
 		for (String s : result.split("\n")) {

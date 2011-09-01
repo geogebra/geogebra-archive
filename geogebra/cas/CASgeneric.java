@@ -6,6 +6,9 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.MyResourceBundle;
+import geogebra.main.settings.AbstractSettings;
+import geogebra.main.settings.CASSettings;
+import geogebra.main.settings.SettingListener;
 
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -13,12 +16,12 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public abstract class CASgeneric {
+public abstract class CASgeneric implements SettingListener {
 	
 	/**
-	 * Timeout for CAS in seconds.
+	 * Timeout for CAS in milliseconds.
 	 */
-	private int timeout = 5;
+	private long timeoutMillis = 5000;
 	
 	protected CASparser casParser;
 	private ResourceBundle rbCasTranslations;  // translates from GeogebraCAS syntax to the internal CAS syntax.
@@ -167,16 +170,15 @@ public abstract class CASgeneric {
 	/**
 	 * @return CAS timeout in seconds
 	 */
-	public int getTimeout() {
-		return timeout;
+	protected long getTimeoutMilliseconds() {
+		return timeoutMillis;
 	}
 	
-	/**
-	 * @param timeout Timeout in seconds
-	 */
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
+	public void settingsChanged(AbstractSettings settings) {
+		CASSettings s = (CASSettings) settings;
+		timeoutMillis = s.getTimeoutMilliseconds();
 	}
+	
 	
 
 

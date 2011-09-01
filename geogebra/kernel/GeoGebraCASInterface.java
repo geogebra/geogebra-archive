@@ -20,11 +20,7 @@ public interface GeoGebraCASInterface {
 
 	public CASparser getCASparser();
 
-	public int getTimeout();
-
 	public boolean isStructurallyEqual(ValidExpression inputVE, String newInput);
-
-	public void setTimeout(int t);
 
 	public boolean isCommandAvailable(Command cmd);
 

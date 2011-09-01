@@ -158,7 +158,7 @@ public class CASmathpiper extends CASgeneric {
 		               timer.cancel();
 		           }
 
-		       }, getTimeout() * 1000);
+		       }, getTimeoutMilliseconds());
 		       
 		       response = mathpiper.evaluate(exp);
 		       timer.cancel();

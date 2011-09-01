@@ -1,7 +1,7 @@
 package geogebra.gui;
 
-import geogebra.cas.GeoGebraCAS;
 import geogebra.main.Application;
+import geogebra.main.settings.CASSettings;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -24,6 +24,8 @@ public class OptionsCAS  extends JPanel implements ActionListener, SetLabels {
 	 */
 	private Application app;
 	
+	private CASSettings casSettings;
+	
 	/** */
 	private JLabel timeoutLabel;
 	
@@ -39,6 +41,7 @@ public class OptionsCAS  extends JPanel implements ActionListener, SetLabels {
 		super(new BorderLayout());
 		
 		this.app = app;
+		casSettings = app.getSettings().getCasSettings();
 		
 		initGUI();
 		updateGUI();
@@ -71,8 +74,7 @@ public class OptionsCAS  extends JPanel implements ActionListener, SetLabels {
 	 * @remark Do not call setLabels() here
 	 */
 	public void updateGUI() {
-		int timeout = app.getKernel().getGeoGebraCAS().getTimeout();
-		cbTimeout.setSelectedItem(timeout);
+		cbTimeout.setSelectedItem(casSettings.getTimeoutMilliseconds() / 1000);
 	}
 
 	/**
@@ -81,7 +83,7 @@ public class OptionsCAS  extends JPanel implements ActionListener, SetLabels {
 	public void actionPerformed(ActionEvent e) {
 		// change timeout
 		if(e.getSource() == cbTimeout) {
-			app.getKernel().getGeoGebraCAS().setTimeout((Integer)cbTimeout.getSelectedItem());
+			casSettings.setTimeoutMilliseconds(((Integer)cbTimeout.getSelectedItem()) * 1000);
 		}
 	}
 

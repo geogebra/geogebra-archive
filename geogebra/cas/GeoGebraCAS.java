@@ -73,6 +73,7 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 					
 				default:
 					cas = getMPReduce();
+					app.getSettings().getCasSettings().addListener(cas);
 					currentCAS = CAS;
 					break;	
 				/*
@@ -476,20 +477,6 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 			System.err.println("GeoGebraCAS.isStructurallyEqual: " + th.getMessage() );
 			return false;
 		}
-	}
-	
-	/**
-	 * @return CAS timeout in seconds
-	 */
-	public int getTimeout() {
-		return cas.getTimeout();
-	}
-	
-	/**
-	 * @param timeout Timeout in seconds
-	 */
-	public void setTimeout(int timeout) {
-		cas.setTimeout(timeout);
 	}
 	
 }
