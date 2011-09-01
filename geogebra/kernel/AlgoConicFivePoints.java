@@ -187,8 +187,8 @@ public class AlgoConicFivePoints extends AlgoElement {
             delta = Math.min(delta, Math.abs(
             		Cpert[0][0]*Cpert[1][1] - (Cpert[0][1]+Cpert[1][0])*(Cpert[0][1]+Cpert[1][0])/4));
         	for (int m=0; m<3; m++)
-        		for (int n=0; n<3; n++)
-        			Cmin[m][n]=Math.min(Cmin[m][n],Math.abs(Cpert[m][n]));
+        		for (int n=m; n<3; n++)
+        			Cmin[m][n]=Math.min(Cmin[m][n],Math.abs((Cpert[m][n]+Cpert[n][m])/2));
         	        
     	}
     
@@ -198,7 +198,7 @@ public class AlgoConicFivePoints extends AlgoElement {
         	C[0][0]=0;
         if (Math.abs(C[1][1])< Math.abs(Cmin[1][1])/10)
     		C[1][1]=0;
-        if (Math.abs(C[0][1] + C[1][0])< Math.abs(Cmin[0][1]+Cmin[1][0])/10) {
+        if (Math.abs(C[0][1] + C[1][0])< Math.abs( Cmin[0][1]) /5 ) {
     		C[0][1]=0;
     		C[1][0]=0;
         }
