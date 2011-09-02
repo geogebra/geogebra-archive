@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Comparator;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -658,7 +659,7 @@ public class Util extends Object {
 					c == '/' ||
 					c == '\\' ||
 					c == '?' ||
-					c == '\u00a3' || // seems to turn into 'ú' inside zips
+					c == '\u00a3' || // seems to turn into 'ï¿½' inside zips
 					c == '|' )
 			{
 				sb.append("_");
@@ -677,6 +678,7 @@ public class Util extends Object {
 	}       
     
     private static StringBuilder sb;
+	private static Comparator<File> comparator;
     /*
      * returns a string with n instances of s
      * eg string("hello",2) -> "hellohello";
@@ -749,6 +751,23 @@ public class Util extends Object {
 		return high;
 	}       
     
+	/**
+	 * Returns a comparator for GeoText objects.
+	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
+	 */
+	public static Comparator<File> getFileComparator() {
+		if (comparator == null) {
+			comparator = new Comparator<File>() {
+			      public int compare(File itemA, File itemB) {
+
+				        return itemA.getName().compareTo(itemB.getName());
+			      }
+				        
+			};
+		}
+		
+		return comparator;
+	}
 
 
 }

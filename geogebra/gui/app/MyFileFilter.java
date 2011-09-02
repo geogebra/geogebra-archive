@@ -37,7 +37,7 @@ import javax.swing.filechooser.FileFilter;
  *     chooser.showOpenDialog(this);
  * 
  */
-public class MyFileFilter extends FileFilter {
+public class MyFileFilter extends FileFilter implements java.io.FileFilter {
 
   //  private static String TYPE_UNKNOWN = "Type Unknown";
   //  private static String HIDDEN_FILE = "Hidden File";
