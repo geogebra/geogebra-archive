@@ -11,14 +11,13 @@ the Free Software Foundation.
 */
 
 /*
- * AlgoIntersectImplictpolys.java
+ * PolynomialUtils.java
  *
  * Created on 17.08.2011, 13:05
  */
 
 package geogebra.kernel.implicit;
 
-import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
@@ -35,12 +34,11 @@ public class PolynomialUtils {
 		double[] cq;
 		cp=cp.clone();
 		int degD=cd.length-1;
-//		Application.debug(String.format("Divide %s by %s",p,d));
 		while(degD>=0&&Kernel.isZero(cd[degD])){
 			degD--;
 		}
 		if (degD<0){ // => division by zero
-			cp[0]=1/0;
+			throw new ArithmeticException("divide by zero polynomial");
 		}
 		if (cp.length-1<degD){ 
 			return new double[]{0};

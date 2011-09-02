@@ -19,7 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel.implicit;
 
 import geogebra.Matrix.Coords;
-import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.AlgoClosestPoint;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPointOnPath;
@@ -48,11 +48,11 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.math.linear.DecompositionSolver;
 import org.apache.commons.math.linear.LUDecompositionImpl;
@@ -79,14 +79,12 @@ Dilateable, Transformable, EuclidianViewCE {
 	
 	public GeoLocus locus;
 	public Polynomial poly;
-	
-//	private Thread factorThread;
 
 	public GeoImplicitPoly(Construction c) {
 		super(c);
 		degX=-1;
 		degY=-1;
-		coeffSquarefree=null;
+		coeffSquarefree=new double[0][0];
 		locus=new GeoLocus(c);
 		locus.setDefined(true);
 		calcPath=true;
@@ -172,32 +170,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		coeff[2][1]=coeff[1][2]=0;
 		degX=2;
 		degY=2;
-//		Application.debug("Conic -> "+this);
 	}
-	
-	
-	
-//	/**
-//	 * Create conic from this implicitPoly (if degX == degY == 2)
-//	 * @param g GeoConic for storing this implicitPoly
-//	 */
-//	public void toGeoConic(GeoConicND g)
-//	{
-//		if(degX != 2 || degY != 2)
-//		{
-//			g.setUndefined();
-//			return;
-//		}
-//		
-//		double [] matrix = new double[6];
-//		matrix[0] = coeff[2][0];
-//		matrix[1] = coeff[0][2];	
-//		matrix[2] = coeff[0][0];
-//		matrix[3] = .5*coeff[1][1];
-//		matrix[4] = .5*coeff[1][0];
-//		matrix[5] = .5*coeff[0][1];
-//		g.setMatrix(matrix);
-//	}
 	
 	
 	@Override
@@ -268,7 +241,7 @@ Dilateable, Transformable, EuclidianViewCE {
 							d=coeff[i][j];
 						}
 					}
-					if (c!=d)
+					if (!Kernel.isEqual(c, d))
 						return false;
 				}
 			}
@@ -361,7 +334,6 @@ Dilateable, Transformable, EuclidianViewCE {
 				if (i==0&&j==0){
 					if (first)
 						sb.append("0");
-//					Application.debug("pf="+kernel.getCASPrintForm());
 					if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MATH_PIPER) 
 						sb.append(" == ");
 					else
@@ -630,12 +602,9 @@ Dilateable, Transformable, EuclidianViewCE {
 			//find the "common" degree, e.g. x^4+y^4->4, but x^4 y^4->8
 			commDeg=getDeg();
 		}
-//		Application.debug(String.format("sameDenom=%s,cd=%d",sameDenom+"",commDeg));
-//		Application.debug(String.format("XX=%d,YX=%d,XY=%d,YY=%d", degXPolyX,degYPolyX,degXPolyY,degYPolyY));
-	//	Application.debug(String.format("degXpX=%d,degXqX=%d,degXpY=%d,degXqY=%d",degXpX=%d,degXqX=%d,degXpY=%d,degXqY=%d));
 		int newDegX=Math.max(degXpX, degXqX)*degX+Math.max(degXpY, degXqY)*degY;
 		int newDegY=Math.max(degYpX, degYqX)*degX+Math.max(degYpY, degYqY)*degY;
-//		Application.debug(String.format("newdegX=%d,newDegY=%d",newDegX,newDegY));
+
 		double[][] newCoeff=new double[newDegX+1][newDegY+1];
 		double[][] tmpCoeff=new double[newDegX+1][newDegY+1];
 		double[][] ratXCoeff=new double[newDegX+1][newDegY+1];
@@ -648,7 +617,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		int ratXCoeffDegY=0;
 		int ratYCoeffDegX=0;
 		int ratYCoeffDegY=0;
-	//	double[][] xCoeff=new double[newDegX+1][newDegY+1];
+
 		for (int i=0;i<newDegX;i++){
 			for (int j=0;j<newDegY;j++){
 				newCoeff[i][j]=0;
@@ -688,7 +657,6 @@ Dilateable, Transformable, EuclidianViewCE {
 					tmpCoeffDegY=Math.max(tmpCoeffDegY, ratYCoeffDegY);
 				}
 				if (y>0){
-//					Application.debug(String.format("x=%d,y=%d,tX=%d,tY=%d,dXY=%d,dYY=%d",x,y,tmpCoeffDegX,tmpCoeffDegY,degXPolyY,degYPolyY));
 					polyMult(tmpCoeff,pY,tmpCoeffDegX,tmpCoeffDegY,degXpY,degYpY);
 					tmpCoeffDegX+=degXpY;
 					tmpCoeffDegY+=degYpY;
@@ -713,7 +681,6 @@ Dilateable, Transformable, EuclidianViewCE {
 			tmpCoeffDegX=0;
 			tmpCoeffDegY=0;
 			if (x>0){
-//				Application.debug(String.format("x=%d,nX=%d,nY=%d,dXY=%d,dYY=%d",x,newCoeffDegX,newCoeffDegY,degXPolyY,degYPolyY));
 				polyMult(newCoeff,pX,newCoeffDegX,newCoeffDegY,degXpX,degYpX);
 				newCoeffDegX+=degXpX;
 				newCoeffDegY+=degYpX;
@@ -794,7 +761,6 @@ Dilateable, Transformable, EuclidianViewCE {
 	 */
 	private static void polyMult(double[][] polyDest,double[][] polySrc, int degDestX,int degDestY,int degSrcX,int degSrcY){
 		double[][] result=new double[degDestX+degSrcX+1][degDestY+degSrcY+1];
-//		Application.debug(String.format("dX=%d,dY=%d,sX=%d,sY=%d", degDestX,degDestY,degSrcX,degSrcY));
 		for (int n=0;n<=degDestX+degSrcX;n++){
 			for (int m=0;m<=degDestY+degSrcY;m++){
 				double sum=0;
@@ -880,7 +846,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		DecompositionSolver solver;
 		
 		double [] matrixRow = new double[points.size()+1];
-		double [] results = new double[points.size()];
+		double [] results;
 		
 		for(int i=0; i<points.size(); i++)
 		{
@@ -976,8 +942,6 @@ Dilateable, Transformable, EuclidianViewCE {
 		double x=PI.getX2D();
 		double y=PI.getY2D();
 		
-//		Application.debug("eval-1: "+evalPolyAt(x, y));
-		
 		double dx,dy;
 		dx=evalDiffXPolyAt(x,y);
 		dy=evalDiffYPolyAt(x,y);
@@ -989,10 +953,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		double[] pair=new double[]{x,y};
 		double[] line=new double[]{y*dx-x*dy,dy,-dx};
 		if (PolynomialUtils.rootPolishing(pair, this, line)){
-//			Application.debug("x="+pair[0]+";y="+pair[1]);
 			PI.setCoords2D(pair[0], pair[1], 1);
-//			Application.debug("->"+isOnPath(PI));
-//			Application.debug("eval-2: "+evalPolyAt(pair[0], pair[1]));
 		}
 	}
 	
@@ -1182,16 +1143,13 @@ Dilateable, Transformable, EuclidianViewCE {
 				return true;
 			}
 			return false;
-//			Application.debug("EuclidianViewUpdate");
 		}
 	 
-//		private List<GeneralPath> gps;
 		/**
 		 * X and Y of the point on the curve next to the Right Down Corner of the View, for the Label
 		 */
-//		private int pointNearRDCornerX=0, pointNearRDCornerY=0;
-		private ArrayList<Double[]> singularitiesCollection;
-		private ArrayList<Double[]> boundaryIntersectCollection;
+		private List<double[]> singularitiesCollection;
+		private List<double[]> boundaryIntersectCollection;
 		
 		//Second Algorithm
 		final public static double EPS=Kernel.EPSILON;
@@ -1208,7 +1166,7 @@ Dilateable, Transformable, EuclidianViewCE {
 			return 0;
 		}
 		
-		private class GridRect{
+		private static class GridRect{
 			double x,y,width,height;
 			int[] eval;
 
@@ -1224,7 +1182,6 @@ Dilateable, Transformable, EuclidianViewCE {
 		
 		private boolean[][] remember;
 		private GridRect[][] grid;
-//		private final static double GRIDSIZE=10; //in Pixel
 		
 		private int gridWidth=30; //grid"Resolution" how many grids in one row
 		private int gridHeight=30; //how many grids in one col
@@ -1238,7 +1195,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		 * updates the path inside the current view-rectangle
 		 */
 		public void updatePath(){
-			EuclidianView view=kernel.getApplication().getEuclidianView();
+			EuclidianViewInterface view=kernel.getApplication().getEuclidianView();
 			if (view!=null)
 				updatePath(view.getXmin(), view.getYmin(), view.getXmax()-view.getXmin(), view.getYmax()-view.getYmin(),
         			(view.getXmax()-view.getXmin())*(view.getYmax()-view.getYmin())/view.getHeight()/view.getWidth());
@@ -1255,26 +1212,17 @@ Dilateable, Transformable, EuclidianViewCE {
 		public void updatePath(double rectX,double rectY,double rectW,double rectH,double resolution){
 			if (!calcPath) //important for helper curves, which aren't visible
 				return;
-			try{
-				locus.clearPoints();
-				singularitiesCollection=new ArrayList<Double[]>();
-//				if (fillSign!=0)
-					boundaryIntersectCollection=new ArrayList<Double[]>();
-//			int gridWidth=(int)Math.ceil(view.getWidth()/GRIDSIZE);
-//			int gridHeight=(int)Math.ceil(view.getHeight()/GRIDSIZE);
-			//ticket #249
-/*			if (view.getWidth()==0||view.getHeight()==0){ 
-				Application.debug("View not visible (width or height equal to zero)");
-				return;
-			} */
+			locus.clearPoints();
+			singularitiesCollection=new ArrayList<double[]>();
+			boundaryIntersectCollection=new ArrayList<double[]>();
+
 			grid=new GridRect[gridWidth][gridHeight];
 			remember=new boolean[gridWidth][gridHeight];
-//			scaleX=(view.xmax-view.xmin)/view.getWidth();
-//			scaleY=(view.ymax-view.ymin)/view.getHeight();
+
 			double prec=5;
 			scaleX=prec*Math.sqrt(resolution);
 			scaleY=prec*Math.sqrt(resolution);
-//			Application.debug("scale="+scaleX);
+
 			double grw=rectW/gridWidth;
 			double grh=rectH/gridHeight;
 			double x=rectX;
@@ -1385,12 +1333,8 @@ Dilateable, Transformable, EuclidianViewCE {
 						}
 					}
 				}
-//				algoUpdateSet.updateAll();
 			} 
 			
-			}catch(Exception e){
-				e.printStackTrace();
-			}
 		}
 
 		
@@ -1407,13 +1351,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		}
 		
 		private void startPath(int w, int h, double x, double y,GeoLocus locus) {
-//			Application.debug("startPath at "+x+"/"+y+" in GridRect["+w+","+h+"]");
-//			if (Double.isNaN(firstX)||Double.isNaN(firstY)){ //Save the first point on the curve for the label
-//				firstX=view.toScreenCoordXd(x);
-//				firstY=view.toScreenCoordYd(y);
-//			}
-			
-//			GeneralPath gp=new GeneralPath();
+
 			double sx=x;
 			double sy=y;
 			double lx=Double.NaN; //no previous point
@@ -1423,12 +1361,10 @@ Dilateable, Transformable, EuclidianViewCE {
 			double stepSize=START_STEP_SIZE*Math.max(scaleX, scaleY);
 			double startX=x;
 			double startY=y;
-//			float pathX=(float)view.toScreenCoordXd(x);
-//			float pathY=(float)view.toScreenCoordYd(y);
-//			gp.moveTo(pathX,pathY);
+
 			ArrayList<MyPoint> firstDirPoints=new ArrayList<MyPoint>();
 			firstDirPoints.add(new MyPoint(x,y,true));
-//			locus.insertPoint(x, y, false);
+
 			int s=0;
 			int lastW=w;
 			int lastH=h;
@@ -1439,10 +1375,6 @@ Dilateable, Transformable, EuclidianViewCE {
 			double lastGradX=Double.POSITIVE_INFINITY;
 			double lastGradY=Double.POSITIVE_INFINITY;
 			while(true){
-//				if (s>10000){
-//					Application.debug("Too much steps");
-//					return gp;
-//				}
 				s++;
 				boolean reachedSingularity=false;
 				boolean reachedEnd=false;
@@ -1463,7 +1395,6 @@ Dilateable, Transformable, EuclidianViewCE {
 					if (w>0)
 						w--;
 					else{
-//						Application.debug("reached end of grid");
 						reachedEnd=true;
 						break;
 					}
@@ -1473,7 +1404,6 @@ Dilateable, Transformable, EuclidianViewCE {
 						w++;
 					else{
 						reachedEnd=true;
-//						Application.debug("reached end of grid");
 						break;
 					}
 				}
@@ -1482,7 +1412,6 @@ Dilateable, Transformable, EuclidianViewCE {
 						h--;
 					else{
 						reachedEnd=true;
-//						Application.debug("reached end of grid");
 						break;
 					}
 				}
@@ -1491,13 +1420,12 @@ Dilateable, Transformable, EuclidianViewCE {
 						h++;
 					else{
 						reachedEnd=true;
-//						Application.debug("reached end of grid");
 						break;
 					}
 				}
-//				if (reachedEnd&&fillSign!=0){ //we reached the boundary
-//					
-//				}
+				if (reachedEnd){ //we reached the boundary
+					boundaryIntersectCollection.add(new double[]{sx,sy});
+				}
 				if (lastW!=w||lastH!=h){
 					int dw=(int)Math.signum(lastW-w);
 					int dh=(int)Math.signum(lastH-h);
@@ -1523,11 +1451,10 @@ Dilateable, Transformable, EuclidianViewCE {
 					 */
 					
 					if (nearSing||(Math.abs(gradX)<NEAR_SING&&Math.abs(gradY)<NEAR_SING)){
-						for (Double[] pair:singularitiesCollection){ //check if this singularity is already known
+						for (double[] pair:singularitiesCollection){ //check if this singularity is already known
 							if ((scaledNormSquared(pair[0]-sx,pair[1]-sy)<SING_RADIUS*SING_RADIUS)){
 								sx=pair[0];
 								sy=pair[1];
-//								Application.debug("jump to Sing @["+sx+","+sy+"]");
 								reachedSingularity=true;
 								reachedEnd=true;
 								break;
@@ -1535,17 +1462,14 @@ Dilateable, Transformable, EuclidianViewCE {
 						}
 						if (!reachedEnd){
 							if (gradX*gradX+gradY*gradY>lastGradX*lastGradX+lastGradY*lastGradY){ //going away from the singularity, stop here
-//								Application.debug("Sing-c @["+sx+","+sy+"]");
-								singularitiesCollection.add(new Double[]{sx,sy});
+								singularitiesCollection.add(new double[]{sx,sy});
 								reachedEnd=true;
 								reachedSingularity=true;
 							}else if (Math.abs(gradX)<MIN_GRAD&&Math.abs(gradY)<MIN_GRAD){ //singularity
-//								Application.debug("Sing-a @["+sx+","+sy+"]");
-								singularitiesCollection.add(new Double[]{sx,sy});
+								singularitiesCollection.add(new double[]{sx,sy});
 								reachedEnd=true;
 								reachedSingularity=true;
 							}
-//							Application.debug("Near Sing dp = ["+gradX+","+gradY+"]; p = ["+sx+","+sy+"]");
 							lastGradX=gradX;
 							lastGradY=gradY;
 							nearSing=true;
@@ -1572,7 +1496,6 @@ Dilateable, Transformable, EuclidianViewCE {
 						if (!first){ //other dir now
 							nX=-nX;
 							nY-=nY;
-//							Application.debug("Go in other dir now");
 						}
 					}
 					lx=sx;
@@ -1582,7 +1505,6 @@ Dilateable, Transformable, EuclidianViewCE {
 					sx=lx+nX*stepSize; //go in "best" direction
 					sy=ly+nY*stepSize;
 					int e=epsSignum(evalPolyAt(sx,sy,true));
-//					Application.debug("s: "+sx+"/"+sy+";l: "+lx+"/"+ly+"; e="+e);
 					if (e==0){
 						if (stepSize*2<=MAX_STEP_SIZE*Math.max(scaleX, scaleY))
 							stepSize*=2;
@@ -1590,14 +1512,12 @@ Dilateable, Transformable, EuclidianViewCE {
 					}else{
 						gradX=evalDiffXPolyAt(sx, sy,true);
 						gradY=evalDiffYPolyAt(sx, sy,true);
-//						Application.debug("gradient in "+sx+"/"+sy+"="+gradX+"/"+gradY);
 						if (Math.abs(gradX)<MIN_GRAD&&Math.abs(gradY)<MIN_GRAD){ //singularity
 							stepSize/=2;
 							if (stepSize>MIN_STEP_SIZE*Math.max(scaleX, scaleY))
 								continue;
 							else{
-//								Application.debug("Sing-b @["+sx+","+sy+"]");
-								singularitiesCollection.add(new Double[]{sx,sy});
+								singularitiesCollection.add(new double[]{sx,sy});
 								reachedEnd=true;
 								break;
 							}
@@ -1625,7 +1545,6 @@ Dilateable, Transformable, EuclidianViewCE {
 							if (stepSize>MIN_STEP_SIZE*Math.max(scaleX, scaleY))
 								continue;
 							else{
-//								Application.debug("no matching point found");
 								reachedEnd=true;
 								break;
 							}
@@ -1633,10 +1552,7 @@ Dilateable, Transformable, EuclidianViewCE {
 					}
 				}
 				if (!reachedEnd||reachedSingularity){
-					if (reachedSingularity||((lx-sx)*(lx-sx)+(ly-sy)*(ly-sy)>minGap*minGap)){//(newPathX-pathX)*(newPathX-pathX)+(newPathY-pathY)*(newPathY-pathY)>MIN_PATH_GAP*MIN_PATH_GAP){
-						if (evalPolyAt(sx, sy)>0.01){
-							Application.debug("sx="+sx+";sy="+sy);
-						}
+					if (reachedSingularity||((lx-sx)*(lx-sx)+(ly-sy)*(ly-sy)>minGap*minGap)){
 						if (firstDirPoints!=null){
 							firstDirPoints.add(new MyPoint(sx,sy,true));
 						}else{
@@ -1647,7 +1563,6 @@ Dilateable, Transformable, EuclidianViewCE {
 				}
 				if (reachedEnd){
 					if (!first){
-//						Application.debug("reached end in both dir; s="+s+"; stepcount="+stepCount);
 						return; //reached the end two times
 					}
 					lastGradX=Double.POSITIVE_INFINITY;
@@ -1699,12 +1614,10 @@ Dilateable, Transformable, EuclidianViewCE {
 			double a2=1;
 			int e;
 			if (e1!=e2){
-//				Application.debug("enter bisec");
 				//solved #278 PRECISION to small (was Double.MIN_VALUE)
 				while(a2-a1>Kernel.MAX_PRECISION){
 					e=epsSignum(evalPolyAt(x1+(x2-x1)*(a2+a1)/2,y1+(y2-y1)*(a2+a1)/2,true));
 					if (e==0){
-//						Application.debug("leave bisec");
 						return (a2+a1)/2;
 					}
 					if (e==e1){
@@ -1713,7 +1626,6 @@ Dilateable, Transformable, EuclidianViewCE {
 						a2=(a1+a2)/2;
 					}
 				}
-//				Application.debug("leave bisec");
 				return (a1+a2)/2;
 			}
 			return Double.NaN;

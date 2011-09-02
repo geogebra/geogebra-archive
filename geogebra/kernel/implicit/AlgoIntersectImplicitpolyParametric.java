@@ -84,13 +84,13 @@ public class AlgoIntersectImplicitpolyParametric extends
 
 	@Override
 	protected void compute() {
-//		Application.debug("compute");
-		if (p==null||!p.isDefined()){
+
+		if (!p.isDefined()){
 			return;
 		}
 		
-		double maxT=Double.POSITIVE_INFINITY;
-		double minT=Double.NEGATIVE_INFINITY;
+		double maxT;
+		double minT;
 		if (f!=null){
 			if (!f.isDefined()){
 				return;
@@ -100,22 +100,8 @@ public class AlgoIntersectImplicitpolyParametric extends
 				
 				
 				Kernel ker = cons.getKernel();
-				GeoFunction substituteFunctionX = null;
 				
 				ker.setSilentMode(true);
-				try {
-					substituteFunctionX = (GeoFunction) ker.getAlgebraProcessor().processValidExpression(
-						ker.getParser().parseGeoGebraExpression("x"))[0];
-				} catch (MyError e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				
 				GeoFunction paramEquation = new GeoFunction(cons, p, null, f);
 				

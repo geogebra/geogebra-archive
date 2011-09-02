@@ -36,8 +36,6 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 	
 	private String[] labels;
 	
-//	private final static double EPS_ANGLE=1E-3;
-	
 
 	protected AlgoTangentImplicitpoly(Construction c) {
 		super(c);
@@ -90,7 +88,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 			input[0]=R;
 		tangents=new OutputHandler<GeoLine>(new elementFactory<GeoLine>() {
 			public GeoLine newElement() {
-				GeoLine g=new GeoLine(cons);
+				GeoLine g=new GeoLine(getConstruction());
 				g.setParentAlgorithm(AlgoTangentImplicitpoly.this);
 				return g;
 			}
