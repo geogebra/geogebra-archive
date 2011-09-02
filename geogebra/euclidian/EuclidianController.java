@@ -795,6 +795,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelection(selectedFunctions);		
 		clearSelection(selectedCurves);
 		clearSelection(selectedLists);
+		clearSelection(selectedPaths);
+		clearSelection(selectedRegions);
 
 		app.clearSelectedGeos();
 
@@ -6190,7 +6192,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+				clearSelections();
 				return true;
 			}			
 		}
@@ -6237,6 +6239,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			GeoPoint newPoint = kernel.Point(null, path, view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
 			cons.setSuppressLabelCreation(oldLabelCreationFlag);
 			kernel.getConstruction().replace(point, newPoint);
+			clearSelections();
 			return true;
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -6253,6 +6256,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			GeoPoint newPoint = kernel.PointIn(null, region, view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false, false);
 			cons.setSuppressLabelCreation(oldLabelCreationFlag);
 			kernel.getConstruction().replace(point, newPoint);
+			clearSelections();
 			return true;
 		} catch (Exception e1) {
 			e1.printStackTrace();
