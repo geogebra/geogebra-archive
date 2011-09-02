@@ -4776,7 +4776,7 @@ public abstract class GeoElement
 	 * @param th new thickness
 	 */
 	public void setLineThickness(int th) {
-		lineThickness = Math.min(MAX_LINE_WIDTH,Math.max(0,th));
+		lineThickness = Math.max(0,th);
 	}
 
 	/**
