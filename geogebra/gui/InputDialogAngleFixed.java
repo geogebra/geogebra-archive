@@ -95,9 +95,9 @@ public class InputDialogAngleFixed extends AngleInputDialog implements KeyListen
 			GeoAngle angle;
 			
 			if (points.length == 2) {
-				angle = (GeoAngle) kernel.Angle(null, points[0], points[1], num, true)[0];			
+				angle = (GeoAngle) kernel.Angle(null, points[0], points[1], num, !rbClockWise.isSelected())[0];			
 			} else {
-				angle = (GeoAngle) kernel.Angle(null, segments[0].getEndPoint(), segments[0].getStartPoint(), num, true)[0];
+				angle = (GeoAngle) kernel.Angle(null, segments[0].getEndPoint(), segments[0].getStartPoint(), num, !rbClockWise.isSelected())[0];
 			}			
 
 			// make sure that we show angle value
