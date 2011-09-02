@@ -238,7 +238,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    	
    	set(XML_USER_PREFERENCES, xml);  
    	
-    if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
+    if (!(app.is3D())) // TODO: implement it in Application3D!
     {
     	String xmlDef = app.getKernel().getConstruction().getConstructionDefaults().getCDXML();
 
@@ -288,7 +288,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 			app.updateRightAngleStyle();
 		}
    	
-        if (!(app instanceof Application3D)) // TODO: implement it in Application3D!
+        if (!(app.is3D())) // TODO: implement it in Application3D!
         {
         	String xmlDef = get(XML_DEFAULT_OBJECT_PREFERENCES, factoryDefaultXml);
         	if (!xmlDef.equals(factoryDefaultXml)) {
