@@ -335,39 +335,44 @@ Dilateable, Transformable, EuclidianViewCE {
 					if (first)
 						sb.append("0");
 					if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MATH_PIPER) 
-						sb.append(" == ");
+						sb.append("== ");
 					else
-						sb.append(" = ");
+						sb.append("= ");
 					sb.append(kernel.format(-coeff[0][0]));
 				}else{
-					if (Math.abs(coeff[i][j])>Kernel.EPSILON){
-						String number=kernel.format(coeff[i][j]);
-						if (!first)
-							sb.append(number.charAt(0)=='-'?"":"+");
-						if (Math.abs(coeff[i][j]-1)>Kernel.EPSILON){
-							if (Math.abs(coeff[i][j]+1)<Kernel.EPSILON){
-								sb.append("-");
-							}else{
-								sb.append(number);
+					String number=kernel.format(coeff[i][j]);
+					boolean pos=true;
+					if (number.charAt(0)=='-'){
+						pos=false;
+						number=number.substring(1);
+					}
+					if (!number.equals("0")){
+						if (pos){
+							if (!first){
+								sb.append('+');
 							}
-							first=false;
+						}else{
+							sb.append('-');
+						}
+						if (!first){
+							sb.append(' ');
+						}
+						first=false;
+						if (!number.equals("1")){
+							sb.append(number);
 						}
 						if (i>0){
-							if (!first)
-								sb.append(' ');
-							else
-								first=false;
 							sb.append('x');
 						}
 						addPow(sb,i);
 						if (j>0){
-							if (!first)
+							if (i>0){ //insert blank after x^i
 								sb.append(' ');
-							else
-								first=false;
+							}
 							sb.append('y');
 						}
 						addPow(sb,j);
+						sb.append(' ');
 					}
 				}
 			}
