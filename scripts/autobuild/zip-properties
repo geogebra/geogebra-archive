@@ -25,11 +25,11 @@ for i in *.properties; do
  if [ "$i" = "en.properties" ]; then
   NEWNAME=tube.properties
   fi
- cp $i $SVNDIR/geogebra/geogebra/properties/$NEWNAME # renaming
+ cp $i $SVNDIR/ggb40/geogebra/geogebra/properties/$NEWNAME # renaming
  done
 
 # Updating GeoGebra properties:
-cd $SVNDIR/geogebra/geogebra/properties
+cd $SVNDIR/ggb40/geogebra/geogebra/properties
 $SVN_COMMAND update --accept theirs-full --force
 cd ../gui
 $SVN_COMMAND update --accept theirs-full --force
