@@ -782,10 +782,8 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	 
 	
 
-	@Override
 	public GeoElement copy() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GeoPolyhedron(this);
 	}
 
 
