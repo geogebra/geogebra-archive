@@ -929,7 +929,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * @return If the style bar should be visible.
 	 */
 	private boolean isStyleBarVisible() {
-		return (isAlone || showStyleBar)  && app.getSettings().getLayout().isAllowingStyleBar();
+		return showStyleBar  && app.getSettings().getLayout().isAllowingStyleBar();
 	}
 	
 	public void setFrameBounds(Rectangle frameBounds) {
@@ -1188,7 +1188,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * 
 	 * @author Florian Sonner
 	 */
-	private class TitleBarButtonUI extends BasicButtonUI
+	private static class TitleBarButtonUI extends BasicButtonUI
 	{ 
 		@Override
 		public void paint(Graphics g, JComponent component) {

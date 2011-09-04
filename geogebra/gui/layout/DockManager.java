@@ -241,9 +241,6 @@ public class DockManager implements AWTEventListener, SetLabels {
 		
 		// update all labels at once
 		setLabels();
-		
-		// clean up as we can create a lot of mess here..
-		Runtime.getRuntime().gc();
 	}
 
 	/**
