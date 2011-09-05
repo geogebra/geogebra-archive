@@ -2949,28 +2949,16 @@ public class Kernel {
 	}
 
 	/** 
-	 * Returns the projected point of P on line g. 
+	 * Returns the projected point of P on line g (or nearest for a Segment)
 	 */
-	final public GeoPoint ProjectedPoint(GeoPoint P, GeoLine g) {
+	final public GeoPoint ClosestPoint(GeoPoint P, GeoLine g) {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);		
-			GeoLine perp = OrthogonalLine(null, P, g);
-			
-			// needed so that outlying intersections exist
-			// eg for Distance Tool (point & segment)
-			if (g.isGeoSegment()) {
-				GeoSegment seg = (GeoSegment) g;
-				GeoPoint a = g.getStartPoint();
-				GeoPoint b = g.getEndPoint();
-				if (a != null && b != null) {
-					AlgoJoinPoints line = new AlgoJoinPoints(cons, a, b);
-					g = line.getLine();
-				}
-			}
-			
-			GeoPoint S = (GeoPoint) IntersectLines(null, perp, g);		
+				
+		AlgoClosestPoint cp = new AlgoClosestPoint(cons, g, P);
+	
 		cons.setSuppressLabelCreation(oldMacroMode);
-		return S;
+		return cp.getP();
 	}
 
 	
