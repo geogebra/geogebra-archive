@@ -110,8 +110,8 @@ office@geogebra.org
 		<path id="build.class.path">
 			<fileset dir="${src.dir}">
 				<include name="*.jar" />
-				<include name="jogl1/jar/jogl.jar" />
-				<include name="jogl1/jar/gluegen-rt.jar" />
+				<include name="lib/build/jogl1/jar/jogl.jar" />
+				<include name="lib/build/jogl1/jar/gluegen-rt.jar" />
 			</fileset>
 		</path>
 		<javac srcdir="${src.dir}" destdir="${build.dir}/classes">
@@ -153,8 +153,8 @@ office@geogebra.org
 		<path id="build.class.path">
 			<fileset dir="${src.dir}">
 				<include name="*.jar"/>
-				<include name="jogl1/jar/jogl.jar"/>
-				<include name="jogl1/jar/gluegen-rt.jar"/>
+				<include name="lib/build/jogl1/jar/jogl.jar"/>
+				<include name="lib/build/jogl1/jar/gluegen-rt.jar"/>
 			</fileset>
 		</path>
 		<javac srcdir="${src.dir}">
@@ -306,10 +306,10 @@ office@geogebra.org
 	</target>
 	<!-- copies the jogl jars  -->
 	<target name="ggb-copy-jogl" depends="clean" description="copy jogl jars">
-		<copy file="${src.dir}/jogl1/jar/jogl.jar"
+		<copy file="${src.dir}/lib/build/jogl1/jar/jogl.jar"
 		      tofile="${build.dir}/jogl.jar">
 		</copy>
-		<copy file="${src.dir}/jogl1/jar/gluegen-rt.jar"
+		<copy file="${src.dir}/lib/build/jogl1/jar/gluegen-rt.jar"
 		      tofile="${build.dir}/gluegen-rt.jar">
 		</copy>
 	</target>

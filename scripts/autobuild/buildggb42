@@ -46,11 +46,12 @@ export ANT_OPTS="-Xmx1024m"
 ant delete-classes compile-grammar-cl || exit 3
 
 # 4/2. Setting classpath for ecj (required for Java 5)
+JOGLDIR=lib/build/jogl1/jar
 CP=""
 for i in *.jar; do
  CP=$CP:$i
  done
-CP=$CP:3D/jogl.jar:3D/gluegenrt.jar
+CP=$CP:$JOGLDIR/jogl.jar:$JOGLDIR/gluegenrt.jar
 
 # 4/3. Setting bootclasspath
 BCP=../java150-rt.jar
