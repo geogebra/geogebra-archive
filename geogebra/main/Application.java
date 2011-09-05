@@ -5015,6 +5015,7 @@ public class Application implements KeyEventDispatcher {
 	
 	public final LowerCaseDictionary getCommandDictionaryCAS() {
 		fillCommandDict();
+		fillCasCommandDict();
 		return commandDictCAS;
 	}
 	
