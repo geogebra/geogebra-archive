@@ -11,6 +11,7 @@ the Free Software Foundation.
 */
 
 package geogebra.gui;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.kernel.GeoElement;
@@ -116,7 +117,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			if (!macro.isUsed()) {
 				// delete macro
 				changeToolBar = changeToolBar || macro.isShowInToolBar();
-				app.getGuiManager().removeFromToolbarDefinition(kernel.getMacroID(macro) + EuclidianView.MACRO_MODE_ID_OFFSET);				
+				app.getGuiManager().removeFromToolbarDefinition(kernel.getMacroID(macro) + EuclidianConstants.MACRO_MODE_ID_OFFSET);				
 				kernel.removeMacro(macro);
 				listModel.removeElement(macro);
 				didDeletion = true;

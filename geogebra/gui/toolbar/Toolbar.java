@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui.toolbar;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.layout.DockPanel;
 import geogebra.kernel.Kernel;
@@ -122,8 +123,8 @@ public class Toolbar extends JToolBar {
 
 		// there is no special icon/button for the selection listener mode, use the
 		// move mode button instead
-		if (mode == EuclidianView.MODE_SELECTION_LISTENER) {
-			mode = EuclidianView.MODE_MOVE;
+		if (mode == EuclidianConstants.MODE_SELECTION_LISTENER) {
+			mode = EuclidianConstants.MODE_MOVE;
 		}
 
 		if (temporaryModes != null && temporaryModes.isVisible()) {
@@ -145,7 +146,7 @@ public class Toolbar extends JToolBar {
 			if (!success) {
 				if(createTemporaryMode) {
 					// don't display move mode icon in other views, this is a bit irritating
-					if (dockPanel == null || mode != EuclidianView.MODE_MOVE) {
+					if (dockPanel == null || mode != EuclidianConstants.MODE_MOVE) {
 						// we insert a temporary icon if possible
 						temporaryModes.addMode(mode);
 						temporaryModes.setVisible(true);
@@ -370,7 +371,7 @@ public class Toolbar extends JToolBar {
 				Macro macro = kernel.getMacro(i);
 				if (macro.isShowInToolBar()) {
 					count++;
-					sb.append(i + EuclidianView.MACRO_MODE_ID_OFFSET);
+					sb.append(i + EuclidianConstants.MACRO_MODE_ID_OFFSET);
 					sb.append(" ");
 				}
 			}
@@ -386,168 +387,168 @@ public class Toolbar extends JToolBar {
 		StringBuilder sb = new StringBuilder();
 
 		// move
-		sb.append(EuclidianView.MODE_MOVE);
+		sb.append(EuclidianConstants.MODE_MOVE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_MOVE_ROTATE);
+		sb.append(EuclidianConstants.MODE_MOVE_ROTATE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_RECORD_TO_SPREADSHEET);
+		sb.append(EuclidianConstants.MODE_RECORD_TO_SPREADSHEET);
 
 		// points
 		sb.append(" || ");
-		sb.append(EuclidianView.MODE_POINT);
+		sb.append(EuclidianConstants.MODE_POINT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_POINT_ON_OBJECT);
+		sb.append(EuclidianConstants.MODE_POINT_ON_OBJECT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_INTERSECT);
+		sb.append(EuclidianConstants.MODE_INTERSECT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_MIDPOINT);
+		sb.append(EuclidianConstants.MODE_MIDPOINT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ATTACH_DETACH);
+		sb.append(EuclidianConstants.MODE_ATTACH_DETACH);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_COMPLEX_NUMBER);
+		sb.append(EuclidianConstants.MODE_COMPLEX_NUMBER);
 
 		// basic lines
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_JOIN);
+		sb.append(EuclidianConstants.MODE_JOIN);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_SEGMENT);
+		sb.append(EuclidianConstants.MODE_SEGMENT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_SEGMENT_FIXED);
+		sb.append(EuclidianConstants.MODE_SEGMENT_FIXED);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_RAY);
+		sb.append(EuclidianConstants.MODE_RAY);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_VECTOR);
+		sb.append(EuclidianConstants.MODE_VECTOR);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_VECTOR_FROM_POINT);
+		sb.append(EuclidianConstants.MODE_VECTOR_FROM_POINT);
 
 		// advanced lines
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_ORTHOGONAL);
+		sb.append(EuclidianConstants.MODE_ORTHOGONAL);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_PARALLEL);
+		sb.append(EuclidianConstants.MODE_PARALLEL);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_LINE_BISECTOR);
+		sb.append(EuclidianConstants.MODE_LINE_BISECTOR);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ANGULAR_BISECTOR);
+		sb.append(EuclidianConstants.MODE_ANGULAR_BISECTOR);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_TANGENTS);
+		sb.append(EuclidianConstants.MODE_TANGENTS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_POLAR_DIAMETER);
+		sb.append(EuclidianConstants.MODE_POLAR_DIAMETER);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_FITLINE);
+		sb.append(EuclidianConstants.MODE_FITLINE);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_LOCUS);
+		sb.append(EuclidianConstants.MODE_LOCUS);
 
 		// polygon
 		sb.append(" || ");
-		sb.append(EuclidianView.MODE_POLYGON);
+		sb.append(EuclidianConstants.MODE_POLYGON);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_REGULAR_POLYGON);
+		sb.append(EuclidianConstants.MODE_REGULAR_POLYGON);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_RIGID_POLYGON);
+		sb.append(EuclidianConstants.MODE_RIGID_POLYGON);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_VECTOR_POLYGON);
+		sb.append(EuclidianConstants.MODE_VECTOR_POLYGON);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_POLYLINE);
+		sb.append(EuclidianConstants.MODE_POLYLINE);
 
 		// circles, arcs
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_CIRCLE_TWO_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_TWO_POINTS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_CIRCLE_POINT_RADIUS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_POINT_RADIUS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_COMPASSES);
+		sb.append(EuclidianConstants.MODE_COMPASSES);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_CIRCLE_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_THREE_POINTS);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_SEMICIRCLE);
+		sb.append(EuclidianConstants.MODE_SEMICIRCLE);
 		sb.append("  ");
-		sb.append(EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS);
 
 		// conics
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_ELLIPSE_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_ELLIPSE_THREE_POINTS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_HYPERBOLA_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_PARABOLA);
+		sb.append(EuclidianConstants.MODE_PARABOLA);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_CONIC_FIVE_POINTS);
+		sb.append(EuclidianConstants.MODE_CONIC_FIVE_POINTS);
 
 		// measurements
 		sb.append(" || ");
-		sb.append(EuclidianView.MODE_ANGLE);
+		sb.append(EuclidianConstants.MODE_ANGLE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ANGLE_FIXED);
+		sb.append(EuclidianConstants.MODE_ANGLE_FIXED);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_DISTANCE);
+		sb.append(EuclidianConstants.MODE_DISTANCE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_AREA);
+		sb.append(EuclidianConstants.MODE_AREA);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_SLOPE);
+		sb.append(EuclidianConstants.MODE_SLOPE);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_CREATE_LIST);
+		sb.append(EuclidianConstants.MODE_CREATE_LIST);
 
 		// transformations
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_MIRROR_AT_LINE);
+		sb.append(EuclidianConstants.MODE_MIRROR_AT_LINE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_MIRROR_AT_POINT);
+		sb.append(EuclidianConstants.MODE_MIRROR_AT_POINT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_MIRROR_AT_CIRCLE);
+		sb.append(EuclidianConstants.MODE_MIRROR_AT_CIRCLE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ROTATE_BY_ANGLE);
+		sb.append(EuclidianConstants.MODE_ROTATE_BY_ANGLE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_TRANSLATE_BY_VECTOR);
+		sb.append(EuclidianConstants.MODE_TRANSLATE_BY_VECTOR);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_DILATE_FROM_POINT);
+		sb.append(EuclidianConstants.MODE_DILATE_FROM_POINT);
 
 		// dialogs
 		sb.append(" | ");
 		
-		sb.append(EuclidianView.MODE_TEXT);
+		sb.append(EuclidianConstants.MODE_TEXT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_IMAGE);
+		sb.append(EuclidianConstants.MODE_IMAGE);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_PEN);
+		sb.append(EuclidianConstants.MODE_PEN);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_RELATION);
+		sb.append(EuclidianConstants.MODE_RELATION);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_PROBABILITY_CALCULATOR);
+		sb.append(EuclidianConstants.MODE_PROBABILITY_CALCULATOR);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_FUNCTION_INSPECTOR);
+		sb.append(EuclidianConstants.MODE_FUNCTION_INSPECTOR);
 
 		// objects with actions
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_SLIDER);
+		sb.append(EuclidianConstants.MODE_SLIDER);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);
+		sb.append(EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_BUTTON_ACTION);
+		sb.append(EuclidianConstants.MODE_BUTTON_ACTION);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_TEXTFIELD_ACTION);
+		sb.append(EuclidianConstants.MODE_TEXTFIELD_ACTION);
 
 		// properties
 		sb.append(" || ");
-		sb.append(EuclidianView.MODE_TRANSLATEVIEW);
+		sb.append(EuclidianConstants.MODE_TRANSLATEVIEW);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ZOOM_IN);
+		sb.append(EuclidianConstants.MODE_ZOOM_IN);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ZOOM_OUT);
+		sb.append(EuclidianConstants.MODE_ZOOM_OUT);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_SHOW_HIDE_OBJECT);
+		sb.append(EuclidianConstants.MODE_SHOW_HIDE_OBJECT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_SHOW_HIDE_LABEL);
+		sb.append(EuclidianConstants.MODE_SHOW_HIDE_LABEL);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_COPY_VISUAL_STYLE);
+		sb.append(EuclidianConstants.MODE_COPY_VISUAL_STYLE);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_DELETE);
+		sb.append(EuclidianConstants.MODE_DELETE);
 
 		return sb.toString();
 	}
@@ -560,43 +561,43 @@ public class Toolbar extends JToolBar {
 		StringBuilder sb = new StringBuilder();
 
 		// move
-		sb.append(EuclidianView.MODE_MOVE);
+		sb.append(EuclidianConstants.MODE_MOVE);
 		//sb.append(" ");
-		//sb.append(EuclidianView.MODE_MOVE_ROTATE);
+		//sb.append(EuclidianConstants.MODE_MOVE_ROTATE);
 		//sb.append(" ");
-		//sb.append(EuclidianView.MODE_RECORD_TO_SPREADSHEET);
+		//sb.append(EuclidianConstants.MODE_RECORD_TO_SPREADSHEET);
 
 		// points
 		sb.append(" || ");
-		sb.append(EuclidianView.MODE_POINT);
+		sb.append(EuclidianConstants.MODE_POINT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_POINT_ON_OBJECT);
+		sb.append(EuclidianConstants.MODE_POINT_ON_OBJECT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_INTERSECT);
+		sb.append(EuclidianConstants.MODE_INTERSECT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_MIDPOINT);
+		sb.append(EuclidianConstants.MODE_MIDPOINT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ATTACH_DETACH);
+		sb.append(EuclidianConstants.MODE_ATTACH_DETACH);
 
 		// basic lines
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_JOIN);
+		sb.append(EuclidianConstants.MODE_JOIN);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_SEGMENT);
+		sb.append(EuclidianConstants.MODE_SEGMENT);
 		//sb.append(" ");
 		//sb.append(EuclidianView.MODE_SEGMENT_FIXED);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_RAY);
+		sb.append(EuclidianConstants.MODE_RAY);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_VECTOR);
+		sb.append(EuclidianConstants.MODE_VECTOR);
 		//sb.append(" ");
 		//sb.append(EuclidianView.MODE_VECTOR_FROM_POINT);
 
 		// advanced lines
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_ORTHOGONAL);
+		sb.append(EuclidianConstants.MODE_ORTHOGONAL);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_PARALLEL);
+		sb.append(EuclidianConstants.MODE_PARALLEL);
 		//sb.append(" ");
 		//sb.append(EuclidianView.MODE_LINE_BISECTOR);
 		//sb.append(" ");
@@ -612,7 +613,7 @@ public class Toolbar extends JToolBar {
 
 		// polygon
 		sb.append(" || ");
-		sb.append(EuclidianView.MODE_POLYGON);
+		sb.append(EuclidianConstants.MODE_POLYGON);
 		sb.append(" ");
 		//sb.append(EuclidianView.MODE_REGULAR_POLYGON);
 		//sb.append(" ");
@@ -622,13 +623,13 @@ public class Toolbar extends JToolBar {
 
 		// circles, arcs
 		sb.append(" | ");
-		sb.append(EuclidianView.MODE_CIRCLE_TWO_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_TWO_POINTS);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_CIRCLE_POINT_RADIUS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_POINT_RADIUS);
 		//sb.append(" ");
 		//sb.append(EuclidianView.MODE_COMPASSES);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_CIRCLE_THREE_POINTS);
+		sb.append(EuclidianConstants.MODE_CIRCLE_THREE_POINTS);
 		/*
 		sb.append(" , ");
 		sb.append(EuclidianView.MODE_SEMICIRCLE);
@@ -714,19 +715,19 @@ public class Toolbar extends JToolBar {
 		
 		// properties
 		sb.append(" || ");
-		sb.append(EuclidianView.MODE_TRANSLATEVIEW);
+		sb.append(EuclidianConstants.MODE_TRANSLATEVIEW);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ZOOM_IN);
+		sb.append(EuclidianConstants.MODE_ZOOM_IN);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_ZOOM_OUT);
+		sb.append(EuclidianConstants.MODE_ZOOM_OUT);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_SHOW_HIDE_OBJECT);
+		sb.append(EuclidianConstants.MODE_SHOW_HIDE_OBJECT);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_SHOW_HIDE_LABEL);
+		sb.append(EuclidianConstants.MODE_SHOW_HIDE_LABEL);
 		sb.append(" ");
-		sb.append(EuclidianView.MODE_COPY_VISUAL_STYLE);
+		sb.append(EuclidianConstants.MODE_COPY_VISUAL_STYLE);
 		sb.append(" , ");
-		sb.append(EuclidianView.MODE_DELETE);
+		sb.append(EuclidianConstants.MODE_DELETE);
 
 		return sb.toString();
 	}
@@ -735,50 +736,50 @@ public class Toolbar extends JToolBar {
 	 * @return default toolbar (3D)
 	 */
 	public static String getAllToolsNoMacros3D() {
-		return EuclidianView.MODE_MOVE 
+		return EuclidianConstants.MODE_MOVE 
 		+ " || "
-		+ EuclidianView.MODE_POINT
+		+ EuclidianConstants.MODE_POINT
 		+ " " 
-		+ EuclidianView.MODE_POINT_ON_OBJECT 
+		+ EuclidianConstants.MODE_POINT_ON_OBJECT 
 		+ " " 
-		+ EuclidianView.MODE_INTERSECT 
+		+ EuclidianConstants.MODE_INTERSECT 
 		+ " "
-		+ EuclidianView.MODE_MIDPOINT 
+		+ EuclidianConstants.MODE_MIDPOINT 
 		+ " , "
-		+ EuclidianView.MODE_ATTACH_DETACH 
+		+ EuclidianConstants.MODE_ATTACH_DETACH 
 		+ " , "
-		+ EuclidianView.MODE_COMPLEX_NUMBER
+		+ EuclidianConstants.MODE_COMPLEX_NUMBER
 		+ " | " 
-		+ EuclidianView.MODE_JOIN + " "
-		+ EuclidianView.MODE_SEGMENT + " " + EuclidianView.MODE_RAY + " , "
-		+ EuclidianView.MODE_VECTOR + " | " + EuclidianView.MODE_ORTHOGONAL
-		+ " " + EuclidianView.MODE_PARALLEL + " || "
-		+ EuclidianView.MODE_POLYGON
+		+ EuclidianConstants.MODE_JOIN + " "
+		+ EuclidianConstants.MODE_SEGMENT + " " + EuclidianConstants.MODE_RAY + " , "
+		+ EuclidianConstants.MODE_VECTOR + " | " + EuclidianConstants.MODE_ORTHOGONAL
+		+ " " + EuclidianConstants.MODE_PARALLEL + " || "
+		+ EuclidianConstants.MODE_POLYGON
 		+ " | "
-		+ EuclidianView.MODE_CIRCLE_AXIS_POINT
+		+ EuclidianConstants.MODE_CIRCLE_AXIS_POINT
 		+ " "
-		+ EuclidianView.MODE_CIRCLE_POINT_RADIUS_DIRECTION
+		+ EuclidianConstants.MODE_CIRCLE_POINT_RADIUS_DIRECTION
 		+ " "
-		+ EuclidianView.MODE_CIRCLE_THREE_POINTS
+		+ EuclidianConstants.MODE_CIRCLE_THREE_POINTS
 		+ " | "
-		+ EuclidianView.MODE_INTERSECTION_CURVE
+		+ EuclidianConstants.MODE_INTERSECTION_CURVE
 		+ " || "
-		+ EuclidianView.MODE_PLANE_THREE_POINTS
+		+ EuclidianConstants.MODE_PLANE_THREE_POINTS
 		+ " , "
-		+ EuclidianView.MODE_PLANE_POINT_LINE
+		+ EuclidianConstants.MODE_PLANE_POINT_LINE
 		+ " | "
-		+ EuclidianView.MODE_ORTHOGONAL_PLANE
+		+ EuclidianConstants.MODE_ORTHOGONAL_PLANE
 		+ " , "
-		+ EuclidianView.MODE_PARALLEL_PLANE
+		+ EuclidianConstants.MODE_PARALLEL_PLANE
 		+ " || "
-		+ EuclidianView.MODE_RIGHT_PRISM
+		+ EuclidianConstants.MODE_RIGHT_PRISM
 		// +" , "
-		// +EuclidianView.MODE_PRISM
-		+ " | " + EuclidianView.MODE_SPHERE_TWO_POINTS + " "
-		+ EuclidianView.MODE_SPHERE_POINT_RADIUS + " || "
-		+ EuclidianView.MODE_ROTATEVIEW + " "
-		+ EuclidianView.MODE_TRANSLATEVIEW + " " + EuclidianView.MODE_ZOOM_IN
-		+ " " + EuclidianView.MODE_ZOOM_OUT + " | "
-		+ EuclidianView.MODE_VIEW_IN_FRONT_OF;
+		// +EuclidianConstants.MODE_PRISM
+		+ " | " + EuclidianConstants.MODE_SPHERE_TWO_POINTS + " "
+		+ EuclidianConstants.MODE_SPHERE_POINT_RADIUS + " || "
+		+ EuclidianConstants.MODE_ROTATEVIEW + " "
+		+ EuclidianConstants.MODE_TRANSLATEVIEW + " " + EuclidianConstants.MODE_ZOOM_IN
+		+ " " + EuclidianConstants.MODE_ZOOM_OUT + " | "
+		+ EuclidianConstants.MODE_VIEW_IN_FRONT_OF;
 	}
 }

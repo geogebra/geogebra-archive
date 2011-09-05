@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.util;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolyLine;
@@ -559,7 +560,7 @@ public class CopyPaste {
 		afterSavingToXML(geoslocalsw, geostohidesw);
 		// SECOND XML SAVE END
 
-		app.setMode(EuclidianView.MODE_MOVE);
+		app.setMode(EuclidianConstants.MODE_MOVE);
 		app.getActiveEuclidianView().setSelectionRectangle(null);
 		
 		app.setBlockUpdateScripts(scriptsBlocked);
@@ -678,7 +679,7 @@ public class CopyPaste {
 		}
 
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
-		app.setMode(EuclidianView.MODE_MOVE);
+		app.setMode(EuclidianConstants.MODE_MOVE);
 	}
 
 	/**

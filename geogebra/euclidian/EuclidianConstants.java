@@ -1,6 +1,10 @@
 package geogebra.euclidian;
 
-public interface EuclidianConstants {
+public final class EuclidianConstants {
+	
+	//prevent instantiation
+	private EuclidianConstants(){
+	}
 	
 	public static final int MODE_MOVE = 0;
 

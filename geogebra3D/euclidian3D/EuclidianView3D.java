@@ -72,7 +72,7 @@ import javax.swing.JPanel;
  * @author matthieu
  *
  */
-public class EuclidianView3D extends JPanel implements View, Printable, EuclidianConstants, EuclidianViewInterface {
+public class EuclidianView3D extends JPanel implements Printable, EuclidianViewInterface {
 
 	
 
@@ -2360,7 +2360,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		CoordMatrix4x4 m2;
 		Coords v;
 		CoordMatrix m;
-		if (getEuclidianController().getMode()==MODE_VIEW_IN_FRONT_OF){
+		if (getEuclidianController().getMode()==EuclidianConstants.MODE_VIEW_IN_FRONT_OF){
 
 			switch(getCursor3DType()){
 
@@ -2604,13 +2604,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);
 					break;
 				case PREVIEW_POINT_REGION:
-					if (getEuclidianController().getMode()==MODE_VIEW_IN_FRONT_OF)
+					if (getEuclidianController().getMode()==EuclidianConstants.MODE_VIEW_IN_FRONT_OF)
 						renderer.drawViewInFrontOf();
 					else
 						renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);
 					break;
 				case PREVIEW_POINT_PATH:
-					if (getEuclidianController().getMode()==MODE_VIEW_IN_FRONT_OF)
+					if (getEuclidianController().getMode()==EuclidianConstants.MODE_VIEW_IN_FRONT_OF)
 						renderer.drawViewInFrontOf();
 					else
 						renderer.drawCursor(PlotterCursor.TYPE_CYLINDER);

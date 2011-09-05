@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.kernel.ConstructionDefaults;
@@ -376,7 +377,7 @@ public class PropertiesDialog
 		//Util.addKeyListenerToAll(propPanel, this);
 		
 		// update selection of application too
-		if (app.getMode() == EuclidianView.MODE_SELECTION_LISTENER)
+		if (app.getMode() == EuclidianConstants.MODE_SELECTION_LISTENER)
 			app.setSelectedGeos(selectionList);		
 	}
 	
@@ -916,7 +917,7 @@ public class PropertiesDialog
 
 	public void windowGainedFocus(WindowEvent arg0) {
 		// make sure this dialog is the current selection listener
-		if (app.getMode() != EuclidianView.MODE_SELECTION_LISTENER ||
+		if (app.getMode() != EuclidianConstants.MODE_SELECTION_LISTENER ||
 			app.getCurrentSelectionListener() != this) 
 		{
 			app.setSelectionListenerMode(this);

@@ -541,7 +541,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected void endOfMode(int mode) {
 		switch (mode) {
-		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
+		case EuclidianConstants.MODE_RECORD_TO_SPREADSHEET:
 			// just to be sure recordObject is set to null
 			// usually this is already done at mouseRelease
 			if (recordObject != null) {
@@ -552,11 +552,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			break;
 			
-		case EuclidianView.MODE_MOVE:
+		case EuclidianConstants.MODE_MOVE:
 			deletePastePreviewSelected();
 			break;
 
-		case EuclidianView.MODE_SHOW_HIDE_OBJECT:				
+		case EuclidianConstants.MODE_SHOW_HIDE_OBJECT:				
 			// take all selected objects and hide them
 			Collection coll = 	app.getSelectedGeos();				
 			Iterator it = coll.iterator();
@@ -567,7 +567,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}				
 			break;
 			
-		case EuclidianView.MODE_PEN:
+		case EuclidianConstants.MODE_PEN:
 			pen.resetPenOffsets();
 			
 			view.setSelectionRectangle(null);
@@ -611,7 +611,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// init preview drawables
 		switch (mode) {
 		
-		case EuclidianView.MODE_PEN:
+		case EuclidianConstants.MODE_PEN:
 			
 			app.zoomAxesRatio(1);
 			
@@ -639,89 +639,89 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			
 			// no break;
 			
-		case EuclidianView.MODE_VISUAL_STYLE:
+		case EuclidianConstants.MODE_VISUAL_STYLE:
 			
 		//	openMiniPropertiesPanel();
 			
 			break;
 			
-		case EuclidianView.MODE_PARALLEL:
+		case EuclidianConstants.MODE_PARALLEL:
 			previewDrawable = view.createPreviewParallelLine(selectedPoints, selectedLines);
 			break;
 
-		case EuclidianView.MODE_ANGULAR_BISECTOR:
+		case EuclidianConstants.MODE_ANGULAR_BISECTOR:
 			previewDrawable = view.createPreviewAngleBisector(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_ORTHOGONAL:
+		case EuclidianConstants.MODE_ORTHOGONAL:
 			previewDrawable = view.createPreviewPerpendicularLine(selectedPoints, selectedLines);
 			break;
 
-		case EuclidianView.MODE_LINE_BISECTOR:
+		case EuclidianConstants.MODE_LINE_BISECTOR:
 			previewDrawable = view.createPreviewPerpendicularBisector(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_JOIN: // line through two points
+		case EuclidianConstants.MODE_JOIN: // line through two points
 					useLineEndPoint = false;
 			previewDrawable = view.createPreviewLine(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_SEGMENT:
+		case EuclidianConstants.MODE_SEGMENT:
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewSegment(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_RAY:
+		case EuclidianConstants.MODE_RAY:
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewRay(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_VECTOR:
+		case EuclidianConstants.MODE_VECTOR:
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewVector(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_POLYGON:
-		case EuclidianView.MODE_RIGID_POLYGON:
-		case EuclidianView.MODE_VECTOR_POLYGON:
+		case EuclidianConstants.MODE_POLYGON:
+		case EuclidianConstants.MODE_RIGID_POLYGON:
+		case EuclidianConstants.MODE_VECTOR_POLYGON:
 			previewDrawable = view.createPreviewPolygon(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_POLYLINE:
+		case EuclidianConstants.MODE_POLYLINE:
 			previewDrawable = view.createPreviewPolyLine(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
-		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
-		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
-		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:		
+		case EuclidianConstants.MODE_CIRCLE_TWO_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_THREE_POINTS:
+		case EuclidianConstants.MODE_ELLIPSE_THREE_POINTS:
+		case EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS:		
 			previewDrawable = view.createPreviewConic(mode, selectedPoints);
 			break;
 
-		case EuclidianView.MODE_ANGLE:		
+		case EuclidianConstants.MODE_ANGLE:		
 			previewDrawable = view.createPreviewAngle(selectedPoints);
 			break;
 
 			// preview for compass: radius first
-		case EuclidianView.MODE_COMPASSES:
+		case EuclidianConstants.MODE_COMPASSES:
 			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints, selectedSegments, selectedConicsND);
 			break;
 
 			// preview for arcs and sectors
-		case EuclidianView.MODE_SEMICIRCLE:
-		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
-		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
-		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
-		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_SEMICIRCLE:
+		case EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
 			previewDrawable = new DrawConicPart((EuclidianView) view, mode, selectedPoints);
 			break;
 
-		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR:
 			useLineEndPoint = false;
 			previewDrawable = view.createPreviewVector(selectedPoints);
 			break;
 
-		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
+		case EuclidianConstants.MODE_SHOW_HIDE_OBJECT:
 			// select all hidden objects			
 			Iterator it = kernel.getConstruction().getGeoSetConstructionOrder().iterator();
 			while (it.hasNext()) {
@@ -740,15 +740,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}	
 			break;
 
-		case EuclidianView.MODE_COPY_VISUAL_STYLE:
+		case EuclidianConstants.MODE_COPY_VISUAL_STYLE:
 			movedGeoElement = null; // this will be the active geo template
 			break;
 
-		case EuclidianView.MODE_MOVE_ROTATE:		
+		case EuclidianConstants.MODE_MOVE_ROTATE:		
 			rotationCenter = null; // this will be the active geo template
 			break;
 
-		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
+		case EuclidianConstants.MODE_RECORD_TO_SPREADSHEET:
 			
 			//G.Sturr 2010-5-14
 			if(recordObject != null)
@@ -763,12 +763,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			previewDrawable = null;
 
 			// macro mode?
-			if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+			if (mode >= EuclidianConstants.MACRO_MODE_ID_OFFSET) {
 				// get ID of macro
-				int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+				int macroID = mode - EuclidianConstants.MACRO_MODE_ID_OFFSET;
 				macro = kernel.getMacro(macroID);
 				macroInput = macro.getInputTypes();
-				this.mode = EuclidianView.MODE_MACRO;								
+				this.mode = EuclidianConstants.MODE_MACRO;								
 			}		
 			break;
 		}
@@ -779,7 +779,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 	protected void initShowMouseCoords() {
-		view.setShowMouseCoords(mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_MOVE);	}
+		view.setShowMouseCoords(mode == EuclidianConstants.MODE_POINT || mode == EuclidianConstants.MODE_MOVE);	}
 
 	public void clearSelections() {
 
@@ -815,7 +815,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	public void mouseClicked(MouseEvent e) {	
 		
-		if (mode == EuclidianView.MODE_PEN)
+		if (mode == EuclidianConstants.MODE_PEN)
 			return;
 		
 		Hits hits;
@@ -823,7 +823,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		altDown=e.isAltDown();
 
-		if (mode != EuclidianView.MODE_SELECTION_LISTENER)
+		if (mode != EuclidianConstants.MODE_SELECTION_LISTENER)
 			((JPanel) view).requestFocusInWindow();
 
 		if (Application.isRightClick(e)) return;
@@ -841,7 +841,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			hits = view.getHits().getTopHits();
 			switchModeForRemovePolygons(hits);
 			if (!hits.isEmpty()) {
-				view.setMode(EuclidianView.MODE_MOVE);
+				view.setMode(EuclidianConstants.MODE_MOVE);
 				GeoElement geo0 = (GeoElement)hits.get(0);
 				
 				if (geo0.isGeoNumeric() && ((GeoNumeric)geo0).isSlider()) {
@@ -867,7 +867,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoElement geo = (GeoElement) hits.get(0);
 
 				// F3 key: copy definition to input bar
-				if (mode != EuclidianView.MODE_ATTACH_DETACH)
+				if (mode != EuclidianConstants.MODE_ATTACH_DETACH)
 					app.getGlobalKeyDispatcher().handleFunctionKeyForAlgebraInput(3, geo);
 
 				moveMode = MOVE_NONE;	
@@ -882,12 +882,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 
 		switch (mode) {
-		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
+		case EuclidianConstants.MODE_RECORD_TO_SPREADSHEET:
 			clearSelections();
 			break;
-		case EuclidianView.MODE_VISUAL_STYLE:								
-		case EuclidianView.MODE_MOVE:								
-		case EuclidianView.MODE_SELECTION_LISTENER:
+		case EuclidianConstants.MODE_VISUAL_STYLE:								
+		case EuclidianConstants.MODE_MOVE:								
+		case EuclidianConstants.MODE_SELECTION_LISTENER:
 			switch (e.getClickCount()) {
 			case 1:			
 				// handle selection click	
@@ -903,7 +903,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 				app.clearSelectedGeos();
 				hits = view.getTopHits(mouseLoc);
-				if (hits != null && mode == EuclidianView.MODE_MOVE) {
+				if (hits != null && mode == EuclidianConstants.MODE_MOVE) {
 					GeoElement geo0 = (GeoElement)hits.get(0);
 					if (!geo0.isFixed() && !(geo0.isGeoImage() && geo0.isIndependent()))
 						app.getGuiManager().showRedefineDialog((GeoElement)hits.get(0));
@@ -912,12 +912,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			break;
 
-		case EuclidianView.MODE_ZOOM_IN:
+		case EuclidianConstants.MODE_ZOOM_IN:
 			view.zoom(mouseLoc.x, mouseLoc.y, EuclidianView.MODE_ZOOM_FACTOR, 15,  false);
 			toggleModeChangedKernel = true;
 			break;
 
-		case EuclidianView.MODE_ZOOM_OUT:
+		case EuclidianConstants.MODE_ZOOM_OUT:
 			view.zoom(mouseLoc.x, mouseLoc.y, 1d/EuclidianView.MODE_ZOOM_FACTOR, 15, false);
 			toggleModeChangedKernel = true;
 			break;
@@ -1002,7 +1002,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		xTemp = xRW;
 		yTemp = yRW;
 		view.setShowAxesRatio((moveMode == MOVE_X_AXIS) || (moveMode == MOVE_Y_AXIS));
-		//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
+		//view.setDrawMode(EuclidianConstants.DRAW_MODE_DIRECT_DRAW);
 
 	}
 	
@@ -1034,7 +1034,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		Hits hits;
 		
-		if (mode == EuclidianView.MODE_PEN) {
+		if (mode == EuclidianConstants.MODE_PEN) {
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removeAllButImages();
@@ -1086,7 +1086,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			//			 Michael Borcherds 2007-12-08 END
 			TEMPORARY_MODE = true;
 			oldMode = mode; // remember current mode	
-			view.setMode(EuclidianView.MODE_TRANSLATEVIEW);				
+			view.setMode(EuclidianConstants.MODE_TRANSLATEVIEW);				
 		} 	
 		
 		switchModeForMousePressed(e);
@@ -1094,7 +1094,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected void createNewPointForModePoint(Hits hits, boolean complex){
-		if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_COMPLEX_NUMBER){//remove polygons : point inside a polygon is created free, as in v3.2
+		if (mode==EuclidianConstants.MODE_POINT || mode==EuclidianConstants.MODE_COMPLEX_NUMBER){//remove polygons : point inside a polygon is created free, as in v3.2
 			Application.debug("complex"+complex);
 			hits.removeAllPolygons();
 			hits.removeConicsHittedOnFilling();
@@ -1115,13 +1115,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		switch (mode) {
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
-		case EuclidianView.MODE_COMPLEX_NUMBER:
+		case EuclidianConstants.MODE_COMPLEX_NUMBER:
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			createNewPointForModePoint(hits, true); 
 			break;
-		case EuclidianView.MODE_POINT:
-		case EuclidianView.MODE_POINT_ON_OBJECT:				
+		case EuclidianConstants.MODE_POINT:
+		case EuclidianConstants.MODE_POINT_ON_OBJECT:				
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			Application.debug(hits);
@@ -1129,25 +1129,25 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			createNewPointForModePoint(hits, false); 
 			break;
 
-		case EuclidianView.MODE_SEGMENT:
-		case EuclidianView.MODE_SEGMENT_FIXED:		
-		case EuclidianView.MODE_JOIN:
-		case EuclidianView.MODE_RAY:
-		case EuclidianView.MODE_VECTOR:
-		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
-		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
-		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
-		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
-		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
-		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
-		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
-		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
-		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
-		case EuclidianView.MODE_SEMICIRCLE:
-		case EuclidianView.MODE_CONIC_FIVE_POINTS:
-		case EuclidianView.MODE_POLYGON:
-		case EuclidianView.MODE_POLYLINE:
-		case EuclidianView.MODE_REGULAR_POLYGON:	
+		case EuclidianConstants.MODE_SEGMENT:
+		case EuclidianConstants.MODE_SEGMENT_FIXED:		
+		case EuclidianConstants.MODE_JOIN:
+		case EuclidianConstants.MODE_RAY:
+		case EuclidianConstants.MODE_VECTOR:
+		case EuclidianConstants.MODE_CIRCLE_TWO_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_POINT_RADIUS:
+		case EuclidianConstants.MODE_CIRCLE_THREE_POINTS:
+		case EuclidianConstants.MODE_ELLIPSE_THREE_POINTS:
+		case EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_SEMICIRCLE:
+		case EuclidianConstants.MODE_CONIC_FIVE_POINTS:
+		case EuclidianConstants.MODE_POLYGON:
+		case EuclidianConstants.MODE_POLYLINE:
+		case EuclidianConstants.MODE_REGULAR_POLYGON:	
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -1155,15 +1155,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			createNewPointForModeOther(hits);
 			break;
 
-		case EuclidianView.MODE_VECTOR_POLYGON:
-		case EuclidianView.MODE_RIGID_POLYGON:
+		case EuclidianConstants.MODE_VECTOR_POLYGON:
+		case EuclidianConstants.MODE_RIGID_POLYGON:
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removePolygons();
 			createNewPoint(hits, false, false, false, false, false); 
 			break;
 
-		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR:
 			if (!allowSelectionRectangleForTranslateByVector) {
 				view.setHits(mouseLoc);
 				hits = view.getHits();
@@ -1173,13 +1173,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			break;
 
-		case EuclidianView.MODE_PARALLEL:
-		case EuclidianView.MODE_PARABOLA: // Michael Borcherds 2008-04-08
-		case EuclidianView.MODE_ORTHOGONAL:
-		case EuclidianView.MODE_LINE_BISECTOR:
-		case EuclidianView.MODE_ANGULAR_BISECTOR:
-		case EuclidianView.MODE_TANGENTS:		
-		case EuclidianView.MODE_POLAR_DIAMETER:
+		case EuclidianConstants.MODE_PARALLEL:
+		case EuclidianConstants.MODE_PARABOLA: // Michael Borcherds 2008-04-08
+		case EuclidianConstants.MODE_ORTHOGONAL:
+		case EuclidianConstants.MODE_LINE_BISECTOR:
+		case EuclidianConstants.MODE_ANGULAR_BISECTOR:
+		case EuclidianConstants.MODE_TANGENTS:		
+		case EuclidianConstants.MODE_POLAR_DIAMETER:
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -1188,7 +1188,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				createNewPoint(hits, false, true, true);
 			break;		
 
-		case EuclidianView.MODE_COMPASSES:		// Michael Borcherds 2008-03-13	
+		case EuclidianConstants.MODE_COMPASSES:		// Michael Borcherds 2008-03-13	
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -1197,7 +1197,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				createNewPoint(hits, false, true, true);
 			break;		
 
-		case EuclidianView.MODE_ANGLE:
+		case EuclidianConstants.MODE_ANGLE:
 			//hits = view.getTopHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits().getTopHits();
@@ -1207,8 +1207,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}			
 			break;
 
-		case EuclidianView.MODE_ANGLE_FIXED:
-		case EuclidianView.MODE_MIDPOINT:
+		case EuclidianConstants.MODE_ANGLE_FIXED:
+		case EuclidianConstants.MODE_MIDPOINT:
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -1217,11 +1217,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				createNewPoint(hits, false, false, true);			
 			break;
 
-		case EuclidianView.MODE_MOVE_ROTATE:
+		case EuclidianConstants.MODE_MOVE_ROTATE:
 			handleMousePressedForRotateMode();
 			break;
 
-		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
+		case EuclidianConstants.MODE_RECORD_TO_SPREADSHEET:
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			GeoElement tracegeo = hits.getFirstHit(GeoPoint.class);
@@ -1245,13 +1245,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 			// move an object
-		case EuclidianView.MODE_MOVE:	
-		case EuclidianView.MODE_VISUAL_STYLE:	
+		case EuclidianConstants.MODE_MOVE:	
+		case EuclidianConstants.MODE_VISUAL_STYLE:	
 			handleMousePressedForMoveMode(e, false);			
 			break;
 
 			// move drawing pad or axis
-		case EuclidianView.MODE_TRANSLATEVIEW:		
+		case EuclidianConstants.MODE_TRANSLATEVIEW:		
 
 			mousePressedTranslatedView(e);
 
@@ -1406,7 +1406,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
         handleMovedElement(geo,selGeos.size()>1);
 
-		view.repaintEuclidianView();												
+		view.repaintView();												
 	}
 	public void handleMovedElement(GeoElement geo, boolean multiple){
 		resetMovedGeoPoint();
@@ -1838,7 +1838,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (textfieldHasFocus) return;
 
-		if (mode == EuclidianView.MODE_PEN) {
+		if (mode == EuclidianConstants.MODE_PEN) {
 			pen.handleMousePressedForPenMode(e, null);
 			return;
 		}
@@ -1852,32 +1852,32 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// Michael Borcherds 2007-10-07 allow right mouse button to drag points
 			// mathieu : also if it's mode point, we can drag the point
 			if (Application.isRightClick(e) 
-					|| mode == EuclidianView.MODE_POINT 
-					|| mode == EuclidianView.MODE_COMPLEX_NUMBER
-					|| mode == EuclidianView.MODE_POINT_ON_OBJECT
-					|| mode == EuclidianView.MODE_SLIDER
-					|| mode == EuclidianView.MODE_BUTTON_ACTION
-					|| mode == EuclidianView.MODE_TEXTFIELD_ACTION
-					|| mode == EuclidianView.MODE_SHOW_HIDE_CHECKBOX
-					|| mode == EuclidianView.MODE_TEXT
+					|| mode == EuclidianConstants.MODE_POINT 
+					|| mode == EuclidianConstants.MODE_COMPLEX_NUMBER
+					|| mode == EuclidianConstants.MODE_POINT_ON_OBJECT
+					|| mode == EuclidianConstants.MODE_SLIDER
+					|| mode == EuclidianConstants.MODE_BUTTON_ACTION
+					|| mode == EuclidianConstants.MODE_TEXTFIELD_ACTION
+					|| mode == EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX
+					|| mode == EuclidianConstants.MODE_TEXT
 			){
 				view.setHits(mouseLoc);
 				
 				// make sure slider tool drags only sliders, not other object types
-				if (mode == EuclidianView.MODE_SLIDER) {
+				if (mode == EuclidianConstants.MODE_SLIDER) {
 					if (view.getHits().size() != 1) return;
 					
 					if (!(view.getHits().get(0) instanceof GeoNumeric)) return;
-				} else if (mode == EuclidianView.MODE_BUTTON_ACTION
-						|| mode == EuclidianView.MODE_TEXTFIELD_ACTION ) {
+				} else if (mode == EuclidianConstants.MODE_BUTTON_ACTION
+						|| mode == EuclidianConstants.MODE_TEXTFIELD_ACTION ) {
 					if (view.getHits().size() != 1) return;
 					
 					if (!(view.getHits().get(0) instanceof GeoButton)) return;
-				} else if (mode == EuclidianView.MODE_SHOW_HIDE_CHECKBOX ) {
+				} else if (mode == EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX ) {
 					if (view.getHits().size() != 1) return;
 					
 					if (!(view.getHits().get(0) instanceof GeoBoolean)) return;
-				} else if (mode == EuclidianView.MODE_TEXT ) {
+				} else if (mode == EuclidianConstants.MODE_TEXT ) {
 					if (view.getHits().size() != 1) return;
 					
 					if (!(view.getHits().get(0) instanceof GeoText)) return;
@@ -1889,7 +1889,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				{
 					TEMPORARY_MODE = true;
 					oldMode = mode; // remember current mode			
-					view.setMode(EuclidianView.MODE_MOVE);
+					view.setMode(EuclidianConstants.MODE_MOVE);
 					handleMousePressedForMoveMode(e, true);	
 
 					// make sure that dragging doesn't deselect the geos
@@ -1903,7 +1903,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			//			 Michael Borcherds 2007-10-07
 
 
-			if (mode == EuclidianView.MODE_MOVE_ROTATE) {
+			if (mode == EuclidianConstants.MODE_MOVE_ROTATE) {
 				app.clearSelectedGeos(false);
 				app.addSelectedGeo(rotationCenter, false);						
 			}
@@ -1951,7 +1951,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					// Cmd-left-drag: zoom
 					// Cmd-shift-left-drag: zoom without preserving aspect ratio
 					|| (Application.MAC_OS && Application.isControlDown(e) && !e.isShiftDown() && !Application.isRightClick(e)));
-			view.repaintEuclidianView();
+			view.repaintView();
 			return;
 		}		
 
@@ -2015,15 +2015,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected boolean allowSelectionRectangle() {
 		switch (mode) {
 		// move objects
-		case EuclidianView.MODE_MOVE:
+		case EuclidianConstants.MODE_MOVE:
 			return moveMode == MOVE_NONE;
 
 			// move rotate objects
-		case EuclidianView.MODE_MOVE_ROTATE:
+		case EuclidianConstants.MODE_MOVE_ROTATE:
 			return selPoints() > 0; // need rotation center
 
 			// object selection mode
-		case EuclidianView.MODE_SELECTION_LISTENER:
+		case EuclidianConstants.MODE_SELECTION_LISTENER:
 			GeoElementSelectionListener sel = app.getCurrentSelectionListener();
 			if (sel == null) return false;
 			if (app.useFullGui()) {
@@ -2033,24 +2033,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				return sel != null;
 
 			// transformations
-		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR:
 			return allowSelectionRectangleForTranslateByVector;
 
-		case EuclidianView.MODE_DILATE_FROM_POINT:	
-		case EuclidianView.MODE_MIRROR_AT_POINT:
-		case EuclidianView.MODE_MIRROR_AT_LINE:
-		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
-		case EuclidianView.MODE_ROTATE_BY_ANGLE:
-		case EuclidianView.MODE_FITLINE:
-		case EuclidianView.MODE_CREATE_LIST:
-		case EuclidianView.MODE_VISUAL_STYLE:
-		case EuclidianView.MODE_COPY_VISUAL_STYLE:
+		case EuclidianConstants.MODE_DILATE_FROM_POINT:	
+		case EuclidianConstants.MODE_MIRROR_AT_POINT:
+		case EuclidianConstants.MODE_MIRROR_AT_LINE:
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE:
+		case EuclidianConstants.MODE_FITLINE:
+		case EuclidianConstants.MODE_CREATE_LIST:
+		case EuclidianConstants.MODE_VISUAL_STYLE:
+		case EuclidianConstants.MODE_COPY_VISUAL_STYLE:
 			return true;
 
 			// checkbox, button
-		case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:			
-		case EuclidianView.MODE_BUTTON_ACTION:
-		case EuclidianView.MODE_TEXTFIELD_ACTION:
+		case EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX:			
+		case EuclidianConstants.MODE_BUTTON_ACTION:
+		case EuclidianConstants.MODE_TEXTFIELD_ACTION:
 			return true;
 
 		default:
@@ -2238,7 +2238,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// outdated - we want to leave the point selected after drag now
 		//if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 
-		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET && app.useFullGui())
+		if (mode != EuclidianConstants.MODE_RECORD_TO_SPREADSHEET && app.useFullGui())
 			getMovedGeoPoint().resetTraceColumns();
 
 	}
@@ -2261,7 +2261,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (textfieldHasFocus) return;
 
-		if (mode == EuclidianView.MODE_PEN) {
+		if (mode == EuclidianConstants.MODE_PEN) {
 			pen.handleMouseReleasedForPenMode(e);
 			return;
 		}
@@ -2288,7 +2288,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			app.getKernel().getConstruction().getUndoManager().storeUndoInfoAfterPasteOrAdd();
 		}
 
-		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
+		//if (mode != EuclidianConstants.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
 		if (getMovedGeoPoint() != null){
 
 			processReleaseForMovedGeoPoint(e);
@@ -2296,7 +2296,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// deselect point after drag, but not on click
 			if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 
-			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
+			if (mode != EuclidianConstants.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
 			 */
 		}
 		if (movedGeoNumeric != null) {
@@ -2304,7 +2304,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// deselect slider after drag, but not on click
 			//if (movedGeoNumericDragged) movedGeoNumeric.setSelected(false);
 
-			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET && app.useFullGui()) {
+			if (mode != EuclidianConstants.MODE_RECORD_TO_SPREADSHEET && app.useFullGui()) {
 				movedGeoNumeric.resetTraceColumns();
 			}
 		}
@@ -2330,7 +2330,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				kernel.getAnimatonManager().stopAnimation();
 			else
 				kernel.getAnimatonManager().startAnimation();			
-			view.repaintEuclidianView();
+			view.repaintView();
 			app.setUnsaved();
 			return;
 		}
@@ -2478,7 +2478,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//  also needed for right-drag
 		else
 		{			
-			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET){ 
+			if (mode != EuclidianConstants.MODE_RECORD_TO_SPREADSHEET){ 
 				changedKernel = processMode(hits, e);
 			}
 			if (changedKernel)
@@ -2503,7 +2503,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setHitCursor();
 
 
-		if (mode == EuclidianView.MODE_RECORD_TO_SPREADSHEET && recordObject != null) {
+		if (mode == EuclidianConstants.MODE_RECORD_TO_SPREADSHEET && recordObject != null) {
 			clearSelections();
 		} else {
 			// this is in the else branch to avoid running it twice
@@ -2512,7 +2512,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		
 		// reinit vars
-		//view.setDrawMode(EuclidianView.DRAW_MODE_BACKGROUND_IMAGE);
+		//view.setDrawMode(EuclidianConstants.DRAW_MODE_BACKGROUND_IMAGE);
 		moveMode = MOVE_NONE;
 		initShowMouseCoords();	
 		view.setShowAxesRatio(false);
@@ -2541,9 +2541,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	 */
 	protected void switchModeForRemovePolygons(Hits hits){
 		switch(mode){
-		case EuclidianView.MODE_POINT:
-		case EuclidianView.MODE_COMPLEX_NUMBER:
-		case EuclidianView.MODE_POINT_ON_OBJECT:
+		case EuclidianConstants.MODE_POINT:
+		case EuclidianConstants.MODE_COMPLEX_NUMBER:
+		case EuclidianConstants.MODE_POINT_ON_OBJECT:
 		// removed: polygons can still be selected if they are the only object clicked on
 		//case EuclidianView.MODE_INTERSECT:
 		//case EuclidianView.MODE_INTERSECTION_CURVE:
@@ -2556,12 +2556,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	protected boolean switchModeForMouseReleased(int mode, Hits hits, boolean changedKernel){
 		switch (mode) {
-		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
-		case EuclidianView.MODE_DILATE_FROM_POINT:	
-		case EuclidianView.MODE_MIRROR_AT_POINT:
-		case EuclidianView.MODE_MIRROR_AT_LINE:
-		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
-		case EuclidianView.MODE_ROTATE_BY_ANGLE:
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianConstants.MODE_DILATE_FROM_POINT:	
+		case EuclidianConstants.MODE_MIRROR_AT_POINT:
+		case EuclidianConstants.MODE_MIRROR_AT_LINE:
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE:
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removePolygons();
@@ -2572,8 +2572,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			changedKernel = POINT_CREATED;
 			break;
 
-		case EuclidianView.MODE_BUTTON_ACTION:
-		case EuclidianView.MODE_TEXTFIELD_ACTION:
+		case EuclidianConstants.MODE_BUTTON_ACTION:
+		case EuclidianConstants.MODE_TEXTFIELD_ACTION:
 			// make sure script not triggered
 			break;
 
@@ -2622,7 +2622,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				|| !app.isShiftDragZoomEnabled() // Michael Borcherds 2007-12-11		
 		) {
 			view.setSelectionRectangle(null);
-			view.repaintEuclidianView();
+			view.repaintView();
 			return false;
 		}
 
@@ -2651,7 +2651,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		Hits hits = view.getHits();
 
 		switch (mode) {
-		case EuclidianView.MODE_SELECTION_LISTENER:
+		case EuclidianConstants.MODE_SELECTION_LISTENER:
 			// tell properties dialog
 			if (hits.size() > 0 &&
 					app.useFullGui() &&
@@ -2665,25 +2665,25 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			} 
 			break;
 
-		case EuclidianView.MODE_MIRROR_AT_POINT:	
-		case EuclidianView.MODE_MIRROR_AT_LINE:
-		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_POINT:	
+		case EuclidianConstants.MODE_MIRROR_AT_LINE:
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;
 
-		case EuclidianView.MODE_ROTATE_BY_ANGLE:
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE:
 			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;		
 
-		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR:
 			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;	
 
-		case EuclidianView.MODE_DILATE_FROM_POINT:
+		case EuclidianConstants.MODE_DILATE_FROM_POINT:
 			processSelectionRectangleForTransformations(hits, Dilateable.class);									
 			break;	
 
-		case EuclidianView.MODE_CREATE_LIST:
+		case EuclidianConstants.MODE_CREATE_LIST:
 				removeParentPoints(hits);				
 				selectedGeos.addAll(hits);
 				app.setSelectedGeos(hits);
@@ -2691,7 +2691,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				view.setSelectionRectangle(null);
 			break;
 			
-		case EuclidianView.MODE_FITLINE:
+		case EuclidianConstants.MODE_FITLINE:
 			
 			// check for list first
 			if (hits.size() == 1) {
@@ -2769,26 +2769,26 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelections();
 
 		switch (mode) {
-		case EuclidianView.MODE_MIRROR_AT_POINT:	
-		case EuclidianView.MODE_MIRROR_AT_LINE:
-		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_POINT:	
+		case EuclidianConstants.MODE_MIRROR_AT_LINE:
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;
 
-		case EuclidianView.MODE_ROTATE_BY_ANGLE:
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE:
 			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;		
 
-		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR:
 			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;	
 
-		case EuclidianView.MODE_DILATE_FROM_POINT:
+		case EuclidianConstants.MODE_DILATE_FROM_POINT:
 			processSelectionRectangleForTransformations(hits, Dilateable.class);
 			break;
 
-		//case EuclidianView.MODE_CREATE_LIST:
-		case EuclidianView.MODE_FITLINE:
+		//case EuclidianConstants.MODE_CREATE_LIST:
+		case EuclidianConstants.MODE_FITLINE:
 			for (int i=0; i < hits.size(); i++) {
 				GeoElement geo = (GeoElement) hits.get(i);
 				if (!(GeoPoint.class.isInstance(geo))) {
@@ -2856,7 +2856,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			else 
 				view.setToolTipText(app.getPlainTooltip("Pause"));		
 			view.setHitCursor();
-			view.repaintEuclidianView();
+			view.repaintView();
 			return;
 		}			
 
@@ -3035,8 +3035,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		GeoElement[] ret = null; 
 		
 		switch (mode) {
-		case EuclidianView.MODE_VISUAL_STYLE:
-		case EuclidianView.MODE_MOVE:
+		case EuclidianConstants.MODE_VISUAL_STYLE:
+		case EuclidianConstants.MODE_MOVE:
 			// move() is for highlighting and selecting
 			if (selectionPreview) {	
 				move(hits.getTopHits());				
@@ -3047,19 +3047,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			break;			
 
-		case EuclidianView.MODE_MOVE_ROTATE:
+		case EuclidianConstants.MODE_MOVE_ROTATE:
 			// moveRotate() is a dummy function for highlighting only
 			if (selectionPreview) {				
 				moveRotate(hits.getTopHits());
 			}
 			break;
 
-		case EuclidianView.MODE_POINT:
-		case EuclidianView.MODE_COMPLEX_NUMBER:
-		case EuclidianView.MODE_POINT_ON_OBJECT:
+		case EuclidianConstants.MODE_POINT:
+		case EuclidianConstants.MODE_COMPLEX_NUMBER:
+		case EuclidianConstants.MODE_POINT_ON_OBJECT:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
-				if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_COMPLEX_NUMBER)
+				if (mode==EuclidianConstants.MODE_POINT || mode==EuclidianConstants.MODE_COMPLEX_NUMBER)
 					hits.keepOnlyHitsForNewPointMode();
 
 				point(hits);
@@ -3072,259 +3072,259 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 			// copy geo to algebra input
-		case EuclidianView.MODE_SELECTION_LISTENER:
+		case EuclidianConstants.MODE_SELECTION_LISTENER:
 			boolean addToSelection = e != null && (Application.isControlDown(e));
 			geoElementSelected(hits.getTopHits(), addToSelection);
 			break;
 
 			// new line through two points
-		case EuclidianView.MODE_JOIN:
+		case EuclidianConstants.MODE_JOIN:
 			ret = join(hits);
 			break;
 
 			// new segment through two points
-		case EuclidianView.MODE_SEGMENT:
+		case EuclidianConstants.MODE_SEGMENT:
 			ret = segment(hits);
 			break;
 
 			// segment for point and number
-		case EuclidianView.MODE_SEGMENT_FIXED:
+		case EuclidianConstants.MODE_SEGMENT_FIXED:
 			changedKernel = segmentFixed(hits);
 			break;
 
 			//	angle for two points and number
-		case EuclidianView.MODE_ANGLE_FIXED:
+		case EuclidianConstants.MODE_ANGLE_FIXED:
 			ret = angleFixed(hits);
 			break;
 
-		case EuclidianView.MODE_MIDPOINT:
+		case EuclidianConstants.MODE_MIDPOINT:
 			ret = midpoint(hits);
 			break;
 
 			// new ray through two points or point and vector
-		case EuclidianView.MODE_RAY:
+		case EuclidianConstants.MODE_RAY:
 			ret = ray(hits);
 			break;
 
 			
-		case EuclidianView.MODE_POLYLINE:
+		case EuclidianConstants.MODE_POLYLINE:
 			ret = polyline(hits);
 			break;
 			
 			// new polygon through points
-		case EuclidianView.MODE_POLYGON:
+		case EuclidianConstants.MODE_POLYGON:
 			polygonMode = POLYGON_NORMAL;
 			ret = polygon(hits);
 			break;
 
-		case EuclidianView.MODE_RIGID_POLYGON:
+		case EuclidianConstants.MODE_RIGID_POLYGON:
 			polygonMode = POLYGON_RIGID;
 			ret = polygon(hits);
 			break;
 
-		case EuclidianView.MODE_VECTOR_POLYGON:
+		case EuclidianConstants.MODE_VECTOR_POLYGON:
 			polygonMode = POLYGON_VECTOR;
 			ret = polygon(hits);
 			break;
 
 			// new vector between two points
-		case EuclidianView.MODE_VECTOR:
+		case EuclidianConstants.MODE_VECTOR:
 			ret = vector(hits);
 			break;
 
 			// intersect two objects
-		case EuclidianView.MODE_INTERSECT:
+		case EuclidianConstants.MODE_INTERSECT:
 			ret = intersect(hits);
 			break;
 
 			// new line through point with direction of vector or line
-		case EuclidianView.MODE_PARALLEL:
+		case EuclidianConstants.MODE_PARALLEL:
 			ret = parallel(hits);
 			break;
 
 			// Michael Borcherds 2008-04-08
-		case EuclidianView.MODE_PARABOLA:
+		case EuclidianConstants.MODE_PARABOLA:
 			ret = parabola(hits);
 			break;
 
 			// new line through point orthogonal to vector or line
-		case EuclidianView.MODE_ORTHOGONAL:
+		case EuclidianConstants.MODE_ORTHOGONAL:
 			ret = orthogonal(hits);
 			break;
 
 			// new line bisector
-		case EuclidianView.MODE_LINE_BISECTOR:
+		case EuclidianConstants.MODE_LINE_BISECTOR:
 			ret = lineBisector(hits);
 			break;
 
 			// new angular bisector
-		case EuclidianView.MODE_ANGULAR_BISECTOR:
+		case EuclidianConstants.MODE_ANGULAR_BISECTOR:
 			ret = angularBisector(hits);
 			break;
 
 			// new circle (2 points)
-		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_TWO_POINTS:
 			// new semicircle (2 points)
-		case EuclidianView.MODE_SEMICIRCLE:
+		case EuclidianConstants.MODE_SEMICIRCLE:
 			ret = circleOrSphere2(hits, mode);
 			break;
 
-		case EuclidianView.MODE_LOCUS:
+		case EuclidianConstants.MODE_LOCUS:
 			ret = locus(hits);
 			break;
 
 			// new circle (3 points)
-		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
-		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
-		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
-		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
-		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
-		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
-		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_THREE_POINTS:
+		case EuclidianConstants.MODE_ELLIPSE_THREE_POINTS:
+		case EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
 			ret = threePoints(hits, mode);
 			break;
 
 			// new conic (5 points)
-		case EuclidianView.MODE_CONIC_FIVE_POINTS:
+		case EuclidianConstants.MODE_CONIC_FIVE_POINTS:
 			ret = conic5(hits);
 			break;
 
 			// relation query
-		case EuclidianView.MODE_RELATION:
+		case EuclidianConstants.MODE_RELATION:
 			relation(hits.getTopHits());			
 			break;
 
 			// new tangents
-		case EuclidianView.MODE_TANGENTS:
+		case EuclidianConstants.MODE_TANGENTS:
 			ret = tangents(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_POLAR_DIAMETER:
+		case EuclidianConstants.MODE_POLAR_DIAMETER:
 			ret = polarLine(hits.getTopHits());
 			break;
 
 			// delete selected object
-		case EuclidianView.MODE_DELETE:
+		case EuclidianConstants.MODE_DELETE:
 			changedKernel = delete(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
+		case EuclidianConstants.MODE_SHOW_HIDE_OBJECT:
 			if (showHideObject(hits.getTopHits()))
 				toggleModeChangedKernel = true;
 			break;
 
-		case EuclidianView.MODE_SHOW_HIDE_LABEL:
+		case EuclidianConstants.MODE_SHOW_HIDE_LABEL:
 			if (showHideLabel(hits.getTopHits()))
 				toggleModeChangedKernel = true;
 			break;
 
-		case EuclidianView.MODE_COPY_VISUAL_STYLE:
+		case EuclidianConstants.MODE_COPY_VISUAL_STYLE:
 			if (copyVisualStyle(hits.getTopHits()))
 				toggleModeChangedKernel = true;
 			break;
 
 			//  new text or image
-		case EuclidianView.MODE_TEXT:
-		case EuclidianView.MODE_IMAGE:
+		case EuclidianConstants.MODE_TEXT:
+		case EuclidianConstants.MODE_IMAGE:
 			changedKernel = textImage(hits.getOtherHits(GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
 			break;
 
 			// new slider
-		case EuclidianView.MODE_SLIDER:
+		case EuclidianConstants.MODE_SLIDER:
 			changedKernel = slider();
 			break;			
 
-		case EuclidianView.MODE_MIRROR_AT_POINT:
+		case EuclidianConstants.MODE_MIRROR_AT_POINT:
 			ret = mirrorAtPoint(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_MIRROR_AT_LINE:
+		case EuclidianConstants.MODE_MIRROR_AT_LINE:
 			ret = mirrorAtLine(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 			ret = mirrorAtCircle(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_ATTACH_DETACH: // Michael Borcherds 2008-03-23
+		case EuclidianConstants.MODE_ATTACH_DETACH: // Michael Borcherds 2008-03-23
 			changedKernel = attachDetach(hits.getTopHits(), e);
 			break;
 
-		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR:
 			ret = translateByVector(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_ROTATE_BY_ANGLE:
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE:
 			ret = rotateByAngle(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_DILATE_FROM_POINT:
+		case EuclidianConstants.MODE_DILATE_FROM_POINT:
 			ret = dilateFromPoint(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_FITLINE:
+		case EuclidianConstants.MODE_FITLINE:
 			ret = fitLine(hits);
 			break;
 
-		case EuclidianView.MODE_CREATE_LIST:
+		case EuclidianConstants.MODE_CREATE_LIST:
 			ret = createList(hits);
 			break;
 
-		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
+		case EuclidianConstants.MODE_CIRCLE_POINT_RADIUS:
 			changedKernel = circlePointRadius(hits);
 			break;				
 
-		case EuclidianView.MODE_ANGLE:
+		case EuclidianConstants.MODE_ANGLE:
 			ret = angle(hits.getTopHits());
 			break;
 
-		case EuclidianView.MODE_VECTOR_FROM_POINT:
+		case EuclidianConstants.MODE_VECTOR_FROM_POINT:
 			ret = vectorFromPoint(hits);
 			break;
 
-		case EuclidianView.MODE_DISTANCE:
+		case EuclidianConstants.MODE_DISTANCE:
 			ret = distance(hits, e);
 			break;	
 
-		case EuclidianView.MODE_MACRO:			
+		case EuclidianConstants.MODE_MACRO:			
 			changedKernel = macro(hits);
 			break;
 
-		case EuclidianView.MODE_AREA:
+		case EuclidianConstants.MODE_AREA:
 			ret = area(hits, e);
 			break;	
 
-		case EuclidianView.MODE_SLOPE:
+		case EuclidianConstants.MODE_SLOPE:
 			ret = slope(hits);
 			break;
 
-		case EuclidianView.MODE_REGULAR_POLYGON:
+		case EuclidianConstants.MODE_REGULAR_POLYGON:
 			changedKernel = regularPolygon(hits);
 			break;
 
-		case EuclidianView.MODE_SHOW_HIDE_CHECKBOX:
+		case EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX:
 			changedKernel = showCheckBox(hits);
 			break;
 
-		case EuclidianView.MODE_BUTTON_ACTION:
+		case EuclidianConstants.MODE_BUTTON_ACTION:
 			changedKernel = button(false);
 			break;
 
-		case EuclidianView.MODE_TEXTFIELD_ACTION:
+		case EuclidianConstants.MODE_TEXTFIELD_ACTION:
 			changedKernel = button(true);
 			break;
 
-		case EuclidianView.MODE_PEN:
+		case EuclidianConstants.MODE_PEN:
 			changedKernel = pen();
 			break;
 
 			// Michael Borcherds 2008-03-13	
-		case EuclidianView.MODE_COMPASSES:
+		case EuclidianConstants.MODE_COMPASSES:
 			ret = compasses(hits);
 			break;
 			
 			
-		case EuclidianView.MODE_FUNCTION_INSPECTOR:
+		case EuclidianConstants.MODE_FUNCTION_INSPECTOR:
 			changedKernel = functionInspector(hits);
 			break;
 
@@ -3396,7 +3396,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						
 				view.getPreviewDrawable().updateMousePos(xRW, yRW);			
 			}
-			view.repaintEuclidianView();
+			view.repaintView();
 		}
 
 		return changedKernel;
@@ -3453,7 +3453,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		view.setAnimationButtonsHighlighted(false);
 		view.setShowMouseCoords(false);
 		mouseLoc = null;		
-		view.repaintEuclidianView();
+		view.repaintView();
 		view.mouseExited();
 	}
 
@@ -3829,16 +3829,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		calcRWcoords();
 
 		// if alt pressed, make sure slope is a multiple of 15 degrees
-		if ((mode == EuclidianView.MODE_JOIN || mode == EuclidianView.MODE_SEGMENT
-				|| mode == EuclidianView.MODE_RAY || mode == EuclidianView.MODE_VECTOR
-				|| mode == EuclidianView.MODE_POLYGON || mode == EuclidianView.MODE_POLYLINE)
+		if ((mode == EuclidianConstants.MODE_JOIN || mode == EuclidianConstants.MODE_SEGMENT
+				|| mode == EuclidianConstants.MODE_RAY || mode == EuclidianConstants.MODE_VECTOR
+				|| mode == EuclidianConstants.MODE_POLYGON || mode == EuclidianConstants.MODE_POLYLINE)
 				&& useLineEndPoint && lineEndPoint != null) {
 			xRW = lineEndPoint.x;
 			yRW = lineEndPoint.y;
 			return;
 		}
 
-		if (mode == EuclidianView.MODE_MOVE && 
+		if (mode == EuclidianConstants.MODE_MOVE && 
 				moveMode == MOVE_NUMERIC) return; // Michael Borcherds 2008-03-24 bugfix: don't want grid on
 
 		//	point capturing to grid
@@ -4000,7 +4000,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (usePointCapturing) {	
 			double pointCapturingPercentage = 1;
 			switch (view.getPointCapturingMode()) {		
-				case EuclidianView.POINT_CAPTURING_AUTOMATIC:
+				case EuclidianConstants.POINT_CAPTURING_AUTOMATIC:
 					if (!view.isGridOrAxesShown())break;
 
 				case EuclidianView.POINT_CAPTURING_ON:
@@ -4056,9 +4056,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	 **************************************************************************/
 
 	private boolean allowPointCreation() {
-		return  mode == EuclidianView.MODE_POINT || 
-		mode == EuclidianView.MODE_POINT_ON_OBJECT ||
-		mode == EuclidianView.MODE_COMPLEX_NUMBER ||
+		return  mode == EuclidianConstants.MODE_POINT || 
+		mode == EuclidianConstants.MODE_POINT_ON_OBJECT ||
+		mode == EuclidianConstants.MODE_COMPLEX_NUMBER ||
 		app.isOnTheFlyPointCreationActive(); 
 	}
 
@@ -4130,9 +4130,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon
-		if (mode != EuclidianView.MODE_POINT
-				&& mode != EuclidianView.MODE_POINT_ON_OBJECT
-				&& mode != EuclidianView.MODE_COMPLEX_NUMBER
+		if (mode != EuclidianConstants.MODE_POINT
+				&& mode != EuclidianConstants.MODE_POINT_ON_OBJECT
+				&& mode != EuclidianConstants.MODE_COMPLEX_NUMBER
 				&& !hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
 		
@@ -4203,10 +4203,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 							if (!sideInHits) {
 								createPoint = true;	
 								hits.removePolygonsIfSideNotPresent(); // if a polygon is a region, need only polygons that should be a path
-								if (mode==EuclidianView.MODE_POINT_ON_OBJECT)
+								if (mode==EuclidianConstants.MODE_POINT_ON_OBJECT)
 									hits.removeSegmentsFromPolygons(); // remove polygon's segments to take the polygon for path
 							} else {
-								if (mode==EuclidianView.MODE_POINT_ON_OBJECT){
+								if (mode==EuclidianConstants.MODE_POINT_ON_OBJECT){
 									// if one wants a point on boundary of a polygon
 									createPoint=false;
 									createPointOnBoundary = true;
@@ -4217,7 +4217,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 								}
 							}
 						}else if (((GeoElement) region).isGeoConic()){
-							if (mode==EuclidianView.MODE_POINT_ON_OBJECT && ((GeoConicND) region).getLastHitType()==GeoConicND.HIT_TYPE_ON_FILLING){
+							if (mode==EuclidianConstants.MODE_POINT_ON_OBJECT && ((GeoConicND) region).getLastHitType()==GeoConicND.HIT_TYPE_ON_FILLING){
 								createPoint = true;	
 								hits.remove(region); // conic won't be treated as a path
 							}else{
@@ -5124,7 +5124,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		GeoPointND[] points = getSelectedPointsND();
 		GeoElement[] ret = { null };
 		switch (mode) {
-		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_THREE_POINTS:
 			if ( ((GeoElement) points[0]).isGeoElement3D() 
 					|| ((GeoElement) points[1]).isGeoElement3D() 
 					|| ((GeoElement) points[2]).isGeoElement3D() )
@@ -5133,27 +5133,27 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				ret[0] = kernel.Circle(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
-		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+		case EuclidianConstants.MODE_ELLIPSE_THREE_POINTS:
 			ret[0] = kernel.Ellipse(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
-		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
+		case EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS:
 			ret[0] = kernel.Hyperbola(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
-		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
 			ret[0] = kernel.CircumcircleArc(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
-		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
 			ret[0] = kernel.CircumcircleSector(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
-		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS:
 			ret[0] = kernel.CircleArc(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
-		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
+		case EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS:
 			ret[0] = kernel.CircleSector(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;												
 
@@ -5279,7 +5279,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	protected GeoElement[] switchModeForCircleOrSphere2(int mode){
 		GeoPointND[] points = getSelectedPointsND();
-		if (mode == EuclidianView.MODE_SEMICIRCLE)
+		if (mode == EuclidianConstants.MODE_SEMICIRCLE)
 			return new GeoElement[] {kernel.Semicircle(null, (GeoPoint) points[0], (GeoPoint) points[1])};
 		else
 			return createCircle2(points[0], points[1]);
@@ -6815,11 +6815,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// got location
 		if (loc != null) {
 			switch (mode) {
-			case EuclidianView.MODE_TEXT:				
+			case EuclidianConstants.MODE_TEXT:				
 				app.getGuiManager().showTextCreationDialog(loc);
 				break;
 
-			case EuclidianView.MODE_IMAGE:	
+			case EuclidianConstants.MODE_IMAGE:	
 				app.getGuiManager().loadImage(loc, null, altDown);
 				break;
 			}			
@@ -7149,7 +7149,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		selectionList.clear();
 		selectedGeos.clear();
 		app.clearSelectedGeos();	
-		view.repaintEuclidianView();
+		view.repaintView();
 	}
 
 	final protected int addSelectedGeo(Hits hits, int max,
@@ -7683,8 +7683,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// don't allow mouse wheel zooming for applets if mode is not zoom mode
 		boolean allowMouseWheel = 
 			!app.isApplet() ||
-			mode == EuclidianView.MODE_ZOOM_IN ||
-			mode == EuclidianView.MODE_ZOOM_OUT ||
+			mode == EuclidianConstants.MODE_ZOOM_IN ||
+			mode == EuclidianConstants.MODE_ZOOM_OUT ||
 			(app.isShiftDragZoomEnabled() && 
 					(e.isControlDown() || e.isMetaDown() || e.isShiftDown()));			
 		if (!allowMouseWheel)
@@ -7725,8 +7725,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void zoomInOut(KeyEvent event) {
 		boolean allowZoom = 
 			!app.isApplet() ||
-			mode == EuclidianView.MODE_ZOOM_IN ||
-			mode == EuclidianView.MODE_ZOOM_OUT ||
+			mode == EuclidianConstants.MODE_ZOOM_IN ||
+			mode == EuclidianConstants.MODE_ZOOM_OUT ||
 			(app.isShiftDragZoomEnabled());			
 		if (!allowZoom)
 			return;
@@ -7903,8 +7903,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected boolean moveMode(int mode) {
-		if (mode == EuclidianView.MODE_MOVE ||
-				mode == EuclidianView.MODE_VISUAL_STYLE)
+		if (mode == EuclidianConstants.MODE_MOVE ||
+				mode == EuclidianConstants.MODE_VISUAL_STYLE)
 			return true;
 		
 		else return false;

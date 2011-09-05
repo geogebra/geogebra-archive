@@ -4,6 +4,7 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.View;
 
 import geogebra.kernel.arithmetic.NumberValue;
 
@@ -27,7 +28,7 @@ import java.util.ArrayList;
  * 
  */
 
-public interface EuclidianViewInterface {
+public interface EuclidianViewInterface extends View{
 	
 	public static final int AXES_TICK_STYLE_MAJOR_MINOR = 0;
 
@@ -43,7 +44,7 @@ public interface EuclidianViewInterface {
 	
 	
 	public void updateSize();
-	public void repaintEuclidianView();
+//	public void repaintEuclidianView();
 
 
 	/**
@@ -94,7 +95,6 @@ public interface EuclidianViewInterface {
 	 * clears all selections and highlighting
 	 */
 	void resetMode();
-	void setMode(int modeMove);
 
 	
 	// screen coordinate to real world coordinate
@@ -439,6 +439,6 @@ public interface EuclidianViewInterface {
 	 * @return true if the axes ratio is 1
 	 */
 	public boolean isUnitAxesRatio();
-	public int getViewID();
+
 	public void replaceBoundObject(GeoNumeric num, GeoNumeric geoNumeric);
 }

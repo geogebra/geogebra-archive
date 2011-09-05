@@ -168,7 +168,7 @@ final public class DrawConic extends Drawable implements Previewable {
 		previewMode = mode;	
 		
 		Construction cons = view.getKernel().getConstruction();
-		neededPrevPoints = mode == EuclidianView.MODE_CIRCLE_TWO_POINTS ?
+		neededPrevPoints = mode == EuclidianConstants.MODE_CIRCLE_TWO_POINTS ?
 							1 : 2;
 		previewTempPoints = new GeoPoint[neededPrevPoints+1];
 		for (int i=0; i < previewTempPoints.length; i++) {
@@ -1168,7 +1168,7 @@ final public class DrawConic extends Drawable implements Previewable {
 		isPreview = true;
 		
 		switch (previewMode) {			
-			case EuclidianView.MODE_CIRCLE_TWO_POINTS:			
+			case EuclidianConstants.MODE_CIRCLE_TWO_POINTS:			
 				AlgoCircleTwoPoints algo = new AlgoCircleTwoPoints(cons, 
 						previewTempPoints[0], 
 						previewTempPoints[1]);
@@ -1176,7 +1176,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				initConic(algo.getCircle());
 				break;
 			
-			case EuclidianView.MODE_CIRCLE_THREE_POINTS:
+			case EuclidianConstants.MODE_CIRCLE_THREE_POINTS:
 				AlgoCircleThreePoints algo2 = new AlgoCircleThreePoints(cons, 
 						previewTempPoints[0], 
 						previewTempPoints[1],
@@ -1185,7 +1185,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				initConic((GeoConic) algo2.getCircle());
 				break;		
 
-			case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
+			case EuclidianConstants.MODE_ELLIPSE_THREE_POINTS:
 				AlgoEllipseFociPoint algo3 = new AlgoEllipseFociPoint(cons,
 						previewTempPoints[0], 
 						previewTempPoints[1],
@@ -1194,7 +1194,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				initConic(algo3.getEllipse());
 				break;												
 				
-			case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
+			case EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS:
 				AlgoHyperbolaFociPoint algo4 = new AlgoHyperbolaFociPoint(cons,
 						previewTempPoints[0], 
 						previewTempPoints[1],
@@ -1203,7 +1203,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				initConic(algo4.getHyperbola());
 				break;	
 				
-			case EuclidianView.MODE_COMPASSES:			
+			case EuclidianConstants.MODE_COMPASSES:			
 				AlgoCirclePointRadius algo5 = new AlgoCirclePointRadius(cons, 
 						previewTempPoints[0], 
 						previewTempRadius);
@@ -1219,7 +1219,7 @@ final public class DrawConic extends Drawable implements Previewable {
     // preview of circle with midpoint through a second point
 	final public void updatePreview() {		
 		// compass: set radius of preview circle
-		if (previewMode == EuclidianView.MODE_COMPASSES) {
+		if (previewMode == EuclidianConstants.MODE_COMPASSES) {
 			// two points or one segment selected to define radius
 			isVisible = conic != null && (prevPoints.size() == 2 || prevSegments.size() == 1 || prevConics.size() == 1);
 			if (isVisible) {

@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.gui.GuiManager.NumberInputHandler;
@@ -209,7 +210,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 				Boolean sign = new Boolean(false);
 				NumberValue num = 
 					app.getGuiManager().showNumberInputDialog(
-							app.getMenu(getView3D().getKernel().getModeText(EuclidianView3D.MODE_RIGHT_PRISM)),
+							app.getMenu(getView3D().getKernel().getModeText(EuclidianConstants.MODE_RIGHT_PRISM)),
 							app.getPlain("Altitude"), null, 
 							//check basis direction / view direction to say if the sign has to be forced
 							basis.getMainDirection().dotproduct(getView3D().getViewDirection())>0,

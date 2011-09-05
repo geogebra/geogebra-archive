@@ -94,7 +94,7 @@ implements Previewable {
 		previewMode = mode;	
 		
 		Construction cons = view.getKernel().getConstruction();
-		neededPrevPoints = mode == EuclidianView.MODE_SEMICIRCLE ?
+		neededPrevPoints = mode == EuclidianConstants.MODE_SEMICIRCLE ?
 				1 : 2;
 		previewTempPoints = new GeoPoint[neededPrevPoints+1];
 		for (int i=0; i < previewTempPoints.length; i++) {
@@ -301,7 +301,7 @@ implements Previewable {
 		Construction cons = previewTempPoints[0].getConstruction();
 		int arcMode;
 		switch (previewMode) {
-			case EuclidianView.MODE_SEMICIRCLE:
+			case EuclidianConstants.MODE_SEMICIRCLE:
 				AlgoSemicircle alg = new AlgoSemicircle(cons, 
 						previewTempPoints[0], 
 						previewTempPoints[1]);
@@ -309,9 +309,9 @@ implements Previewable {
 				initConicPart(alg.getSemicircle());
 				break;
 			
-			case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
-			case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
-				arcMode = previewMode == EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS ?
+			case EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS:
+			case EuclidianConstants.MODE_CIRCLE_SECTOR_THREE_POINTS:
+				arcMode = previewMode == EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS ?
 						GeoConicPart.CONIC_PART_ARC : GeoConicPart.CONIC_PART_SECTOR;
 				AlgoConicPartCircle algo = new AlgoConicPartCircle(cons, 
 						previewTempPoints[0], 
@@ -321,9 +321,9 @@ implements Previewable {
 				initConicPart(algo.getConicPart());
 				break;
 
-			case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
-			case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
-				arcMode = previewMode == EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS ?
+			case EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
+			case EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
+				arcMode = previewMode == EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS ?
 						GeoConicPart.CONIC_PART_ARC : GeoConicPart.CONIC_PART_SECTOR;			
 				AlgoConicPartCircumcircle algo2 = 
 					new AlgoConicPartCircumcircle(cons,

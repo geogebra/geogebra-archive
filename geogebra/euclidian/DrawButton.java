@@ -110,7 +110,7 @@ public final class DrawButton extends Drawable {
 
 		public void mouseReleased(MouseEvent e) {	
 			if (!dragging && !e.isMetaDown() && !e.isPopupTrigger()
-					&& view.getMode() == EuclidianView.MODE_MOVE) 
+					&& view.getMode() == EuclidianConstants.MODE_MOVE) 
 			{
 				// handle LEFT CLICK
 				//geoBool.setValue(!geoBool.getBoolean());

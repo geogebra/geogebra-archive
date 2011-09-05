@@ -16,6 +16,7 @@ package geogebra3D.kernel3D;
 
 
 import geogebra.GeoGebra3D;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -117,40 +118,40 @@ public class Kernel3D
 
 	public String getModeText(int mode) {
 		switch (mode) {
-		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+		case EuclidianConstants.MODE_VIEW_IN_FRONT_OF:
 			return "ViewInFrontOf";
 			
-		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
+		case EuclidianConstants.MODE_PLANE_THREE_POINTS:
 			return "PlaneThreePoint";
 			
-		case EuclidianView3D.MODE_PLANE_POINT_LINE:
+		case EuclidianConstants.MODE_PLANE_POINT_LINE:
 			return "PlanePointLine";
 			
-		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
+		case EuclidianConstants.MODE_ORTHOGONAL_PLANE:
 			return "OrthogonalPlane";
 			
-		case EuclidianView3D.MODE_PARALLEL_PLANE:
+		case EuclidianConstants.MODE_PARALLEL_PLANE:
 			return "ParallelPlane";
 			
-		case EuclidianView3D.MODE_PRISM:
+		case EuclidianConstants.MODE_PRISM:
 			return "Prism";		
 			
-		case EuclidianView3D.MODE_RIGHT_PRISM:
+		case EuclidianConstants.MODE_RIGHT_PRISM:
 			return "RightPrism";		
 			
-		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
+		case EuclidianConstants.MODE_SPHERE_POINT_RADIUS:
 			return "SpherePointRadius";
 						
-		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:
+		case EuclidianConstants.MODE_SPHERE_TWO_POINTS:
 			return "Sphere2";
 			
-		case EuclidianView3D.MODE_ROTATEVIEW:
+		case EuclidianConstants.MODE_ROTATEVIEW:
 			return "RotateView";
 			
-		case EuclidianView3D.MODE_CIRCLE_POINT_RADIUS_DIRECTION:
+		case EuclidianConstants.MODE_CIRCLE_POINT_RADIUS_DIRECTION:
 			return "CirclePointRadiusDirection";
 			
-		case EuclidianView3D.MODE_CIRCLE_AXIS_POINT:
+		case EuclidianConstants.MODE_CIRCLE_AXIS_POINT:
 			return "CircleAxisPoint";
 			
 		default:

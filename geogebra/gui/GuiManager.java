@@ -2903,11 +2903,11 @@ public class GuiManager {
 			strCustomToolbarDefinition = strCustomToolbarDefinition.replaceAll(
 					Integer.toString(mode), "");
 
-			if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+			if (mode >= EuclidianConstants.MACRO_MODE_ID_OFFSET) {
 				// if a macro mode is removed all higher macros get a new id
 				// (i.e. id-1)
 				int lastID = kernel.getMacroNumber()
-						+ EuclidianView.MACRO_MODE_ID_OFFSET - 1;
+						+ EuclidianConstants.MACRO_MODE_ID_OFFSET - 1;
 				for (int id = mode + 1; id <= lastID; id++) {
 					strCustomToolbarDefinition = strCustomToolbarDefinition
 							.replaceAll(Integer.toString(id),

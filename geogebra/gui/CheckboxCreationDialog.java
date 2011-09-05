@@ -11,6 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputfield.AutoCompleteTextField;
 import geogebra.gui.view.algebra.InputPanel;
@@ -211,7 +212,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 	
 	public void windowGainedFocus(WindowEvent arg0) {		
 		// make sure this dialog is the current selection listener
-		if (app.getMode() != EuclidianView.MODE_SELECTION_LISTENER ||
+		if (app.getMode() != EuclidianConstants.MODE_SELECTION_LISTENER ||
 			app.getCurrentSelectionListener() != this) 
 		{
 			app.setSelectionListenerMode(this);
@@ -228,7 +229,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 			} else {		
 				removeWindowFocusListener(this);
 				app.setSelectionListenerMode(null);
-				app.setMode(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);
+				app.setMode(EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX);
 			}
 		}
 		super.setVisible(flag);

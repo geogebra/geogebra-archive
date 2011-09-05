@@ -47,7 +47,7 @@ class DashListRenderer extends JPanel implements ListCellRenderer {
 		int type;
 		BasicStroke stroke;
 		for (int i = 0; i < types.length; i++) {
-			type = types[i].intValue();
+			type = types[i];
 			stroke = EuclidianView.getStroke(1.0f, type);
 			dashStrokeMap.put(type, stroke);
 		}

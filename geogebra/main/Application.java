@@ -20,6 +20,7 @@ package geogebra.main;
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
 import geogebra.euclidian.DrawEquation;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
@@ -1472,7 +1473,7 @@ public class Application implements KeyEventDispatcher {
 	public void setSelectionListenerMode(GeoElementSelectionListener sl) {
 		currentSelectionListener = sl;
 		if (sl != null) 
-			setMode(EuclidianView.MODE_SELECTION_LISTENER);
+			setMode(EuclidianConstants.MODE_SELECTION_LISTENER);
 		else
 			setMoveMode();
 	}	
@@ -1486,7 +1487,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public void setMoveMode() {
-		setMode(EuclidianView.MODE_MOVE);
+		setMode(EuclidianConstants.MODE_MOVE);
 	}
 	
 		
@@ -3044,9 +3045,9 @@ public class Application implements KeyEventDispatcher {
 		// macro
     	String ret; 
     	
-		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+		if (mode >= EuclidianConstants.MACRO_MODE_ID_OFFSET) {
 			// MACRO
-			int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+			int macroID = mode - EuclidianConstants.MACRO_MODE_ID_OFFSET;
 			try {
 				Macro macro = kernel.getMacro(macroID);
 				if (toolName) {
@@ -3089,8 +3090,8 @@ public class Application implements KeyEventDispatcher {
 		Color border = Color.lightGray;
 
 		// macro
-		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
-			int macroID = mode - EuclidianView.MACRO_MODE_ID_OFFSET;
+		if (mode >= EuclidianConstants.MACRO_MODE_ID_OFFSET) {
+			int macroID = mode - EuclidianConstants.MACRO_MODE_ID_OFFSET;
 			try {
 				Macro macro = kernel.getMacro(macroID);
 				String iconName = macro.getIconFileName();
@@ -3356,13 +3357,13 @@ public class Application implements KeyEventDispatcher {
 
 		getGuiManager().updateMenubarSelection();
 		
-		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
+		if (getEuclidianView().getMode() == EuclidianConstants.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {				
 				getEuclidianView().getStyleBar().applyVisualStyle(selectedGeos);				
 			}
 		}
 		
-		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {			
+		if (getEuclidianView().getMode() == EuclidianConstants.MODE_MOVE) {			
 				updateStyleBars();		
 		}
 	}
@@ -3473,7 +3474,7 @@ public class Application implements KeyEventDispatcher {
 	 */
 
 	public void setMode(int mode) {
-		if (mode != EuclidianView.MODE_SELECTION_LISTENER)
+		if (mode != EuclidianConstants.MODE_SELECTION_LISTENER)
 			currentSelectionListener = null;
 
 		if (guiManager != null)

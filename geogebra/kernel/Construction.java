@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -1946,7 +1947,7 @@ public class Construction {
 			return;
 		}			
 		Application app = kernel.getApplication();
-		boolean moveMode = app.getMode() == EuclidianView.MODE_MOVE 
+		boolean moveMode = app.getMode() == EuclidianConstants.MODE_MOVE 
 			&& app.getSelectedGeos().size()>0;
 		String oldSelection = null;
 		if(moveMode){

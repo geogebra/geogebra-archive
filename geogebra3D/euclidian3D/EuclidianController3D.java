@@ -4,6 +4,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
@@ -465,7 +466,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
 			view3D.updateMatrixForCursor3D();
 			view3D.getCursor3D().setMoveMode(point3D.getMoveMode());
-			if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_POINT_ON_OBJECT)
+			if (mode==EuclidianConstants.MODE_POINT || mode==EuclidianConstants.MODE_POINT_ON_OBJECT)
 				freePointJustCreated = true;
 			break;
 
@@ -1186,9 +1187,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		((EuclidianView3D) view).updatePointDecorations(null);
 		
 		
-		if (mode==EuclidianView.MODE_POINT 
-				|| mode==EuclidianView.MODE_POINT_ON_OBJECT
-				|| mode==EuclidianView.MODE_MOVE
+		if (mode==EuclidianConstants.MODE_POINT 
+				|| mode==EuclidianConstants.MODE_POINT_ON_OBJECT
+				|| mode==EuclidianConstants.MODE_MOVE
 		){
 			if(freePointJustCreated)
 				//avoid switch if the point is created by a click
@@ -1298,15 +1299,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		switch (mode) {
 
-		case EuclidianView.MODE_SPHERE_TWO_POINTS:
+		case EuclidianConstants.MODE_SPHERE_TWO_POINTS:
 			previewDrawable = view3D.createPreviewSphere(selectedPoints);
 			break;
 			
-		case EuclidianView.MODE_RIGHT_PRISM:
+		case EuclidianConstants.MODE_RIGHT_PRISM:
 			previewDrawable = view3D.createPreviewRightPrism(selectedPolygons);
 			break;
 			
-		case EuclidianView.MODE_INTERSECTION_CURVE: // line through two points
+		case EuclidianConstants.MODE_INTERSECTION_CURVE: // line through two points
 			previewFromResultedGeo = true;
 
 			view3D.createPreviewConic();
@@ -1462,44 +1463,44 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		boolean changedKernel = false;
 		
 		switch (mode) {
-		case EuclidianView3D.MODE_INTERSECTION_CURVE:
+		case EuclidianConstants.MODE_INTERSECTION_CURVE:
 			changedKernel = intersectionCurve(hits); 
 			break;
-		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
+		case EuclidianConstants.MODE_PLANE_THREE_POINTS:
 			changedKernel = (threePoints(hits, mode) != null);
 			break;
-		case EuclidianView3D.MODE_PLANE_POINT_LINE:
+		case EuclidianConstants.MODE_PLANE_POINT_LINE:
 			changedKernel = planePointLine(hits);
 			break;		
 		
-		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
+		case EuclidianConstants.MODE_ORTHOGONAL_PLANE:
 			changedKernel = (orthogonalPlane(hits) != null);
 			break;
 			
-		case EuclidianView3D.MODE_PARALLEL_PLANE:
+		case EuclidianConstants.MODE_PARALLEL_PLANE:
 			changedKernel = parallelPlane(hits);
 			break;
 			
-		case EuclidianView3D.MODE_RIGHT_PRISM:
+		case EuclidianConstants.MODE_RIGHT_PRISM:
 			changedKernel = rightPrism(hits);
 			break;
 			
-		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:	
+		case EuclidianConstants.MODE_SPHERE_TWO_POINTS:	
 			changedKernel = (circleOrSphere2(hits, mode) != null);
 			break;
-		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
+		case EuclidianConstants.MODE_SPHERE_POINT_RADIUS:
 			changedKernel = spherePointRadius(hits);
 			break;
 			
-		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+		case EuclidianConstants.MODE_VIEW_IN_FRONT_OF:
 			changedKernel = viewInFrontOf(hits);
 			break;
 
-		case EuclidianView3D.MODE_CIRCLE_AXIS_POINT:
+		case EuclidianConstants.MODE_CIRCLE_AXIS_POINT:
 			changedKernel = circleAxisPoint(hits);
 			break;
 
-		case EuclidianView3D.MODE_CIRCLE_POINT_RADIUS_DIRECTION:
+		case EuclidianConstants.MODE_CIRCLE_POINT_RADIUS_DIRECTION:
 			changedKernel = circlePointRadiusDirection(hits);
 			break;
 
@@ -1524,10 +1525,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected void switchModeForRemovePolygons(Hits hits){
 		
 		switch (mode){
-		case EuclidianView3D.MODE_PARALLEL_PLANE:
+		case EuclidianConstants.MODE_PARALLEL_PLANE:
 			((Hits3D) hits).removePolygonsIfNotOnlyCS2D();
 			break;
-		case EuclidianView3D.MODE_RIGHT_PRISM:
+		case EuclidianConstants.MODE_RIGHT_PRISM:
 			//String s = hits.toString();
 			hits.removeAllPolygonsButOne();
 			//s+="\nAprès:\n"+hits.toString();
@@ -1542,7 +1543,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected GeoElement[] switchModeForThreePoints(){
 		
 		switch (mode) {
-		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
+		case EuclidianConstants.MODE_PLANE_THREE_POINTS:
 			GeoPointND[] points = getSelectedPointsND();
 			GeoPlane3D ret0 = (GeoPlane3D)getKernel().getManager3D().Plane3D(null, points[0], points[1], points[2]);
 			GeoElement[] ret = { ret0 };
@@ -1558,7 +1559,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 		switch (mode) {
-		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:
+		case EuclidianConstants.MODE_SPHERE_TWO_POINTS:
 			GeoPointND[] points = getSelectedPointsND();
 			GeoElement[] ret = { null };
 			ret[0] = getKernel().getManager3D().Sphere(null, points[0], points[1]);
@@ -1587,28 +1588,28 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		Hits hits;
 		
 		switch (mode) {
-		case EuclidianView3D.MODE_PLANE_THREE_POINTS:	
-		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:	
-		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:	
+		case EuclidianConstants.MODE_PLANE_THREE_POINTS:	
+		case EuclidianConstants.MODE_SPHERE_TWO_POINTS:	
+		case EuclidianConstants.MODE_SPHERE_POINT_RADIUS:	
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, true, true, true, true, false);
 			break;
 			
-		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
-		case EuclidianView3D.MODE_PLANE_POINT_LINE:
+		case EuclidianConstants.MODE_ORTHOGONAL_PLANE:
+		case EuclidianConstants.MODE_PLANE_POINT_LINE:
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, false, false, true);
 			break;	
 			
-		case EuclidianView3D.MODE_PARALLEL_PLANE:
+		case EuclidianConstants.MODE_PARALLEL_PLANE:
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, true, false, false, true, false);
 			break;	
 			
-		case EuclidianView3D.MODE_RIGHT_PRISM:
+		case EuclidianConstants.MODE_RIGHT_PRISM:
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			switchModeForRemovePolygons(hits);
@@ -1617,21 +1618,21 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			view3D.updatePreviewable();
 			break;
 			
-		case EuclidianView3D.MODE_ROTATEVIEW:
+		case EuclidianConstants.MODE_ROTATEVIEW:
 			startLoc = mouseLoc; 
 			view.rememberOrigins();
 			moveMode = MOVE_ROTATE_VIEW;
 			break;
 			
-		case EuclidianView.MODE_CIRCLE_AXIS_POINT:	
-		case EuclidianView.MODE_CIRCLE_POINT_RADIUS_DIRECTION:	
+		case EuclidianConstants.MODE_CIRCLE_AXIS_POINT:	
+		case EuclidianConstants.MODE_CIRCLE_POINT_RADIUS_DIRECTION:	
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removePolygons();
 			if (hits.size() == 0)
 				createNewPoint(hits, false, true, true);
 			break;
-		case EuclidianView.MODE_INTERSECTION_CURVE:
+		case EuclidianConstants.MODE_INTERSECTION_CURVE:
 			//no need to do anything for preview when mouse is pressed
 			break;
 		default:
@@ -1648,14 +1649,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected boolean switchModeForMouseReleased(int mode, Hits hits, boolean changedKernel){
 		switch (mode) {
-		case EuclidianView3D.MODE_PARALLEL_PLANE:
+		case EuclidianConstants.MODE_PARALLEL_PLANE:
 			return true;
-		case EuclidianView3D.MODE_RIGHT_PRISM:
+		case EuclidianConstants.MODE_RIGHT_PRISM:
 			((DrawPolyhedron3D) view3D.getPreviewDrawable()).createPolyhedron();
 			//view3D.setPreview(null);//remove current previewable
 			//view3D.setPreview(view3D.createPreviewRightPrism(selectedPolygons));//init new one	
 			return true;
-		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+		case EuclidianConstants.MODE_VIEW_IN_FRONT_OF:
 			//Application.debug("hop");
 			//TODO implement choose geo
 			return true;
@@ -2495,9 +2496,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (cursorType==EuclidianView3D.PREVIEW_POINT_ALREADY){
 			switch(mode){
 			//cross arrows for moving point
-			case EuclidianView.MODE_MOVE:
-			case EuclidianView.MODE_POINT:
-			case EuclidianView.MODE_POINT_ON_OBJECT:
+			case EuclidianConstants.MODE_MOVE:
+			case EuclidianConstants.MODE_POINT:
+			case EuclidianConstants.MODE_POINT_ON_OBJECT:
 				return true;//!mousePressed; //don't display cursor if dragging 
 			default:
 				return false;			
@@ -2505,8 +2506,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		} else if (cursorType==EuclidianView3D.PREVIEW_POINT_DEPENDENT) {
 			switch(mode){
 			//modes in which the result could be a dependent point 
-			case EuclidianView.MODE_POINT:
-			case EuclidianView.MODE_INTERSECT:
+			case EuclidianConstants.MODE_POINT:
+			case EuclidianConstants.MODE_INTERSECT:
 				return true;
 
 			default:
@@ -2516,25 +2517,25 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			switch(mode){
 			//modes where point can be created on path/region
 			
-			case EuclidianView.MODE_POINT:
-			case EuclidianView.MODE_POINT_ON_OBJECT:
+			case EuclidianConstants.MODE_POINT:
+			case EuclidianConstants.MODE_POINT_ON_OBJECT:
 				
-			case EuclidianView.MODE_JOIN:
-			case EuclidianView.MODE_SEGMENT:
+			case EuclidianConstants.MODE_JOIN:
+			case EuclidianConstants.MODE_SEGMENT:
 				
-			case EuclidianView.MODE_RAY:
-			case EuclidianView.MODE_VECTOR:
+			case EuclidianConstants.MODE_RAY:
+			case EuclidianConstants.MODE_VECTOR:
 
-			case EuclidianView.MODE_VECTOR_FROM_POINT:
+			case EuclidianConstants.MODE_VECTOR_FROM_POINT:
 
-			case EuclidianView.MODE_POLYGON:
-			case EuclidianView.MODE_POLYLINE:
-			case EuclidianView.MODE_CIRCLE_THREE_POINTS:
-			case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
-			case EuclidianView.MODE_PLANE_THREE_POINTS:
-			case EuclidianView.MODE_SPHERE_TWO_POINTS:
+			case EuclidianConstants.MODE_POLYGON:
+			case EuclidianConstants.MODE_POLYLINE:
+			case EuclidianConstants.MODE_CIRCLE_THREE_POINTS:
+			case EuclidianConstants.MODE_CIRCLE_ARC_THREE_POINTS:
+			case EuclidianConstants.MODE_PLANE_THREE_POINTS:
+			case EuclidianConstants.MODE_SPHERE_TWO_POINTS:
 				
-			case EuclidianView.MODE_VIEW_IN_FRONT_OF:
+			case EuclidianConstants.MODE_VIEW_IN_FRONT_OF:
 				return true;
 
 			default:

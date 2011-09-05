@@ -109,7 +109,7 @@ import javax.swing.Timer;
  * @version
  */
 public class EuclidianView extends JPanel  
-implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingListener {
+implements EuclidianViewInterface, Printable, SettingListener {
 
 	protected static final long serialVersionUID = 1L;
 
@@ -426,7 +426,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 
 	// END
 	
-	int mode = MODE_MOVE;
+	int mode = EuclidianConstants.MODE_MOVE;
 
 	protected boolean[] showAxes = { true, true };
 	private boolean showAxesCornerCoords = true;
@@ -958,12 +958,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		defaultCursor = null;
 
 		switch (mode) {	
-		case EuclidianView.MODE_ZOOM_IN:
+		case EuclidianConstants.MODE_ZOOM_IN:
 			defaultCursor = getCursorForImage(app
 					.getInternalImage("cursor_zoomin.gif"));
 			break;
 
-		case EuclidianView.MODE_ZOOM_OUT:
+		case EuclidianConstants.MODE_ZOOM_OUT:
 			defaultCursor = getCursorForImage(app
 					.getInternalImage("cursor_zoomout.gif"));
 			break;	
@@ -1014,12 +1014,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	final private boolean clearRectangle(int mode) {
 		switch (mode)
 		{
-		case MODE_PEN: return false;
-		case MODE_MIRROR_AT_LINE: return false;
-		case MODE_MIRROR_AT_POINT: return false;
-		case MODE_ROTATE_BY_ANGLE: return false;
-		case MODE_TRANSLATE_BY_VECTOR: return false;
-		case MODE_DILATE_FROM_POINT: return false;
+		case EuclidianConstants.MODE_PEN: return false;
+		case EuclidianConstants.MODE_MIRROR_AT_LINE: return false;
+		case EuclidianConstants.MODE_MIRROR_AT_POINT: return false;
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE: return false;
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR: return false;
+		case EuclidianConstants.MODE_DILATE_FROM_POINT: return false;
 		default: return true;
 		}
 	}
@@ -2790,7 +2790,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	
 	final protected boolean drawSliderValue(Graphics2D g2) {
 		
-		if (mode != MODE_MOVE) return false;
+		if (mode != EuclidianConstants.MODE_MOVE) return false;
 		
 		Point pos = euclidianController.mouseLoc;
 		if (pos == null)
@@ -4897,11 +4897,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	{
 		switch (mode)
 		{
-		case MODE_MIRROR_AT_LINE: return true;
-		case MODE_MIRROR_AT_POINT: return true;
-		case MODE_ROTATE_BY_ANGLE: return true;
-		case MODE_TRANSLATE_BY_VECTOR: return true;
-		case MODE_DILATE_FROM_POINT: return true;
+		case EuclidianConstants.MODE_MIRROR_AT_LINE: return true;
+		case EuclidianConstants.MODE_MIRROR_AT_POINT: return true;
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE: return true;
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR: return true;
+		case EuclidianConstants.MODE_DILATE_FROM_POINT: return true;
 		default: return false;
 		}
 	}
@@ -4910,16 +4910,16 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 	{
 		switch (mode)
 		{
-		case MODE_VISUAL_STYLE: 
-		case MODE_FITLINE: 
-		case MODE_CREATE_LIST: 
-		case MODE_PEN: 
-		case MODE_MIRROR_AT_LINE: 
-		case MODE_MIRROR_AT_POINT: 
-		case MODE_ROTATE_BY_ANGLE: 
-		case MODE_TRANSLATE_BY_VECTOR: 
-		case MODE_DILATE_FROM_POINT: 
-		case MODE_COPY_VISUAL_STYLE: return true;
+		case EuclidianConstants.MODE_VISUAL_STYLE: 
+		case EuclidianConstants.MODE_FITLINE: 
+		case EuclidianConstants.MODE_CREATE_LIST: 
+		case EuclidianConstants.MODE_PEN: 
+		case EuclidianConstants.MODE_MIRROR_AT_LINE: 
+		case EuclidianConstants.MODE_MIRROR_AT_POINT: 
+		case EuclidianConstants.MODE_ROTATE_BY_ANGLE: 
+		case EuclidianConstants.MODE_TRANSLATE_BY_VECTOR: 
+		case EuclidianConstants.MODE_DILATE_FROM_POINT: 
+		case EuclidianConstants.MODE_COPY_VISUAL_STYLE: return true;
 		default: return false;
 		}
 	}

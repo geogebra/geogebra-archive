@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
@@ -229,7 +230,7 @@ implements GeoElementSelectionListener {
 		
 		// set macro mode
 		if (newTool.isShowInToolBar()) {
-			int mode = kernel.getMacroID(newTool) + EuclidianView.MACRO_MODE_ID_OFFSET;
+			int mode = kernel.getMacroID(newTool) + EuclidianConstants.MACRO_MODE_ID_OFFSET;
 			appToSave.getGuiManager().addToToolbarDefinition(mode);			
 			appToSave.updateToolBar();			
 			appToSave.setMode(mode);			

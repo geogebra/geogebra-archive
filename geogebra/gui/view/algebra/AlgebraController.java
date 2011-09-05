@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.gui.view.algebra;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.util.GeoGebraIcon;
@@ -134,7 +135,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 		} 	
 
 		int mode = ev.getMode();
-		if (!skipSelection && (mode == EuclidianView.MODE_MOVE || mode == EuclidianView.MODE_RECORD_TO_SPREADSHEET) ) {
+		if (!skipSelection && (mode == EuclidianConstants.MODE_MOVE || mode == EuclidianConstants.MODE_RECORD_TO_SPREADSHEET) ) {
 			// update selection	
 			if (geo == null)
 				app.clearSelectedGeos();
@@ -191,7 +192,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 				}
 			}
 		} 
-		else if (mode != EuclidianView.MODE_SELECTION_LISTENER) {
+		else if (mode != EuclidianConstants.MODE_SELECTION_LISTENER) {
 			// let euclidianView know about the click
 			ev.clickedGeo(geo, e);
 		} else 
@@ -261,7 +262,7 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 			EuclidianViewInterface ev = app.getActiveEuclidianView();
 			int mode = ev.getMode();
 
-			if ( (mode == EuclidianView.MODE_MOVE || mode == EuclidianView.MODE_SELECTION_LISTENER)  && 
+			if ( (mode == EuclidianConstants.MODE_MOVE || mode == EuclidianConstants.MODE_SELECTION_LISTENER)  && 
 					!Application.isControlDown(e) && !e.isShiftDown() 
 					&& geo != null  && !app.containsSelectedGeo(geo)) 
 			{					

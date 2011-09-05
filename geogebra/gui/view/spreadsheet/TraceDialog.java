@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputfield.MyTextField;
 import geogebra.kernel.GeoElement;
@@ -816,8 +817,8 @@ implements
 	
 	public void toolbarModeChanged(int euclidianMode){
 		//System.out.println(euclidianMode);
-		if(euclidianMode != EuclidianView.MODE_MOVE 
-				&& euclidianMode != EuclidianView.MODE_SELECTION_LISTENER 
+		if(euclidianMode != EuclidianConstants.MODE_MOVE 
+				&& euclidianMode != EuclidianConstants.MODE_SELECTION_LISTENER 
 				&&  (mode == MODE_ADD || mode == MODE_LOCATE)){
 			setMode(MODE_NORMAL);
 			if(isIniting)
