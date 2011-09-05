@@ -1735,7 +1735,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	//           ComboBox Renderer with SEPARATOR
 	//============================================================
 
-	class ListSeparatorRenderer extends JLabel implements ListCellRenderer {
+	static class ListSeparatorRenderer extends JLabel implements ListCellRenderer {
 
 		public static final String SEPARATOR = "---";
 		JSeparator separator;

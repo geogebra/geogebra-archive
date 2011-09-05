@@ -85,7 +85,7 @@ public class MyCellEditorList extends DefaultCellEditor implements ActionListene
 	/**
 	 * Custom cell renderer that displays GeoElement descriptions.
 	 */
-	private class MyListCellRenderer extends DefaultListCellRenderer {
+	static private class MyListCellRenderer extends DefaultListCellRenderer {
 		
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value,

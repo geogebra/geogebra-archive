@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class TraceSettings {
 				try {
 					System.out.println(field.getName() + ": " + field.get(this).toString());
 				} catch (Exception e) {
-					
+					Application.debug(e.getMessage());
 				}
 			}
 		System.out.println("=====================================");	

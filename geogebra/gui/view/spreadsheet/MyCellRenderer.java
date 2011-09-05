@@ -43,7 +43,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 
 	// LaTeX
 	private ImageIcon latexIcon, emptyIcon; 
-	private String latexStr = new String();
+	private String latexStr;
 
 	// Cell formats
 	private CellFormat formatHandler;

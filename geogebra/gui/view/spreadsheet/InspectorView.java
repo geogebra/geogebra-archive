@@ -372,7 +372,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 
 	}
 
-	public class MyCellRenderer extends DefaultTableCellRenderer  {
+	static public class MyCellRenderer extends DefaultTableCellRenderer  {
 
 		public Component getTableCellRendererComponent(JTable table, Object value, 
 				boolean isSelected, boolean hasFocus, final int row, int column) {

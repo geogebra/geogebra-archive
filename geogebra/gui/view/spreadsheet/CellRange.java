@@ -32,7 +32,7 @@ import java.util.ArrayList;
  */
 
 
-public class CellRange {
+public class CellRange implements Cloneable{
 	
 	private int minColumn = -1;
 	private int minRow = -1;

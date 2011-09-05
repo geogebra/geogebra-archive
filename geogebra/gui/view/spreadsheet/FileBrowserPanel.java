@@ -76,8 +76,8 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	private DefaultTreeModel treeModel;
 
 	// parser
-	private static  QDParser xmlParser;
-	private static  myFileTreeHandler handler;
+	private   QDParser xmlParser;
+	private   myFileTreeHandler handler;
 
 	// directory
 	private Object root;
