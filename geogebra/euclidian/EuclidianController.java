@@ -5423,7 +5423,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			GeoNumeric length = kernel.Distance(null, points[0], lines[0]);						
 
 			// set startpoint of text to midpoint between point and line
-			GeoPoint midPoint = kernel.Midpoint(points[0], kernel.ProjectedPoint(points[0], lines[0]));
+			GeoPoint midPoint = kernel.Midpoint(points[0], kernel.ClosestPoint(points[0], lines[0]));
 			GeoElement[] ret = { null };
 			ret[0] = createDistanceText(points[0],lines[0], midPoint, length);	
 			return ret;
