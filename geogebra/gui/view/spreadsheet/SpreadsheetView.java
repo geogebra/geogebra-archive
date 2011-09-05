@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 public class SpreadsheetView extends JPanel implements 
@@ -54,6 +55,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	protected MyTable table;
 	protected DefaultTableModel tableModel;
 	private SpreadsheetRowHeader rowHeader;
+	private JTableHeader tableHeader;
 
 	// if these are increased above 32000, you need to change traceRow to an int[]
 	public static int MAX_COLUMNS = 9999; // TODO make sure this is actually used
@@ -185,6 +187,8 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		spreadsheet.setRowHeaderView(rowHeader);
 		spreadsheet.setViewportView(table);
 
+		// save the table header 
+		tableHeader = table.getTableHeader();
 
 		// Create and set the scrollpane corners
 		Corner upperLeftCorner = new Corner(); //use FlowLayout
@@ -1224,10 +1228,10 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 	public void setShowColumnHeader(boolean showColumnHeader) {
 		if (showColumnHeader) {
-			table.getTableHeader().setVisible(true);
+			table.setTableHeader(tableHeader);
 			spreadsheet.setColumnHeaderView(table.getTableHeader());
 		} else {
-			table.getTableHeader().setVisible(false);
+			table.setTableHeader(null);
 			spreadsheet.setColumnHeaderView(null);
 		}
 	}
@@ -1408,7 +1412,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 
 	protected SpreadsheetSettings settings(){
-		return settings();
+		return settings;
 	}
 
 
@@ -1417,7 +1421,6 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 		allowSettingUpate = false;
 
-		//Application.debug("========> settings changed");
 		// layout
 		setShowColumnHeader(settings.showColumnHeader());
 		setShowRowHeader(settings.showRowHeader()) ;
@@ -1432,7 +1435,6 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 		// browser panel
 		if(app.hasFullPermissions()){
-			//Application.debug("========> setting file browser fields");
 			settings.removeListener(this);
 			if(settings.initialBrowserMode() < 0)
 				settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
