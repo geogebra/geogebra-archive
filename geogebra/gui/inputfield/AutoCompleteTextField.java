@@ -718,16 +718,25 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		ArrayList<String> syntaxes = new ArrayList<String>();
 		for (String cmd: commands) {
 
-			cmd = app.getInternalCommand(cmd);
+			String cmdInt = app.getInternalCommand(cmd);
 
 			String syntaxString;
 			if (isCASInput) {
-				syntaxString = app.getCommandSyntaxCAS(cmd);
+				syntaxString = app.getCommandSyntaxCAS(cmdInt);
 			} else {
-				syntaxString = app.getCommandSyntax(cmd);
+				syntaxString = app.getCommandSyntax(cmdInt);
 			}
 			if (syntaxString.endsWith(isCASInput ? app.syntaxCAS : app.syntaxStr)) {
-				syntaxes.add(cmd + "[]");
+				
+				// command not found, check for macros
+				Macro macro = isCASInput ? null : app.getKernel().getMacro(cmd);
+				if (macro != null) {
+					syntaxes.add(macro.toString());
+				} else {
+					//syntaxes.add(cmdInt + "[]");
+					Application.debug("Can't find syntax for: "+cmd);
+				}
+
 				continue;
 			}
 			for (String syntax: syntaxString.split("\\n")) {
