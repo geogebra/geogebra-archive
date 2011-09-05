@@ -3935,11 +3935,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants, SettingL
 		sb.append(pointCapturingMode);
 		sb.append("\" rightAngleStyle=\"");
 		sb.append(app.rightAngleStyle);
-		if (!asPreference) {
-			sb.append("\" javaLatexFonts=\"");
-			sb.append(app.useJavaFontsForLaTeX());
-		}
-		
+
 		sb.append("\" checkboxSize=\"");
 		sb.append(app.booleanSize); // Michael Borcherds 2008-05-12
 

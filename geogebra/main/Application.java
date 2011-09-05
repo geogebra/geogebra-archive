@@ -3887,6 +3887,13 @@ public class Application implements KeyEventDispatcher {
 			sb.append("/>\n");
 		}
 
+        if (!asPreference) {
+            sb.append("\t<graphicsSettings");
+            sb.append(" javaLatexFonts=\"");
+            sb.append(useJavaFontsForLaTeX());
+            sb.append("\"/>\n");
+        }
+
 		sb.append(getConsProtocolXML());
 
 		sb.append("</gui>\n");

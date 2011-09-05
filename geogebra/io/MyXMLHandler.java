@@ -990,9 +990,6 @@ public class MyXMLHandler implements DocHandler {
 				//ev.setRightAngleStyle(Integer.parseInt(strRightAngleStyle));
 				app.rightAngleStyle = Integer.parseInt(strRightAngleStyle);
 
-			if ("true".equals((String) attrs.get("javaLatexFonts")))
-				app.getDrawEquation().setUseJavaFontsForLaTeX(app, true);
-
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1439,71 +1436,63 @@ public class MyXMLHandler implements DocHandler {
 		boolean ok = true;
 		switch (eName.charAt(0)) {
 		case 'c':
-			if (eName.equals("consProtColumns")) {
+			if (eName.equals("consProtColumns"))
 				ok = handleConsProtColumns(app, attrs);
-				break;
-			} else if (eName.equals("consProtocol")) {
+			else if (eName.equals("consProtocol"))
 				ok = handleConsProtocol(app, attrs);
-				break;
-			} else if (eName.equals("consProtNavigationBar")) {
+			else if (eName.equals("consProtNavigationBar"))
 				ok = handleConsProtNavigationBar(app, attrs);
-				break;
-			}
+			break;
 
 		case 'f':
-			if (eName.equals("font")) {
+			if (eName.equals("font"))
 				ok = handleFont(app, attrs);
-				break;
-			}
-		
+			break;
+			
+		case 'g':
+			if (eName.equals("graphicsSettings"))
+				ok = handleGraphicsSettings(attrs);
+			break;
+
 		case 'm':
-			if (eName.equals("menuFont")) {
+			if (eName.equals("menuFont"))
 				ok = handleMenuFont(app, attrs);
-				break;
-			} else if (eName.equals("mouse")) {
+			else if (eName.equals("mouse"))
 				ok = handleMouse(app, attrs);
-				break;
-			}
+			break;
 
 		case 'l':
-			if (eName.equals("labelingStyle")) {
+			if (eName.equals("labelingStyle"))
 				ok = handleLabelingStyle(app, attrs);
-				break;
-			}
+			break;
 			
 		case 'p':
 			if(eName.equals("perspectives")) {
 				mode = MODE_GUI_PERSPECTIVES;
 				tmp_perspectives.clear();
-				break;
 			}
+			break;
 			
 		case 's':
-			if (eName.equals("show")) {
+			if (eName.equals("show"))
 				ok = handleGuiShow(app, attrs);
-				break;
-			} else if (eName.equals("splitDivider")) {
+			else if (eName.equals("splitDivider"))
 				ok = handleSplitDivider(app, attrs);
-				break;
-			} else if (eName.equals("settings")) {
+			else if (eName.equals("settings"))
 				ok = handleGuiSettings(app, attrs);
-				break;
-			}
+			break;
 			
 		case 't':
-			if (eName.equals("toolbar")) {
+			if (eName.equals("toolbar"))
 				ok = handleToolbar(app, attrs);
-				break;
-			} else if (eName.equals("tooltipSettings")) {
+			else if (eName.equals("tooltipSettings"))
 				ok = handleTooltipSettings(app, attrs);
-				break;
-			}
+			break;
 			
 		case 'w':
-			if(eName.equals("window")) {
+			if(eName.equals("window"))
 				ok = handleWindowSize(app, attrs);
-				break;
-			}
+			break;
 
 		default:
 			System.err.println("unknown tag in <gui>: " + eName);
@@ -1773,6 +1762,18 @@ public class MyXMLHandler implements DocHandler {
 				app.getSettings().getLayout().setAllowStyleBar(allowStyleBar);
 			} 
 			
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+			Application.debug(e.getMessage() + ": " + e.getCause());
+			return false;
+		}
+	}
+	
+	private boolean handleGraphicsSettings(LinkedHashMap<String, String> attrs) {
+		try {
+			if ("true".equals((String) attrs.get("javaLatexFonts")))
+				app.getDrawEquation().setUseJavaFontsForLaTeX(app, true);
 			return true;
 		} catch(Exception e) {
 			e.printStackTrace();
