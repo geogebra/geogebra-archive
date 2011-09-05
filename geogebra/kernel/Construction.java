@@ -2507,7 +2507,13 @@ public class Construction {
 	 * @return StringBuilder with xml  of this construction.
 	 */
 	public StringBuilder getCurrentUndoXML() {
-		return MyXMLio.getUndoXML(this);
+		return xmlio.getUndoXML(this);
+	}
+	
+	private MyXMLio xmlio;
+	
+	public void setXMLio(MyXMLio xmlio){
+		this.xmlio=xmlio;
 	}
 
 	/**

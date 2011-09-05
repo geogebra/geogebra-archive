@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.GeoGebra;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
@@ -9356,5 +9357,9 @@ public class Kernel {
 	}
 	public boolean getLoadingMode() {
 		return loadingMode;
+	}
+	
+	public String getXMLFileFormat(){
+		return GeoGebra.XML_FILE_FORMAT;
 	}
 }

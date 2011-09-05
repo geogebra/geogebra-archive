@@ -15,41 +15,19 @@ package geogebra3D.kernel3D;
 
 
 
-import geogebra.Matrix.Coords;
-import geogebra.euclidian.EuclidianView;
+import geogebra.GeoGebra3D;
 import geogebra.io.MyXMLHandler;
-import geogebra.kernel.AlgoCirclePointRadius;
-import geogebra.kernel.AlgoCircleThreePoints;
-import geogebra.kernel.AlgoCircleTwoPoints;
-import geogebra.kernel.AlgoDependentLine;
-import geogebra.kernel.AlgoIntersectConics;
-import geogebra.kernel.AlgoIntersectLines;
-import geogebra.kernel.AlgoOrthoLinePointLine;
-import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunctionNVar;
-import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Manager3DInterface;
-import geogebra.kernel.Path;
-import geogebra.kernel.Region;
-import geogebra.kernel.arithmetic.Equation;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
@@ -416,7 +394,9 @@ public class Kernel3D
 	}
 
 	
-	
+	public String getXMLFileFormat(){
+		return GeoGebra3D.XML_FILE_FORMAT;
+	}
 	
 	
 }

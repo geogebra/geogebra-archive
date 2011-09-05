@@ -51,10 +51,12 @@ public class UndoManager {
 	public UndoManager(Construction c) {				
 		construction = c;
 		xmlio = new MyXMLio(c.getKernel(), c);	
+		c.setXMLio(xmlio);
 		undoInfoList = new LinkedList();		
 
 		app = c.getApplication();
 	}
+	
 
 	private void updateUndoActions() {
 		if (app.useFullGui())

@@ -706,8 +706,8 @@ public class MyXMLio {
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 	}
 
-	private final static void addGeoGebraHeader(StringBuilder sb, boolean isMacro) {
-		sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\"");
+	private final void addGeoGebraHeader(StringBuilder sb, boolean isMacro) {
+		sb.append("<geogebra format=\"" + kernel.getXMLFileFormat() + "\"");
 		sb.append(" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/");
 		if (isMacro)
 			sb.append(GeoGebra.GGT_XSD_FILENAME); //eg	ggt.xsd
@@ -813,7 +813,7 @@ public class MyXMLio {
 	 * Returns XML representation of all settings and construction needed for
 	 * undo.
 	 */
-	public static synchronized StringBuilder getUndoXML(Construction c) {
+	public synchronized StringBuilder getUndoXML(Construction c) {
 		Application app = c.getApplication();
 
 		StringBuilder sb = new StringBuilder();
