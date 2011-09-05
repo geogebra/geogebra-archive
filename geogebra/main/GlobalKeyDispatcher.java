@@ -397,7 +397,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 							TreeSet<File> sortedSet = new TreeSet<File>(Util.getFileComparator());
 							for (int i = 0 ; i < options.length ; i++) {
-								sortedSet.add(options[i]);
+								if (options[i].isFile())
+									sortedSet.add(options[i]);
 							}
 
 							String currentFile = app.getCurrentFile().getName();
