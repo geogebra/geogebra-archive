@@ -6115,6 +6115,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		int count = 0;
 		if (selGeos() == 0) {
 			Hits mirAbles = hits.getHits(Transformable.class, tempArrayList);
+			mirAbles.removeImages();
 			count =addSelectedGeo(mirAbles, 1, false);
 		}
 

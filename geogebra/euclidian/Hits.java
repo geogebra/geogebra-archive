@@ -307,11 +307,14 @@ public class Hits extends ArrayList<GeoElement> {
 	
 	final public void removeAllButImages(){
 
+	}
+	
+	public void removeImages() {
 		for (int i = size() - 1 ; i >= 0 ; i-- ) {
-				GeoElement geo = (GeoElement) get(i);
-				if (!geo.isGeoImage())
-					remove(i);
-			}
+			GeoElement geo = (GeoElement) get(i);
+			if (geo.isGeoImage())
+				remove(i);
+		}
 
 	}
 	
@@ -659,6 +662,8 @@ public class Hits extends ArrayList<GeoElement> {
 		}
 		return s;
 	}
-	
+
+
+
 
 }
