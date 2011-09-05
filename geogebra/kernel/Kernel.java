@@ -2955,6 +2955,19 @@ public class Kernel {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);		
 			GeoLine perp = OrthogonalLine(null, P, g);
+			
+			// needed so that outlying intersections exist
+			// eg for Distance Tool (point & segment)
+			if (g.isGeoSegment()) {
+				GeoSegment seg = (GeoSegment) g;
+				GeoPoint a = g.getStartPoint();
+				GeoPoint b = g.getEndPoint();
+				if (a != null && b != null) {
+					AlgoJoinPoints line = new AlgoJoinPoints(cons, a, b);
+					g = line.getLine();
+				}
+			}
+			
 			GeoPoint S = (GeoPoint) IntersectLines(null, perp, g);		
 		cons.setSuppressLabelCreation(oldMacroMode);
 		return S;
