@@ -316,13 +316,13 @@ office@geogebra.org
 
 	<!-- copies the jlatexmath jars  -->
 	<target name="ggb-copy-jlatexmath" depends="clean" description="copy jlatexmath jars">
-		<copy file="${src.dir}/jlatexmath.jar"
+		<copy file="${src.dir}/lib/jlatexmath.jar"
 		      tofile="${build.dir}/jlatexmath.jar">
 		</copy>
-		<copy file="${src.dir}/jlm_greek.jar"
+		<copy file="${src.dir}/lib/jlm_greek.jar"
 		      tofile="${build.dir}/jlm_greek.jar">
 		</copy>
-		<copy file="${src.dir}/jlm_cyrillic.jar"
+		<copy file="${src.dir}/lib/jlm_cyrillic.jar"
 		      tofile="${build.dir}/jlm_cyrillic.jar">
 		</copy>
 	</target>
