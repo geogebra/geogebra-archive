@@ -81,6 +81,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	
 	/**
 	 * Timeout values of tooltips (last entry reserved for "Off", but that has to be translated)
+	 * This is just an example,
+	 * it will be overwritten by tooltipTimeouts in MyXMLHandler, plus "-" instead of "0"
 	 */
 	private String[] tooltipTimeouts = new String[] {
 		"1",
@@ -256,10 +258,16 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbTooltipLanguage = new JComboBox();
 		// listener to this combo box is added in setLabels()
 		tooltipPanel.add(cbTooltipLanguage);
-		
+
 		tooltipTimeoutLabel = new JLabel();
 		tooltipPanel.add(tooltipTimeoutLabel);
-		
+
+		// get tooltipTimeouts from MyXMLHandler
+		tooltipTimeouts = new String[MyXMLHandler.tooltipTimeouts.length];
+		for (int i = 0; i < MyXMLHandler.tooltipTimeouts.length - 1; i++)
+			tooltipTimeouts[i] = MyXMLHandler.tooltipTimeouts[i];
+		tooltipTimeouts[tooltipTimeouts.length - 1] = "-";
+
 		cbTooltipTimeout = new JComboBox(tooltipTimeouts);
 		tooltipPanel.add(cbTooltipTimeout);
 	}
@@ -553,10 +561,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		// tooltip timeout
 		int timeoutIndex = -1;
 		int currentTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-		
+
 		// search for combobox index
 		for(int i = 0; i < tooltipTimeouts.length-1; ++i) {
-			if(Integer.parseInt(tooltipTimeouts[i]) == currentTimeout) {
+			if(Integer.parseInt(tooltipTimeouts[i]) * 1000 == currentTimeout) {
 				timeoutIndex = i;
 			}
 		}

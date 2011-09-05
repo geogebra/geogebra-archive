@@ -80,6 +80,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import javax.swing.JSplitPane;
+import javax.swing.ToolTipManager;
 
 import org.xml.sax.SAXException;
 
@@ -117,7 +118,18 @@ public class MyXMLHandler implements DocHandler {
 	private static final int MODE_GUI_PERSPECTIVE_PANES = 403; // <perspective> <panes /> </perspective>
 	private static final int MODE_GUI_PERSPECTIVE_VIEWS = 404; // <perspective> <views /> </perspective>
 
+	// these two will be reused in OptionsAdvanced
 	final public static int[] menuFontSizes = {12, 14, 16, 18, 20, 24, 28, 32};
+	final public static String[] tooltipTimeouts = new String[] {
+		"1",
+		"3",
+		"5",
+		"10",
+		"20",
+		"30",
+		"60",
+		"0"
+	};
 
 	private int mode;
 	private int constMode; // submode for <construction>
@@ -1898,6 +1910,21 @@ public class MyXMLHandler implements DocHandler {
 				if (!found) {
 					app.setTooltipLanguage(null);
 				}
+			}
+			int ttt = -1;
+			try { // "off" will be -1
+				ttt = Integer.parseInt(attrs.get("timeout"));
+			} catch (NumberFormatException e) {
+			}
+			if (ttt > 0)
+			{
+				ToolTipManager.sharedInstance().setDismissDelay(ttt * 1000);
+				// make it fit into tooltipTimeouts array:
+				ToolTipManager.sharedInstance().setDismissDelay(app.getTooltipTimeout() * 1000);
+			}
+			else
+			{
+				ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 			}
 			return true;
 		} catch (Exception e) {

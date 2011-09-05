@@ -29,6 +29,7 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.ImageSelection;
 import geogebra.gui.view.algebra.AlgebraView;
+import geogebra.io.MyXMLHandler;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.Perspective;
@@ -1665,6 +1666,18 @@ public class Application implements KeyEventDispatcher {
 
 	public Locale getTooltipLanguage() {
 		return tooltipLocale;
+	}
+
+	public int getTooltipTimeout() {
+		int dmd = ToolTipManager.sharedInstance().getDismissDelay();
+		if (dmd <= 0 || dmd == Integer.MAX_VALUE)
+			return -1;
+		dmd /= 1000;
+		for (int i = 0; i < MyXMLHandler.tooltipTimeouts.length - 1; i++) {
+			if (Integer.parseInt(MyXMLHandler.tooltipTimeouts[i]) >= dmd)
+				return Integer.parseInt(MyXMLHandler.tooltipTimeouts[i]);
+		}
+		return Integer.parseInt(MyXMLHandler.tooltipTimeouts[MyXMLHandler.tooltipTimeouts.length - 2]);
 	}
 
 
@@ -3860,17 +3873,18 @@ public class Application implements KeyEventDispatcher {
 			sb.append(guiFontSize);
 			sb.append("\"/>\n");
 
-			if (getTooltipLanguage() != null) // or ...
+			sb.append("\t<tooltipSettings ");
+			if (getTooltipLanguage() != null)
 			{
-				sb.append("\t<tooltipSettings ");
-				if (getTooltipLanguage() != null)
-				{
-					sb.append(" language=\"");
-					sb.append(getTooltipLanguage());
-					sb.append("\"");
-				}
-				sb.append("/>\n");
+				sb.append(" language=\"");
+				sb.append(getTooltipLanguage());
+				sb.append("\"");
 			}
+			sb.append(" timeout=\"");
+			sb.append(getTooltipTimeout());
+			sb.append("\"");
+
+			sb.append("/>\n");
 		}
 
 		sb.append(getConsProtocolXML());
