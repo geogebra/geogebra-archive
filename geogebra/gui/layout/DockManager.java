@@ -237,6 +237,15 @@ public class DockManager implements AWTEventListener, SetLabels {
 			}
 			
 			markAlonePanel();
+			
+			// is focused dock panel not visible anymore => choose another one
+			if(focusedDockPanel == null || !focusedDockPanel.isVisible()) {
+				for(DockPanel panel : dockPanels) {
+					if(panel.isVisible() && !panel.isInFrame()) {
+						setFocusedPanel(panel);
+					}
+				}
+			}
 		}
 		
 		// update all labels at once

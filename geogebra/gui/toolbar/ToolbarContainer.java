@@ -213,10 +213,14 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		if(activeToolbar == id) {
 			return;
 		}
-		
+
 		activeToolbar = id;
-		toolbarPanel.show(Integer.toString(id));
-		app.setMode(getToolbar(id).getSelectedMode());
+		
+		// the toolbar activate toolbar may be set even before the GUI is initialized
+		if(toolbarPanel != null) {
+			toolbarPanel.show(Integer.toString(id));
+			app.setMode(getToolbar(id).getSelectedMode());
+		}
 	}
 
 	/**
