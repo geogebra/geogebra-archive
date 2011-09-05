@@ -8975,6 +8975,17 @@ public class Kernel {
 			sb.append(isAnimationRunning());
 			sb.append("\"/>\n");
 		}
+		
+		if (asPreference) {
+			sb.append("\t<localization");
+			sb.append(" digits=\"");
+			sb.append(app.isUsingLocalizedDigits());
+			sb.append("\"");
+			sb.append(" labels=\"");
+			sb.append(app.isUsingLocalizedLabels());
+			sb.append("\"");
+			sb.append("/>\n");
+		}
 	
 		sb.append("</kernel>\n");
 	}

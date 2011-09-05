@@ -1333,6 +1333,8 @@ public class MyXMLHandler implements DocHandler {
 			handleKernelFigures(attrs);
 		} else if (eName.equals("startAnimation")) {
 			handleKernelStartAnimation(attrs);
+		} else if (eName.equals("localization")) {
+			handleKernelLocalization(attrs);
 		} else
 			System.err.println("unknown tag in <kernel>: " + eName);
 	}
@@ -1390,10 +1392,22 @@ public class MyXMLHandler implements DocHandler {
 			return false;
 		}
 	}
-	
+
 	private boolean handleKernelStartAnimation(LinkedHashMap<String, String> attrs) {
 		try {
 			startAnimation = parseBoolean((String) attrs.get("val"));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleKernelLocalization(LinkedHashMap<String, String> attrs) {
+		try {
+			boolean digits = parseBoolean((String) attrs.get("digits"));
+			app.setUseLocalizedDigits(digits);
+			boolean labels = parseBoolean((String) attrs.get("labels"));
+			app.setUseLocalizedLabels(labels);
 			return true;
 		} catch (Exception e) {
 			return false;
