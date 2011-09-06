@@ -38,13 +38,10 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	private boolean errorOnStopEditing = false;
 
 
-
 	private boolean allowProcessGeo = false;
-
 	public boolean allowProcessGeo() {
 		return allowProcessGeo;
 	}
-
 	public void setAllowProcessGeo(boolean allowProcessGeo) {
 		this.allowProcessGeo = allowProcessGeo;
 	}
@@ -325,7 +322,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	public class SpreadsheetCellEditorKeyListener implements KeyListener {
 
 
-		boolean escape = false;
+	//	boolean escape = false;
 		boolean isFormulaBarListener;
 
 
@@ -338,12 +335,10 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 
 		public void keyPressed(KeyEvent e) {
 			checkCursorKeys(e);
-
-			escape = false;
 			int keyCode = e.getKeyCode();
+			
 			switch (keyCode) {
 			case KeyEvent.VK_ESCAPE:
-				escape = true;
 				GeoElement oldGeo = kernel.getGeoAt(column, row);
 				cancelCellEditing();
 

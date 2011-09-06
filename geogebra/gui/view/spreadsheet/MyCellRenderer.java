@@ -349,7 +349,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	/**
 	 * Custom cell renderer that displays GeoElement descriptions.
 	 */
-	private class MyListCellRenderer extends DefaultListCellRenderer {
+	private static class MyListCellRenderer extends DefaultListCellRenderer {
 
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value,

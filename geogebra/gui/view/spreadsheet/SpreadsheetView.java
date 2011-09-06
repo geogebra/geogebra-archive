@@ -112,7 +112,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 
 
-	/**
+	/******************************************************
 	 * Construct spreadsheet view as a split panel. 
 	 * Left panel holds file tree browser, right panel holds spreadsheet. 
 	 */
@@ -261,7 +261,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		return mode;
 	}
 
-	private class Corner extends JComponent {
+	private static class Corner extends JComponent {
 		private static final long serialVersionUID = -4426785169061557674L;
 
 		protected void paintComponent(Graphics g) {
@@ -817,7 +817,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		if(fileBrowser != null){
 			sb.append("\t<spreadsheetBrowser ");
 
-			if(settings.initialFilePath() != settings.defaultFile() 
+			if(!settings.initialFilePath().equals(settings.defaultFile()) 
 					|| settings.initialURL() != DEFAULT_URL 
 					|| settings.initialBrowserMode() != DEFAULT_MODE)
 			{	
@@ -1198,8 +1198,8 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 			setFileBrowserDirectory(settings.initialURL(), settings.initialBrowserMode());
 	}
 
-	public void setFileBrowserDirectory(String rootString, int mode) {
-		getFileBrowser().setRoot(rootString, mode);
+	public boolean setFileBrowserDirectory(String rootString, int mode) {
+		return getFileBrowser().setRoot(rootString, mode);
 	}
 
 	/*

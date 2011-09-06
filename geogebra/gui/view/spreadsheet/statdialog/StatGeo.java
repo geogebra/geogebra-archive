@@ -528,8 +528,6 @@ public class StatGeo   {
 	public void updateNormalQuantilePlot(GeoList dataList, StatPanelSettings settings){
 
 		getDataBounds(dataList);
-		String label = dataList.getLabel();	
-
 		if(settings.isAutomaticWindow){
 			double buffer = .25*(xMaxData - xMinData);		
 			settings.xMin = xMinData - buffer;

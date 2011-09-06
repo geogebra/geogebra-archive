@@ -240,7 +240,6 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 
 	public void mousePressed(MouseEvent e) {						
 		boolean shiftPressed = e.isShiftDown();	
-		boolean metaDown = Application.isControlDown(e);							
 		boolean rightClick = Application.isRightClick(e);
 				
 		int x = e.getX();

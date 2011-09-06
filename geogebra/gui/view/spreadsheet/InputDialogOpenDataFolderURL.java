@@ -66,21 +66,9 @@ public class InputDialogOpenDataFolderURL extends InputDialog{
 		}
 	}
 	
+	
 	private boolean processInput() {
-		boolean succ = true;
-		
-		URL url;
-		try {
-			url = new URL(inputPanel.getText());
-			view.setFileBrowserDirectory(inputPanel.getText(),FileBrowserPanel.MODE_URL);
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			succ = false;
-		}
-		
-		return succ;
-		
+		return	view.setFileBrowserDirectory(inputPanel.getText(),FileBrowserPanel.MODE_URL);
 	}
 
 

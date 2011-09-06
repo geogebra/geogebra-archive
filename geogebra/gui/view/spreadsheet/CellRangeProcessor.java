@@ -49,7 +49,7 @@ public class CellRangeProcessor {
 		// two adjacent rows or columns?
 		if (rangeList.size() == 1 && rangeList.get(0).is2D())
 			return true;
-		
+
 		// two non-adjacent rows or columns?
 		else if (rangeList.size() == 2 && 
 				rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1 )
@@ -61,7 +61,7 @@ public class CellRangeProcessor {
 		return false;
 	}
 
-	
+
 
 	/*
 	 * top-left must be a function of 2 variables eg A4(x,y)=x y^2
@@ -294,7 +294,7 @@ public class CellRangeProcessor {
 
 
 
-	private class PointDimension{
+	private static class PointDimension{
 		private boolean doHorizontalPairs;
 		private int c1, c2, r1, r2;
 	}
@@ -465,7 +465,7 @@ public class CellRangeProcessor {
 		// return null titles if data source is a point list
 		if(rangeList.size()==1 && rangeList.get(0).isPointList())
 			return title;
-		
+
 		// get the orientation and dimensions of the list
 		PointDimension pd = new PointDimension();
 		getPointListDimensions(rangeList, pd);
@@ -576,14 +576,13 @@ public class CellRangeProcessor {
 	public GeoElement createList(ArrayList<CellRange> rangeList,  boolean scanByColumn, boolean copyByValue, 
 			boolean isSorted, boolean doStoreUndo, Integer geoTypeFilter, boolean setLabel) {
 
-		GeoElement[] geos = null;
 		//StringBuilder listString = new StringBuilder();
-		
+
 		GeoList geoList = null;
 		ArrayList<GeoElement> list = null;
 		if (copyByValue) geoList = new GeoList(cons);
 		else list = new ArrayList<GeoElement>();
-		
+
 		ArrayList<Point> cellList = new ArrayList<Point>();
 
 		// temporary fix for catching duplicate cells caused by ctrl-seelct
@@ -606,7 +605,7 @@ public class CellRangeProcessor {
 			for(CellRange cr:rangeList){
 				cellList.addAll(cr.toCellList(scanByColumn));
 			}
-			
+
 			// iterate through the cells and add their contents to the expression string
 			for(Point cell: cellList){
 				if(!usedCells.contains(cell)){
@@ -632,7 +631,7 @@ public class CellRangeProcessor {
 			//	listString.deleteCharAt(listString.length()-1);
 
 			//listString.append("}");
-			
+
 			if (!copyByValue) {
 				AlgoDependentList algo = new AlgoDependentList(cons, list, false);
 				geoList = (GeoList) algo.getGeoElements()[0];
@@ -660,7 +659,7 @@ public class CellRangeProcessor {
 
 		if(doStoreUndo)
 			app.storeUndoInfo();
-		
+
 		if (setLabel)
 			geoList.setLabel(null);
 
@@ -716,7 +715,7 @@ public class CellRangeProcessor {
 
 	}
 
-	
+
 	/**
 	 * Creates a string expression for a matrix formed by the cell range with
 	 * upper left corner (column1, row1) and lower right corner (column2, row2).
@@ -821,7 +820,7 @@ public class CellRangeProcessor {
 
 		GeoElement[] geos = null;
 		String expr = null;
-		
+
 		try {
 			expr = createMatrixExpression( column1, column2, row1, row2, copyByValue, transpose);
 			//Application.debug(expr);
@@ -858,7 +857,7 @@ public class CellRangeProcessor {
 
 		GeoElement[] geos = null;
 		StringBuilder text= new StringBuilder();
-		
+
 		try {
 			text.append("TableText[");		
 			text.append(createMatrixExpression( column1, column2, row1, row2, copyByValue, transpose));
@@ -880,7 +879,7 @@ public class CellRangeProcessor {
 	}
 
 
-	
+
 
 
 	//===================================================
@@ -894,7 +893,7 @@ public class CellRangeProcessor {
 
 
 
-	public void InsertLeft(int column1, int column2){ 
+	public void insertLeft(int column1, int column2){ 
 
 		int columns = table.getModel().getColumnCount();
 		if (columns == column1 + 1){
@@ -925,7 +924,7 @@ public class CellRangeProcessor {
 	}
 
 
-	public void InsertRight(int column1, int column2){
+	public void insertRight(int column1, int column2){
 
 		int columns = table.getModel().getColumnCount();
 		int rows = table.getModel().getRowCount();
@@ -961,7 +960,7 @@ public class CellRangeProcessor {
 
 
 
-	public void InsertAbove(int row1, int row2){
+	public void insertAbove(int row1, int row2){
 		int columns = table.getModel().getColumnCount();
 		int rows = table.getModel().getRowCount();
 		if (rows == row2 + 1){
@@ -991,7 +990,7 @@ public class CellRangeProcessor {
 	}
 
 
-	public void InsertBelow(int row1, int row2){	
+	public void insertBelow(int row1, int row2){	
 		int columns = table.getModel().getColumnCount();
 		int rows = table.getModel().getRowCount();
 		boolean succ = false;
@@ -1062,7 +1061,7 @@ public class CellRangeProcessor {
 
 
 	//Experimental ---- merging ctrl-selected cells 
-
+	/*
 	private void consolidateRangeList(ArrayList<CellRange> rangeList){
 
 		ArrayList<Point> columnList = new ArrayList<Point>();
@@ -1106,7 +1105,7 @@ public class CellRangeProcessor {
 		}
 
 	}
-
+	 */
 
 
 	public String getCellRangeString(CellRange range){

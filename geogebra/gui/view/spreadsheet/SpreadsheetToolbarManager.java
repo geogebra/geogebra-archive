@@ -16,7 +16,6 @@ public class SpreadsheetToolbarManager {
 	private Application app;
 	private SpreadsheetView view;
 	private MyTable table;
-	private int prevMode = -1;
 
 	private CreateObjectDialog id;
 
@@ -107,15 +106,10 @@ public class SpreadsheetToolbarManager {
 
 			break;
 
-
-
-
-
 		default:
 			// ignore other modes
 		}				
 
-		prevMode  = mode;
 	}
 
 

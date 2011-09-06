@@ -77,7 +77,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 	// parser
 	private   QDParser xmlParser;
-	private   myFileTreeHandler handler;
+	private   MyFileTreeHandler handler;
 
 	// directory
 	private Object root;
@@ -108,7 +108,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		app = view.getApplication();
 
 		xmlParser = new QDParser();
-		handler = new myFileTreeHandler();
+		handler = new MyFileTreeHandler();
 
 		setBackground(view.table.getBackground());
 		setLayout(new BorderLayout());	
@@ -337,7 +337,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	}
 	
 	
-	public void setRoot(String rootString, int mode) {
+	public boolean setRoot(String rootString, int mode) {
 		
 		Object root = null;
 		
@@ -348,8 +348,10 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 					root = new URL(rootString);
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
+					return false;
 				}
 		setRoot(root, mode);
+		return true;
 	}
 	
 	public void setRoot(Object root, int mode) {
@@ -458,8 +460,6 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 		if (node == null)
 			return;
-
-		Object nodeInfo = node.getUserObject();
 
 		if (node.isLeaf()) {
 			TreePath p = e.getPath();
@@ -610,7 +610,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	/**
 	 * Filter that returns directories and text files
 	 */
-	public class DataFileFilter implements FilenameFilter {
+	public static class DataFileFilter implements FilenameFilter {
 
 		public boolean accept(File dir, String name) {
 
@@ -633,16 +633,16 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 	private File getFileFromPath(TreePath p){
 
-		String filePath = rootFile.getPath()+ File.separator;
+		StringBuilder sb = new StringBuilder();
+		sb.append(rootFile.getPath()+ File.separator);
 		for(int i=1;i< p.getPathCount()-1;i++){
-			filePath += p.getPathComponent(i).toString()+ File.separator;
+			sb.append(p.getPathComponent(i).toString()+ File.separator);
 		}
-		filePath += p.getLastPathComponent().toString();
-
-		return new File(filePath);
-
+		sb.append(p.getLastPathComponent().toString());
+		return new File(sb.toString());
 	}
 
+	
 	private URL getURLFromPath(TreePath p) throws MalformedURLException{
 
 		String dirPath = rootURL.getFile();
@@ -734,7 +734,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	/**
 	 * Handler used by QDParser to parse XML file trees. 
 	 */
-	public class myFileTreeHandler implements DocHandler {
+	public static class MyFileTreeHandler implements DocHandler {
 
 		private DefaultMutableTreeNode previousNode = new DefaultMutableTreeNode();
 		private DefaultMutableTreeNode currentNode = new DefaultMutableTreeNode();

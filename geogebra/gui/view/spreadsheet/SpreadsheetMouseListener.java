@@ -142,7 +142,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 			// now fill down
 			if (rowCount != 0){
-				boolean succ = relativeCopy.doCopy(table.minSelectionColumn, table.minSelectionRow, table.maxSelectionColumn, table.maxSelectionRow,
+				boolean succ = relativeCopy.doDragCopy(table.minSelectionColumn, table.minSelectionRow, table.maxSelectionColumn, table.maxSelectionRow,
 						table.minSelectionColumn, table.maxSelectionRow + 1, table.maxSelectionColumn, table.maxSelectionRow + rowCount);
 				if (succ) app.storeUndoInfo();		
 			}
@@ -338,7 +338,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				}
 				
 				// copy the cells
-				boolean succ = relativeCopy.doCopy(table.minSelectionColumn, table.minSelectionRow, table.maxSelectionColumn, table.maxSelectionRow, x1, y1, x2, y2);
+				boolean succ = relativeCopy.doDragCopy(table.minSelectionColumn, table.minSelectionRow, table.maxSelectionColumn, table.maxSelectionRow, x1, y1, x2, y2);
 				if (succ) {
 					app.storeUndoInfo();				
 				}

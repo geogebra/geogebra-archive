@@ -85,7 +85,7 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 	private JScrollPane previewPanel;
 	private JTextField fldType;
 
-	private String title;
+	private String title = null;
 
 	private boolean keepNewGeo = false;
 	private JComboBox cbLeftRightOrder;
@@ -456,9 +456,6 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 
 
 	private void doTextFieldActionPerformed(JTextField source) {
-
-		String inputText = source.getText().trim();
-		//Double value = Double.parseDouble(source.getText());
 
 		if(source == fldName){
 			createNewGeo();

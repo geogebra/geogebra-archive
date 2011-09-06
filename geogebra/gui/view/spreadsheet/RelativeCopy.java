@@ -26,12 +26,25 @@ public class RelativeCopy {
 	protected Kernel kernel;
 	protected MyTable table;
 
-	public RelativeCopy(JTable table0, Kernel kernel0) {
-		table = (MyTable)table0;
+	public RelativeCopy(MyTable table0, Kernel kernel0) {
+		table = table0;
 		kernel = kernel0;
 	}
 
-	public boolean doCopy(int sx1, int sy1, int sx2, int sy2, int dx1, int dy1, int dx2, int dy2) {
+	/**
+	 * Performs spreadsheet drag-copy operation.
+	 * 
+	 * @param sx1 source minimum column
+	 * @param sy1 source minimum row
+	 * @param sx2 source maximum column
+	 * @param sy2 source maximum row
+	 * @param dx1 destination minimum column
+	 * @param dy1 destination minimum row
+	 * @param dx2 destination maximum column
+	 * @param dy2 destination maximum row
+	 * @return
+	 */
+	public boolean doDragCopy(int sx1, int sy1, int sx2, int sy2, int dx1, int dy1, int dx2, int dy2) {
 		// -|1|-
 		// 2|-|3
 		// -|4|-
@@ -43,10 +56,16 @@ public class RelativeCopy {
 
 			// collect all redefine operations				
 			cons.startCollectingRedefineCalls();
+			
+			
+			// ==============================================
+			//          vertical drag
+			// ==============================================
+			if (sx1 == dx1 && sx2 == dx2) {  
 
-			if (sx1 == dx1 && sx2 == dx2) {
-				if (dy2 < sy1) { // 1
-					if (sy1 + 1 == sy2) {
+				if (dy2 < sy1) { // 1  -----  drag up
+					if (sy1 + 1 == sy2) { 
+						// two row source, so drag copy a linear pattern
 						for (int x = sx1; x <= sx2; ++ x) {
 							GeoElement v1 = getValue(table, x, sy1);
 							GeoElement v2 = getValue(table, x, sy2);
@@ -63,13 +82,16 @@ public class RelativeCopy {
 							}
 						}
 					}
-					else {
+					else { // not two row source, so drag-copy the first row of the source
 						doCopyVerticalNoStoringUndoInfo1(sx1, sx2, sy1, dy1, dy2);
 					}
 					success = true;
 				}
-				else if (dy1 > sy2) { // 4
-					if (sy1 + 1 == sy2) {
+
+
+				else if (dy1 > sy2) { // 4 ---- drag down
+					if (sy1 + 1 == sy2) {  
+						// two row source, so drag copy a linear pattern
 						for (int x = sx1; x <= sx2; ++ x) {
 							GeoElement v1 = getValue(table, x, sy1);
 							GeoElement v2 = getValue(table, x, sy2);
@@ -86,15 +108,21 @@ public class RelativeCopy {
 							}
 						}
 					}
-					else {
+					else { 
+						// not two row source, so drag-copy the last row of the source
 						doCopyVerticalNoStoringUndoInfo1(sx1, sx2, sy2, dy1, dy2);												
 					}
 					success = true;
 				}
 			}
+
+			// ==============================================
+			//          horizontal drag
+			// ==============================================
 			else if (sy1 == dy1 && sy2 == dy2) {
-				if (dx2 < sx1) { // 2
-					if (sx1 + 1 == sx2) {
+				if (dx2 < sx1) { // 2  ---- drag left
+					if (sx1 + 1 == sx2) { 
+						// two column source, so drag copy a linear pattern
 						for (int y = sy1; y <= sy2; ++ y) {
 							GeoElement v1 = getValue(table, sx1, y);
 							GeoElement v2 = getValue(table, sx2, y);
@@ -111,13 +139,15 @@ public class RelativeCopy {
 							}
 						}
 					}
-					else {
+					else { 
+						// not two column source, so drag-copy the first column of the source
 						doCopyHorizontalNoStoringUndoInfo1(sy1, sy2, sx1, dx1, dx2);
 					}
 					success = true;
 				}
-				else if (dx1 > sx2) { // 4
+				else if (dx1 > sx2) { // 4 --- drag right
 					if (sx1 + 1 == sx2) {
+						// two column source, so drag copy a linear pattern
 						for (int y = sy1; y <= sy2; ++ y) {
 							GeoElement v1 = getValue(table, sx1, y);
 							GeoElement v2 = getValue(table, sx2, y);
@@ -135,6 +165,7 @@ public class RelativeCopy {
 						}
 					}
 					else {
+						// not two column source, so drag-copy the last column of the source
 						doCopyHorizontalNoStoringUndoInfo1(sy1, sy2, sx2, dx1, dx2);
 					}
 					success = true;
@@ -167,13 +198,29 @@ public class RelativeCopy {
 		}
 	}
 
+	
+	/**
+	 * Performs a vertical spreadsheet drag-copy. Cells are copied vertically
+	 * row by row using a single given row as the copy source.
+	 * 
+	 * @param x1
+	 *            minimum column of the drag-copy region
+	 * @param x2
+	 *            maximum column of the drag-copy region
+	 * @param sy
+	 *            source row
+	 * @param dy1
+	 *            destination minimum row
+	 * @param dy2
+	 *            destination maximum row
+	 * @throws Exception
+	 */
 	public void doCopyVerticalNoStoringUndoInfo1(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
-
 
 		// create a treeset, ordered by construction index
 		// so that when we relative copy A1=1 B1=(A1+C1)/2 C1=3 
 		// B2 is done last
-		TreeSet tree = new TreeSet();
+		TreeSet<GeoElement> tree = new TreeSet<GeoElement>();
 		for (int x = x1; x <= x2; ++ x) {
 			int ix = x - x1;
 			tree.add(getValue(table,x1 + ix, sy));
@@ -181,36 +228,43 @@ public class RelativeCopy {
 
 		for (int y = dy1; y <= dy2; ++ y) {
 			int iy = y - dy1;
-
-			Iterator  iterator = tree.iterator();
+			Iterator<GeoElement> iterator = tree.iterator();
 			while (iterator.hasNext()){
-
 				GeoElement geo = (GeoElement)(iterator.next());
-
 				if (geo != null) {
 					Point p = geo.getSpreadsheetCoords();
-
 					doCopyNoStoringUndoInfo0(kernel, table, geo,
 							getValue(table,p.x, dy1 + iy), 0, y - sy);
 					//Application.debug(p.x+"");
 				}
-
 			}
-
-
-
-
 		}
-
-	
 	}
 
+	
+	/**
+	 * Performs a horizontal spreadsheet drag-copy. Cells are copied
+	 * horizontally column by column using a single given column as the copy
+	 * source.
+	 * 
+	 * @param y1
+	 *            minimum row of the drag-copy region
+	 * @param y2
+	 *            maximum row of the drag-copy region
+	 * @param sx
+	 *            source column
+	 * @param dx1
+	 *            destination minimum column
+	 * @param dx2
+	 *            destination maximum column
+	 * @throws Exception
+	 */
 	public void doCopyHorizontalNoStoringUndoInfo1(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
 
 		// create a treeset, ordered by construction index
 		// so that when we relative copy A1=1 A2=(A1+A3)/2 A3=3 
 		// B2 is done last
-		TreeSet tree = new TreeSet();
+		TreeSet<GeoElement> tree = new TreeSet<GeoElement>();
 		for (int y = y1; y <= y2; ++ y) {
 			int iy = y - y1;
 			tree.add(getValue(table, sx, y1 + iy));
@@ -218,12 +272,11 @@ public class RelativeCopy {
 		for (int x = dx1; x <= dx2; ++ x) {
 			int ix = x - dx1;
 
-			Iterator  iterator = tree.iterator();
+			Iterator<GeoElement>  iterator = tree.iterator();
 			while (iterator.hasNext()){
 
 				GeoElement geo = (GeoElement)(iterator.next());
 
-				//G.Sturr 2009-9-18 bug fix: null test was missing
 				if (geo != null) {
 					Point p = geo.getSpreadsheetCoords();
 					doCopyNoStoringUndoInfo0(kernel, table, geo,
@@ -232,18 +285,10 @@ public class RelativeCopy {
 				}
 			}
 		}
-		/* old code
-		for (int x = dx1; x <= dx2; ++ x) {
-			int ix = x - dx1;
-			for (int y = y1; y <= y2; ++ y) {
-				int iy = y - y1;
-				doCopyNoStoringUndoInfo0(kernel, table, getValue(table, sx, y1 + iy),
-														getValue(table, dx1 + ix, y1+iy), x - sx, 0);
-			}
-		} */
 	}
 
-	//G.Sturr 2009-9-23 bug fix: [A-Z] needs to be [A-Z]+ for double letter columns
+	
+	
 	protected static final Pattern pattern2 = Pattern.compile("(::|\\$)([A-Z]+)(::|\\$)([0-9]+)");
 
 	public static GeoElement doCopyNoStoringUndoInfo0(Kernel kernel, MyTable table, GeoElement value, GeoElement oldValue, int dx, int dy) throws Exception {
@@ -371,8 +416,10 @@ public class RelativeCopy {
 
 	}
 
-	/*
-	 * updates the cell references in text according to a relative copy in the spreadsheet of offset (dx,dy)
+	
+	
+	/**
+	 * Updates the cell references in text according to a relative copy in the spreadsheet of offset (dx,dy)
 	 * (changes only dependents of value)
 	 * eg change A1 < 3 to A2 < 3 for a vertical copy
 	 */
@@ -440,6 +487,9 @@ public class RelativeCopy {
 		table.setValueAt(value2, row, column);
 	}
 
+	
+	
+	
 	public static String replaceAll(Pattern pattern, String text, String text1, String text2) {
 		String pre = "";
 		String post = text;
@@ -569,7 +619,7 @@ public class RelativeCopy {
 			// make sure that an error dialog is not displayed for unquoted text
 			.processAlgebraCommandNoExceptionHandling(text, false, false, false);
 			//.processAlgebraCommandNoExceptionHandling(text, false);
-			
+
 			// check if text was the label of an existing geo 
 			// toLowerCase() added to fix bug A1=1, enter just 'a1' or 'A1' into cell B1 -> A1 disappears
 			if (text.toUpperCase(Locale.US).equals(newValues[0].getLabel())) {

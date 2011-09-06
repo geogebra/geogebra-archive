@@ -121,7 +121,7 @@ public class CellFormat {
 	 * put(key, null) will remove a key if it exists already.
 	 * 
 	 */
-	private class MyHashMap extends HashMap{
+	private static class MyHashMap extends HashMap{
 		public Object put(Object key, Object value){
 			if(value == null){
 				super.remove(key);

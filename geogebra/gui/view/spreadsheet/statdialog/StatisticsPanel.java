@@ -348,7 +348,7 @@ public class StatisticsPanel extends JPanel implements StatPanelInterface, Actio
 	//           ComboBox Renderer with SEPARATOR
 	//============================================================
 
-	class MyRenderer extends JLabel implements ListCellRenderer {
+	private static class MyRenderer extends JLabel implements ListCellRenderer {
 
 		public static final String SEPARATOR = "SEPARATOR";
 		JSeparator separator;

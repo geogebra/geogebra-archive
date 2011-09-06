@@ -302,7 +302,6 @@ public class SpreadsheetTraceManager {
 		if (t==null) return;
 		 
 		table.copyPasteCut.delete(t.traceColumn1, t.traceRow1, t.traceColumn2, SpreadsheetView.MAX_ROWS);
-		Construction cons = app.getKernel().getConstruction();
 		t.tracingRow = t.traceRow1;	
 		t.lastTrace.clear();
 		

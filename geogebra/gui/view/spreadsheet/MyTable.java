@@ -185,10 +185,10 @@ public class MyTable extends JTable implements FocusListener
 
 
 	// cursors
-	protected static Cursor defaultCursor = Cursor.getDefaultCursor(); 
-	protected static Cursor crossHairCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-	protected static Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
-	protected static Cursor grabbingCursor, grabCursor, largeCrossCursor; 
+	protected  Cursor defaultCursor = Cursor.getDefaultCursor(); 
+	protected  Cursor crossHairCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+	protected  Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
+	protected  Cursor grabbingCursor, grabCursor; 
 
 
 
@@ -207,7 +207,6 @@ public class MyTable extends JTable implements FocusListener
 		table = this;
 		grabCursor = createCursor(app.getImageIcon("cursor_grab.gif").getImage(), true);
 		grabbingCursor = createCursor(app.getImageIcon("cursor_grabbing.gif").getImage(), true);
-		largeCrossCursor = createCursor(app.getImageIcon("cursor_large_cross.gif").getImage(), true);
 
 		// set row height 	
 		setRowHeight(TABLE_CELL_HEIGHT);
@@ -1450,77 +1449,6 @@ public class MyTable extends JTable implements FocusListener
 
 
 
-
-	//G.STURR 2010-1-29
-	// Row and Column selection listeners no longer needed.
-
-	protected class RowSelectionListener implements ListSelectionListener
-	{
-
-		public void valueChanged(ListSelectionEvent e) {
-			//selectionChanged();
-			/* -------------------------------------------
- 			ListSelectionModel selectionModel = (ListSelectionModel) e
-					.getSource();
-			minSelectionRow = selectionModel.getMinSelectionIndex();
-			maxSelectionRow = selectionModel.getMaxSelectionIndex();
-			if (getSelectionModel().getSelectionMode() == ListSelectionModel.MULTIPLE_INTERVAL_SELECTION) {
-				minSelectionColumn = 0;
-				maxSelectionColumn = MyTable.this.getColumnCount() - 1;
-
-				selectionChanged();
-			}
-			--------------------------------------------
-			/*
-			 * removed Michael Borcherds 2008-08-08 causes a bug when multiple
-			 * rows are selected selected = new boolean[getColumnCount()]; for
-			 * (int i = 0; i < selected.length; ++ i) { if
-			 * (selectionModel.isSelectedIndex(i)) { selected[i] = true; } }
-			 */
-
-		}
-
-	}
-
-
-
-
-	protected class ColumnSelectionListener implements ListSelectionListener
-	{
-
-		public void valueChanged(ListSelectionEvent e) {
-			//	selectionChanged();
-			/* ------------------------------------
-			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
-			minSelectionColumn = selectionModel.getMinSelectionIndex(); 
-			maxSelectionColumn = selectionModel.getMaxSelectionIndex();
-
-			//G.Sturr 2009-9-30  added to allow drawing column selection rectangle
-			if (getSelectionModel().getSelectionMode() == ListSelectionModel.MULTIPLE_INTERVAL_SELECTION) {
-				minSelectionRow = 0;
-				maxSelectionRow = MyTable.this.getRowCount() - 1;
-				selectionChanged();	
-			}
-
-			----------------------------------------------
-
-			//  old code --- selectedColumns is no longer used
-			/*
-			selectedColumns = new boolean[getColumnCount()];
-			for (int i = 0; i < selectedColumns.length; ++ i) {
-				if (selectionModel.isSelectedIndex(i)) {
-					selectedColumns[i] = true;
-				}
-			}
-			selectionChanged();	
-			 */
-		}
-
-	}
-
-
-
-
 	@Override
 	public int convertColumnIndexToModel(int viewColumnIndex) {
 		return viewColumnIndex;    	
@@ -1590,16 +1518,16 @@ public class MyTable extends JTable implements FocusListener
 	@Override
 	public void setRowHeight(int row, int rowHeight) {
 		super.setRowHeight(row, rowHeight);	
-			try {
-				if(view != null){
-					view.updateRowHeader();
-					if(doRecordRowHeights)
-						adjustedRowHeights.add(new Point(row, rowHeight));
-					view.updateRowHeightSetting(row, rowHeight);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+		try {
+			if(view != null){
+				view.updateRowHeader();
+				if(doRecordRowHeights)
+					adjustedRowHeights.add(new Point(row, rowHeight));
+				view.updateRowHeightSetting(row, rowHeight);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -1700,8 +1628,6 @@ public class MyTable extends JTable implements FocusListener
 
 		TableColumn tableColumn = table.getColumnModel().getColumn(column); 
 
-		// iterate through the rows and find the preferred width
-		int currentWidth = tableColumn.getWidth();
 		int prefWidth = 0;
 		int tempWidth = -1;
 		for (int row = 0; row < getRowCount(); row++) {
@@ -1730,13 +1656,11 @@ public class MyTable extends JTable implements FocusListener
 	}
 
 	/**
-	 * Adjust the height of a row to fit the maximum prefferred height of 
+	 * Adjust the height of a row to fit the maximum preferred height of 
 	 * the its cell contents. 
 	 */
 	public void fitRow(int row){
 
-		// iterate through the columns and find the preferred height
-		int currentHeight = table.getRowHeight(row);
 		int prefHeight = table.getRowHeight();
 		int tempHeight = 0;
 		for (int column = 0; column < table.getColumnCount(); column++) {

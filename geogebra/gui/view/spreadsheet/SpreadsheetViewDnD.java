@@ -35,7 +35,6 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 	private Application app;
 	private SpreadsheetView view;
 	private MyTable table;
-	private ArrayList<String> geoLabelList;
 
 	private DragSource ds;
 	private DropTarget dt;
@@ -239,7 +238,7 @@ public class SpreadsheetViewDnD implements DragGestureListener, DragSourceListen
 	 * @return
 	 */
 	private boolean handleHtmlFlavorDrop(DropTargetDropEvent dte){
-		StringBuilder sb = new StringBuilder();
+		
 		Transferable t = dte.getTransferable();
 
 		// accept the drop

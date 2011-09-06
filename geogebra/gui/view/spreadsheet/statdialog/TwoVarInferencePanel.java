@@ -332,8 +332,6 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 
 	private void updateCBAlternativeHyp(){
 
-		int selectedIndex = cbAltHyp.getSelectedIndex();
-
 		cbAltHyp.removeActionListener(this);
 		cbAltHyp.removeAllItems();
 		cbAltHyp.addItem(getNullHypName() + " " + tail_right + " " + statDialog.format(hypMean));
@@ -772,90 +770,6 @@ public class TwoVarInferencePanel extends JPanel implements ActionListener, Focu
 		//	p.setBackground(Color.white);
 		return p;
 	}
-
-
-
-
-	private void createDataSourceList(){	
-
-		model = new DefaultListModel(); 
-		dataSourceList = new JList(model);
-
-		dataSourceList.setCellRenderer(new CheckListRenderer());
-		dataSourceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		// Add a mouse listener to handle changing selection
-		dataSourceList.addMouseListener(new MouseAdapter()
-		{
-			public void mouseClicked(MouseEvent event)
-			{
-				JList list = (JList) event.getSource();
-
-				// Get index of item clicked
-				int index = list.locationToIndex(event.getPoint());
-				CheckListItem item = (CheckListItem)
-				list.getModel().getElementAt(index);
-
-				// Toggle selected state
-				item.setSelected(! item.isSelected());
-
-				// Repaint cell
-				list.repaint(list.getCellBounds(index, index));
-			}
-		});  
-
-	}
-
-
-
-
-	// Represents items in the list that can be selected
-	class CheckListItem
-	{
-		private String  label;
-		private boolean isSelected = false;
-
-		public CheckListItem(String label)
-		{
-			this.label = label;
-		}
-
-		public boolean isSelected()
-		{
-			return isSelected;
-		}
-
-		public void setSelected(boolean isSelected)
-		{
-			this.isSelected = isSelected;
-		}
-
-		public String toString()
-		{
-			return label;
-		}
-	}
-
-	// Handles rendering cells in the list using a check box
-
-	class CheckListRenderer extends JCheckBox
-	implements ListCellRenderer
-	{
-		public Component getListCellRendererComponent(
-				JList list, Object value, int index,
-				boolean isSelected, boolean hasFocus)
-		{
-			setEnabled(list.isEnabled());
-			setSelected(((CheckListItem)value).isSelected());
-			setFont(list.getFont());
-			setBackground(list.getBackground());
-			setForeground(list.getForeground());
-			setText(value.toString());
-			return this;
-		}
-	}
-
-
 
 
 

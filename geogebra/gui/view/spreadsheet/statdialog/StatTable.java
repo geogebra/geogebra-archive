@@ -103,7 +103,7 @@ public class StatTable extends JScrollPane {
 
 	}
 
-	private class Corner extends JPanel {
+	private static class Corner extends JPanel {
 		protected void paintComponent(Graphics g) {
 			g.setColor(TABLE_HEADER_COLOR);
 			g.fillRect(0, 0, getWidth(), getHeight());
@@ -271,7 +271,9 @@ public class StatTable extends JScrollPane {
 			if(myTable.getTableHeader() != null)	
 				myTable.getTableHeader().setFont(font);
 		}
-		myTable.setPreferredScrollableViewportSize(myTable.getPreferredSize());
+		
+		if(myTable != null)
+			myTable.setPreferredScrollableViewportSize(myTable.getPreferredSize());
 	}
 
 
@@ -288,8 +290,6 @@ public class StatTable extends JScrollPane {
 
 		TableColumn tableColumn = table.getColumnModel().getColumn(column); 
 
-		// iterate through the rows and find the preferred width
-		int currentWidth = tableColumn.getWidth();
 		int prefWidth = 0;
 		int tempWidth = -1;
 		for (int row = 0; row < table.getRowCount(); row++) {
@@ -352,7 +352,7 @@ public class StatTable extends JScrollPane {
 	//         Table Cell Renderer 
 	//======================================================
 
-	class MyCellRenderer extends DefaultTableCellRenderer {
+	private static class MyCellRenderer extends DefaultTableCellRenderer {
 
 		public MyCellRenderer(){
 			// cell padding

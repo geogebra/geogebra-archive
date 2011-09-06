@@ -320,7 +320,6 @@ public class ProbabilityManager {
 			break;
 
 		case DIST_STUDENT:
-			v = parms[0];
 			xMin = -5;
 			xMax = 5;
 			yMin = 0;
@@ -412,7 +411,6 @@ public class ProbabilityManager {
 		case DIST_LOGNORMAL:
 			mean = parms[0];
 			sigma = parms[1];
-			double meanActual = Math.exp(mean + sigma*sigma/2);
 			double var = (Math.exp(sigma*sigma) - 1)*Math.exp(2*mean + sigma*sigma);
 			mode = Math.exp(mean - sigma*sigma);
 			xMin = 0;

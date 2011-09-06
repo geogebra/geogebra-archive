@@ -606,7 +606,6 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	
 		
 		GeoElement geo;
-		String underConstruction = "\\text{" + app.getPlain("NotAvailable") + "}";
 		if(hasControlPanel)
 			((CardLayout)controlCards.getLayout()).show(controlCards, "blankPanel");	
 
@@ -909,7 +908,7 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	//           ComboBox Renderer with SEPARATOR
 	//============================================================
 
-	class MyRenderer extends JLabel implements ListCellRenderer {
+	private static class MyRenderer extends JLabel implements ListCellRenderer {
 
 		public static final String SEPARATOR = "SEPARATOR";
 		JSeparator separator;
@@ -964,7 +963,6 @@ public class StatComboPanel extends JPanel implements ActionListener, StatPanelI
 	public void exportGeosToEV(int viewID){
 
 		app.setWaitCursor();
-		ArrayList<GeoElement> newGeoList = new ArrayList<GeoElement>();
 		String expr;
 
 		try {

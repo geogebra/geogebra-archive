@@ -181,7 +181,7 @@ public class FormulaBar extends JToolBar implements ActionListener, FocusListene
 		// start cell editing in the currently selected cell
 		// TODO: should these be an anchor cell?
 		table.setAllowEditing(true);
-		boolean succ = view.getTable().editCellAt(table.getSelectedRow(), table.getSelectedColumn());
+		view.getTable().editCellAt(table.getSelectedRow(), table.getSelectedColumn());
 		view.getTable().repaint();
 
 	}

@@ -282,11 +282,7 @@ public class RegressionPanel extends JPanel implements  ActionListener, StatPane
 
 	
 		// create an icon with the LaTeX string	
-		ImageIcon icon = (ImageIcon) lblRegEquation.getIcon();
-		if(icon == null)
-			icon = new ImageIcon();
-
-		icon = GeoGebraIcon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, null);
+		ImageIcon icon = GeoGebraIcon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, null);
 
 
 		// set the label icon with our equation string

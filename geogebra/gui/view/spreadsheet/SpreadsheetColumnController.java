@@ -32,7 +32,6 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 	private Kernel kernel;
 	private MyTable table;
 	private DefaultTableModel model;	
-	private MyCellEditor editor;
 
 
 	protected int column0 = -1;
@@ -48,8 +47,7 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 		this.table = table;
 		this.view = table.getView();
 		this.model = (DefaultTableModel) table.getModel();  
-		this.editor = table.editor;
-
+		
 	}
 
 
@@ -426,8 +424,6 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 					setBackground(defaultBackground);
 				}
 			}
-
-			JTableHeader header = table.getTableHeader();
 
 			if(overTraceButtonColumn == colIndex){
 				btnTrace.setIcon(traceRollOverIcon);

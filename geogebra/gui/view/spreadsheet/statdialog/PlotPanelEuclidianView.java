@@ -47,7 +47,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 
 	private EuclidianController ec;
 	private PlotPanelEuclidianView plotPanelEV;
-	
+
 	public int viewID;
 
 	private static boolean[] showAxes = { true, true };
@@ -60,14 +60,14 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 	private MyMouseListener myMouseListener;
 
 	private boolean enableContextMenu;
-	
-	
-	
+
+
+
 	public PlotSettings getPlotSettings() {
 		return plotSettings;
 	}
-	
-	
+
+
 	/**
 	 * Sets the given plotSettings and updates the panel accordingly
 	 * @param plotSettings
@@ -85,11 +85,11 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
 	}
 
-	protected static Cursor defaultCursor = Cursor.getDefaultCursor(); 
-	protected static Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
-	protected static Cursor grabbingCursor, grabCursor; 
-	
-	
+	protected  Cursor defaultCursor = Cursor.getDefaultCursor(); 
+	protected  Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
+	protected  Cursor grabbingCursor, grabCursor; 
+
+
 
 	/*************************************************
 	 * Construct the panel
@@ -99,14 +99,14 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 
 		plotPanelEV = this;
 		this.ec = this.getEuclidianController();
-		
+
 		viewID = kernel.getApplication().getGuiManager().assignPlotPanelID(this);
-			
-		
+
+
 		grabCursor = getCursorForImage(app.getImageIcon("cursor_grab.gif").getImage());
 		grabbingCursor = getCursorForImage(app.getImageIcon("cursor_grabbing.gif").getImage());
-		
-		
+
+
 		setMouseEnabled(false);
 		setMouseMotionEnabled(false);
 		setMouseWheelEnabled(false);
@@ -290,7 +290,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 	}
 
 
-	class MyMouseListener implements MouseListener{
+	private static class MyMouseListener implements MouseListener{
 
 		public void mouseClicked(MouseEvent e) {
 			Object ob = e.getSource();	
@@ -315,34 +315,34 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 
 	class MyMouseMotionListener implements MouseMotionListener{
 
-		
+
 
 		public void mouseDragged(MouseEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void mouseMoved(MouseEvent e) {
 			overDragRegion = e.getPoint().y < 10;
 			//if(overDragRegion)
-				//plotPanelEV.setSelectionRectangle(new Rectangle(0, 0, plotPanelEV.getWidth(), plotPanelEV.getHeight()));
+			//plotPanelEV.setSelectionRectangle(new Rectangle(0, 0, plotPanelEV.getWidth(), plotPanelEV.getHeight()));
 			//else
-				//plotPanelEV.setSelectionRectangle(null);
+			//plotPanelEV.setSelectionRectangle(null);
 		}
 	}
-	
+
 	public void setDefaultCursor() {
 		if(overDragRegion)
 			setCursor(grabCursor);
 		else
 			setCursor(defaultCursor);
 	}
-	
-	
 
-	
-	
-	
+
+
+
+
+
 
 	//=============================================
 	//      Context Menu
@@ -462,7 +462,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 			ds.startDrag(dge, DragSource.DefaultCopyDrop, null, 
 					new Point(0,0), new TransferablePlotPanel(),  this);
 		}
-		
+
 	}
 
 
@@ -472,12 +472,12 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 	 */
 	public class TransferablePlotPanel implements Transferable {
 
-		
+
 		private final DataFlavor supportedFlavors[] = { plotPanelFlavor, DataFlavor.imageFlavor };
 
 		private String plotPanelIdentifier;
 		private Image image;
-		
+
 		public TransferablePlotPanel() {
 			image = plotPanelEV.getExportImage(1d);
 			plotPanelIdentifier = "ProbabilityCalculator";
@@ -489,8 +489,8 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			for(int i = 0; i < supportedFlavors.length; i++)
-			if (flavor.equals(supportedFlavors[i]))
-				return true;
+				if (flavor.equals(supportedFlavors[i]))
+					return true;
 			return false;
 		}
 
@@ -508,7 +508,7 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 		return viewID;
 	}
 
-	
+
 
 
 

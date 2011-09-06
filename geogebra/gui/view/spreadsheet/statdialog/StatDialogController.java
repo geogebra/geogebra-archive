@@ -164,11 +164,13 @@ public class StatDialogController {
 		if(dataAll != null) dataAll.remove();
 
 		if(dataSource instanceof GeoList){
+			// TODO list option not working yet
 			//dataListAll = dataSource;
+			/*
 			text = ((GeoList)dataSource).getLabel();
 			if(isSorted)
 				text = "Sort[" + text + "]";
-
+			 */
 		}else{
 
 			ArrayList<CellRange> cellRangeList =  (ArrayList<CellRange>) dataSource;
@@ -186,7 +188,7 @@ public class StatDialogController {
 				break;
 
 			case StatDialog.MODE_REGRESSION:
-				
+
 				if( cellRangeList.size()==1 && cellRangeList.get(0).isPointList()){
 					dataAll = (GeoList) crProcessor.createList(
 							cellRangeList, 
@@ -196,7 +198,7 @@ public class StatDialogController {
 							doStoreUndo, 
 							GeoElement.GEO_CLASS_POINT, false);
 				}
-				
+
 				else{
 					dataAll = (GeoList) crProcessor.createPointList(
 							cellRangeList, 
@@ -207,11 +209,11 @@ public class StatDialogController {
 				}
 				break;
 
-				case StatDialog.MODE_MULTIVAR:
-					cons.setSuppressLabelCreation(true);
-					dataAll = crProcessor.createCollectionList((ArrayList<CellRange>)dataSource, true); 
-					cons.setSuppressLabelCreation(false);
-					break;
+			case StatDialog.MODE_MULTIVAR:
+				cons.setSuppressLabelCreation(true);
+				dataAll = crProcessor.createCollectionList((ArrayList<CellRange>)dataSource, true); 
+				cons.setSuppressLabelCreation(false);
+				break;
 
 			}
 		}	

@@ -564,10 +564,7 @@ SpecialNumberFormatInterface {
 		if(source == btnClose){
 			setVisible(false);
 		}
-		else if(source == btnPrint){
-			doPrint();
-		}
-
+	
 		btnClose.requestFocus();
 	}
 
@@ -744,8 +741,6 @@ SpecialNumberFormatInterface {
 			return (NO_SUCH_PAGE);
 		else {
 			Graphics2D g2d = (Graphics2D) g;
-			AffineTransform oldTransform = g2d.getTransform();
-
 			g2d.translate(pageFormat.getImageableX(), pageFormat
 					.getImageableY());
 
@@ -800,7 +795,6 @@ SpecialNumberFormatInterface {
 			this.paint(g2d,scale);
 			buttonPanel.setVisible(true);
 
-			System.gc();
 			return (PAGE_EXISTS);
 		}
 	}

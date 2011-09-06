@@ -1268,7 +1268,6 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 	// Handles user point changes in the EV plot panel 
 	public void update(GeoElement geo) {
-		double[] coords = new double[2];;
 		if(!isSettingAxisPoints && !isIniting){
 			if(geo.equals(lowPoint)){	
 				if(isValidInterval(lowPoint.getInhomX(), high)){

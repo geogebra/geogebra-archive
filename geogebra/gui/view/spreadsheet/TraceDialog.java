@@ -618,10 +618,7 @@ implements
 		} else if (source == btClose) {
 			closeDialog();
 			return;
-			
-		} else if (source == btChangeLocation) {
-			setMode(MODE_LOCATE);
-		}
+		}	
 				
 		updateGUI();	
 	}
@@ -888,7 +885,7 @@ implements
 	/**
 	 * Custom cell renderer that displays GeoElement descriptions.
 	 */
-	class MyCellRenderer extends DefaultListCellRenderer {
+	private static class MyCellRenderer extends DefaultListCellRenderer {
 		
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value,

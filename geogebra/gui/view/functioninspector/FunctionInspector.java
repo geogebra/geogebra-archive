@@ -738,8 +738,6 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 
 		// load the model with these pairs
-		//=================================================
-		int rowCount = Math.max(minRows, property.size());
 		modelInterval.setRowCount(property.size());
 
 		for(int i=0; i < property.size(); i++){

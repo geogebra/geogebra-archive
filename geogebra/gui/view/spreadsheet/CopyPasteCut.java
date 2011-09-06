@@ -71,9 +71,9 @@ public class CopyPasteCut {
 	/***************************************
 	 * Constructor
 	 */
-	public CopyPasteCut(JTable table0, Kernel kernel0) {
+	public CopyPasteCut(MyTable table0, Kernel kernel0) {
 
-		table = (MyTable)table0;
+		table = table0;
 		tableModel = (DefaultTableModel) table.getModel();
 		kernel = kernel0;	
 		app = kernel.getApplication();
@@ -426,17 +426,22 @@ public class CopyPasteCut {
 
 
 	/**
-	 * Creates copies of the geos stored in cellBufferGeo, naming them to correspond with the 
-	 * given target cell range and the original source cells.
-	 * Relative cell references are applied to the new geos.
+	 * Creates copies of the geos stored in the global field cellBufferGeo. The
+	 * copied values are named as spreadsheet cells corresponding to the given
+	 * target cell range and the original source cell locations. Relative cell
+	 * references are then applied to match the location of these new geos.
 	 * 
-	 * The target cell range is defined by upper left corner (column1, row1) 
-	 * and lower right corner (maxColumn, maxRow).
+	 * The target cell range is defined by upper left corner (column1, row1) and
+	 * lower right corner (maxColumn, maxRow).
 	 * 
 	 * @param column1
+	 *            minimum target column
 	 * @param row1
+	 *            minimum target row
 	 * @param maxColumn
+	 *            maximum target column
 	 * @param maxRow
+	 *            maximum target row
 	 * @return
 	 * @throws Exception
 	 */
@@ -806,7 +811,7 @@ public class CopyPasteCut {
 
 
 
-	class Record {
+	private static class Record {
 		int id, x1, y1, x2, y2;
 		public Record(int id, int x1, int y1, int x2, int y2){
 			this.id = id;
