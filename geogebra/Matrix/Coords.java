@@ -793,4 +793,19 @@ public class Coords
 			return new Coords(get(1),get(2),get(dim+1));
 		}
 	}
+	
+	
+	/**
+	 * this=(r,g,b,...) color representation
+	 * @return gray scale intensity
+	 */
+	public double getGrayScale(){
+		return 0.2989*getX()+0.5870*getY()+0.1140*getZ();
+	}
+	
+	
+	public void convertToGrayScale(){
+		double gray = getGrayScale();
+		setX(gray);setY(gray);setZ(gray);
+	}
 }

@@ -91,7 +91,9 @@ public class DrawLabel3D {
 		this.yOffset = yOffset;
 		this.color = new Coords((double) color.getRed()/255, 
 				(double) color.getGreen()/255, (double) color.getBlue()/255,1);
-
+		
+		if (view.isGrayScaled())
+			this.color.convertToGrayScale();
 		
 		setIsVisible(true);
 		

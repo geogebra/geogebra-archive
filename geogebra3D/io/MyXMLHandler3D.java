@@ -13,6 +13,7 @@ import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 
+import java.awt.Color;
 import java.util.LinkedHashMap;
 
 
@@ -61,13 +62,13 @@ public class MyXMLHandler3D extends MyXMLHandler {
 				break;
 			}
 
-			/*
+			
 		case 'b':
 			if (eName.equals("bgColor")) {
 				ok = handleBgColor(ev, attrs);
 				break;
 			}
-			*/
+			
 
 		case 'c':
 			if (eName.equals("coordSystem")) {
@@ -275,7 +276,27 @@ public class MyXMLHandler3D extends MyXMLHandler {
 	}
 	
 	
+	private boolean handleBgColor(EuclidianViewInterface ev, LinkedHashMap<String, String> attrs) {
+		
+		Application.debug("TODO: remove this");
+		
+		Color col = handleColorAttrs(attrs);
+		if (col == null)
+			return false;
+		ev.setBackground(col);
+		return true;
+	}
 	
+	private Color handleColorAttrs(LinkedHashMap<String, String> attrs) {
+		try {
+			int red = Integer.parseInt((String) attrs.get("r"));
+			int green = Integer.parseInt((String) attrs.get("g"));
+			int blue = Integer.parseInt((String) attrs.get("b"));
+			return new Color(red, green, blue);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	protected boolean handleAxis(EuclidianViewInterface ev, LinkedHashMap<String, String> attrs) {
 		

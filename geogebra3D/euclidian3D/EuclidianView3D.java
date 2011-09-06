@@ -296,6 +296,8 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 		app = ec.getApplication();	
 		
 		start();
+		
+		initView(false);
 	}
 	
 	
@@ -1111,7 +1113,11 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 	public void clearView() {
 		drawable3DLists.clear();
 		//getEuclidianController().initNewMode(getMode()); //TODO: put in a better place
-		
+		initView(false);
+	}
+	
+	protected void initView(boolean repaint) {
+		setBackground(Color.white);
 	}
 
 	/**
@@ -2797,6 +2803,15 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 		sb.append("\"/>\n");
 		
 		
+		// background color
+		sb.append("\t<bgColor r=\"");
+		sb.append(bgColor.getRed());
+		sb.append("\" g=\"");
+		sb.append(bgColor.getGreen());
+		sb.append("\" b=\"");
+		sb.append(bgColor.getBlue());
+		sb.append("\"/>\n");
+		
 		
 		
 		sb.append("</euclidianView3D>\n");
@@ -3709,6 +3724,8 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 			updateEye();
 			setViewChanged();
 			setWaitForUpdate();
+			resetAllDrawables();
+			renderer.setWaitForUpdateClearColor();
 		}
 	}
 	
@@ -3767,8 +3784,46 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 		setProjection(PROJECTION_ANAGLYPH);
 	}
 	
-	private double eyeSepFactor = 0.03;
+	private boolean isAnaglyphGrayScaled = true;
 	
+	public boolean isAnaglyphGrayScaled(){
+		return isAnaglyphGrayScaled;
+	}
+	
+	public void setAnaglyphGrayScaled(boolean flag){
+		
+		if (isAnaglyphGrayScaled==flag)
+			return;
+		
+		isAnaglyphGrayScaled=flag;
+		resetAllDrawables();
+	}
+	
+	public boolean isGrayScaled(){
+		return projection==PROJECTION_ANAGLYPH && isAnaglyphGrayScaled();
+	}
+	
+	private boolean isAnaglyphShutDownGreen = false;
+	
+	public boolean isAnaglyphShutDownGreen(){
+		return isAnaglyphShutDownGreen;
+	}
+
+	public void setAnaglyphShutDownGreen(boolean flag){
+
+		if (isAnaglyphShutDownGreen==flag)
+			return;
+
+		isAnaglyphShutDownGreen=flag;
+		renderer.setWaitForUpdateClearColor();
+	}
+	
+	public boolean isShutDownGreen(){
+		return projection==PROJECTION_ANAGLYPH && isAnaglyphShutDownGreen();
+	}
+	
+	private double eyeSepFactor = 0.03;
+
 	public void setEyeSepFactor(double val){
 		eyeSepFactor = val;
 		renderer.updateAnaglyphValues();
@@ -3844,6 +3899,21 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 
 	public void replaceBoundObject(GeoNumeric num, GeoNumeric geoNumeric){
 		
+	}
+	
+	
+	protected Color bgColor;
+	
+	public Color getBackground() {
+		return bgColor;
+	}
+
+	public void setBackground(Color bgColor) {
+		if (bgColor != null){
+			this.bgColor = bgColor;
+			if (renderer!=null)
+				renderer.setWaitForUpdateClearColor();
+		}
 	}
 	
 }

@@ -14,6 +14,7 @@ import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.euclidian3D.Hits3D;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
@@ -355,6 +356,11 @@ public class Renderer implements GLEventListener {
         	draw();       		
         }
         */
+        
+        if (waitForUpdateClearColor){
+        	updateClearColor();
+        	waitForUpdateClearColor=false;
+        }
         
         if (view3D.getProjection()==EuclidianView3D.PROJECTION_ANAGLYPH){
         	//clear all
@@ -1414,6 +1420,31 @@ public class Renderer implements GLEventListener {
     		break;
     	}
     }
+    
+    
+    //////////////////////////////////
+    // clear color
+    
+    private boolean waitForUpdateClearColor = false;
+    
+    public void setWaitForUpdateClearColor(){
+    	waitForUpdateClearColor = true;
+    }
+    
+    private void updateClearColor(){
+    	/*
+    	if(view3D.getProjection()==EuclidianView3D.PROJECTION_ANAGLYPH)
+    		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);  
+    	else
+    		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);  
+    		*/
+    	Color c = view3D.getBackground();
+    	float r = (float) c.getRed()/255;
+    	float g = view3D.isShutDownGreen() ? 0 : (float) c.getGreen()/255;
+    	float b = (float) c.getBlue()/255;
+    	
+        gl.glClearColor(r,g,b, 0.0f);   
+    }
      
     
     //////////////////////////////////
@@ -1528,8 +1559,8 @@ public class Renderer implements GLEventListener {
         gl.glBlendFunc(GLlocal.GL_SRC_ALPHA, GLlocal.GL_ONE_MINUS_SRC_ALPHA);
         //gl.glBlendFunc(GLlocal.GL_SRC_ALPHA, GLlocal.GL_DST_ALPHA);
         gl.glEnable(GLlocal.GL_BLEND);	
-        gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);  
-        //gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);  
+        updateClearColor();
+        
         
         gl.glAlphaFunc(GLlocal.GL_NOTEQUAL, 0);//pixels with alpha=0 are not drawn
         
@@ -1808,7 +1839,7 @@ public class Renderer implements GLEventListener {
     		if (eye==EYE_LEFT)
     			gl.glColorMask(true,false,false,true);
     		else
-    			gl.glColorMask(false,true,true,true);
+    			gl.glColorMask(false,!view3D.isAnaglyphShutDownGreen(),true,true);
     	}else
     		gl.glColorMask(true,true,true,true);
     	
