@@ -571,10 +571,10 @@ public class Application implements KeyEventDispatcher {
 			
 			if (!fileLoaded && !ggtloading)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
-			
-			if(tmpPerspectives != null && !ggtloading) {
-				getGuiManager().getLayout().setPerspectives(tmpPerspectives);
-			}
+		}
+		
+		if(useFullGui() && tmpPerspectives != null && !ggtloading) {
+			getGuiManager().getLayout().setPerspectives(tmpPerspectives);
 		}
 
 		setUndoActive(undoActive);
