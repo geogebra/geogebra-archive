@@ -9,16 +9,15 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
 public class RelativeCopy {
@@ -57,6 +56,7 @@ public class RelativeCopy {
 			// collect all redefine operations				
 			cons.startCollectingRedefineCalls();
 			
+			boolean patternOK = isPatternSource(new CellRange(table,sx1, sy1, sx2, sy2));
 			
 			// ==============================================
 			//          vertical drag
@@ -64,7 +64,7 @@ public class RelativeCopy {
 			if (sx1 == dx1 && sx2 == dx2) {  
 
 				if (dy2 < sy1) { // 1  -----  drag up
-					if (sy1 + 1 == sy2) { 
+					if (sy1 + 1 == sy2 && patternOK) { 
 						// two row source, so drag copy a linear pattern
 						for (int x = sx1; x <= sx2; ++ x) {
 							GeoElement v1 = getValue(table, x, sy1);
@@ -90,7 +90,7 @@ public class RelativeCopy {
 
 
 				else if (dy1 > sy2) { // 4 ---- drag down
-					if (sy1 + 1 == sy2) {  
+					if (sy1 + 1 == sy2 && patternOK) {  
 						// two row source, so drag copy a linear pattern
 						for (int x = sx1; x <= sx2; ++ x) {
 							GeoElement v1 = getValue(table, x, sy1);
@@ -121,7 +121,7 @@ public class RelativeCopy {
 			// ==============================================
 			else if (sy1 == dy1 && sy2 == dy2) {
 				if (dx2 < sx1) { // 2  ---- drag left
-					if (sx1 + 1 == sx2) { 
+					if (sx1 + 1 == sx2 && patternOK) { 
 						// two column source, so drag copy a linear pattern
 						for (int y = sy1; y <= sy2; ++ y) {
 							GeoElement v1 = getValue(table, sx1, y);
@@ -146,7 +146,7 @@ public class RelativeCopy {
 					success = true;
 				}
 				else if (dx1 > sx2) { // 4 --- drag right
-					if (sx1 + 1 == sx2) {
+					if (sx1 + 1 == sx2 && patternOK) {
 						// two column source, so drag copy a linear pattern
 						for (int y = sy1; y <= sy2; ++ y) {
 							GeoElement v1 = getValue(table, sx1, y);
@@ -198,6 +198,27 @@ public class RelativeCopy {
 		}
 	}
 
+	
+	/**
+	 * Tests if a cell range can be used as the source for a pattern drag-copy.
+	 * @param cellRange
+	 * @return
+	 */
+	private boolean isPatternSource(CellRange cellRange){
+		// don't allow empty cells
+		if(cellRange.hasEmptyCells()) return false;
+		
+		ArrayList<GeoElement> list = cellRange.toGeoList();
+		for(GeoElement geo : list){
+			if(!(geo.isGeoNumeric() || geo.isGeoFunction()))
+				return false;
+		}
+		
+		return true;
+	}
+	
+	
+	
 	
 	/**
 	 * Performs a vertical spreadsheet drag-copy. Cells are copied vertically
@@ -477,14 +498,19 @@ public class RelativeCopy {
 
 	}
 
+	
+	
 	public static void doCopyNoStoringUndoInfo1(Kernel kernel, MyTable table, String text, GeoElement geoForStyle, int column, int row) throws Exception {
 		GeoElement oldValue = getValue(table, column, row);
+		
 		if (text == null) {
 			if (oldValue != null) {
 				prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
 			}
 			return;
 		}
+		
+		
 		GeoElement value2 = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column, row);
 
 		if (geoForStyle != null)
@@ -513,58 +539,32 @@ public class RelativeCopy {
 		return pre + post;
 	}
 
-	/*
-	// return true if any of elems1 is dependent on any of elems
-	// preposition: every elems1 is not null.
-	public static boolean checkDependency(GeoElement[][] elems1, GeoElement[][] elems2) {
-		for (int i = 0; i < elems1.length; ++ i) {
-			for (int j = 0; j < elems1[i].length; ++ j) {
-				if (checkDependency(elems1[i][j], elems2)) return true;
-			}			
-		}
-		return false;
-	}
-
-	// return true if elem is dependent on any of elems
-	// preposition: elem is not null
-	public static boolean checkDependency(GeoElement elem, GeoElement[][] elems) {
-		for (int i = 0; i < elems.length; ++ i) {
-			for (int j = 0; j < elems[i].length; ++ j) {
-				if (elems[i] == null) continue;
-				if (checkDependency(elem, elems[i][j])) return true;
-			}			
-		}
-		return false;
-	}
-
-	// return true if elem1 is dependent on elem2
-	// preposition: elem is not null
-	public static boolean checkDependency(GeoElement elem1, GeoElement elem2) {
-		if (elem1 == null || elem2 == null) return false;
-		GeoElement[] elems = getDependentObjects(elem1);
-		if (elems.length == 0) return false;
-        int column = GeoElement.getSpreadsheetColumn(elem2.getLabel());
-        int row = GeoElement.getSpreadsheetRow(elem2.getLabel());
-        if (column == -1 || row == -1) return false;
-		for (int i = 0; i < elems.length; ++ i) {
-            int column2 = GeoElement.getSpreadsheetColumn(elems[i].getLabel());
-            int row2 = GeoElement.getSpreadsheetRow(elems[i].getLabel());
-            if (column == column2 && row == row2) return true;
-		}
-		return false;
-	}
-	/**/
-
-	public static GeoElement[] getDependentObjects(GeoElement geo) {
-		if (geo.isIndependent()) return new GeoElement[0];
-		TreeSet geoTree = geo.getAllPredecessors();
-		return (GeoElement[])geoTree.toArray(new GeoElement[0]);
-	}
-
+	
 	/**
-	 * Returns a GeoElement[columns][rows] array containing GeoElements found in
-	 * the cell block with upper left corner in column1, row1 and lower
-	 * right corner in column2, row2.
+	 * Returns array of GeoElements that depend on given GeoElement geo
+	 * 
+	 * @param geo
+	 * @return
+	 */
+	public static GeoElement[] getDependentObjects(GeoElement geo) {
+		if (geo.isIndependent())
+			return new GeoElement[0];
+		TreeSet<GeoElement> geoTree = geo.getAllPredecessors();
+		return (GeoElement[]) geoTree.toArray(new GeoElement[0]);
+	}
+
+	
+	/**
+	 * Returns 2D array, GeoElement[columns][rows], containing GeoElements found
+	 * in the cell range with upper left corner (column1, row1) and lower right
+	 * corner (column2, row2).
+	 * 
+	 * @param table
+	 * @param column1
+	 * @param row1
+	 * @param column2
+	 * @param row2
+	 * @return
 	 */
 	public static GeoElement[][] getValues(MyTable table, int column1, int row1, int column2, int row2) {
 		GeoElement[][] values = new GeoElement[column2 - column1 + 1][row2 - row1 + 1];
@@ -750,18 +750,18 @@ public class RelativeCopy {
 
 	/**
 	 * Prepares a spreadsheet cell editor string for processing in the kernel and 
-	 * returns either a new GeoElement for the cell or null.
+	 * returns either (1) a new GeoElement for the cell or (2) null.
 	 * 
 	 * @param kernel
 	 * @param table
 	 * @param text
-	 *            -- string to be processed
+	 *            string representation of the new GeoElement
 	 * @param oldValue
-	 *            -- current cell GeoElement
+	 *            current cell GeoElement
 	 * @param column
-	 *            -- cell column
+	 *            cell column
 	 * @param row
-	 *            -- cell row
+	 *            cell row
 	 * @return
 	 * @throws Exception
 	 */
@@ -780,7 +780,7 @@ public class RelativeCopy {
 			}
 		}
 
-		// If "=" is required before commands and text is not a number 
+		// if "=" is required before commands and text is not a number 
 		// or does not begin with "=" then surround it with quotes. 
 		// This will force the cell to become GeoText. 
 		if(table.isEqualsRequired()){
