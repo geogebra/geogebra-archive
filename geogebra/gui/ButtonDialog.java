@@ -267,7 +267,7 @@ public class ButtonDialog extends JDialog
 
 			
 			button.setLabel(null);	
-			button.setClickScript(tfScript.getText());
+			button.setClickScript(tfScript.getText(), true);
 			
 			// set caption text
 			String strCaption = tfCaption.getText().trim();

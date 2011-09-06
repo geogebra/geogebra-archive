@@ -5596,21 +5596,147 @@ public abstract class GeoElement
 	private String clickScript = "";
 	private String updateScript = "";
 
-	public void setClickScript(String script) {
-		if (!canHaveClickScript()) return;
-		//Application.debug(script);
-		if(app.getScriptingLanguage()==null){
-			app.setScriptingLanguage(app.getLocale().getLanguage());
+	// This method is copied from AutoCompleteTextField
+	private static boolean isLetterOrDigit(char character) {
+		switch (character) {
+		case '_':  // allow underscore as a valid letter in an autocompletion word
+			return true;
+
+		default:
+			return Character.isLetterOrDigit(character);
 		}
-		this.clickScript = script;
 	}
 
-	public void setUpdateScript(String script) {
-		if (!canHaveUpdateScript()) return;
-		if(app.getScriptingLanguage()==null){
-			app.setScriptingLanguage(app.getLocale().getLanguage());
+	/**
+	 * This method should split a GeoGebra script into the following format:
+	 * "" or "something"; "command"; "something"; "command"; "something"; ...
+	 * @param st String GeoGebra script
+	 * @return String [] the GeoGebra script split into and array
+	 */
+	private static String [] splitScriptByCommands(String st) {
+
+		StringBuilder retone = new StringBuilder();
+		ArrayList<String> ret = new ArrayList<String>();
+
+		// as the other algorithms would be too complicated,
+		// just go from the end of the string and advance character by character
+
+		// at first count the number of "s to decide how to start the algorithm
+		int countapo = 0;
+		for (int j = 0; j < st.length(); j++)
+			if (st.charAt(j) == '"')
+				countapo++;
+
+		boolean in_string = false;
+		if (countapo % 2 == 1)
+			in_string = true;
+
+		boolean before_bracket = false;
+		boolean just_before_bracket = false;
+		for (int i = st.length() - 1; i >= 0; i--) {
+			if (in_string) {
+				if (st.charAt(i) == '"')
+					in_string = false;
+			} else if (just_before_bracket) {
+				if (isLetterOrDigit(st.charAt(i))) {
+					ret.add(0, retone.reverse().toString());
+					retone = new StringBuilder();
+					just_before_bracket = false;
+					before_bracket = true;
+				} else if (st.charAt(i) != '[' && st.charAt(i) != ' ') {
+					just_before_bracket = false;
+					before_bracket = false;
+					if (st.charAt(i) == '"')
+						in_string = true;
+				}
+			} else if (before_bracket) {
+				if (!isLetterOrDigit(st.charAt(i))) {
+					ret.add(0, retone.reverse().toString());
+					retone = new StringBuilder();
+					before_bracket = false;
+					if (st.charAt(i) == '"')
+						in_string = true;
+					else if (st.charAt(i) == '[')
+						just_before_bracket = true;
+				}
+			} else {
+				if (st.charAt(i) == '"')
+					in_string = true;
+				else if (st.charAt(i) == '[')
+					just_before_bracket = true;
+			}
+			retone.append(st.charAt(i));
 		}
-		this.updateScript = script;
+		ret.add(0, retone.reverse().toString());
+		if (before_bracket) {
+			ret.add(0, "");
+		}
+		String [] ex = {""};
+		return ret.toArray(ex);
+	}
+
+	private String script2LocalizedScript(String st) {
+		String [] starr = splitScriptByCommands(st);
+		StringBuilder retone = new StringBuilder();
+		for (int i = 0; i < starr.length; i++) {
+			if (i % 2 == 0) {
+				retone.append(starr[i]);
+			} else {
+				retone.append(app.getCommand(starr[i]));
+			}
+		}
+		return retone.toString();
+	}
+	
+	private String localizedScript2Script(String st) {
+		String [] starr = splitScriptByCommands(st);
+		StringBuilder retone = new StringBuilder();
+		for (int i = 0; i < starr.length; i++) {
+			if (i % 2 == 0) {
+				retone.append(starr[i]);
+			} else {
+				// allow English language command in French scripts
+				if (app.getInternalCommand(starr[i]) != null)
+					retone.append(app.getInternalCommand(starr[i]));
+				else
+					// fallback for wrong call in English already
+					// or if someone writes an English command into an
+					// other language script
+					retone.append(starr[i]);
+			}
+		}
+		return retone.toString();
+	}
+
+	public void setClickScript(String script, boolean translateInternal) {
+		if (!canHaveClickScript()) return;
+		//Application.debug(script);
+		if (clickJavaScript) {
+			if(app.getScriptingLanguage()==null){
+				app.setScriptingLanguage(app.getLocale().getLanguage());
+			}
+			this.clickScript = script;
+		} else {
+			if (translateInternal)
+				this.clickScript = localizedScript2Script(script);
+			else
+				this.clickScript = script;
+		}
+	}
+
+	public void setUpdateScript(String script, boolean translateInternal) {
+		if (!canHaveUpdateScript()) return;
+		if (updateJavaScript) {
+			if(app.getScriptingLanguage()==null){
+				app.setScriptingLanguage(app.getLocale().getLanguage());
+			}
+			this.updateScript = script;
+		} else {
+			if (translateInternal)
+				this.updateScript = localizedScript2Script(script);
+			else
+				this.updateScript = script;
+		}
 		app.getScriptManager().initJavaScriptViewWithoutJavascript();
 	}
 
@@ -5619,10 +5745,14 @@ public abstract class GeoElement
 	}
 
 	public String getUpdateScript() {
+		if (!updateJavaScript)
+			return script2LocalizedScript(updateScript);
 		return updateScript;
 	}
 
 	public String getClickScript() {
+		if (!clickJavaScript)
+			return script2LocalizedScript(clickScript);
 		return clickScript;
 	}
 

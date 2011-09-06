@@ -3109,12 +3109,12 @@ public class MyXMLHandler implements DocHandler {
 		try {			
 			String clickScript = (String) attrs.get("val");
 			if(clickScript != null && clickScript.length()>0){
-				geo.setClickScript(clickScript);
+				geo.setClickScript(clickScript, false);
 				geo.setClickJavaScript(javaScript);
 			}
 			String updateScript = (String) attrs.get("onUpdate");			
 			if(updateScript != null && updateScript.length()>0){
-				geo.setUpdateScript(updateScript);
+				geo.setUpdateScript(updateScript, false);
 				geo.setUpdateJavaScript(javaScript);
 			}
 			return true;
@@ -3184,7 +3184,7 @@ public class MyXMLHandler implements DocHandler {
 				bool.setValue(parseBoolean(strVal));
 			} else if (isButton) {
 				GeoButton button = (GeoButton)geo;
-				button.setClickScript(strVal);
+				button.setClickScript(strVal, false);
 				button.setClickJavaScript(true);
 			}
 			return true;
