@@ -210,9 +210,13 @@ public class RelativeCopy {
 		// don't allow empty cells
 		if(cellRange.hasEmptyCells()) return false;
 		
+		// test for any unacceptable geos in the range
 		ArrayList<GeoElement> list = cellRange.toGeoList();
 		for(GeoElement geo : list){
-			if(!(geo.isGeoNumeric() || geo.isGeoFunction()))
+			if(!(geo.isGeoNumeric() 
+					|| geo.isGeoFunction()
+					|| geo.isGeoPoint()
+			))
 				return false;
 		}
 		
