@@ -669,12 +669,28 @@ public class CopyPaste {
 		app.getActiveEuclidianView().getEuclidianController().setPastePreviewSelected();
 
 		if (pasteFast(app)) {
-			app.getGgbApi().evalXML(copiedXMLforSameWindow.toString());
-			app.getKernel().getConstruction().updateConstruction();
+			EuclidianView ev = (EuclidianView) app.getActiveEuclidianView();
+			if (ev == app.getEuclidianView()) {
+				app.getGgbApi().evalXML(copiedXMLforSameWindow.toString());
+				app.getKernel().getConstruction().updateConstruction();
+				app.setActiveView(Application.VIEW_EUCLIDIAN);
+			} else {
+				app.getGgbApi().evalXML(copiedXMLforSameWindow.toString());
+				app.getKernel().getConstruction().updateConstruction();
+				app.setActiveView(Application.VIEW_EUCLIDIAN2);
+			}
 			handleLabels(app, copiedXMLlabelsforSameWindow);
 		} else {
-			app.getGgbApi().evalXML(copiedXML.toString());
-			app.getKernel().getConstruction().updateConstruction();
+			EuclidianView ev = (EuclidianView) app.getActiveEuclidianView();
+			if (ev == app.getEuclidianView()) {
+				app.getGgbApi().evalXML(copiedXML.toString());
+				app.getKernel().getConstruction().updateConstruction();
+				app.setActiveView(Application.VIEW_EUCLIDIAN);
+			} else {
+				app.getGgbApi().evalXML(copiedXML.toString());
+				app.getKernel().getConstruction().updateConstruction();
+				app.setActiveView(Application.VIEW_EUCLIDIAN2);
+			}
 			handleLabels(app, copiedXMLlabels);
 		}
 
