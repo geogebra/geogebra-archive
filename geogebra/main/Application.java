@@ -114,6 +114,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -796,6 +797,8 @@ public class Application implements KeyEventDispatcher {
 		getEuclidianView().resetMaxLayerUsed();
 		
 		kernel.resetLibraryJavaScript();
+
+		resetUniqueId();
 	}
 
 	/**
@@ -3656,6 +3659,9 @@ public class Application implements KeyEventDispatcher {
 
 			// make sure objects are displayed in the correct View
 			setActiveView(Application.VIEW_EUCLIDIAN);
+			
+			// reset unique id (for old files, in case they don't have one)
+			resetUniqueId();
 
 			BufferedInputStream bis = new BufferedInputStream(is);
 			myXMLio.readZipFromInputStream(bis, isMacroFile);
@@ -5908,6 +5914,25 @@ public class Application implements KeyEventDispatcher {
 	
 	public boolean is3D(){
 		return false;
+	}
+	
+	// random id to identify ggb files
+	// eg so that GeoGebraTube can notice it's a version of the same file
+	private String uniqueId = ""+UUID.randomUUID();
+
+	public String getUniqueId() {
+		Application.debug(uniqueId);
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+		Application.debug(uniqueId);
+	}
+	
+	public void resetUniqueId() {
+		uniqueId = ""+UUID.randomUUID();
+		Application.debug(uniqueId);
 	}
 	
 }

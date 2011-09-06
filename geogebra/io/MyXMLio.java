@@ -706,8 +706,15 @@ public class MyXMLio {
 		sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 	}
 
-	private final void addGeoGebraHeader(StringBuilder sb, boolean isMacro) {
-		sb.append("<geogebra format=\"" + kernel.getXMLFileFormat() + "\"");
+	private final void addGeoGebraHeader(StringBuilder sb, boolean isMacro, String uniqueId) {
+		sb.append("<geogebra format=\"");
+		sb.append(GeoGebra.XML_FILE_FORMAT);
+		sb.append("\" ");
+		if (uniqueId != null) {
+			sb.append("id=\"");
+			sb.append(uniqueId); // unique id to identify ggb file
+			sb.append("\" ");
+		}
 		sb.append(" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/");
 		if (isMacro)
 			sb.append(GeoGebra.GGT_XSD_FILENAME); //eg	ggt.xsd
@@ -724,7 +731,7 @@ public class MyXMLio {
 	public String getFullXML() {
 		StringBuilder sb = new StringBuilder();
 		addXMLHeader(sb);
-		addGeoGebraHeader(sb, false);
+		addGeoGebraHeader(sb, false, app.getUniqueId());
 		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\"");
 		//sb.append(" xsi:noNamespaceSchemaLocation=\"http://www.geogebra.org/");
@@ -779,7 +786,7 @@ public class MyXMLio {
 	public String getPreferencesXML() {
 		StringBuilder sb = new StringBuilder();
 		addXMLHeader(sb);
-		addGeoGebraHeader(sb, false);
+		addGeoGebraHeader(sb, false, null);
 		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 		//				+ "\">\n");
@@ -797,7 +804,7 @@ public class MyXMLio {
 	public String getFullMacroXML(ArrayList macros) {
 		StringBuilder sb = new StringBuilder();
 		addXMLHeader(sb);
-		addGeoGebraHeader(sb, true);
+		addGeoGebraHeader(sb, true, null);
 		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT
 		//				+ "\">\n");
@@ -818,7 +825,7 @@ public class MyXMLio {
 
 		StringBuilder sb = new StringBuilder();
 		addXMLHeader(sb);
-		addGeoGebraHeader(sb, false);
+		addGeoGebraHeader(sb, false, app.getUniqueId());
 		//sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 

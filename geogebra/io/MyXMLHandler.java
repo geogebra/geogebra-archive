@@ -420,6 +420,9 @@ public class MyXMLHandler implements DocHandler {
 				} catch (Exception e) {
 					throw new MyError(app, "FileFormatUnknown");
 				}
+				
+				String uniqueId = (String) attrs.get("id");
+				if (uniqueId != null) app.setUniqueId(uniqueId);
 			}
 			break;
 
