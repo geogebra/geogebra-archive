@@ -5921,18 +5921,15 @@ public class Application implements KeyEventDispatcher {
 	private String uniqueId = ""+UUID.randomUUID();
 
 	public String getUniqueId() {
-		Application.debug(uniqueId);
 		return uniqueId;
 	}
 
 	public void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
-		Application.debug(uniqueId);
 	}
 	
 	public void resetUniqueId() {
 		uniqueId = ""+UUID.randomUUID();
-		Application.debug(uniqueId);
 	}
 	
 }
