@@ -332,7 +332,7 @@ public class Util extends Object {
      *  Writes all contents of the given InputStream to a String
      */
     public static String loadIntoString(InputStream is) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF8"));
         StringBuilder sb = new StringBuilder();
  
         String line = null;

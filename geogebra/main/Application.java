@@ -4452,7 +4452,7 @@ public class Application implements KeyEventDispatcher {
         StringBuilder sb = new StringBuilder();        
         try {
           InputStream is = Application.class.getResourceAsStream(s);
-          BufferedReader br = new BufferedReader(new InputStreamReader(is));
+          BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF8"));
           String thisLine;
           while ((thisLine = br.readLine()) != null) {  
              sb.append(thisLine);
