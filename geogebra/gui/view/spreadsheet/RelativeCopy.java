@@ -322,7 +322,7 @@ public class RelativeCopy {
 		if(value.isGeoText() && !((GeoText)value).isTextCommand()){
 			text = "\"" + text + "\"";
 		}
-
+		
 
 		// for E1 = Polynomial[D1] we need value.getCommandDescription(); 
 		// even though it's a GeoFunction
@@ -331,9 +331,9 @@ public class RelativeCopy {
 			text = ((GeoFunction)value).toSymbolicString();
 		}
 
-		Application.debug("before:"+text);
+		//Application.debug("before:"+text);
 		text = updateCellReferences(value, text, dx, dy);
-		Application.debug("after:"+text);
+		//Application.debug("after:"+text);
 
 		// condition to show object
 		GeoBoolean bool = value.getShowObjectCondition();
@@ -370,9 +370,15 @@ public class RelativeCopy {
 
 		kernel.restorePrintAccuracy();
 
+		// make sure that non-GeoText elements are copied when the equalsRequired option is set
+		if(!value.isGeoText() && table.isEqualsRequired()){
+			text = "=" + text;
+		}
 
 		//Application.debug("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
-		//int column3 = table.convertColumnIndexToView(column) + dx;
+		
+	
+		// create the new cell geo
 		Matcher matcher = GeoElement.spreadsheetPattern.matcher(value.getLabel());			
 		int column0 = GeoElement.getSpreadsheetColumn(matcher);
 		int row0 = GeoElement.getSpreadsheetRow(matcher);
