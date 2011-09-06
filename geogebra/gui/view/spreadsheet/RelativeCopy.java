@@ -6,9 +6,11 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -351,6 +353,15 @@ public class RelativeCopy {
 			// we need the definition without A1(x)= on the front
 			text = ((GeoFunction)value).toSymbolicString();
 		}
+		
+		boolean freeImage = false;
+		
+		if (value.isGeoImage()) {
+			GeoImage image = (GeoImage)value;
+			if (image.getParentAlgorithm() == null) {
+				freeImage = true;
+			}
+		}
 
 		//Application.debug("before:"+text);
 		text = updateCellReferences(value, text, dx, dy);
@@ -403,8 +414,14 @@ public class RelativeCopy {
 		Matcher matcher = GeoElement.spreadsheetPattern.matcher(value.getLabel());			
 		int column0 = GeoElement.getSpreadsheetColumn(matcher);
 		int row0 = GeoElement.getSpreadsheetRow(matcher);
-		GeoElement value2 = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
-
+		GeoElement value2;
+		if (freeImage) {
+			value2 = value.copy();
+			if (oldValue != null) oldValue.remove();
+			value2.setLabel(table.getModel().getColumnName(column0 + dx) + (row0 + dy + 1));
+		} else {
+			value2 = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
+		}
 		value2.setAllVisualProperties(value, false);
 
 		value2.setAuxiliaryObject(true);
