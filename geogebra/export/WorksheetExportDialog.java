@@ -532,7 +532,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(label, BorderLayout.NORTH);
-		p.add(textAbove, BorderLayout.CENTER);
+		p.add(textAbove, BorderLayout.SOUTH);
 		centerPanel.add(p, BorderLayout.NORTH);
 
 		label = new JLabel(app.getPlain("TextAfterConstruction") + ":");
@@ -540,7 +540,7 @@ public class WorksheetExportDialog extends JDialog {
 		// scrollPane = new JScrollPane(textBelow);
 		p = new JPanel(new BorderLayout());
 		p.add(label, BorderLayout.NORTH);
-		p.add(textBelow, BorderLayout.CENTER);
+		p.add(textBelow, BorderLayout.SOUTH);
 		centerPanel.add(p, BorderLayout.SOUTH);
 
 		// TODO set line wrapping
