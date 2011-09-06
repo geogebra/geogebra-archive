@@ -110,8 +110,8 @@ public class DrawParametricCurve extends Drawable {
 		double min = curve.getMinParameter();
 		double max = curve.getMaxParameter();
 		if (curve instanceof GeoFunction){
-			double minView = ((GeoElement) curve).getXmin(view);
-			double maxView = ((GeoElement) curve).getXmax(view);
+			double minView = view.getXmin();
+			double maxView = view.getXmax();
 			if (min<minView)
 				min=minView;
 			if (max>maxView)

@@ -22,6 +22,7 @@ import geogebra.GeoGebra;
 import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -87,6 +88,7 @@ import geogebra.util.MaxSizeHashMap;
 import geogebra.util.ScientificFormat;
 import geogebra.util.Unicode;
 
+import java.awt.Rectangle;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -94,6 +96,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
@@ -774,6 +777,69 @@ public class Kernel {
 			return Math.max(yscale, yscale2);
 		else
 			return yscale;
+	}
+	
+	/**
+	 * @param geo
+	 * @return RealWorld Coordinates of the rectangle covering all euclidian views
+	 *  in which <b>geo</b> is shown.<br /> Format: {xMin,xMax,yMin,yMax,xScale,yScale}
+	 */
+	public double[] getViewBoundsForGeo(GeoElement geo){
+		Set<Integer> viewSet=geo.getViewSet();
+		double[] viewBounds=new double[6];
+		for (int i=0;i<6;i++)
+			viewBounds[i]=Double.NEGATIVE_INFINITY;
+		viewBounds[0]=viewBounds[2]=Double.POSITIVE_INFINITY;
+		for(int id:viewSet){
+			View view=app.getView(id);
+			if (view!=null&&view instanceof EuclidianViewInterface){
+				EuclidianViewInterface ev=(EuclidianViewInterface)view;
+				viewBounds[0]=Math.min(viewBounds[0],ev.getXmin());
+				viewBounds[1]=Math.max(viewBounds[1],ev.getXmax());
+				viewBounds[2]=Math.min(viewBounds[2],ev.getYmin());
+				viewBounds[3]=Math.max(viewBounds[3],ev.getYmax());
+				viewBounds[4]=Math.max(viewBounds[4],ev.getXscale());
+				viewBounds[5]=Math.max(viewBounds[5],ev.getYscale());
+			}
+		}
+//		if (viewBounds[0]==Double.POSITIVE_INFINITY){
+//			//standard values if no view
+//			viewBounds[0]=viewBounds[2]=-10;
+//			viewBounds[1]=viewBounds[3]=10;
+//			viewBounds[5]=viewBounds[6]=1;
+//		}
+		return viewBounds;
+	}
+	
+	/**
+	 * 
+	 * {@linkplain #getViewBoundsForGeo(GeoElement)}
+	 * @see #getViewBoundsForGeo(GeoElement)
+	 * @param geo
+	 * @return
+	 */
+	public double getViewsXMin(GeoElement geo){
+		return getViewBoundsForGeo(geo)[0];
+	}
+	
+	public double getViewsXMax(GeoElement geo){
+		return getViewBoundsForGeo(geo)[1];
+	}
+	
+	public double getViewsYMin(GeoElement geo){
+		return getViewBoundsForGeo(geo)[2];
+	}
+	
+	public double getViewsYMax(GeoElement geo){
+		return getViewBoundsForGeo(geo)[3];
+	}
+	
+	public double getViewsXScale(GeoElement geo){
+		return getViewBoundsForGeo(geo)[4];
+	}
+	
+	public double getViewsYScale(GeoElement geo){
+		return getViewBoundsForGeo(geo)[5];
 	}
 	
 	

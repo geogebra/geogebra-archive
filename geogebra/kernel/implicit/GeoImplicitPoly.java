@@ -407,24 +407,19 @@ Dilateable, Transformable, EuclidianViewCE {
 		degX=-1;
 		degY=-1;
 		coeffSquarefree=null;
-		try {
-			degX=c.length-1;
-			coeff = new double[c.length][];
-			for (int i = 0; i < c.length; i++) {
-				coeff[i] = new double[c[i].length];
-				if (c[i].length>degY+1)
-					degY=c[i].length-1;
-				for (int j = 0; j < c[i].length; j++){
-					coeff[i][j]=c[i][j];
-					isConstant=isConstant&&(c[i][j]==0||(i==0&&j==0));	
-				}
+		degX=c.length-1;
+		coeff = new double[c.length][];
+		for (int i = 0; i < c.length; i++) {
+			coeff[i] = new double[c[i].length];
+			if (c[i].length>degY+1)
+				degY=c[i].length-1;
+			for (int j = 0; j < c[i].length; j++){
+				coeff[i][j]=c[i][j];
+				isConstant=isConstant&&(c[i][j]==0||(i==0&&j==0));	
 			}
-			if (calcPath&&this.calcPath)
-				updatePath();
-		} catch (Exception e) {
-			setUndefined();
-			e.printStackTrace();
 		}
+		if (calcPath&&this.calcPath)
+			updatePath();
 	}
 	
 	/**
@@ -439,33 +434,28 @@ Dilateable, Transformable, EuclidianViewCE {
 	 * @param calcPath 
 	 */
 	public void setCoeff(ExpressionValue[][] ev,boolean calcPath){
-		try {
-			isConstant=true;
-			degX=-1;
-			degY=-1;
-			coeff = new double[ev.length][];
-			degX=ev.length-1;
-			coeffSquarefree=null;
-			for (int i = 0; i < ev.length; i++) {
-				coeff[i] = new double[ev[i].length];
-				if (ev[i].length>degY+1)
-					degY=ev[i].length-1;
-				for (int j = 0; j < ev[i].length; j++){
-					if (ev[i][j]==null)
-						coeff[i][j]=0;
-					else
-						coeff[i][j] = ((NumberValue) ev[i][j].evaluate())
-							.getDouble();
-					isConstant=isConstant&&(Kernel.isZero(coeff[i][j])||(i==0&&j==0));
-				}
+		isConstant=true;
+		degX=-1;
+		degY=-1;
+		coeff = new double[ev.length][];
+		degX=ev.length-1;
+		coeffSquarefree=null;
+		for (int i = 0; i < ev.length; i++) {
+			coeff[i] = new double[ev[i].length];
+			if (ev[i].length>degY+1)
+				degY=ev[i].length-1;
+			for (int j = 0; j < ev[i].length; j++){
+				if (ev[i][j]==null)
+					coeff[i][j]=0;
+				else
+					coeff[i][j] = ((NumberValue) ev[i][j].evaluate())
+						.getDouble();
+				isConstant=isConstant&&(Kernel.isZero(coeff[i][j])||(i==0&&j==0));
 			}
-			getFactors();
-			if (calcPath&&this.calcPath)
-				updatePath();
-		} catch (Exception e) {
-			setUndefined();
-			e.printStackTrace();
 		}
+		getFactors();
+		if (calcPath&&this.calcPath)
+			updatePath();
 	}
 	
 	/**
@@ -1200,10 +1190,12 @@ Dilateable, Transformable, EuclidianViewCE {
 		 * updates the path inside the current view-rectangle
 		 */
 		public void updatePath(){
-			EuclidianViewInterface view=kernel.getApplication().getEuclidianView();
-			if (view!=null)
-				updatePath(view.getXmin(), view.getYmin(), view.getXmax()-view.getXmin(), view.getYmax()-view.getYmin(),
-        			(view.getXmax()-view.getXmin())*(view.getYmax()-view.getYmin())/view.getHeight()/view.getWidth());
+			double[] viewBounds=kernel.getViewBoundsForGeo(this);
+			if (viewBounds[0]==Double.POSITIVE_INFINITY){ //no active View
+				viewBounds=new double[]{-1,1,-1,1,1,1}; //get some value...
+			}
+			updatePath(viewBounds[0], viewBounds[2], viewBounds[1]-viewBounds[0],
+					viewBounds[3]-viewBounds[2], 1./viewBounds[4]/viewBounds[5]);
 		}
 		
 		/**
