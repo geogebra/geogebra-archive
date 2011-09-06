@@ -28,23 +28,42 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 				<xs:element ref="euclidianView" minOccurs="0" maxOccurs="2"/>
 				<xs:element ref="euclidianView3D" minOccurs="0"/>
 				<xs:element ref="spreadsheetView" minOccurs="0"/>
+				<xs:element ref="keyboard" minOccurs="0"/>
 				<xs:element ref="kernel"/>
+				<xs:element ref="scripting" minOccurs="0"/>
 				<xs:element ref="construction" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>
 					This element is required except for the preferences file. 
 					</xs:documentation>
 				</xs:annotation>
-				</xs:element>
-				<xs:element ref="casSession" minOccurs="0"/>
+				</xs:element>				
 			</xs:sequence>
 			<xs:attribute name="format" type="xs:double" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	
+	<xs:element name="keyboard">
+		<xs:complexType>
+		<xs:attribute name="language" type="xs:string"/>
+		<xs:attribute name="width" type="positiveInt"/>
+		<xs:attribute name="height" type="positiveInt"/>
+		<xs:attribute name="opacity" type="xs:double"/>
+		<xs:attribute name="show" type="xs:boolean"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="scripting">
+		<xs:complexType>
+		<xs:attribute name="language" type="xs:string"/>
+		<xs:attribute name="disabled" type="xs:boolean"/>
+		<xs:attribute name="blocked" type="xs:boolean"/>		
+		</xs:complexType>
+	</xs:element>
+	
 	<xs:element name="gui">
 		<xs:complexType>
-			<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
 				<xs:element name="window" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="width" type="positiveInt" use="required"/>
@@ -62,9 +81,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 					<xs:complexType>
 						<xs:attribute name="ignoreDocument" type="xs:boolean"/>
 						<xs:attribute name="showTitleBar" type="xs:boolean"/>
+						<xs:attribute name="allowStyleBar" type="xs:boolean"/>
+					</xs:complexType>
+				</xs:element>				
+				<xs:element name="labelingStyle" type="intVal" minOccurs="0"/>
+				<xs:element name="mouse">
+					<xs:complexType>
+						<xs:attribute name="reverseWheel" type="xs:boolean"/>						
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="labelingStyle" type="intVal" minOccurs="0"/>
 				<xs:element name="consProtColumns" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="col0" type="xs:boolean"/>
@@ -73,11 +98,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						<xs:attribute name="col3" type="xs:boolean"/>
 						<xs:attribute name="col4" type="xs:boolean"/>
 						<xs:attribute name="col5" type="xs:boolean"/>
+						<xs:attribute name="col6" type="xs:boolean"/>
+						<xs:attribute name="col7" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="consProtocol" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="useColors" type="xs:boolean"/>
+						<xs:attribute name="addIcons" type="xs:boolean"/>
 						<xs:attribute name="showOnlyBreakpoints" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
@@ -101,7 +129,33 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						<xs:attribute name="size" type="positiveInt" use="required"/>
 					</xs:complexType>
 				</xs:element>
-			</xs:sequence>
+				<xs:element name="menuFont" minOccurs="0">
+					<xs:complexType>
+					<xs:annotation>
+					<xs:documentation>
+					size=-1 means that we use the same font for graphics and menus
+					</xs:documentation>
+					</xs:annotation>
+						<xs:attribute name="size" type="xs:int" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="tooltipSettings" minOccurs="0">
+					<xs:complexType>
+					<xs:annotation>
+					<xs:documentation>
+					timeout=-1 means that we don't want to display them
+					</xs:documentation>
+					</xs:annotation>
+						<xs:attribute name="timeout" type="xs:int"/>
+						<xs:attribute name="language" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>				
+				<xs:element name="graphicsSettings">
+					<xs:complexType>
+						<xs:attribute name="javaLatexFonts" type="xs:boolean"/>
+					</xs:complexType>
+				</xs:element>            
+			</xs:choice>
 		</xs:complexType>
 	</xs:element>
 	
@@ -221,6 +275,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="size"/>
+				<xs:element name="prefCellSize" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="width" type="xs:int"/>
+						<xs:attribute name="height" type="xs:int"/>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="spreadsheetColumn" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:attribute name="id" type="nonNegInt" use="required"/>
@@ -240,15 +300,22 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 				<xs:element name="layout" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="showGrid" type="xs:boolean"/>
+						<xs:attribute name="showFormulaBar" type="xs:boolean"/>
 						<xs:attribute name="showHScrollBar" type="xs:boolean"/>
 						<xs:attribute name="showVScrollBar" type="xs:boolean"/>
 						<xs:attribute name="showBrowserPanel" type="xs:boolean"/>
 						<xs:attribute name="showColumnHeader" type="xs:boolean"/>
 						<xs:attribute name="showRowHeader" type="xs:boolean"/>
 						<xs:attribute name="allowSpecialEditor" type="xs:boolean"/>
+						<xs:attribute name="allowToolTips" type="xs:boolean"/>
+						<xs:attribute name="equalsRequired" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
-			
+				<xs:element name="spreadsheetCellFormat" minOccurs="0">
+				<xs:complexType>
+				<xs:attribute name="formatMap" type="xs:string"/>
+				</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -295,7 +362,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 				</xs:element>
 				
 				<xs:element ref="axis" minOccurs="2" maxOccurs="2"/>
-			
+				<xs:element name="grid" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="distX" type="xs:double"/>
+						<xs:attribute name="distY" type="xs:double"/>
+						<xs:attribute name="distTheta" type="xs:double"/>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -363,41 +436,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 				</xs:element>
 				<xs:element name="coordStyle" type="intVal"/>
 				<xs:element name="startAnimation" type="boolVal" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="casSession">
-		<xs:annotation>
-			<xs:documentation>
-	Works only with GeoGebra >= 4.0
-	</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="cellPair" maxOccurs="unbounded">
+				<xs:element name="angleFromInvTrig" type="boolVal" minOccurs="0"/>
+            
+				<xs:element name="localization" minOccurs="0">
 					<xs:complexType>
-						<xs:sequence minOccurs="0">
-							<xs:element name="inputCell">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="expression"/>
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="outputCell">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="expression"/>
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
+						<xs:attribute name="digits" type="xs:boolean"/>
+						<xs:attribute name="labels" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	
 	
 	<xs:element name="expression">
 		<xs:complexType>

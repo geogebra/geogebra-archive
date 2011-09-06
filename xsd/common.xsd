@@ -4,7 +4,7 @@
 		<xs:documentation>
 This schema shoul be compatible with GeoGebra 4.0 file format.
 </xs:documentation>
-		<xs:appinfo>
+<xs:appinfo>
 This schema is a part of GeoGebra which is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						</xs:complexType>
 					</xs:element>
 					<xs:element ref="element"/>
+					<xs:element ref="cascell"/>
 					<xs:element name="expression">
 						<xs:complexType>
 							<xs:attribute name="exp" type="xs:string"/>
@@ -212,6 +213,39 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			<xs:attribute name="label" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
+	
+	<xs:element name="cascell">
+		<xs:annotation>
+			<xs:documentation>
+	Works only with GeoGebra >= 4.0
+	</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>		
+			<xs:sequence>
+				<xs:element name="cellPair" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence minOccurs="0">
+							<xs:element name="inputCell">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="expression"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="outputCell">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="expression"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
 	
 	<xs:complexType name="spreadsheetTrace">
 		<xs:attribute name="traceColumn1" type="xs:integer"/>
