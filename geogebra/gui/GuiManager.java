@@ -2952,7 +2952,17 @@ public class GuiManager {
 	    }
 	    
 	    public void openToolHelp(String page) {
-	    	openHelp(page,HELP_TOOL);
+			Object[] options = {app.getPlain("OK"), app.getPlain("ShowOnlineHelp")};
+			int n = JOptionPane.showOptionDialog(app.getMainComponent(),
+					app.getMenu(page+".Help"),
+					app.getMenu("ToolHelp")+" - "+app.getMenu(page),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					null,     //do not use a custom Icon
+					options,  //the titles of buttons
+					options[0]); //default button title
+
+			if (n == 1) openHelp(page,HELP_TOOL);
 	    }
 	    
 	    private void openHelp(String page,int type) {
@@ -2987,7 +2997,6 @@ public class GuiManager {
 	    private URL getHelpURL(int type, String pageName)  {
 	    	// try to get help for given language
 	    	// eg http://www.geogebra.org/help/en/FitLogistic
-
 	    	String localeCode = app.getLocale().toString();
 	    		    	
 	    	String helpItem = "";

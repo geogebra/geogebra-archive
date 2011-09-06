@@ -364,8 +364,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 					String word = getWordAtPos(getText(), pos);
 					String lowerCurWord = word.toLowerCase();
 					String closest = dict.lookup(lowerCurWord);
-					if (closest != null && lowerCurWord.equals(closest.toLowerCase()))		                
-						showCommandHelp(word, true);
+					if (closest != null)// && lowerCurWord.equals(closest.toLowerCase()))		                
+						showCommandHelp(app.getInternalCommand(closest), true);
 					else
 						app.getGuiManager().openHelp(Application.WIKI_MANUAL);
 
@@ -831,8 +831,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 
 		if (goToWebManual) {
-			app.getGuiManager().openCommandHelp(cmd); // TEST CODE
+			app.showError(new MyError(app, app.getPlain("Syntax")+":\n"+app.getCommandSyntax(cmd),cmd));					
 			return;
+			//app.getGuiManager().openCommandHelp(cmd); // TEST CODE
+			//return;
 		}
 
 		// show help if available
