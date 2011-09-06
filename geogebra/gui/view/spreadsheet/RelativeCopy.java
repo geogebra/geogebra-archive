@@ -77,7 +77,7 @@ public class RelativeCopy {
 								String vs2 = v4.isGeoFunction() ? "(x)" : "";
 								String d0 = GeoElement.getSpreadsheetCellName(x, y + 2) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x, y + 1) + vs2;
-								String text = "2*" + d1 + "-" + d0;
+								String text = "=2*" + d1 + "-" + d0;
 								doCopyNoStoringUndoInfo1(kernel, table, text, v4, x, y);								
 							}
 						}
@@ -103,7 +103,7 @@ public class RelativeCopy {
 								String vs2 = v4.isGeoFunction() ? "(x)" : "";
 								String d0 = GeoElement.getSpreadsheetCellName(x, y - 2) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x, y - 1) + vs2;
-								String text = "2*" + d1 + "-" + d0;
+								String text = "=2*" + d1 + "-" + d0;
 								doCopyNoStoringUndoInfo1(kernel, table, text, v4, x, y);								
 							}
 						}
@@ -134,7 +134,7 @@ public class RelativeCopy {
 								String vs2 = v4.isGeoFunction() ? "(x)" : "";
 								String d0 = GeoElement.getSpreadsheetCellName(x + 2, y) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x + 1, y) + vs2;
-								String text = "2*" + d1 + "-" + d0;
+								String text = "=2*" + d1 + "-" + d0;
 								doCopyNoStoringUndoInfo1(kernel, table, text, v4, x, y);								
 							}
 						}
@@ -159,7 +159,7 @@ public class RelativeCopy {
 								String vs2 = v4.isGeoFunction() ? "(x)" : "";
 								String d0 = GeoElement.getSpreadsheetCellName(x - 2, y) + vs1;
 								String d1 = GeoElement.getSpreadsheetCellName(x - 1, y) + vs2;
-								String text = "2*" + d1 + "-" + d0;
+								String text = "=2*" + d1 + "-" + d0;
 								doCopyNoStoringUndoInfo1(kernel, table, text, v4, x, y);								
 							}
 						}
