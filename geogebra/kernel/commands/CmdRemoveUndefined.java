@@ -19,7 +19,6 @@ public class CmdRemoveUndefined extends CommandProcessor {
 
 	public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
-        boolean[] ok = new boolean[n];
 		GeoElement[] arg;
 		arg = resArgs(c);
 		

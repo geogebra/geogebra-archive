@@ -145,7 +145,6 @@ public class AlgoVoronoi extends AlgoElement {
                 done.add(site);
                 List<Triangle> list = dt.surroundingTriangles(site, triangle);
 				//Pnt[] vertices = new Pnt[list.size()];
-                GeoPoint[] vertices = new GeoPoint[list.size()];
                 int i = 0;
                 Pnt firstPoint = null;
                 Pnt prevPoint = null;

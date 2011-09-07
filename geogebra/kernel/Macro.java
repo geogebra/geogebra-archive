@@ -314,7 +314,7 @@ public class Macro {
 		 if (algo.isInConstructionList()) {
 	   		// STANDARD case
 	   		// add algorithm
-			Long algoID = new Long(algo.getID()); 
+			Long algoID = Long.valueOf(algo.getID()); 
 	   		if(!usedAlgoIds.contains(algoID))consElementSet.add(algo);
 	   			usedAlgoIds.add(algoID);
 	   		

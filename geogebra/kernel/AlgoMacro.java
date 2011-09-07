@@ -394,7 +394,8 @@ implements EuclidianViewCE {
 				
 			}	
 		} catch (Exception e) {
-			Application.debug("AlgoMacro.initLocateable:\n" + e.getStackTrace());
+			Application.debug("AlgoMacro.initLocateable:");
+			e.printStackTrace();
 		}
 	}		
 	

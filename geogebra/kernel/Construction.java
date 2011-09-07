@@ -1979,7 +1979,7 @@ public class Construction {
 	 */
 	public void changeCasCell(GeoCasCell casCell) throws Exception {								
 		// move all predecessors of casCell to the left of casCell in construction list
-		boolean didReordering = updateConstructionOrder(casCell);			
+		updateConstructionOrder(casCell);			
 		
 		// get current construction XML
 		StringBuilder consXML = getCurrentUndoXML();

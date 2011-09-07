@@ -1705,7 +1705,7 @@ ExpressionValue numVecVariable():
 			// i for imaginary unit
 			else if (c.image.equals("i"))
 			{
-			  	return GeoVec2D.getImaginaryUnit(kernel);
+			  	return kernel.getImaginaryUnit();
 			}		}      				
 
        // standard case for variables

@@ -81,14 +81,14 @@ public class AlgoIntegral extends AlgoCasBase {
 		kernel.setUseTempVariablePrefix(isUseTempVariablePrefix);
 		kernel.internationalizeDigits = internationalizeDigits;		
 
-		 sb.setLength(0);
-		 sb.append("Integral(%");
-		 sb.append(",");
-		 sb.append(varStr);
-		 sb.append(")");
+		 sbAE.setLength(0);
+		 sbAE.append("Integral(%");
+		 sbAE.append(",");
+		 sbAE.append(varStr);
+		 sbAE.append(")");
 		 
 		 // find symbolic derivative of f
-		 g.setUsingCasCommand(sb.toString(), f, true);	
+		 g.setUsingCasCommand(sbAE.toString(), f, true);	
 	}
 
     final public String toString() {

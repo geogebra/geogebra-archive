@@ -196,9 +196,9 @@ public class AlgoStemPlot extends AlgoElement {
 
 			// now add our leaf to the stem
 			if(stem == 0 && n < 0)
-				lines.get(lines.size()-2).add(new Integer(leaf));
+				lines.get(lines.size()-2).add(Integer.valueOf(leaf));
 			else
-				lines.get(lines.size()-1).add(new Integer(leaf));
+				lines.get(lines.size()-1).add(Integer.valueOf(leaf));
 		}
 
 		return lines;   	

@@ -93,16 +93,16 @@ public class AlgoDerivative extends AlgoCasBase {
 
 		 kernel.internationalizeDigits = internationalizeDigits;
 		
-		 sb.setLength(0);
-		 sb.append("Derivative(%");
-		 sb.append(",");
-		 sb.append(varStr);
-		 sb.append(",");
-		 sb.append(order == null ? 1 : (int) Math.round(order.getDouble()));
-		 sb.append(")");
+		 sbAE.setLength(0);
+		 sbAE.append("Derivative(%");
+		 sbAE.append(",");
+		 sbAE.append(varStr);
+		 sbAE.append(",");
+		 sbAE.append(order == null ? 1 : (int) Math.round(order.getDouble()));
+		 sbAE.append(")");
 		 
 		 // find symbolic derivative of f
-		 g.setUsingCasCommand(sb.toString(), f, true);	
+		 g.setUsingCasCommand(sbAE.toString(), f, true);	
 
 	}
   

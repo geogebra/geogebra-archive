@@ -42,13 +42,13 @@ public class AlgoPartialFractions extends AlgoCasBase {
 
 		 kernel.internationalizeDigits = internationalizeDigits;
 		
-		 sb.setLength(0);
-		 sb.append("PartialFractions(%");
-		 sb.append(",");
-		 sb.append(varStr);		
-		 sb.append(")");
+		 sbAE.setLength(0);
+		 sbAE.append("PartialFractions(%");
+		 sbAE.append(",");
+		 sbAE.append(varStr);		
+		 sbAE.append(")");
 		 		
-		g.setUsingCasCommand(sb.toString(), f, false);		
+		g.setUsingCasCommand(sbAE.toString(), f, false);		
 	}
 
 }

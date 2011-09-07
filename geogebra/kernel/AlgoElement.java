@@ -879,46 +879,46 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         return false;
     }
 
-    protected StringBuilder sb = new StringBuilder();
+    protected StringBuilder sbAE = new StringBuilder();
 
     public String getNameDescription() {
-        sb.setLength(0);
-        if (getOutput(0).isLabelSet()) sb.append(getOutput(0).getNameDescription());
+        sbAE.setLength(0);
+        if (getOutput(0).isLabelSet()) sbAE.append(getOutput(0).getNameDescription());
         for (int i = 1; i < getOutputLength(); ++i) {
             if (getOutput(i).isLabelSet()) {
-                sb.append("\n");
-                sb.append(getOutput(i).getNameDescription());              
+                sbAE.append("\n");
+                sbAE.append(getOutput(i).getNameDescription());              
             }                           
         }
-        return sb.toString();
+        return sbAE.toString();
     }
     
 
   
     public String getAlgebraDescription() {
-    	 sb.setLength(0);
+    	 sbAE.setLength(0);
         
-        if (getOutput(0).isLabelSet()) sb.append(getOutput(0).getAlgebraDescription());       
+        if (getOutput(0).isLabelSet()) sbAE.append(getOutput(0).getAlgebraDescription());       
         for (int i = 1; i < getOutputLength(); ++i) {
             if (getOutput(i).isLabelSet()) {
-                sb.append("\n");
-                sb.append(getOutput(i).getAlgebraDescription());               
+                sbAE.append("\n");
+                sbAE.append(getOutput(i).getAlgebraDescription());               
             }           
         }
-        return sb.toString();
+        return sbAE.toString();
     }
 
     public String getAlgebraDescriptionRegrOut() {
-   	 sb.setLength(0);
+   	 sbAE.setLength(0);
        
-       if (getOutput(0).isLabelSet()) sb.append(getOutput(0).getAlgebraDescriptionRegrOut());       
+       if (getOutput(0).isLabelSet()) sbAE.append(getOutput(0).getAlgebraDescriptionRegrOut());       
        for (int i = 1; i < getOutputLength(); ++i) {
            if (getOutput(i).isLabelSet()) {
-               sb.append("\n");
-               sb.append(getOutput(i).getAlgebraDescriptionRegrOut());               
+               sbAE.append("\n");
+               sbAE.append(getOutput(i).getAlgebraDescriptionRegrOut());               
            }           
        }
-       return sb.toString();
+       return sbAE.toString();
    }
 
 
@@ -937,24 +937,24 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         if (cmdname.equals("Expression"))
 			return real ? toRealString():toString();
 		else {
-			 sb.setLength(0);
+			 sbAE.setLength(0);
             if (kernel.isPrintLocalizedCommandNames()) {
-                sb.append(app.getCommand(cmdname));        
+                sbAE.append(app.getCommand(cmdname));        
             } else {
-                sb.append(cmdname);
+                sbAE.append(cmdname);
             } 
             
             int length = input.length;
                   
-            sb.append("[");
+            sbAE.append("[");
             // input
-            if (length>0) sb.append(real?input[0].getRealLabel():input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
+            if (length>0) sbAE.append(real?input[0].getRealLabel():input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
             for (int i = 1; i < length; ++i) {
-                sb.append(", ");
-                sb.append(real? input[i].getRealLabel():input[i].getLabel());
+                sbAE.append(", ");
+                sbAE.append(real? input[i].getRealLabel():input[i].getLabel());
             }
-            sb.append("]");
-            return sb.toString();           
+            sbAE.append("]");
+            return sbAE.toString();           
         }       
     }
     

@@ -43,7 +43,6 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
     public double y = Double.NaN;    
     
     private int mode; // POLAR or CARTESIAN  
-    private static GeoVec2D imaginaryUnit;
     
     private Kernel kernel;
     
@@ -75,14 +74,6 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
         mode = v.mode;
     }
     
-    public static GeoVec2D getImaginaryUnit(Kernel kernel) {
-    	if (imaginaryUnit == null) {
-    		imaginaryUnit = new GeoVec2D(kernel, 0, 1);
-    		imaginaryUnit.setMode(Kernel.COORD_COMPLEX);
-    	}
-    	
-    	return imaginaryUnit;
-    }
     
     public boolean isImaginaryUnit() {
     	return mode == Kernel.COORD_COMPLEX && x == 0 && y == 1;
@@ -568,10 +559,6 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 
     	c.setMode(Kernel.COORD_COMPLEX);
     }
-
-    final public static void inner(GeoVec2D a, GeoVec2D b, double c) {
-        c = a.x * b.x + a.y * b.y;        
-    }   
 
     /*
      * see also GeoVec3D.vectorProduct()

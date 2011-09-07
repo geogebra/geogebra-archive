@@ -738,7 +738,6 @@ public class GeoCasCell extends GeoElement {
 		} else {
 			node = new ExpressionNode(kernel, ve);
 			node.setLabel(ve.getLabel());
-			ve = node;
 		}
 		
 		// replace GeoDummyVariable occurances for each geo

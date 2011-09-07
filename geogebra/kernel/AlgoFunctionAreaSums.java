@@ -1417,8 +1417,8 @@ implements EuclidianViewCE, AlgoDrawInformation{
 			// fill in class boundaries
 
 			for (int i=0; i < NN-1; i += 2 ) {
-				leftBorder[i] = start + step * (i/2) - colWidth / 2.0;
-				leftBorder[i+1] = start + step * (i/2) + colWidth / 2.0;
+				leftBorder[i] = start + step * (i/2.0) - colWidth / 2.0;
+				leftBorder[i+1] = start + step * (i/2.0) + colWidth / 2.0;
 			}
 			
 			area = 0;

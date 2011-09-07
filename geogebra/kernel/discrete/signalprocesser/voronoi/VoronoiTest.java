@@ -175,9 +175,6 @@ public class VoronoiTest extends javax.swing.JFrame {
                 if ( attentiontovpoint!=null ) {
                     attentiontovpoint_onclick = attentiontovpoint;
                 } else {
-                    // Get dimensions
-                    double width = this.getWidth();
-                    double height = this.getHeight();
                     
                     // Add to vector
                     if ( representation==null ) {
@@ -517,7 +514,7 @@ public class VoronoiTest extends javax.swing.JFrame {
     		}
     		br.close();
     		fr.close();
-    	}catch(IOException e){e.printStackTrace(System.out);}
+    	}catch(IOException e){e.printStackTrace();}
     	
     	// Store data about point locations
     	int [][] coords = new int[no_coords][2];     	
@@ -581,7 +578,7 @@ public class VoronoiTest extends javax.swing.JFrame {
 		   }
 		   br.close();
 		   fr.close();
-	   }catch(IOException e){e.printStackTrace(System.out);}
+	   }catch(IOException e){e.printStackTrace();}
 		
 	   // Read in all data
 	   System.out.println(count);

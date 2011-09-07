@@ -228,8 +228,8 @@ public class Equation extends ValidExpression implements ReplaceableValue {
     
     final public GeoElement [] getGeoElementVariables() {
         HashSet varset = new HashSet();
-        try { varset.addAll(lhs.getVariables()); } catch (Exception e) {}
-        try { varset.addAll(rhs.getVariables()); } catch (Exception e) {}
+        try { varset.addAll(lhs.getVariables()); } catch (Exception e) {e.printStackTrace();}
+        try { varset.addAll(rhs.getVariables()); } catch (Exception e) {e.printStackTrace();}
         
         Iterator i = varset.iterator();        
         GeoElement [] ret = new GeoElement[varset.size()];

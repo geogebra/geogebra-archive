@@ -469,7 +469,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				//calculate parameters. consider only the upper-half plane.
 				px = P.getX() / P.getZ();
 				py = P.getY() / P.getZ();
-				abspx=Math.abs(px);
 				abspy=Math.abs(py);
 							
 				 if (abspy<tolerance) { // Point is on x-axis
@@ -2175,8 +2174,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		double abs = Math.abs(matrix[1]);
 		if (abs > maxAbs) maxAbs = abs;
 		abs = Math.abs(matrix[3]);
-		if (abs > maxAbs) maxAbs = abs;
-				
+
 		// det(S) = 0
 		// A[0] * A[1] = A[3] * A[3]  
 		// normalized: A[0]/maxAbs * A[1]/maxAbs = A[3]/maxAbs * A[3]/maxAbs 

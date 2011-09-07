@@ -2487,7 +2487,7 @@ public abstract class GeoElement
 
 	public static final int MAX_LINE_WIDTH = 13;
 
-	private static StringBuilder sb = null;
+	private static volatile StringBuilder sb = null;
 
 	/*
 	 * used to set a cell to another geo
@@ -5117,8 +5117,8 @@ public abstract class GeoElement
 
 		return moved;
 	}
-	private static ArrayList<GeoElement> moveObjectsUpdateList;
-	private static TreeSet<AlgoElement> tempSet;
+	private static volatile ArrayList<GeoElement> moveObjectsUpdateList;
+	private static volatile TreeSet<AlgoElement> tempSet;
 
 	protected static TreeSet<AlgoElement> getTempSet() {
 		if (tempSet == null) {

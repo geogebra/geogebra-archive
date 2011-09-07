@@ -464,11 +464,9 @@ public class BranchBound implements GraphDemonstration {
 			double[] multipliers = new double[nodes.length];
 			boolean[][] connect = new boolean[nodes.length][nodes.length];
 			boolean[][] disconnect = new boolean[nodes.length][nodes.length];
-			long start = System.currentTimeMillis();
 			int depth = 0;
 			double percent = 0;
 			Circuit betterCase = branch(panel, table, multipliers, edges, connect, disconnect, Double.POSITIVE_INFINITY, depth, percent);
-			long end = System.currentTimeMillis();
 			//System.out.println("[" + this.toString() + "]");
 			//System.out.println("node: "+ nodes.length);
 			//System.out.println("cost: "+ ((int) (betterCase.getCost() * 1000) / 1000D));
@@ -486,11 +484,9 @@ public class BranchBound implements GraphDemonstration {
 			double[] multipliers = new double[nodes.length];
 			boolean[][] connect = new boolean[nodes.length][nodes.length];
 			boolean[][] disconnect = new boolean[nodes.length][nodes.length];
-			long start = System.currentTimeMillis();
 			int depth = 0;
 			double percent = 0;
 			Circuit betterCase = branch(null, table, multipliers, edges, connect, disconnect, Double.POSITIVE_INFINITY, depth, percent);
-			long end = System.currentTimeMillis();
 			//System.out.println("[" + this.toString() + "]");
 			//System.out.println("node: "+ nodes.length);
 			//System.out.println("cost: "+ ((int) (betterCase.getCost() * 1000) / 1000D));

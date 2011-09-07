@@ -627,4 +627,17 @@ implements NumberValue, Comparable {
 		}
 		return 0;
 	}
+	
+	public boolean equals(Object d) {
+		
+		if (d == null) return false;
+		
+		if (d instanceof Double) {
+			return Kernel.isEqual(((Double)d).doubleValue(), val);
+		} 
+		if (d instanceof MyDouble) {
+			return Kernel.isEqual(((MyDouble)d).getDouble(), val);
+		} 
+		return false;
+	}
 }

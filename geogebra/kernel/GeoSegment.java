@@ -59,13 +59,13 @@ GeoSegmentND {
 	 */
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(SEGMENT_DECORATION_NONE),
-				new Integer(SEGMENT_DECORATION_ONE_TICK),
-				new Integer(SEGMENT_DECORATION_TWO_TICKS),
-				new Integer(SEGMENT_DECORATION_THREE_TICKS),
+				Integer.valueOf(SEGMENT_DECORATION_ONE_TICK),
+				Integer.valueOf(SEGMENT_DECORATION_TWO_TICKS),
+				Integer.valueOf(SEGMENT_DECORATION_THREE_TICKS),
 // Michael Borcherds 20071006 start
-				new Integer(SEGMENT_DECORATION_ONE_ARROW),
-				new Integer(SEGMENT_DECORATION_TWO_ARROWS),
-				new Integer(SEGMENT_DECORATION_THREE_ARROWS)
+				Integer.valueOf(SEGMENT_DECORATION_ONE_ARROW),
+				Integer.valueOf(SEGMENT_DECORATION_TWO_ARROWS),
+				Integer.valueOf(SEGMENT_DECORATION_THREE_ARROWS)
 // Michael Borcherds 20071006 end
 				};
 		return ret;

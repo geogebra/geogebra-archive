@@ -202,9 +202,6 @@ public class AlgoZip extends AlgoElement {
 				addElement(i);
 
 				currentVal += 1;
-				if (kernel.isInteger(currentVal)) {
-					currentVal = Math.round(currentVal);
-				}
 				i++;
 			}
 		}
@@ -325,9 +322,6 @@ public class AlgoZip extends AlgoElement {
 			listElement.update();
 
 			currentVal += 1;
-			if (kernel.isInteger(currentVal)) {
-				currentVal = Math.round(currentVal);
-			}
 		}
 	}
 

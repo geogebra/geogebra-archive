@@ -68,13 +68,13 @@ public final class GeoAngle extends GeoNumeric {
 	 */
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(GeoElement.DECORATION_NONE),
-				new Integer(GeoElement.DECORATION_ANGLE_TWO_ARCS),
-				new Integer(GeoElement.DECORATION_ANGLE_THREE_ARCS),
-				new Integer(GeoElement.DECORATION_ANGLE_ONE_TICK),
-				new Integer(GeoElement.DECORATION_ANGLE_TWO_TICKS),
-				new Integer(GeoElement.DECORATION_ANGLE_THREE_TICKS),				
-				new Integer(GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE), 
-				new Integer(GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE) 
+				Integer.valueOf(GeoElement.DECORATION_ANGLE_TWO_ARCS),
+				Integer.valueOf(GeoElement.DECORATION_ANGLE_THREE_ARCS),
+				Integer.valueOf(GeoElement.DECORATION_ANGLE_ONE_TICK),
+				Integer.valueOf(GeoElement.DECORATION_ANGLE_TWO_TICKS),
+				Integer.valueOf(GeoElement.DECORATION_ANGLE_THREE_TICKS),				
+				Integer.valueOf(GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE), 
+				Integer.valueOf(GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE) 
 		};
 		return ret;
 	}

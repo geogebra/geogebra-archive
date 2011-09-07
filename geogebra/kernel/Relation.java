@@ -246,7 +246,6 @@ public class Relation extends java.lang.Object {
             // intersect line and conic 
             GeoPoint[] points = { new GeoPoint(cons), new GeoPoint(cons)};
             type = AlgoIntersectLineConic.intersectLineConic(g, c, points);           
-            points = null;
             str = lineConicString(g, c, type);
         }
         return str;

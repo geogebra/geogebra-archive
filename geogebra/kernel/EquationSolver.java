@@ -722,6 +722,7 @@ public class EquationSolver {
 			complexRoots = laguerreSolver.solveAll(real, LAGUERRE_START);
 		} catch (Exception e) {
 			Application.debug("Problem solving with LaguerreSolver"+e.getLocalizedMessage());
+			return 0;
 		}
 	
 		// sort by real part & remove duplicates

@@ -288,7 +288,6 @@ public class TextToolkit {
     static private int getMultilineOfText(String string, FontMetrics metrics, int maxnumberoflines, int maxwidth) {
         
         int currindex = 0;
-        int stringlength = string.length();
         
         boolean islastline     = false;
         String  iftoolong      = TERMINATE_HALFWORD_WITH;

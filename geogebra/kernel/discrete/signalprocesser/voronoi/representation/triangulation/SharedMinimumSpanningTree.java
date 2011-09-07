@@ -283,7 +283,6 @@ public class SharedMinimumSpanningTree {
         // Check finally for better line
         if ( valuesonline>best_valuesonline ) {
             //System.out.println("  - new best line of " + valuesonline + " set");
-            best_valuesonline = valuesonline;
             best_cutoff = prev;
         }
         

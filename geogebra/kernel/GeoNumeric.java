@@ -1061,7 +1061,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		
 		return comparator;
 	}
-	private static Comparator<GeoNumeric> comparator;
+	private static volatile Comparator<GeoNumeric> comparator;
 
 	
 	

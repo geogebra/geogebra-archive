@@ -1163,7 +1163,7 @@ GeoPointND, Animatable, Transformable  {
 		}			
 	}
 	
-	private static TreeSet<AlgoElement> tempSet;	
+	private static volatile TreeSet<AlgoElement> tempSet;	
 	protected static TreeSet<AlgoElement> getTempSet() {
 		if (tempSet == null) {
 			tempSet = new TreeSet<AlgoElement>();
@@ -1310,7 +1310,7 @@ GeoPointND, Animatable, Transformable  {
 		
 			return comparatorX;
 		}
-	  private static Comparator<GeoPoint> comparatorX;
+	  private static volatile Comparator<GeoPoint> comparatorX;
     
 	    
 	    /////////////////////////////////////////////

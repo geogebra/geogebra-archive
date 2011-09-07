@@ -184,8 +184,6 @@ public class AlgoPolygonOperation extends AlgoElement {
 		ArrayList<Double> xcoord = new ArrayList<Double>();
 		ArrayList<Double> ycoord = new ArrayList<Double>();
 		double[] coords = new double[6];
-		double[] oldCoords = new double[6];
-
 				
 		// Convert input polygons to Area objects
 		Area a1 = getArea(inPoly0.getPoints());
@@ -219,7 +217,7 @@ public class AlgoPolygonOperation extends AlgoElement {
 
 			int type = it.currentSegment(coords);
 			it.next();
-			oldCoords = coords.clone();
+			double[] oldCoords = coords.clone();
 			double epsilon = 1E-10;
 
 			while (!it.isDone()) {

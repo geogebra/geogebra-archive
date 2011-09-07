@@ -1090,9 +1090,9 @@ public class Kernel {
 			noOfDecimalPlacesList = new Stack<Integer>();
 		}
 				
-		useSignificantFiguresList.push(new Boolean(useSignificantFigures));
+		useSignificantFiguresList.push(Boolean.valueOf(useSignificantFigures));
 		noOfSignificantFiguresList.push(new Integer(sf.getSigDigits()));	
-		noOfDecimalPlacesList.push(new Integer(nf.getMaximumFractionDigits()));	
+		noOfDecimalPlacesList.push(Integer.valueOf(nf.getMaximumFractionDigits()));	
 	}
 	
 	/**
@@ -5653,7 +5653,7 @@ public class Kernel {
     	boolean oldMacroMode = cons.isSuppressLabelsActive();
     	
     	cons.setSuppressLabelCreation(true);	
-    	GeoConic circle = Circle(null, points[0], new MyDouble(this, points[0].distance(points[1])));
+    	Circle(null, points[0], new MyDouble(this, points[0].distance(points[1])));
 		cons.setSuppressLabelCreation(oldMacroMode);
 		
 	
@@ -8510,8 +8510,6 @@ public class Kernel {
 		
 		if (reverseOrder) formatSB.append(Unicode.RightToLeftMark);
 		
-		int length = num.length();
-		
 		for (int i = 0 ; i < num.length() ; i++) {
 			char c = num.charAt(i);
 			//char c = reverseOrder ? num.charAt(length - 1 - i) : num.charAt(i);
@@ -9340,7 +9338,7 @@ public class Kernel {
 
 	public GeoElement[] Zip(String label, GeoElement expression,
 			GeoElement[] vars, GeoList[] over) {
-		Application.debug("expr:"+expression+"label:"+label+"var:"+vars+"over:"+over);
+		//Application.debug("expr:"+expression+"label:"+label+"var:"+vars+"over:"+over);
 		AlgoZip algo = new AlgoZip(cons,label,expression,vars,over);
 		return algo.getOutput();
 	}
@@ -9440,4 +9438,15 @@ public class Kernel {
 	public String getXMLFileFormat(){
 		return GeoGebra.XML_FILE_FORMAT;
 	}
+	
+    private GeoVec2D imaginaryUnit;
+    public GeoVec2D getImaginaryUnit() {
+    	if (imaginaryUnit == null) {
+    		imaginaryUnit = new GeoVec2D(this, 0, 1);
+    		imaginaryUnit.setMode(Kernel.COORD_COMPLEX);
+    	}
+    	
+    	return imaginaryUnit;
+    }
+
 }

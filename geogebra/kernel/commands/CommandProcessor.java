@@ -186,7 +186,7 @@ public abstract class CommandProcessor {
 			// replace all imaginary unit objects in command arguments by a variable "i"object
 			localVarName = "i";
 			Variable localVar = new Variable(kernel, localVarName);
-			c.replace(GeoVec2D.getImaginaryUnit(kernel), localVar);			
+			c.replace(kernel.getImaginaryUnit(), localVar);			
 		}
 		// Euler constant as local variable name
 		else if (localVarName.equals(Unicode.EULER_STRING)) {
@@ -1883,9 +1883,7 @@ class CmdConic extends CommandProcessor {
 
 	final public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
-		boolean[] ok = new boolean[n];
-		GeoElement[] arg;
-		arg = resArgs(c);
+		GeoElement[] arg = resArgs(c);
 		switch (n) {
 		case 1:
 			if (arg[0].isGeoList())
@@ -2696,7 +2694,7 @@ class CmdRotate extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
-		GeoElement[] ret = new GeoElement[1];
+		GeoElement[] ret;
 
 		switch (n) {
 		case 2:
@@ -2770,7 +2768,7 @@ class CmdDilate extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
 		GeoElement[] arg;
-		GeoElement[] ret = new GeoElement[1];
+		GeoElement[] ret;
 
 		switch (n) {
 		case 2:
@@ -2839,7 +2837,7 @@ class CmdApplyMatrix extends CommandProcessor {
 		int n = c.getArgumentNumber();
 
 		GeoElement[] arg;
-		GeoElement[] ret = new GeoElement[1];
+		GeoElement[] ret;
 
 		switch (n) {
 		case 2:
@@ -2882,7 +2880,7 @@ class CmdShear extends CommandProcessor {
 		int n = c.getArgumentNumber();
 
 		GeoElement[] arg;
-		GeoElement[] ret = new GeoElement[1];
+		GeoElement[] ret;
 
 		switch (n) {
 		case 3:
@@ -2931,7 +2929,7 @@ class CmdStretch extends CommandProcessor {
 		int n = c.getArgumentNumber();
 
 		GeoElement[] arg;
-		GeoElement[] ret = new GeoElement[1];
+		GeoElement[] ret;
 
 		switch (n) {
 		case 2:
@@ -4926,7 +4924,6 @@ class CmdStemPlot extends CommandProcessor {
 			if (!arg[1].isGeoNumeric()) {
 				throw argErr(app, c.getName(), arg[1]);
 			}
-			GeoList list = (GeoList) arg[0];
 
 			GeoElement[] ret = { kernel.StemPlot(c.getLabel(),
 					(GeoList) arg[0], (GeoNumeric) arg[1]) };
@@ -4937,7 +4934,7 @@ class CmdStemPlot extends CommandProcessor {
 
 		default:
 
-			list = wrapInList(kernel, arg, arg.length, -1);
+			GeoList list = wrapInList(kernel, arg, arg.length, -1);
 			if (list != null) {
 				GeoElement[] ret2 = { kernel.StemPlot(c.getLabel(), list) };
 				return ret2;
@@ -9142,6 +9139,8 @@ class CmdFillCells extends CommandProcessor {
 											minCol + 1, row)).remove();
 
 							MyPoint p = al.get(i);
+							
+							StringBuilder sb = new StringBuilder();
 
 							GeoElement.setSpreadsheetCell(app, row, minCol,
 									new GeoNumeric(cons, p.x));
@@ -9481,8 +9480,8 @@ class CmdZoomOut extends CommandProcessor {
 				GeoNumeric numGeo = (GeoNumeric) arg[0];
 
 				EuclidianView ev = (EuclidianView)app.getActiveEuclidianView();
-				double px = ev.getWidth() / 2; // mouseLoc.x;
-				double py = ev.getHeight() / 2; // mouseLoc.y;
+				double px = ev.getWidth() / 2.0; // mouseLoc.x;
+				double py = ev.getHeight() / 2.0; // mouseLoc.y;
 
 				double factor = numGeo.getDouble();
 
