@@ -364,8 +364,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 					String word = getWordAtPos(getText(), pos);
 					String lowerCurWord = word.toLowerCase();
 					String closest = dict.lookup(lowerCurWord);
+					
 					if (closest != null)// && lowerCurWord.equals(closest.toLowerCase()))		                
-						showCommandHelp(app.getInternalCommand(closest), true);
+						showCommandHelp(app.getInternalCommand(closest));
 					else
 						app.getGuiManager().openHelp(Application.WIKI_MANUAL);
 
@@ -810,36 +811,16 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 
 	/**
-	 * shows dialog with syntax info for current command
+	 * shows dialog with syntax info
+	 * cmd is the internal command name
 	 */
-	private void showCommandHelp(String cmd, boolean goToWebManual) {   
+	private void showCommandHelp(String cmd) {   
 		// show help for current command (current word)
-		// String cmd = getCurrentWord();
-		String help = getCmdSyntax(cmd);
-
-		// maybe this didn't work because we are between the parentheses [ ... ]
-		// try harder and get the word left to the last "["
-		if (help == null) {    
-			int oldCaretPos = getCaretPosition();
-			String leftText = getText().substring(0, oldCaretPos);
-
-			int pos = leftText.lastIndexOf("[");
-			if (pos > -1) {
-				cmd = AutoCompleteTextField.getWordAtPos(leftText, pos);               
-				help = getCmdSyntax(cmd);             
-			}
-		}
-
-		if (goToWebManual) {
-			app.showError(new MyError(app, app.getPlain("Syntax")+":\n"+app.getCommandSyntax(cmd),cmd));					
-			return;
-			//app.getGuiManager().openCommandHelp(cmd); // TEST CODE
-			//return;
-		}
+		String help = app.getCommandSyntax(cmd);
 
 		// show help if available
 		if (help != null) {
-			app.showHelp(help); // ORIGINAL CODE
+			app.showError(new MyError(app, app.getPlain("Syntax")+":\n"+help,cmd));					
 		} else {
 			app.getGuiManager().openCommandHelp(null);
 		}
