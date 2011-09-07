@@ -167,6 +167,8 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 		apply(operation, value, false);
 	}		
 	
+	boolean isDefined = true;
+	
 	final private void matrixMultiply(MyList LHlist, MyList RHlist) {
 		int LHcols = LHlist.getMatrixCols(), LHrows=LHlist.getMatrixRows();
 		int RHcols = RHlist.getMatrixCols(); //RHlist.getMatrixRows();
@@ -174,6 +176,14 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 		ExpressionNode totalNode;
 		ExpressionNode tempNode; 
 		listElements.clear();
+		
+		if (LHcols != RHlist.getMatrixRows()) {
+			isDefined = false;
+			return;
+		}
+		
+		isDefined = true;
+		
 		for (int row=0 ; row < LHrows ; row++)
 		{
 			MyList col1 = new MyList(kernel);
@@ -930,6 +940,10 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 
 	public Kernel getKernel() {
 		return kernel;
+	}
+
+	public boolean isDefined() {
+		return isDefined;
 	}
 
 

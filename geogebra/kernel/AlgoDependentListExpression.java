@@ -88,6 +88,11 @@ public class AlgoDependentListExpression extends AlgoElement {
 		// get resulting list of ExpressionNodes		    	
     	ExpressionValue evlist = root.evaluate();
     	MyList myList = (evlist instanceof MyList)? (MyList)evlist: ((GeoList)evlist).getMyList();
+    	
+    	if (!myList.isDefined()) {
+    		list.setUndefined();
+    		return;
+    	}
 
 		int evalListSize = myList.size();
 		int cachedListSize = list.getCacheSize();    		
