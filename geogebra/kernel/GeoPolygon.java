@@ -1172,19 +1172,27 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	/** returns true if the segment ((x1,y1),(x2,y2)) intersects [Ox) */
 	private int intersectOx(double x1, double y1, double x2, double y2){
 		
-		double eps = Kernel.MAX_PRECISION;
+		double eps = Kernel.STANDARD_PRECISION;
 		
-		if (y1*y2>eps) //segment totally above or under
+		if (Kernel.isZero(y1)){ //first point on (Ox)
+			if (Kernel.isZero(y2)){ //second point on (Ox)
+				if ((x1+eps<0) && (x2+eps<0)) //segment totally on the left
+					return -1;
+				else if ((x1>eps) && (x2>eps)) //segment totally on the right
+					return 1;
+				else //O on segment
+					return 2;
+			}else
+				return -1; //only first point is on (Ox)
+		}else if (y1*y2>eps) //segment totally above or under
 			return -1;
 		else{ 
 			if (y1>y2){ //first point under (Ox)
 				double y=y1; y1=y2; y2=y;
 				double x=x1; x1=x2; x2=x;
 			}
-			/*
-			if (y2<-eps) //half-plane
-				return -1;				
-			else*/ if ((x1+eps<0) && (x2+eps<0)) //segment totally on the left
+
+			if ((x1+eps<0) && (x2+eps<0)) //segment totally on the left
 				return -1;
 			else if ((x1>eps) && (x2>eps)) //segment totally on the right
 				return 1;
