@@ -4,9 +4,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
-import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -164,7 +165,8 @@ public class DrawInequality extends Drawable {
 			drawable = new DrawImplicitPoly(view, ineq.getImpBorder());
 			break;
 		default:
-			drawable = null;
+			Application.debug("Unhandled inequality type");
+			return;
 		}
 		drawable.setGeoElement(geo);
 		drawable.setForceNoFill(true);

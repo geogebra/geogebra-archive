@@ -85,8 +85,8 @@ implements ComponentListener, DragGestureListener, DragSourceListener {
 		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
 	}
 
-	protected  Cursor defaultCursor = Cursor.getDefaultCursor(); 
-	protected  Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
+	//protected  Cursor defaultCursor = Cursor.getDefaultCursor(); 
+	//protected  Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
 	protected  Cursor grabbingCursor, grabCursor; 
 
 

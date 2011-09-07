@@ -631,12 +631,15 @@ implements NumberValue, Comparable {
 		
 		if (d == null) return false;
 		
-		if (d instanceof Double) {
-			return Kernel.isEqual(((Double)d).doubleValue(), val);
-		} 
 		if (d instanceof MyDouble) {
 			return Kernel.isEqual(((MyDouble)d).getDouble(), val);
 		} 
 		return false;
 	}
+	
+	public int hashCode() {
+		assert false : "hashCode not designed";
+	return 42; // any arbitrary constant will do 
+	}
+
 }

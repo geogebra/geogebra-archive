@@ -10647,7 +10647,7 @@ class CmdIdentity extends CommandProcessor {
 			throw argErr(app, c.getName(), arg[0]);
 		
 		StringBuilder sb = new StringBuilder();
-		double order = Math.round(((NumberValue)arg[0]).getDouble());
+		int order = (int)Math.round(((NumberValue)arg[0]).getDouble());
 		
 		if (order < 1)
 			throw argErr(app, c.getName(), arg[0]);

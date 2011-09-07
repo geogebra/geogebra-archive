@@ -649,7 +649,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		GeoPoint P = (GeoPoint) PI;
 		
 		if (P.z == 1.0) {
-			P.x = P.x;			
+			//P.x = P.x;			
 		} else {
 			P.x = P.x / P.z;			
 		}
@@ -1576,7 +1576,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		GeoPoint P = (GeoPoint) PI;
 		
 		if (P.z == 1.0) {
-			P.x = P.x;			
+			//P.x = P.x;			
 		} else {
 			P.x = P.x / P.z;			
 		}

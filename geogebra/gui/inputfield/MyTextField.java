@@ -284,7 +284,7 @@ public class MyTextField extends JTextField implements ActionListener, FocusList
 		try {
 			r = thisField.modelToView(position);
 		} catch (BadLocationException e) {
-			r = null;
+			return null;
 		}  
 		return new Point(r.x, r.y - popup.getPreferredSize().height-10);
 	}

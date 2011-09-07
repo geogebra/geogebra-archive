@@ -201,7 +201,7 @@ public class Kernel {
 	
 	private int casPrintForm;		
 	private String casPrintFormPI; // for pi
-	private static boolean useTempVariablePrefix;
+	private boolean useTempVariablePrefix;
 	private boolean keepCasNumbers;
 		
 	// before May 23, 2005 the function acos(), asin() and atan()

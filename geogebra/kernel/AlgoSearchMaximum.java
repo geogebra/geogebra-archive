@@ -36,8 +36,8 @@ public class AlgoSearchMaximum {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static 	Construction				cons		=	null;
-	private static 	Kernel						kernel		=	null;
+	private 	 	Construction				cons		=	null;
+	private 	 	Kernel						kernel		=	null;
 	private 	 	ExtremumFinder				extrFinder	=	null;		//Uses ExtremumFinder for the dirty work
 	private 	   	RealRootFunctionVariable	i_am_not_a_real_function=null;	
 	private			GeoElement					dep			=	null;
@@ -90,7 +90,7 @@ public class AlgoSearchMaximum {
     	
     }//Constructor(cons)
 	
-    /* Show some info about GeoNumerics */
+    /* Show some info about GeoNumerics *
 	public final static void showInfo(String name){
     	double min,max,step,val;
     	GeoElement geo=kernel.lookupLabel(name);
@@ -103,7 +103,7 @@ public class AlgoSearchMaximum {
 		}else{
 			debug(name+": not GeoNumeric or null:"+geo);
 		}//if dep ok
-    }//getX()
+    }//getX()*/
     
 
     

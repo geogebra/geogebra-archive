@@ -241,7 +241,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		
 	public void insertString(String str, boolean isLatex) {
 		
-		boolean convertGreekLetters = !app.getLocale().equals("gr");
+		boolean convertGreekLetters = !app.getLocale().getLanguage().equals("gr");
 		if (str != null){
 			if(isLatex){
 				str = Util.toLaTeXString(str, convertGreekLetters);

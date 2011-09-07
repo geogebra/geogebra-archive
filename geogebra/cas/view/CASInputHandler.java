@@ -76,7 +76,7 @@ public class CASInputHandler {
 		
 		
 		// get possibly selected text
-		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
+		String selectedText = cellEditor.getInputSelectedText();
 		int selStart = cellEditor.getInputSelectionStart();
 		int selEnd = cellEditor.getInputSelectionEnd();
 		String selRowInput = cellEditor.getInput();

@@ -301,6 +301,11 @@ public class Term implements Comparable, Serializable {
 			return false;    
     }
         
+    public int hashCode() {
+    	assert false : "hashCode not designed";
+    return 42; // any arbitrary constant will do 
+    }
+
     boolean contains(String var) {
         return (variables.toString().indexOf(var) >= 0);    
     }

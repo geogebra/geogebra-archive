@@ -39,17 +39,14 @@ public abstract class AlgoOptimize extends AlgoElement{
 	public  static final int  MINIMIZE = 0;
 	public  static final int  MAXIMIZE = 1;
 	
-	private static 	Construction				cons		=	null;
+	private     	Construction				cons		=	null;
 	private 	 	ExtremumFinder				extrFinder	=	null;		//Uses ExtremumFinder for the dirty work
 	private 	   	RealRootFunctionVariable	i_am_not_a_real_function=null;	
 	private			GeoElement					dep			=	null;
 	private			GeoNumeric					indep		=	null;
 	private			GeoNumeric					result		=	null;
 	private			int							type		=	MINIMIZE;
-	private static  boolean						isrunning	=	false;		//To stop recursive calls. Both Maximize and Minimize.
-	private static  int							counter		=	0;			//Debug: invokations counter...
-	
-	
+	private 		boolean						isrunning	=	false;		//To stop recursive calls. Both Maximize and Minimize.
 	
 	/** Constructor for Maximize*/
 	public AlgoOptimize(Construction cons,String label,GeoElement dep,GeoNumeric indep,int type){
@@ -92,7 +89,6 @@ public abstract class AlgoOptimize extends AlgoElement{
     	if(isrunning){return;}   		//do nothing return as fast as possible		
 
    		old=indep.getValue();
-   		counter++;														//debug(""+counter+" invocation: Executing!");
    		isrunning=true;
    		if(indep.getIntervalMaxObject()==null||
    				indep.getIntervalMinObject()==null){

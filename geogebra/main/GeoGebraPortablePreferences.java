@@ -346,7 +346,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 		   java.io.ByteArrayOutputStream baos=new java.io.ByteArrayOutputStream();
 		   app.getXMLio().writeGeoGebraFile(baos,false);
 		   b64.append(geogebra.util.Base64.encode(baos.toByteArray(),0));
-	   }catch(Exception e){}
+	   }catch(Exception e){e.printStackTrace();}
 	   if(b64!=null){
 		   return b64.toString();
 	   }else{
