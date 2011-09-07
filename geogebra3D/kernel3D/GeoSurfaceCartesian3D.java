@@ -135,11 +135,11 @@ implements GeoElement3DInterface, Functional2Var, SurfaceEvaluable, LevelOfDetai
 	
 	
 	public String getClassName() {
-		return "GeoCurveCartesian3D";
+		return "GeoSurfaceCartesian3D";
 	}        
 	
     protected String getTypeString() {
-		return "CurveCartesian3D";
+		return "SurfaceCartesian3D";
 	}
     
     public int getGeoClassType() {
