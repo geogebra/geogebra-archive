@@ -3400,7 +3400,12 @@ public class GuiManager {
 			}
 			
 		}
-		
+
+		public void updateAlgebraInput() { 
+			if (algebraInput != null) 
+				algebraInput.initGUI(); 
+		} 
+
 
 
 

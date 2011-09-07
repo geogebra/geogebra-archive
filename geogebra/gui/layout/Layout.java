@@ -303,7 +303,7 @@ public class Layout implements SettingListener {
 		perspective.setShowAxes(ev.getShowXaxis() && ev.getShowYaxis());
 		perspective.setShowGrid(ev.getShowGrid());
 		perspective.setShowInputPanel(app.showAlgebraInput());
-		perspective.setShowInputPanelCommands(app.showCmdList());
+		perspective.setShowInputPanelCommands(app.showInputHelpToggle());
 		perspective.setShowInputPanelOnTop(app.showInputTop());
 
 		return perspective;

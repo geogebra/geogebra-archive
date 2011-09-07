@@ -411,7 +411,7 @@ public class Application implements KeyEventDispatcher {
 	public boolean showAuxiliaryObjects = false;
 	private boolean showAlgebraInput = true;
 	private boolean showInputTop = false;
-	private boolean showCmdList = true;
+	private boolean showInputHelpToggle = true;
 	protected boolean showToolBar = true;
 	private boolean showToolBarTop = true;
 	protected boolean showMenuBar = true;
@@ -3158,8 +3158,8 @@ public class Application implements KeyEventDispatcher {
 			updateContentPane();
 	}
 
-	public boolean showCmdList() {
-		return showCmdList;
+	public boolean showInputHelpToggle() {
+		return showInputHelpToggle;
 	}
 	
 	public boolean showToolBarTop() {
@@ -5931,7 +5931,15 @@ public class Application implements KeyEventDispatcher {
 	public void resetUniqueId() {
 		uniqueId = ""+UUID.randomUUID();
 	}
-	
+
+	public void setShowInputHelpToggle(boolean flag) { 
+		if (showInputHelpToggle == flag) 
+			return; 
+
+		showInputHelpToggle = flag; 
+		getGuiManager().updateAlgebraInput(); 
+		updateMenubar(); 
+	} 	
 }
 
 

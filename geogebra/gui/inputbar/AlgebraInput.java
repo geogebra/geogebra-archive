@@ -70,7 +70,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	}
 
 
-	private void initGUI() {
+	public void initGUI() {
 		removeAll();
 		inputLabel = new JLabel(); 
 		inputPanel = new InputPanel(null, app, 30, true);
@@ -116,7 +116,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		labelPanel.add(inputLabel, BorderLayout.EAST);
 
 		JPanel eastPanel = new JPanel(new BorderLayout());
-		if (app.showCmdList()) {
+		if (app.showInputHelpToggle()) {
 			eastPanel.add(btnHelpToggle, BorderLayout.WEST);
 		}
 		

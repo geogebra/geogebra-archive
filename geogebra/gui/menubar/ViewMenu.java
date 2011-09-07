@@ -30,7 +30,7 @@ class ViewMenu extends BaseMenu {
 	private AbstractAction 
 		showAlgebraInputAction,
 		showKeyboardAction,
-		showCmdListAction,
+		showInputHelpToggleAction,
 		showInputTopAction,
 		showToolBarAction,
 		showToolBarTopAction,
@@ -51,7 +51,7 @@ class ViewMenu extends BaseMenu {
 		cbShowConsProtNavigationOpenProt,
 		cbShowAlgebraInput,
 		cbShowKeyboard,		
-		cbShowCmdList,
+		cbShowInputHelpToggle,
 		cbShowAxes,
 		cbShowGrid;
 	
@@ -141,12 +141,12 @@ class ViewMenu extends BaseMenu {
 
 		menuInput = new JMenu(app.getMenu("InputField"));
 		menuInput.setIcon(app.getEmptyIcon());
-		cbShowCmdList = new JCheckBoxMenuItem(showCmdListAction);
+		cbShowInputHelpToggle = new JCheckBoxMenuItem(showInputHelpToggleAction);
 		cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);
 		app.setEmptyIcon(cbShowAlgebraInput);
 		menuInput.add(cbShowAlgebraInput);
-		app.setEmptyIcon(cbShowCmdList);
-		menuInput.add(cbShowCmdList);
+		app.setEmptyIcon(cbShowInputHelpToggle);
+		menuInput.add(cbShowInputHelpToggle);
 		cbShowInputTop = new JCheckBoxMenuItem(showInputTopAction);
 		app.setEmptyIcon(cbShowInputTop);
 		menuInput.add(cbShowInputTop);
@@ -296,6 +296,17 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
+		showInputHelpToggleAction = new AbstractAction(app.getMenu("CmdList")) { 
+			private static final long serialVersionUID = 1L; 
+
+			public void actionPerformed(ActionEvent e) { 
+				app.setShowInputHelpToggle(!app.showInputHelpToggle()); 
+				if (app.getGuiManager().getAlgebraInput() != null) 
+					SwingUtilities.updateComponentTreeUI(app.getGuiManager() 
+							.getAlgebraInput()); 
+			} 
+		}; 
+
 		showInputTopAction = new AbstractAction(app.getMenu("ShowAtTop")) {
 			private static final long serialVersionUID = 1L;
 
@@ -429,7 +440,7 @@ class ViewMenu extends BaseMenu {
 //		cbShowHandwritingAutoAdd.setSelected(Application.isHandwritingRecognitionAutoAdd());
 //		cbShowHandwritingTimedAdd.setSelected(Application.isHandwritingRecognitionTimedAdd());
 //		cbShowHandwritingTimedRecognise.setSelected(Application.isHandwritingRecognitionTimedRecognise());
-		cbShowCmdList.setSelected(app.showCmdList());
+		cbShowInputHelpToggle.setSelected(app.showInputHelpToggle());
 		cbShowInputTop.setSelected(app.showInputTop());
 		cbShowToolBar.setSelected(app.showToolBar());
 		cbShowToolBarTop.setSelected(app.showToolBarTop());
