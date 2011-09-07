@@ -65,8 +65,6 @@ public class AlgoFitNL extends AlgoElement {
 	private	int 					datasize			=	0;			//rows in M and Y
 	private double[]				xdata				=	null;
 	private double[]				ydata				=	null;
-	private	int						parsize				=	0;
-	private double[]				parameters			=	null;
 	private FitRealFunction			prfunction			=	null;		//function for Apache lib
 	private LevenbergMarquardtOptimizer LMO				=	new LevenbergMarquardtOptimizer();
 	private	CurveFitter				curvefitter			=	new CurveFitter(LMO);
@@ -131,8 +129,6 @@ public class AlgoFitNL extends AlgoElement {
 
 				//prfunction makes itself a copy of inputfunction with parameters instead of GeoNumerics
 				prfunction = new FitRealFunction(inputfunction.getFunction());
-				
-				parsize=prfunction.getNumberOfParameters();
 				
 				//very important:
 				curvefitter.clearObservations();

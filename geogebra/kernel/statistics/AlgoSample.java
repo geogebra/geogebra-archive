@@ -39,7 +39,6 @@ public class AlgoSample extends AlgoElement {
 	private GeoBoolean replacement;
 	private NumberValue num;
     private GeoList outputList; //output	
-    private int size;
 
     public AlgoSample(Construction cons, String label, GeoList inputList, NumberValue num, GeoBoolean replacement) {
         super(cons);

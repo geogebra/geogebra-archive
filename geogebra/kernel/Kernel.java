@@ -9351,8 +9351,6 @@ public class Kernel {
 		
 	}
 
-	boolean inverseTrigReturnsAngle = false;
-
 	public void setInverseTrigReturnsAngle(boolean selected) {
 		arcusFunctionCreatesAngle = selected;
 	}

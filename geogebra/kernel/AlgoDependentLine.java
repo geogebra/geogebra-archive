@@ -43,13 +43,6 @@ public class AlgoDependentLine extends AlgoElement {
     protected ExpressionNode root;
     protected GeoLine g;     // output       
     
-    protected int mode;
-    public final static int MODE_EQUATION = 0;
-    public final static int MODE_ADD      = 1;
-    public final static int MODE_SUBTRACT = 2;
-    public final static int MODE_MULTIPLY = 3;
-    public final static int MODE_DIVIDE   = 4;
-    
         
     /** Creates new AlgoDependentLine 
      * @param cons 
@@ -58,7 +51,6 @@ public class AlgoDependentLine extends AlgoElement {
     public AlgoDependentLine(Construction cons, String label, Equation equ) {        
        	super(cons, false); // don't add to construction list yet
         equation = equ;  
-        mode = MODE_EQUATION;
         Polynomial lhs = equ.getNormalForm();
         
         ev[0] = lhs.getCoefficient("x");        
@@ -91,28 +83,7 @@ public class AlgoDependentLine extends AlgoElement {
     
     // for AlgoElement
 	protected void setInputOutput() {
-		switch (mode) {
-		case MODE_EQUATION:
-		
         input = equation.getGeoElementVariables();     
-		break;
-		
-		case MODE_ADD:
-		case MODE_SUBTRACT:
-			
-			input = new GeoElement[2];
-			input[0] = line1;
-			input[1] = line2;
-			break;
-			
-		case MODE_MULTIPLY:
-		case MODE_DIVIDE:
-			
-			input = new GeoElement[2];
-			input[0] = line1;
-			input[1] = num.toGeoElement();
-			break;
-		}
 			
 			
         setOutputLength(1);        
@@ -125,8 +96,6 @@ public class AlgoDependentLine extends AlgoElement {
     // calc the current value of the arithmetic tree
     protected final void compute() {  
     	
-    	switch (mode) {
-    	case MODE_EQUATION:
 	    	try {
 		        g.x = ((NumberValue) ev[0].evaluate()).getDouble();
 		        g.y = ((NumberValue) ev[1].evaluate()).getDouble();
@@ -138,48 +107,14 @@ public class AlgoDependentLine extends AlgoElement {
 		    } catch (Throwable e) {
 				g.setUndefined();
 			}
-    	break;
-    	case MODE_ADD:
-    		g.x = line1.x + line2.x;
-    		g.y = line1.y + line2.y;
-    		g.z = line1.z + line2.z;
-    		break;
-    	case MODE_SUBTRACT:
-    		g.x = line1.x - line2.x;
-    		g.y = line1.y - line2.y;
-    		g.z = line1.z - line2.z;
-    		break;
-    	case MODE_MULTIPLY:
-    		double n = num.getDouble();
-    		g.x = line1.x * n;
-    		g.y = line1.y * n;
-    		g.z = line1.z * n;
-    		break;
-    	case MODE_DIVIDE:
-    		n = num.getDouble();
-    		if (Kernel.isZero(n))
-    			g.setUndefined();
-    		else {
-	    		g.x = line1.x / n;
-	    		g.y = line1.y / n;
-	    		g.z = line1.z / n;
-    		}
-    		break;
-    	}
     }   
           
     final public String toString() { 
-    	if (mode == MODE_EQUATION)
-    		return equation.toString();
-    	else
-    		return root.toString();
+    	return equation.toString();
     }
     
     final public String toRealString() { 
-    	if (mode == MODE_EQUATION)
-    		return equation.toRealString();
-    	else
-    		return root.toRealString();
+    	return equation.toRealString();
     } 
     
 }

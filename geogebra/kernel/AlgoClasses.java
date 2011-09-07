@@ -28,9 +28,6 @@ public class AlgoClasses extends AlgoElement {
 	private GeoList classList;  //output	
 
 	// for compute
-	private GeoList value = new GeoList(cons);
-
-
 
 	AlgoClasses(Construction cons, String label, GeoList dataList, GeoNumeric start, GeoNumeric width, GeoNumeric numClasses ) {
 		

@@ -74,12 +74,10 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 	/// --- Properties --- ///
 	private		Kernel			kernel				=	null;
 	private 	int				numberOfParameters	=	0;
-	private 	Function		oldf				=	null;			//Must remember f to get new startvalues
 	private		Object[]		gliders				=	null;			//Pointers to gliders, need for new startvalues
 	private		Function		newf				=	null;
 	private		double			lastvalue			=	0.0d;
 	private		MyDouble[]		mydoubles			=	null;
-	private		double			numberrange			=	1.0E-14;
 	
 	
 	
@@ -94,7 +92,6 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 	 */
 	public FitRealFunction(Function f)throws Exception{
 		super();
-		this.oldf=f;
 		setFunction(f);
 	}//Constructor 
 	
@@ -152,8 +149,6 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 			mydoubles[i].set(temp);								//Set mydoubles to start values from a,b,c
 			sum+=temp;											//System.out.println("mydouble["+i+"]: "+mydoubles[i].getDouble());
 		}//for all parameters
-		
-		numberrange=sum/numberOfParameters;
 		
 		ExpressionNode node=f.getExpression();
 		

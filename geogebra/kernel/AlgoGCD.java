@@ -23,8 +23,6 @@ import java.math.BigInteger;
  */
 public class AlgoGCD extends AlgoTwoNumFunction {  
 	
-	private StringBuilder sb;
-        
     AlgoGCD(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons, label, a, b); 
     }   

@@ -21,13 +21,8 @@ public class AlgoVerticalText extends AlgoElement {
     private GeoText text; //output	
     private GeoText args; //input	
     
-    private GeoList[] geoLists;
-    
     private StringBuffer sb = new StringBuffer();
     
-    private int VERTICAL = 0;
-    private int HORIZONTAL = 1;
-
     AlgoVerticalText(Construction cons, String label, GeoText args) {
     	this(cons,  args);
         text.setLabel(label);

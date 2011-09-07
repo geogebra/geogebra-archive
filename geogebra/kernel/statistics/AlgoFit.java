@@ -68,9 +68,6 @@ public class AlgoFit extends AlgoElement {
 	private	RealMatrix		M				=	null;
 	private	RealMatrix		Y				=	null;
 	private	RealMatrix		P				=	null;
-	private FunctionVariable X				=	null;
-	
-
 
 	public AlgoFit(Construction cons, String label, GeoList pointlist,GeoList functionlist) {
 		super(cons);

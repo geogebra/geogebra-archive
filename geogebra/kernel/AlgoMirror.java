@@ -226,7 +226,6 @@ public class AlgoMirror extends AlgoTransformation {
         	return new GeoList(cons);
 		return geo.copy();
 	}
-    private  AlgoClosestPoint pt;
     protected void transformLimitedPath(GeoElement a,GeoElement b){
     	if(mirror != mirrorConic){
     		super.transformLimitedPath(a, b);

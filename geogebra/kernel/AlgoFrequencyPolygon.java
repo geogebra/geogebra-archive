@@ -33,7 +33,7 @@ public class AlgoFrequencyPolygon extends AlgoElement {
 	private GeoNumeric density;
 	private GeoPolyLine outputPolyLine; //output
 
-	private GeoPointND[] points; 
+	private GeoPointND[] points = null; 
 	private AlgoHistogram algoHistogram;
 
 	private boolean right = false;

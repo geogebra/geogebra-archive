@@ -29,8 +29,6 @@ public class AlgoNumerator extends AlgoElement {
 	private GeoFunction f; // input
     private GeoFunction g; // output        
     
-    private StringBuilder sb = new StringBuilder();
-   
     public AlgoNumerator(Construction cons, String label, GeoFunction f) {
     	super(cons);
         this.f = f;            	

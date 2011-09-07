@@ -32,7 +32,7 @@ public class AlgoListElement extends AlgoElement {
 	private GeoList geoList; // input
 	private NumberValue num;
 	private NumberValue[] num2 = null; // input
-	private GeoElement numGeo, num2Geo = null;
+	private GeoElement numGeo;
 	private GeoElement element; // output
 	private boolean shortSyntax;
 

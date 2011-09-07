@@ -59,7 +59,6 @@ implements NumberValue, Comparable {
         isAngle = d.isAngle;
     }    
     
-    StringBuilder sbSuper;
     /*
      * called from the parser 
      * power must be a string of unicode superscript digits

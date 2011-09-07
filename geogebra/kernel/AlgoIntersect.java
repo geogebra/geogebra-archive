@@ -19,13 +19,6 @@ import geogebra.kernel.kernelND.GeoPointND;
 
 public abstract class AlgoIntersect extends AlgoIntersectND {
 
-    // gives the number of intersection algorithms
-    // this algorithm is used by: see AlgoIntersectSingle
-    private int numberOfUsers = 0;
-    
-    // used in setIntersectionPoint to remember all indices that have been set
-    private boolean [] didSetIntersectionPoint;
-
     public AlgoIntersect(Construction c) {
         super(c);
     }

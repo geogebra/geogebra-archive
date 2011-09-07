@@ -33,9 +33,8 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 	private static final long serialVersionUID = 1L;
 	private GeoFunction h;  // input
     private GeoConic c;
-    private GeoPoint []  Q;     // points  
-    
-   // private boolean isLimitedPathSituation;
+
+    // private boolean isLimitedPathSituation;
 
 	
 	public AlgoIntersectPolynomialConic(Construction cons,GeoFunction h,GeoConic c) {

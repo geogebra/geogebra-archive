@@ -28,8 +28,6 @@ public class AlgoStemPlot extends AlgoElement {
 	private GeoText text; //output	
 	StringBuffer low, high;
 
-	private GeoList[] geoLists;
-
 	private StringBuffer sb = new StringBuffer();
 
 	AlgoStemPlot(Construction cons, String label, GeoList geoList, GeoNumeric scaleAdjustment) {

@@ -1157,12 +1157,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					this.setVisible(false);
 				}
 			}
-			public String getJustification() {
-				String s = "l";
-				if(this.getSelectedIndex() == 1) s = "c";
-				if(this.getSelectedIndex() == 2) s = "r";
-				return s;
-			}
 		};
 		
 		btnTableTextJustify.addActionListener(this);

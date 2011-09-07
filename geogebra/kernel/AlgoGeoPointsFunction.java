@@ -59,8 +59,6 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
         	this.setLabels=setLabels;			//In subclass: !cons.isSuppressLabelsActive();
         	this.f=f;
         	
-        	tempPoint = new GeoPoint(cons);
-            
             //  make sure root points is not null
             int number = labels == null ? 1 : Math.max(1, labels.length);
             points = new GeoPoint[0];

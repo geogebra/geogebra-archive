@@ -32,8 +32,6 @@ public class AlgoPointsFromList extends AlgoElement {
 	private String[] labels;
 	private boolean initLabels, setLabels;
 
-	private GeoPoint tempPoint;
-
 
 	AlgoPointsFromList(
 			Construction cons,
@@ -42,9 +40,6 @@ public class AlgoPointsFromList extends AlgoElement {
 			GeoList list) {
 		super(cons);
 		this.list = list;
-
-		tempPoint = new GeoPoint(cons);
-
 
 		this.labels = labels;
 		this.setLabels = setLabels; // should labels be used?

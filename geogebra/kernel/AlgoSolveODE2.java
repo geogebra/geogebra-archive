@@ -14,7 +14,7 @@ public class AlgoSolveODE2 extends AlgoElement {
 
 		private static final long serialVersionUID = 1L;
 		private GeoFunction b, c, f; // input
-		private GeoNumeric x, y, yDot, start, end, step; // input
+		private GeoNumeric x, y, yDot, end, step; // input
 	    //private GeoList g; // output  
 		private GeoLocus locus; // output
 	    private ArrayList<MyPoint> al;

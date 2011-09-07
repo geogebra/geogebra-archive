@@ -16,7 +16,7 @@ public class AlgoSolveODE extends AlgoElement {
 
 		private static final long serialVersionUID = 1L;
 		private FunctionalNVar f0, f1; // input
-		private GeoNumeric x, y, start, end, step; // input
+		private GeoNumeric x, y, end, step; // input
 	    //private GeoList g; // output        
 	    private GeoLocus locus; // output   
 	    private ArrayList<MyPoint> al;

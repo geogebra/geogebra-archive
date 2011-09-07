@@ -25,7 +25,6 @@ public class AlgoPrimeFactors extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private NumberValue num; //input
     private GeoList outputList; //output	
-    private int size;
     
     private static double LARGEST_INTEGER=9007199254740992d;
 
