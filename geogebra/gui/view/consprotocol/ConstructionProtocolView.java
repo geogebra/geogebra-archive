@@ -924,8 +924,8 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			 * For that, we calculate the index for the current and the previous row
 			 * and check if they are equal.
 			 */
-			Integer index = null;
-			Integer prevIndex = null;
+			int index;
+			int prevIndex;
 
 			index = (rowNumber < 0) ? -1 : data.getConstructionIndex(rowNumber);
 			prevIndex = (rowNumber < 1) ? -1 : data.getConstructionIndex(rowNumber - 1);
@@ -1257,8 +1257,8 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			 * For that, we calculate the index for the current and the previous row
 			 * and check if they are equal.
 			 */
-			Integer index = null;
-			Integer prevIndex = null;
+			int index;
+			int prevIndex;
 
 			index = (nRow < 0) ? -1 : data.getConstructionIndex(nRow);
 			prevIndex = (nRow < 1) ? -1 : data.getConstructionIndex(nRow - 1);
