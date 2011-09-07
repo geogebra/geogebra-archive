@@ -78,9 +78,7 @@ public class Renderer implements GLEventListener {
 	/** for polygon tesselation */
 	private GLUtessellator tobj;
 	
-	private IntBuffer selectBuffer;
-	private int BUFSIZE = 512;
-	private static int MOUSE_PICK_WIDTH = 3;
+	private static final int MOUSE_PICK_WIDTH = 3;
 	
 	Drawable3D[] drawHits;
 	int pickingLoop;
@@ -1169,62 +1167,55 @@ public class Renderer implements GLEventListener {
     	// on next rending, a picking will be done : see doPick()
     	waitForPick = true;
     	
-    	//thread = new Thread(picking);
-       
-    	//thread.setPriority(Thread.MIN_PRIORITY);
-    	
-    	//thread.start();
-        //return thread;
     	
     }
     
-
     
-    /**
-     * does the picking to sets which objects are under the mouse coordinates.
-     */
-    public void doPick(){
-    	
-    	//double pickTime = System.currentTimeMillis();
+    private int oldGeoToPickSize = -1;
+    private int geoToPickSize = EuclidianView3D.DRAWABLES_NB;
 
-    	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
-    	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
-    	//selectBuffer =  GLBuffers.newDirectIntBuffer(BUFSIZE); // Set Up A Selection Buffer
-        int hits; // The Number Of Objects That We Selected
-        gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
-        
-        
+	private IntBuffer selectBuffer;
+    
+	
+    public void addOneGeoToPick(){
+    	geoToPickSize++;
+    }
+    
+
+	public void removeOneGeoToPick(){
+		geoToPickSize--;
+	}
+	
+	
+	
+	private IntBuffer createSelectBufferForPicking(int bufSize){
+		IntBuffer ret = BufferUtil.newIntBuffer(bufSize);// Set Up the Selection Buffer
+        gl.glSelectBuffer(bufSize, ret); // Tell OpenGL To Use Our Array For Selection
+        return ret; 
+	}
+	
+	private Drawable3D[] createDrawableListForPicking(int bufSize){
+        return new Drawable3D[bufSize];
+	}
+	
+	private void setGLForPicking(){
+
         // The Size Of The Viewport. [0] Is <x>, [1] Is <y>, [2] Is <length>, [3] Is <width>
         int[] viewport = new int[4];
         gl.glGetIntegerv(GLlocal.GL_VIEWPORT, viewport, 0);      
-        //System.out.println("viewport= "+viewport[0]+","+viewport[1]+","+viewport[2]+","+viewport[3]);
-        
-        
         Dimension dim = canvas.getSize();
-        //System.out.println("dimension= "+dim.width +","+dim.height);
-        
-        
-        
-        
         // Puts OpenGL In Selection Mode. Nothing Will Be Drawn.  Object ID's and Extents Are Stored In The Buffer.
         gl.glRenderMode(GLlocal.GL_SELECT);
         gl.glInitNames(); // Initializes The Name Stack
         gl.glPushName(0); // Push 0 (At Least One Entry) Onto The Stack
-        
-        
-        // This Creates A Matrix That Will Zoom Up To A Small Portion Of The Screen, Where The Mouse Is.
-
-        
+         
         gl.glMatrixMode(GLlocal.GL_PROJECTION);
         gl.glLoadIdentity();
       
         
         /* create MOUSE_PICK_WIDTH x MOUSE_PICK_WIDTH pixel picking region near cursor location */
-        //glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
-        //TODO just for testing:
-        glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), 6, 6, viewport, 0);
+        glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
         setProjectionMatrix();
-        //gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
     	gl.glMatrixMode(GLlocal.GL_MODELVIEW);
     	
         
@@ -1234,23 +1225,75 @@ public class Renderer implements GLEventListener {
     	gl.glDisable(GLlocal.GL_BLEND);
     	gl.glDisable(GLlocal.GL_LIGHTING);
        	gl.glDisable(GLlocal.GL_TEXTURE);
-       	//gl.glDisable(GLlocal.GL_DEPTH_TEST);
-       	//gl.glColorMask(false,false,false,false);
-       	//gl.glDisable(GLlocal.GL_NORMALIZE);
     	
-    	drawHits = new Drawable3D[BUFSIZE];
-  
-    	
+     	
     	
     	// picking 
     	pickingLoop = 0;
 
-    	
-    	
+	}
+	
+	private void pushSceneMatrix(){
         // set the scene matrix
     	gl.glPushMatrix();
-        //gl.glMultMatrixd(view3D.getToScreenMatrix().get(),0);
         gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
+
+	}
+	
+	
+	private void storePickingInfos(Hits3D hits3D, int labelLoop){
+
+        int hits = gl.glRenderMode(GLlocal.GL_RENDER); // Switch To Render Mode, Find Out How Many
+
+        int names, ptr = 0;
+        float zMax, zMin;
+        int num;
+        
+        for (int i = 0; i < hits ; i++) { 
+        	     
+          names = selectBuffer.get(ptr);  
+          ptr++; // min z    
+          zMin = getDepth(ptr);
+          ptr++; // max z
+          zMax = getDepth(ptr);           
+          
+          ptr++;
+
+
+          for (int j = 0; j < names; j++){ 
+        	  num = selectBuffer.get(ptr);
+
+        	  if (hits3D!=null)
+        		  hits3D.addDrawable3D(drawHits[num],num>=labelLoop);
+        	  drawHits[num].zPickMin = zMin;
+        	  drawHits[num].zPickMax = zMax;
+        	  
+        	  //Application.debug(drawHits[num]+"\nzMin="+zMin+", zMax="+zMax);
+        	  ptr++;
+          }
+          
+          
+        }
+	}
+	
+    
+    /**
+     * does the picking to sets which objects are under the mouse coordinates.
+     */
+    public void doPick(){
+    	
+    	if (geoToPickSize!=oldGeoToPickSize){
+    		int bufSize=geoToPickSize*2+1;
+    		selectBuffer=createSelectBufferForPicking(bufSize);
+    		drawHits=createDrawableListForPicking(bufSize);
+    		oldGeoToPickSize=geoToPickSize;
+    	}
+
+        
+        
+    	setGLForPicking();
+    	pushSceneMatrix();
+    	
         
 		// picking objects
         drawable3DLists.drawForPicking(this);
@@ -1278,43 +1321,13 @@ public class Renderer implements GLEventListener {
         
         
         //end picking
-        hits = gl.glRenderMode(GLlocal.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
         
         //hits are stored
-        Hits3D hits3D = new Hits3D();
+        //Hits3D hits3D = new Hits3D();
+        Hits3D hits3D = view3D.getHits3D();
         hits3D.init();
-        
-        int names, ptr = 0;
-        float zMax, zMin;
-        int num;
-        
-        for (int i = 0; i < hits ; i++) { 
-        	     
-          names = selectBuffer.get(ptr);  
-          ptr++; // min z    
-          zMin = getDepth(ptr);
-          ptr++; // max z
-          zMax = getDepth(ptr);           
-          
-          ptr++;
-
-
-          for (int j = 0; j < names; j++){ 
-        	  num = selectBuffer.get(ptr);
-
-        	  hits3D.addDrawable3D(drawHits[num],num>=labelLoop);
-        	  drawHits[num].zPickMin = zMin;
-        	  drawHits[num].zPickMax = zMax;
-        	  
-        	  //Application.debug(drawHits[num]+"\nzMin="+zMin+", zMax="+zMax);
-
-
-        	  ptr++;
-          }
-          
-          
-        }
+        storePickingInfos(hits3D, labelLoop);
         
         // sets the GeoElements in view3D
         hits3D.sort();
@@ -1329,11 +1342,9 @@ public class Renderer implements GLEventListener {
         			"  zPickMax=" + drawHits[i].zPickMax);}}
         }
 		Application.debug(sbd.toString());*/
-        view3D.setHits(hits3D);
+        //view3D.setHits(hits3D);
        
         waitForPick = false;
-        
-        
         
         gl.glEnable(GLlocal.GL_LIGHTING);
     }
@@ -1344,11 +1355,13 @@ public class Renderer implements GLEventListener {
     }
     
     
-    public void pick(Drawable3D d){    	
-    	gl.glLoadName(pickingLoop);
-    	Drawable3D ret = d.drawForPicking(this);	
-    	drawHits[pickingLoop] = ret;
-    	pickingLoop++;
+    public void pick(Drawable3D d){  
+    	//Application.debug(d.getGeoElement()+"\npickingloop="+pickingLoop+"\ndrawHits length="+drawHits.length);  	
+    	//Application.debug("1");
+    	gl.glLoadName(pickingLoop);//Application.debug("2");
+    	Drawable3D ret = d.drawForPicking(this);	//Application.debug("3");
+    	drawHits[pickingLoop] = ret;//Application.debug("4");
+    	pickingLoop++;//Application.debug("5");
     }
     
     public void pickLabel(Drawable3D d){   	

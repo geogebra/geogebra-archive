@@ -1979,6 +1979,9 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 
 
 
+	public Hits3D getHits3D(){
+		return hits;
+	}
 
 
 
@@ -3914,6 +3917,20 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 			if (renderer!=null)
 				renderer.setWaitForUpdateClearColor();
 		}
+	}
+	
+	
+	
+	//////////////////////////////////////
+	// PICKING
+	
+	
+	public void addOneGeoToPick(){
+		renderer.addOneGeoToPick();
+	}
+	
+	public void removeOneGeoToPick(){
+		renderer.removeOneGeoToPick();
 	}
 	
 }
