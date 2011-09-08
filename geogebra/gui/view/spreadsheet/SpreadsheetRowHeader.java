@@ -129,7 +129,6 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 
 		private static final long serialVersionUID = 1L;
 
-		protected JTableHeader header;
 		protected JList rowHeader;
 		private Color defaultBackground;
 
@@ -137,14 +136,8 @@ implements MouseListener, MouseMotionListener, KeyListener, ListSelectionListene
 			super("", JLabel.CENTER);
 			setOpaque(true);
 			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
-
 			this.rowHeader = rowHeader;
-			header = table.getTableHeader() ;
-			//			setOpaque(true);
-			//setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
 			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.HEADER_GRID_COLOR));
-			
-
 		}
 
 		public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {

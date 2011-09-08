@@ -621,7 +621,8 @@ public class MyTable extends JTable implements FocusListener
 		// if the selection has changed or an empty cell has been clicked, repaint 
 		if(changed || list.isEmpty()){			
 			repaint();
-			getTableHeader().repaint();
+			if(table.getTableHeader() != null)
+				getTableHeader().repaint();
 		}
 
 
@@ -1649,7 +1650,9 @@ public class MyTable extends JTable implements FocusListener
 		} else {
 			prefWidth = Math.max(prefWidth, tableColumn.getMinWidth());
 		}
-		getTableHeader().setResizingColumn(tableColumn);
+		// note: the table might have its header set to null, 
+		// so we get the actual header from view
+		view.getTableHeader().setResizingColumn(tableColumn);
 		tableColumn.setWidth(prefWidth
 				+ getIntercellSpacing().width);
 

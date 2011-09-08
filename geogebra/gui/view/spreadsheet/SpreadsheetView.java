@@ -209,6 +209,21 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	}
 
 
+	//===============================================================
+	//             Corners
+	//===============================================================
+
+
+
+	private static class Corner extends JComponent {
+		private static final long serialVersionUID = -4426785169061557674L;
+
+		protected void paintComponent(Graphics g) {
+			g.setColor(MyTable.BACKGROUND_COLOR_HEADER);
+			g.fillRect(0, 0, getWidth(), getHeight());
+		}
+	}
+
 
 
 	//===============================================================
@@ -256,19 +271,15 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		return spreadsheet.getColumnHeader();
 	}
 
-
+	public JTableHeader getTableHeader(){
+		return tableHeader;
+	}
+	
 	public int getMode() {
 		return mode;
 	}
 
-	private static class Corner extends JComponent {
-		private static final long serialVersionUID = -4426785169061557674L;
 
-		protected void paintComponent(Graphics g) {
-			g.setColor(MyTable.BACKGROUND_COLOR_HEADER);
-			g.fillRect(0, 0, getWidth(), getHeight());
-		}
-	}
 
 	/** 
 	 * get spreadsheet styleBar 
@@ -486,7 +497,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	 * Updates highestUsedColumn
 	 */
 	private void updateHighestUsedColAndRow(int col, int row) {
-		
+
 		if (col==highestUsedColumn){
 			boolean updatedHighestUsedColumn=false;
 			for (int c=highestUsedColumn;c>=0;c--){
@@ -1229,7 +1240,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	public void setShowColumnHeader(boolean showColumnHeader) {
 		if (showColumnHeader) {
 			table.setTableHeader(tableHeader);
-			spreadsheet.setColumnHeaderView(table.getTableHeader());
+			spreadsheet.setColumnHeaderView(tableHeader);
 		} else {
 			table.setTableHeader(null);
 			spreadsheet.setColumnHeaderView(null);
@@ -1503,7 +1514,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 			return false;
 		return table.hasFocus()
 		|| rowHeader.hasFocus()
-		|| table.getTableHeader().hasFocus()
+		|| (table.getTableHeader() != null && table.getTableHeader().hasFocus())
 		|| spreadsheet.getCorner(JScrollPane.UPPER_LEFT_CORNER).hasFocus()
 		|| (formulaBar != null && formulaBar.hasFocus());
 	}
@@ -1536,7 +1547,12 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 	public int[] getGridRowHeights() {
 		int[] rowHeights=new int[2+highestUsedRow];
-		rowHeights[0]=table.getTableHeader().getHeight();
+		
+		if(table.getTableHeader() == null)
+			rowHeights[0] = 0;
+		else
+			rowHeights[0]=table.getTableHeader().getHeight();
+		
 		for (int r=0;r<=highestUsedRow;r++){
 			rowHeights[r+1]=table.getRowHeight(r);
 		}
@@ -1545,7 +1561,9 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 
 	public Component[][] getPrintComponents() {
-		return new Component[][]{{spreadsheet.getCorner(JScrollPane.UPPER_LEFT_CORNER), table.getTableHeader()},{rowHeader,table}};
+		return new Component[][]{
+				{spreadsheet.getCorner(JScrollPane.UPPER_LEFT_CORNER), spreadsheet.getColumnHeader()},
+				{spreadsheet.getRowHeader(),table}};
 	}
 
 

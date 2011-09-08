@@ -86,7 +86,8 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 
 	public void mouseExited(MouseEvent e) {
 		overTraceButtonColumn = -1;
-		table.getTableHeader().resizeAndRepaint();
+		if(table.getTableHeader() != null)
+			table.getTableHeader().resizeAndRepaint();
 	}
 
 
@@ -125,7 +126,8 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 					// otherwise handle column selection
 					if(table.getSelectionType() != MyTable.COLUMN_SELECT){
 						table.setSelectionType(MyTable.COLUMN_SELECT);
-						table.getTableHeader().requestFocusInWindow();
+						if(table.getTableHeader() != null)
+							table.getTableHeader().requestFocusInWindow();
 					}
 
 
@@ -263,11 +265,13 @@ public class SpreadsheetColumnController implements KeyListener, MouseListener, 
 		//System.out.println("isOver = " + isOver );
 		if(isOver && overTraceButtonColumn != column){
 			overTraceButtonColumn = column;
-			table.getTableHeader().resizeAndRepaint();
+			if(table.getTableHeader() != null)
+				table.getTableHeader().resizeAndRepaint();
 		}
 		if(!isOver && overTraceButtonColumn > 0){
 			overTraceButtonColumn = -1;
-			table.getTableHeader().resizeAndRepaint();
+			if(table.getTableHeader() != null)
+				table.getTableHeader().resizeAndRepaint();
 		}
 	}
 
