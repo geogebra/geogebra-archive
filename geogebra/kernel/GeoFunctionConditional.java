@@ -316,9 +316,10 @@ public class GeoFunctionConditional extends GeoFunction {
 			return app.getPlain("undefined");
 		
 		// for CAS, translate to CAS format :)
-		if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MPREDUCE
-				|| kernel.getCASPrintForm() ==  ExpressionNode.STRING_TYPE_MATH_PIPER
-				|| kernel.getCASPrintForm() ==  ExpressionNode.STRING_TYPE_MAXIMA) {
+		if (kernel.getCASPrintForm() ==  ExpressionNode.STRING_TYPE_MATH_PIPER
+				|| kernel.getCASPrintForm() ==  ExpressionNode.STRING_TYPE_MAXIMA
+				|| kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MPREDUCE) {
+			//TODO: implement if in mpreduce
 			CASgeneric cas = kernel.getGeoGebraCAS().getCurrentCAS();
 			String cmd = cas.getTranslatedCASCommand(elseFun == null ? "If.2" : "If.3");
 			if (symbolic) {

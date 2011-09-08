@@ -556,10 +556,19 @@ implements ExpressionValue, RealRootFunction, Functional {
         int oldPrintForm = kernel.getCASPrintForm();
         kernel.setUseTempVariablePrefix(true);
         kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_MPREDUCE);
-        String function = node.getCASstring(ExpressionNode.STRING_TYPE_MPREDUCE, symbolic); 
-        String var = fVars[0].toString();
-        kernel.setCASPrintForm(oldPrintForm);
-        kernel.setUseTempVariablePrefix(oldUseTempVarPrefix);
+        String function,var;
+        
+        //See #1322
+        try {
+        	function = node.getCASstring(ExpressionNode.STRING_TYPE_MPREDUCE, symbolic); 
+        	var = fVars[0].toString();
+        } catch (NullPointerException e) {
+        	// this is not a valid polynomial           
+            return null;
+        } finally {
+        	 kernel.setCASPrintForm(oldPrintForm);
+             kernel.setUseTempVariablePrefix(oldUseTempVarPrefix);
+        }
         
         String [] strCoeffs = kernel.getPolynomialCoeffs(function, var);
         
