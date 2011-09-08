@@ -75,14 +75,14 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 		if(a instanceof GeoConicPart){
 			double p = ((GeoConicPart)a).getParameterStart();
 			double q = ((GeoConicPart)a).getParameterEnd();
-			Application.debug(p+","+q);
+			//Application.debug(p+","+q);
 			((GeoConicPart)b).setParameters(p, q, 
 					swapOrientation(((GeoConicPart)a).positiveOrientation()));
 			//TODO transform for conic part
 		}
 	}
 	protected boolean swapOrientation(boolean positiveOrientation) {
-		Application.debug(positiveOrientation);
+		//Application.debug(positiveOrientation);
 		return positiveOrientation;
 	}
 
@@ -107,7 +107,7 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 		);
 		compute();								
 		transformedPoint.updateCascade();
-		Application.debug("start"+transformedPoint);
+		//Application.debug("start"+transformedPoint);
 		double d = pt.getP().getPathParameter().getT();
 		transformedPoint.removePath();
 		setTransformedObject(
@@ -115,9 +115,9 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 		);
 		compute();
 		transformedPoint.updateCascade();
-		Application.debug("end"+transformedPoint);			
+		//Application.debug("end"+transformedPoint);			
 		double e = pt.getP().getPathParameter().getT();
-		Application.debug(d+","+e);
+		//Application.debug(d+","+e);
 		arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,swapOrientation(((GeoConicPart)a).positiveOrientation()));
 		
 		setTransformedObject(a,b);
