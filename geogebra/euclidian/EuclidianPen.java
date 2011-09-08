@@ -375,20 +375,20 @@ public class EuclidianPen {
 			geoImage.setImageFileName(fileName);
 			geoImage.setTooltipMode(GeoElement.TOOLTIP_OFF);
 			GeoPoint corner = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
-			corner.update();
-			geoImage.setCorner(corner, 0);
-			geoImage.setLabel(null);
-			if (penUsingOffsets) { // want to allow easy resizing
-				GeoPoint corner2 = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX + penImage.getWidth()),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
-				corner.setLabelVisible(false);
-				corner2.setLabelVisible(false);
-				corner2.update();
-				geoImage.setCorner(corner2, 1);
-			}
-			corner.setEuclidianVisible(penUsingOffsets);
+			GeoPoint corner2 = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX + penImage.getWidth()),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
+			corner.setLabelVisible(false);
+			corner2.setLabelVisible(false);
 			corner.setAuxiliaryObject(!penUsingOffsets);
+			corner2.setAuxiliaryObject(!penUsingOffsets);
 			corner.update();
+			corner2.update();
+			geoImage.setLabel(null);
+			geoImage.setCorner(corner, 0);
+			geoImage.setCorner(corner2, 1);
 			geoImage.setFixed(!penUsingOffsets);
+			geoImage.setSelectionAllowed(penUsingOffsets);
+			geoImage.setAuxiliaryObject(!penUsingOffsets);
+			geoImage.update();
 
 			GeoImage.updateInstances();
 

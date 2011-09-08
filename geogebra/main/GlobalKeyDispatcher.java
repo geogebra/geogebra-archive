@@ -1,6 +1,7 @@
 package geogebra.main;
 
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
@@ -15,7 +16,6 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PointProperties;
@@ -31,7 +31,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -506,17 +505,21 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				// Ctrl + "+", Ctrl + "-" zooms in or out in graphics view
 			case KeyEvent.VK_PLUS:
 			case KeyEvent.VK_MINUS:
-			case KeyEvent.VK_EQUALS:				
+			case KeyEvent.VK_EQUALS:	
+				
+				// disable zooming in PEN mode
+				if (app.getEuclidianView().getMode() != EuclidianConstants.MODE_PEN) {
 
-				boolean spanish = app.getLocale().toString().startsWith("es");
-
-				// AltGr+ on Spanish keyboard is ] so
-				// allow <Ctrl>+ (zoom) but not <Ctrl><Alt>+ (fast zoom)
-				// from eg Input Bar
-				if (!spanish || !event.isAltDown() || (event.getSource() instanceof EuclidianView)) {
-					((EuclidianView)app.getActiveEuclidianView()).getEuclidianController().zoomInOut(event);
-					app.setUnsaved();
-					consumed = true;				
+					boolean spanish = app.getLocale().toString().startsWith("es");
+	
+					// AltGr+ on Spanish keyboard is ] so
+					// allow <Ctrl>+ (zoom) but not <Ctrl><Alt>+ (fast zoom)
+					// from eg Input Bar
+					if (!spanish || !event.isAltDown() || (event.getSource() instanceof EuclidianView)) {
+						((EuclidianView)app.getActiveEuclidianView()).getEuclidianController().zoomInOut(event);
+						app.setUnsaved();
+						consumed = true;				
+					}
 				}
 				break;
 

@@ -7682,6 +7682,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void mouseWheelMoved(MouseWheelEvent e) {
 
 		if (textfieldHasFocus) return;
+		
+		if (mode == EuclidianConstants.MODE_PEN) return;
 
 		// don't allow mouse wheel zooming for applets if mode is not zoom mode
 		boolean allowMouseWheel = 
