@@ -78,7 +78,6 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 			//Application.debug(p+","+q);
 			((GeoConicPart)b).setParameters(p, q, 
 					swapOrientation(((GeoConicPart)a).positiveOrientation()));
-			//TODO transform for conic part
 		}
 	}
 	protected boolean swapOrientation(boolean positiveOrientation) {
@@ -121,7 +120,6 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 		arc.setParameters(d*Kernel.PI_2,e*Kernel.PI_2,swapOrientation(((GeoConicPart)a).positiveOrientation()));
 		
 		setTransformedObject(a,b);
-		//TODO transform for conic part
 	}
    }
 }
