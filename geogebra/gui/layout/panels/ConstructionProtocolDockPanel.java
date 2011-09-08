@@ -16,7 +16,7 @@ public class ConstructionProtocolDockPanel extends DockPanel {
 			"ConstructionProtocol", 					// view title phrase 
 			null,	// toolbar string
 			true,					// style bar?
-			5,						// menu order
+			7,						// menu order
 			'L' // ctrl-shift-L
 		);
 		
