@@ -142,4 +142,17 @@ public class AlgoDilate extends AlgoTransformation {
     	return app.getPlain("ADilatedByFactorBfromC",inGeo.getLabel(),rgeo.getLabel(),sLabel);
 
     }
+   	
+   	@Override
+   	protected void transformLimitedPath(GeoElement a, GeoElement b){
+   		if(!(a instanceof GeoConicPart))
+   			super.transformLimitedPath(a, b);    
+   		else
+   			super.transformLimitedConic(a, b);
+
+   	}
+   	@Override
+   	protected boolean swapOrientation(boolean posOrientation) {
+   		return posOrientation;
+   	}
 }
