@@ -83,7 +83,7 @@ public class CASmpreduce extends CASgeneric {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<<keepinput!!:=");
 		sb.append(keepInput ? 1 : 0);
-		sb.append("$numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, expandlogs, pri$on combinelogs$ ");
+		sb.append("$numeric!!:=0$ precision 30$ print\\_precision 16$ off complex, rounded, numval, factor, div, combinelogs, expandlogs, pri$");
 		sb.append(mpreduceInput);
 		sb.append(">>");
 		
