@@ -7508,7 +7508,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			int pointOnPathCount = 0;
 			int segmentCount = 0;
 			//int polygonCount = 0;
-			int maxIndex = -1;
+			int minIndex = Integer.MAX_VALUE;
 
 			// count no of points in top layer
 			for (int i = 0 ; i < geos.size() ; i++) {
@@ -7519,10 +7519,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					pointCount ++;
 					ret = geo;
 
-					// find point with the highest construction index
+					// find point with the lowest construction index
+					// changed from highest so that tessellation works
+					// eg two points like (a + x(A), b + y(A))
+					// we want to drag the older one
 					int index = geo.getConstructionIndex();
-					if (index > maxIndex) {
-						maxIndex = index;
+					if (index < minIndex) {
+						minIndex = index;
 						retIndex = geo;
 					}
 
