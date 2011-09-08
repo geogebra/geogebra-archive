@@ -19,6 +19,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -301,14 +302,12 @@ public class Renderer implements GLEventListener {
         
         
         //picking        
-        if(waitForPick){
+        if(waitForPick)
         	doPick();
         	//Application.debug("doPick");
         	//return;
-        }
-        
-        
-
+        //else 
+        	
         
         
 
@@ -319,6 +318,15 @@ public class Renderer implements GLEventListener {
                 
         //update 3D controller
         ((EuclidianController3D) view3D.getEuclidianController()).processMouseMoved();
+        
+        /*
+        if (intersectionCurvesWaitForPick){//picking intersection curves
+    		doPickIntersectionCurves();
+    		//intersectionCurvesWaitForPick=false;
+    		((EuclidianController3D) view3D.getEuclidianController()).endsIntersectionCurve();
+    		
+    	}
+    	*/
         
         // update 3D view
         geometryManager.update();
@@ -1170,6 +1178,13 @@ public class Renderer implements GLEventListener {
     	
     }
     
+    /*
+    private boolean intersectionCurvesWaitForPick = false;
+    
+    public void setIntersectionCurvesWaitForPick(){
+    	intersectionCurvesWaitForPick = true;
+    }
+    */
     
     private int oldGeoToPickSize = -1;
     private int geoToPickSize = EuclidianView3D.DRAWABLES_NB;
@@ -1241,10 +1256,10 @@ public class Renderer implements GLEventListener {
 	}
 	
 	
-	private void storePickingInfos(Hits3D hits3D, int labelLoop){
+	private void storePickingInfos(Hits3D hits3D, int labelLoop, Drawable3D[] drawHits, IntBuffer selectBuffer){
 
         int hits = gl.glRenderMode(GLlocal.GL_RENDER); // Switch To Render Mode, Find Out How Many
-
+        
         int names, ptr = 0;
         float zMax, zMin;
         int num;
@@ -1253,9 +1268,9 @@ public class Renderer implements GLEventListener {
         	     
           names = selectBuffer.get(ptr);  
           ptr++; // min z    
-          zMin = getDepth(ptr);
+          zMin = getDepth(ptr, selectBuffer);
           ptr++; // max z
-          zMax = getDepth(ptr);           
+          zMax = getDepth(ptr, selectBuffer);           
           
           ptr++;
 
@@ -1283,7 +1298,7 @@ public class Renderer implements GLEventListener {
     public void doPick(){
     	
     	if (geoToPickSize!=oldGeoToPickSize){
-    		int bufSize=geoToPickSize*2+1;
+    		int bufSize=geoToPickSize*2+1 +20; //TODO remove "+20" due to intersection curve
     		selectBuffer=createSelectBufferForPicking(bufSize);
     		drawHits=createDrawableListForPicking(bufSize);
     		oldGeoToPickSize=geoToPickSize;
@@ -1296,7 +1311,7 @@ public class Renderer implements GLEventListener {
     	
         
 		// picking objects
-        drawable3DLists.drawForPicking(this);
+        drawable3DLists.drawForPicking(this, drawHits);
         
         
         // set off the scene matrix
@@ -1311,7 +1326,7 @@ public class Renderer implements GLEventListener {
         	gl.glEnable(GLlocal.GL_BLEND);
            	gl.glEnable(GLlocal.GL_TEXTURE_2D);
            	
-        	drawable3DLists.drawLabelForPicking(this);
+        	drawable3DLists.drawLabelForPicking(this, drawHits);
         	
            	gl.glDisable(GLlocal.GL_TEXTURE_2D);
            	gl.glDisable(GLlocal.GL_BLEND);
@@ -1327,7 +1342,7 @@ public class Renderer implements GLEventListener {
         //Hits3D hits3D = new Hits3D();
         Hits3D hits3D = view3D.getHits3D();
         hits3D.init();
-        storePickingInfos(hits3D, labelLoop);
+        storePickingInfos(hits3D, labelLoop, drawHits, selectBuffer);
         
         // sets the GeoElements in view3D
         hits3D.sort();
@@ -1350,21 +1365,68 @@ public class Renderer implements GLEventListener {
     }
     
     
+    
+    /**
+     * process picking for intersection curves
+     * SHOULD NOT BE CALLED OUTSIDE THE DISPLAY LOOP
+     */
+    public void pickIntersectionCurves(){
+    	
+    	ArrayList<Drawable3D> curves = ((EuclidianController3D) view3D.getEuclidianController()).getIntersectionCurves();
+ 
+    	int bufSize=curves.size();
+    	//IntBuffer selectBuffer=createSelectBufferForPicking(bufSize);
+    	//Drawable3D[] drawHits=createDrawableListForPicking(bufSize);
+    	if (bufSize>geoToPickSize){
+    		selectBuffer=createSelectBufferForPicking(bufSize);
+    		drawHits=createDrawableListForPicking(bufSize);
+    		oldGeoToPickSize=-1;
+    	}
+
+        
+        
+    	setGLForPicking();
+    	pushSceneMatrix();
+    	
+        
+		// picking objects
+        for (Drawable3D d : curves){
+        	d.zPickMax=Float.POSITIVE_INFINITY;
+        	d.zPickMin=Float.POSITIVE_INFINITY; 
+        	pick(d,drawHits,false);
+        }
+        
+        
+        // set off the scene matrix
+        gl.glPopMatrix();
+ 
+        storePickingInfos(null, 0, drawHits, selectBuffer);
+        
+        
+        gl.glEnable(GLlocal.GL_LIGHTING);
+    }
+    
+    
+    
+    
     public void glLoadName(int loop){
     	gl.glLoadName(loop);
     }
     
+    public void pick(Drawable3D d, Drawable3D[] drawHits){  
+    	 pick(d,drawHits,true);
+    }
     
-    public void pick(Drawable3D d){  
+    public void pick(Drawable3D d, Drawable3D[] drawHits, boolean verifyIsPickable){  
     	//Application.debug(d.getGeoElement()+"\npickingloop="+pickingLoop+"\ndrawHits length="+drawHits.length);  	
     	//Application.debug("1");
     	gl.glLoadName(pickingLoop);//Application.debug("2");
-    	Drawable3D ret = d.drawForPicking(this);	//Application.debug("3");
+    	Drawable3D ret = d.drawForPicking(this,verifyIsPickable);	//Application.debug("3");
     	drawHits[pickingLoop] = ret;//Application.debug("4");
     	pickingLoop++;//Application.debug("5");
     }
     
-    public void pickLabel(Drawable3D d){   	
+    public void pickLabel(Drawable3D d, Drawable3D[] drawHits){   	
     	gl.glLoadName(pickingLoop);
     	d.drawLabelForPicking(this);	
     	drawHits[pickingLoop] = d;
@@ -1376,7 +1438,7 @@ public class Renderer implements GLEventListener {
      *  
      *  @param ptr the integer offset
      * */
-    private float getDepth(int ptr){
+    private float getDepth(int ptr, IntBuffer selectBuffer){
      	
     	float depth = (float) selectBuffer.get(ptr)/0x7fffffff;
     	if (depth<0)

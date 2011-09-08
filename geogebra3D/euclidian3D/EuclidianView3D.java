@@ -66,6 +66,8 @@ import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
+import org.freehep.graphicsio.emf.gdi.IntersectClipRect;
+
 
 /**
  * Class for 3D view
@@ -483,9 +485,11 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 	 */
 	public void addToDrawable3DLists(Drawable3D d){
 		
+		/*
 		if (d.getGeoElement().getLabel().equals("a")){
 			Application.debug("d="+d);
 		}
+		*/
 		
 		setWaitForUpdate();
 		drawable3DListToBeAdded.add(d);
@@ -2966,10 +2970,10 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 	/** draw for picking view's drawables (plane and axis)
 	 * @param renderer
 	 */
-	public void drawForPicking(Renderer renderer){
-		renderer.pick(xOyPlaneDrawable);
+	public void drawForPicking(Renderer renderer, Drawable3D[] drawHits){
+		renderer.pick(xOyPlaneDrawable, drawHits);
 		for(int i=0;i<3;i++)
-			renderer.pick(axisDrawable[i]);
+			renderer.pick(axisDrawable[i], drawHits);
 	}
 	
 	
@@ -3089,6 +3093,9 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 		
 		// update xOyPlane
 		xOyPlaneDrawable.update();
+		
+		// update intersection curves in controller
+		//((EuclidianController3D) getEuclidianController()).updateIntersectionCurves();
 
 		
 	}

@@ -42,6 +42,8 @@ public class Hits3D extends Hits {
 	private TreeSet<TreeSetOfDrawable3D> hitSetSet = new TreeSet<TreeSetOfDrawable3D>(new Drawable3D.setComparator()); 
 	
 	private Hits topHits = new Hits();
+	
+	private ArrayList<Drawable3D> drawables3D = new ArrayList<Drawable3D>();
 
 	/** number of coord sys 2D */
 	private int cs2DCount;
@@ -147,11 +149,13 @@ public class Hits3D extends Hits {
 		
 		// sets the hits to this
 		ArrayList<GeoElement> segmentList = new ArrayList<GeoElement>();
+		drawables3D.clear();
 		
 		for (Iterator<TreeSetOfDrawable3D> iterSet = hitSetSet.iterator(); iterSet.hasNext();) {
 			TreeSetOfDrawable3D set = iterSet.next();
 			for (Iterator<Drawable3D> iter = set.iterator(); iter.hasNext();) {
 				Drawable3D d = (Drawable3D) iter.next();
+				drawables3D.add(d);
 				GeoElement geo = d.getGeoElement();
 				this.add(geo);
 				
@@ -183,8 +187,13 @@ public class Hits3D extends Hits {
 	}
 	
 	
-	
-	
+	/**
+	 * WARNING : sort() should be called before
+	 * @return all drawables, in pick order
+	 */
+	public ArrayList<Drawable3D> getDrawables(){
+		return drawables3D;
+	}
 	
 	
 	
