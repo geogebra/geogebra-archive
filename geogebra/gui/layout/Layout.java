@@ -132,7 +132,7 @@ public class Layout implements SettingListener {
 		defaultPerspectives[1].setUnitAxesRatio(true);
 		
 		// geometry - like basic geometry but with less toolbar entries
-		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, defToolbar, true, true, false, false, true, false);
+		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, defToolbar, true, false, false, false, true, false);
 		
 		// Table & Graphics - spreadsheet and euclidian view
 		spInfo = new DockSplitPaneXml[1];
