@@ -17,13 +17,21 @@ public class GeoLaTeXCache {
 		} catch (ParseException e) {
 			if (keyLaTeX != null) {
 				// remove old key from cache
-				JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+				try {
+					JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+				} catch (Exception ee) {
+					ee.printStackTrace();
+				}
 			}
 			throw e;
 		}
 		if (keyLaTeX != null && !keyLaTeX.equals(newKey)) {
 			// key has changed, remove old key from cache
-			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			try {
+				JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			} catch (Exception ee) {
+				ee.printStackTrace();
+			}
 			//Application.debug("removing");
 		}
 
@@ -34,7 +42,11 @@ public class GeoLaTeXCache {
 
 	public void remove() {
 		if (keyLaTeX != null)
-			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			try {
+				JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			} catch (Exception ee) {
+				ee.printStackTrace();
+			}
 		
 	}
 
