@@ -2336,7 +2336,7 @@ public class GuiManager {
 	
 	private final static String ggbTube = "geogebratube.org/";
 	private final static String ggbTubeShort = "ggbtu.be/";
-	private final static String material = "material/show/id/";
+	private final static String material = "/material/show/id/";
 	/*
 	 * possible GeoGebraTube syntaxes
 	 * http://www.geogebratube.org/material/show/id/111
@@ -2348,12 +2348,10 @@ public class GuiManager {
 	 * http://geogebratube.org/material/show/id/111
 	 * http://geogebratube.org/student/m111
 	 * http://geogebratube.org/student/cXX/m111
-	 * http://ggbtu.be/material/show/id/111
-	 * http://ggbtu.be/student/m111
-	 * http://www.ggbtu.be/student/cXX/m111
-	 * http://ggbtu.be/material/show/id/111
-	 * http://www.ggbtu.be/student/m111
-	 * http://www.ggbtu.be/student/cXX/m111
+	 * http://ggbtu.be/m111
+	 * http://ggbtu.be/cXX/m111
+	 * http://www.ggbtu.be/m111
+	 * http://www.ggbtu.be/cXX/m111
 	 */
 	public boolean loadURL(String urlString, boolean suppressErrorMsg) {
 		urlString = urlString.trim().toLowerCase(Locale.US);
@@ -2382,8 +2380,8 @@ public class GuiManager {
 					urlString = urlString.substring(urlString.indexOf("://") + 3, urlString.length());
 				}
 				// remove hostname
-				urlString = urlString.substring(urlString.indexOf('/') + 1, urlString.length());
-				
+				urlString = urlString.substring(urlString.indexOf('/'), urlString.length());
+			
 				String id;
 				
 				int i;
