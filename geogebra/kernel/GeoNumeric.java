@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
@@ -278,6 +279,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 
 	final public boolean isDefined() {
+		AlgoElement algo;
+		// make sure shaded-only integrals are drawn
+		if ((algo = getParentAlgorithm()) instanceof AlgoIntegralDefinite) {
+			AlgoIntegralDefinite aid = (AlgoIntegralDefinite)algo;
+			if (aid.evaluateOnly()) return true;
+		}
 		return !Double.isNaN(value);
 	}
 

@@ -22,6 +22,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.main.Application;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
@@ -187,8 +188,8 @@ public class AlgoIntegralDefinite extends AlgoUsingTempCASalgo implements AlgoDr
         }
 
         // return if it should not be evaluated (i.e. is shade-only)
-        if(evaluate !=null && !evaluate.getBoolean()){
-        	n.setValue(0);
+        if (evaluateOnly()){
+        	n.setValue(Double.NaN);
         	return;
         }
         
@@ -307,6 +308,13 @@ public class AlgoIntegralDefinite extends AlgoUsingTempCASalgo implements AlgoDr
     			(NumberValue)a.deepCopy(kernel),
     			(NumberValue)b.deepCopy(kernel),null);
     }
+
+	/*
+	 * 		make sure shaded-only integrals are drawn
+	 */
+    public boolean evaluateOnly() {
+		return evaluate !=null && !evaluate.getBoolean();
+	}
     
 
 }
