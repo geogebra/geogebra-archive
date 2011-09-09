@@ -1512,19 +1512,22 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	  * Converts this function to cartesian curve and stores result to given curve
 	  * @param curve Curve to be stored to
 	  */
-	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {		 
-		 curve.setFunctionY((Function)getFunction().deepCopy(kernel));
-		 Function varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
-		 curve.setFunctionX(varFun);
-		 if(this.hasInterval()){
-			 curve.setInterval(intervalMin, intervalMax);
-		 }else{
-			 double min = app.getEuclidianView().getXminForFunctions();
-			 double max = app.getEuclidianView().getXmaxForFunctions();		 
-			 curve.setInterval(min, max);
-			 curve.setHideRangeInFormula(true);
-		 }
-	 }
+	public void toGeoCurveCartesian(GeoCurveCartesian curve) {   
+		FunctionVariable t = new FunctionVariable(kernel,"t");
+		FunctionVariable x = fun.getFunctionVariable();
+		ExpressionNode yExp = (ExpressionNode)((ExpressionNode)getFunction().getExpression().deepCopy(kernel)).replace(x,t);
+		curve.setFunctionY(new Function(yExp,t));
+		Function varFun = new Function(new ExpressionNode(kernel,t),t);
+		curve.setFunctionX(varFun);
+		if(this.hasInterval()){
+			curve.setInterval(intervalMin, intervalMax);
+		}else{
+			double min = app.getEuclidianView().getXminForFunctions();
+			double max = app.getEuclidianView().getXmaxForFunctions();   
+			curve.setInterval(min, max);
+			curve.setHideRangeInFormula(true);
+		}
+	}
 
 	public void dilate(NumberValue r, GeoPoint S) {
 		double rd=r.getNumber().getDouble(),

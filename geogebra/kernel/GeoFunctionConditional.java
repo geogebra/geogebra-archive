@@ -583,18 +583,20 @@ public class GeoFunctionConditional extends GeoFunction {
 			return ret;
 		}
 	}
-	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {
-		 ExpressionNode en = new ExpressionNode(kernel,this,ExpressionNode.FUNCTION,fun.getFunctionVariable());
-		 Function fn = new Function(en,fun.getFunctionVariable());
-		 curve.setFunctionY(fn);
-		 Function varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
-		 curve.setFunctionX(varFun);
-		 double min = app.getEuclidianView().getXminForFunctions();
-		 double max = app.getEuclidianView().getXmaxForFunctions();
-		 curve.setInterval(min, max);		 
-		 curve.setHideRangeInFormula(true);
-	 }
 	
+	public void toGeoCurveCartesian(GeoCurveCartesian curve) {
+		FunctionVariable t = new FunctionVariable(kernel,"t");
+		ExpressionNode en = new ExpressionNode(kernel,this,ExpressionNode.FUNCTION,t);
+		Function fn = new Function(en,t);
+		curve.setFunctionY(fn);
+		Function varFun = new Function(new ExpressionNode(kernel,t),t);
+		curve.setFunctionX(varFun);
+		double min = app.getEuclidianView().getXminForFunctions();
+		double max = app.getEuclidianView().getXmaxForFunctions();
+		curve.setInterval(min, max);   
+		curve.setHideRangeInFormula(true);
+	}
+
 	public String toOutputValueString() {
 		return toValueString();
 		
