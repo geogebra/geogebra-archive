@@ -2334,6 +2334,27 @@ public class GuiManager {
 		return loadURL(urlString, true);
 	}
 	
+	private final static String ggbTube = "geogebratube.org/";
+	private final static String ggbTubeShort = "ggbtu.be/";
+	private final static String material = "material/show/id/";
+	/*
+	 * possible GeoGebraTube syntaxes
+	 * http://www.geogebratube.org/material/show/id/111
+	 * http://www.geogebratube.org/student/m111
+	 * http://www.geogebratube.org/student/cXX/m111
+	 * www.geogebratube.org/material/show/id/111
+	 * www.geogebratube.org/student/m111
+	 * www.geogebratube.org/student/cXX/m111
+	 * http://geogebratube.org/material/show/id/111
+	 * http://geogebratube.org/student/m111
+	 * http://geogebratube.org/student/cXX/m111
+	 * http://ggbtu.be/material/show/id/111
+	 * http://ggbtu.be/student/m111
+	 * http://www.ggbtu.be/student/cXX/m111
+	 * http://ggbtu.be/material/show/id/111
+	 * http://www.ggbtu.be/student/m111
+	 * http://www.ggbtu.be/student/cXX/m111
+	 */
 	public boolean loadURL(String urlString, boolean suppressErrorMsg) {
 		urlString = urlString.trim().toLowerCase(Locale.US);
 		
@@ -2341,7 +2362,7 @@ public class GuiManager {
 		boolean isMacroFile =  false;
 		app.setWaitCursor();
 		
-		String ggbTube = "http://www.geogebratube.org/student/";
+		
 		
 		try {
 			// check first for ggb/ggt file
@@ -2354,18 +2375,36 @@ public class GuiManager {
 				// eg http://www.geogebratube.org/student/105 changed to
 				// http://www.geogebratube.org/files/material-105.ggb
 				
-			} else if (urlString.startsWith(ggbTube)) {
+			} else if (urlString.indexOf(ggbTube) > -1 || urlString.indexOf(ggbTubeShort) > -1) {
 
-				urlString = "http://www.geogebratube.org/files/material-"+
-				urlString.substring(ggbTube.length(), urlString.length())+
-				".ggb";
+				// remove eg http:// if it's there
+				if (urlString.indexOf("://") > -1) {
+					urlString = urlString.substring(urlString.indexOf("://") + 3, urlString.length());
+				}
+				// remove hostname
+				urlString = urlString.substring(urlString.indexOf('/') + 1, urlString.length());
 				
+				String id;
+				
+				int i;
+				if (urlString.startsWith(material)) {
+					
+					id = urlString.substring(material.length(), urlString.length());
+					
+				} else if ((i = urlString.lastIndexOf("/m")) > -1) {
+					id = urlString.substring(i + 2, urlString.length());
+					
+				} else {
+					Application.debug("problem parsing: "+urlString);
+					return false;
+				}
+				
+				urlString = "http://www.geogebratube.org/files/material-"+id+".ggb";
+								
 				Application.debug(urlString);
 				
 				URL url = getEscapedUrl(urlString);
-				success = app.loadXML(url, false);
-
-				
+				success = app.loadXML(url, false);		
 				
 				// special case: urlString is actually a base64 encoded ggb file
 			} else if (urlString.startsWith("UEs")) {
