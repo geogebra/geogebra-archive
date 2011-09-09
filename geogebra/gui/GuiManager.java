@@ -2341,17 +2341,17 @@ public class GuiManager {
 	 * possible GeoGebraTube syntaxes
 	 * http://www.geogebratube.org/material/show/id/111
 	 * http://www.geogebratube.org/student/m111
-	 * http://www.geogebratube.org/student/cXX/m111
+	 * http://www.geogebratube.org/student/cXX/m111/options
 	 * www.geogebratube.org/material/show/id/111
 	 * www.geogebratube.org/student/m111
-	 * www.geogebratube.org/student/cXX/m111
+	 * www.geogebratube.org/student/cXX/m111/options
 	 * http://geogebratube.org/material/show/id/111
 	 * http://geogebratube.org/student/m111
-	 * http://geogebratube.org/student/cXX/m111
+	 * http://geogebratube.org/student/cXX/m111/options
 	 * http://ggbtu.be/m111
-	 * http://ggbtu.be/cXX/m111
+	 * http://ggbtu.be/cXX/m111/options
 	 * http://www.ggbtu.be/m111
-	 * http://www.ggbtu.be/cXX/m111
+	 * http://www.ggbtu.be/cXX/options
 	 */
 	public boolean loadURL(String urlString, boolean suppressErrorMsg) {
 		urlString = urlString.trim().toLowerCase(Locale.US);
@@ -2384,18 +2384,33 @@ public class GuiManager {
 			
 				String id;
 				
-				int i;
-				if (urlString.startsWith(material)) {
-					
-					id = urlString.substring(material.length(), urlString.length());
-					
-				} else if ((i = urlString.lastIndexOf("/m")) > -1) {
-					id = urlString.substring(i + 2, urlString.length());
-					
+				// determine the start position of ID in the URL  
+				int start = -1;
+				
+				if(urlString.startsWith(material)) {
+					start = material.length();
 				} else {
+					start = urlString.lastIndexOf("/m")+2;
+				}
+				
+				// no valid URL?
+				if(start == -1) {
 					Application.debug("problem parsing: "+urlString);
 					return false;
 				}
+				
+				// the end position is either before the next slash or at the end of the string
+				int end = -1;
+				if(start > -1) {
+					end = urlString.indexOf('/', start);
+				}
+				
+				if(end == -1) {
+					end = urlString.length();
+				}
+				
+				// fetch ID
+				id = urlString.substring(start, end);
 				
 				urlString = "http://www.geogebratube.org/files/material-"+id+".ggb";
 								
