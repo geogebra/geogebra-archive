@@ -486,7 +486,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		title.setBackground(bgColor); 
 		title.setForeground(fgColor);
 
-		title.setBorder(BorderFactory.createEmptyBorder(5, 10, 2, 5));      
+		title.setIcon(app.getEmptyIcon());
+		title.setBorder(BorderFactory.createEmptyBorder(5, 15, 2, 5));      
 		add(title);
 
 		title.addMouseListener(new MouseAdapter() {
