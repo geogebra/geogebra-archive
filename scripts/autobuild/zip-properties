@@ -7,6 +7,7 @@ ZIPDIR=/Users/zoltan/source/translation/gui
 DATE=`date +%Y%m%d`
 ZIPFILE=geogebra_prop_40_$DATE.zip
 TUBE_REPO=file:///opt/repos/tube/trunk # not used yet, but assumed
+NAVDIR=/Users/zoltan/navigation
 
 date
 echo "$0: start"
@@ -26,6 +27,12 @@ for i in *.properties; do
   NEWNAME=tube.properties
   fi
  cp $i $SVNDIR/ggb40/geogebra/geogebra/properties/$NEWNAME # renaming
+ done
+ 
+# Copying navigation properties to the properties directory:
+cd $NAVDIR
+for i in *.properties; do
+ cp $i $SVNDIR/ggb40/geogebra/geogebra/properties
  done
 
 # Updating GeoGebra properties:
