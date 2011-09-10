@@ -613,7 +613,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		case EuclidianConstants.MODE_PEN:
 			
-			app.zoomAxesRatio(1);
+			boolean createUndo = true;
+			// scale both EVs 1:1
+			if (app.getEuclidianView().isVisible()) {
+				app.getEuclidianView().zoomAxesRatio(1, true);
+				createUndo = false;
+			}
+			
+			if (app.hasEuclidianView2() && app.getEuclidianView2().isVisible()) {
+				app.getEuclidianView2().zoomAxesRatio(1, createUndo);
+			}
 			
 			ArrayList selection = app.getSelectedGeos();
 			if (selection.size() == 1) {
