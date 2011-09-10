@@ -122,8 +122,9 @@ public abstract class Drawable extends DrawableND {
 		if (label.startsWith("$") && label.endsWith("$")) {
 			boolean serif = true; // nice "x"s
 			if (geo.isGeoText()) serif = ((GeoText)geo).isSerifFont();
-			FormulaDimension dim = view.getApplication().getDrawEquation().drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), serif, g2.getColor(), g2.getBackground(), true);
-			labelRectangle.setBounds(xLabel, yLabel - dim.depth, (int)dim.width, (int)dim.height);
+			int offsetY = 10 + view.fontSize; // make sure LaTeX labels don't go off bottom of screen
+			FormulaDimension dim = view.getApplication().getDrawEquation().drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel - offsetY, label.substring(1, label.length() - 1), g2.getFont(), serif, g2.getColor(), g2.getBackground(), true);
+			labelRectangle.setBounds(xLabel, yLabel - dim.depth - offsetY, (int)dim.width, (int)dim.height);
 			return;
 		}
 
@@ -177,15 +178,15 @@ public abstract class Drawable extends DrawableND {
 	 */
 	final public void ensureLabelDrawsOnScreen() {
 		// draw label and
-		drawLabel(view.g2Dtemp);
+		drawLabel(view.getTempGraphics2D(view.getApplication().getPlainFont()));
 
 		// make sure labelRectangle fits on screen horizontally
 		if (xLabel < 3)
 			xLabel = 3;
 		else
 			xLabel = Math.min(xLabel, view.width - labelRectangle.width - 3);
-		if (yLabel < view.fontSize)
-			yLabel = view.fontSize;
+		if (yLabel < labelRectangle.height)
+			yLabel = labelRectangle.height;
 		else
 			yLabel = Math.min(yLabel, view.height - 3);
 

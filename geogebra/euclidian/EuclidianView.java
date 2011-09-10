@@ -495,7 +495,7 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	private boolean firstPaint = true;
 	
 	// temp image
-	public Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
+	private Graphics2D g2Dtemp = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB).createGraphics();
 	//public Graphics2D lastGraphics2D;
 	
 	protected StringBuilder sb = new StringBuilder();
@@ -4890,6 +4890,11 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	
 	final public Graphics2D getTempGraphics2D(Font font) {
 		g2Dtemp.setFont(font); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]		
+		return g2Dtemp;
+	}
+
+	final public Graphics2D getTempGraphics2D() {
+		g2Dtemp.setFont(app.getPlainFont()); 
 		return g2Dtemp;
 	}
 
