@@ -8,6 +8,7 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.euclidian.EuclidianPen;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
@@ -53,6 +54,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -295,6 +297,7 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 		this.euclidianController3D = ec;
 		this.kernel3D = (Kernel3D) ec.getKernel();
 		euclidianController3D.setView(this);
+		euclidianController3D.setPen(new EuclidianPen(app,this));
 		app = ec.getApplication();	
 		
 		start();
@@ -3940,4 +3943,12 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 		renderer.removeOneGeoToPick();
 	}
 	
+	
+	//////////////////////////////////////
+	// SOME LINKS WITH 2D VIEW
+	
+	public Graphics2D getGraphicsForPen(){
+		return app.getEuclidianView().getGraphicsForPen();
+		
+	}
 }

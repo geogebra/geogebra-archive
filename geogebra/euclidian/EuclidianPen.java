@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class EuclidianPen {
 
 	private Application app;
-	private EuclidianView view;
+	private EuclidianViewInterface view;
 	
 	private int penOffsetX = 0;
 	private int penOffsetY = 0;
@@ -90,7 +90,7 @@ public class EuclidianPen {
 	/************************************************
 	 * Construct EuclidianPen
 	 */
-	public EuclidianPen(Application app, EuclidianView view){
+	public EuclidianPen(Application app, EuclidianViewInterface view){
 		this.view = view;
 		this.app = app;
 	
@@ -301,7 +301,7 @@ public class EuclidianPen {
 
 
 		Point newPoint = new Point(e.getX() - penOffsetX, e.getY() - penOffsetY);
-		Graphics2D g2D = (Graphics2D) view.getGraphics();
+		Graphics2D g2D = view.getGraphicsForPen();
 		Shape circle;
 		if (Application.isRightClick(e)) {
 			g2D.setColor(Color.white);

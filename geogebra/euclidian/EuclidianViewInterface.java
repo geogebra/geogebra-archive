@@ -14,6 +14,8 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -441,4 +443,10 @@ public interface EuclidianViewInterface extends View{
 	public boolean isUnitAxesRatio();
 
 	public void replaceBoundObject(GeoNumeric num, GeoNumeric geoNumeric);
+
+
+	public void setCursor(Cursor cursor);
+
+
+	public Graphics2D getGraphicsForPen();
 }

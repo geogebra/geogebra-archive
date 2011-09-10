@@ -5304,4 +5304,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		default: return Application.VIEW_NONE;
 		}
 	}
+	
+	
+	public Graphics2D getGraphicsForPen(){
+		return (Graphics2D) getGraphics();
+		
+	}
 }
