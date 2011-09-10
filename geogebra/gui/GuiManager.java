@@ -2354,7 +2354,7 @@ public class GuiManager {
 	 * http://www.ggbtu.be/cXX/options
 	 */
 	public boolean loadURL(String urlString, boolean suppressErrorMsg) {
-		urlString = urlString.trim().toLowerCase(Locale.US);
+		urlString = urlString.trim();
 		
 		boolean success = false;
 		boolean isMacroFile =  false;
