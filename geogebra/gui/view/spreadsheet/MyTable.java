@@ -71,9 +71,9 @@ public class MyTable extends JTable implements FocusListener
 	protected Kernel kernel;
 	protected Application app;
 	protected MyCellEditor editor;
-	protected MyCellEditorBoolean editorBoolean;
-	protected MyCellEditorButton editorButton;
-	protected MyCellEditorList editorList;
+	private MyCellEditorBoolean editorBoolean;
+	private MyCellEditorButton editorButton;
+	private MyCellEditorList editorList;
 
 	protected RelativeCopy relativeCopy;
 	protected CopyPasteCut copyPasteCut;
@@ -240,9 +240,6 @@ public class MyTable extends JTable implements FocusListener
 
 		// add cell renderer & editors
 		setDefaultRenderer(Object.class, new MyCellRenderer(app, view, this.getCellFormatHandler()));
-		editorButton = new MyCellEditorButton();
-		editorBoolean = new MyCellEditorBoolean(kernel);
-		editorList = new MyCellEditorList();
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
 
@@ -352,7 +349,35 @@ public class MyTable extends JTable implements FocusListener
 		return formatHandler;
 	}
 
+	/**
+	 * Returns boolean editor (checkbox) for this table.
+	 * If none exists, a new one is created.
+	 */
+	public MyCellEditorBoolean getEditorBoolean() {
+		if(editorBoolean == null)
+			editorBoolean = new MyCellEditorBoolean(kernel);
+		return editorBoolean;
+	}
 
+	/**
+	 * Returns button editor for this table.
+	 * If none exists, a new one is created.
+	 */
+	public MyCellEditorButton getEditorButton() {
+		if(editorButton == null)
+			editorButton = new MyCellEditorButton();
+		return editorButton;
+	}
+
+	/**
+	 * Returns list editor (comboBox) for this table.
+	 * If none exists, a new one is created.
+	 */
+	public MyCellEditorList getEditorList() {
+		if(editorList == null)
+			editorList = new MyCellEditorList();
+		return editorList;
+	}
 
 
 	/**
@@ -388,11 +413,11 @@ public class MyTable extends JTable implements FocusListener
 
 			switch (oneClickEditMap.get(p).getGeoClassType()){
 			case GeoElement.GEO_CLASS_BOOLEAN:
-				return editorBoolean;
+				return getEditorBoolean();
 			case GeoElement.GEO_CLASS_BUTTON:
-				return editorButton;
+				return getEditorButton();
 			case GeoElement.GEO_CLASS_LIST:
-				return editorList;					
+				return getEditorList();					
 			}
 		}
 		return editor;
