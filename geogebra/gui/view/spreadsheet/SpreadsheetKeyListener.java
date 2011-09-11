@@ -170,6 +170,7 @@ public class SpreadsheetKeyListener implements KeyListener
 			table.changeSelection(row, column, false, e.isShiftDown());
 			
 			e.consume();
+			break;
 
 		case KeyEvent.VK_RIGHT:
 			// auto increase spreadsheet size when you go off the right
