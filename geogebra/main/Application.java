@@ -38,6 +38,8 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
@@ -5530,6 +5532,32 @@ public class Application implements KeyEventDispatcher {
 		// no real latex string
 		return false;
 	}
+	
+	
+	/**
+	 * Test method that returns true if the given GeoElement geo is to be drawn
+	 * with LaTeX rendering in the spreadsheet or AV. For performance reasons
+	 * LaTeX is to be avoided when not needed.
+	 * 
+	 * @param geo
+	 * @return
+	 */
+	public static boolean isLaTeXDrawableGeo(GeoElement geo) {
+
+		if(geo.isGeoText() && !((GeoText) geo).isLaTeX())
+			return false;
+		else if(geo.isGeoNumeric())
+			return false;
+		else if(geo.isGeoList() && ((GeoList)geo).getElementType() == GeoElement.GEO_CLASS_NUMERIC)
+			return false;
+
+		else
+			return true;
+	}
+	
+	
+	
+	
 	
 	
 
