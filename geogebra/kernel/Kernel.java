@@ -518,8 +518,8 @@ public class Kernel {
      */
 	private String evaluateGeoGebraCAS(String exp, boolean useCaching) throws Throwable {
 		String result = null;
-		if (useCaching && ggbCasCache != null) {
-			result = ggbCasCache.get(exp);
+		if (useCaching && hasCasCache()) {
+			result = getCasCache().get(exp);
 			if (result != null) {
 				// caching worked
 				// TODO: remove
@@ -529,19 +529,30 @@ public class Kernel {
 		}
 		
 		// evaluate in GeoGebraCAS
-		if (ggbCAS == null) {
-			getGeoGebraCAS();		
-		}
-		result = ggbCAS.evaluateGeoGebraCAS(exp);
+		result = getGeoGebraCAS().evaluateGeoGebraCAS(exp);
 		
 		if (useCaching) {
-			if (ggbCasCache == null)
-				ggbCasCache = new MaxSizeHashMap<String, String>(GEOGEBRA_CAS_CACHE_SIZE);
-			ggbCasCache.put(exp, result);
+			getCasCache().put(exp, result);
 		}
 		return result;
 	}	
 	private MaxSizeHashMap<String, String> ggbCasCache;
+	
+	/**
+	 * @return Hash map for caching CAS results.
+	 */
+	protected MaxSizeHashMap<String, String> getCasCache() {
+		if (ggbCasCache == null)
+			ggbCasCache = new MaxSizeHashMap<String, String>(GEOGEBRA_CAS_CACHE_SIZE);
+		return ggbCasCache;
+	}
+	
+	/**
+	 * @return Whether kernel is already using CAS caching.
+	 */
+	protected boolean hasCasCache() {
+		return ggbCasCache != null;
+	}
 	
 	/** 
 	 * Evaluates an expression in MathPiper syntax with.
@@ -569,17 +580,21 @@ public class Kernel {
 		return ggbCAS.evaluateMaxima(exp);
 	}*/	
 			
-	final public boolean isGeoGebraCASready() {
+	/**
+	 * @return Whether the GeoGebraCAS has been initialized before
+	 */
+	public synchronized boolean isGeoGebraCASready() {
 		return ggbCAS != null;
 	}
 	
 	public static int DEFAULT_CAS = Application.CAS_MPREDUCE; // default
 
-	/*
-	 * needed eg change MathPiper -> Maxima
+	/**
+	 * Sets currently used underlying CAS, e.g. MPReduce or Maxima.
+	 * @param casID Application.CAS_MPREDUCE or CAS_MPREDUCE.CAS_Maxima
 	 */
-	final public void setDefaultCAS(int cas) {
-		DEFAULT_CAS = cas;
+	public void setDefaultCAS(int casID) {
+		DEFAULT_CAS = casID;
 		if (ggbCAS != null) ggbCAS.setCurrentCAS(DEFAULT_CAS);
 	}
 	
@@ -597,7 +612,7 @@ public class Kernel {
 	}
 	
 	/**
-	 * Returns this kernel's GeoGebraCAS object.
+	 * Resets the GeoGebraCAS and clears all variables.
 	 */
 	public void resetGeoGebraCAS() {
 		if (ggbCAS == null) return;
@@ -632,11 +647,7 @@ public class Kernel {
      * @return array of coefficients, e.g. ["0", "b", "3*a"]
      */
     final public String [] getPolynomialCoeffs(String exp, String variable) {
-    	if (ggbCAS == null) {
-    		getGeoGebraCAS();					
-		}
-    	
-    	return ggbCAS.getPolynomialCoeffs(exp, variable);
+    	return getGeoGebraCAS().getPolynomialCoeffs(exp, variable);
     }
 
 	final public void setEpsilon(double epsilon) {

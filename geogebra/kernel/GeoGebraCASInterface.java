@@ -24,4 +24,8 @@ public interface GeoGebraCASInterface {
 
 	public boolean isCommandAvailable(Command cmd);
 
+	public String[] getPolynomialCoeffs(String exp, String variable);
+
+	public String evaluateGeoGebraCAS(String exp);
+
 }

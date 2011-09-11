@@ -15,6 +15,7 @@ import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.MyError;
+import geogebra.util.MaxSizeHashMap;
 
 import java.util.LinkedHashMap;
 
@@ -133,6 +134,56 @@ public class MacroKernel extends Kernel  {
 	
 	public boolean handleCoords(GeoElement geo, LinkedHashMap<String, String> attrs) {
 		return parentKernel.handleCoords(geo, attrs);
+	}
+	
+	/**
+	 * Returns the parent kernel's GeoGebraCAS object.
+	 */
+	public GeoGebraCASInterface getGeoGebraCAS() {
+		return parentKernel.getGeoGebraCAS();
+	}
+	
+	/**
+	 * @return Whether the GeoGebraCAS of the parent kernel has been initialized before
+	 */
+	public boolean isGeoGebraCASready() {
+		return parentKernel.isGeoGebraCASready();
+	}
+
+	/**
+	 * Resets the GeoGebraCAS of the parent kernel and clears all variables.
+	 */
+	public void resetGeoGebraCAS() {
+		parentKernel.resetGeoGebraCAS();
+	}
+		
+	/**
+	 * Sets currently used underlying CAS, e.g. MPReduce or Maxima.
+	 * @param casID Application.CAS_MPREDUCE or CAS_MPREDUCE.CAS_Maxima
+	 */
+	public void setDefaultCAS(int casID) {
+		parentKernel.setDefaultCAS(DEFAULT_CAS);
+	}
+	
+	/**
+	 * Removes the given variableName from ther underlying CAS.
+	 */
+	public void unbindVariableInGeoGebraCAS(String variableName) {
+		parentKernel.unbindVariableInGeoGebraCAS(variableName);
+	}
+	
+	/**
+	 * @return Hash map for caching CAS results from parent kernel.
+	 */
+	protected MaxSizeHashMap<String, String> getCasCache() {
+		return parentKernel.getCasCache();
+	}
+	
+	/**
+	 * @return Whether parent kernel is already using CAS caching.
+	 */
+	protected boolean hasCasCache() {
+		return parentKernel.hasCasCache();
 	}
 	
 }
