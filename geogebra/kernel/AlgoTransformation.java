@@ -22,28 +22,28 @@ public abstract class AlgoTransformation extends AlgoElement implements Euclidia
 	abstract GeoElement getResult();
 	
 	abstract protected void setTransformedObject(GeoElement g,GeoElement g2);
-	protected void transformList(GeoList ageo2, GeoList bgeo2) {    	
+
+	protected void transformList(GeoList ageo2, GeoList bgeo2) {     
 		for(int i = bgeo2.size()-1; i>=ageo2.size();i--)
 			bgeo2.remove(i);
-		
+
 		for(int i = 0; i<ageo2.size();i++){
 			GeoElement trans = null;
 			if(i<bgeo2.size()){
-				trans = bgeo2.get(i);
-				setTransformedObject(ageo2.get(i),trans);
-				compute();
-				bgeo2.get(i).set(trans);
+				setTransformedObject(ageo2.get(i),bgeo2.get(i));
+				compute();    
 			}
 			else{
 				trans = getResultTemplate(ageo2.get(i));
-				
+
 				setTransformedObject(ageo2.get(i),trans);
 				compute();
 				bgeo2.add(trans);
 			}
-		}		
+		}  
 		setTransformedObject(ageo2,bgeo2);
 	}
+
 	protected GeoElement getResultTemplate(GeoElement geo) {		
 		if(geo instanceof GeoPolyLineInterface || geo.isLimitedPath())
 			return geo.copyInternal(cons);
