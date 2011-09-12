@@ -71,7 +71,20 @@ public class DrawIntegralFunctions extends Drawable {
 		// init gp
 		double aRW = a.getDouble();
 		double bRW = b.getDouble();		
-								
+
+		// DrawParametricCurve.plotCurve doesn't handle these values well,
+		// so adjust them
+		if (aRW == Double.NEGATIVE_INFINITY || aRW == Double.MIN_VALUE) {
+			aRW = view.getXmin() - 2;
+		} else if (aRW == Double.POSITIVE_INFINITY || aRW == Double.MAX_VALUE || aRW == Double.NaN) {
+			return;
+		}
+		if (bRW == Double.POSITIVE_INFINITY || bRW == Double.MAX_VALUE) {
+			bRW = view.getXmax() + 2;
+		} else if (bRW == Double.NEGATIVE_INFINITY || bRW == Double.MIN_VALUE || bRW == Double.NaN) {
+			return;
+		}
+
 		//	init first point of gp as (ax, ay) 	
 		double ax = view.toClippedScreenCoordX(aRW);
 		double ay = view.toClippedScreenCoordY(f.evaluate(aRW));	
