@@ -72,18 +72,15 @@ public class DrawIntegralFunctions extends Drawable {
 		double aRW = a.getDouble();
 		double bRW = b.getDouble();		
 
-		// DrawParametricCurve.plotCurve doesn't handle these values well,
-		// so adjust them
-		if (aRW == Double.NEGATIVE_INFINITY || aRW < view.getXmin() - 2) {
-			aRW = view.getXmin() - 2;
-		} else if (aRW == Double.POSITIVE_INFINITY || aRW > view.getXmax() + 2 || aRW == Double.NaN) {
+		// for DrawParametricCurve.plotCurve to work with special values,
+		// these changes are needed (also filter out out of screen integrals)
+		aRW = Math.max(aRW, view.getXmin() - 2);
+		if (aRW > view.getXmax() + 2)
 			return;
-		}
-		if (bRW == Double.POSITIVE_INFINITY || bRW > view.getXmax() + 2) {
-			bRW = view.getXmax() + 2;
-		} else if (bRW == Double.NEGATIVE_INFINITY || bRW < view.getXmin() - 2 || bRW == Double.NaN) {
+
+		bRW = Math.min(bRW, view.getXmax() + 2);
+		if (bRW < view.getXmin() - 2)
 			return;
-		}
 
 		//	init first point of gp as (ax, ay) 	
 		double ax = view.toClippedScreenCoordX(aRW);
