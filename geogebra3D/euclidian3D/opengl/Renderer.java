@@ -1256,7 +1256,7 @@ public class Renderer implements GLEventListener {
 	}
 	
 	
-	private void storePickingInfos(Hits3D hits3D, int labelLoop, Drawable3D[] drawHits, IntBuffer selectBuffer){
+	private void storePickingInfos(Hits3D hits3D, int labelLoop, IntBuffer selectBuffer){
 
         int hits = gl.glRenderMode(GLlocal.GL_RENDER); // Switch To Render Mode, Find Out How Many
         
@@ -1311,7 +1311,7 @@ public class Renderer implements GLEventListener {
     	
         
 		// picking objects
-        drawable3DLists.drawForPicking(this, drawHits);
+        drawable3DLists.drawForPicking(this);
         
         
         // set off the scene matrix
@@ -1326,7 +1326,7 @@ public class Renderer implements GLEventListener {
         	gl.glEnable(GLlocal.GL_BLEND);
            	gl.glEnable(GLlocal.GL_TEXTURE_2D);
            	
-        	drawable3DLists.drawLabelForPicking(this, drawHits);
+        	drawable3DLists.drawLabelForPicking(this);
         	
            	gl.glDisable(GLlocal.GL_TEXTURE_2D);
            	gl.glDisable(GLlocal.GL_BLEND);
@@ -1342,7 +1342,7 @@ public class Renderer implements GLEventListener {
         //Hits3D hits3D = new Hits3D();
         Hits3D hits3D = view3D.getHits3D();
         hits3D.init();
-        storePickingInfos(hits3D, labelLoop, drawHits, selectBuffer);
+        storePickingInfos(hits3D, labelLoop, selectBuffer);
         
         // sets the GeoElements in view3D
         hits3D.sort();
@@ -1393,14 +1393,14 @@ public class Renderer implements GLEventListener {
         for (Drawable3D d : curves){
         	d.zPickMax=Float.POSITIVE_INFINITY;
         	d.zPickMin=Float.POSITIVE_INFINITY; 
-        	pick(d,drawHits,false);
+        	pick(d,false);
         }
         
         
         // set off the scene matrix
         gl.glPopMatrix();
  
-        storePickingInfos(null, 0, drawHits, selectBuffer);
+        storePickingInfos(null, 0, selectBuffer);
         
         
         gl.glEnable(GLlocal.GL_LIGHTING);
@@ -1413,11 +1413,11 @@ public class Renderer implements GLEventListener {
     	gl.glLoadName(loop);
     }
     
-    public void pick(Drawable3D d, Drawable3D[] drawHits){  
-    	 pick(d,drawHits,true);
+    public void pick(Drawable3D d){  
+    	 pick(d,true);
     }
     
-    public void pick(Drawable3D d, Drawable3D[] drawHits, boolean verifyIsPickable){  
+    public void pick(Drawable3D d, boolean verifyIsPickable){  
     	//Application.debug(d.getGeoElement()+"\npickingloop="+pickingLoop+"\ndrawHits length="+drawHits.length);  	
     	//Application.debug("1");
     	gl.glLoadName(pickingLoop);//Application.debug("2");
@@ -1426,7 +1426,7 @@ public class Renderer implements GLEventListener {
     	pickingLoop++;//Application.debug("5");
     }
     
-    public void pickLabel(Drawable3D d, Drawable3D[] drawHits){   	
+    public void pickLabel(Drawable3D d){   	
     	gl.glLoadName(pickingLoop);
     	d.drawLabelForPicking(this);	
     	drawHits[pickingLoop] = d;

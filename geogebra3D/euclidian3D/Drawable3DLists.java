@@ -326,23 +326,23 @@ public class Drawable3DLists {
 	/** draw objects to pick them
 	 * @param renderer opengl context
 	 */
-	public void drawForPicking(Renderer renderer, Drawable3D[] drawHits){
+	public void drawForPicking(Renderer renderer){
 
 		renderer.setCulling(true);
 		for(int i=0; i<Drawable3D.DRAW_TYPE_SURFACES; i++)
 			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
 	        	Drawable3D d = iter.next();
-	        	renderer.pick(d, drawHits);
+	        	renderer.pick(d);
 			}
 		
 		renderer.setCulling(false);
 		for(int i=Drawable3D.DRAW_TYPE_SURFACES; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
 	        	Drawable3D d = iter.next();
-	        	renderer.pick(d, drawHits);
+	        	renderer.pick(d);
 			}		
 		
-		view3D.drawForPicking(renderer, drawHits);
+		view3D.drawForPicking(renderer);
 		
 		renderer.setCulling(true);
 		
@@ -352,14 +352,14 @@ public class Drawable3DLists {
 	/** draw objects labels to pick them
 	 * @param renderer opengl context
 	 */
-	public void drawLabelForPicking(Renderer renderer, Drawable3D[] drawHits){
+	public void drawLabelForPicking(Renderer renderer){
 
 		
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> iter = lists[i].iterator(); iter.hasNext();) {
 	        	Drawable3D d = iter.next();
 	        	
-	        	renderer.pickLabel(d, drawHits);
+	        	renderer.pickLabel(d);
 	        	
 	        	/*
 	        	loop++;

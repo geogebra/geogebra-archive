@@ -2973,10 +2973,10 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 	/** draw for picking view's drawables (plane and axis)
 	 * @param renderer
 	 */
-	public void drawForPicking(Renderer renderer, Drawable3D[] drawHits){
-		renderer.pick(xOyPlaneDrawable, drawHits);
+	public void drawForPicking(Renderer renderer){
+		renderer.pick(xOyPlaneDrawable);
 		for(int i=0;i<3;i++)
-			renderer.pick(axisDrawable[i], drawHits);
+			renderer.pick(axisDrawable[i]);
 	}
 	
 	
