@@ -48,8 +48,10 @@ import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
@@ -445,6 +447,8 @@ public abstract class GeoElement
 	public final static int COLORSPACE_HSL = 2;
 	private int colorSpace = COLORSPACE_RGB;
 	
+	private List<Integer> viewFlags;
+	
 	public int getColorSpace() {
 		return colorSpace;
 	}
@@ -563,6 +567,13 @@ public abstract class GeoElement
 			EuclidianView ev = app.getEuclidianView();
 			if (ev != null)
 				layer = ev.getMaxLayerUsed();
+		}
+		
+		viewFlags=new ArrayList<Integer>();
+		if (app!=null && app.getActiveEuclidianView()!=null){
+			viewFlags.add(app.getActiveEuclidianView().getViewID());
+		}else{
+			viewFlags.add(Application.VIEW_EUCLIDIAN);
 		}
 	}
 
@@ -5886,31 +5897,50 @@ public abstract class GeoElement
 	// Control which views are allowed to add a geo.
 	// G.Sturr, 2010-6-30
 	//=============================================
+	
 
-	private Set<Integer> viewSet = new HashSet<Integer>();
-
-	public void addView(int view){
-		viewSet.add(view);
-	}
-	public void removeView(int view){
-		viewSet.remove(view);
-	}
-
-	public boolean isVisibleInView(int view){
-		// if no views are set, add geo to both  by default
-		if(viewSet.isEmpty()){
-			EuclidianViewInterface ev = app.getActiveEuclidianView();
-			viewSet.add(ev.getViewID());
-			// if ev isn't Graphics or Graphics 2, then also add 1st 2D euclidian view
-			if (!(ev.isDefault2D()))
-				viewSet.add(Application.VIEW_EUCLIDIAN);
-
+	
+	public void setVisibility(int viewId, boolean setVisible){
+		if (setVisible){
+			viewFlags.add(viewId);
+		}else{
+			viewFlags.remove(Integer.valueOf(viewId));
 		}
-		return viewSet.contains(view);
 	}
 	
-	protected Set<Integer> getViewSet(){
-		return viewSet;
+	public boolean isVisibleInView(int viewId){
+		return viewFlags.contains(viewId);
+	}
+
+//	private Set<Integer> viewSet = new HashSet<Integer>();
+
+	public void addView(int viewId){
+		setVisibility(viewId, true);
+//		viewSet.add(view);
+	}
+	public void removeView(int viewId){
+		setVisibility(viewId, false);
+//		viewSet.remove(view);
+	}
+
+//	public boolean isVisibleInView(int view){
+//		// if no views are set, add geo to both  by default
+//		if(viewSet.isEmpty()){
+//			EuclidianViewInterface ev = app.getActiveEuclidianView();
+//			viewSet.add(ev.getViewID());
+//			// if ev isn't Graphics or Graphics 2, then also add 1st 2D euclidian view
+//			if (!(ev.isDefault2D()))
+//				viewSet.add(Application.VIEW_EUCLIDIAN);
+//
+//		}
+//		return viewSet.contains(view);
+//	}
+	
+	protected List<Integer> getViewSet(){
+		List<Integer> list=new ArrayList<Integer>();
+		list.addAll(viewFlags);
+//		Collections.copy(list, viewFlags);
+		return list;
 	}
 
 	/**

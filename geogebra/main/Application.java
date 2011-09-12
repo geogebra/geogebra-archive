@@ -426,7 +426,7 @@ public class Application implements KeyEventDispatcher {
 	private boolean allowToolTips = true;
 
 	// moved to Application from EuclidianView as the same value is used across multiple EVs 
-	public int MAX_LAYER_USED = 0;
+	public int maxLayerUsed = 0;
 	public int pointStyle = EuclidianView.POINT_STYLE_DOT;
 	public int booleanSize=13;
 	public int rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;

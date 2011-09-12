@@ -689,7 +689,7 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		allDrawableList.clear();
 		bgImageList.clear();
 		
-		for (int i=0 ; i<= app.MAX_LAYER_USED ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
+		for (int i=0 ; i<= app.maxLayerUsed ; i++) drawLayers[i].clear(); // Michael Borcherds 2008-02-29
 
 		setToolTipText(null);
 	}
@@ -2858,12 +2858,12 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	public void updateMaxLayerUsed(int layer)
 	{
 		if (layer > MAX_LAYERS) layer=MAX_LAYERS;
-		if (layer > app.MAX_LAYER_USED) app.MAX_LAYER_USED=layer;
+		if (layer > app.maxLayerUsed) app.maxLayerUsed=layer;
 	}
 
 	public int getMaxLayerUsed()
 	{
-		return app.MAX_LAYER_USED;
+		return app.maxLayerUsed;
 	}
 	
 	// Michael Borcherds 2008-03-01
@@ -2898,7 +2898,7 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		//boolean isSVGExtensions=g2.getClass().getName().endsWith("SVGExtensions");
 		int layer;
 		
-		for (layer=0 ; layer<=app.MAX_LAYER_USED ; layer++) // only draw layers we need
+		for (layer=0 ; layer<=app.maxLayerUsed ; layer++) // only draw layers we need
 		{
 			//if (isSVGExtensions) ((geogebra.export.SVGExtensions)g2).startGroup("layer "+layer);
 			drawLayers[layer].drawAll(g2);
@@ -4930,7 +4930,7 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	}
 
 	public void resetMaxLayerUsed() {
-		app.MAX_LAYER_USED = 0;		
+		app.maxLayerUsed = 0;		
 	}
 	
 	

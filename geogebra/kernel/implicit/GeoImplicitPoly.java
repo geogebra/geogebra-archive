@@ -1192,7 +1192,7 @@ Dilateable, Transformable, EuclidianViewCE {
 		public void updatePath(){
 			double[] viewBounds=kernel.getViewBoundsForGeo(this);
 			if (viewBounds[0]==Double.POSITIVE_INFINITY){ //no active View
-				viewBounds=new double[]{-1,1,-1,1,1,1}; //get some value...
+				viewBounds=new double[]{-10,10,-10,10,10,10}; //get some value...
 			}
 			updatePath(viewBounds[0], viewBounds[2], viewBounds[1]-viewBounds[0],
 					viewBounds[3]-viewBounds[2], 1./viewBounds[4]/viewBounds[5]);

@@ -88,17 +88,15 @@ import geogebra.util.MaxSizeHashMap;
 import geogebra.util.ScientificFormat;
 import geogebra.util.Unicode;
 
-import java.awt.Rectangle;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.List;
 
 public class Kernel {
 
@@ -796,7 +794,7 @@ public class Kernel {
 	 *  in which <b>geo</b> is shown.<br /> Format: {xMin,xMax,yMin,yMax,xScale,yScale}
 	 */
 	public double[] getViewBoundsForGeo(GeoElement geo){
-		Set<Integer> viewSet=geo.getViewSet();
+		List<Integer> viewSet=geo.getViewSet();
 		double[] viewBounds=new double[6];
 		for (int i=0;i<6;i++)
 			viewBounds[i]=Double.NEGATIVE_INFINITY;
