@@ -71,14 +71,14 @@ public class DrawIntegral extends Drawable {
 
 		// DrawParametricCurve.plotCurve doesn't handle these values well,
 		// so adjust them
-		if (aRW == Double.NEGATIVE_INFINITY || aRW == Double.MIN_VALUE) {
+		if (aRW == Double.NEGATIVE_INFINITY || aRW < view.getXmin() - 2) {
 			aRW = view.getXmin() - 2;
-		} else if (aRW == Double.POSITIVE_INFINITY || aRW == Double.MAX_VALUE || aRW == Double.NaN) {
+		} else if (aRW == Double.POSITIVE_INFINITY || aRW > view.getXmax() + 2 || aRW == Double.NaN) {
 			return;
 		}
-		if (bRW == Double.POSITIVE_INFINITY || bRW == Double.MAX_VALUE) {
+		if (bRW == Double.POSITIVE_INFINITY || bRW > view.getXmax() + 2) {
 			bRW = view.getXmax() + 2;
-		} else if (bRW == Double.NEGATIVE_INFINITY || bRW == Double.MIN_VALUE || bRW == Double.NaN) {
+		} else if (bRW == Double.NEGATIVE_INFINITY || bRW < view.getXmin() - 2 || bRW == Double.NaN) {
 			return;
 		}
 
