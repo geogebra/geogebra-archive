@@ -951,14 +951,34 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
             if (length>0) sbAE.append(real?input[0].getRealLabel():input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
             for (int i = 1; i < length; ++i) {
                 sbAE.append(", ");
-                sbAE.append(real? input[i].getRealLabel():input[i].getLabel());
+                appendCheckVector(sbAE, input[i], real);
             }
             sbAE.append("]");
             return sbAE.toString();           
         }       
     }
     
+    /*
+     * see #1377
+     * g:X = (-5, 5) + t (4, -3) 
+     */
+    private void appendCheckVector(StringBuilder sb, GeoElement geo, boolean real) {
+        String cmd = real? geo.getRealLabel():geo.getLabel();
+        if (geo.isGeoVector()) {
+        	String vectorCommand = app.getCommand("Vector")+"[";
+        	boolean needsWrapping = !geo.isLabelSet() && !cmd.startsWith(vectorCommand);
+        	
+        	if (needsWrapping) sb.append(vectorCommand);
+        	sb.append(cmd);
+        	if (needsWrapping) sb.append(']');
+        } else {
+        	sb.append(cmd);
+        }
+    	
+    }
     
+    
+   
 
     public String toRealString() {
 		return toString();
@@ -1172,16 +1192,20 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
                 // attribute name is input No. 
                 sb.append("=\"");
                 
-                // ensure a vector stays a vector!               
-                if (input[i].isGeoVector() && !input[i].isLabelSet()) {
+                String cmd = Util.encodeXML(input[i].getLabel());
+                
+                // ensure a vector stays a vector!  
+                // eg g:X = (-5, 5) + t (4, -3) 
+                if (input[i].isGeoVector() && !input[i].isLabelSet() && !cmd.startsWith("Vector[")) {
                     // add Vector[ ] command around argument
                     // to make sure that this really becomes a vector again
+                	// eg g:X = (-5, 5) + t (4, -3) 
                     sb.append("Vector[");
-                        sb.append(Util.encodeXML(input[i].getLabel()));
+                    sb.append(cmd);
                     sb.append("]");
                 } else {
                 	// standard case
-                    sb.append(Util.encodeXML(input[i].getLabel()));                 
+                    sb.append(cmd);                 
                 }                       
                         
                 sb.append("\"");
