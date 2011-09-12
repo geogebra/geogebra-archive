@@ -67,6 +67,27 @@ public class MySpecialDouble extends MyDouble {
 		this.strToString = strToString;
 	}
 	
+	/**
+	 * Copy constructor.
+	 * @param md
+	 */
+	public MySpecialDouble(MySpecialDouble sd) {
+		super(sd);
+		strToString = sd.strToString;
+		keepOriginalString = sd.keepOriginalString;
+		isLetterConstant = sd.isLetterConstant; // for Pi, Euler, or Degree constant
+		scientificNotation = sd.scientificNotation;
+	}
+	
+	public ExpressionValue deepCopy(Kernel kernel) {
+		if (isEulerConstant())
+			return getEulerConstant(kernel);
+		
+		MySpecialDouble ret = new MySpecialDouble(this);
+		ret.kernel = kernel; 
+		return ret;
+	}  
+	
 	public void setKeepOriginalString() {
 		keepOriginalString = true;
 	}
