@@ -338,8 +338,14 @@ public class MyXMLio {
 				app.showConsProtNavigation()) 
 		{
 				//app.getGuiManager().setConstructionStep(handler.getConsStep());
+
+			if (app.getGuiManager() != null)
+				// if there is a ConstructionProtocolView, then update its navigation bars
+				app.getGuiManager().getConstructionProtocolView().setConstructionStep(handler.getConsStep());
+			else
+				// otherwise this is not needed 
 				app.getKernel().getConstruction().setStep(handler.getConsStep());
-				
+
 		}
 		
 	}

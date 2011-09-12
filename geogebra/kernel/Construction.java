@@ -975,6 +975,9 @@ public class Construction {
 			return;
 
 			kernel.setAllowVisibilitySideEffects(false);
+		
+		boolean cpara = kernel.isNotifyConstructionProtocolViewAboutAddRemoveActive();
+		kernel.setNotifyConstructionProtocolViewAboutAddRemoveActive(false);
 
 		if (s < step) {
 			for (int i = s + 1; i <= step; ++i) {
@@ -986,7 +989,9 @@ public class Construction {
 				((ConstructionElement) ceList.get(i)).notifyAdd();
 			}
 		}
-	
+
+		kernel.setNotifyConstructionProtocolViewAboutAddRemoveActive(cpara);
+
 		step = s;
 
 		kernel.setAllowVisibilitySideEffects(true);

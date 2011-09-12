@@ -213,6 +213,7 @@ public class Kernel {
 	private boolean useInternalCommandNames = false;
 	private boolean undoActive = false;
 	private boolean notifyViewsActive = true;
+	private boolean notifyConstructionProtocolViewAboutAddRemoveActive = true;
 	private boolean viewReiniting = false;
 	private boolean allowVisibilitySideEffects = true;
 
@@ -2039,7 +2040,9 @@ public class Kernel {
 	final void notifyAdd(GeoElement geo) {
 		if (notifyViewsActive) {
 			for (int i = 0; i < viewCnt; ++i) {
-				views[i].add(geo);					
+				if (views[i].getViewID() != Application.VIEW_CONSTRUCTION_PROTOCOL
+					|| notifyConstructionProtocolViewAboutAddRemoveActive)
+					views[i].add(geo);
 			}
 		}
 		
@@ -2049,7 +2052,9 @@ public class Kernel {
 	final void notifyRemove(GeoElement geo) {
 		if (notifyViewsActive) {
 			for (int i = 0; i < viewCnt; ++i) {
-				views[i].remove(geo);
+				if (views[i].getViewID() != Application.VIEW_CONSTRUCTION_PROTOCOL
+						|| notifyConstructionProtocolViewAboutAddRemoveActive)
+					views[i].remove(geo);
 			}
 		}
 		
@@ -2119,7 +2124,15 @@ public class Kernel {
 	public boolean isNotifyViewsActive() {
 		return notifyViewsActive && !viewReiniting;
 	}
-		
+
+	public void setNotifyConstructionProtocolViewAboutAddRemoveActive(boolean flag) {
+		notifyConstructionProtocolViewAboutAddRemoveActive = flag;
+	}
+
+	public boolean isNotifyConstructionProtocolViewAboutAddRemoveActive() {
+		return notifyConstructionProtocolViewAboutAddRemoveActive;
+	}
+
 	public boolean isViewReiniting() {
 		return viewReiniting;
 	}
