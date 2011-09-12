@@ -4037,7 +4037,7 @@ public class Application implements KeyEventDispatcher {
 	
 	final public static boolean isWebstart() {
 		if (codebase == null) initCodeBase();
-		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_WEBSITE + "webstart");
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE_BASE);
 	}
 	
 	final public static boolean isWebstartDebug() {
