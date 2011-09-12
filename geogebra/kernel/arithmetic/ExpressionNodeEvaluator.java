@@ -4,6 +4,7 @@ import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
@@ -1466,10 +1467,15 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 			} else if (rt instanceof GeoPoint) {
 				if (lt instanceof Evaluatable) {
 					GeoPoint pt = (GeoPoint) rt;
-					FunctionNVar fun = ((GeoFunction) lt).getFunction();
-					if (lt instanceof GeoFunction && fun.isBooleanFunction())
-						return new MyBoolean(kernel, fun.evaluateBoolean(pt));
-					return new MyDouble(kernel, fun.evaluate(pt));
+					if (lt instanceof GeoFunction) {
+						FunctionNVar fun = ((GeoFunction) lt).getFunction();
+						if (lt instanceof GeoFunction && fun.isBooleanFunction())
+							return new MyBoolean(kernel, fun.evaluateBoolean(pt));
+						return new MyDouble(kernel, fun.evaluate(pt));						
+					} else if (lt instanceof GeoFunctionable) {
+						// eg GeoLine
+						return new MyDouble(kernel, ((GeoFunctionable)lt).getGeoFunction().getFunction().evaluate(pt));							
+					} else Application.debug("missing case in ExpressionNodeEvaluator");
 				}
 			} else if (lt.isPolynomialInstance() && rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {
 				lt = ((Polynomial) lt).getConstantCoefficient();
