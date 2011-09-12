@@ -301,16 +301,12 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	final public void startDocument() throws SAXException {
-		reset(true);
-		
-		app.getSettings().beginBatch();
+		reset(true);			
 	}
 
 	final public void endDocument() throws SAXException {				
 		if (mode == MODE_INVALID)
 			throw new SAXException(app.getPlain("XMLTagANotFound","<geogebra>"));
-		
-		app.getSettings().endBatch();
 	}
 
 	final public void startElement(String eName, LinkedHashMap<String, String> attrs)

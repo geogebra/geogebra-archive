@@ -286,7 +286,7 @@ public class UndoManager {
 	 * Processes xml string. Note: this will change the construction.
 	 */
 	synchronized void processXML(String strXML) throws Exception {	
-		xmlio.processXMLString(strXML, true, false);
+		xmlio.processXMLString(strXML, true, false,false);
 	}		
 
 }
