@@ -2028,10 +2028,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			GeoElement[] ret = new GeoElement[1];
 			
 			//tells the kernel not to record the algo
+			boolean oldSilentMode = getKernel().isSilentMode();
 			getKernel().setSilentMode(true);
 			ret[0] = getKernel().getManager3D().IntersectPlanes(
 					(GeoCoordSys2D)A, (GeoCoordSys2D) B);
-			getKernel().setSilentMode(false);
+			getKernel().setSilentMode(oldSilentMode);
 			
 			Drawable3D d = new DrawLine3D(view3D, (GeoLineND) ret[0]);
 			processIntersectionCurve(A, B, ret[0], d);
@@ -2045,18 +2046,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			} */
 		else if (A.isGeoPlane() && B instanceof GeoQuadric3D) {
 			//add intersection to tempArrayList
+			boolean oldSilentMode = getKernel().isSilentMode();
 			getKernel().setSilentMode(true);//tells the kernel not to record the algo
 			GeoElement[] ret = {kernel.getManager3D().Intersect((GeoPlaneND) A, (GeoQuadric3D) B)};
-			getKernel().setSilentMode(false);
+			getKernel().setSilentMode(oldSilentMode);
 			Drawable3D d = new DrawConic3D(view3D, (GeoConicND) ret[0]);
 			processIntersectionCurve(A, B, ret[0], d);
 			intersectable = true;
 			
 		} else if (B.isGeoPlane() && A instanceof GeoQuadric3D) {
 			//add intersection to tempArrayList
+			boolean oldSilentMode = getKernel().isSilentMode();
 			getKernel().setSilentMode(true);//tells the kernel not to record the algo
 			GeoElement[] ret = {kernel.getManager3D().Intersect((GeoPlaneND) B, (GeoQuadric3D) A)};
-			getKernel().setSilentMode(false);
+			getKernel().setSilentMode(oldSilentMode);
 			Drawable3D d = new DrawConic3D(view3D, (GeoConicND) ret[0]);
 			processIntersectionCurve(A, B, ret[0], d);
 			intersectable = true;
