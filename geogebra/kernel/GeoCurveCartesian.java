@@ -809,5 +809,8 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 			hideRangeInFormula = b;
 			
 		}
+		public  boolean isLaTeXDrawableGeo(String latexStr) {
+			return true;
+		}
 
 }

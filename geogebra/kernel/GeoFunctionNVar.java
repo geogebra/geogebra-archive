@@ -731,4 +731,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 		public boolean isGeoFunctionNVar(){
 			return true;
 		}
+		
+		public  boolean isLaTeXDrawableGeo(String latexStr) {
+			return isLaTeXneeded(latexStr);
+		}
+
 }

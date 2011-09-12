@@ -6179,5 +6179,47 @@ public abstract class GeoElement
 	final public void setCorrespondingCasCell(GeoCasCell correspondingCasCell) {
 		this.correspondingCasCell = correspondingCasCell;
 	}
+	
+	/**
+	 * Test method that returns true if the given GeoElement geo is to be drawn
+	 * with LaTeX rendering in the spreadsheet or AV. For performance reasons
+	 * LaTeX is to be avoided when not needed.
+	 * 
+	 * @param geo
+	 * @return
+	 */
+	public  boolean isLaTeXDrawableGeo(String latexStr) {
+		return false;
+	}
+	
+	/*
+	 * used in eg CAS and Spreadsheet Views to decide if the LaTeX renderer
+	 * is neccesary by checking for eg ^2, \frac
+	 */
+	public static boolean isLaTeXneeded(String latex) {
+		
+		for (int i=0; i < latex.length(); i++) {
+			char ch = latex.charAt(i);
+			switch (ch) {
+				case '\\':
+					char ch1 = i == latex.length() - 1 ? ' ' : latex.charAt(i+1);
+					if (ch1 != ';' && ch1 != ',') return true; // \; \, just spacing
+					break;
+				case '^':
+					return true;
+			}
+		}
+		
+		// no real latex string
+		return false;
+	}
+	
+	
+	
+	
+	
+	
+	
+
 
 }

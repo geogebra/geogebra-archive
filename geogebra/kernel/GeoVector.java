@@ -719,4 +719,9 @@ Transformable, GeoVectorND {
 		setCoords(x1/z1,y1/z1,0);
 
 	}
+	
+	public  boolean isLaTeXDrawableGeo(String latexStr) {
+		return true;
+	}
+
 }

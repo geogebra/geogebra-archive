@@ -1550,4 +1550,18 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		return geoList.contains(geo);
 	}
 	
+	@Override
+	public  boolean isLaTeXDrawableGeo(String latexStr) {
+		
+		
+		// check for matrix
+		if (getElementType() == GeoElement.GEO_CLASS_LIST) return true;
+		
+		// don't check getGeoElementForPropertiesDialog
+		// as we want matrices to use latex
+		if (getElementType() == GeoElement.GEO_CLASS_NUMERIC) return false;
+		
+		return  super.isLaTeXDrawableGeo(latexStr);
+	}
+	
 }

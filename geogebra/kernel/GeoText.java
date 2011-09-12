@@ -833,6 +833,11 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		return true;
 	}
 	
+	@Override
+	public  boolean isLaTeXDrawableGeo(String latexStr) {
+		
+		return isLaTeX();
+	}
 	
 
 

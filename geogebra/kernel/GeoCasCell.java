@@ -1462,5 +1462,8 @@ public class GeoCasCell extends GeoElement {
 //	public void setIgnoreTwinGeoUpdate(boolean ignoreTwinGeoUpdate) {
 //		this.ignoreTwinGeoUpdate = ignoreTwinGeoUpdate;
 //	}
-	
+	public  boolean isLaTeXDrawableGeo(String latexStr) {
+		return isLaTeXneeded(latexStr);
+	}
+
 }

@@ -566,7 +566,7 @@ implements ListSelectionListener, FocusListener, WindowFocusListener{
 
 			Font latexFont = new Font(app.getPlainFont().getName(),app.getPlainFont().getStyle(),app.getPlainFont().getSize()-1);
 
-			if(latexStr != null && Application.isLaTeXneeded(latexStr)){
+			if(latexStr != null && geo.isLaTeXDrawableGeo(latexStr)){
 				drawLatexImageIcon(latexIcon, latexStr, latexFont, false, Color.black, null );
 				lblPreview.setText(" ");
 			}else{

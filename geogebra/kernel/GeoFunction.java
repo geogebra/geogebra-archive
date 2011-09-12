@@ -1640,5 +1640,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public boolean isGeoFunctionBoolean(){
 		return isBooleanFunction();
 	}
+	
+	public  boolean isLaTeXDrawableGeo(String latexStr) {
+		return isLaTeXneeded(latexStr);
+	}
 
 }

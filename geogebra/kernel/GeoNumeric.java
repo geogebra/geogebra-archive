@@ -1182,4 +1182,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			}
 		}
 	}
+	
+	@Override
+	public  boolean isLaTeXDrawableGeo(String latexStr) {
+		return false;
+	}
+
 }
