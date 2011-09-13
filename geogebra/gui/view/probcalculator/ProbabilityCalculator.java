@@ -815,7 +815,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		lowPoint.setCoords(low, 0.0, 1.0);
 		highPoint.setCoords(high, 0.0, 1.0);
 		plotPanel.repaint();
-		GeoElement.updateCascade(pointList, getTempSet());
+		GeoElement.updateCascade(pointList, getTempSet(), false);
 		tempSet.clear();
 
 		if(probManager.isDiscrete(selectedDist))

@@ -1020,7 +1020,7 @@ if (!geo.isGeoPoint()) return false;
 						
 		// update all registered locatables (they have this point as start point)
 		if (locateableList != null) {	
-			GeoElement.updateCascade(locateableList, getTempSet());
+			GeoElement.updateCascade(locateableList, getTempSet(), false);
 		}			
 	}
 	

@@ -176,7 +176,7 @@ public class AnimationManager implements ActionListener {
 		// do we need to update anything?
 		if (changedGeos.size() > 0) {
 			// efficiently update all changed GeoElements
-			GeoElement.updateCascade(changedGeos, getTempSet());
+			GeoElement.updateCascade(changedGeos, getTempSet(), false);
 			
 			// repaint views 
 			kernel.notifyRepaint();	

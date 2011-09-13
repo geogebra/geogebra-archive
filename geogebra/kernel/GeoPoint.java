@@ -1159,7 +1159,7 @@ GeoPointND, Animatable, Transformable  {
 						
 		// update all registered locatables (they have this point as start point)
 		if (locateableList != null) {	
-			GeoElement.updateCascade(locateableList, getTempSet());
+			GeoElement.updateCascade(locateableList, getTempSet(), false);
 		}			
 	}
 	
@@ -1737,7 +1737,7 @@ GeoPointND, Animatable, Transformable  {
 				//if (!geo.isFixed())
 				//geo.updateCascade();
 				
-				GeoElement.updateCascade(predList, tempSet);
+				GeoElement.updateCascade(predList, tempSet, false);
 				
 				// if all of the cases are good, add incidence
 				if (incident)

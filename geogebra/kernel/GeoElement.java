@@ -3248,7 +3248,7 @@ public abstract class GeoElement
 	 *
 	 * @param tempSet a temporary set that is used to collect all algorithms that need to be updated
 	 */
-	final static public synchronized void updateCascade(ArrayList<?> geos, TreeSet<AlgoElement> tempSet) {		
+	final static public synchronized void updateCascade(ArrayList<?> geos, TreeSet<AlgoElement> tempSet, boolean updateCascadeAll) {		
 				// only one geo: call updateCascade()
 		if (geos.size() == 1) {
 			ConstructionElement ce = (ConstructionElement) geos.get(0);
@@ -3269,7 +3269,7 @@ public abstract class GeoElement
 				GeoElement geo = (GeoElement) geos.get(i);
 				geo.update();
 
-				if ((geo.isIndependent() || geo.isPointOnPath()) &&
+				if ((geo.isIndependent() || geo.isPointOnPath() || updateCascadeAll) &&
 						geo.algoUpdateSet != null)
 				{
 					// add all dependent algos of geo to the overall algorithm set
@@ -5124,7 +5124,7 @@ public abstract class GeoElement
 		// then update all their algos.
 		// (don't do updateCascade() on them individually as this could cause
 		//  multiple updates of the same algorithm)
-		updateCascade(moveObjectsUpdateList, getTempSet());
+		updateCascade(moveObjectsUpdateList, getTempSet(), false);
 
 		return moved;
 	}
@@ -5298,7 +5298,7 @@ public abstract class GeoElement
 			if (tempMoveObjectList == null)
 				tempMoveObjectList = new ArrayList<GeoElement>();
 			tempMoveObjectList.add(number);
-			updateCascade(tempMoveObjectList, getTempSet() );
+			updateCascade(tempMoveObjectList, getTempSet() , false );
 		}
 	}
 

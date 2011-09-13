@@ -456,7 +456,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		}
 		
 		// update all geos
-		GeoElement.updateCascade(geos, getTempSet());
+		GeoElement.updateCascade(geos, getTempSet(), true);
 	}
 	
 	private static TreeSet<AlgoElement> tempSet;	

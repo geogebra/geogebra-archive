@@ -875,7 +875,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			}
 
 			// update all geos together
-			GeoElement.updateCascade(geos, getTempSet());
+			GeoElement.updateCascade(geos, getTempSet(), false);
 			app.getKernel().notifyRepaint();
 
 			return true;
