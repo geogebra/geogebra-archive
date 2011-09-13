@@ -3241,12 +3241,20 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * Updates all GeoElements in the given ArrayList and all algorithms that depend on free GeoElements in that list.
+	 * If the flag updateCascadeAll is false, this algorithm 
+	 * updates all GeoElements in the given ArrayList and all algorithms that depend on free GeoElements in that list.
+	 * If the flag updateCascadeAll is true, this algorithm
+	 * updates all GeoElements in the given ArrayList and all algorithms that depend on any GeoElement in that list.
+	 * This flag was introduced because of Ticket #1383, description of that change is there
+	 * 
 	 * Note: this method is more efficient than calling updateCascade() for all individual
 	 * GeoElements.
+	 * 
 	 * @param geos 
 	 *
 	 * @param tempSet a temporary set that is used to collect all algorithms that need to be updated
+	 * 
+	 * @param updateCascadeAll
 	 */
 	final static public synchronized void updateCascade(ArrayList<?> geos, TreeSet<AlgoElement> tempSet, boolean updateCascadeAll) {		
 				// only one geo: call updateCascade()
