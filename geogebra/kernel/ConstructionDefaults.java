@@ -546,11 +546,13 @@ public class ConstructionDefaults {
 		// else -> no labels
 		if (labelingStyle == LABEL_VISIBLE_AUTOMATIC) {
 			if(app.useFullGui()) {
-				labelingStyle = LABEL_VISIBLE_USE_DEFAULTS;
-				/* TODO method chains doesn't allow app.getGuiManager().showAlgebraView() to appear here, fix this (F.S.)
-				labelingStyle = app.getGuiManager().showAlgebraView() ?
-										LABEL_VISIBLE_USE_DEFAULTS :
-										LABEL_VISIBLE_ALWAYS_OFF;*/
+				if (app.getGuiManager().hasAlgebraView()) {
+					labelingStyle = app.getGuiManager().getAlgebraView().isVisible() ?
+							LABEL_VISIBLE_USE_DEFAULTS :
+							LABEL_VISIBLE_ALWAYS_OFF;
+				} else {
+					labelingStyle = LABEL_VISIBLE_ALWAYS_OFF;
+				}
 			} else {
 				labelingStyle = LABEL_VISIBLE_USE_DEFAULTS;
 			}
