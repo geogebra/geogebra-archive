@@ -23,13 +23,11 @@ import java.util.Map;
 public class GeoGebraCAS implements GeoGebraCASInterface {
 
 	private Application app;
-	private Kernel kernel;
 	private CASparser casParser;
 	private CASgeneric cas;
 	public int currentCAS = -1;
 
 	public GeoGebraCAS(Kernel kernel) {
-		this.kernel = kernel;
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
 		setCurrentCAS(Kernel.DEFAULT_CAS);
@@ -59,7 +57,7 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 	
 	/**
 	 * Sets the currently used CAS for evaluateGeoGebraCAS().
-	 * @param CAS: use CAS_MATHPIPER or CAS_MAXIMA
+	 * @param CAS use CAS_MATHPIPER or CAS_MAXIMA
 	 */
 	public void setCurrentCAS(int CAS) {
 		try {
@@ -142,7 +140,6 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 	/**
 	 * Unbinds (deletes) variable.
 	 * @param var
-	 * @param isFunction
 	 */
 	public void unbindVariable(String var) {
 		cas.unbindVariable(var);
@@ -156,8 +153,8 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 	 */
 	public String evaluateGeoGebraCAS(ValidExpression casInput) throws CASException {
 		Kernel kernel = app.getKernel();
-		boolean oldDigits = kernel.internationalizeDigits;
-		kernel.internationalizeDigits = false;			
+		boolean oldDigits = Kernel.internationalizeDigits;
+		Kernel.internationalizeDigits = false;			
 		
 		String result = null;
 		CASException exception = null;
@@ -168,7 +165,7 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 			exception = ce;			
 		}
 		finally  {
-			kernel.internationalizeDigits = oldDigits;
+			Kernel.internationalizeDigits = oldDigits;
 		}
 		
 		// check if keep input command was successful
@@ -233,25 +230,14 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 	final synchronized public String getGeoGebraCASError() {
 		return cas.getEvaluateGeoGebraCASerror();
 	}
+
 	
 	/** 
-	 * Evaluates an expression in MathPiper syntax.
+	 * Evaluates an expression given in MPReduce syntax.
      * @return result string (null possible)
-     * @deprecated since GeoGebra 4.0
-     *
-	final public String evaluateMathPiper(String exp) {		
-		return getMathPiper().evaluateMathPiper(exp);
-	}*/
-	
-	/** 
-	 * Evaluates an expression in Maxima syntax.
-     * @return result string (null possible)
-     *
-	final public String evaluateMaxima(String exp) {
-		return getMaxima().evaluateMaxima(exp);
-	}
-	 * @throws Throwable */
-	
+     * @param exp the expression
+	 * @throws CASException
+	 * */
 	final public String evaluateMPReduce(String exp) throws CASException
 	{
 		return getMPReduce().evaluateMPReduce(exp);
@@ -458,7 +444,7 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 	 * Returns true if the two input expressions are structurally equal. 
 	 * For example "2 + 2/3" is structurally equal to "2 + (2/3)"
 	 * but unequal to "(2 + 2)/3"
-	 * @param internalInput includes internal command names
+	 * @param inputVE includes internal command names
 	 * @param localizedInput includes localized command names
 	 */
 	public boolean isStructurallyEqual(ValidExpression inputVE, String localizedInput) {
