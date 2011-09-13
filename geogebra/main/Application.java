@@ -3922,6 +3922,8 @@ public class Application implements KeyEventDispatcher {
 		//save euclidian view 2 settings
 		if(hasEuclidianView2()){
 			getEuclidianView2().getXML(sb,asPreference);
+		} else if (asPreference && getGuiManager() != null) {
+			getEuclidianView2().getXML(sb,true);
 		}
 
 		// save spreadsheetView settings

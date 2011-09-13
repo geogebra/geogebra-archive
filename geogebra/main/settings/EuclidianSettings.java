@@ -268,6 +268,16 @@ public class EuclidianSettings extends AbstractSettings {
 
 	private int pointCapturingMode;
 	
+	private boolean allowShowMouseCoords = true;
+	
+	public boolean getAllowShowMouseCoords() {
+		return allowShowMouseCoords;
+	}
+
+	public void setAllowShowMouseCoords(boolean neverShowMouseCoords) {
+		this.allowShowMouseCoords = neverShowMouseCoords;
+	}
+	
 	/*
 	 * change visibility of axes
 	 */

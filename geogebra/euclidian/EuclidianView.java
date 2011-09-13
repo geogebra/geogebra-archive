@@ -3935,6 +3935,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		sb.append(pointCapturingMode);
 		sb.append("\" rightAngleStyle=\"");
 		sb.append(app.rightAngleStyle);
+		if (asPreference) {
+			sb.append("\" allowShowMouseCoords=\"");
+			sb.append(getAllowShowMouseCoords());
+		}
 
 		sb.append("\" checkboxSize=\"");
 		sb.append(app.booleanSize); // Michael Borcherds 2008-05-12
@@ -5290,6 +5294,8 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		setGridType(evs.getGridType());
 		
 		setPointCapturing(evs.getPointCapturingMode());
+		
+		setAllowShowMouseCoords(evs.getAllowShowMouseCoords());
 		
 		if(evs.getXmaxObject()==null)
 			setCoordSystem(evs.getXZero(), evs.getYZero(), evs.getXscale(), evs.getYscale(), true);

@@ -978,6 +978,9 @@ public class MyXMLHandler implements DocHandler {
 			if (strBooleanSize != null)
 				app.booleanSize = Integer.parseInt(strBooleanSize);
 				//ev.setBooleanSize(Integer.parseInt(strBooleanSize));
+			
+			boolean asm = parseBoolean((String) attrs.get("allowShowMouseCoords"));
+			ev.setAllowShowMouseCoords(asm);
 
 			// v3.0: appearance of right angle
 			String strRightAngleStyle = (String) attrs.get("rightAngleStyle");
