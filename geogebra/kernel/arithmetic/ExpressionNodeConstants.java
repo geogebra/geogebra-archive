@@ -131,6 +131,10 @@ public interface ExpressionNodeConstants {
     // logarithm for arbitrary base log(b, x)
     public static final int LOGB = 580;
     
+    /*
+     * these should also be documented here:
+     * http://wiki.geogebra.org/en/Manual:Naming_Objects
+     */
     public static final Set<String> RESERVED_FUNCTION_NAMES = new HashSet<String>(Arrays.asList(
     		"x", "y", "abs",
 		"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan",
