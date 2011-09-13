@@ -236,7 +236,7 @@ public class CASmpreduce extends CASgeneric {
 	}
 
 	@Override
-	public void reset() {
+	public synchronized void reset() {
 		try {
 			mpreduce.evaluate("resetreduce;");
 			mpreduce.initialize();
@@ -683,7 +683,7 @@ public class CASmpreduce extends CASgeneric {
 		// http://sourceforge.net/projects/reduce-algebra/forums/forum/899364/topic/4546339
 		// this is a numeric approximation according to Abramowitz & Stegun
 		// 7.1.26.
-		mpreduce.evaluate("procedure erf(x); "
+		mpreduce.evaluate("procedure myerf(x); "
 				+ "begin scalar a1!!, a2!!, a3!!, a4!!, a5!!, p!!, x!!, t!!, y!!, sign!!, result!!;"
 				+ "     on rounded;"
 				+ "		if numberp(x) then 1 else return !*hold(erf(x));"
