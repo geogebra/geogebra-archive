@@ -1229,6 +1229,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 		String ret = null;
 		
 		kernel.setTemporaryPrintFigures(15);
+		try {
 
 		if (leaf) { // leaf is GeoElement or not
 			/*
@@ -1271,8 +1272,10 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			}
 			ret = operationToString(leftStr, rightStr, !symbolic);
 		}
-
-		kernel.restorePrintAccuracy();
+		}
+		finally {
+			kernel.restorePrintAccuracy();
+		}
 		
 		return ret;
 	}

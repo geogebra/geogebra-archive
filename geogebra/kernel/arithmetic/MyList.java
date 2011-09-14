@@ -442,53 +442,58 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 		// check if already calculated
 		if (matrixRows > 0 && matrixCols > 0) return true;
 		
+		try {
+			boolean isMatrix=true;
+			
+			int LHrows = LHlist.size(), LHcols=0;
+			
+			//Application.debug("MULT LISTS"+size);
+			
+			// check LHlist is a matrix
+			ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
+			if (singleValue == null)
+			{
+				matrixRows = matrixCols = 0;
+				return false;
+			}
+			
+			if ( singleValue.isListValue() ){
+				LHcols=((ListValue)singleValue).getMyList().size();
+				//Application.debug("LHrows"+LHrows);
+				if (LHrows>1) for (int i=1 ; i<LHrows ; i++) // check all rows same length
+				{
+					//Application.debug(i);
+					singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
+					//Application.debug("size"+((ListValue)singleValue).getMyList().size());
+					if ( singleValue.isListValue() ){
+						MyList list=((ListValue)singleValue).getMyList();
+						if (list.size()!=LHcols) isMatrix=false;	
+						else if ((list.size()>0) && (list.getListElement(0) instanceof ExpressionNode) && (((ExpressionNode)list.getListElement(0)).getLeft() instanceof Equation)) isMatrix=false;
+					}
+					else isMatrix=false;
+				}
+			}
+			else isMatrix = false;
+	
+			//Application.debug("isMatrix="+isMatrix);	
+			
+			if (isMatrix)
+			{
+				matrixCols=LHcols;
+				matrixRows=LHrows;
+			}
+			else
+			{
+				matrixCols=0;
+			 	matrixRows=0;		
+			}
 		
-		boolean isMatrix=true;
-		
-		int LHrows = LHlist.size(), LHcols=0;
-		
-		//Application.debug("MULT LISTS"+size);
-		
-		// check LHlist is a matrix
-		ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
-		if (singleValue == null)
-		{
+			return isMatrix;
+		}
+		catch (Throwable e) {
 			matrixRows = matrixCols = 0;
 			return false;
 		}
-		
-		if ( singleValue.isListValue() ){
-			LHcols=((ListValue)singleValue).getMyList().size();
-			//Application.debug("LHrows"+LHrows);
-			if (LHrows>1) for (int i=1 ; i<LHrows ; i++) // check all rows same length
-			{
-				//Application.debug(i);
-				singleValue=((ExpressionValue)LHlist.getListElement(i)).evaluate();
-				//Application.debug("size"+((ListValue)singleValue).getMyList().size());
-				if ( singleValue.isListValue() ){
-					MyList list=((ListValue)singleValue).getMyList();
-					if (list.size()!=LHcols) isMatrix=false;	
-					else if ((list.size()>0) && (list.getListElement(0) instanceof ExpressionNode) && (((ExpressionNode)list.getListElement(0)).getLeft() instanceof Equation)) isMatrix=false;
-				}
-				else isMatrix=false;
-			}
-		}
-		else isMatrix = false;
-
-		//Application.debug("isMatrix="+isMatrix);	
-		
-		if (isMatrix)
-		{
-			matrixCols=LHcols;
-			matrixRows=LHrows;
-		}
-		else
-		{
-			matrixCols=0;
-		 	matrixRows=0;		
-		}
-		
-		return isMatrix;
 		
 	}
 	
