@@ -231,6 +231,12 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	public static final int POINT_CAPTURING_AUTOMATIC = 3;
 	public static final int POINT_CAPTURING_STICKY_POINTS = 4;
 	
+	public static final int TOOLTIPS_AUTOMATIC = 0;
+	public static final int TOOLTIPS_ON = 1;
+	public static final int TOOLTIPS_OFF = 2;
+	
+	protected int tooltipsInThisView = TOOLTIPS_AUTOMATIC;
+	
 //	 Michael Borcherds 2008-04-28 
 	public static final int GRID_CARTESIAN = 0;
 	public static final int GRID_ISOMETRIC = 1;
@@ -785,7 +791,7 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	final public int getBooleanSize() {
 		return app.booleanSize;
 	}
-	
+
 	/**
 	 * Sets the global style for point drawing.
 	 * @param style 
@@ -801,6 +807,19 @@ implements EuclidianViewInterface, Printable, SettingListener {
 
 	final public int getPointStyle() {
 		return app.pointStyle;
+	}
+
+	public void setAllowToolTips(int setto) {
+		tooltipsInThisView = setto;
+	}
+
+	final public int getAllowToolTips() {
+		return tooltipsInThisView;
+	}
+
+	public void setToolTipText(String plain) {
+		if (tooltipsInThisView == TOOLTIPS_ON || tooltipsInThisView == TOOLTIPS_AUTOMATIC)
+			super.setToolTipText(plain);
 	}
 
 	// added by Loic BEGIN
@@ -3938,6 +3957,9 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		if (asPreference) {
 			sb.append("\" allowShowMouseCoords=\"");
 			sb.append(getAllowShowMouseCoords());
+
+			sb.append("\" allowToolTips=\"");
+			sb.append(getAllowToolTips());
 		}
 
 		sb.append("\" checkboxSize=\"");
@@ -5296,6 +5318,8 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		setPointCapturing(evs.getPointCapturingMode());
 		
 		setAllowShowMouseCoords(evs.getAllowShowMouseCoords());
+		
+		setAllowToolTips(evs.getAllowToolTips());
 		
 		if(evs.getXmaxObject()==null)
 			setCoordSystem(evs.getXZero(), evs.getYZero(), evs.getXscale(), evs.getYscale(), true);

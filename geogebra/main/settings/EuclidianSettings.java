@@ -49,7 +49,9 @@ public class EuclidianSettings extends AbstractSettings {
 	private boolean[] drawBorderAxes = {false,false};
 	NumberValue xminObject, xmaxObject, yminObject, ymaxObject;
 	
+	private int tooltipsInThisView = EuclidianView.TOOLTIPS_AUTOMATIC;
 
+	
 	/* 
 	 * some settings are not stored in XML, eg
 	 * 	eg automaticGridDistance
@@ -620,6 +622,14 @@ public class EuclidianSettings extends AbstractSettings {
 		if (pointCapturingMode == mode) return;
 		pointCapturingMode = mode;
 		settingChanged();
+	}
+
+	public void setAllowToolTips(int setto) {
+		tooltipsInThisView = setto;
+	}
+
+	final public int getAllowToolTips() {
+		return tooltipsInThisView;
 	}
 
 	// TODO add more settings here

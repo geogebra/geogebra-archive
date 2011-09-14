@@ -1582,11 +1582,12 @@ public abstract class GeoElement
 
 	}
 
-	public String getTooltipText(boolean colored) {
+	public String getTooltipText(boolean colored, boolean alwaysOn) {
 		//sbToolTipDesc.append(geo.getLongDescriptionHTML(colored, false));
 		switch (tooltipMode) {
 		default:
 		case TOOLTIP_ALGEBRAVIEW_SHOWING:
+			if (!alwaysOn)
 			if (!(app.useFullGui() && app.getGuiManager().showView(Application.VIEW_ALGEBRA))) {
 				return "";
 			}
@@ -3825,7 +3826,8 @@ public abstract class GeoElement
 	final public static String getToolTipDescriptionHTML(
 		ArrayList<GeoElement> geos,
 		boolean colored,
-		boolean addHTMLtag) {
+		boolean addHTMLtag,
+		boolean alwaysOn) {
 		if (geos == null)
 			return null;
 
@@ -3836,9 +3838,9 @@ public abstract class GeoElement
 		int count=0;
 		for (int i = 0; i < geos.size(); ++i) {
 			GeoElement geo = geos.get(i);
-			if (geo.showToolTipText()) {
+			if (geo.showToolTipText() || alwaysOn) {
 				count++;
-				sbToolTipDesc.append(geo.getTooltipText(colored));
+				sbToolTipDesc.append(geo.getTooltipText(colored, alwaysOn));
 				if (i+1 < geos.size())
 					sbToolTipDesc.append("<br>");
 			}

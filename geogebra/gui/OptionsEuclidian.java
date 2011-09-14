@@ -525,7 +525,19 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
         cbShowGrid.removeActionListener(this);
         cbShowGrid.setSelected(view.getShowGrid()); 
         cbShowGrid.addActionListener(this);
-        
+
+        if (view instanceof EuclidianView) {
+        	cbTooltips.removeActionListener(this);
+        	int ind = ((EuclidianView)view).getAllowToolTips();
+        	if (ind == EuclidianView.TOOLTIPS_ON)
+        		cbTooltips.setSelectedIndex(0);
+        	else if (ind == EuclidianView.TOOLTIPS_AUTOMATIC)
+        		cbTooltips.setSelectedIndex(1);
+        	else if (ind == EuclidianView.TOOLTIPS_OFF)
+        		cbTooltips.setSelectedIndex(2);
+        	cbTooltips.addActionListener(this);
+        }
+
 //      Michael Borcherds 2008-04-11
         cbBoldGrid.removeActionListener(this);
         cbBoldGrid.setSelected(view.getGridIsBold()); 
@@ -728,6 +740,17 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		else if (source == btGridColor) {
 			view.setGridColor(
 					app.getGuiManager().showColorChooser(view.getGridColor()));			
+		}
+		else if (source == cbTooltips) {
+			int ind = cbTooltips.getSelectedIndex();
+			if (view instanceof EuclidianView) {
+				if (ind == 0)
+					((EuclidianView)view).setAllowToolTips(EuclidianView.TOOLTIPS_ON);
+				else if (ind == 1)
+					((EuclidianView)view).setAllowToolTips(EuclidianView.TOOLTIPS_AUTOMATIC);
+				else if (ind == 2)
+					((EuclidianView)view).setAllowToolTips(EuclidianView.TOOLTIPS_OFF);
+			}
 		}
 		else if (source == cbShowAxes) {
 			//view.showAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());	

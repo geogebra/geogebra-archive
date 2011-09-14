@@ -2943,8 +2943,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			
 			if (!hits.isEmpty()) {
+				boolean alwaysOn = false;
+				if (view instanceof EuclidianView)
+					if (((EuclidianView)view).getAllowToolTips() == EuclidianView.TOOLTIPS_ON)
+						alwaysOn = true;
 				String text = GeoElement.getToolTipDescriptionHTML(hits,
-						true, true);				
+						true, true, alwaysOn);				
 				view.setToolTipText(text);
 			} else
 				view.setToolTipText(null);
