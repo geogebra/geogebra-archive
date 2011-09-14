@@ -329,7 +329,6 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		tooltips = new JLabel(app.getPlain("Tooltips")+":");
 		bgPanel.add(tooltips);
 		
-		// TODO implement
 		cbTooltips = new JComboBox(new String[] { app.getPlain("On"), app.getPlain("Automatic"), app.getPlain("Off") });
 		bgPanel.add(cbTooltips);
 		cbTooltips.addActionListener(this);

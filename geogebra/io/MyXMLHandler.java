@@ -982,8 +982,9 @@ public class MyXMLHandler implements DocHandler {
 			boolean asm = parseBoolean((String) attrs.get("allowShowMouseCoords"));
 			ev.setAllowShowMouseCoords(asm);
 
-			int ast = Integer.parseInt((String) attrs.get("allowToolTips"));
-			ev.setAllowToolTips(ast);
+			String att = (String) attrs.get("allowToolTips");
+			if (att != null)
+				ev.setAllowToolTips(Integer.parseInt(att));
 
 			// v3.0: appearance of right angle
 			String strRightAngleStyle = (String) attrs.get("rightAngleStyle");
