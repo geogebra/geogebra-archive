@@ -1303,6 +1303,8 @@ public class MyXMLHandler implements DocHandler {
 			if (axisCross != null) {
 				double ac = Double.parseDouble(axisCross);
 				ev.setAxisCross(axis,ac);
+			} else {
+				ev.setAxisCross(axis,0);
 			}
 
 			// positive direction only

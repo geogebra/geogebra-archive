@@ -5301,10 +5301,13 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		setAxesNumberingDistance(evs.getAxisNumberingDistanceX(), 0);
 		setAxesNumberingDistance(evs.getAxisNumberingDistanceY(), 1);
 		
-		axesTickStyles = evs.getAxesTickStyles();
+		axesTickStyles[0] = evs.getAxesTickStyles()[0];
+		axesTickStyles[1] = evs.getAxesTickStyles()[1];
 		
-		axisCross = evs.getAxesCross();
-		positiveAxes = evs.getPositiveAxes();
+		axisCross[0] = evs.getAxesCross()[0];
+		axisCross[1] = evs.getAxesCross()[1];
+		positiveAxes[0] = evs.getPositiveAxes()[0];
+		positiveAxes[1] = evs.getPositiveAxes()[1];
 		
 		Dimension ps = evs.getPreferredSize();
 		if (ps != null) setPreferredSize(ps);
