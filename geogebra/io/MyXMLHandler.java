@@ -874,43 +874,46 @@ public class MyXMLHandler implements DocHandler {
 //
 //	}
 
-	private HashMap<EuclidianSettings,String>xmin=new HashMap<EuclidianSettings,String>(),
-	    xmax=new HashMap<EuclidianSettings,String>(),
-		ymin=new HashMap<EuclidianSettings,String>(),
-		ymax=new HashMap<EuclidianSettings,String>();
-	private boolean handleCoordSystem(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
-		if(xmin.keySet().size()>1){
-		xmin.clear();
-		xmax.clear();
-		ymin.clear();
-		ymax.clear();}
-		if(attrs.get("xZero")!=null) 
-			try {
-			
-			double xZero = Double.parseDouble((String) attrs.get("xZero"));
-			double yZero = Double.parseDouble((String) attrs.get("yZero"));
-			double scale = Double.parseDouble((String) attrs.get("scale"));
+	private HashMap<EuclidianSettings,String>
+		xmin = new HashMap<EuclidianSettings,String>(),
+	    xmax = new HashMap<EuclidianSettings,String>(),
+		ymin = new HashMap<EuclidianSettings,String>(),
+		ymax = new HashMap<EuclidianSettings,String>();
 
-			// new since version 2.5
-			double yscale = scale;
-			String strYscale = (String) attrs.get("yscale");
-			if (strYscale != null) {
-				yscale = Double.parseDouble(strYscale);
-			}
-			ev.setCoordSystem(xZero, yZero, scale, yscale);
-			return true;
-		} catch (Exception e) {
-			return false;
+	private boolean handleCoordSystem(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
+
+		if (xmin.keySet().size() > 1) {
+			xmin.clear();
+			xmax.clear();
+			ymin.clear();
+			ymax.clear();
 		}
-		else try {
+		if (attrs.get("xZero") != null) {
+			try {
+				double xZero = Double.parseDouble((String) attrs.get("xZero"));
+				double yZero = Double.parseDouble((String) attrs.get("yZero"));
+				double scale = Double.parseDouble((String) attrs.get("scale"));
+
+				// new since version 2.5
+				double yscale = scale;
+				String strYscale = (String) attrs.get("yscale");
+				if (strYscale != null) {
+					yscale = Double.parseDouble(strYscale);
+				}
+				ev.setCoordSystem(xZero, yZero, scale, yscale);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		} else try {
 			xmin.put(ev, attrs.get("xMin"));
 			xmax.put(ev, attrs.get("xMax"));
 			ymin.put(ev, attrs.get("yMin"));
 			ymax.put(ev, attrs.get("yMax"));
 			return true;
 		} catch (Exception e) {
-		return false;
-	}
+			return false;
+		}
 	}
 
 	private boolean handleEvSettings(EuclidianSettings ev, LinkedHashMap<String, String> attrs) {
@@ -985,6 +988,8 @@ public class MyXMLHandler implements DocHandler {
 			String att = (String) attrs.get("allowToolTips");
 			if (att != null)
 				ev.setAllowToolTips(Integer.parseInt(att));
+			else
+				ev.setAllowToolTips(EuclidianView.TOOLTIPS_AUTOMATIC);
 
 			// v3.0: appearance of right angle
 			String strRightAngleStyle = (String) attrs.get("rightAngleStyle");
