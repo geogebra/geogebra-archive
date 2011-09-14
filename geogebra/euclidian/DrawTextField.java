@@ -56,8 +56,6 @@ public final class DrawTextField extends Drawable {
 	private boolean hit = false;
 	private String oldCaption;
 
-	private Point textSize = new Point(0,0);
-	
 	JTextField textField;
 	JLabel label;
 	ButtonListener bl;
@@ -281,13 +279,11 @@ public final class DrawTextField extends Drawable {
 				oldCaption = caption;
 				labelDesc = GeoElement.indicesToHTML(caption, true);
 			}	
+			box.setVisible(false); // avoid redraw error
 			label.setText(labelDesc);
+			box.setVisible(true);
 		} else {
-			// don't show label
-// Michael Borcherds 2007-10-18 BEGIN changed so that vertical position of checkbox doesn't change when label is shown/hidden
-//			checkBox.setText("");
-			label.setText(" ");
-// Michael Borcherds 2007-10-18 END
+			label.setText("");
 		}			
 		
 		
