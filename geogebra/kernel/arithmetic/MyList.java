@@ -65,6 +65,16 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 		listElements = new ArrayList<ExpressionValue>(size);
 	}
 
+	public MyList(Kernel kernel, boolean isFlatList) {
+		this(kernel);
+		
+		if (isFlatList) {
+			// make sure isMatrix() returns false (fast)
+			// see #1384
+			matrixRows = matrixCols = 0;
+		}
+	}
+
 	/**
 	 * Adds expression value to the list
 	 * @param arg
@@ -441,6 +451,7 @@ public class MyList extends ValidExpression implements ListValue, ReplaceableVal
 	{
 		// check if already calculated
 		if (matrixRows > 0 && matrixCols > 0) return true;
+		if (matrixRows == 0 && matrixCols == 0) return false;
 		
 		try {
 			boolean isMatrix=true;

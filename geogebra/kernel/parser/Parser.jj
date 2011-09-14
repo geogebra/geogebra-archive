@@ -2089,7 +2089,7 @@ ExpressionNode numberFunction():
 |
 	(	  c = <FUNCTION_LABEL> en = expressionnode()
 		{   
-            myList = new MyList(kernel);         
+            myList = new MyList(kernel, true);         
             myList.addListElement(en);
         }
        ( <COMMA> en = expressionnode()  
