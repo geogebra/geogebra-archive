@@ -4028,7 +4028,7 @@ implements EuclidianViewInterface, Printable, SettingListener {
 			}
 			
 			//  axis crossing values 	
-			if (!Kernel.isZero(axisCross[i])) {
+			if (!Kernel.isZero(axisCross[i]) && !drawBorderAxes[i]) {
 				sb.append("\" axisCross=\"");
 				sb.append(axisCross[i]);
 			}
