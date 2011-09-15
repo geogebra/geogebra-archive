@@ -32,7 +32,7 @@ chmod g+rwx $WWWDIR/$MYDIR || exit 3
 
 # 4/1. Copying static files (common code with buildggb42)
 cp -R $SVNDIR/geogebra/webstart/4.2/* $WWWDIR/$MYDIR || exit 4
-find $SVNDIR/geogebra/webstart/4.2 -name .svn | xargs rm -fR
+find $WWWDIR/$MYDIR -name .svn | xargs rm -fR
 mkdir -p $WWWDIR/$MYDIR/usb
 cp $SVNDIR/geogebra/lib/vernier_ccsd* $WWWDIR/$MYDIR/usb || exit 4
 echo "$0: static files copied"
@@ -64,10 +64,10 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt  | while re
 cd $WWWDIR/$MYDIR
 for i in *.html *.jnlp; do
  cat $i | \
-  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/unsigned"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unsigned\/unpacked"/g | \
-  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
-  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/debug"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
-  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
+  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/unsigned"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unsigned\/unpacked"/g | \
+  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
+  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/debug"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
+  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
   sed s/"<\/title>"/" ($MYVER)<\/title>"/g | \
   grep -v "association mime-type" \
   > unpacked/$i
