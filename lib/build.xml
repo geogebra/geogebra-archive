@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!-- README: Downloading external libraries for GeoGebra
+
+
+-->
+
+<!--
+   GeoGebra external libraries
+   @author Zoltan Kovacs
+-->
+
+<project default="lib">
+
+	<!-- download external libraries -->
+	<!--target name="lib" depends="lib-runtime, lib-build, lib-build-installer"-->
+	<target name="lib" depends="lib-runtime">
+	</target>
+
+	<!-- download runtime libraries -->
+	<target name="lib-runtime" depends="jlatexmath-geogebra, lib_jsobject.jar, lib_mac_extensions.jar, vernier">
+	</target>
+
+	<!-- download jlatexmath-minimal.zip directly from Calixte Denizet's repository -->
+	<target name="jlatexmath-calixte">
+	<mkdir dir="download"/>
+	<get src="http://forge.scilab.org/index.php/p/jlatexmath/downloads/253/get/"
+	    dest="download/jlatexmath-minimal.zip" usetimestamp="true"/>
+	<unzip src="download/jlatexmath-minimal.zip" dest="./"/>
+	<delete file="README_MINIMAL"/>
+	<rename src="jlatexmath-minimal-0.9.6.jar" dest="jlatexmath.jar"/>
+	</target>
+
+	<!-- download jlatexmath from GeoGebra repository -->
+	<target name="jlatexmath-geogebra">
+	<get src="http://www.geogebra.org/download/lib/jlatexmath.jar" dest="jlatexmath.jar" usetimestamp="true"/>
+	<get src="http://www.geogebra.org/download/lib/jlm_cyrillic.jar" dest="jlm_cyrillic.jar" usetimestamp="true"/>
+	<get src="http://www.geogebra.org/download/lib/jlm_greek.jar" dest="jlm_greek.jar" usetimestamp="true"/>
+	</target>
+	
+
+	<!-- download lib_jsobject.jar -->
+	<target name="lib_jsobject.jar">
+	</target>
+
+	<!-- download lib_mac_extensions.jar -->
+	<target name="lib_mac_extensions.jar">
+	</target>
+
+	<!-- download vernier -->
+	<target name="vernier">
+	</target>
+
+	<!-- download ecj -->
+	<target name="ecj">
+	<mkdir dir="build"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/ecj-3.6.2.jar"
+	    dest="build/ecj-3.6.2.jar" usetimestamp="true"/>
+	</target>
+	
+	<!-- download proguard -->
+	<target name="proguard">
+	<mkdir dir="build"/>
+	<mkdir dir="download"/>
+	<get 
+	    src="http://downloads.sourceforge.net/project/proguard/proguard/4.6/proguard4.6.zip?&amp;use_mirror=heanet"
+	    dest="download/proguard46.zip" usetimestamp="true"/>
+	<unzip src="download/proguard46.zip" dest="download"/>
+	<copy file="download/proguard4.6/lib/proguard.jar" tofile="build/tools_proguard46.jar"/>
+	</target>
+
+
+</project>
