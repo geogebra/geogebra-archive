@@ -336,10 +336,14 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	 * @param xminObjectNew the xminObject to set
 	 */
 	public void setXminObject(NumberValue xminObjectNew) {
-		if(xminObjectNew == null) return;
-		if(xminObject !=null)
-		((GeoNumeric)xminObject).removeEVSizeListener(this);
-		this.xminObject = xminObjectNew;
+		if (xminObject != null)
+			((GeoNumeric)xminObject).removeEVSizeListener(this);
+		if (xminObjectNew == null) {
+			this.xminObject = new GeoNumeric(kernel.getConstruction());
+			updateBoundObjects();
+		} else {
+			this.xminObject = xminObjectNew;
+		}
 		setSizeListeners();	
 	}
 
@@ -354,10 +358,14 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	 * @param xmaxObjectNew the xmaxObject to set
 	 */
 	public void setXmaxObject(NumberValue xmaxObjectNew) {
-		if(xmaxObjectNew == null) return;
-		if(xmaxObject !=null)
-		((GeoNumeric)xmaxObject).removeEVSizeListener(this);
-		this.xmaxObject = xmaxObjectNew;
+		if (xmaxObject != null)
+			((GeoNumeric)xmaxObject).removeEVSizeListener(this);
+		if(xmaxObjectNew == null) {
+			this.xmaxObject = new GeoNumeric(kernel.getConstruction());
+			updateBoundObjects();
+		} else {
+			this.xmaxObject = xmaxObjectNew;
+		}
 		setSizeListeners();	
 	}
 
@@ -372,10 +380,14 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	 * @param yminObjectNew the yminObject to set
 	 */
 	public void setYminObject(NumberValue yminObjectNew) {
-		if(yminObjectNew == null) return;
-		if(yminObject !=null)
-		((GeoNumeric)yminObject).removeEVSizeListener(this);
-		this.yminObject = yminObjectNew;
+		if (yminObject != null)
+			((GeoNumeric)yminObject).removeEVSizeListener(this);
+		if (yminObjectNew == null) {
+			this.yminObject = new GeoNumeric(kernel.getConstruction());
+			updateBoundObjects();
+		} else {
+			this.yminObject = yminObjectNew;
+		}
 		setSizeListeners();		
 	}
 
@@ -397,10 +409,14 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	 * @param ymaxObjectNew the ymaxObject to set
 	 */
 	public void setYmaxObject(NumberValue ymaxObjectNew) {
-		if(ymaxObjectNew == null) return;
-		if(ymaxObject !=null)
+		if (ymaxObject != null)
 			((GeoNumeric)ymaxObject).removeEVSizeListener(this);
-		this.ymaxObject = ymaxObjectNew;
+		if (ymaxObjectNew == null) {
+			this.ymaxObject = new GeoNumeric(kernel.getConstruction());
+			updateBoundObjects();
+		} else {
+			this.ymaxObject = ymaxObjectNew;
+		}
 		setSizeListeners();
 	}
 

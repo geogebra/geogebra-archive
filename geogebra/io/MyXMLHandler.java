@@ -901,6 +901,11 @@ public class MyXMLHandler implements DocHandler {
 					yscale = Double.parseDouble(strYscale);
 				}
 				ev.setCoordSystem(xZero, yZero, scale, yscale);
+				
+				xmin.put(ev, null);
+				xmax.put(ev, null);
+				ymin.put(ev, null);
+				ymax.put(ev, null);
 				return true;
 			} catch (Exception e) {
 				return false;
@@ -2530,20 +2535,36 @@ public class MyXMLHandler implements DocHandler {
 
 	private void processEvSizes() {
 		for(EuclidianSettings ev:xmin.keySet()){			
-			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmin.get(ev),true);			
-			ev.setXminObject(n);			
+			if (xmin.get(ev) == null) {
+				ev.setXminObject(null);
+			} else {
+				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmin.get(ev),true);			
+				ev.setXminObject(n);
+			}
 		}
 		for(EuclidianSettings ev:xmax.keySet()){
-			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmax.get(ev),true);			
-			ev.setXmaxObject(n);			
+			if (xmax.get(ev) == null) {
+				ev.setXmaxObject(null);
+			} else {
+				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmax.get(ev),true);			
+				ev.setXmaxObject(n);
+			}
 		}
 		for(EuclidianSettings ev:ymin.keySet()){
-			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymin.get(ev),true);
-			ev.setYminObject(n);			
+			if (ymin.get(ev) == null) {
+				ev.setYminObject(null);
+			} else {
+				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymin.get(ev),true);
+				ev.setYminObject(n);
+			}
 		}
 		for(EuclidianSettings ev:ymax.keySet()){
-			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymax.get(ev),true);
-			ev.setYmaxObject(n);			
+			if (ymax.get(ev) == null) {
+				ev.setYmaxObject(null);
+			} else {
+				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymax.get(ev),true);
+				ev.setYmaxObject(n);
+			}
 			//ev.updateBounds();
 		}
 		
