@@ -4032,7 +4032,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 			}
 			
 			//  axis crossing values 	
-			if (!Kernel.isZero(axisCross[i]) && !drawBorderAxes[i]) {
+			if (drawBorderAxes[i]) {
+				sb.append("\" axisCrossEdge=\"");
+				sb.append(true);
+			} else if (!Kernel.isZero(axisCross[i]) && !drawBorderAxes[i]) {
 				sb.append("\" axisCross=\"");
 				sb.append(axisCross[i]);
 			}
@@ -5307,7 +5310,9 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		
 		axesTickStyles[0] = evs.getAxesTickStyles()[0];
 		axesTickStyles[1] = evs.getAxesTickStyles()[1];
-		
+
+		setDrawBorderAxes(evs.getDrawBorderAxes());
+
 		axisCross[0] = evs.getAxesCross()[0];
 		axisCross[1] = evs.getAxesCross()[1];
 		positiveAxes[0] = evs.getPositiveAxes()[0];

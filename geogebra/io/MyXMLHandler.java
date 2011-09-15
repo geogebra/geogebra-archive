@@ -1300,11 +1300,21 @@ public class MyXMLHandler implements DocHandler {
 			
 			// axis crossing
 			String axisCross = (String) attrs.get("axisCross");
-			if (axisCross != null) {
+			String axisCrossEdge = (String) attrs.get("axisCrossEdge");
+			boolean acb = false;
+			if (axisCrossEdge != null) {
+				acb = parseBoolean(axisCrossEdge);
+			}
+			if (acb) {
+				ev.setAxisCross(axis,0);
+				ev.setDrawBorderAxes(axis, true);
+			} else if (axisCross != null) {
 				double ac = Double.parseDouble(axisCross);
 				ev.setAxisCross(axis,ac);
+				ev.setDrawBorderAxes(axis, false);
 			} else {
 				ev.setAxisCross(axis,0);
+				ev.setDrawBorderAxes(axis, false);
 			}
 
 			// positive direction only

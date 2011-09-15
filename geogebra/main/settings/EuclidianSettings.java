@@ -95,9 +95,6 @@ public class EuclidianSettings extends AbstractSettings {
 		axisCross[1] = 0;
 		positiveAxes[0] = false;
 		positiveAxes[1] = false;
-		drawBorderAxes[0] = false;
-		drawBorderAxes[1] = false;
-
 }
 	
 	/**
@@ -630,6 +627,15 @@ public class EuclidianSettings extends AbstractSettings {
 
 	final public int getAllowToolTips() {
 		return tooltipsInThisView;
+	}
+
+	public void setDrawBorderAxes(int axis, boolean value) {
+		if (axis == 0 || axis == 1)
+			drawBorderAxes[axis] = value;
+	}
+
+	final public boolean[] getDrawBorderAxes() {
+		return drawBorderAxes;
 	}
 
 	// TODO add more settings here
