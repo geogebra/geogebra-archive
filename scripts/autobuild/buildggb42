@@ -137,10 +137,6 @@ for i in geogebra geogebra_main; do
  cp $SVNDIR/geogebra/build/unsigned/unpacked/$i.jar $WWWDIR/$MYDIR/minimal
  done
  
-# 6/5. Creating filelist.txt for mirror servers:
-cd $WWWDIR/$MYDIR
-find . > filelist.txt
-
 # 7. Finally, making sure that all files have group writable permissions
 WARNINGS=`chmod -R g+rw $WWWDIR/$MYDIR 2>&1 | wc -l | awk '{print $1}'`
 echo "$0: $WARNINGS warnings during chmod'ing web files"
