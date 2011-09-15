@@ -570,8 +570,12 @@ public abstract class GeoElement
 		}
 		
 		viewFlags=new ArrayList<Integer>();
-		if (app!=null && app.getActiveEuclidianView()!=null){
-			viewFlags.add(app.getActiveEuclidianView().getViewID());
+		EuclidianViewInterface ev;
+		if (app!=null && (ev = app.getActiveEuclidianView())!=null){
+			viewFlags.add(ev.getViewID());
+			// if ev isn't Graphics or Graphics 2, then also add 1st 2D euclidian view
+			if (!(ev.isDefault2D()))
+				viewFlags.add(Application.VIEW_EUCLIDIAN);
 		}else{
 			viewFlags.add(Application.VIEW_EUCLIDIAN);
 		}
