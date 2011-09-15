@@ -43,7 +43,7 @@ for i in geogebra geogebra_main; do
  
 # 4/3. Creating filelist.txt for mirror servers:
 cd $WWWDIR/$MYDIR
-find . -name '*.jnlp' -or -name '*.jar' > filelist.txt
+find . -name '*.jnlp' -or -name '*.jar' | grep -v debug > filelist.txt
 
 # 4/4. Copying/overwriting JAR files to 4.2 and history/$MYVER:
 cd $SVNDIR/geogebra/build
@@ -58,7 +58,23 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt  | while re
  cp $filename $WWWDIR/history/$MYVER/$filename || exit 6
  done
 
-# 4/5. Creating a jnlp file for webstart/history (implementing #692)
+# 4/5. Copying files to unpacked/ (common code with buildggb42):
+cd $WWWDIR/$MYDIR
+for i in *.html *.jnlp; do
+ cat $i | \
+  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/unsigned"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unsigned\/unpacked"/g | \
+  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
+  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/debug"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
+  sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
+  sed s/"<\/title>"/" ($MYVER)<\/title>"/g | \
+  grep -v "association mime-type" \
+  > unpacked/$i
+ rm $i || exit 4
+ cp unpacked/$i $i || exit 4 # Some files in some subdirectories may still refer to the original file.
+ echo "$0: $i is rewritten"
+ done
+
+# 4/6. Creating a jnlp file for webstart/history (implementing #692), common code with buildggb42:
 MYVER_DASHED=`echo $MYVER | tr . -`
 for i in unpacked debug; do
  cat $SVNDIR/geogebra/scripts/autobuild/history-template.jnlp |\
