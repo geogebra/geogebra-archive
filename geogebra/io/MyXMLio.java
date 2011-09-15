@@ -846,6 +846,11 @@ public class MyXMLio {
 		// save euclidianView settings
 		app.getEuclidianViewXML(sb,false);
 		
+		//save euclidian view 2 settings
+		if(app.hasEuclidianView2EitherShowingOrNot()){
+			app.getEuclidianView2().getXML(sb,false);
+		}
+		
 		// save kernel settings
 		c.getKernel().getKernelXML(sb, false);
 
@@ -863,11 +868,6 @@ public class MyXMLio {
 		
 		// save algebraView settings
 		//app.getGuiManager().getAlgebraViewXML(sb);
-		
-		//save euclidian view 2 settings
-		if(app.hasEuclidianView2()){
-			app.getEuclidianView2().getXML(sb,false);
-		}
 		
 		// save ProbabilityCalculator settings
 		if (app.useFullGui() && app.getGuiManager().hasProbabilityCalculator()){

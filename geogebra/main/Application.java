@@ -1425,16 +1425,20 @@ public class Application implements KeyEventDispatcher {
 	public EuclidianView getEuclidianView2() {
 		return getGuiManager().getEuclidianView2();
 	}
-	
+
 	public boolean hasEuclidianView2() {
 		return guiManager != null && getGuiManager().hasEuclidianView2();
 	}
-	
+
+	public boolean hasEuclidianView2EitherShowingOrNot() {
+		return guiManager != null && getGuiManager().hasEuclidianView2EitherShowingOrNot();
+	}
+
 	public boolean isShowingEuclidianView2() {
 		return guiManager != null && getGuiManager().hasEuclidianView2() && 
 			getGuiManager().getEuclidianView2().isShowing();
 	}
-	
+
 	public void getEuclidianViewXML(StringBuilder sb,boolean asPreference){
 		getEuclidianView().getXML(sb,asPreference);
 	}

@@ -538,13 +538,18 @@ public class GuiManager {
     	}
     	return euclidianView2;
 	}
-	
+
 	public boolean hasEuclidianView2() {
 		if (euclidianView2 == null) return false;
 		if (!euclidianView2.isShowing()) return false;
 		return true;
 	}
-	
+
+	public boolean hasEuclidianView2EitherShowingOrNot() {
+		if (euclidianView2 == null) return false;
+		return true;
+	}
+
 	/**
 	 * @todo Do not just use the default euclidian view if no EV has focus, but
 	 * determine if maybe just one EV is visible etc. 
