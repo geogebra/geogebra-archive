@@ -46,7 +46,6 @@ for i in ../../../../../jre*.bin; do
       ../../../../build/unsigned/unpacked \
       $IMAGE_DIR/geogebra.png \
       ../geogebra \
-      $LINUX_MAXIMA_TGZ \
       ../../../../build
      done
 
