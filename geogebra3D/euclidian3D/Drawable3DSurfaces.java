@@ -13,8 +13,6 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 
 	protected boolean elementHasChanged;
 	
-	/** alpha value for rendering transparency */
-	protected float alpha;
 
 	/**
 	 * common constructor
@@ -34,8 +32,6 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	}
 	
 	
-	
-	
 	/**
 	 * draws the geometry that hides other drawables (for dashed curves)
 	 * @param renderer
@@ -47,7 +43,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		if(!isVisible())
 			return;
 
-		if (alpha<=0 || alpha == 1)
+		if (!hasTransparentAlpha())
 			return;
 		
 		//renderer.setMatrix(getMatrix());
@@ -67,12 +63,12 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		}
 		
 		
-		if (alpha<=0 || alpha == 1)
+		if (!hasTransparentAlpha())
 			return;
 		
 		setLight(renderer);
 
-		setHighlightingColor(alpha);
+		setHighlightingColor();
 			
 		
 		//renderer.setMatrix(getMatrix());
@@ -93,11 +89,11 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		}
 		
 		
-		if (alpha<1)
+		if (getAlpha()<1)
 			return;
 		
 		setLight(renderer);
-		setHighlightingColor(alpha);
+		setHighlightingColor();
 		drawGeometry(renderer);
 		
 	}
@@ -105,18 +101,20 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	public void drawHidden(Renderer renderer){} 	
 	
 	
-	
-	
-	protected boolean updateForItSelf(){
-		
+	protected void updateColors(){
 		//update alpha value
-		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
-		alpha = (float) (1-Math.pow(1-getGeoElement().getAlphaValue(),1./3.));
-		
-		setColors(alpha);
+		updateAlpha();
+		super.updateColors();
+	}
+	
+	/*
+	protected boolean updateForItSelf(){
+				
+		updateColors();
 		
 		return true;
 	}
+	*/
 	
 	protected void updateForView(){
 		
@@ -153,6 +151,9 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	protected double getColorShift(){
 		return 0.2;
 	}
+	
+	
+
 
 
 }

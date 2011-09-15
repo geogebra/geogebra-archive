@@ -719,7 +719,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 			colorFunctionListener = new ArrayList<GeoElement>();
 		colorFunctionListener.add(geo);
 	}
-
+	
 	public void unregisterColorFunctionListener(GeoElement geo) {
 		if (colorFunctionListener != null) {
 			colorFunctionListener.remove(geo);

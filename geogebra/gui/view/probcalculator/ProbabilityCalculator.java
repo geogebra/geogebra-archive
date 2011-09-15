@@ -1295,6 +1295,10 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	}
 
 
+	final public void updateColor(GeoElement geo) {
+		update(geo);
+	}
+
 	public void attachView() {
 		//clearView();
 		//kernel.notifyAddAll(this);

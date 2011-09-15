@@ -178,12 +178,21 @@ public class Drawable3DLists {
 	}
 	
 	
-	/** says all 3D labels to be updated */
+	/** says all have to be reset */
 	public void resetAllDrawables(){
 		
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
 			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
 				d.next().setWaitForReset();		
+		
+	}
+	
+	/** says all colors to be updated */
+	public void resetAllColors(){
+		
+		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++)
+			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
+				d.next().setWaitForUpdateColor();	
 		
 	}
 	

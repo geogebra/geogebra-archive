@@ -2069,6 +2069,14 @@ public class Kernel {
 		}
 	}
 	
+	public final void notifyUpdateColor(GeoElement geo) {
+		if (notifyViewsActive) {
+			for (int i = 0; i < viewCnt; ++i) {
+				views[i].updateColor(geo);
+			}
+		}
+	}
+	
 	final void notifyUpdateAuxiliaryObject(GeoElement geo) {
 		if (notifyViewsActive) {
 			for (int i = 0; i < viewCnt; ++i) {

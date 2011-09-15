@@ -45,7 +45,7 @@ implements Previewable {
 	
 	protected boolean updateForItSelf(){
 
-		setColors();
+		//updateColors();
 		
 		GeoVectorND geo = ((GeoVectorND) getGeoElement());
 		

@@ -1059,6 +1059,11 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 		}
 
 	}
+	
+
+	final public void updateColor(GeoElement geo) {
+		update(geo);
+	}
 
 	public void add(GeoElement geo) {}
 	public void remove(GeoElement geo) {}

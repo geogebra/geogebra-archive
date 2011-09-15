@@ -114,7 +114,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	protected boolean updateForItSelf(boolean checkTime){
 		
 		
-		super.updateForItSelf();
+		//super.updateForItSelf();
 
 		Renderer renderer = getView3D().getRenderer();
 		GeoPlane3D geo = (GeoPlane3D) getGeoElement();

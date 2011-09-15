@@ -611,22 +611,22 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 
 	   		for (GeoPolygon3D polygon : polygons.values()){
 	   			polygon.setObjColor(color);
-	   			polygon.update();
+	   			polygon.updateColor();
 	   		}
 	   		
 	   		for (GeoPolygon polygon : polygonsLinked){
 	   			polygon.setObjColor(color);
-	   			polygon.update();
+	   			polygon.updateColor();
 	   		}
 
 	   		for (GeoSegment3D segment : segments.values()){
 	   			segment.setObjColor(color);
-	   			segment.update();
+	   			segment.updateColor();
 	   		}
 	   		
 	   		for (GeoSegmentND segment : segmentsLinked.values()){
 	   			segment.setObjColor(color);
-	   			segment.update();
+	   			segment.updateColor();
 	   		}
 	   }
 	 

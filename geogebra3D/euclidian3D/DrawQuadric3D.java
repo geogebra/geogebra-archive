@@ -65,7 +65,7 @@ implements Previewable {
 	protected boolean updateForItSelf(){
 		
 		
-		super.updateForItSelf();
+		//super.updateForItSelf();
 		
 		
 		Renderer renderer = getView3D().getRenderer();

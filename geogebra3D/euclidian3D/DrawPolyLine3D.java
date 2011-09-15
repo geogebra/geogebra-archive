@@ -81,7 +81,7 @@ public class DrawPolyLine3D extends Drawable3DCurves implements Previewable {
 	
 	protected boolean updateForItSelf(){
 		
-		setColors();
+		//updateColors();
 		
 		GeoPolyLine p = (GeoPolyLine) getGeoElement();
 		int num = p.getNumPoints();

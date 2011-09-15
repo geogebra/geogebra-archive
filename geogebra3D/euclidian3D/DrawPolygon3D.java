@@ -108,7 +108,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 	protected boolean updateForItSelf(){
 		
-		super.updateForItSelf();
+		//super.updateForItSelf();
 		
 		
 		

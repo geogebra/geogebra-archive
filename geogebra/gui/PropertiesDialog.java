@@ -803,6 +803,11 @@ public class PropertiesDialog
 		public void update(GeoElement geo) {
 			repaint();
 		}
+		
+
+		final public void updateColor(GeoElement geo) {
+			update(geo);
+		}
 
 		public void updateAuxiliaryObject(GeoElement geo) {
 			repaint();

@@ -23,8 +23,6 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 	
 	
 	
-	/** alpha value for rendering transparency */
-	protected float alpha;
 	
 	
 	
@@ -37,6 +35,12 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 		super(view3d,conic);
 	}
 
+	
+
+	protected void updateColors(){
+		updateAlpha();
+		setColorsOutlined();
+	}
 	
 	
 	
@@ -64,6 +68,11 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 
 	}
 
+	
+
+
+	
+	
 
 	// method used only if surface is not transparent
 	public void drawNotTransparentSurface(Renderer renderer){
@@ -73,7 +82,7 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 		}
 		
 
-		if (alpha<1)
+		if (getAlpha()<1)
 			return;
 
 		GeoConicND conic = (GeoConicND) getGeoElement();
@@ -82,7 +91,7 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 		case GeoConic.CONIC_CIRCLE:
 		case GeoConic.CONIC_ELLIPSE:
 			setLight(renderer);
-			setSurfaceHighlightingColor(alpha);
+			setSurfaceHighlightingColor();
 			renderer.setLayer(getGeoElement().getLayer());
 			renderer.getGeometryManager().draw(getSurfaceIndex());
 			renderer.setLayer(0);
@@ -106,20 +115,14 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 		else
 			return Math.log(x+Math.sqrt(x*x-1));
 	}
+	
 
 	protected boolean updateForItSelf(){
-		
-
 
 		//update alpha value
-		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
-		alpha = (float) (1-Math.pow(1-getGeoElement().getAlphaValue(),1./3.));
-		
-		setColorsOutlined(alpha);
+		updateColors();
     	
 		Renderer renderer = getView3D().getRenderer();
-		
-		
 		
 		GeoConicND conic = (GeoConicND) getGeoElement();
 		
@@ -361,12 +364,12 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
     	}
 
 
-    	if (alpha<=0 || alpha == 1)
+    	if (!hasTransparentAlpha())
     		return;
 
     	setLight(renderer);
 
-    	setSurfaceHighlightingColor(alpha);
+    	setSurfaceHighlightingColor();
 
     	drawSurfaceGeometry(renderer);
 
@@ -379,7 +382,7 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var, Pre
 		if(!isVisible())
 			return;
 
-		if (alpha<=0 || alpha == 1)
+		if (!hasTransparentAlpha())
 			return;
 		
 		

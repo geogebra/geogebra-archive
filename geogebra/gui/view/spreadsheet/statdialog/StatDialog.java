@@ -694,6 +694,13 @@ SpecialNumberFormatInterface {
 		}
 	}
 
+	
+
+	final public void updateColor(GeoElement geo) {
+		update(geo);
+	}
+	
+	
 	public void add(GeoElement geo) {}
 	public void clearView() {}
 	public void rename(GeoElement geo) {}

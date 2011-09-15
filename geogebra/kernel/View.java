@@ -20,6 +20,7 @@ public interface View {
 	public void remove(GeoElement geo);
 	public void rename(GeoElement geo);
 	public void update(GeoElement geo);	 
+	public void updateColor(GeoElement geo);	 
 	public void updateAuxiliaryObject(GeoElement geo);
 	public void repaintView();
 	public void reset(); 

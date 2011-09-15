@@ -73,7 +73,7 @@ implements Previewable, Functional2Var{
 
 	protected boolean updateForItSelf(){
 		
-		setColors();
+		//updateColors();
 		
 		Renderer renderer = getView3D().getRenderer();
 		

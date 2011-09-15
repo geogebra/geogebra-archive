@@ -3820,6 +3820,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 			((Drawable) d).update();
 		}
 	}
+	
+	final public void updateColor(GeoElement geo) {
+		update(geo);
+	}
 
 	final public Drawable getDrawableFor(GeoElement geo) {
 		return (Drawable) DrawableMap.get(geo);

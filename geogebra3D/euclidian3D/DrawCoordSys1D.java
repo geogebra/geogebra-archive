@@ -79,7 +79,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	protected boolean updateForItSelf(){
 		
-		setColors();
+		//updateColors();
 		
 		GeoLineND cs = (GeoLineND) getGeoElement();
 		double[] minmax = getDrawMinMax(); 

@@ -383,6 +383,11 @@ public class ScriptManager {
 			}
 			
 		}
+		
+
+		final public void updateColor(GeoElement geo) {
+			update(geo);
+		}
 				
 		public void updateAuxiliaryObject(GeoElement geo) {
 			update(geo);

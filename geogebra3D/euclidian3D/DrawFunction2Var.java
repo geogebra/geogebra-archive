@@ -121,7 +121,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	}
 	
 	protected boolean updateForItSelf(){
-		super.updateForItSelf();
+		//super.updateForItSelf();
 		boolean ret = true;
 		
 		if(elementHasChanged){

@@ -3135,6 +3135,13 @@ public abstract class GeoElement
 	 */
 	public void update() {
 
+		updateGeo();
+
+		kernel.notifyUpdate(this);
+	}
+	
+	final private void updateGeo() {
+
 		//Application.debug(label);
 
 		if (labelWanted && !labelSet) {
@@ -3160,8 +3167,8 @@ public abstract class GeoElement
 		// send update to underlying CAS if necessary
 		sendValueToCAS();
 
-		kernel.notifyUpdate(this);
 	}
+
 	
 	/**
 	 * Sends geo's value in the current CAS, e.g. a := 5;
@@ -3205,7 +3212,10 @@ public abstract class GeoElement
 	 */
 	 public void updateCascade() {
 		update();
-
+		updateDependentObjects();		
+	}
+	 
+	final private void updateDependentObjects(){
 		if (correspondingCasCell != null && isIndependent()) {
 			updateAlgoUpdateSetWith(correspondingCasCell);
 		}				
@@ -3364,7 +3374,18 @@ public abstract class GeoElement
 		updateCascade();
 		kernel.notifyRepaint();
 	}
-
+	
+	/**
+	 * update color
+	 */
+	public void updateColor() {
+		updateGeo();
+		kernel.notifyUpdateColor(this);
+		updateDependentObjects();
+		kernel.notifyRepaint();
+	}
+	
+	
 	public String toString() {
 		return label;
 	}
@@ -5075,7 +5096,8 @@ public abstract class GeoElement
 
 		// set new condition
 		colFunction = col;
-
+		
+		
 		// register new condition
 		if (colFunction != null) {
 			colFunction.registerColorFunctionListener(this);

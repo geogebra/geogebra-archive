@@ -58,7 +58,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		
 		setLight(renderer);
 			
-		setHighlightingColor(1f);
+		setHighlightingColor();
 		
 		//Application.debug("geo:"+getGeoElement().getLabel()+", lineType="+getGeoElement().getLineTypeHidden());
 		renderer.getTextures().setDashFromLineType(getGeoElement().getLineType()); 
@@ -81,7 +81,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		
 		setLight(renderer);
 
-		setHighlightingColor(1f);
+		setHighlightingColor();
 		
 		if (getGeoElement().getLineTypeHidden()==EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN)
 			renderer.getTextures().setDashFromLineType(getGeoElement().getLineType()); 

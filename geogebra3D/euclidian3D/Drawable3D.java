@@ -255,6 +255,11 @@ public abstract class Drawable3D extends DrawableND {
 					+"\n reset="+labelWaitForReset);
 					*/
 
+		if (waitForUpdateColor){
+			updateColors();
+			waitForUpdateColor = false;
+		}
+		
 
 		if (isVisible())
 			updateForView();
@@ -324,6 +329,7 @@ public abstract class Drawable3D extends DrawableND {
 	public void setWaitForUpdate(){
 		
 		waitForUpdate = true;
+		setWaitForUpdateColor();
 	}
 	
 	/**
@@ -354,6 +360,16 @@ public abstract class Drawable3D extends DrawableND {
 		setWaitForUpdate();
 	}
 	
+	
+	private boolean waitForUpdateColor = true;
+	
+	/**
+	 * wait for reset color
+	 */
+	public void setWaitForUpdateColor(){
+		
+		waitForUpdateColor = true;
+	}
 	
 	
 	protected void removeGeometryIndex(int index){
@@ -713,9 +729,8 @@ public abstract class Drawable3D extends DrawableND {
 	/**
 	 * sets the color for drawing
 	 * and alpha value
-	 * @param alpha
 	 */
-	protected void setHighlightingColor(float alpha){
+	protected void setHighlightingColor(){
 		
 		if(doHighlighting()){
 			Manager manager = getView3D().getRenderer().getGeometryManager();
@@ -727,9 +742,8 @@ public abstract class Drawable3D extends DrawableND {
 	/**
 	 * sets the color of surface for drawing
 	 * and alpha value
-	 * @param alpha
 	 */
-	protected void setSurfaceHighlightingColor(float alpha){
+	protected void setSurfaceHighlightingColor(){
 		
 		if(doHighlighting()){
 			Manager manager = getView3D().getRenderer().getGeometryManager();
@@ -738,19 +752,19 @@ public abstract class Drawable3D extends DrawableND {
 			getView3D().getRenderer().setColor(surfaceColor);
 	}	
 	
-	protected void setColors(){
-		setColors(1);
-	}
+
 	
 	private static final double ALPHA_MIN_HIGHLIGHTING = 0.25;
 	private static final double LIGHT_COLOR = 3*0.5;
 	
-	protected void setColors(double alpha){
+	
+	
+	protected void updateColors(){
 		setColors(alpha,color,colorHighlighted);
 	}
 	
-	protected void setColorsOutlined(double alpha){
-		setColors(1);//for outline
+	protected void setColorsOutlined(){
+		setColors(1,color,colorHighlighted);//for outline
 		setColors(alpha,surfaceColor,surfaceColorHighlighted);
 	}
 	
@@ -789,6 +803,35 @@ public abstract class Drawable3D extends DrawableND {
 		if (colorHighlighted.getW()<ALPHA_MIN_HIGHLIGHTING)
 			colorHighlighted.setW(ALPHA_MIN_HIGHLIGHTING);
 	}
+	
+	
+	/** alpha value for rendering transparency */
+	private float alpha = 1f;
+	
+	protected void setAlpha(float alpha){
+		this.alpha = alpha;
+	}
+	
+	protected float getAlpha(){
+		return alpha;
+	}
+
+	protected void updateAlpha(){
+		//only used by surfaces
+		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
+		setAlpha((float) (1-Math.pow(1-getGeoElement().getAlphaValue(),1./3.)));
+	}
+
+
+	/**
+	 * 
+	 * @return true if has alpha that leads to a transparent surface
+	 */
+	protected boolean hasTransparentAlpha(){
+		return getAlpha()>0 && getAlpha() < 1;
+	}
+	
+	
 	
 	abstract protected double getColorShift();
 	

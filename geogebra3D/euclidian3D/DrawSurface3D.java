@@ -103,7 +103,7 @@ public class DrawSurface3D extends Drawable3DSurfaces {
 	}
 	
 	protected boolean updateForItSelf(){
-		super.updateForItSelf();
+		//super.updateForItSelf();
 		boolean ret = true;
 		
 		if(elementHasChanged){

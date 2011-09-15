@@ -492,6 +492,11 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		}
 	}	
 
+	
+
+	final public void updateColor(GeoElement geo) {
+		update(geo);
+	}
 
 	/**
 	 * Updates highestUsedColumn

@@ -1131,7 +1131,8 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 			for (int i = 0; i < geos.length; i++) {
 				geo = (GeoElement) geos[i];
 				geo.setObjColor(col);
-				geo.updateRepaint();
+				//geo.updateRepaint();
+				geo.updateColor();
 			}					
 			
 			Application.debug("Setting color RGB = "+col.getRed()+" "+col.getGreen()+" "+col.getBlue());
@@ -4381,7 +4382,7 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 					geo.setAlphaValue(alpha);
 					geo.setHatchingAngle(angle);
 					geo.setHatchingDistance(distance);
-					geo.updateRepaint();
+					geo.updateColor();
 				}
 			}
 		}
@@ -6389,15 +6390,16 @@ class ColorFunctionPanel
 			((list.size() == 3  || list.get(3) instanceof NumberValue)) )		//
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				if (geo.isFillable() && listAlpha != null)
-					geo.setColorFunction(listAlpha);				
-				else
+				if (geo.isFillable() && listAlpha != null){
+					geo.setColorFunction(listAlpha);
+					list=listAlpha; //to have correct update
+				}else
 					geo.setColorFunction(list);	
 				geo.setColorSpace(colorSpace);
 			}	
 			
 	
-		list.updateRepaint();		
+		list.updateRepaint();
 		
 		// to update "showObject" as well
 		propPanel.updateSelection(geos);

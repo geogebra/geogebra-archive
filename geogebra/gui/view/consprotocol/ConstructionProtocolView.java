@@ -1537,6 +1537,11 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 					add(geo);
 			}
 		}
+		
+
+		final public void updateColor(GeoElement geo) {
+			update(geo);
+		}
 
 		final public void updateAuxiliaryObject(GeoElement geo) {
 			// update(geo);

@@ -6,8 +6,6 @@ import geogebra.euclidian.EuclidianView;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoPoint3D;
 
-import java.awt.Color;
-
 /**
  * Class for drawing decorations of points (altitude segment from the point to xOy plane, ...)
  * @author matthieu
@@ -130,4 +128,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 		return 0;
 	}
 
+	protected void updateColors(){
+		
+	}
 }

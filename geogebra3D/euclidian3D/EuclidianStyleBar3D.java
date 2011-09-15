@@ -1,21 +1,18 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.euclidian.EuclidianConstants;
+import geogebra.euclidian.EuclidianStyleBar;
+import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.util.SelectionTable;
+import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JTextField;
-
-import geogebra.euclidian.EuclidianConstants;
-import geogebra.euclidian.EuclidianStyleBar;
-import geogebra.euclidian.EuclidianStyleBar.MyToggleButton;
-import geogebra.gui.util.PopupMenuButton;
-import geogebra.gui.util.SelectionTable;
-import geogebra.kernel.GeoElement;
-import geogebra.main.Application;
-import geogebra.main.MyError;
 
 
 

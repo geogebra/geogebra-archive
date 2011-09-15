@@ -132,7 +132,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 
 
 		
-		setColors();
+		//updateColors();
 
 		if(useOldCurves){
 			Renderer renderer = getView3D().getRenderer();
