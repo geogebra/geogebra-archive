@@ -33,7 +33,7 @@ chmod g+rwx $WWWDIR/$MYDIR || exit 3
 rm -fR $WWWDIR/history/$MYVER || exit 4
 mkdir -p $WWWDIR/history/$MYVER || exit 4
 chmod g+rwx $WWWDIR/history/$MYVER || exit 4
-find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while read filename; do
+find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt  | while read filename; do
  directory=`dirname $filename`
  mkdir -p $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
  chmod g+rwx $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
@@ -41,7 +41,18 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while rea
  cp $filename $WWWDIR/history/$MYVER/$filename || exit 6
  done
 
-# 4/1. Creating a jnlp file for webstart/history (implementing #692)
+# 4/1. Copying additional files to 4.2
+cd $WWWDIR/test42
+find . -name '*.html' -or -name '*.jnlp' -or -name '*.html' -or -name '*.var.jar' \
+ -or -name '*.css' -or -name '*.js' -or -name '*.ggb' | while read filename; do
+   directory=`dirname $filename`
+   mkdir -p $WWWDIR/$MYDIR/$directory || exit 5
+   chmod g+rwx $WWWDIR/$MYDIR/$directory || exit 5
+  cp $filename $WWWDIR/$MYDIR/$filename || exit 6
+  done
+
+
+# 4/2. Creating a jnlp file for webstart/history (implementing #692)
 MYVER_DASHED=`echo $MYVER | tr . -`
 for i in unpacked debug; do
  cat $SVNDIR/geogebra/scripts/autobuild/history-template.jnlp |\
