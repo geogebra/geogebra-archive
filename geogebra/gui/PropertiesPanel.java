@@ -225,7 +225,8 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 				colorFunctionPanel = new ColorFunctionPanel(app, this);
 				
 				graphicsViewLocationPanel = new GraphicsViewLocationPanel(app, this);
-				
+				allowReflexAnglePanel = new AllowReflexAnglePanel();
+							
 				//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
 			}
 			
@@ -263,7 +264,6 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 			animStepPanel = new AnimationStepPanel(app);
 			textFieldSizePanel = new TextfieldSizePanel(app);
 			animSpeedPanel = new AnimationSpeedPanel(app);
-			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
 			
  			//tabbed pane for properties
@@ -321,7 +321,8 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 				basicTabList.add(bgImagePanel);
 			
 			basicTabList.add(absScreenLocPanel);
-			basicTabList.add(allowReflexAnglePanel);	
+			if(!isDefaults)
+				basicTabList.add(allowReflexAnglePanel);	
 			basicTabList.add(rightAnglePanel);
 			basicTabList.add(allowOutlyingIntersectionsPanel);
 			basicTabList.add(showTrimmedIntersectionLines);
@@ -489,7 +490,6 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 			tracePanel.setLabels();
 			fixPanel.setLabels();
 			checkBoxFixPanel.setLabels();
-	 		allowReflexAnglePanel.setLabels();
 	 		allowOutlyingIntersectionsPanel.setLabels();
 			auxPanel.setLabels();
 			animStepPanel.setLabels();
@@ -499,6 +499,7 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 			sliderPanel.setLabels();
 
 			if(!isDefaults) {
+		 		allowReflexAnglePanel.setLabels();
 				namePanel.setLabels();
 				labelPanel.setLabels();
 				tooltipPanel.setLabels();
@@ -2098,14 +2099,12 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 		public AllowReflexAnglePanel() {
 			super(new FlowLayout(FlowLayout.LEFT));
 			
-//			 Michael Borcherds 2007-11-19
 			reflexAngleCB = new JCheckBox();
 			reflexAngleCB.addItemListener(this);
 			forceReflexAngleCB = new JCheckBox();
 			forceReflexAngleCB.addItemListener(this);
 			add(reflexAngleCB);	
 
-			// TODO make sure this line is commented out for 3.0 release, then reinstated
 			add(forceReflexAngleCB);
 		}
 		
