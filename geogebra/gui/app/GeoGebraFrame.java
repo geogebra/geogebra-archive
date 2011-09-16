@@ -200,7 +200,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener {
 			GeoGebraFrame wnd) {
 		// check java version
 		double javaVersion = Util.getJavaVersion();
-		if (javaVersion < 1.42) {
+		if (javaVersion < 1.5) {
 			JOptionPane
 					.showMessageDialog(
 							null,
