@@ -338,7 +338,11 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	}
 
 	public synchronized String getBase64() {
-		return getAppletImplementation().getBase64();
+		return getAppletImplementation().getBase64(false);
+	}
+	
+	public synchronized String getBase64(boolean includeThumbnail) {
+		return getAppletImplementation().getBase64(includeThumbnail);
 	}
 
 	public synchronized String getXML(String objName) {

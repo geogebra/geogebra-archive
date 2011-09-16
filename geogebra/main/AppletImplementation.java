@@ -634,7 +634,14 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 * Returns current construction in XML format. May be used for saving.
 	 */
 	public synchronized String getBase64() {
-		return ggbApi.getBase64();
+		return getBase64(false);
+	}
+
+	/**
+	 * Returns current construction in XML format. May be used for saving.
+	 */
+	public synchronized String getBase64(boolean includeThumbnail) {
+		return ggbApi.getBase64(includeThumbnail);
 	}
 
 	/**

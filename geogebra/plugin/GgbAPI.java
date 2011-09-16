@@ -179,10 +179,10 @@ public class GgbAPI {
 	/**
 	 * Returns current construction in Base64 format. May be used for saving.
 	 */
-	public synchronized String getBase64() {
+	public synchronized String getBase64(boolean includeThumbnail) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			app.getXMLio().writeGeoGebraFile(baos, false);
+			app.getXMLio().writeGeoGebraFile(baos, includeThumbnail);
 			return geogebra.util.Base64.encode(baos.toByteArray(), 0);
 		} catch (IOException e) {
 			e.printStackTrace();

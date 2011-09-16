@@ -20,6 +20,7 @@ public interface JavaScriptAPI {
 	 */
 	public  String getXML();
 	public  String getBase64();
+	public  String getBase64(boolean includeThumbnail);
 	
 	/**
 	 * Returns the GeoGebra XML string for the given GeoElement object, 

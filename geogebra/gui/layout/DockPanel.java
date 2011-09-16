@@ -929,7 +929,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * @return If the style bar should be visible.
 	 */
 	private boolean isStyleBarVisible() {
-		return showStyleBar  && app.getSettings().getLayout().isAllowingStyleBar();
+		return (isAlone || showStyleBar)  && app.getSettings().getLayout().isAllowingStyleBar();
 	}
 	
 	public void setFrameBounds(Rectangle frameBounds) {
