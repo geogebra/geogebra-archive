@@ -1503,12 +1503,16 @@ public class ConstructionProtocolView extends JPanel implements Printable, Actio
 			for (int i = 0; i < size; ++i) {
 				RowData row = (RowData) rowList.get(i);
 				row.updateAll();
+
+				// it seems there isn't fit to content (automatic) row height in JTable,
+				// so we use the most frequent option, 2 lines of text in a row
+				// (this is still better than 1 lines of text in a row)
 				if (row.includesIndex) {
 					table.setRowHeight(i, Math.max(
-							table.getFont().getSize() * 2, toolbarIconHeight));
+							(int) (table.getFont().getSize() * 2 + 16), toolbarIconHeight));
 				} else {
-					table.setRowHeight(i, Math.max((int) (table.getFont()
-							.getSize() + 8), toolbarIconHeight));
+					table.setRowHeight(i, Math.max(
+							(int) (table.getFont().getSize() * 2 + 12), toolbarIconHeight));
 				}
 			}
 			fireTableRowsUpdated(0, size - 1);
