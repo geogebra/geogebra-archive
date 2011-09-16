@@ -14,6 +14,7 @@ Code License Agreement (BCL),
 http://java.sun.com/javase/6/jre-6u2-license.txt. The original packages
 can be downloaded from http://java.com/en/download/manual.jsp?locale=en.
 
+
 lib_mac_extensions.jar
 ----------------------
 
@@ -22,7 +23,7 @@ provided by Apple, Inc., for the Mac OS X. The contents of this file are
 copied from Classes/ui.jar. To make this JAR file small, just the needed
 .class files were selected.
 
-Here is an except from http://developer.apple.com/java/faq/:
+Here is an excerpt from http://developer.apple.com/java/faq/:
 
     Q: Can I bundle the Mac OS X JDK with my application?
 
@@ -38,3 +39,36 @@ with legal software can use the Java JDK on his machine without
 no further permissions. For those developers we give a convenient way
 to set up the underlying libraries by providing lib_mac_extensions.jar.
 
+
+vernier_ccsd-mac-static.jar
+---------------------------
+
+This JAR is created by using
+http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-native/bin/libvernier_ccsd.jnilib,
+signed by the certificate of International GeoGebra Institute.
+
+License is GNU Lesser General Public License (LGPL) 2.1.
+
+
+vernier_ccsd-macintel-static.jar
+--------------------------------
+
+This JAR is created by using
+http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-native/bin/libvernier_ccsd-macintel.jnilib
+signed by the certificate of International GeoGebra Institute.
+
+License is GNU Lesser General Public License (LGPL) 2.1.
+
+
+vernier_ccsd-win.jar
+--------------------
+
+This JAR is created by using
+
+http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-native/vernier_goio_sdk/GoIO_DLL.dll
+and
+http://svn.concord.org/svn/projects/trunk/common/java/sensor/sensor-native/bin/vernier_ccsd.dll
+
+signed by the certificate of International GeoGebra Institute.
+
+License is GNU Lesser General Public License (LGPL) 2.1.
