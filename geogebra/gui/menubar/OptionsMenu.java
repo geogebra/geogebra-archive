@@ -301,7 +301,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		if (menuPointCapturing == null)
 			return;
 
-		String pos = Integer.toString(app.getEuclidianView()
+		String pos = Integer.toString(app.getActiveEuclidianView()
 				.getPointCapturingMode());
 		for (int i = 0; i < 4; i++) {
 			JRadioButtonMenuItem mi = (JRadioButtonMenuItem) menuPointCapturing
@@ -438,7 +438,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		else if (cmd.endsWith("PointCapturing")) {
 			int mode = Integer.parseInt(cmd.substring(0, 1));
 			app.getEuclidianView().setPointCapturing(mode);
-			if (app.hasEuclidianView2()) {
+			if (app.hasEuclidianView2EitherShowingOrNot()) {
 				app.getEuclidianView2().setPointCapturing(mode);
 			}
 			app.setUnsaved();
