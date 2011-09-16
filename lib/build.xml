@@ -26,9 +26,18 @@
 	<mkdir dir="download"/>
 	<get src="http://forge.scilab.org/index.php/p/jlatexmath/downloads/253/get/"
 	    dest="download/jlatexmath-minimal.zip" usetimestamp="true"/>
-	<unzip src="download/jlatexmath-minimal.zip" dest="./"/>
-	<delete file="README_MINIMAL"/>
-	<rename src="jlatexmath-minimal-0.9.6.jar" dest="jlatexmath.jar"/>
+	<unzip src="download/jlatexmath-minimal.zip" dest="./">
+	    <patternset>
+		<include name="jlm_*.jar"/>
+	    </patternset>
+	    <mapper type="glob" from="*.jar" to="*.jar"/>
+	</unzip>
+	<unzip src="download/jlatexmath-minimal.zip" dest="./">
+	    <patternset>
+		<include name="jlatexmath-*.jar"/>
+	    </patternset>
+	    <mapper type="glob" from="jlatexmath-minimal-*.jar" to="jlatexmath.jar"/>
+	</unzip>
 	</target>
 
 	<!-- download jlatexmath from GeoGebra repository -->
@@ -55,7 +64,7 @@
 	<target name="ecj">
 	<mkdir dir="build"/>
 	<get 
-	    src="http://www.geogebra.org/download/lib/build/ecj-3.6.2.jar"
+	    src="http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops/R-3.6.2-201102101200/ecj-3.6.2.jar&amp;url=http://ftp.wh2.tu-dresden.de/pub/mirrors/eclipse/eclipse/downloads/drops/R-3.6.2-201102101200/ecj-3.6.2.jar&amp;mirror_id=324"
 	    dest="build/ecj-3.6.2.jar" usetimestamp="true"/>
 	</target>
 	
@@ -66,8 +75,29 @@
 	<get 
 	    src="http://downloads.sourceforge.net/project/proguard/proguard/4.6/proguard4.6.zip?&amp;use_mirror=heanet"
 	    dest="download/proguard46.zip" usetimestamp="true"/>
-	<unzip src="download/proguard46.zip" dest="download"/>
-	<copy file="download/proguard4.6/lib/proguard.jar" tofile="build/tools_proguard46.jar"/>
+	<unzip src="download/proguard46.zip" dest="download">
+	    <patternset>
+		<include name="proguard4.6/lib/proguard.jar"/>
+	    </patternset>
+	    <mapper type="glob" from="proguard4.6/lib/proguard.jar" to="../build/tools_proguard46.jar"/>
+	</unzip>
+	<!--copy file="download/proguard4.6/lib/proguard.jar" tofile="build/tools_proguard46.jar"/-->
+	</target>
+
+	<!-- download javacc -->
+	<target name="javacc">
+	<mkdir dir="build"/>
+	<mkdir dir="download"/>
+	<get 
+	    src="http://java.net/projects/javacc/downloads/download/javacc-5.0.zip"
+	    dest="download/javacc-5.0.zip" usetimestamp="true"/>
+	<unzip src="download/javacc-5.0.zip" dest="download">
+	    <patternset>
+    		<include name="javacc-5.0/bin/lib/javacc.jar"/>
+	    </patternset>
+	    <mapper type="glob" from="javacc-5.0/bin/lib/javacc.jar" to="../build/javacc/javacc.jar"/>
+	</unzip>
+	<!--copy file="download/javacc-5.0/bin/lib/javacc.jar" tofile="build/javacc/javacc.jar"/-->
 	</target>
 
 
