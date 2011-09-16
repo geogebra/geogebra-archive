@@ -19,12 +19,14 @@ import java.net.URL;
 public class GeoGebra extends Object {
 	
 	// GeoGebra version
-	public static final String BUILD_DATE = "15 September 2011";
-	public static final String VERSION_STRING = "4.1.7.0";
-	//current 3D: "4.9.0.0"
-	//current ggb42: "4.1.4.0"
+	public static final String BUILD_DATE = "16 September 2011";
+	public static final String VERSION_STRING = "4.9.2.0"; // <- update lines below when this is updated
+	//current 3D: "4.9.2.0"
+	//current ggb42: "4.1.7.0"
 	
-	public static final String PREFERENCES_ROOT = "/geogebra42";
+	public static final String PREFERENCES_ROOT = VERSION_STRING.startsWith("4.9") ? 
+			"/geogebra50" : "/geogebra42";
+	
 	public static final String SPLASH_STRING = "splash42beta.png";
 	public static final String SHORT_VERSION_STRING = "4.2"; // used for online archive
 	public static final boolean CAS_VIEW_ENABLED = true;
