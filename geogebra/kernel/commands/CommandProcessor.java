@@ -19,6 +19,7 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.RenameInputHandler;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
+import geogebra.kernel.AlgoDependentList;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
@@ -8105,10 +8106,13 @@ class CmdSetDynamicColor extends CommandProcessor {
 
 				GeoElement geo = (GeoElement) arg[0];
 
-				GeoList list = new GeoList(cons);
-				list.add(arg[1]);
-				list.add(arg[2]);
-				list.add(arg[3]);
+				ArrayList<GeoElement> listItems = new ArrayList<GeoElement>();
+				listItems.add((GeoElement) arg[1]); 
+				listItems.add((GeoElement) arg[2]); 
+				listItems.add((GeoElement) arg[3]); 
+				//listItems.add((GeoElement) arg[4]); // no opacity 
+				AlgoDependentList algo = new AlgoDependentList(cons, listItems, false);
+				GeoList list = algo.getGeoList();
 
 				geo.setColorFunction(list);
 				geo.updateRepaint();
@@ -8131,12 +8135,14 @@ class CmdSetDynamicColor extends CommandProcessor {
 					&& (ok[4] = arg[4].isNumberValue())) {
 
 				GeoElement geo = (GeoElement) arg[0];
-
-				GeoList list = new GeoList(cons);
-				list.add(arg[1]);
-				list.add(arg[2]);
-				list.add(arg[3]);
-				list.add(arg[4]); // opacity
+				
+				ArrayList<GeoElement> listItems = new ArrayList<GeoElement>();
+				listItems.add((GeoElement) arg[1]); 
+				listItems.add((GeoElement) arg[2]); 
+				listItems.add((GeoElement) arg[3]); 
+				listItems.add((GeoElement) arg[4]); // opacity 
+				AlgoDependentList algo = new AlgoDependentList(cons, listItems, false);
+				GeoList list = algo.getGeoList();
 
 				geo.setColorFunction(list);
 				geo.updateRepaint();
