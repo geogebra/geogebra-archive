@@ -2,23 +2,27 @@
 
 <!-- README: Downloading external libraries for GeoGebra
 
+This build file is about to download all necessary external libraries
+from the Internet. Some files are to be downloaded from their official
+URL, but others are from the GeoGebra server. For a long term, we
+would like to use the official JAR files everywhere.
 
--->
+@author Zoltan Kovacs
 
-<!--
-   GeoGebra external libraries
-   @author Zoltan Kovacs
 -->
 
 <project default="lib">
 
 	<!-- download external libraries -->
 	<!--target name="lib" depends="lib-runtime, lib-build, lib-build-installer"-->
-	<target name="lib" depends="lib-runtime">
+	<target name="lib" depends="lib-runtime, lib-build">
+	</target>
+
+	<target name="lib-build" depends="mpreduce-geogebra, javacc, ecj, proguard, p200ant-geogebra">
 	</target>
 
 	<!-- download runtime libraries -->
-	<target name="lib-runtime" depends="jlatexmath-geogebra, lib_jsobject.jar, lib_mac_extensions.jar, vernier">
+	<target name="lib-runtime" depends="jlatexmath-geogebra, jsobject-geogebra, mac_extensions-geogebra, vernier-geogebra">
 	</target>
 
 	<!-- download jlatexmath-minimal.zip directly from Calixte Denizet's repository -->
@@ -47,17 +51,32 @@
 	<get src="http://www.geogebra.org/download/lib/jlm_greek.jar" dest="jlm_greek.jar" usetimestamp="true"/>
 	</target>
 	
-
-	<!-- download lib_jsobject.jar -->
-	<target name="lib_jsobject.jar">
+	<!-- download p200ant from GeoGebra repository -->
+	<target name="p200ant-geogebra">
+	<get src="http://www.geogebra.org/download/lib/build/tools_p200ant_java5only.jar" dest="build/tools_p200ant_java5only.jar"
+	    usetimestamp="true"/>
 	</target>
 
-	<!-- download lib_mac_extensions.jar -->
-	<target name="lib_mac_extensions.jar">
+	<!-- download jsobject from GeoGebra repository -->
+	<target name="jsobject-geogebra">
+	<get src="http://www.geogebra.org/download/lib/lib_jsobject.jar" dest="lib_jsobject.jar"
+	    usetimestamp="true"/>
 	</target>
 
-	<!-- download vernier -->
-	<target name="vernier">
+	<!-- download lib_mac_extensions from GeoGebra repository -->
+	<target name="mac_extensions-geogebra">
+	<get src="http://www.geogebra.org/download/lib/lib_mac_extensions.jar" dest="lib_mac_extensions.jar"
+	    usetimestamp="true"/>
+	</target>
+
+	<!-- download vernier from GeoGebra repository -->
+	<target name="vernier-geogebra">
+	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-macintel-static.jar" dest="vernier_ccsd-macintel-static.jar"
+	    usetimestamp="true"/>
+	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-mac-static.jar" dest="vernier_ccsd-mac-static.jar"
+	    usetimestamp="true"/>
+	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-win.jar" dest="vernier_ccsd-win.jar"
+	    usetimestamp="true"/>
 	</target>
 
 	<!-- download ecj -->
@@ -66,6 +85,13 @@
 	<get 
 	    src="http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops/R-3.6.2-201102101200/ecj-3.6.2.jar&amp;url=http://ftp.wh2.tu-dresden.de/pub/mirrors/eclipse/eclipse/downloads/drops/R-3.6.2-201102101200/ecj-3.6.2.jar&amp;mirror_id=324"
 	    dest="build/ecj-3.6.2.jar" usetimestamp="true"/>
+	</target>
+	
+	<!-- download mpreduce default.img from GeoGebra repository -->
+	<target name="mpreduce-geogebra">
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/mpreduce/default.img"
+	    dest="../default.img" usetimestamp="true"/>
 	</target>
 	
 	<!-- download proguard -->
@@ -81,7 +107,6 @@
 	    </patternset>
 	    <mapper type="glob" from="proguard4.6/lib/proguard.jar" to="../build/tools_proguard46.jar"/>
 	</unzip>
-	<!--copy file="download/proguard4.6/lib/proguard.jar" tofile="build/tools_proguard46.jar"/-->
 	</target>
 
 	<!-- download javacc -->
@@ -97,8 +122,6 @@
 	    </patternset>
 	    <mapper type="glob" from="javacc-5.0/bin/lib/javacc.jar" to="../build/javacc/javacc.jar"/>
 	</unzip>
-	<!--copy file="download/javacc-5.0/bin/lib/javacc.jar" tofile="build/javacc/javacc.jar"/-->
 	</target>
-
 
 </project>
