@@ -1543,7 +1543,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					//if we change alpha for functions, hit won't work properly
 					if(geo.isFillable())
 						geo.setAlphaValue(alpha);
-					geo.updateColor();
+					geo.updateVisualStyle();
 					needUndo = true;
 			}
 		}

@@ -494,7 +494,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 	
 
-	final public void updateColor(GeoElement geo) {
+	final public void updateVisualStyle(GeoElement geo) {
 		update(geo);
 	}
 

@@ -743,7 +743,7 @@ public class AlgebraView extends JTree implements View, Gridable, SetLabels{
 	
 
 
-	final public void updateColor(GeoElement geo) {
+	final public void updateVisualStyle(GeoElement geo) {
 		update(geo);
 	}
 	

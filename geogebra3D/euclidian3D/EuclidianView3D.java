@@ -1205,8 +1205,8 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 		}
 	}
 	
-	public void updateColor(GeoElement geo) {
-		Application.debug(geo);
+	public void updateVisualStyle(GeoElement geo) {
+		//Application.debug(geo);
 		if (geo.hasDrawable3D()){
 			Drawable3D d = drawable3DMap.get(geo);
 			if (d!=null){

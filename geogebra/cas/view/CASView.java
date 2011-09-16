@@ -359,7 +359,7 @@ public class CASView extends JComponent implements View, Gridable {
 	}
 	
 
-	final public void updateColor(GeoElement geo) {
+	final public void updateVisualStyle(GeoElement geo) {
 		update(geo);
 	}
 

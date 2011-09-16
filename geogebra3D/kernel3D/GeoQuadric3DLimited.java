@@ -359,13 +359,13 @@ public class GeoQuadric3DLimited extends GeoQuadricND implements NumberValue {
 			return;
 
 		bottom.setAlphaValue(alpha);
-		bottom.updateColor();
+		bottom.updateVisualStyle();
 		if (top!=null){
 			top.setAlphaValue(alpha);
-			top.updateColor();
+			top.updateVisualStyle();
 		}
 		side.setAlphaValue(alpha);
-		side.updateColor();
+		side.updateVisualStyle();
 
 
 

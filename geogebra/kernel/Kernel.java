@@ -2069,10 +2069,10 @@ public class Kernel {
 		}
 	}
 	
-	public final void notifyUpdateColor(GeoElement geo) {
+	public final void notifyUpdateVisualStyle(GeoElement geo) {
 		if (notifyViewsActive) {
 			for (int i = 0; i < viewCnt; ++i) {
-				views[i].updateColor(geo);
+				views[i].updateVisualStyle(geo);
 			}
 		}
 	}

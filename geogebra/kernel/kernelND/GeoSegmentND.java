@@ -86,6 +86,6 @@ public interface GeoSegmentND extends GeoLineND {
 
 	public GeoPointND getEndPoint();
 
-	public void updateColor();
+	public void updateVisualStyle();
 
 }

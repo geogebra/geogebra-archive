@@ -1133,7 +1133,7 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 				geo = (GeoElement) geos[i];
 				geo.setObjColor(col);
 				//geo.updateRepaint();
-				geo.updateColor();
+				geo.updateVisualStyle();
 			}					
 			
 			Application.debug("Setting color RGB = "+col.getRed()+" "+col.getGreen()+" "+col.getBlue());
@@ -4381,7 +4381,7 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 					geo.setAlphaValue(alpha);
 					geo.setHatchingAngle(angle);
 					geo.setHatchingDistance(distance);
-					geo.updateColor();
+					geo.updateVisualStyle();
 				}
 			}
 		}

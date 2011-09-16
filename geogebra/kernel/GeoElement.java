@@ -3378,9 +3378,9 @@ public abstract class GeoElement
 	/**
 	 * update color
 	 */
-	public void updateColor() {
+	public void updateVisualStyle() {
 		updateGeo();
-		kernel.notifyUpdateColor(this);
+		kernel.notifyUpdateVisualStyle(this);
 		updateDependentObjects();
 		kernel.notifyRepaint();
 	}
