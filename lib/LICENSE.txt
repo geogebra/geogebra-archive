@@ -1,5 +1,5 @@
 This directory contains 3rd party libraries. Most of them are required
-to build GeoGebra properly.
+to run GeoGebra properly.
 
 lib_jsobject.jar
 ----------------

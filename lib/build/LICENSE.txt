@@ -1,0 +1,31 @@
+This directory contains 3rd party libraries. Most of them are required
+to build GeoGebra properly.
+
+jogl1
+-----
+
+The original binaries are repackaged into .zip files in order to decrease
+download time.
+
+License: BSD License.
+
+
+lib_p200ant_java5only.jar
+-------------------------
+
+A modified version of Matthias Mann's Pack200 ANT task software
+(http://www.matthiasmann.de/content/view/20/26/). The original version
+can be downloaded here:
+
+http://www.matthiasmann.de/java/p200ant.tgz
+
+The only modification was to filter out those systems which run
+Java 1.6 or above:
+
+    if (!System.getProperty("java.version").startsWith("1.5"))
+	throw new BuildException("Must be run under Java 1.5");
+
+It was necessary to workaround this bug:
+http://bugs.sun.com/view_bug.do?bug_id=6712743
+
+License: BSD License.

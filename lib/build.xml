@@ -18,7 +18,7 @@ would like to use the official JAR files everywhere.
 	<target name="lib" depends="lib-runtime, lib-build">
 	</target>
 
-	<target name="lib-build" depends="mpreduce-geogebra, javacc, ecj, proguard, p200ant-geogebra">
+	<target name="lib-build" depends="mpreduce-geogebra, javacc, ecj, proguard, p200ant-geogebra, jogl1-geogebra">
 	</target>
 
 	<!-- download runtime libraries -->
