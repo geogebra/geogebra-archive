@@ -146,6 +146,21 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 		advancedPanel.updateGUI();
 	}
 
+	
+	/**
+	 * Restores default settings in option dialogs 
+	 */
+	public void restoreDefaults(){
+		defaultsPanel.restoreDefaults();	
+		
+		// TODO
+		// --- add calls to other panels here
+		
+		updateGUI();
+	}
+	
+	
+	
 	/**
 	 * Select the tab which shows the euclidian view settings.
 	 * 
@@ -205,7 +220,27 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 		restoreDefaultsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GeoGebraPreferences.getPref().clearPreferences();
-				updateGUI(); // update GUI to reflect possible changes in preferences
+
+				GeoGebraPreferences.getPref().loadXMLPreferences(app);
+
+				// reset default line thickness etc
+				app.getKernel().getConstruction().getConstructionDefaults().resetDefaults();
+
+				// reset defaults for geoelements
+				app.getKernel().getConstruction().getConstructionDefaults().createDefaultGeoElements();
+
+				// reset the stylebar defaultGeo 
+				if(app.getEuclidianView().hasStyleBar())
+					app.getEuclidianView().getStyleBar().restoreDefaultGeo();
+				if(app.hasEuclidianView2EitherShowingOrNot() && app.getEuclidianView2().hasStyleBar())
+					app.getEuclidianView2().getStyleBar().restoreDefaultGeo();
+				
+				// reset defaults for GUI, views etc
+				app.getSettings().resetSettings();				
+				
+				// restore dialog panels to display these defaults
+				restoreDefaults();
+				
 			}
 		});
 		

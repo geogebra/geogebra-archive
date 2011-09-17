@@ -5,6 +5,7 @@ import geogebra.gui.view.spreadsheet.MyTable;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Settings for the spreadsheet view.
@@ -53,6 +54,14 @@ public class SpreadsheetSettings extends AbstractSettings {
 	//============================================
 	//  Row/Column Dimension Settings
 	//============================================
+
+	public SpreadsheetSettings(LinkedList<SettingListener> listeners) {
+		super(listeners);
+	}
+
+	public SpreadsheetSettings() {
+		super();
+	}
 
 	public HashMap<Integer,Integer> getWidthMap(){
 		if(widthMap == null)

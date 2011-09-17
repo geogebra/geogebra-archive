@@ -153,7 +153,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	
 	
 	
-	protected void createDefaultGeoElements() {
+	public void createDefaultGeoElements() {
 		super.createDefaultGeoElements();
 		
 		

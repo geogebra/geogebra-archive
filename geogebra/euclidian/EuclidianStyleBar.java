@@ -167,6 +167,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
+	public void restoreDefaultGeo(){
+		if(oldDefaultGeo != null)
+		oldDefaultGeo = cons.getConstructionDefaults().getDefaultGeo(oldDefaultMode);
+	}
+	
+	
 	/**
 	 * Updates the state of the stylebar buttons and the defaultGeo field.
 	 */
@@ -241,7 +247,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					oldDefaultMode = defaultGeoMap.get(mode);
 				}
 			}
-			
+		
 			// we also update stylebars according to just created geos
 			activeGeoList.addAll(ec.getJustCreatedGeos());
 		}

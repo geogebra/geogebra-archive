@@ -32,6 +32,11 @@ public abstract class AbstractSettings {
 		listeners = new LinkedList<SettingListener>();
 	}
 	
+	public AbstractSettings(LinkedList<SettingListener> listeners) {
+		this.listeners = listeners;
+		settingChanged();
+	}
+	
 	/**
 	 * Notify listeners about changed settings. This method has to be called by
 	 * implementors of subclasses if a setting's value has been changed.
@@ -92,5 +97,9 @@ public abstract class AbstractSettings {
 	 */
 	public final void removeListener(SettingListener listener) {
 		listeners.remove(listener);
+	}
+	
+	public LinkedList<SettingListener> getListeners() {
+		return listeners;
 	}
 }

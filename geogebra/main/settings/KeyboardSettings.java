@@ -3,6 +3,7 @@ package geogebra.main.settings;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Locale;
 
 
@@ -40,6 +41,14 @@ public class KeyboardSettings extends AbstractSettings {
 	private Locale keyboardLocale = null;
 	private boolean showKeyboardOnStart = false;
 	
+	public KeyboardSettings(LinkedList<SettingListener> listeners) {
+		super(listeners);
+	}
+
+	public KeyboardSettings() {
+		super();
+	}
+
 	public float getKeyboardOpacity() {		
 		return keyboardOpacity;
 	}

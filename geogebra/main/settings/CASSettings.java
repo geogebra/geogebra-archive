@@ -1,5 +1,7 @@
 package geogebra.main.settings;
 
+import java.util.LinkedList;
+
 
 /**
  * Stores CAS specific settings
@@ -10,6 +12,14 @@ public class CASSettings extends AbstractSettings {
 	
 	private long timeoutMillis;
 	
+	public CASSettings(LinkedList<SettingListener> listeners) {
+		super(listeners);
+	}
+
+	public CASSettings() {
+		super();
+	}
+
 	/**
 	 * Changes the timeout value for the cas
 	 * @param value new timeout value, in milliseconds

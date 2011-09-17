@@ -1,8 +1,17 @@
 package geogebra.main.settings;
 
+import java.util.LinkedList;
+
 /**
  * Settings for the algebra view.
  */
 public class AlgebraSettings extends AbstractSettings {
-	// TODO add your settings here
+
+	public AlgebraSettings(LinkedList<SettingListener> listeners) {
+		super(listeners);
+	}
+
+	public AlgebraSettings() {
+		super();
+	}
 }

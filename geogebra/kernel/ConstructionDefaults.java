@@ -152,8 +152,9 @@ public class ConstructionDefaults {
 	/**
 	 * Fills the list of default geos
 	 */
-	protected void createDefaultGeoElements() {
-		defaultGeoElements = new HashMap<Integer,GeoElement>();		
+	public void createDefaultGeoElements() {
+		if (defaultGeoElements == null)
+			defaultGeoElements = new HashMap<Integer,GeoElement>();		
 				
 						
 		// free point
@@ -623,6 +624,14 @@ public class ConstructionDefaults {
 		setDefaultPointSize(pointSize);
 		setDefaultAngleSize(angleSize);
 		setDefaultFilling(filling);
+		
+		
+		
+		
+		
+		
+		
+		
 
 	}
 	

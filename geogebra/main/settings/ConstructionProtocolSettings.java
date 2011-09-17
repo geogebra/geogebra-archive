@@ -1,5 +1,7 @@
 package geogebra.main.settings;
 
+import java.util.LinkedList;
+
 /**
  * Settings for the construction protocol.
  */
@@ -23,6 +25,14 @@ public class ConstructionProtocolSettings extends AbstractSettings {
 	 * Show the construction protocol button.
 	 */
 	private boolean showConsProtButton = true;
+
+	public ConstructionProtocolSettings(LinkedList<SettingListener> listeners) {
+		super(listeners);
+	}
+
+	public ConstructionProtocolSettings() {
+		super();
+	}
 
 	/**
 	 * @return the showConsProtButton

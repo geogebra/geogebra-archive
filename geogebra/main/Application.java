@@ -3383,8 +3383,11 @@ public class Application implements KeyEventDispatcher {
 			return;
 		}
 		
-		getEuclidianView().getStyleBar().updateStyleBar();	
-		if (hasEuclidianView2())
+		if(getEuclidianView().hasStyleBar())
+			getEuclidianView().getStyleBar().updateStyleBar();	
+		
+		
+		if (hasEuclidianView2() && getEuclidianView2().hasStyleBar())
 			getEuclidianView2().getStyleBar().updateStyleBar();
 	}
 

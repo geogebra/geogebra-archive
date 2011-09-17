@@ -13,19 +13,19 @@ package geogebra.main.settings;
 public class Settings {
 	private final EuclidianSettings[] euclidianSettings;
 	
-	private final AlgebraSettings algebraSettings;
+	private AlgebraSettings algebraSettings;
 	
-	private final SpreadsheetSettings spreadsheetSettings;
+	private SpreadsheetSettings spreadsheetSettings;
 	
-	private final ConstructionProtocolSettings consProtSettings;
+	private ConstructionProtocolSettings consProtSettings;
 	
-	private final LayoutSettings layoutSettings;
+	private LayoutSettings layoutSettings;
 	
-	private final ApplicationSettings applicationSettings;
+	private ApplicationSettings applicationSettings;
 	
-	private final KeyboardSettings keyboardSettings;
+	private KeyboardSettings keyboardSettings;
 	
-	private final CASSettings casSettings;
+	private CASSettings casSettings;
 	
 	/**
 	 * Initialize settings using the constructors of the setting container classes.
@@ -33,17 +33,52 @@ public class Settings {
 	public Settings() {
 		euclidianSettings = new EuclidianSettings[2];
 		
+		resetSettings();
+	}
+	
+	public void resetSettings() {
 		for(int i = 0; i < euclidianSettings.length; ++i) {
 			euclidianSettings[i] = new EuclidianSettings();
 		}
 		
-		algebraSettings = new AlgebraSettings();
-		spreadsheetSettings = new SpreadsheetSettings();
-		consProtSettings = new ConstructionProtocolSettings();
-		layoutSettings = new LayoutSettings();
-		applicationSettings = new ApplicationSettings();
-		keyboardSettings = new KeyboardSettings();
-		casSettings = new CASSettings();
+		if (algebraSettings == null)
+			algebraSettings = new AlgebraSettings();
+		else 
+			algebraSettings = new AlgebraSettings(algebraSettings.getListeners());
+		
+		if (spreadsheetSettings == null)
+			spreadsheetSettings = new SpreadsheetSettings();
+		else 
+			spreadsheetSettings = new SpreadsheetSettings(spreadsheetSettings.getListeners());
+		
+		if (consProtSettings == null)
+			consProtSettings = new ConstructionProtocolSettings();
+		else 
+			consProtSettings = new ConstructionProtocolSettings(consProtSettings.getListeners());
+		
+		if (layoutSettings == null)
+			layoutSettings = new LayoutSettings();
+		else 
+			layoutSettings = new LayoutSettings(layoutSettings.getListeners());
+		
+		if (applicationSettings == null)
+			applicationSettings = new ApplicationSettings();
+		else 
+			applicationSettings = new ApplicationSettings(applicationSettings.getListeners());
+		
+		if (keyboardSettings == null)
+			keyboardSettings = new KeyboardSettings();
+		else 
+			keyboardSettings = new KeyboardSettings(keyboardSettings.getListeners());
+		
+		if (casSettings == null)
+			casSettings = new CASSettings();
+		else 
+			casSettings = new CASSettings(algebraSettings.getListeners());
+		
+		
+		
+		
 	}
 	
 	/**

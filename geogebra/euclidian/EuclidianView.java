@@ -1040,7 +1040,8 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		euclidianController.clearJustCreatedGeos();
 		euclidianController.setMode(mode);
 		if (clearRectangle(mode)) setSelectionRectangle(null);
-		getStyleBar().setMode(mode);
+		if(hasStyleBar())
+			getStyleBar().setMode(mode);
 	}
 	
 	/*

@@ -67,7 +67,7 @@ public class Construction3D extends Construction {
 	/**
 	 * creates the ConstructionDefaults consDefaults
 	 */
-	protected void newConstructionDefaults(){
+	public void newConstructionDefaults(){
 		consDefaults = new ConstructionDefaults3D(this);
 	}
 	

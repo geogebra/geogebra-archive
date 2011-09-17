@@ -21,6 +21,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 /**
  * Options with the default settings of objects.
@@ -198,6 +199,17 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener, Se
 		
 		// create the dictionary which is used to assign a type constant (int) to
 		// every tree leaf
+		createDefaultMap();
+	}
+	
+	
+	
+	/**
+	 * Creates the dictionary which is used to assign a type constant (int) to
+	 * every tree leaf
+	 */
+	private void createDefaultMap(){
+			
 		typeToNode = new Hashtable<DefaultMutableTreeNode, Integer>(15);
 		typeToNode.put(pointsFreeNode, ConstructionDefaults.DEFAULT_POINT_FREE);
 		typeToNode.put(pointsDepNode, ConstructionDefaults.DEFAULT_POINT_DEPENDENT);
@@ -218,7 +230,21 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener, Se
 		typeToNode.put(angleNode, ConstructionDefaults.DEFAULT_ANGLE);
 		typeToNode.put(booleanNode, ConstructionDefaults.DEFAULT_BOOLEAN);
 		typeToNode.put(listNode, ConstructionDefaults.DEFAULT_LIST);
+		
 	}
+	
+	/**
+	 * Restores all defaults to the current ConstructionDefault values. 
+	 */
+	public void restoreDefaults(){
+		createDefaultMap();
+		// update panel selection
+		TreePath path = tree.getSelectionPath();
+		tree.setSelectionPath(null);
+		tree.setSelectionPath(path);
+	}
+	
+	
 	
 	/**
 	 * Update the GUI to take care of new settings which were applied.

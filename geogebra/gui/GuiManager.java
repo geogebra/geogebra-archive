@@ -1141,7 +1141,7 @@ public class GuiManager {
 	/**
 	 * Displays the options dialog.
 	 *
-	 * @param tabIndex Index of the tab. Use OptionsDialog.TAB_* constants for this, or -1 for the default.
+	 * @param tabIndex Index of the tab. Use OptionsDialog.TAB_* constants for this, or -1 for the default, -2 to hide.
 	 */
 	public void showOptionsDialog(int tabIndex)	{
 		if(optionsDialog == null)
@@ -1149,10 +1149,10 @@ public class GuiManager {
 		else
 			optionsDialog.updateGUI();
 		
-		if(tabIndex != -1)
+		if(tabIndex > -1)
 			optionsDialog.showTab(tabIndex);
 		
-		optionsDialog.setVisible(true);
+		optionsDialog.setVisible(tabIndex != -2);
 	}
 	
 	protected OptionsDialog newOptionsDialog(){

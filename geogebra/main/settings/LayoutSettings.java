@@ -1,5 +1,7 @@
 package geogebra.main.settings;
 
+import java.util.LinkedList;
+
 /**
  * Settings for the layout manager.
  * 
@@ -29,6 +31,10 @@ public class LayoutSettings extends AbstractSettings {
 		showTitleBar = true;
 		allowStyleBar = true;
 		ignoreDocumentLayout = false;
+	}
+
+	public LayoutSettings(LinkedList<SettingListener> listeners) {
+		super(listeners);
 	}
 
 	/**
