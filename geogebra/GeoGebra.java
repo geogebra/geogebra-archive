@@ -43,6 +43,7 @@ public class GeoGebra extends Object {
 
 	// URLs
 	public final static String GEOGEBRA_ONLINE_ARCHIVE_BASE = "http://jars.geogebra.org/webstart/" + SHORT_VERSION_STRING + "/";
+	public final static String GEOGEBRA_ONLINE_WEBSTART_BASE = "http://www.geogebra.org/webstart/" + SHORT_VERSION_STRING + "/";
 	public static final String LOADING_GIF = "http://www.geogebra.org/webstart/loading.gif";
 	public final static String GEOGEBRA_WEBSITE = "http://www.geogebra.org/";
 	public final static String HELP_URL = GEOGEBRA_WEBSITE + "help";

@@ -4046,12 +4046,12 @@ public class Application implements KeyEventDispatcher {
 	
 	final public static boolean isWebstart() {
 		if (codebase == null) initCodeBase();
-		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE_BASE);
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE);
 	}
 	
 	final public static boolean isWebstartDebug() {
 		if (codebase == null) initCodeBase();
-		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE_BASE + "debug");
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE + "debug");
 	}
 	
 	final public static boolean hasFullPermissions() {
