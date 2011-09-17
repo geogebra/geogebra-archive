@@ -124,4 +124,78 @@ would like to use the official JAR files everywhere.
 	</unzip>
 	</target>
 
+	<target name="jogl1-geogebra" depends="jogl1-jar-geogebra, jogl1-linux-geogebra, jogl1-macosx-geogebra, jogl1-windows-geogebra"/>
+
+	<target name="jogl1-jar-geogebra">
+	<mkdir dir="build/jogl1/jar"/>
+	<mkdir dir="download"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-jar.zip"
+	    dest="download/jogl1-jar.zip" usetimestamp="true"/>
+	<unzip src="download/jogl1-jar.zip" dest="./">
+	    <mapper type="glob" from="*" to="build/jogl1/*"/>
+	</unzip>
+	</target>
+
+	<condition property="winnt">
+		<os family="winnt"/>
+	</condition>
+
+	<condition property="mac">
+		<os family="mac"/>
+	</condition>
+
+	<condition property="unix">
+		<os family="unix"/>
+	</condition>
+
+	<target name="jogl1-linux-geogebra" if="unix">
+	<mkdir dir="download"/>
+	<mkdir dir="build/jogl1/linux-amd64"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-linux-amd64.zip"
+	    dest="download/jogl1-linux-amd64.zip" usetimestamp="true"/>
+	<unzip src="download/jogl1-linux-amd64.zip" dest="./">
+	    <mapper type="glob" from="*" to="build/jogl1/*"/>
+	</unzip>
+	<mkdir dir="build/jogl1/linux-i586"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-linux-i586.zip"
+	    dest="download/jogl1-linux-i586.zip" usetimestamp="true"/>
+	<unzip src="download/jogl1-linux-i586.zip" dest="./">
+	    <mapper type="glob" from="*" to="build/jogl1/*"/>
+	</unzip>
+	</target>
+
+	<target name="jogl1-macosx-geogebra" if="mac">
+	<mkdir dir="build/jogl1/macosx"/>
+	<mkdir dir="download"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-macosx.zip"
+	    dest="download/jogl1-macosx.zip" usetimestamp="true"/>
+	<unzip src="download/jogl1-macosx.zip" dest="./">
+	    <mapper type="glob" from="*" to="build/jogl1/*"/>
+	</unzip>
+	</target>
+
+	<target name="jogl1-windows-geogebra" if="winnt">
+	<mkdir dir="download"/>
+	<mkdir dir="build/jogl1/windows-amd64"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-windows-amd64.zip"
+	    dest="download/jogl1-windows-amd64.zip" usetimestamp="true"/>
+	<unzip src="download/jogl1-windows-amd64.zip" dest="./">
+	    <mapper type="glob" from="*" to="build/jogl1/*"/>
+	</unzip>
+	<mkdir dir="build/jogl1/windows-i586"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-windows-i586.zip"
+	    dest="download/jogl1-windows-i586.zip" usetimestamp="true"/>
+	<unzip src="download/jogl1-windows-i586.zip" dest="./">
+	    <mapper type="glob" from="*" to="build/jogl1/*"/>
+	</unzip>
+	</target>
+
+	
+
 </project>
