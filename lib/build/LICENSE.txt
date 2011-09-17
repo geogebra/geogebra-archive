@@ -4,8 +4,19 @@ to build GeoGebra properly.
 jogl1
 -----
 
-The original binaries are repackaged into .zip files in order to decrease
-download time.
+The original binaries are repackaged into .zip files in order to
+decrease download time.
+
+License: BSD License.
+
+
+jogl2
+-----
+
+The original binaries are repackaged into .zip files for a shorter
+download time. The original files are here:
+
+http://jogamp.org/deployment/jogamp-current/archive/
 
 License: BSD License.
 
