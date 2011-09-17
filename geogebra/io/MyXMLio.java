@@ -689,7 +689,18 @@ public class MyXMLio {
 				ext = "JPG";
 			else
 				ext = "PNG";
+			
+			// circumvent security issues by disabling disk-based caching
+			if(app.isApplet()) {
+				javax.imageio.ImageIO.setUseCache(false);
+			}
+			
 			ImageIO.write(img, ext, os);
+			
+			// restore caching to prevent side-effects
+			if(app.isApplet()) {
+				javax.imageio.ImageIO.setUseCache(true);
+			}
 		} catch (Exception e) {
 			Application.debug(e.getMessage());
 			try {
