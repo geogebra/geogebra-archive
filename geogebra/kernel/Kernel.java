@@ -5367,6 +5367,17 @@ public class Kernel {
 	}
 	
 	/** 
+	 * SurdText[number]
+	 * Kai Chung Tam
+	 */
+	final public GeoText SurdText(String label, GeoNumeric num) {
+		AlgoSurdText algo = new AlgoSurdText(cons, label, num);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	
+	/** 
 	 * Mean[list]
 	 * Michael Borcherds
 	 */

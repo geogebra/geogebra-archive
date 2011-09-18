@@ -329,7 +329,8 @@ public class CommandDispatcher {
       	cmdTable.put("TextToUnicode", new CmdTextToUnicode(kernel));    	
       	cmdTable.put("UnicodeToText", new CmdUnicodeToText(kernel));    
       	cmdTable.put("UnicodeToLetter", new CmdUnicodeToLetter(kernel));    
-      	cmdTable.put("FractionText", new CmdFractionText(kernel));   
+      	cmdTable.put("FractionText", new CmdFractionText(kernel));
+      	cmdTable.put("SurdText", new CmdSurdText(kernel)); 
       	cmdTable.put("TableText", new CmdTableText(kernel)); 
       	cmdTable.put("VerticalText", new CmdVerticalText(kernel));	   
     	cmdTable.put("RotateText", new CmdRotateText(kernel));	   
