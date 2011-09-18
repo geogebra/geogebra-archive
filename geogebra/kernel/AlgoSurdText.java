@@ -71,7 +71,8 @@ public class AlgoSurdText extends AlgoElement {
 			
 			Application.debug(coeffs);
 			if (coeffs[0] == 0 && coeffs[1] == 0 && coeffs[2] == 0 ) {
-				text.setTextString(app.getPlain("undefined"));
+				text.setTextString("\\text{"+app.getPlain("undefined")+"}");
+		    	text.setLaTeX(true,false);
 			} else if (coeffs[0] == 0) {
 				//coeffs[1]: denominator;  coeffs[2]: numerator
 				if (coeffs[1] == 1) { // integer
@@ -102,7 +103,7 @@ public class AlgoSurdText extends AlgoElement {
 				int c = 2*coeffs[0];
 	
 				if (b2 == 0) { //should not happen!
-					text.setTextString("error");
+					text.setTextString("\\text{"+app.getPlain("undefined")+"}");
 					text.setLaTeX(true,false);
 					return;
 				}
