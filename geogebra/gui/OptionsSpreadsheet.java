@@ -50,7 +50,6 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 
 	private Application app;
 	private Kernel kernel;
-	private SpreadsheetSettings settings;
 	
 	private JCheckBox cbShowFormulaBar, cbShowGrid, cbShowRowHeader, 
 	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, 
@@ -70,8 +69,6 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	 */
 	public OptionsSpreadsheet(Application app, SpreadsheetView view) {
 		this.app = app;	
-		this.settings = app.getSettings().getSpreadsheet();
-		
 		kernel = app.getKernel();
 		
 		// build GUI
@@ -79,6 +76,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		updateGUI();
 	}
 
+	private SpreadsheetSettings settings(){
+		return app.getSettings().getSpreadsheet();
+	}
 	
 	
 	private void initGUI() {
@@ -298,64 +298,64 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         // layout tab GUI
 		
 		cbShowFormulaBar.removeActionListener(this);
-		cbShowFormulaBar.setSelected(settings.showFormulaBar());
+		cbShowFormulaBar.setSelected(settings().showFormulaBar());
 		cbShowFormulaBar.addActionListener(this);       
 		
 		cbShowGrid.removeActionListener(this);
-		cbShowGrid.setSelected(settings.showGrid());
+		cbShowGrid.setSelected(settings().showGrid());
 		cbShowGrid.addActionListener(this);          
         
         cbShowRowHeader.removeActionListener(this);
-        cbShowRowHeader.setSelected(settings.showRowHeader()); 
+        cbShowRowHeader.setSelected(settings().showRowHeader()); 
         cbShowRowHeader.addActionListener(this);
         
         cbShowColumnHeader.removeActionListener(this);
-        cbShowColumnHeader.setSelected(settings.showColumnHeader()); 
+        cbShowColumnHeader.setSelected(settings().showColumnHeader()); 
         cbShowColumnHeader.addActionListener(this);
         
         cbShowHScrollbar.removeActionListener(this);
-        cbShowHScrollbar.setSelected(settings.showHScrollBar()); 
+        cbShowHScrollbar.setSelected(settings().showHScrollBar()); 
         cbShowHScrollbar.addActionListener(this);
                
         cbShowVScrollbar.removeActionListener(this);
-        cbShowVScrollbar.setSelected(settings.showVScrollBar()); 
+        cbShowVScrollbar.setSelected(settings().showVScrollBar()); 
         cbShowVScrollbar.addActionListener(this);
         
       
         cbAllowSpecialEditor.removeActionListener(this);
-        cbAllowSpecialEditor.setSelected(settings.allowSpecialEditor()); 
+        cbAllowSpecialEditor.setSelected(settings().allowSpecialEditor()); 
         cbAllowSpecialEditor.addActionListener(this);
       
         cbAllowToolTips.removeActionListener(this);
-        cbAllowToolTips.setSelected(settings.allowToolTips()); 
+        cbAllowToolTips.setSelected(settings().allowToolTips()); 
         cbAllowToolTips.addActionListener(this);
         
         cbPrependCommands.removeActionListener(this);
-        cbPrependCommands.setSelected(settings.equalsRequired()); 
+        cbPrependCommands.setSelected(settings().equalsRequired()); 
         cbPrependCommands.addActionListener(this);
         
         //======================================
         // browser tab GUI
         
         cbShowBrowser.removeActionListener(this);
-        cbShowBrowser.setSelected(settings.showBrowserPanel()); 
+        cbShowBrowser.setSelected(settings().showBrowserPanel()); 
         cbShowBrowser.addActionListener(this);
         
         dirRadioButton.removeActionListener(this);
-        dirRadioButton.setSelected(settings.initialBrowserMode() == FileBrowserPanel.MODE_FILE); 
+        dirRadioButton.setSelected(settings().initialBrowserMode() == FileBrowserPanel.MODE_FILE); 
         dirRadioButton.addActionListener(this);
        
         urlRadioButton.removeActionListener(this);
-        urlRadioButton.setSelected(settings.initialBrowserMode() == FileBrowserPanel.MODE_URL); 
+        urlRadioButton.setSelected(settings().initialBrowserMode() == FileBrowserPanel.MODE_URL); 
         urlRadioButton.addActionListener(this);
         
         dirField.removeActionListener(this);
-        dirField.setText(settings.initialFilePath());
+        dirField.setText(settings().initialFilePath());
         dirField.setCaretPosition(0);
         dirField.addActionListener(this);
         
         urlField.removeActionListener(this);
-        urlField.setText(settings.initialURL());
+        urlField.setText(settings().initialURL());
         urlField.setCaretPosition(0);
         urlField.addActionListener(this);
         
@@ -382,62 +382,62 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		// layout options
 		
 		if (source == cbShowFormulaBar) {
-			settings.setShowFormulaBar(cbShowFormulaBar.isSelected());			
+			settings().setShowFormulaBar(cbShowFormulaBar.isSelected());			
 		}
 		
 		if (source == cbShowGrid) {
-			settings.setShowGrid(cbShowGrid.isSelected());			
+			settings().setShowGrid(cbShowGrid.isSelected());			
 		}
 		
 		else if (source == cbShowRowHeader) {
-			settings.setShowRowHeader(cbShowRowHeader.isSelected());			
+			settings().setShowRowHeader(cbShowRowHeader.isSelected());			
 		}
 			
 		else if (source == cbShowColumnHeader) {
-			settings.setShowColumnHeader(cbShowColumnHeader.isSelected());
+			settings().setShowColumnHeader(cbShowColumnHeader.isSelected());
 		}
 		
 		else if (source == cbShowHScrollbar) {
-			settings.setShowHScrollBar(cbShowHScrollbar.isSelected());
+			settings().setShowHScrollBar(cbShowHScrollbar.isSelected());
 		}
 		
 		else if (source == cbShowVScrollbar) {
-			settings.setShowVScrollBar(cbShowVScrollbar.isSelected());
+			settings().setShowVScrollBar(cbShowVScrollbar.isSelected());
 		}
 			
 		else if (source == cbAllowSpecialEditor) {
-			settings.setAllowSpecialEditor(cbAllowSpecialEditor.isSelected());
+			settings().setAllowSpecialEditor(cbAllowSpecialEditor.isSelected());
 		}
 		
 		else if (source == cbAllowToolTips) {
-			settings.setAllowToolTips(cbAllowToolTips.isSelected());
+			settings().setAllowToolTips(cbAllowToolTips.isSelected());
 		}
 		
 		else if (source == cbPrependCommands) {
-			settings.setEqualsRequired(cbPrependCommands.isSelected());
+			settings().setEqualsRequired(cbPrependCommands.isSelected());
 		}
 		
 		//========================================
 		// browser options
 				
 		else if (source == cbShowBrowser) {
-			settings.setShowFileBrowser(cbShowBrowser.isSelected());
+			settings().setShowFileBrowser(cbShowBrowser.isSelected());
 		}
 
 		else if (source == dirRadioButton) {
 			dirField.selectAll();
-			settings.beginBatch();
-			settings.setInitialFilePath(dirField.getText());
-			settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
-			settings.endBatch();
+			settings().beginBatch();
+			settings().setInitialFilePath(dirField.getText());
+			settings().setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
+			settings().endBatch();
 		}
 		
 		else if (source == urlRadioButton) {
 			urlField.selectAll();
-			settings.beginBatch();
-			settings.setInitialURL(urlField.getText());
-			settings.setInitialBrowserMode(FileBrowserPanel.MODE_URL);
-			settings.endBatch();
+			settings().beginBatch();
+			settings().setInitialURL(urlField.getText());
+			settings().setInitialBrowserMode(FileBrowserPanel.MODE_URL);
+			settings().endBatch();
 
 		}
 
@@ -452,11 +452,11 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		}
 		
 		else if (source == restoreButton) {
-			settings.setDefaultBrowser(true);
+			settings().setDefaultBrowser(true);
 		}
 		
 		else if (source == setCurrentButton) {
-			settings.setDefaultBrowser(false);
+			settings().setDefaultBrowser(false);
 		}
 		
 		updateGUI();

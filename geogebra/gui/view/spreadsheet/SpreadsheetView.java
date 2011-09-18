@@ -108,7 +108,6 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 	private SpreadsheetViewDnD dndHandler;
 
-	private SpreadsheetSettings settings;
 
 
 
@@ -122,8 +121,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		kernel = app.getKernel();
 
 		// Initialize settings and register listener
-		settings = app.getSettings().getSpreadsheet();
-		settings.addListener(this);
+		app.getSettings().getSpreadsheet().addListener(this);
 
 
 		// Build the spreadsheet table and enclosing scrollpane
@@ -139,7 +137,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		splitPane.setBorder(BorderFactory.createEmptyBorder());
 
 		// Set the browser as the left component or to null if showBrowserPanel == false
-		setShowFileBrowser(settings.showBrowserPanel());  
+		setShowFileBrowser(settings().showBrowserPanel());  
 
 
 		setLayout(new BorderLayout());
@@ -161,7 +159,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 		dndHandler = new SpreadsheetViewDnD(app, this);
 
-		settingsChanged(settings);
+		settingsChanged(settings());
 
 	}
 
@@ -445,7 +443,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 			multiVarStatDialog.setVisible(false);
 
 		// clear the formats and call settingsChanged 
-		settings.setCellFormat(null);
+		settings().setCellFormat(null);
 		
 	}	
 
@@ -574,7 +572,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	}
 
 	public void updateFormulaBar(){
-		if(formulaBar != null && settings.showFormulaBar())
+		if(formulaBar != null && settings().showFormulaBar())
 			formulaBar.update();
 	}
 
@@ -784,43 +782,43 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		sb.append("\t<layout ");
 
 		sb.append(" showFormulaBar=\"");
-		sb.append(settings.showFormulaBar()  ? "true" : "false" );
+		sb.append(settings().showFormulaBar()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showGrid=\"");
-		sb.append(settings.showGrid()  ? "true" : "false" );
+		sb.append(settings().showGrid()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showHScrollBar=\"");
-		sb.append(settings.showHScrollBar()  ? "true" : "false" );
+		sb.append(settings().showHScrollBar()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showVScrollBar=\"");
-		sb.append(settings.showVScrollBar()  ? "true" : "false" );
+		sb.append(settings().showVScrollBar()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showBrowserPanel=\"");
-		sb.append(settings.showBrowserPanel()  ? "true" : "false" );
+		sb.append(settings().showBrowserPanel()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showColumnHeader=\"");
-		sb.append(settings.showColumnHeader()  ? "true" : "false" );
+		sb.append(settings().showColumnHeader()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" showRowHeader =\"");
-		sb.append(settings.showRowHeader()  ? "true" : "false" );
+		sb.append(settings().showRowHeader()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" allowSpecialEditor=\"");
-		sb.append(settings.allowSpecialEditor()  ? "true" : "false" );
+		sb.append(settings().allowSpecialEditor()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" allowToolTips=\"");
-		sb.append(settings.allowToolTips()  ? "true" : "false" );
+		sb.append(settings().allowToolTips()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append(" equalsRequired=\"");
-		sb.append(settings.equalsRequired()  ? "true" : "false" );
+		sb.append(settings().equalsRequired()  ? "true" : "false" );
 		sb.append("\"");
 
 		sb.append("/>\n");
@@ -833,24 +831,24 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 		if(fileBrowser != null){
 			sb.append("\t<spreadsheetBrowser ");
 
-			if(!settings.initialFilePath().equals(settings.defaultFile()) 
-					|| settings.initialURL() != DEFAULT_URL 
-					|| settings.initialBrowserMode() != DEFAULT_MODE)
+			if(!settings().initialFilePath().equals(settings().defaultFile()) 
+					|| settings().initialURL() != DEFAULT_URL 
+					|| settings().initialBrowserMode() != DEFAULT_MODE)
 			{	
 				sb.append(" default=\"");
 				sb.append("false");
 				sb.append("\"");	
 
 				sb.append(" dir=\"");
-				sb.append(settings.initialFilePath());
+				sb.append(settings().initialFilePath());
 				sb.append("\"");
 
 				sb.append(" URL=\"");
-				sb.append(settings.initialURL());
+				sb.append(settings().initialURL());
 				sb.append("\"");
 
 				sb.append(" mode=\"");
-				sb.append(settings.initialBrowserMode());
+				sb.append(settings().initialBrowserMode());
 				sb.append("\"");	
 
 			}else{
@@ -972,8 +970,8 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 	public void setColumnWidthsFromSettings(){
 
-		table.setPreferredColumnWidth(settings.preferredColumnWidth());
-		HashMap<Integer,Integer> widthMap = settings.getWidthMap();
+		table.setPreferredColumnWidth(settings().preferredColumnWidth());
+		HashMap<Integer,Integer> widthMap = settings().getWidthMap();
 		for (int i = 0; i < table.getColumnCount(); ++ i) {
 			if(widthMap.containsKey(i))
 				table.getColumnModel().getColumn(i).setPreferredWidth(widthMap.get(i));
@@ -1126,7 +1124,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	}
 
 	public boolean getShowBrowserPanel(){
-		return settings.showBrowserPanel();
+		return settings().showBrowserPanel();
 
 	}
 
@@ -1176,42 +1174,42 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 
 	public int getInitialBrowserMode() {
-		return settings.initialBrowserMode();
+		return settings().initialBrowserMode();
 	}
 
 
 	public String getInitialURLString() {
-		return settings.initialURL();
+		return settings().initialURL();
 	}
 
 
 	public String getInitialFileString() {
-		return settings.initialFilePath();
+		return settings().initialFilePath();
 	}
 
 
 	public void setBrowserDefaults(boolean doRestore){
 
 		if(doRestore){
-			settings.setInitialFilePath(settings.defaultFile());
-			settings.setInitialURL(DEFAULT_URL);
-			settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
+			settings().setInitialFilePath(settings().defaultFile());
+			settings().setInitialURL(DEFAULT_URL);
+			settings().setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
 			//initFileBrowser();
 
 		}else{
-			settings.setInitialFilePath(fileBrowser.getRootString());
-			settings.setInitialBrowserMode(fileBrowser.getMode());
+			settings().setInitialFilePath(fileBrowser.getRootString());
+			settings().setInitialBrowserMode(fileBrowser.getMode());
 		}
 	}
 
 	public void initFileBrowser(){
 		// don't init file browser without full permissions (e.g. unsigned applets)
-		if(!app.hasFullPermissions() || !settings.showBrowserPanel()) return;
+		if(!app.hasFullPermissions() || !settings().showBrowserPanel()) return;
 
-		if(settings.initialBrowserMode() == FileBrowserPanel.MODE_FILE)
-			setFileBrowserDirectory(settings.initialFilePath(), settings.initialBrowserMode());
+		if(settings().initialBrowserMode() == FileBrowserPanel.MODE_FILE)
+			setFileBrowserDirectory(settings().initialFilePath(), settings().initialBrowserMode());
 		else
-			setFileBrowserDirectory(settings.initialURL(), settings.initialBrowserMode());
+			setFileBrowserDirectory(settings().initialURL(), settings().initialBrowserMode());
 	}
 
 	public boolean setFileBrowserDirectory(String rootString, int mode) {
@@ -1286,7 +1284,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 
 
 	public boolean getAllowToolTips() {
-		return settings.allowToolTips();
+		return settings().allowToolTips();
 	}
 
 	public void setAllowToolTips(boolean allowToolTips) {
@@ -1309,7 +1307,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	}
 
 	public boolean getShowFormulaBar(){
-		return settings.showFormulaBar();
+		return settings().showFormulaBar();
 	}
 
 
@@ -1323,7 +1321,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	}
 
 	public boolean isColumnSelect(){
-		return settings.isColumnSelect();
+		return settings().isColumnSelect();
 	}
 
 	public void setAllowSpecialEditor(boolean allowSpecialEditor){
@@ -1331,7 +1329,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	}
 
 	public boolean allowSpecialEditor(){
-		return settings.allowSpecialEditor();
+		return settings().allowSpecialEditor();
 	}
 
 	/**
@@ -1345,7 +1343,7 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	 * gets requirement that commands entered into cells must start with "="
 	 */
 	public boolean isEqualsRequired(){
-		return settings.equalsRequired();
+		return settings().equalsRequired();
 	}
 
 
@@ -1354,23 +1352,23 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	protected void updateCellFormat(String cellFormat){
 		if(!allowSettingUpate) return;
 
-		settings.removeListener(this);
-		settings.setCellFormat(cellFormat);
-		settings.addListener(this);
+		settings().removeListener(this);
+		settings().setCellFormat(cellFormat);
+		settings().addListener(this);
 	}
 
 	protected void updateAllRowSettings(){
 		if(!allowSettingUpate) return;
 
-		settings.removeListener(this);
-		settings.setPreferredRowHeight(table.getRowHeight());
-		settings.getHeightMap().clear();
+		settings().removeListener(this);
+		settings().setPreferredRowHeight(table.getRowHeight());
+		settings().getHeightMap().clear();
 		for (int row = 0 ; row < table.getRowCount() ; row++) {
 			int rowHeight = table.getRowHeight(row);
 			if (rowHeight != table.getRowHeight())
-				settings.getHeightMap().put(row,rowHeight);
+				settings().getHeightMap().put(row,rowHeight);
 		}
-		settings.addListener(this);
+		settings().addListener(this);
 	}
 
 
@@ -1378,102 +1376,101 @@ View, ComponentListener, FocusListener, Gridable, SettingListener
 	protected void updateRowHeightSetting(int row, int height){
 		if(!allowSettingUpate) return;
 
-		settings.removeListener(this);
-		settings.getHeightMap().put(row, height);
-		settings.addListener(this);
+		settings().removeListener(this);
+		settings().getHeightMap().put(row, height);
+		settings().addListener(this);
 	}
 
 	protected void updatePreferredRowHeight(int preferredRowHeight){
 		if(!allowSettingUpate) return;
 
-		settings.removeListener(this);
-		settings.getHeightMap().clear();
-		settings.setPreferredRowHeight(preferredRowHeight);
-		settings.addListener(this);
+		settings().removeListener(this);
+		settings().getHeightMap().clear();
+		settings().setPreferredRowHeight(preferredRowHeight);
+		settings().addListener(this);
 	}
 
 
 	protected void updateColumnWidth(int col, int colWidth){
 		if(!allowSettingUpate) return;
 
-		settings.removeListener(this);
-		settings.getWidthMap().put(col, colWidth);
-		settings.addListener(this);
+		settings().removeListener(this);
+		settings().getWidthMap().put(col, colWidth);
+		settings().addListener(this);
 	}
 
 	protected void updatePreferredColumnWidth(int colWidth){
 		if(!allowSettingUpate) return;
 
-		settings.removeListener(this);
-		settings.getWidthMap().clear();
-		settings.setPreferredColumnWidth(table.preferredColumnWidth);
-		settings.addListener(this);
+		settings().removeListener(this);
+		settings().getWidthMap().clear();
+		settings().setPreferredColumnWidth(table.preferredColumnWidth);
+		settings().addListener(this);
 	}
 
 
 	protected void updateAllColumnWidthSettings(){
 		if(!allowSettingUpate) return;
 
-		settings.removeListener(this);
-		settings.setPreferredColumnWidth(table.preferredColumnWidth);
-		settings.getWidthMap().clear();
+		settings().removeListener(this);
+		settings().setPreferredColumnWidth(table.preferredColumnWidth);
+		settings().getWidthMap().clear();
 		for (int col = 0 ; col < table.getColumnCount() ; col++) {
 			TableColumn column = table.getColumnModel().getColumn(col); 
 			int colWidth = column.getWidth();
 			if (colWidth !=	table.preferredColumnWidth)
-				settings.getWidthMap().put(col, colWidth);
+				settings().getWidthMap().put(col, colWidth);
 		}
-		settings.addListener(this);
+		settings().addListener(this);
 	}
 
 
 	protected SpreadsheetSettings settings(){
-		return settings;
+		return app.getSettings().getSpreadsheet();
 	}
 
-
-
+	
 	public void settingsChanged(AbstractSettings settings0) {
 
 		allowSettingUpate = false;
 
 		// layout
-		setShowColumnHeader(settings.showColumnHeader());
-		setShowRowHeader(settings.showRowHeader()) ;
-		setShowVScrollBar(settings.showVScrollBar());
-		setShowHScrollBar(settings.showHScrollBar());
-		setShowGrid(settings.showGrid());
-		setAllowToolTips(settings.allowToolTips());
-		setShowFormulaBar(settings.showFormulaBar());
-		setColumnSelect(settings.isColumnSelect());
-		setAllowSpecialEditor(settings.allowSpecialEditor());
-		setEqualsRequired(settings.equalsRequired());
+		setShowColumnHeader(settings().showColumnHeader());
+		setShowRowHeader(settings().showRowHeader()) ;
+		setShowVScrollBar(settings().showVScrollBar());
+		setShowHScrollBar(settings().showHScrollBar());
+		setShowGrid(settings().showGrid());
+		setAllowToolTips(settings().allowToolTips());
+		setShowFormulaBar(settings().showFormulaBar());
+		setColumnSelect(settings().isColumnSelect());
+		setAllowSpecialEditor(settings().allowSpecialEditor());
+		setEqualsRequired(settings().equalsRequired());
 
 		// browser panel
 		if(app.hasFullPermissions()){
-			settings.removeListener(this);
-			if(settings.initialBrowserMode() < 0)
-				settings.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
-			if(settings.defaultFile() == null)
-				settings.setDefaultFile(System.getProperty("user.dir"));
-			if(settings.initialFilePath() == null)
-				settings.setInitialFilePath(System.getProperty("user.dir"));
-			if(settings.initialURL() == null)
-				settings.setInitialURL(DEFAULT_URL);
-			settings.addListener(this);
+			settings().removeListener(this);
+			if(settings().initialBrowserMode() < 0)
+				settings().setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
+			if(settings().defaultFile() == null)
+				settings().setDefaultFile(System.getProperty("user.dir"));
+			if(settings().initialFilePath() == null)
+				settings().setInitialFilePath(System.getProperty("user.dir"));
+			if(settings().initialURL() == null)
+				settings().setInitialURL(DEFAULT_URL);
+			settings().addListener(this);
 		}
 
-		setShowFileBrowser(settings.showBrowserPanel());
+		setShowFileBrowser(settings().showBrowserPanel());
 
 		// row height and column widths		
 		setColumnWidthsFromSettings();
 		setRowHeightsFromSettings();
 
 		// cell format
-		getTable().getCellFormatHandler().processXMLString(settings.cellFormat());	
+		getTable().getCellFormatHandler().processXMLString(settings().cellFormat());	
 
 		// preferredSize
-		this.setPreferredSize(settings.preferredSize());
+		this.setPreferredSize(settings().preferredSize());
 
 
 		// initial position

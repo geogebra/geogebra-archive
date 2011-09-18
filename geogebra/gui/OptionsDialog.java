@@ -153,8 +153,6 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 	public void restoreDefaults(){
 		defaultsPanel.restoreDefaults();	
 		
-		// TODO
-		// --- add calls to other panels here
 		
 		updateGUI();
 	}
@@ -236,7 +234,16 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 					app.getEuclidianView2().getStyleBar().restoreDefaultGeo();
 				
 				// reset defaults for GUI, views etc
-				app.getSettings().resetSettings();				
+				app.getSettings().resetSettings();
+				if(app.getGuiManager().hasSpreadsheetView()){
+					app.getGuiManager().getSpreadsheetView().settingsChanged(app.getSettings().getSpreadsheet());
+				}
+				app.getEuclidianView().settingsChanged(app.getSettings().getEuclidian(1));
+				app.getEuclidianView().repaint();
+				if(app.hasEuclidianView2EitherShowingOrNot()){
+					app.getEuclidianView2().settingsChanged(app.getSettings().getEuclidian(2));
+					app.getEuclidianView2().repaint();
+				}
 				
 				// restore dialog panels to display these defaults
 				restoreDefaults();
