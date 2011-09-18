@@ -405,7 +405,7 @@ public abstract class GeoElement
 	private boolean isAlgoMacroOutput; // is an output object of a macro construction
 	protected boolean fixed = false;
 	public int labelMode = LABEL_NAME;
-	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar
+	public int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar
 	protected Color objColor = Color.black;
 	protected Color bgColor = null; // none by default
 	protected Color selColor = objColor;

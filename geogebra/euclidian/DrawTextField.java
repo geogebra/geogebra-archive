@@ -14,11 +14,14 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -185,6 +188,11 @@ public final class DrawTextField extends Drawable {
 						defineText = prefix + defineText;
 				} else if (linkedGeo.isGeoText()) {
 					defineText = "\"" +  defineText + "\"";
+				} else if (linkedGeo.isGeoPoint()) {
+					if (((GeoPoint)linkedGeo).toStringMode == Kernel.COORD_COMPLEX) {
+						// z=2 doesn't work for complex numbers (parses to GeoNumeric)
+						defineText = defineText + "+0"+Unicode.IMAGINARY;
+					}
 				} else if (linkedGeo instanceof FunctionalNVar) {
 					// string like f(x,y)=x^2
 					// or f(\theta) = \theta
