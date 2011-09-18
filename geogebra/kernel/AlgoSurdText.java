@@ -69,7 +69,11 @@ public class AlgoSurdText extends AlgoElement {
 		if (input[0].isDefined()) {
 			
 			sb.setLength(0);
-			PSLQappend(sb, num.getDouble());
+			
+			if (Kernel.isEqual(num.getDouble(), 0.0, Kernel.MAX_PRECISION))
+				sb.append(kernel.format(0));
+			else
+				PSLQappend(sb, num.getDouble());
 			
 			text.setTextString(sb.toString());
 			text.setLaTeX(true, false);
@@ -89,16 +93,22 @@ public class AlgoSurdText extends AlgoElement {
 			sb.append("\\text{"+app.getPlain("undefined")+"}");
 		} else if (coeffs[0] == 0) {
 			//coeffs[1]: denominator;  coeffs[2]: numerator
-			if (coeffs[1] == 1) { // integer
-				sb.append(kernel.format(-coeffs[2]));				
-			} else if (coeffs[1] == 0) { // 1 / 0 or -1 / 0
-				sb.append( -coeffs[2] < 0 ? "-"+Unicode.Infinity : ""+Unicode.Infinity);				
+			int denom = coeffs[1];
+			int numer = -coeffs[2];
+			if (denom<0) {
+				denom= -denom;
+				numer= -numer;
+			}
+			
+			if (denom == 1) { // integer
+				sb.append(kernel.format(numer));				
+			} else if (denom == 0) { // 1 / 0 or -1 / 0
+				sb.append( numer < 0 ? "-"+Unicode.Infinity : ""+Unicode.Infinity);				
 			} else {
 		    	sb.append("{\\frac{");
-		    	// checkDecimalFraction() needed for eg FractionText[20.0764]
-		    	sb.append(kernel.format(-coeffs[2]));
+		    	sb.append(kernel.format(numer));
 		    	sb.append("}{");
-		    	sb.append(kernel.format(coeffs[1]));
+		    	sb.append(kernel.format(denom));
 		    	sb.append("}}");
 		    	
 			}
@@ -123,12 +133,35 @@ public class AlgoSurdText extends AlgoElement {
 				b2 = b2 / 4;
 				b1 = b1 * 2;
 			}
-			for (int s = 3; s<Math.sqrt(b2); s+=2)
+			for (int s = 3; s<=Math.sqrt(b2); s+=2)
 				while (b2 % (s*s) ==0) {
 					b2 = b2 / (s*s);
 					b1 = b1 * s;
 				}
 			
+			if (c<0) {
+				a=-a;
+				c=-c;
+			}
+			
+			boolean positive;
+			if (num > (a+0.0)/c) {
+				positive=true;
+				if (b2==1) {
+					a+=b1;
+					b1=0;
+					b2=0;
+				}
+			} else {
+				positive=false;
+				if (b2==1) {
+					a-=b1;
+					b1=0;
+					b2=0;
+				}
+			}
+			
+
 			int gcd = MathUtils.gcd(MathUtils.gcd(a,b1),c);
 			if (gcd!=1) {
 				a=a/gcd;
@@ -136,33 +169,27 @@ public class AlgoSurdText extends AlgoElement {
 				c=c/gcd;
 			}
 			
-			if (c<0) {
-				a=-a;
-				c=-c;
-			}
-			
-			
+			//when fraction is needed
 			if (c!=1) sb.append("\\frac{");
 			
 			if (a!=0) sb.append(kernel.format(a));
-			if (num > (a+0.0)/c) {
-				if (a!=0) sb.append("+");
-			} else {
-				sb.append("-");
-			}
 			
-			if (b1 == 1 && b2 == 1)
-				sb.append(kernel.format(1));
-			else {
+			//when the radical is surd
+			if (b2!=0) {
+				if (positive) {
+					if (a!=0) sb.append("+");
+				} else {
+					sb.append("-");
+				}
+				
 				if (b1!=1)
 					sb.append(kernel.format(b1));
-				if (b2!=1) {
-					sb.append("\\sqrt{");
-					sb.append(kernel.format(b2));
-					sb.append("}");
-				}
+				sb.append("\\sqrt{");
+				sb.append(kernel.format(b2));
+				sb.append("}");
 			}
-				
+			
+			//when fraction is needed
 			if (c!=1) {
 				sb.append("}{");
 				sb.append(kernel.format(c));
