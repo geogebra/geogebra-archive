@@ -23,9 +23,7 @@ public class AlgoSurdText extends AlgoElement {
 	private GeoNumeric num; //input
     private GeoText text; //output	
     
-    private double quadNum[] = {0,0,0};
- 
-    private StringBuilder sb = new StringBuilder();
+    protected StringBuilder sb = new StringBuilder();
     
     AlgoSurdText(Construction cons, String label, GeoNumeric num) {
     	this(cons, num);
@@ -37,13 +35,18 @@ public class AlgoSurdText extends AlgoElement {
         this.num = num;
                
         text = new GeoText(cons);
+		text.setLaTeX(true, false);
 		text.setIsTextCommand(true); // stop editing as text
 		
         setInputOutput();
         compute();
     }
 
-    public String getClassName() {
+    public AlgoSurdText(Construction cons) {
+		super(cons);
+	}
+
+	public String getClassName() {
         return "AlgoSurdText";
     }
 
@@ -60,113 +63,114 @@ public class AlgoSurdText extends AlgoElement {
         return text;
     }
 
-    protected final void compute() {
+    protected void compute() {
     	
     	
 		if (input[0].isDefined()) {
 			
-			double[] numPowers = {num.getDouble()*num.getDouble(), num.getDouble(), 1.0};
-			int[] coeffs = PSLQ(numPowers,Kernel.STANDARD_PRECISION,10);
-			//frac = DecimalToFraction(num.getDouble(),Kernel.STANDARD_PRECISION);
+			sb.setLength(0);
+			PSLQappend(sb, num.getDouble());
 			
-			Application.debug(coeffs);
-			if (coeffs[0] == 0 && coeffs[1] == 0 && coeffs[2] == 0 ) {
-				text.setTextString("\\text{"+app.getPlain("undefined")+"}");
-		    	text.setLaTeX(true,false);
-			} else if (coeffs[0] == 0) {
-				//coeffs[1]: denominator;  coeffs[2]: numerator
-				if (coeffs[1] == 1) { // integer
-			    	text.setTextString(kernel.format(-coeffs[2]));				
-				} else if (coeffs[1] == 0) { // 1 / 0 or -1 / 0
-			    	text.setTextString( -coeffs[2] < 0 ? "-"+Unicode.Infinity : ""+Unicode.Infinity);				
-				} else {
-					sb.setLength(0);
-			    	sb.append("{\\frac{");
-			    	// checkDecimalFraction() needed for eg FractionText[20.0764]
-			    	sb.append(kernel.format(-coeffs[2]));
-			    	sb.append("}{");
-			    	sb.append(kernel.format(coeffs[1]));
-			    	sb.append("}}");
-			    	
-			    	text.setTextString(sb.toString());
-				}
-		    	text.setLaTeX(true,false);
-
-			} else {
-				
-				//coeffs, if found, shows the equation coeffs[2]+coeffs[1]x+coeffs[0]x^2=0"
-				//We want x=\frac{a +/- b1\sqrt{b2}}{c}
-				//where  c=coeffs[0], a=-coeffs[1], b=coeffs[1]^2 - 4*coeffs[0]*coeffs[2]
-				int a = -coeffs[1];
-				int b2 = coeffs[1]*coeffs[1] - 4*coeffs[0]*coeffs[2];
-				int b1 =1;
-				int c = 2*coeffs[0];
-	
-				if (b2 == 0) { //should not happen!
-					text.setTextString("\\text{"+app.getPlain("undefined")+"}");
-					text.setLaTeX(true,false);
-					return;
-				}
-				
-				//free the squares of b2
-				while (b2 % 4==0) {
-					b2 = b2 / 4;
-					b1 = b1 * 2;
-				}
-				for (int s = 3; s<Math.sqrt(b2); s+=2)
-					while (b2 % (s*s) ==0) {
-						b2 = b2 / (s*s);
-						b1 = b1 * s;
-					}
-				
-				int gcd = MathUtils.gcd(MathUtils.gcd(a,b1),c);
-				if (gcd!=1) {
-					a=a/gcd;
-					b1=b1/gcd;
-					c=c/gcd;
-				}
-				
-				if (c<0) {
-					a=-a;
-					c=-c;
-				}
-				
-				sb.setLength(0);
-				//sb.append("{");
-				
-				if (c!=1) sb.append("\\frac{");
-				
-				if (a!=0) sb.append(kernel.format(a));
-				if (num.getDouble() > (a+0.0)/c) {
-					if (a!=0) sb.append("+");
-				} else {
-					sb.append("-");
-				}
-				
-				if (b1 == 1 && b2 == 1)
-					sb.append(kernel.format(1));
-				else {
-					if (b1!=1)
-						sb.append(kernel.format(b1));
-					if (b2!=1) {
-						sb.append("\\sqrt{");
-						sb.append(kernel.format(b2));
-						sb.append("}");
-					}
-				}
-					
-				if (c!=1) {
-					sb.append("}{");
-					sb.append(kernel.format(c));
-			    	sb.append("}");
-				}
-				//sb.append("}");
-		    	text.setTextString(sb.toString());
-		    	text.setLaTeX(true,false);
-			}
+			text.setTextString(sb.toString());
+			text.setLaTeX(true, false);
+			
+		} else {
+			text.setUndefined();
 		}
 			
 	}
+    
+    protected void PSLQappend(StringBuilder sb, double num) {
+		double[] numPowers = {num * num, num, 1.0};
+		int[] coeffs = PSLQ(numPowers,Kernel.STANDARD_PRECISION,10);
+		
+		Application.debug(coeffs);
+		if (coeffs[0] == 0 && coeffs[1] == 0 && coeffs[2] == 0 ) {
+			sb.append("\\text{"+app.getPlain("undefined")+"}");
+		} else if (coeffs[0] == 0) {
+			//coeffs[1]: denominator;  coeffs[2]: numerator
+			if (coeffs[1] == 1) { // integer
+				sb.append(kernel.format(-coeffs[2]));				
+			} else if (coeffs[1] == 0) { // 1 / 0 or -1 / 0
+				sb.append( -coeffs[2] < 0 ? "-"+Unicode.Infinity : ""+Unicode.Infinity);				
+			} else {
+		    	sb.append("{\\frac{");
+		    	// checkDecimalFraction() needed for eg FractionText[20.0764]
+		    	sb.append(kernel.format(-coeffs[2]));
+		    	sb.append("}{");
+		    	sb.append(kernel.format(coeffs[1]));
+		    	sb.append("}}");
+		    	
+			}
+
+		} else {
+			
+			//coeffs, if found, shows the equation coeffs[2]+coeffs[1]x+coeffs[0]x^2=0"
+			//We want x=\frac{a +/- b1\sqrt{b2}}{c}
+			//where  c=coeffs[0], a=-coeffs[1], b=coeffs[1]^2 - 4*coeffs[0]*coeffs[2]
+			int a = -coeffs[1];
+			int b2 = coeffs[1]*coeffs[1] - 4*coeffs[0]*coeffs[2];
+			int b1 =1;
+			int c = 2*coeffs[0];
+
+			if (b2 == 0) { //should not happen!
+				sb.append("\\text{"+app.getPlain("undefined")+"}");
+				return;
+			}
+			
+			//free the squares of b2
+			while (b2 % 4==0) {
+				b2 = b2 / 4;
+				b1 = b1 * 2;
+			}
+			for (int s = 3; s<Math.sqrt(b2); s+=2)
+				while (b2 % (s*s) ==0) {
+					b2 = b2 / (s*s);
+					b1 = b1 * s;
+				}
+			
+			int gcd = MathUtils.gcd(MathUtils.gcd(a,b1),c);
+			if (gcd!=1) {
+				a=a/gcd;
+				b1=b1/gcd;
+				c=c/gcd;
+			}
+			
+			if (c<0) {
+				a=-a;
+				c=-c;
+			}
+			
+			
+			if (c!=1) sb.append("\\frac{");
+			
+			if (a!=0) sb.append(kernel.format(a));
+			if (num > (a+0.0)/c) {
+				if (a!=0) sb.append("+");
+			} else {
+				sb.append("-");
+			}
+			
+			if (b1 == 1 && b2 == 1)
+				sb.append(kernel.format(1));
+			else {
+				if (b1!=1)
+					sb.append(kernel.format(b1));
+				if (b2!=1) {
+					sb.append("\\sqrt{");
+					sb.append(kernel.format(b2));
+					sb.append("}");
+				}
+			}
+				
+			if (c!=1) {
+				sb.append("}{");
+				sb.append(kernel.format(c));
+		    	sb.append("}");
+			}
+		}
+
+    }
   
     /*	Algorithm PSLQ
 	* from Ferguson and Bailey (1992)

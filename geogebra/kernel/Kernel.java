@@ -93,10 +93,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.util.List;
 
 public class Kernel {
 
@@ -5372,6 +5372,16 @@ public class Kernel {
 	 */
 	final public GeoText SurdText(String label, GeoNumeric num) {
 		AlgoSurdText algo = new AlgoSurdText(cons, label, num);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	
+	/** 
+	 * SurdText[Point]
+	 */
+	final public GeoText SurdText(String label, GeoPoint p) {
+		AlgoSurdTextPoint algo = new AlgoSurdTextPoint(cons, label, p);
 		GeoText text = algo.getResult();
 		return text;
 	}
