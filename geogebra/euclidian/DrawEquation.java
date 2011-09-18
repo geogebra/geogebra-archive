@@ -172,12 +172,10 @@ public class DrawEquation {
 			g2.drawImage(im,x,y,null);
 			
 			if (width == -1) {
-				Application.debug("width not set");
 				width = im.getWidth(null);
 			}
 			if (height == -1) {
-				Application.debug("height not set"+im.getHeight(null));
-				width = im.getHeight(null);
+				height = im.getHeight(null);
 			}
 
 			return new FormulaDimension(width, height, depth);
