@@ -965,7 +965,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     private void appendCheckVector(StringBuilder sb, GeoElement geo, boolean real) {
         String cmd = real? geo.getRealLabel():geo.getLabel();
         if (geo.isGeoVector()) {
-        	String vectorCommand = app.getCommand("Vector")+"[";
+        	String vectorCommand = "Vector["; // in XML, so don't want this translated
         	boolean needsWrapping = !geo.isLabelSet() && !cmd.startsWith(vectorCommand);
         	
         	if (needsWrapping) sb.append(vectorCommand);
