@@ -123,12 +123,16 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
   -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $WINDOWS_INSTALLER_EXE
  fi
 
-# 9. rsync-www on demand
+# 9/1. rsync-www on demand:
 if [ "$WWW_REMOTEDIR" != "" ]; then
  echo "$0: Copying all files to $WWW_REMOTEDIR"
  cd $SVNDIR/geogebra/scripts/autobuild
  ./rsync-www 2>&1 >.rsync-www
  fi
+
+# 9/2. Push to mirrors:
+cd $SVNDIR/geogebra/scripts/autobuild
+./push-to-mirrors
 
 # 10. Sending an email to geogebra-dev:
 REVISION=`cat $SVNDIR/geogebra/scripts/autobuild/.revision`
