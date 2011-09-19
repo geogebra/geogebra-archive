@@ -77,6 +77,10 @@ would like to use the official JAR files everywhere.
 	    usetimestamp="true"/>
 	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-win.jar" dest="vernier_ccsd-win.jar"
 	    usetimestamp="true"/>
+	<unjar src="vernier_ccsd-win.jar" dest="./">
+			    <mapper type="glob" from="*" to="../*"/>
+	</unjar>
+		
 	</target>
 
 	<!-- download ecj -->
