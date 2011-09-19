@@ -11,19 +11,57 @@ would like to use the official JAR files everywhere.
 
 -->
 
-<project default="lib">
+<project default="geogebra4-developer">
 
-	<!-- download external libraries -->
+	<target name="geogebra4-developer" depends="mpreduce-geogebra, lib-runtime">
+	</target>
+
+	<target name="geogebra5-developer" depends="mpreduce-geogebra, lib-runtime, jogl1">
+	</target>
+
+	<target name="geogebra4-developer-commandline" depends="geogebra4-developer, javacc, ecj">
+	</target>
+
+	<target name="geogebra4-packager" depends="geogebra4-developer, proguard, p200ant">
+	</target>
+
+	<target name="geogebra4-packager-commandline" depends="geogebra4-developer-commandline, proguard, p200ant">
+	</target>
+
+	<!-- these targets should come from the GeoGebra repository (currently) -->
+	<target name="mpreduce" depends="mpreduce-geogebra"/>
+	<target name="jogl1" depends="jogl1-geogebra"/>
+	<target name="jogl2" depends="jogl2-geogebra"/>
+	<target name="jlatexmath" depends="jlatexmath-geogebra"/>
+	<target name="p200ant" depends="p200ant-geogebra"/>
+	<target name="jsobject" depends="jsobject-geogebra"/>
+	<target name="mac_extensions" depends="mac_extensions-geogebra"/>
+	<target name="vernier" depends="vernier-geogebra"/>
+
+	<!-- download all external libraries -->
 	<!--target name="lib" depends="lib-runtime, lib-build, lib-build-installer"-->
 	<target name="lib" depends="lib-runtime, lib-build">
 	</target>
 
-	<target name="lib-build" depends="mpreduce-geogebra, javacc, ecj, proguard, p200ant-geogebra, jogl1-geogebra, jogl2-geogebra">
+	<target name="lib-build" depends="mpreduce, javacc, ecj, proguard, p200ant, jogl1, jogl2">
 	</target>
 
 	<!-- download runtime libraries -->
-	<target name="lib-runtime" depends="jlatexmath-geogebra, jsobject-geogebra, mac_extensions-geogebra, vernier-geogebra">
+	<target name="lib-runtime" depends="jlatexmath, jsobject, mac_extensions, vernier">
 	</target>
+
+	<!-- detecting operating system -->
+	<condition property="winnt">
+		<os family="winnt"/>
+	</condition>
+
+	<condition property="mac">
+		<os family="mac"/>
+	</condition>
+
+	<condition property="unix">
+		<os family="unix"/>
+	</condition>
 
 	<!-- download jlatexmath-minimal.zip directly from Calixte Denizet's repository -->
 	<target name="jlatexmath-calixte">
@@ -80,7 +118,6 @@ would like to use the official JAR files everywhere.
 	<unjar src="vernier_ccsd-win.jar" dest="./">
 			    <mapper type="glob" from="*" to="../*"/>
 	</unjar>
-		
 	</target>
 
 	<!-- download ecj -->
@@ -141,18 +178,6 @@ would like to use the official JAR files everywhere.
 	    <mapper type="glob" from="*" to="build/jogl1/*"/>
 	</unzip>
 	</target>
-
-	<condition property="winnt">
-		<os family="winnt"/>
-	</condition>
-
-	<condition property="mac">
-		<os family="mac"/>
-	</condition>
-
-	<condition property="unix">
-		<os family="unix"/>
-	</condition>
 
 	<target name="jogl1-linux-geogebra" if="unix">
 	<mkdir dir="download"/>
@@ -250,7 +275,5 @@ would like to use the official JAR files everywhere.
 	    <mapper type="glob" from="*" to="build/jogl2/*"/>
 	</unzip>
 	</target>
-
-	
 
 </project>
