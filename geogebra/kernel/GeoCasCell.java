@@ -731,13 +731,22 @@ public class GeoCasCell extends GeoElement {
 	private ValidExpression resolveInputReferences(ValidExpression ve, TreeSet<GeoElement> inGeos) {
 		if (ve == null) return ve;
 		
+		ValidExpression ret;
+		
 		// make sure we have an expression node
 		ExpressionNode node;
-		if (ve instanceof ExpressionNode) {
+		if (ve instanceof FunctionNVar) {
+			node = ((FunctionNVar) ve).getExpression();
+			ret = ve; // make sure we return the Function
+		}
+		else if (ve instanceof ExpressionNode) {
 			node = (ExpressionNode) ve;
-		} else {
+			ret = ve; // return the original ExpressionNode
+		} 
+		else {
 			node = new ExpressionNode(kernel, ve);
 			node.setLabel(ve.getLabel());
+			ret = node; // return a new ExpressionNode
 		}
 		
 		// replace GeoDummyVariable occurances for each geo
@@ -758,7 +767,7 @@ public class GeoCasCell extends GeoElement {
 			}
 		}
 		
-		return node;
+		return ret;
 	}
 	
 	/**
@@ -888,8 +897,10 @@ public class GeoCasCell extends GeoElement {
 		// when input is a function declaration, output also needs to become a function
 		// so we need to add f(x,y) := if it is missing
 		boolean isFunctionDeclaration = isAssignment() 
-			&& functionvars != null 
-			&& !output.startsWith(assignmentVar);
+			&& functionvars != null; 
+		// note: MPReduce returns "f" for a function definition "f(x) := x^2"
+		//	&& !output.startsWith(assignmentVar);
+		
 		if (isFunctionDeclaration) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(inputVE.getLabelForAssignment());
