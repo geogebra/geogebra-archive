@@ -59,13 +59,13 @@ would like to use the official JAR files everywhere.
 
 	<!-- download jsobject from GeoGebra repository -->
 	<target name="jsobject-geogebra">
-	<get src="http://www.geogebra.org/download/lib/lib_jsobject.jar" dest="lib_jsobject.jar"
+	<get src="http://www.geogebra.org/download/lib/lib_jsobject.jar" dest="build/lib_jsobject.jar"
 	    usetimestamp="true"/>
 	</target>
 
 	<!-- download lib_mac_extensions from GeoGebra repository -->
 	<target name="mac_extensions-geogebra">
-	<get src="http://www.geogebra.org/download/lib/lib_mac_extensions.jar" dest="lib_mac_extensions.jar"
+	<get src="http://www.geogebra.org/download/lib/lib_mac_extensions.jar" dest="build/lib_mac_extensions.jar"
 	    usetimestamp="true"/>
 	</target>
 
