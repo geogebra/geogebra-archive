@@ -17,17 +17,20 @@ MYDIR=4.2
 cd $WWWDIR/$MYDIR
 MYVER=`cat unpacked/version.txt`
 
-cat $SVNDIR/geogebra/scripts/autobuild/mirrors.conf | grep -v "^#" | grep -v "^$" | while read IP PORT USER DIR; do
- # (Re)creating directories:
- ssh -l $USER -p $PORT $IP "mkdir -p $DIR; cd $DIR; mkdir -p $MYDIR; cd $MYDIR; mkdir -p minimal packed unpacked unsigned usb"
+cat $SVNDIR/geogebra/scripts/autobuild/mirrors.conf | grep -v "^#" | grep -v "^$" | while read IP PORT RUSER DIR; do
+ echo "Copying files to $RUSER@$IP:$PORT/$DIR..."
+ # (Re)creating directories (-n is important to prevent reading data from cat):
+ ssh -n -l $RUSER -p $PORT $IP "mkdir -p $DIR; cd $DIR; mkdir -p $MYDIR; cd $MYDIR; mkdir -p packed unpacked unsigned usb"
  # Copying files to root directory:
- scp -P $PORT forum.gif wiki.jpg geogebra64.gif $USER@$IP:$DIR/$MYDIR
+ scp -P $PORT forum.gif wiki.jpg geogebra64.gif $RUSER@$IP:$DIR/$MYDIR
  # Copying files to packed/ directory:
- scp -P $PORT packed/*.jar.pack.gz $USER@$IP:$DIR/$MYDIR/packed
+ scp -P $PORT packed/*.jar.pack.gz $RUSER@$IP:$DIR/$MYDIR/packed
  # Copying files to unpacked/ directory:
- scp -P $PORT unpacked/*.jnlp unpacked/*.jar $USER@$IP:$DIR/$MYDIR/unpacked
+ scp -P $PORT unpacked/*.jnlp unpacked/*.jar $RUSER@$IP:$DIR/$MYDIR/unpacked
  # Copying files to unsigned/ directory:
- scp -P $PORT unsigned/unpacked/*.jar unsigned/packed/*.jar.pack.gz $USER@$IP:$DIR/$MYDIR/unsigned
+ scp -P $PORT unsigned/unpacked/*.jar unsigned/packed/*.jar.pack.gz $RUSER@$IP:$DIR/$MYDIR/unsigned
+ # Copying files to usb/ directory:
+ scp -P $PORT usb/*.jar $RUSER@$IP:$DIR/$MYDIR/usb
  done
 
 date
