@@ -1,0 +1,34 @@
+#!/bin/sh
+# Pushes files to deploy towards all mirror servers
+# @author Zoltan Kovacs <zoltan@geogebra.org>
+
+# 1. Start and loading configuration
+date
+echo "$0: start"
+
+test -r autobuild.conf || {
+ echo "$0: Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
+ exit 1
+ }
+. ./autobuild.conf
+
+# 2. Setting local variables
+MYDIR=4.2
+cd $WWWDIR/$MYDIR
+MYVER=`cat unpacked/version.txt`
+
+cat $SVNDIR/geogebra/scripts/autobuild/mirrors.conf | grep -v "^#" | grep -v "^$" | while read IP PORT USER DIR; do
+ # (Re)creating directories:
+ ssh -l $USER -p $PORT $IP "mkdir -p $DIR; cd $DIR; mkdir -p $MYDIR; cd $MYDIR; mkdir -p minimal packed unpacked unsigned/packed unsigned/unpacked usb"
+ # Copying files to root directory:
+ scp -P $PORT -l $USER forum.gif wiki.jpg geogebra64.gif $IP:$DIR/$MYDIR
+ # Copying files to packed/ directory:
+ scp -P $PORT -l $USER packed/*.jar.pack.gz $IP:$DIR/$MYDIR/packed
+ # Copying files to unpacked/ directory:
+ scp -P $PORT -l $USER unpacked/*.jnlp unpacked/*.jar $IP:$DIR/$MYDIR/unpacked
+ # Copying files to unsigned/ directory:
+ scp -P $PORT -l $USER unsigned/unpacked/*.jar unsigned/packed/*.jar.pack.gz $IP:$DIR/$MYDIR/unsigned
+ done
+
+date
+echo "$0: end"
