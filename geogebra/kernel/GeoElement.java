@@ -4472,25 +4472,22 @@ public abstract class GeoElement
 			sb.append("\"");
 
 
-			if (app.useFullGui() && app.hasEuclidianView2()) {
-
-				int EVs = 0;
-				if (!isVisibleInView(Application.VIEW_EUCLIDIAN)) {
-					//Application.debug("visible in ev1");
-					EVs += 1; // bit 0
-				}
-
-				if (isVisibleInView(Application.VIEW_EUCLIDIAN2)) {
-					EVs += 2; // bit 1
-				}
-
-				if (EVs != 0) {
-					sb.append(" ev=\"");
-					sb.append(EVs);
-					sb.append("\"");
-				}
-				
+			int EVs = 0;
+			if (!isVisibleInView(Application.VIEW_EUCLIDIAN)) {
+				//Application.debug("visible in ev1");
+				EVs += 1; // bit 0
 			}
+
+			if (isVisibleInView(Application.VIEW_EUCLIDIAN2)) {
+				EVs += 2; // bit 1
+			}
+
+			if (EVs != 0) {
+				sb.append(" ev=\"");
+				sb.append(EVs);
+				sb.append("\"");
+			}
+				
 
 			sb.append("/>\n");
 		}

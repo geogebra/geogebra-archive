@@ -2902,7 +2902,6 @@ public class MyXMLHandler implements DocHandler {
 			else
 				geo.removeView(Application.VIEW_EUCLIDIAN);
 			
-			// will create EV2 if it's there, so care needed
 			if ((EVs & 2) == 2) { // bit 1
 				geo.addView(Application.VIEW_EUCLIDIAN2);		
 			} else {
