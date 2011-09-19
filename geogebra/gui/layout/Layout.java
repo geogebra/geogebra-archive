@@ -200,6 +200,7 @@ public class Layout implements SettingListener {
 			ev.setShowAxes(perspective.getShowAxes(), false);
 			ev.resetShowAxes();
 			ev.showGrid(perspective.getShowGrid());
+			ev.resetShowGrid();
 			ev.setUnitAxesRatio(perspective.isUnitAxesRatio());
 		}
 		

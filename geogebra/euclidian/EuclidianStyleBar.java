@@ -1400,6 +1400,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 		else if (source.equals(btnShowGrid)) {
 			ev.showGrid(!ev.getShowGrid());
+			if (ev instanceof EuclidianView)
+				((EuclidianView)ev).resetShowGrid();
 			ev.repaint();
 		}
 		

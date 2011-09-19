@@ -1152,6 +1152,8 @@ public class Application implements KeyEventDispatcher {
 			this.showGrid=showGrid;
 			this.getEuclidianView().showGrid(showGrid);
 			this.getEuclidianView2().showGrid(showGrid);
+			this.getEuclidianView().resetShowGrid();
+			this.getEuclidianView2().resetShowGrid();
 		}
 		
 		if(args.containsArg("primary")) {

@@ -5007,6 +5007,15 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		}
 	}
 
+	public void resetShowGrid() {
+		if (evNo == 1 || evNo == 2) {
+			EuclidianSettings es = app.getSettings().getEuclidian(evNo);
+			// this is necessary because Copy&Paste may reload
+			// settings from EuclidianSettings
+			es.showGrid(getShowGrid());
+		}
+	}
+
 	/**
 	 * 
 	 * setters and getters for EuclidianViewInterface

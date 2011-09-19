@@ -2679,6 +2679,7 @@ public class GuiManager {
 				// get ev with focus
 				EuclidianView ev = ((EuclidianView)getActiveEuclidianView());
 				ev.showGrid(!ev.getShowGrid());
+				ev.resetShowGrid();
 				ev.repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();

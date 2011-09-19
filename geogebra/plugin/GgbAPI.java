@@ -951,6 +951,7 @@ public class GgbAPI {
 	 */
 	public synchronized void setGridVisible(boolean flag) {		
 		app.getEuclidianView().showGrid(flag);
+		app.getEuclidianView2().resetShowGrid();
 	}
 	
 	/*
