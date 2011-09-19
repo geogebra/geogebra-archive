@@ -797,6 +797,10 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		getEuclidianView().resetMaxLayerUsed();
+		getEuclidianView().resetXYMinMaxObjects();
+		if (hasEuclidianView2EitherShowingOrNot()) {
+			getEuclidianView2().resetXYMinMaxObjects();
+		}
 		
 		kernel.resetLibraryJavaScript();
 

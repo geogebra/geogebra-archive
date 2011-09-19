@@ -4982,11 +4982,22 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	public void resetMaxLayerUsed() {
 		app.maxLayerUsed = 0;		
 	}
-	
-	
-	
-	
-	
+
+	public void resetXYMinMaxObjects() {
+		if (evNo == 1 || evNo == 2) {
+			EuclidianSettings es = app.getSettings().getEuclidian(evNo);
+			// this is necessary in File->New because there might have been dynamic xmin bounds
+			GeoNumeric xmao = new GeoNumeric(kernel.getConstruction(), xmaxObject.getNumber().getDouble());
+			GeoNumeric xmio = new GeoNumeric(kernel.getConstruction(), xminObject.getNumber().getDouble());
+			GeoNumeric ymao = new GeoNumeric(kernel.getConstruction(), ymaxObject.getNumber().getDouble());
+			GeoNumeric ymio = new GeoNumeric(kernel.getConstruction(), yminObject.getNumber().getDouble());
+			es.setXmaxObject(xmao);
+			es.setXminObject(xmio);
+			es.setYmaxObject(ymao);
+			es.setYminObject(ymio);
+		}
+	}
+
 	/**
 	 * 
 	 * setters and getters for EuclidianViewInterface
