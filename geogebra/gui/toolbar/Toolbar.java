@@ -399,12 +399,12 @@ public class Toolbar extends JToolBar {
 		sb.append(" ");
 		sb.append(EuclidianConstants.MODE_POINT_ON_OBJECT);
 		sb.append(" ");
+		sb.append(EuclidianConstants.MODE_ATTACH_DETACH);
+		sb.append(" , ");
 		sb.append(EuclidianConstants.MODE_INTERSECT);
 		sb.append(" ");
 		sb.append(EuclidianConstants.MODE_MIDPOINT);
-		sb.append(" ");
-		sb.append(EuclidianConstants.MODE_ATTACH_DETACH);
-		sb.append(" ");
+		sb.append(" , ");
 		sb.append(EuclidianConstants.MODE_COMPLEX_NUMBER);
 
 		// basic lines
@@ -414,8 +414,10 @@ public class Toolbar extends JToolBar {
 		sb.append(EuclidianConstants.MODE_SEGMENT);
 		sb.append(" ");
 		sb.append(EuclidianConstants.MODE_SEGMENT_FIXED);
-		sb.append(" ");
+		sb.append(" , ");
 		sb.append(EuclidianConstants.MODE_RAY);
+		sb.append(" ");
+		sb.append(EuclidianConstants.MODE_POLYLINE);
 		sb.append(" , ");
 		sb.append(EuclidianConstants.MODE_VECTOR);
 		sb.append(" ");
@@ -446,10 +448,8 @@ public class Toolbar extends JToolBar {
 		sb.append(EuclidianConstants.MODE_REGULAR_POLYGON);
 		sb.append(" ");
 		sb.append(EuclidianConstants.MODE_RIGID_POLYGON);
-		sb.append(" ");
+		sb.append(" , ");
 		sb.append(EuclidianConstants.MODE_VECTOR_POLYGON);
-		sb.append(" ");
-		sb.append(EuclidianConstants.MODE_POLYLINE);
 
 		// circles, arcs
 		sb.append(" | ");
