@@ -8154,6 +8154,7 @@ class CmdSetDynamicColor extends CommandProcessor {
 				listItems.add((GeoElement) arg[3]); 
 				//listItems.add((GeoElement) arg[4]); // no opacity 
 				AlgoDependentList algo = new AlgoDependentList(cons, listItems, false);
+				kernel.getConstruction().removeFromConstructionList(algo);
 				GeoList list = algo.getGeoList();
 
 				geo.setColorFunction(list);
@@ -8184,6 +8185,7 @@ class CmdSetDynamicColor extends CommandProcessor {
 				listItems.add((GeoElement) arg[3]); 
 				listItems.add((GeoElement) arg[4]); // opacity 
 				AlgoDependentList algo = new AlgoDependentList(cons, listItems, false);
+				kernel.getConstruction().removeFromConstructionList(algo);
 				GeoList list = algo.getGeoList();
 
 				geo.setColorFunction(list);
