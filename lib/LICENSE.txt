@@ -1,43 +1,15 @@
 This directory contains 3rd party libraries. Most of them are required
 to run GeoGebra properly.
 
-lib_jsobject.jar
-----------------
 
-Its original content comes from the official Java JDK distribution
-provided by Sun Microsystems, Inc. The contents of this file are copied
-from lib/jre/plugin.jar. To make this JAR file small, just the needed
-.class files are present.
+jlatexmath.jar, jlm_greek.jar, jlm_cyrillic.jar
+-----------------------------------------------
 
-The license for this piece of software is Sun Microsystem, Inc. Binary
-Code License Agreement (BCL), 
-http://java.sun.com/javase/6/jre-6u2-license.txt. The original packages
-can be downloaded from http://java.com/en/download/manual.jsp?locale=en.
+These files are from Calixte Denizet's JLaTeXMath project. He provides a minimal version for GeoGebra
+at http://forge.scilab.org/index.php/p/jlatexmath/downloads/253/get/, but GeoGebra also bundles
+a more recent version in its download repository.
 
-
-lib_mac_extensions.jar
-----------------------
-
-Its original content comes from the official Java JDK distribution
-provided by Apple, Inc., for the Mac OS X. The contents of this file are
-copied from Classes/ui.jar. To make this JAR file small, just the needed
-.class files were selected.
-
-Here is an excerpt from http://developer.apple.com/java/faq/:
-
-    Q: Can I bundle the Mac OS X JDK with my application?
-
-    A: Java is included as part of Mac OS X, and is not available for
-    re-distribution by 3rd-party developers. 
-
-However, this does not mean that it is forbidden to re-distribute any
-parts of the Java JDK for Mac, it still means that there is no direct
-way to download JDK for the Mac OS X from the Internet officially. For
-convenience we still copied those parts of it which are required to
-compile GeoGebra properly. Anyone who has a legal Apple computer
-with legal software can use the Java JDK on his machine without
-no further permissions. For those developers we give a convenient way
-to set up the underlying libraries by providing lib_mac_extensions.jar.
+License: GNU General Public License (GPL) 2 or above.
 
 
 vernier_ccsd-mac-static.jar
