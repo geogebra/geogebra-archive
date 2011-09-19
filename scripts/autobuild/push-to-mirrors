@@ -21,13 +21,13 @@ cat $SVNDIR/geogebra/scripts/autobuild/mirrors.conf | grep -v "^#" | grep -v "^$
  # (Re)creating directories:
  ssh -l $USER -p $PORT $IP "mkdir -p $DIR; cd $DIR; mkdir -p $MYDIR; cd $MYDIR; mkdir -p minimal packed unpacked unsigned/packed unsigned/unpacked usb"
  # Copying files to root directory:
- scp -P $PORT -l $USER forum.gif wiki.jpg geogebra64.gif $IP:$DIR/$MYDIR
+ scp -P $PORT forum.gif wiki.jpg geogebra64.gif $USER@$IP:$DIR/$MYDIR
  # Copying files to packed/ directory:
- scp -P $PORT -l $USER packed/*.jar.pack.gz $IP:$DIR/$MYDIR/packed
+ scp -P $PORT packed/*.jar.pack.gz $USER@$IP:$DIR/$MYDIR/packed
  # Copying files to unpacked/ directory:
- scp -P $PORT -l $USER unpacked/*.jnlp unpacked/*.jar $IP:$DIR/$MYDIR/unpacked
+ scp -P $PORT unpacked/*.jnlp unpacked/*.jar $USER@$IP:$DIR/$MYDIR/unpacked
  # Copying files to unsigned/ directory:
- scp -P $PORT -l $USER unsigned/unpacked/*.jar unsigned/packed/*.jar.pack.gz $IP:$DIR/$MYDIR/unsigned
+ scp -P $PORT unsigned/unpacked/*.jar unsigned/packed/*.jar.pack.gz $USER@$IP:$DIR/$MYDIR/unsigned
  done
 
 date
