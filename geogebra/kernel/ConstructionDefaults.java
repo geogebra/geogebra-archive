@@ -73,6 +73,7 @@ public class ConstructionDefaults {
 
 	// conics
 	private static final Color colConic = Color.black;
+	public static final float DEFAULT_CONIC_ALPHA = 0f;
 
 	// polygons
 	protected static final Color colPolygon = GeoGebraColorConstants.BROWN; //new Color(153, 51, 0);	
@@ -263,6 +264,7 @@ public class ConstructionDefaults {
 //		conic.setLocalVariableLabel(app.getPlain("Conic"));
 		conic.setLocalVariableLabel("Conic");
 		conic.setObjColor(colConic);
+		conic.setAlphaValue(DEFAULT_CONIC_ALPHA);
 		conic.setDefaultGeoType(DEFAULT_CONIC);
 		defaultGeoElements.put(DEFAULT_CONIC, conic);	
 		
