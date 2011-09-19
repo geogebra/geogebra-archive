@@ -198,6 +198,7 @@ public class Layout implements SettingListener {
 		if(!perspective.getId().equals("tmp")) {
 			EuclidianView ev = app.getEuclidianView();
 			ev.setShowAxes(perspective.getShowAxes(), false);
+			ev.resetShowAxes();
 			ev.showGrid(perspective.getShowGrid());
 			ev.setUnitAxesRatio(perspective.isUnitAxesRatio());
 		}

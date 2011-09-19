@@ -754,6 +754,8 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		else if (source == cbShowAxes) {
 			//view.showAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());	
 			view.setShowAxes(cbShowAxes.isSelected(), true);
+			if (view instanceof EuclidianView)
+				((EuclidianView)view).resetShowAxes();
 		}
 		else if (source == cbShowGrid) {
 			view.showGrid(cbShowGrid.isSelected());			

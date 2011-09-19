@@ -1393,6 +1393,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		if (source.equals(btnShowAxes)) {		
 			ev.setShowAxes(!ev.getShowXaxis(), true);
+			if (ev instanceof EuclidianView)
+				((EuclidianView) ev).resetShowAxes();
 			ev.repaint();
 		}
 

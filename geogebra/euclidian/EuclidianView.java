@@ -4998,6 +4998,15 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		}
 	}
 
+	public void resetShowAxes() {
+		if (evNo == 1 || evNo == 2) {
+			EuclidianSettings es = app.getSettings().getEuclidian(evNo);
+			// this is necessary because Copy&Paste may reload
+			// settings from EuclidianSettings
+			es.setShowAxes(getShowXaxis(), getShowYaxis());
+		}
+	}
+
 	/**
 	 * 
 	 * setters and getters for EuclidianViewInterface

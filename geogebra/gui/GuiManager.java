@@ -2663,6 +2663,7 @@ public class GuiManager {
 				
 				boolean bothAxesShown = ev.getShowXaxis() && ev.getShowYaxis();
 				ev.setShowAxes(!bothAxesShown, true);
+				ev.resetShowAxes();
 				ev.repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();

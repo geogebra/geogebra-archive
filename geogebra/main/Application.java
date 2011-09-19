@@ -1142,7 +1142,9 @@ public class Application implements KeyEventDispatcher {
 			this.showAxes[0]=showAxes;
 			this.showAxes[1]=showAxes;
 			this.getEuclidianView().setShowAxes(showAxes, true);
-			this.getEuclidianView2().setShowAxes(showAxes, true);			
+			this.getEuclidianView2().setShowAxes(showAxes, true);
+			this.getEuclidianView().resetShowAxes();
+			this.getEuclidianView2().resetShowAxes();
 		}
 		
 		if(args.containsArg("showGrid")) {
