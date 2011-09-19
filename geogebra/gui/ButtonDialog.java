@@ -179,7 +179,7 @@ public class ButtonDialog extends JDialog
 		
 		// create script panel
 		JLabel scriptLabel = new JLabel(app.getPlain("Script")+":");
-		initString = (button == null || button.getClickScript().equals("")) ? "A=(3,4)\n" : button.getClickScript();
+		initString = (button == null) ? "" : button.getClickScript();
 		InputPanel ip2 = new InputPanel(initString, app, 10, 40, false);				
 		tfScript = ip2.getTextComponent();
 		if (tfScript instanceof AutoCompleteTextField) {
