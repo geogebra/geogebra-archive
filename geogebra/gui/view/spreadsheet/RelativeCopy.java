@@ -721,7 +721,7 @@ public class RelativeCopy {
 			newValue = kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling(oldValue, text, true,
 					false);
-
+			
 			// newValue.setConstructionDefaults();
 			newValue.setAllVisualProperties(oldValue, true);
 			if (oldValue.isAuxiliaryObject())
@@ -740,14 +740,9 @@ public class RelativeCopy {
 			return null;
 		}
 		catch (Throwable e) {
-			//Application.debug("SPREADSHEET: input error: " + e.getMessage());
-			//Application.debug("text0 = " + text0);
-
-
-			//if (text0.startsWith("=") || text0.startsWith("\"")) {
-			//throw new Exception(e);				
-			//} else
-			{
+			// if exception is thrown treat the input as text and try to update the cell as a GeoText
+			{ 
+				// redefine the cell as new GeoText if old value has no children
 				if (!oldValue.hasChildren()) {
 					oldValue.remove();
 
@@ -760,7 +755,16 @@ public class RelativeCopy {
 					}
 					newValue.setEuclidianVisible(false);
 					newValue.update();
-				} else {
+				}
+				
+				// reset the text string if old value is GeoText with children 
+				else if(oldValue.isGeoText()){
+					((GeoText)oldValue).setTextString(text0);
+					oldValue.updateCascade();
+				}
+				
+				// otherwise throw an exception and let the cell revert to the old value
+				else {
 					throw new Exception(e);
 				}
 			}
