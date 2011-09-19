@@ -19,7 +19,7 @@ MYVER=`cat unpacked/version.txt`
 
 cat $SVNDIR/geogebra/scripts/autobuild/mirrors.conf | grep -v "^#" | grep -v "^$" | while read IP PORT USER DIR; do
  # (Re)creating directories:
- ssh -l $USER -p $PORT $IP "mkdir -p $DIR; cd $DIR; mkdir -p $MYDIR; cd $MYDIR; mkdir -p minimal packed unpacked unsigned/packed unsigned/unpacked usb"
+ ssh -l $USER -p $PORT $IP "mkdir -p $DIR; cd $DIR; mkdir -p $MYDIR; cd $MYDIR; mkdir -p minimal packed unpacked unsigned usb"
  # Copying files to root directory:
  scp -P $PORT forum.gif wiki.jpg geogebra64.gif $USER@$IP:$DIR/$MYDIR
  # Copying files to packed/ directory:
