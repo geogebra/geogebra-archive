@@ -153,6 +153,8 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 	public void restoreDefaults(){
 		defaultsPanel.restoreDefaults();	
 		
+		// TODO
+		// --- add calls to other panels here
 		
 		updateGUI();
 	}
@@ -214,44 +216,37 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		panel.setBackground(Color.white);
 		
-		restoreDefaultsButton = new JButton();
-		restoreDefaultsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.getPref().clearPreferences();
-
-				GeoGebraPreferences.getPref().loadXMLPreferences(app);
-
-				// reset default line thickness etc
-				app.getKernel().getConstruction().getConstructionDefaults().resetDefaults();
-
-				// reset defaults for geoelements
-				app.getKernel().getConstruction().getConstructionDefaults().createDefaultGeoElements();
-
-				// reset the stylebar defaultGeo 
-				if(app.getEuclidianView().hasStyleBar())
-					app.getEuclidianView().getStyleBar().restoreDefaultGeo();
-				if(app.hasEuclidianView2EitherShowingOrNot() && app.getEuclidianView2().hasStyleBar())
-					app.getEuclidianView2().getStyleBar().restoreDefaultGeo();
-				
-				// reset defaults for GUI, views etc
-				app.getSettings().resetSettings();
-				if(app.getGuiManager().hasSpreadsheetView()){
-					app.getGuiManager().getSpreadsheetView().settingsChanged(app.getSettings().getSpreadsheet());
+		if (!app.isApplet()) {
+			restoreDefaultsButton = new JButton();
+			restoreDefaultsButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GeoGebraPreferences.getPref().clearPreferences();
+	
+					GeoGebraPreferences.getPref().loadXMLPreferences(app);
+	
+					// reset default line thickness etc
+					app.getKernel().getConstruction().getConstructionDefaults().resetDefaults();
+	
+					// reset defaults for geoelements
+					app.getKernel().getConstruction().getConstructionDefaults().createDefaultGeoElements();
+	
+					// reset the stylebar defaultGeo 
+					if(app.getEuclidianView().hasStyleBar())
+						app.getEuclidianView().getStyleBar().restoreDefaultGeo();
+					if(app.hasEuclidianView2EitherShowingOrNot() && app.getEuclidianView2().hasStyleBar())
+						app.getEuclidianView2().getStyleBar().restoreDefaultGeo();
+					
+					// reset defaults for GUI, views etc
+					app.getSettings().resetSettings();				
+					
+					// restore dialog panels to display these defaults
+					restoreDefaults();
+					
 				}
-				app.getEuclidianView().settingsChanged(app.getSettings().getEuclidian(1));
-				app.getEuclidianView().repaint();
-				if(app.hasEuclidianView2EitherShowingOrNot()){
-					app.getEuclidianView2().settingsChanged(app.getSettings().getEuclidian(2));
-					app.getEuclidianView2().repaint();
-				}
-				
-				// restore dialog panels to display these defaults
-				restoreDefaults();
-				
-			}
-		});
-		
-		panel.add(restoreDefaultsButton);
+			});
+			
+			panel.add(restoreDefaultsButton);
+		}
 		
 		buttonPanel.add(panel, BorderLayout.WEST);
 		
@@ -259,13 +254,16 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 		panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		panel.setBackground(Color.white);
 		
-		saveButton = new JButton();
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				GeoGebraPreferences.getPref().saveXMLPreferences(app);
-			}
-		});
-		panel.add(saveButton);
+		if (!app.isApplet()) {
+			saveButton = new JButton();
+			saveButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GeoGebraPreferences.getPref().saveXMLPreferences(app);
+				}
+			});
+			panel.add(saveButton);
+		}
+		
 		closeButton = new JButton();
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -318,8 +316,11 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 		setTitle(app.getMenu("Settings"));
 
 		closeButton.setText(app.getMenu("Close"));
-		saveButton.setText(app.getMenu("Settings.Save"));
-		restoreDefaultsButton.setText(app.getMenu("Settings.ResetDefault"));
+		
+		if (!app.isApplet()) {
+			saveButton.setText(app.getMenu("Settings.Save"));
+			restoreDefaultsButton.setText(app.getMenu("Settings.ResetDefault"));
+		}
 
 		tabbedPane.setTitleAt(TAB_DEFAULTS, app.getPlain("Defaults"));
 		tabbedPane.setTitleAt(TAB_EUCLIDIAN, app.getPlain("DrawingPad"));
