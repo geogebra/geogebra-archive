@@ -82,10 +82,6 @@ for i in unpacked debug; do
   > $WWWDIR/history/$MYVER/$i/geogebra-$MYVER_DASHED.jnlp
  done
 
-# 4/6. Creating filelist.txt for mirror servers:
-cd $WWWDIR/$MYDIR
-find . -name '*.jnlp' -or -name '*.jar' | grep -v debug > filelist.txt
-
 echo "$0: JAR files copied to 4.2 and history/$MYVER"
 
 # 5. Finally, making sure that all files have group writable permissions:
