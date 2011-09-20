@@ -36,6 +36,9 @@ cat $SVNDIR/geogebra/scripts/autobuild/mirrors.conf | grep -v "^#" | grep -v "^$
  scp -P $PORT packed/*.jar.pack.gz $RUSER@$IP:$DIR/$MYDIR/packed
  # Copying files to unpacked/ directory:
  scp -P $PORT unpacked/*.jnlp unpacked/*.jar $RUSER@$IP:$DIR/$MYDIR/unpacked
+ # All JNLP files will be packEnabled on the remote servers (assuming no mod_negotiation is enabled):
+ ssh -n -l $RUSER -p $PORT $PI "cd $DIR/$MYDIR/unpacked; find -name '*.jnlp' |\
+  xargs sed -i s/\"<resources>\"/\"<resources> <property name=\\\"jnlp.packEnabled\\\" value=\\\"true\\\"\/>\"/g"
  # Copying files to unsigned/ directory:
  scp -P $PORT unsigned/unpacked/*.jar unsigned/packed/*.jar.pack.gz $RUSER@$IP:$DIR/$MYDIR/unsigned
  # Copying files to minimal/ directory:

@@ -64,8 +64,7 @@ for i in *.html *.jnlp; do
   sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
   sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR"/g | \
   sed s/"<\/title>"/" ($MYVER)<\/title>"/g | \
-  grep -v "association mime-type" | \
-  sed s/"<resources>"/"<resources> <property name=\"jnlp.packEnabled\" value=\"true\"\/>"/g \
+  grep -v "association mime-type" \
   > unpacked/$i
  rm $i || exit 4
  cp unpacked/$i $i || exit 4 # Some files in some subdirectories may still refer to the original file.
