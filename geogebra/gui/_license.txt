@@ -132,7 +132,7 @@ SUPPORTING PARTNERS
     2010-2012: Support for Austrian developer group in Linz, Austria
   * Google Summer of Code 2011
     2011: Support of 7 student programmers as part of GSoC 2011
-  * Free Software Foundation, Hungary
+  * FSF.hu Foundation, Hungary
     2010: Support for Hungarian developer group in Szeged, Hungary
   * Google Summer of Code 2010
     2010: Support of 5 student programmers as part of GSoC 2010
