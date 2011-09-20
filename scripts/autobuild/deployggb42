@@ -37,13 +37,7 @@ mkdir -p $WWWDIR/$MYDIR/usb
 cp $SVNDIR/geogebra/lib/vernier_ccsd* $WWWDIR/$MYDIR/usb || exit 4
 echo "$0: static files copied"
 
-# 4/2. Copying unsigned geogebra.jar and geogebra_main.jar to $WWWDIR/$MYDIR/minimal (common code with buildggb42):
-mkdir -p $WWWDIR/$MYDIR/minimal
-for i in geogebra geogebra_main; do
- cp $SVNDIR/geogebra/build/unsigned/unpacked/$i.jar $WWWDIR/$MYDIR/minimal
- done
- 
-# 4/3. Copying/overwriting JAR files to 4.2 and history/$MYVER:
+# 4/2. Copying/overwriting JAR files to 4.2 and history/$MYVER:
 cd $SVNDIR/geogebra/build
 rm -fR $WWWDIR/history/$MYVER || exit 4
 mkdir -p $WWWDIR/history/$MYVER || exit 4
@@ -56,7 +50,7 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while rea
  cp $filename $WWWDIR/history/$MYVER/$filename || exit 6
  done
 
-# 4/4. Copying files to unpacked/ (common code with buildggb42):
+# 4/3. Copying files to unpacked/ (common code with buildggb42):
 cd $WWWDIR/$MYDIR
 for i in *.html *.jnlp; do
  cat $i | \
@@ -71,7 +65,7 @@ for i in *.html *.jnlp; do
  echo "$0: $i is rewritten"
  done
 
-# 4/5. Creating a jnlp file for webstart/history (implementing #692), common code with buildggb42:
+# 4/4. Creating a jnlp file for webstart/history (implementing #692), common code with buildggb42:
 MYVER_DASHED=`echo $MYVER | tr . -`
 for i in unpacked debug; do
  cat $SVNDIR/geogebra/scripts/autobuild/history-template.jnlp |\

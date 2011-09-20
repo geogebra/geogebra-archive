@@ -31,10 +31,11 @@ if [ "$PYTHON3" = "" ]; then
 umask 0002 # trying to ensure g+w rights for all created files automatically
 
 IMAGE_DIR=../../../../geogebra/gui/images/
-convert $IMAGE_DIR/geogebra32.png png:$IMAGE_DIR/geogebra.png || {
-    echo ImageMagick convert is required to run this script.
-    exit 1
-    }
+# This is no longer needed, because geogebra.png is present in repository:
+# convert $IMAGE_DIR/geogebra32.png png:$IMAGE_DIR/geogebra.png || {
+#     echo ImageMagick convert is required to run this script.
+#     exit 1
+#     }
 
 # 2. Packaging
 for i in ../../../../../jre*.bin; do
