@@ -187,7 +187,7 @@ public class CommandDispatcher {
         	// get CommandProcessor object for command name from command table
         	cmdProc = (CommandProcessor) cmdTable.get(cmdName);    
         	
-        	if (cmdProc == null) {
+        	if (cmdProc == null && internalCmdTable != null) {
         		// try internal command
         		cmdProc = internalCmdTable.get(cmdName);
         	}
