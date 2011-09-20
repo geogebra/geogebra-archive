@@ -579,7 +579,7 @@ public class CopyPasteCut {
 			int lastCommaIndex = lines[i].lastIndexOf(",");
 			int firstBracketIndex = lines[i].indexOf("[");
 			int lastBracketIndex = lines[i].lastIndexOf("]");
-			int firstTabIndex = lines[i].indexOf("'\t'");
+			int firstTabIndex = lines[i].indexOf("\t");
 			
 			// no commas, brackets or tabs, so add entire line
 			if (firstCommaIndex == -1 && firstBracketIndex == -1 && firstTabIndex == -1)
