@@ -579,14 +579,21 @@ public class CopyPasteCut {
 			int lastCommaIndex = lines[i].lastIndexOf(",");
 			int firstBracketIndex = lines[i].indexOf("[");
 			int lastBracketIndex = lines[i].lastIndexOf("]");
-
-			if (firstCommaIndex > firstBracketIndex && lastCommaIndex < lastBracketIndex) {
-				// assume it's a GeoGebra command and therefore we don't want to split on commas etc
+			int firstTabIndex = lines[i].indexOf("'\t'");
+			
+			// no commas, brackets or tabs, so add entire line
+			if (firstCommaIndex == -1 && firstBracketIndex == -1 && firstTabIndex == -1)
+					list.addLast(lines[i]);	
+			
+			// brackets enclose the expression, so assume it's a GeoGebra command and add entire line
+			else if (firstCommaIndex > firstBracketIndex && lastCommaIndex < lastBracketIndex) {
 				list.addLast(lines[i]);
+				
+			// otherwise split on commas and tabs	
 			} else {
 
 				Matcher matcher = null;
-				if (lines[i].indexOf('\t') != -1) {
+				if (firstTabIndex != -1) {
 					matcher = pattern1.matcher(lines[i]);
 				}
 				else {
