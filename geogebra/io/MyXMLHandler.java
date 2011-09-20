@@ -2375,9 +2375,13 @@ public class MyXMLHandler implements DocHandler {
 			if (independentCell) {
 				// free cell, e.g. m := 7  creates twinGeo m = 7
 				cons.addToConstructionList(geoCasCell, true);	
-				// create TwinGeo from previously set output
-				geoCasCell.updateTwinGeo();		    	        
-				geoCasCell.setLabelOfTwinGeo();
+				if (geoCasCell.isAssignment()) {
+					// make sure assignment is sent to underlying CAS, e.g. f(x) := x^2
+					// and twinGeo is created
+					geoCasCell.computeOutput();
+					geoCasCell.setLabelOfTwinGeo();
+				}
+				// otherwise keep loaded output and avoid unnecessary computation
 			} else {
 				// create algorithm for dependent cell
 				// this also creates twinGeo if necessary
@@ -4452,6 +4456,14 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 	private void startExpressionElement(String eName, LinkedHashMap<String, String> attrs) {
 		String label = (String) attrs.get("label");
+		
+		// ignore twinGeo expressions coming from CAS cells
+		// e.g. the GeoCasCell f(x) := x^2 automatically creates a twinGeo f
+		// where we don't want the expression of f to be processed again
+		GeoElement geo = kernel.lookupLabel(label);
+		if (geo != null && geo.getCorrespondingCasCell() != null)
+			return;
+		
 		String exp = (String) attrs.get("exp");
 		if (exp == null)
 			throw new MyError(app, "exp missing in <expression>");

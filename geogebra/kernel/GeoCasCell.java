@@ -787,17 +787,32 @@ public class GeoCasCell extends GeoElement {
 	}
 	
 	/**
-	 * Returns whether this object only depends on GeoElements that aren't GeoCasCells
+	 * Replaces GeoDummyVariable objects in outputVE by GeoElements from kernel
+	 * that are not GeoCasCells.
+	 */
+	private void resolveGeoElementReferences(ValidExpression outputVE) {
+		if (invars == null || !(outputVE instanceof FunctionNVar)) return;
+		FunctionNVar fun = (FunctionNVar) outputVE;
+
+		// replace function variables in tree
+		for (String varLabel : invars) {			
+			GeoElement geo = kernel.lookupLabel(varLabel);
+			if (geo != null) {
+				// look for GeoDummyVariable objects with name of function variable and	replace them		
+				fun.getExpression().replaceGeoDummyVariables(varLabel, geo);	
+			}
+		}		
+	}
+	
+	/**
+	 * Returns whether this object only depends on named GeoElements defined in the kernel.
 	 */
 	final public boolean includesOnlyDefinedVariables() {
-		if (inGeos == null) return true;
+		if (invars == null) return true;
 		
-		for (GeoElement ge : inGeos) {
-			if (ge instanceof GeoCasCell) {
-				// check if twinGeo is present
-				if (((GeoCasCell) ge).getTwinGeo() == null)
-					return false;
-			}
+		for (String varLabel : invars) {
+			if (kernel.lookupLabel(varLabel) == null)
+				return false;
 		}
 		return true;
 	}
@@ -914,7 +929,9 @@ public class GeoCasCell extends GeoElement {
 
 		if (isFunctionDeclaration) {
 			// replace GeoDummyVariable objects in outputVE by the function variables	
-			resolveFunctionVariableReferences(outputVE);	
+			resolveFunctionVariableReferences(outputVE);
+			// replace GeoDummyVariable objects in outputVE by GeoElements from kernel
+			resolveGeoElementReferences(outputVE);
 		} else if (isAssignment())
 			outputVE.setLabel(assignmentVar);
 				
