@@ -257,8 +257,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 
 
 
-		// set icons for LaTeX and images
-		// TODO: LaTeX slows things down, need a better test for which geos get LaTex?  
+		// Set icons for LaTeX and images
 		//===============================================
 		if(geo.isGeoImage()){		
 			latexIcon.setImage(((GeoImage) geo).getFillImage());
@@ -272,11 +271,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
 				latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
-
-				// check for \ in LaTeX string (eg \frac)
-				// to decide whether to use LaTeX renderer or not
-				// bit hacky, but easy
-				if ( geo.isLaTeXDrawableGeo(latexStr)) {
+				if (geo.isLaTeXDrawableGeo(latexStr)) {
 					try {
 						if(geo.isGeoText())
 							isSerif = ((GeoText)geo).isSerifFont();
