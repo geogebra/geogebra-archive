@@ -37,7 +37,7 @@ mkdir -p $WWWDIR/$MYDIR/usb
 cp $SVNDIR/geogebra/lib/vernier_ccsd* $WWWDIR/$MYDIR/usb || exit 4
 echo "$0: static files copied"
 
-# 4/2. Copying unsigned geogebra.jar and geogebra_main.jar to $WWWDIR/$MYDIR/minimal (commond code with buildggb42):
+# 4/2. Copying unsigned geogebra.jar and geogebra_main.jar to $WWWDIR/$MYDIR/minimal (common code with buildggb42):
 mkdir -p $WWWDIR/$MYDIR/minimal
 for i in geogebra geogebra_main; do
  cp $SVNDIR/geogebra/build/unsigned/unpacked/$i.jar $WWWDIR/$MYDIR/minimal
@@ -64,7 +64,8 @@ for i in *.html *.jnlp; do
   sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
   sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR"/g | \
   sed s/"<\/title>"/" ($MYVER)<\/title>"/g | \
-  grep -v "association mime-type" \
+  grep -v "association mime-type" | \
+  sed s/"<resources>"/"<resources> <property name=\"jnlp.packEnabled\" value=\"true\"\/>"/g | \
   > unpacked/$i
  rm $i || exit 4
  cp unpacked/$i $i || exit 4 # Some files in some subdirectories may still refer to the original file.
