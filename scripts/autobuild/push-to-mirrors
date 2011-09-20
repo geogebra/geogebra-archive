@@ -23,14 +23,17 @@ cat $SVNDIR/geogebra/scripts/autobuild/mirrors.conf | grep -v "^#" | grep -v "^$
  ssh -n -l $RUSER -p $PORT $IP "mkdir -p $DIR; cd $DIR; mkdir -p $MYDIR; cd $MYDIR; mkdir -p packed unpacked unsigned usb"
  # Copying files to root directory:
  scp -P $PORT forum.gif wiki.jpg geogebra64.gif $RUSER@$IP:$DIR/$MYDIR
- # Copying files to minimal/ directory:
- scp -P $PORT minimal/*.jar minimal/*.html $RUSER@$IP:$DIR/$MYDIR/minimal
  # Copying files to packed/ directory:
  scp -P $PORT packed/*.jar.pack.gz $RUSER@$IP:$DIR/$MYDIR/packed
  # Copying files to unpacked/ directory:
  scp -P $PORT unpacked/*.jnlp unpacked/*.jar $RUSER@$IP:$DIR/$MYDIR/unpacked
  # Copying files to unsigned/ directory:
  scp -P $PORT unsigned/unpacked/*.jar unsigned/packed/*.jar.pack.gz $RUSER@$IP:$DIR/$MYDIR/unsigned
+ # Copying files to minimal/ directory:
+ # This would be somewhat slower due to bandwith usage:
+ # "scp -P $PORT minimal/*.jar minimal/*.html $RUSER@$IP:$DIR/$MYDIR/minimal"
+ # So we copy the files on the remote machine instead:
+ ssh -n -l $RUSER -p $PORT $IP "cd $DIR/$MYDIR; cp unsigned/geogebra.jar unsigned/geogebra_main.jar minimal"
  # Copying files to usb/ directory:
  scp -P $PORT usb/*.jar $RUSER@$IP:$DIR/$MYDIR/usb
  done
