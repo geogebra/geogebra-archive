@@ -265,7 +265,7 @@ public class EuclidianSettings extends AbstractSettings {
 
 	private int gridType;
 
-	private int pointCapturingMode;
+	private int pointCapturingMode = EuclidianView.POINT_CAPTURING_AUTOMATIC;
 	
 	private boolean allowShowMouseCoords = true;
 	

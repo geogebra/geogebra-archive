@@ -964,6 +964,8 @@ public class MyXMLHandler implements DocHandler {
 					// int value
 					pointCapturingMode = Integer.parseInt(str);
 				ev.setPointCapturing(pointCapturingMode);
+			} else {
+				ev.setPointCapturing(EuclidianView.POINT_CAPTURING_AUTOMATIC);
 			}
 			
 			// if there is a point style given save it
