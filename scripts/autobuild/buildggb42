@@ -114,6 +114,8 @@ echo "$0: static files copied"
 # http://www.geogebra.org/webstart/4.2/ -> http://www.geogebra.org/webstart/$MYDIR/unpacked/
 # </title> -> ($MYVER) </title>
 
+# The 1st and 4th change is needed to prevent testing the packed version.
+
 # In addition, removing those lines which have the "association mime-type" text.
 
 cd $WWWDIR/$MYDIR
