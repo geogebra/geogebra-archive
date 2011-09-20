@@ -950,8 +950,8 @@ public class GgbAPI {
 	 * Shows or hides the coordinate grid in the graphics window.
 	 */
 	public synchronized void setGridVisible(boolean flag) {		
-		app.getEuclidianView().showGrid(flag);
-		app.getEuclidianView().resetShowGrid();
+		app.getSettings().getEuclidian(1).showGrid(flag);
+		app.getSettings().getEuclidian(2).showGrid(flag);
 	}
 	
 	/*

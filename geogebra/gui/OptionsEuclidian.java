@@ -752,15 +752,24 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 			}
 		}
 		else if (source == cbShowAxes) {
-			//view.showAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());	
-			view.setShowAxes(cbShowAxes.isSelected(), true);
-			if (view instanceof EuclidianView)
-				((EuclidianView)view).resetShowAxes();
+			if (app.getEuclidianView() == view)
+				app.getSettings().getEuclidian(1).setShowAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setShowAxes(cbShowAxes.isSelected(), true);
+			else if (app.getEuclidianView2() == view)
+				app.getSettings().getEuclidian(2).setShowAxes(cbShowAxes.isSelected(), cbShowAxes.isSelected());
+			else
+				view.setShowAxes(cbShowAxes.isSelected(), true);
 		}
 		else if (source == cbShowGrid) {
-			view.showGrid(cbShowGrid.isSelected());
-			if (view instanceof EuclidianView)
-				((EuclidianView)view).resetShowGrid();
+			if (app.getEuclidianView() == view)
+				app.getSettings().getEuclidian(1).showGrid(cbShowGrid.isSelected());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.showGrid(cbShowGrid.isSelected());
+			else if (app.getEuclidianView2() == view)
+				app.getSettings().getEuclidian(2).showGrid(cbShowGrid.isSelected());
+			else
+				view.showGrid(cbShowGrid.isSelected());
 		}
 		else if (source == cbBoldGrid) {
 			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		

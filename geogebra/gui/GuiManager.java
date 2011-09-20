@@ -2662,8 +2662,16 @@ public class GuiManager {
 				EuclidianView ev = ((EuclidianView)getActiveEuclidianView());
 				
 				boolean bothAxesShown = ev.getShowXaxis() && ev.getShowYaxis();
-				ev.setShowAxes(!bothAxesShown, true);
-				ev.resetShowAxes();
+
+				if (app.getEuclidianView() == ev)
+					app.getSettings().getEuclidian(1).setShowAxes(!bothAxesShown, !bothAxesShown);
+				else if (!app.hasEuclidianView2EitherShowingOrNot())
+					ev.setShowAxes(!bothAxesShown, true);
+				else if (app.getEuclidianView2() == ev)
+					app.getSettings().getEuclidian(2).setShowAxes(!bothAxesShown, !bothAxesShown);
+				else
+					ev.setShowAxes(!bothAxesShown, true);
+
 				ev.repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
@@ -2678,8 +2686,16 @@ public class GuiManager {
 			public void actionPerformed(ActionEvent e) {
 				// get ev with focus
 				EuclidianView ev = ((EuclidianView)getActiveEuclidianView());
-				ev.showGrid(!ev.getShowGrid());
-				ev.resetShowGrid();
+
+				if (app.getEuclidianView() == ev)
+					app.getSettings().getEuclidian(1).showGrid(!ev.getShowGrid());
+				else if (!app.hasEuclidianView2EitherShowingOrNot())
+					ev.showGrid(!ev.getShowGrid());
+				else if (app.getEuclidianView2() == ev)
+					app.getSettings().getEuclidian(2).showGrid(!ev.getShowGrid());
+				else
+					ev.showGrid(!ev.getShowGrid());
+
 				ev.repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();

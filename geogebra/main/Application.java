@@ -1141,19 +1141,15 @@ public class Application implements KeyEventDispatcher {
 			boolean showAxes = args.getBooleanValue("showAxes", true);	
 			this.showAxes[0]=showAxes;
 			this.showAxes[1]=showAxes;
-			this.getEuclidianView().setShowAxes(showAxes, true);
-			this.getEuclidianView2().setShowAxes(showAxes, true);
-			this.getEuclidianView().resetShowAxes();
-			this.getEuclidianView2().resetShowAxes();
+			this.getSettings().getEuclidian(1).setShowAxes(showAxes, showAxes);
+			this.getSettings().getEuclidian(2).setShowAxes(showAxes, showAxes);
 		}
 		
 		if(args.containsArg("showGrid")) {
 			boolean showGrid = args.getBooleanValue("showGrid", false);
 			this.showGrid=showGrid;
-			this.getEuclidianView().showGrid(showGrid);
-			this.getEuclidianView2().showGrid(showGrid);
-			this.getEuclidianView().resetShowGrid();
-			this.getEuclidianView2().resetShowGrid();
+			this.getSettings().getEuclidian(1).showGrid(showGrid);
+			this.getSettings().getEuclidian(2).showGrid(showGrid);
 		}
 		
 		if(args.containsArg("primary")) {

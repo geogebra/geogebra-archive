@@ -1392,16 +1392,26 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 		
 		if (source.equals(btnShowAxes)) {		
-			ev.setShowAxes(!ev.getShowXaxis(), true);
-			if (ev instanceof EuclidianView)
-				((EuclidianView) ev).resetShowAxes();
+			if (app.getEuclidianView() == ev)
+				app.getSettings().getEuclidian(1).setShowAxes(!ev.getShowXaxis(), !ev.getShowXaxis());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				ev.setShowAxes(!ev.getShowXaxis(), true);
+			else if (app.getEuclidianView2() == ev)
+				app.getSettings().getEuclidian(2).setShowAxes(!ev.getShowXaxis(), !ev.getShowXaxis());
+			else
+				ev.setShowAxes(!ev.getShowXaxis(), true);
 			ev.repaint();
 		}
 
 		else if (source.equals(btnShowGrid)) {
-			ev.showGrid(!ev.getShowGrid());
-			if (ev instanceof EuclidianView)
-				((EuclidianView)ev).resetShowGrid();
+			if (app.getEuclidianView() == ev)
+				app.getSettings().getEuclidian(1).showGrid(!ev.getShowGrid());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				ev.showGrid(!ev.getShowGrid());
+			else if (app.getEuclidianView2() == ev)
+				app.getSettings().getEuclidian(2).showGrid(!ev.getShowGrid());
+			else
+				ev.showGrid(!ev.getShowGrid());
 			ev.repaint();
 		}
 		

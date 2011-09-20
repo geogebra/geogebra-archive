@@ -197,10 +197,25 @@ public class Layout implements SettingListener {
 		// ignore axes & grid settings for the document perspective
 		if(!perspective.getId().equals("tmp")) {
 			EuclidianView ev = app.getEuclidianView();
-			ev.setShowAxes(perspective.getShowAxes(), false);
-			ev.resetShowAxes();
-			ev.showGrid(perspective.getShowGrid());
-			ev.resetShowGrid();
+
+			if (app.getEuclidianView() == ev)
+				app.getSettings().getEuclidian(1).setShowAxes(perspective.getShowAxes(), perspective.getShowAxes());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				ev.setShowAxes(perspective.getShowAxes(), false);
+			else if (app.getEuclidianView2() == ev)
+				app.getSettings().getEuclidian(2).setShowAxes(perspective.getShowAxes(), perspective.getShowAxes());
+			else
+				ev.setShowAxes(perspective.getShowAxes(), false);
+
+			if (app.getEuclidianView() == ev)
+				app.getSettings().getEuclidian(1).showGrid(perspective.getShowGrid());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				ev.showGrid(perspective.getShowGrid());
+			else if (app.getEuclidianView2() == ev)
+				app.getSettings().getEuclidian(2).showGrid(perspective.getShowGrid());
+			else
+				ev.showGrid(perspective.getShowGrid());
+
 			ev.setUnitAxesRatio(perspective.isUnitAxesRatio());
 		}
 		
