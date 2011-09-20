@@ -48,7 +48,7 @@ cd $SVNDIR/geogebra/build
 rm -fR $WWWDIR/history/$MYVER || exit 4
 mkdir -p $WWWDIR/history/$MYVER || exit 4
 chmod g+rwx $WWWDIR/history/$MYVER || exit 4
-find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt  | while read filename; do
+find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while read filename; do
  directory=`dirname $filename`
  mkdir -p $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
  chmod g+rwx $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
@@ -60,10 +60,9 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt  | while re
 cd $WWWDIR/$MYDIR
 for i in *.html *.jnlp; do
  cat $i | \
-  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/unsigned"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unsigned\/unpacked"/g | \
+  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/unsigned"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unsigned"/g | \
   sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
-  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/debug"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
-  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
+  sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR"/g | \
   sed s/"<\/title>"/" ($MYVER)<\/title>"/g | \
   grep -v "association mime-type" \
   > unpacked/$i

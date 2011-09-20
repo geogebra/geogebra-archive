@@ -108,10 +108,10 @@ cp $SVNDIR/geogebra/lib/vernier_ccsd* $WWWDIR/$MYDIR/usb || exit 4
 echo "$0: static files copied"
 
 # 6/3. Moving *.html and *.jnlp to unpacked/ and rewriting static URLs:
-# http://jars.geogebra.org/webstart/4.2/unsigned -> http://jars.geogebra.org/webstart/$MYDIR/unsigned/unpacked
-# http://jars.geogebra.org/webstart/4.2/usb-gomotion.ggb -> http://jars.geogebra.org/webstart/$MYDIR/usb-gomotion.ggb
-# http://jars.geogebra.org/webstart/4.2/debug -> http://jars.geogebra.org/webstart/$MYDIR/debug
-# http://jars.geogebra.org/webstart/4.2/ -> http://jars.geogebra.org/webstart/$MYDIR/unpacked/
+# http://www.geogebra.org/webstart/4.2/unsigned -> http://www.geogebra.org/webstart/$MYDIR/unsigned/unpacked
+# http://www.geogebra.org/webstart/4.2/usb-gomotion.ggb -> http://www.geogebra.org/webstart/$MYDIR/usb-gomotion.ggb
+# http://www.geogebra.org/webstart/4.2/debug -> http://www.geogebra.org/webstart/$MYDIR/debug
+# http://www.geogebra.org/webstart/4.2/ -> http://www.geogebra.org/webstart/$MYDIR/unpacked/
 # </title> -> ($MYVER) </title>
 
 # In addition, removing those lines which have the "association mime-type" text.
@@ -119,10 +119,10 @@ echo "$0: static files copied"
 cd $WWWDIR/$MYDIR
 for i in *.html *.jnlp; do
     cat $i | \
-     sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/unsigned"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unsigned\/unpacked"/g | \
-     sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
-     sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/debug"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
-     sed s/"http:\/\/jars.geogebra.org\/webstart\/4.2\/"/"http:\/\/jars.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/unsigned\/unpacked"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/debug"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.2\/"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
      sed s/"<\/title>"/" ($MYVER)<\/title>"/g | \
      grep -v "association mime-type" \
      > unpacked/$i
