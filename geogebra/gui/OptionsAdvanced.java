@@ -76,9 +76,6 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	/** */
 	private JSlider slOpacity;
 	
-	/** */
-	private JButton managePerspectivesButton;
-	
 	/**
 	 * Timeout values of tooltips (last entry reserved for "Off", but that has to be translated)
 	 * This is just an example,
@@ -291,9 +288,6 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbAllowStyleBar.addActionListener(this);
 		perspectivesPanel.add(cbAllowStyleBar);
 		
-		managePerspectivesButton = new JButton();
-		managePerspectivesButton.addActionListener(this);
-		perspectivesPanel.add(managePerspectivesButton);
 	}
 	
 	/**
@@ -669,8 +663,6 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			settings.getLayout().setIgnoreDocumentLayout(cbIgnoreDocumentLayout.isSelected());
 		} else if(source == cbAllowStyleBar) {
 			settings.getLayout().setAllowStyleBar(cbAllowStyleBar.isSelected());
-		} else if(source == managePerspectivesButton) {
-			app.getGuiManager().getLayout().showManageDialog();
 		} else if (source == angleUnitRadioDegree) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
 			app.getKernel().updateConstruction();
@@ -861,7 +853,6 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
 		cbShowTitleBar.setText(app.getPlain("ShowTitleBar"));
 		cbAllowStyleBar.setText(app.getPlain("AllowStyleBar"));
-		managePerspectivesButton.setText(app.getMenu("ManagePerspectives"));
 		
 		miscPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Miscellaneous")));
 		cbEnableScripting.setText(app.getPlain("EnableScripting"));
