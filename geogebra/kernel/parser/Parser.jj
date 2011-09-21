@@ -372,11 +372,7 @@ TOKEN: {
 |	< ARG_FUNC:  ( "arg(" | "Arg(" ) > 
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
 |	< RANDOM_FUNC:  "random()"  >
-|	< DERIV_MP:  "Deriv()"  >  // may be returned by MathPiper
-|	< ARBCONST:  "arbconst("  >  // arbitrary constant by MPreduce
-|	< ARBINT:  "arbint("  >  // may be returned by MPreduce
-|	< ARBCOMPLEX:  "arbcomplex("  >  // may be returned by MPreduce
-|   < POLAR: "polartopoint\u00a7(" > // may be returned by MPreduce
+|   < MP_POLARTOPOINT: "polartopoint\u00a7(" > // may be returned by MPreduce
 | 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 
@@ -1827,7 +1823,7 @@ ExpressionNode numberFunction():
     ExpressionNode en, en2, en3;
     ExpressionValue ev;
     MyList myList;
-    Token c;
+    Token c, flabel, fvar1, fvar2;
     String conslabel;
     MySpecialDouble myconst;
 }
@@ -2058,25 +2054,7 @@ ExpressionNode numberFunction():
       { return new ExpressionNode(kernel, en, ExpressionNode.ARG, null); }               
 | 
     <ROUND_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.ROUND, null); }               
-|
-    <ARBCONST> en = expressionOrEquation() ")" 
-    {
-  		// e.g. arbconst(3) from MPreduce becomes next free index label, e.g. c_4
-        return new ExpressionNode(kernel, new MyArbitraryConstant(kernel, MyArbitraryConstant.ARB_CONST, en.toString()));          
-    }
-|
-    <ARBINT> en = expressionOrEquation() ")"
-    {      	
-      	// e.g. arbint(2) from MPreduce becomes next free index label, e.g. k_3
-		return new ExpressionNode(kernel, new MyArbitraryConstant(kernel, MyArbitraryConstant.ARB_INT, en.toString()));  
-    }
-|
-    <ARBCOMPLEX> en = expressionOrEquation() ")"
-    {      	
-		// e.g. arbcomplex(2) from MPreduce becomes next free index label, e.g. z_5
-		return new ExpressionNode(kernel, new MyArbitraryConstant(kernel, MyArbitraryConstant.ARB_COMPLEX, en.toString())); 
-    }        
+      { return new ExpressionNode(kernel, en, ExpressionNode.ROUND, null); }
 | 
   <RANDOM_FUNC>
       {  
@@ -2103,6 +2081,15 @@ ExpressionNode numberFunction():
       { 
       		// remove the opening parenthesis
       		String funcName = c.image.substring(0, c.image.length()-1);
+
+			if (MPReduceParsing)  {
+			  	// check for special MPReduce functions, e.g. df, arbconst, etc.
+				en = CommandDispatcherMPReduce.processCommand(funcName, myList);
+				if (en != null)
+					return en;
+		    }
+
+      		// check for derivative using f'' notation
       		int order = 0;
       		int index = funcName.length()-1;
       		GeoElement geo = null;    
@@ -2115,7 +2102,8 @@ ExpressionNode numberFunction():
       				order++;
       				index--;
       			} else break;
-      		}      		      	
+      		}
+      		
       		if (geo == null) {
       				// function name does not exist: return command
       				Command cmd = new Command(kernel, funcName, true );
@@ -2222,7 +2210,7 @@ VectorValue polarvector():
     (  
       ( "(" r = expression() ";"  phi = expression() ")" )
     |
-      ( <POLAR> r = expression() <COMMA> phi = expression() ")" )
+      ( <MP_POLARTOPOINT> r = expression() <COMMA> phi = expression() ")" )
     )   
         {                            
              v = new MyVecNode(kernel);                         

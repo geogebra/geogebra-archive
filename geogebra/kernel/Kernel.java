@@ -999,7 +999,10 @@ public class Kernel {
 	 * Returns ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX + label.
 	 */
 	 private static String addCASVariablePrefix(String label) {
-		 return addPrefix(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX, label);
+		 if (label.startsWith(ExpressionNodeConstants.TMP_VARIABLE_PREFIX))
+			 return label;
+		 else
+			 return addPrefix(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX, label);
 	 }
 	 
 	 /**
