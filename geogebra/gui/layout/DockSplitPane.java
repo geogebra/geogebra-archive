@@ -117,6 +117,8 @@ public class DockSplitPane extends JSplitPane {
 	{
 		private Application app;
 		private ArrayList<DockSplitPaneXml> splitPaneInfo;
+		private int windowWidth;
+		private int windowHeight;
 		
 		public TreeReader(Application app) {
 			this.app = app;
@@ -126,6 +128,18 @@ public class DockSplitPane extends JSplitPane {
 		
 		public DockSplitPaneXml[] getInfo(DockSplitPane rootPane) {
 			splitPaneInfo.clear();
+			
+			if(app.isApplet()) {
+				windowWidth = app.getApplet().width;
+			} else {
+				windowWidth = app.getFrame().getWidth();
+			}
+			
+			if(app.isApplet()) {
+				windowHeight = app.getApplet().height;
+			} else {
+				windowHeight = app.getFrame().getHeight();
+			}
 
 			saveSplitPane("", rootPane);
 			
@@ -143,10 +157,11 @@ public class DockSplitPane extends JSplitPane {
 			double dividerLocation = 0.2;
 			
 			// get relative divider location depending on the current orientation
-			if(parent.getOrientation() == DockSplitPane.HORIZONTAL_SPLIT)
-				dividerLocation = (double)parent.getDividerLocation() / app.getFrame().getWidth();
-			else
-				dividerLocation = (double)parent.getDividerLocation() / app.getFrame().getHeight();
+			if(parent.getOrientation() == DockSplitPane.HORIZONTAL_SPLIT) {
+				dividerLocation = (double)parent.getDividerLocation() / windowWidth;
+			} else {
+				dividerLocation = (double)parent.getDividerLocation() / windowHeight;
+			}
 			
 			splitPaneInfo.add(new DockSplitPaneXml(parentLocation, dividerLocation, parent.getOrientation()));
 			
