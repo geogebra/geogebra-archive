@@ -24,6 +24,7 @@ import geogebra.util.Unicode;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -733,8 +734,18 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 					app.getGuiManager().showColorChooser(view.getBackground()));			
 		}
 		else if (source == btAxesColor) {
-			view.setAxesColor(
-					app.getGuiManager().showColorChooser(view.getAxesColor()));			
+			//view.setAxesColor(
+			//		app.getGuiManager().showColorChooser(view.getAxesColor()));
+			
+			Color col = app.getGuiManager().showColorChooser(view.getAxesColor());
+			if (view == app.getEuclidianView())
+				app.getSettings().getEuclidian(1).setAxesColor(col);
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setAxesColor(col);
+			else if (view == app.getEuclidianView2())
+				app.getSettings().getEuclidian(2).setAxesColor(col);
+			else
+				view.setAxesColor(col);
 		}
 		else if (source == btGridColor) {
 			view.setGridColor(

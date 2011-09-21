@@ -221,7 +221,12 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 			restoreDefaultsButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					GeoGebraPreferences.getPref().clearPreferences();
-	
+
+					// reset defaults for GUI, views etc
+					// this has to be called before load XML preferences,
+					// in order to avoid overwrite
+					app.getSettings().resetSettings();
+
 					GeoGebraPreferences.getPref().loadXMLPreferences(app);
 	
 					// reset default line thickness etc
@@ -235,9 +240,6 @@ public class OptionsDialog extends JDialog implements WindowListener, SetLabels 
 						app.getEuclidianView().getStyleBar().restoreDefaultGeo();
 					if(app.hasEuclidianView2EitherShowingOrNot() && app.getEuclidianView2().hasStyleBar())
 						app.getEuclidianView2().getStyleBar().restoreDefaultGeo();
-					
-					// reset defaults for GUI, views etc
-					app.getSettings().resetSettings();				
 					
 					// restore dialog panels to display these defaults
 					restoreDefaults();

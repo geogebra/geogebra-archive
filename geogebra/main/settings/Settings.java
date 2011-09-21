@@ -1,5 +1,8 @@
 package geogebra.main.settings;
 
+import java.util.LinkedList;
+import java.util.Iterator;
+
 /**
  * Class which contains references to all settings of the application.
  * 
@@ -38,7 +41,17 @@ public class Settings {
 	
 	public void resetSettings() {
 		for(int i = 0; i < euclidianSettings.length; ++i) {
-			euclidianSettings[i] = new EuclidianSettings();
+			if (euclidianSettings[i] == null) {
+				euclidianSettings[i] = new EuclidianSettings();
+			} else {
+				LinkedList<SettingListener> ls = euclidianSettings[i].getListeners();
+				euclidianSettings[i] = new EuclidianSettings();
+				Iterator<SettingListener> lsi = ls.iterator();
+				while (lsi.hasNext()) {
+					SettingListener a = lsi.next();
+					euclidianSettings[i].addListener(a);
+				}
+			}
 		}
 		
 		if (algebraSettings == null)
