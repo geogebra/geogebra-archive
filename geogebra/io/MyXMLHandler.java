@@ -2542,34 +2542,34 @@ public class MyXMLHandler implements DocHandler {
 	private void processEvSizes() {
 		for(EuclidianSettings ev:xmin.keySet()){			
 			if (xmin.get(ev) == null) {
-				ev.setXminObject(null);
+				ev.setXminObject(null, true);
 			} else {
 				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmin.get(ev),true);			
-				ev.setXminObject(n);
+				ev.setXminObject(n, true);
 			}
 		}
 		for(EuclidianSettings ev:xmax.keySet()){
 			if (xmax.get(ev) == null) {
-				ev.setXmaxObject(null);
+				ev.setXmaxObject(null, true);
 			} else {
 				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmax.get(ev),true);			
-				ev.setXmaxObject(n);
+				ev.setXmaxObject(n, true);
 			}
 		}
 		for(EuclidianSettings ev:ymin.keySet()){
 			if (ymin.get(ev) == null) {
-				ev.setYminObject(null);
+				ev.setYminObject(null, true);
 			} else {
 				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymin.get(ev),true);
-				ev.setYminObject(n);
+				ev.setYminObject(n, true);
 			}
 		}
 		for(EuclidianSettings ev:ymax.keySet()){
 			if (ymax.get(ev) == null) {
-				ev.setYmaxObject(null);
+				ev.setYmaxObject(null, true);
 			} else {
 				NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymax.get(ev),true);
-				ev.setYmaxObject(n);
+				ev.setYmaxObject(n, true);
 			}
 			//ev.updateBounds();
 		}

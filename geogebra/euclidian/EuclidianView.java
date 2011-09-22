@@ -4991,10 +4991,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 			GeoNumeric xmio = new GeoNumeric(kernel.getConstruction(), xminObject.getNumber().getDouble());
 			GeoNumeric ymao = new GeoNumeric(kernel.getConstruction(), ymaxObject.getNumber().getDouble());
 			GeoNumeric ymio = new GeoNumeric(kernel.getConstruction(), yminObject.getNumber().getDouble());
-			es.setXmaxObject(xmao);
-			es.setXminObject(xmio);
-			es.setYmaxObject(ymao);
-			es.setYminObject(ymio);
+			es.setXmaxObject(xmao, false);
+			es.setXminObject(xmio, false);
+			es.setYmaxObject(ymao, false);
+			es.setYminObject(ymio, true);
 		}
 	}
 
@@ -5360,12 +5360,16 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		setAllowShowMouseCoords(evs.getAllowShowMouseCoords());
 		
 		setAllowToolTips(evs.getAllowToolTips());
-		
-		if(evs.getXmaxObject()==null)
+
+		if(evs.getXmaxObject()==null) {
 			setCoordSystem(evs.getXZero(), evs.getYZero(), evs.getXscale(), evs.getYscale(), true);
-		else
+			evs.setXminObject(xminObject, false);
+			evs.setXmaxObject(xmaxObject, false);
+			evs.setYminObject(yminObject, false);
+			evs.setYmaxObject(ymaxObject, false);
+		} else {
 			updateBounds();
-		
+		}
 	}
 	public int getViewID() {
 		switch (evNo) {

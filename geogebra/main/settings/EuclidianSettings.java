@@ -436,10 +436,12 @@ public class EuclidianSettings extends AbstractSettings {
 
 	/**
 	 * @param xminObjectNew the xminObject to set
+	 * @param callsc whether settingChanged should be called
 	 */
-	public void setXminObject(NumberValue xminObjectNew) {
+	public void setXminObject(NumberValue xminObjectNew, boolean callsc) {
 		this.xminObject = xminObjectNew;
-		settingChanged();
+		if (callsc)
+			settingChanged();
 	}
 
 	/**
@@ -451,10 +453,12 @@ public class EuclidianSettings extends AbstractSettings {
 
 	/**
 	 * @param xmaxObjectNew the xmaxObject to set
+	 * @param callsc whether settingChanged should be called
 	 */
-	public void setXmaxObject(NumberValue xmaxObjectNew) {
+	public void setXmaxObject(NumberValue xmaxObjectNew, boolean callsc) {
 		this.xmaxObject = xmaxObjectNew;
-		settingChanged();
+		if (callsc)
+			settingChanged();
 	}
 
 	/**
@@ -466,10 +470,12 @@ public class EuclidianSettings extends AbstractSettings {
 
 	/**
 	 * @param yminObjectNew the yminObject to set
+	 * @param callsc whether settingChanged should be called
 	 */
-	public void setYminObject(NumberValue yminObjectNew) {
+	public void setYminObject(NumberValue yminObjectNew, boolean callsc) {
 		this.yminObject = yminObjectNew;
-		settingChanged();
+		if (callsc)
+			settingChanged();
 	}
 
 	/**
@@ -481,10 +487,12 @@ public class EuclidianSettings extends AbstractSettings {
 
 	/**
 	 * @param ymaxObjectNew the ymaxObject to set
+	 * @param callsc whether settingChanged should be called
 	 */
-	public void setYmaxObject(NumberValue ymaxObjectNew) {
+	public void setYmaxObject(NumberValue ymaxObjectNew, boolean callsc) {
 		this.ymaxObject = ymaxObjectNew;
-		settingChanged();
+		if (callsc)
+			settingChanged();
 	}
 
 	/**

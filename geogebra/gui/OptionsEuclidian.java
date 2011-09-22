@@ -838,13 +838,45 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 			}
 			else {
 				if(source == tfMinX){
-					view.setXminObject(minMax);				
+					if (view == app.getEuclidianView()) {
+						app.getSettings().getEuclidian(1).setXminObject(minMax, true);
+					} else if (!app.hasEuclidianView2EitherShowingOrNot()) {
+						view.setXminObject(minMax);
+					} else if (view == app.getEuclidianView2()) {
+						app.getSettings().getEuclidian(2).setXminObject(minMax, true);
+					} else {
+						view.setXminObject(minMax);
+					}
 				}else if(source== tfMaxX){
-					view.setXmaxObject(minMax);						
+					if (view == app.getEuclidianView()) {
+						app.getSettings().getEuclidian(1).setXmaxObject(minMax, true);
+					} else if (!app.hasEuclidianView2EitherShowingOrNot()) {
+						view.setXmaxObject(minMax);
+					} else if (view == app.getEuclidianView2()) {
+						app.getSettings().getEuclidian(2).setXmaxObject(minMax, true);
+					} else {
+						view.setXmaxObject(minMax);
+					}
 				}else if(source == tfMinY){
-					view.setYminObject(minMax);				
+					if (view == app.getEuclidianView()) {
+						app.getSettings().getEuclidian(1).setYminObject(minMax, true);
+					} else if (!app.hasEuclidianView2EitherShowingOrNot()) {
+						view.setYminObject(minMax);
+					} else if (view == app.getEuclidianView2()) {
+						app.getSettings().getEuclidian(2).setYminObject(minMax, true);
+					} else {
+						view.setYminObject(minMax);
+					}
 				}else if(source== tfMaxY){
-					view.setYmaxObject(minMax);					
+					if (view == app.getEuclidianView()) {
+						app.getSettings().getEuclidian(1).setYmaxObject(minMax, true);
+					} else if (!app.hasEuclidianView2EitherShowingOrNot()) {
+						view.setYmaxObject(minMax);
+					} else if (view == app.getEuclidianView2()) {
+						app.getSettings().getEuclidian(2).setYmaxObject(minMax, true);
+					} else {
+						view.setYmaxObject(minMax);
+					}
 				}	
 				view.setXminObject(view.getXminObject());
 				tfAxesRatioX.setEnabled(view.isZoomable() && !view.isUnitAxesRatio());
