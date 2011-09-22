@@ -730,13 +730,24 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 	
 	protected void doActionPerformed(Object source) {				
 		if (source == btBackgroundColor) {
-			view.setBackground(
-					app.getGuiManager().showColorChooser(view.getBackground()));			
+			if (view == app.getEuclidianView())
+				app.getSettings().getEuclidian(1).setBackground(
+					app.getGuiManager().showColorChooser(
+						app.getSettings().getEuclidian(1).getBackground()
+					)
+				);
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setBackground(view.getBackground());
+			else if (view == app.getEuclidianView2())
+				app.getSettings().getEuclidian(2).setBackground(
+					app.getGuiManager().showColorChooser(
+						app.getSettings().getEuclidian(2).getBackground()
+					)
+				);
+			else
+				view.setBackground(view.getBackground());
 		}
 		else if (source == btAxesColor) {
-			//view.setAxesColor(
-			//		app.getGuiManager().showColorChooser(view.getAxesColor()));
-			
 			Color col = app.getGuiManager().showColorChooser(view.getAxesColor());
 			if (view == app.getEuclidianView())
 				app.getSettings().getEuclidian(1).setAxesColor(col);
