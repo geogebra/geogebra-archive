@@ -274,7 +274,9 @@ public class EuclidianSettings extends AbstractSettings {
 	}
 
 	public void setAllowShowMouseCoords(boolean neverShowMouseCoords) {
+		if (neverShowMouseCoords == this.allowShowMouseCoords) return;
 		this.allowShowMouseCoords = neverShowMouseCoords;
+		settingChanged();
 	}
 	
 	/*
@@ -630,7 +632,9 @@ public class EuclidianSettings extends AbstractSettings {
 	}
 
 	public void setAllowToolTips(int setto) {
+		if (setto == tooltipsInThisView) return;
 		tooltipsInThisView = setto;
+		settingChanged();
 	}
 
 	final public int getAllowToolTips() {

@@ -764,13 +764,18 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		}
 		else if (source == cbTooltips) {
 			int ind = cbTooltips.getSelectedIndex();
+			if (ind == 0) ind = EuclidianView.TOOLTIPS_ON;
+			else if (ind == 1) ind = EuclidianView.TOOLTIPS_AUTOMATIC;
+			else if (ind == 2) ind = EuclidianView.TOOLTIPS_OFF;
 			if (view instanceof EuclidianView) {
-				if (ind == 0)
-					((EuclidianView)view).setAllowToolTips(EuclidianView.TOOLTIPS_ON);
-				else if (ind == 1)
-					((EuclidianView)view).setAllowToolTips(EuclidianView.TOOLTIPS_AUTOMATIC);
-				else if (ind == 2)
-					((EuclidianView)view).setAllowToolTips(EuclidianView.TOOLTIPS_OFF);
+				if (view == app.getEuclidianView())
+					app.getSettings().getEuclidian(1).setAllowToolTips(ind);
+				else if (!app.hasEuclidianView2EitherShowingOrNot())
+					((EuclidianView)view).setAllowToolTips(ind);
+				else if (view == app.getEuclidianView2())
+					app.getSettings().getEuclidian(2).setAllowToolTips(ind);
+				else
+					((EuclidianView)view).setAllowToolTips(ind);
 			}
 		}
 		else if (source == cbShowAxes) {
@@ -796,12 +801,16 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		else if (source == cbBoldGrid) {
 			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		
 		}
-
 		else if (source == cbShowMouseCoords) {
-			view.setAllowShowMouseCoords(cbShowMouseCoords.isSelected());	
+			if (view == app.getEuclidianView())
+				app.getSettings().getEuclidian(1).setAllowShowMouseCoords(cbShowMouseCoords.isSelected());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setAllowShowMouseCoords(cbShowMouseCoords.isSelected());
+			else if (view == app.getEuclidianView2())
+				app.getSettings().getEuclidian(2).setAllowShowMouseCoords(cbShowMouseCoords.isSelected());
+			else
+				view.setAllowShowMouseCoords(cbShowMouseCoords.isSelected());
 		}
-
-
 		else if (source == cbGridType) {
 			view.setGridType(cbGridType.getSelectedIndex());
 		}	
