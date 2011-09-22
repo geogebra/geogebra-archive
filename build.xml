@@ -130,7 +130,7 @@ office@geogebra.org
 			<fileset dir="./geogebra/kernel" includes="**/*.class" />
 		</delete>
 		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
-			<fileset dir="./geogebra/kernel/parser" includes="**/*.java"/>
+			<fileset dir="./geogebra/kernel/parser" includes="**/*.java" excludes="*MPReduce*.java"/>
 		</delete>
 	</target>
 
