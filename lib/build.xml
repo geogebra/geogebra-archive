@@ -11,7 +11,10 @@ would like to use the official JAR files everywhere.
 
 -->
 
-<project default="geogebra4-developer">
+<project default="kickstart-20110923">
+
+	<target name="kickstart-20110923" depends="mpreduce-geogebra, lib-runtime, jogl1, javacc">
+	</target>
 
 	<target name="geogebra4-developer" depends="mpreduce-geogebra, lib-runtime">
 	</target>
