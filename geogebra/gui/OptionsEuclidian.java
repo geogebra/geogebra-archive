@@ -817,7 +817,14 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		
 		
 		else if (source == cbAxesStyle) {
-			view.setAxesLineStyle(cbAxesStyle.getSelectedIndex());
+			if (view == app.getEuclidianView())
+				app.getSettings().getEuclidian(1).setAxesLineStyle(cbAxesStyle.getSelectedIndex());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setAxesLineStyle(cbAxesStyle.getSelectedIndex());
+			else if (view == app.getEuclidianView2())
+				app.getSettings().getEuclidian(2).setAxesLineStyle(cbAxesStyle.getSelectedIndex());
+			else
+				view.setAxesLineStyle(cbAxesStyle.getSelectedIndex());
 		}
 		else if (source == cbGridStyle) {
 			int type = ((Integer) cbGridStyle.getSelectedItem()).intValue();
@@ -1141,8 +1148,14 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		private void doActionPerformed(Object source) {	
 						
 			if (source == cbShowAxis) {
-				boolean showXaxis, showYaxis; 
-				view.setShowAxis(axis, cbShowAxis.isSelected(), true);
+				if (app.getEuclidianView() == view)
+					app.getSettings().getEuclidian(1).setShowAxis(axis, cbShowAxis.isSelected());
+				else if (!app.hasEuclidianView2EitherShowingOrNot())
+					view.setShowAxis(axis, cbShowAxis.isSelected(), true);
+				else if (app.getEuclidianView2() == view)
+					app.getSettings().getEuclidian(2).setShowAxis(axis, cbShowAxis.isSelected());
+				else
+					view.setShowAxis(axis, cbShowAxis.isSelected(), true);
 			} 
 			
 			else if (source == cbAxisNumber) {
@@ -1192,11 +1205,15 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 			}		
 
 			else if (source == cbPositiveAxis) {
-				boolean[] posAxis = view.getPositiveAxes();				
-				posAxis[axis] = cbPositiveAxis.isSelected();		
-				view.setPositiveAxes(posAxis);
-			}		
-			
+				if (view == app.getEuclidianView())
+					app.getSettings().getEuclidian(1).setPositiveAxis(axis, cbPositiveAxis.isSelected());
+				else if (!app.hasEuclidianView2EitherShowingOrNot())
+					view.setPositiveAxis(axis, cbPositiveAxis.isSelected());
+				else if (view == app.getEuclidianView2())
+					app.getSettings().getEuclidian(2).setPositiveAxis(axis, cbPositiveAxis.isSelected());
+				else
+					view.setPositiveAxis(axis, cbPositiveAxis.isSelected());
+			}
 			else if (source == cbDrawAtBorder) {
 				boolean[] border = view.getDrawBorderAxes();				
 				border[axis] = cbDrawAtBorder.isSelected();		

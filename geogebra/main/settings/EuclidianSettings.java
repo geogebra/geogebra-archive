@@ -426,7 +426,9 @@ public class EuclidianSettings extends AbstractSettings {
 
 	// for xml handler
 	public void setPositiveAxis(int axis, boolean isPositiveAxis) {
+		if (positiveAxes[axis] == isPositiveAxis) return;
 		positiveAxes[axis] = isPositiveAxis;
+		settingChanged();
 	}
 	
 	/**
