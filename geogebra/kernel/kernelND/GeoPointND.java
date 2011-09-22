@@ -1,12 +1,12 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.Coords;
 import geogebra.kernel.LocateableList;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
+import geogebra.kernel.Matrix.CoordSys;
+import geogebra.kernel.Matrix.Coords;
 
 
 

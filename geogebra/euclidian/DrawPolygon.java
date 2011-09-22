@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
@@ -22,6 +21,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 

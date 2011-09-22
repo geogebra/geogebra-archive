@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra3D;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
@@ -28,6 +27,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Region;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra.plugin.GgbAPI;

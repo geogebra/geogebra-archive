@@ -1,6 +1,6 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.Coords;
 
 
 /**

@@ -1,6 +1,6 @@
 package geogebra.kernel.arithmetic;
 
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.Coords;
 
 /** interface for all classes that can be evaluated as (u,v) -> (x,y,z) surfaces
  * 

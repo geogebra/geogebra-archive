@@ -18,12 +18,12 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.Coords;
 import geogebra.cas.CASgeneric;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;

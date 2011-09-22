@@ -3,10 +3,10 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.CoordSys;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;

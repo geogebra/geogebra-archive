@@ -13,10 +13,10 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.CoordSys;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.main.Application;
 
 

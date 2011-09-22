@@ -1,7 +1,7 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Matrix.Coords;
 
 import java.awt.Color;
 

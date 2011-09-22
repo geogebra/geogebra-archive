@@ -10,7 +10,7 @@ the Free Software Foundation.
 
 */
 
-package geogebra.Matrix;
+package geogebra.kernel.Matrix;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;

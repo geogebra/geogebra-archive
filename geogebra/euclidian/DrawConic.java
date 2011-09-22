@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipShape;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
@@ -34,6 +33,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;

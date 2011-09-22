@@ -1,7 +1,7 @@
 package geogebra3D.kernel3D.arithmetic;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.ExpressionValue;

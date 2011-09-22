@@ -1,6 +1,6 @@
 package geogebra.kernel;
 
-import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.CoordMatrix4x4;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;

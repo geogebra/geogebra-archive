@@ -1,7 +1,7 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Region;
+import geogebra.kernel.Matrix.Coords;
 
 /**
  * simple plane interface for all geos that can be considered as a plane (3D plane, polygons, ...)

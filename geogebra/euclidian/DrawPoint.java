@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.GeoConic;
@@ -28,6 +27,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 

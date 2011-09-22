@@ -2,15 +2,15 @@ package geogebra3D.kernel3D;
 
 import java.awt.geom.AffineTransform;
 
-import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.RegionParameters;
+import geogebra.kernel.Matrix.CoordMatrix;
+import geogebra.kernel.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;

@@ -18,8 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.CoordSys;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;

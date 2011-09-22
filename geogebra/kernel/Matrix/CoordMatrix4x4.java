@@ -1,4 +1,4 @@
-package geogebra.Matrix;
+package geogebra.kernel.Matrix;
 
 import geogebra.main.Application;
 

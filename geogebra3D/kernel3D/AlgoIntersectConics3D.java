@@ -18,10 +18,6 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.CoordMatrixUtil;
-import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.AlgoIntersectConics;
@@ -32,6 +28,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.CoordMatrix;
+import geogebra.kernel.Matrix.CoordMatrixUtil;
+import geogebra.kernel.Matrix.CoordSys;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.kernelND.AlgoIntersectND;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoLineND;

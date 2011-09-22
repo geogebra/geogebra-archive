@@ -4,9 +4,9 @@ package geogebra3D.euclidian3D.opengl;
 
 
 
-import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.CoordMatrix;
+import geogebra.kernel.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 import geogebra3D.euclidian3D.Drawable3DLists;

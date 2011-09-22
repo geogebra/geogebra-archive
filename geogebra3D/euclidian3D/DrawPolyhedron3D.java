@@ -3,7 +3,6 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
@@ -12,6 +11,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;

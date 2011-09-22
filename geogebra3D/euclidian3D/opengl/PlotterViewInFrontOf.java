@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D.opengl;
 
 import java.awt.Color;
 
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.Coords;
 
 import javax.media.opengl.GL;
 

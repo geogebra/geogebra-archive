@@ -15,8 +15,8 @@ the Free Software Foundation.
  */
 package geogebra.kernel;
 
-import geogebra.Matrix.CoordNearest;
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.CoordNearest;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.EllipticArcLength;

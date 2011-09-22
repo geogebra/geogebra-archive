@@ -1,7 +1,7 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.Drawable;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 

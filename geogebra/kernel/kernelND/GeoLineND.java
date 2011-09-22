@@ -1,7 +1,7 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.CoordMatrix;
+import geogebra.kernel.Matrix.Coords;
 
 /**
  * @author mathieu

@@ -18,11 +18,11 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;

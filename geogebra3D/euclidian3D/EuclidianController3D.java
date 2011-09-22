@@ -2,8 +2,6 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
@@ -16,6 +14,8 @@ import geogebra.kernel.GeoSurfaceFinite;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
+import geogebra.kernel.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;

@@ -18,9 +18,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.CoordMatrixUtil;
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.CoordMatrix;
+import geogebra.kernel.Matrix.CoordMatrixUtil;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.Evaluatable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;

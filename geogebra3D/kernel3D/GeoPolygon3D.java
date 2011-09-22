@@ -1,8 +1,5 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.CoordMatrix4x4;
-import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -11,6 +8,9 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.Region;
+import geogebra.kernel.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.CoordSys;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;

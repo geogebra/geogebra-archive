@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
 
 

@@ -12,8 +12,6 @@
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoElement;
@@ -43,6 +41,8 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
+import geogebra.kernel.Matrix.CoordMatrix;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.cas.AlgoIntegralDefinite;

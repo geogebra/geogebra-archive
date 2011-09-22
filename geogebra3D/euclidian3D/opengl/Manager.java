@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.Coords;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.nio.FloatBuffer;

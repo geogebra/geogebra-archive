@@ -2,7 +2,6 @@ package geogebra3D.euclidianForPlane;
 
 import java.util.ArrayList;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
@@ -12,6 +11,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;

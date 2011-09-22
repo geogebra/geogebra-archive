@@ -12,7 +12,6 @@
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.Coords;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
@@ -48,6 +47,7 @@ import geogebra.kernel.PointProperties;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Region;
 import geogebra.kernel.Transformable;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.implicit.GeoImplicitPoly;

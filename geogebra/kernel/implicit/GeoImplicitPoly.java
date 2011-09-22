@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel.implicit;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.AlgoClosestPoint;
 import geogebra.kernel.AlgoElement;
@@ -43,6 +42,7 @@ import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.Transformable;
 import geogebra.kernel.Translateable;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;

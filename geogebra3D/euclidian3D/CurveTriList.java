@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.Coords;
+import geogebra.kernel.Matrix.Coords;
 import geogebra3D.euclidian3D.plots.CurveMesh;
 
 /**

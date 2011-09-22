@@ -18,12 +18,12 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 

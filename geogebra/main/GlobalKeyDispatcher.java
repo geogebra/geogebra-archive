@@ -1,6 +1,5 @@
 package geogebra.main;
 
-import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
@@ -19,6 +18,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PointProperties;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.util.CopyPaste;
 import geogebra.util.Util;
