@@ -92,7 +92,7 @@ public class AlgoFractionText extends AlgoElement {
      * Santa Monica, CA 90405
      * http://homepage.smc.edu/kennedy_john/DEC2FRAC.PDF
      */
-	private double[] DecimalToFraction(double decimal, double AccuracyFactor) {
+	public static double[] DecimalToFraction(double decimal, double AccuracyFactor) {
 	double FractionNumerator, FractionDenominator;
 	double DecimalSign;
 	double Z;

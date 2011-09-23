@@ -1163,11 +1163,19 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 				show[axis] = cbAxisNumber.isSelected();
 				view.setShowAxesNumbers(show); 
 			}
-			
+
 			else if (source == cbManualTicks) {
-				view.setAutomaticAxesNumberingDistance(!cbManualTicks.isSelected(), axis);				
+
+				if (app.getEuclidianView() == view)
+					app.getSettings().getEuclidian(1).setAutomaticAxesNumberingDistance(!cbManualTicks.isSelected(), axis, true);
+				else if (!app.hasEuclidianView2EitherShowingOrNot())
+					view.setAutomaticAxesNumberingDistance(!cbManualTicks.isSelected(), axis);
+				else if (app.getEuclidianView2() == view)
+					app.getSettings().getEuclidian(2).setAutomaticAxesNumberingDistance(!cbManualTicks.isSelected(), axis, true);
+				else
+					view.setAutomaticAxesNumberingDistance(!cbManualTicks.isSelected(), axis);
 			}
-			
+
 			else if (source == cbUnitLabel) {
 				Object ob = cbUnitLabel.getSelectedItem();
 				String text =  (ob == null) ? null : ob.toString().trim();
@@ -1175,7 +1183,7 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 				labels[axis] = text;
 				view.setAxesUnitLabels(labels);
 			}
-			
+
 			else if (source == cbAxisLabel) {
 				Object ob = cbAxisLabel.getSelectedItem();
 				String text =  (ob == null) ? null : ob.toString().trim();
@@ -1232,11 +1240,19 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		
 			if (e.getStateChange() != ItemEvent.SELECTED)
 				return;
-			Object source = e.getSource();					
+			Object source = e.getSource();
 			if (source == ncbTickDist) {
 				double val = ncbTickDist.getValue();
-				if (val > 0) 
-					view.setAxesNumberingDistance(val, axis);			
+				if (val > 0) {
+					if (app.getEuclidianView() == view)
+						app.getSettings().getEuclidian(1).setAxesNumberingDistance(val, axis);
+					else if (!app.hasEuclidianView2EitherShowingOrNot())
+						view.setAxesNumberingDistance(val, axis);
+					else if (app.getEuclidianView2() == view)
+						app.getSettings().getEuclidian(2).setAxesNumberingDistance(val, axis);
+					else
+						view.setAxesNumberingDistance(val, axis);
+				}
 			}			
 						
 			view.updateBackground();			

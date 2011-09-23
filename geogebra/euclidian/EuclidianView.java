@@ -5333,9 +5333,15 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		showAxesNumbers = evs.getShowAxisNumbers();
 
 		// might be Double.NaN, handled in setAxesNumberingDistance()
-		setAxesNumberingDistance(evs.getAxisNumberingDistanceX(), 0);
-		setAxesNumberingDistance(evs.getAxisNumberingDistanceY(), 1);
-		
+		if (!evs.getAutomaticAxesNumberingDistance(0) && Double.isNaN(evs.getAxisNumberingDistanceX()))
+			setAutomaticAxesNumberingDistance(false, 0);
+		else
+			setAxesNumberingDistance(evs.getAxisNumberingDistanceX(), 0);
+		if (!evs.getAutomaticAxesNumberingDistance(1) && Double.isNaN(evs.getAxisNumberingDistanceY()))
+			setAutomaticAxesNumberingDistance(false, 1);
+		else
+			setAxesNumberingDistance(evs.getAxisNumberingDistanceY(), 1);
+
 		axesTickStyles[0] = evs.getAxesTickStyles()[0];
 		axesTickStyles[1] = evs.getAxesTickStyles()[1];
 
