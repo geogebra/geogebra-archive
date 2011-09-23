@@ -1,4 +1,4 @@
-package geogebra.kernel.parser;
+package geogebra.kernel.parser.cashandlers;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
