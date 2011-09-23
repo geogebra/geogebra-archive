@@ -13,7 +13,13 @@ would like to use the official JAR files everywhere.
 
 <project default="kickstart-20110923">
 
-	<target name="kickstart-20110923" depends="mpreduce-geogebra, lib-runtime, jogl1, javacc">
+	<target name="info">
+	<echo message="****************"/>
+	<echo message="* NOW PRESS F5 *"/>
+	<echo message="****************"/>
+	</target>
+
+	<target name="kickstart-20110923" depends="mpreduce-geogebra, lib-runtime, jogl1, javacc, info">
 	</target>
 
 	<target name="geogebra4-developer" depends="mpreduce-geogebra, lib-runtime">
@@ -40,6 +46,9 @@ would like to use the official JAR files everywhere.
 	<target name="jsobject" depends="jsobject-geogebra"/>
 	<target name="mac_extensions" depends="mac_extensions-geogebra"/>
 	<target name="vernier" depends="vernier-geogebra"/>
+	<target name="javacc" depends="javacc-geogebra"/>
+	<target name="ecj" depends="ecj-geogebra"/>
+
 
 	<!-- download all external libraries -->
 	<!--target name="lib" depends="lib-runtime, lib-build, lib-build-installer"-->
@@ -124,10 +133,17 @@ would like to use the official JAR files everywhere.
 	</target>
 
 	<!-- download ecj -->
-	<target name="ecj">
+	<target name="ecj-eclipse">
 	<mkdir dir="build"/>
 	<get 
 	    src="http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops/R-3.6.2-201102101200/ecj-3.6.2.jar&amp;url=http://ftp.wh2.tu-dresden.de/pub/mirrors/eclipse/eclipse/downloads/drops/R-3.6.2-201102101200/ecj-3.6.2.jar&amp;mirror_id=324"
+	    dest="build/ecj-3.6.2.jar" usetimestamp="true"/>
+	</target>
+	
+	<target name="ecj-geogebra">
+	<mkdir dir="build"/>
+	<get 
+	    src="http://www.geogebra.org/download/lib/build/ecj-3.6.2.jar"
 	    dest="build/ecj-3.6.2.jar" usetimestamp="true"/>
 	</target>
 	
@@ -153,8 +169,14 @@ would like to use the official JAR files everywhere.
 	</unzip>
 	</target>
 
+	<!-- download javacc from GeoGebra repository -->
+	<target name="javacc-geogebra">
+	<get src="http://www.geogebra.org/download/lib/build/javacc/javacc.jar" dest="build/javacc/javacc.jar"
+	    usetimestamp="true"/>
+	</target>
+
 	<!-- download javacc -->
-	<target name="javacc">
+	<target name="javacc-javanet">
 	<mkdir dir="build"/>
 	<mkdir dir="download"/>
 	<get 
@@ -234,14 +256,14 @@ would like to use the official JAR files everywhere.
 
 	<target name="jogl2-linux-geogebra" if="unix">
 	<mkdir dir="download"/>
-	<mkdir dir="build/jogl2/linux/amd64"/>
+	<mkdir dir="build/jogl2/linux-amd64"/>
 	<get 
 	    src="http://www.geogebra.org/download/lib/build/jogl2/jogl2-linux-amd64.zip"
 	    dest="download/jogl2-linux-amd64.zip" usetimestamp="true"/>
 	<unzip src="download/jogl2-linux-amd64.zip" dest="./">
 	    <mapper type="glob" from="*" to="build/jogl2/*"/>
 	</unzip>
-	<mkdir dir="build/jogl2/linux/i586"/>
+	<mkdir dir="build/jogl2/linux-i586"/>
 	<get 
 	    src="http://www.geogebra.org/download/lib/build/jogl2/jogl2-linux-i586.zip"
 	    dest="download/jogl2-linux-i586.zip" usetimestamp="true"/>
@@ -251,7 +273,7 @@ would like to use the official JAR files everywhere.
 	</target>
 
 	<target name="jogl2-macosx-geogebra" if="mac">
-	<mkdir dir="build/jogl2/macosx"/>
+	<mkdir dir="build/jogl2-macosx"/>
 	<mkdir dir="download"/>
 	<get 
 	    src="http://www.geogebra.org/download/lib/build/jogl2/jogl2-macosx.zip"
@@ -263,14 +285,14 @@ would like to use the official JAR files everywhere.
 
 	<target name="jogl2-windows-geogebra" if="winnt">
 	<mkdir dir="download"/>
-	<mkdir dir="build/jogl2/windows/amd64"/>
+	<mkdir dir="build/jogl2/windows-amd64"/>
 	<get 
 	    src="http://www.geogebra.org/download/lib/build/jogl2/jogl2-windows-amd64.zip"
 	    dest="download/jogl2-windows-amd64.zip" usetimestamp="true"/>
 	<unzip src="download/jogl2-windows-amd64.zip" dest="./">
 	    <mapper type="glob" from="*" to="build/jogl2/*"/>
 	</unzip>
-	<mkdir dir="build/jogl2/windows/i586"/>
+	<mkdir dir="build/jogl2/windows-i586"/>
 	<get 
 	    src="http://www.geogebra.org/download/lib/build/jogl2/jogl2-windows-i586.zip"
 	    dest="download/jogl2-windows-i586.zip" usetimestamp="true"/>

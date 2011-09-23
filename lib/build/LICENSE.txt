@@ -1,6 +1,27 @@
 This directory contains 3rd party libraries. Most of them are required
 to build GeoGebra properly.
 
+
+ecj
+---
+
+The EDT Core Batch Compiler (also known as Eclipse Java Compiler) is
+used for command line builds. This is the same software as the built-in
+Java compiler in Eclipse. Sometimes some mirror servers are down,
+so it is required for us to give a fallback download for ecj.
+
+License: Eclipse Public License 1.0
+
+
+javacc
+------
+
+This library can be downloaded both from java.net, but for faster
+availability we also host it in the GeoGebra repository as well.
+
+License: BSD License.
+
+
 jogl1
 -----
 
