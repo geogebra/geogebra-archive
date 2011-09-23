@@ -13,6 +13,10 @@ would like to use the official JAR files everywhere.
 
 <project default="kickstart-20110923">
 
+	<target name="osarchinfo">
+	<echo message="This is a ${os.name} running on ${os.arch}"/>
+	</target>
+
 	<target name="info">
 	<echo message="****************"/>
 	<echo message="* NOW PRESS F5 *"/>
@@ -62,18 +66,27 @@ would like to use the official JAR files everywhere.
 	<target name="lib-runtime" depends="jlatexmath, jsobject, mac_extensions, vernier">
 	</target>
 
-	<!-- detecting operating system -->
-	<condition property="winnt">
-		<os family="winnt"/>
+	<!-- detecting operating system and architecture -->
+	<condition property="winnt-i386">
+		<os family="winnt" arch="i386"/>
+	</condition>
+
+	<condition property="winnt-amd64">
+		<os family="winnt" arch="amd64"/>
 	</condition>
 
 	<condition property="mac">
 		<os family="mac"/>
 	</condition>
 
-	<condition property="unix">
-		<os family="unix"/>
+	<condition property="unix-i386">
+		<os family="unix" arch="i386"/>
 	</condition>
+
+	<condition property="unix-amd64">
+		<os family="unix" arch="amd64"/>
+	</condition>
+
 
 	<!-- download jlatexmath-minimal.zip directly from Calixte Denizet's repository -->
 	<target name="jlatexmath-calixte">
@@ -203,8 +216,11 @@ would like to use the official JAR files everywhere.
 	    <mapper type="glob" from="*" to="build/jogl1/*"/>
 	</unzip>
 	</target>
+	
+	<target name="jogl1-linux-geogebra" depends="jogl1-linux-amd64-geogebra, jogl1-linux-i586-geogebra"/>
+	<target name="jogl1-windows-geogebra" depends="jogl1-winnt-amd64-geogebra, jogl1-winnt-i586-geogebra"/>
 
-	<target name="jogl1-linux-geogebra" if="unix">
+	<target name="jogl1-linux-amd64-geogebra" if="unix-amd64">
 	<mkdir dir="download"/>
 	<mkdir dir="build/jogl1/linux-amd64"/>
 	<get 
@@ -213,6 +229,10 @@ would like to use the official JAR files everywhere.
 	<unzip src="download/jogl1-linux-amd64.zip" dest="./">
 	    <mapper type="glob" from="*" to="build/jogl1/*"/>
 	</unzip>
+	</target>
+
+	<target name="jogl1-linux-i586-geogebra" if="unix-i386">
+	<mkdir dir="download"/>
 	<mkdir dir="build/jogl1/linux-i586"/>
 	<get 
 	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-linux-i586.zip"
@@ -233,7 +253,7 @@ would like to use the official JAR files everywhere.
 	</unzip>
 	</target>
 
-	<target name="jogl1-windows-geogebra" if="winnt">
+	<target name="jogl1-winnt-amd64-geogebra" if="winnt-amd64">
 	<mkdir dir="download"/>
 	<mkdir dir="build/jogl1/windows-amd64"/>
 	<get 
@@ -242,6 +262,9 @@ would like to use the official JAR files everywhere.
 	<unzip src="download/jogl1-windows-amd64.zip" dest="./">
 	    <mapper type="glob" from="*" to="build/jogl1/*"/>
 	</unzip>
+	</target>
+	
+	<target name="jogl1-winnt-i586-geogebra" if="winnt-i386">
 	<mkdir dir="build/jogl1/windows-i586"/>
 	<get 
 	    src="http://www.geogebra.org/download/lib/build/jogl1/jogl1-windows-i586.zip"
