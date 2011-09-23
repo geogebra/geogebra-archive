@@ -276,6 +276,7 @@ public class GeoGebraView extends WrappedPlainView {
                     g.drawLine(x, y - whiteHeight, x + w, y - whiteHeight);
                 }
 
+                /* disabled background filling  
                 if ((context.tokenAttrib[tok] & 4) != 0) {
                     w = Utilities.getTabbedTextWidth(text, g.getFontMetrics(), x, this, mark);
                     FontMetrics fm = g.getFontMetrics();
@@ -284,7 +285,8 @@ public class GeoGebraView extends WrappedPlainView {
                     g.fillRect(x, y - hgt, w, hgt + desc);
                     g.setColor(context.tokenColors[LexerConstants.DEFAULT]);
                 }
-
+*/
+                
                 switch (tok) {
                 case LexerConstants.WHITE :
                     if (isWhiteViewable) {
