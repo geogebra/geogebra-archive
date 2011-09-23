@@ -70,10 +70,18 @@ public class AlgoSurdText extends AlgoElement {
 			
 			sb.setLength(0);
 			
-			if (Kernel.isEqual(num.getDouble(), 0.0, Kernel.MAX_PRECISION))
-				sb.append(kernel.format(0));
-			else
-				PSLQappend(sb, num.getDouble());
+			double decimal = num.getDouble();
+			
+			if ( Kernel.isEqual(decimal - Math.round(decimal) , 0.0, Kernel.MAX_PRECISION))
+				sb.append(kernel.format(Math.round(decimal)));
+			else {
+				double[] frac = AlgoFractionText.DecimalToFraction(decimal, Kernel.EPSILON);
+				/*if (frac[1]<10000)
+					Fractionappend(sb, (int)frac[0], (int)frac[1]);
+				else*/
+					PSLQappend(sb, decimal);
+			}
+				
 			
 			text.setTextString(sb.toString());
 			text.setLaTeX(true, false);
@@ -83,36 +91,37 @@ public class AlgoSurdText extends AlgoElement {
 		}
 			
 	}
-    
+    protected void Fractionappend(StringBuilder sb, int numer, int denom) {
+		if (denom<0) {
+			denom= -denom;
+			numer= -numer;
+		}
+		
+		if (denom == 1) { // integer
+			sb.append(kernel.format(numer));				
+		} else if (denom == 0) { // 1 / 0 or -1 / 0
+			sb.append( numer < 0 ? "-"+Unicode.Infinity : ""+Unicode.Infinity);				
+		} else {
+	    	sb.append("{\\frac{");
+	    	sb.append(kernel.format(numer));
+	    	sb.append("}{");
+	    	sb.append(kernel.format(denom));
+	    	sb.append("}}");
+	    	
+		}
+    }
     protected void PSLQappend(StringBuilder sb, double num) {
 		double[] numPowers = {num * num, num, 1.0};
 		int[] coeffs = PSLQ(numPowers,Kernel.STANDARD_PRECISION,10);
 		
-		Application.debug(coeffs);
 		if (coeffs[0] == 0 && coeffs[1] == 0 && coeffs[2] == 0 ) {
 			sb.append("\\text{"+app.getPlain("undefined")+"}");
 		} else if (coeffs[0] == 0) {
 			//coeffs[1]: denominator;  coeffs[2]: numerator
 			int denom = coeffs[1];
 			int numer = -coeffs[2];
-			if (denom<0) {
-				denom= -denom;
-				numer= -numer;
-			}
+			Fractionappend(sb, numer, denom);
 			
-			if (denom == 1) { // integer
-				sb.append(kernel.format(numer));				
-			} else if (denom == 0) { // 1 / 0 or -1 / 0
-				sb.append( numer < 0 ? "-"+Unicode.Infinity : ""+Unicode.Infinity);				
-			} else {
-		    	sb.append("{\\frac{");
-		    	sb.append(kernel.format(numer));
-		    	sb.append("}{");
-		    	sb.append(kernel.format(denom));
-		    	sb.append("}}");
-		    	
-			}
-
 		} else {
 			
 			//coeffs, if found, shows the equation coeffs[2]+coeffs[1]x+coeffs[0]x^2=0"
@@ -123,7 +132,7 @@ public class AlgoSurdText extends AlgoElement {
 			int b1 =1;
 			int c = 2*coeffs[0];
 
-			if (b2 == 0) { //should not happen!
+			if (b2 <= 0) { //should not happen!
 				sb.append("\\text{"+app.getPlain("undefined")+"}");
 				return;
 			}
@@ -267,6 +276,18 @@ public class AlgoSurdText extends AlgoElement {
 			}
 		}
 		
+		//test property of H: the n-1 columns are orthogonal
+		/*
+		for (int i =0 ; i<n-1; i++) {
+			for (int j=0; j<n-1; j++) {
+				double sum = 0;
+				for (int k=0; k<n; k++) {
+					sum += H[k][i]*H[k][j];
+				}
+				System.out.println(sum);
+			}
+		}*/
+					
 	
 		//matrix P = In - x.x
 		P = new double[n][n];
@@ -297,7 +318,7 @@ public class AlgoSurdText extends AlgoElement {
 			R[j][j+1][j+1]=0;
 		}
 		
-		gamma = 2.0;
+		gamma = 1.5;
 		deltaSq = 3.0/4 - (1.0/gamma)/gamma;
 		
 		//initialize A, B = I_n
@@ -333,22 +354,29 @@ public class AlgoSurdText extends AlgoElement {
 				}
 			}
 					
-			//0.5. calculate D, E, G[0]...G[n-2]
+			//0.5. calculate D, E
 			//matrix D
 			D = new int[n][n];
+			double[][] D0 = new double[n][n]; //testing
 			for (int i=0; i<n; i++) {
 				//define backwards. the 0's and 1's should be defined first.
 				for (int j=n-1; j>=i+1; j--) {
 					D[i][j]=0;
+					D0[i][j]=0;
 				}
 				D[i][i]=1;
+				D0[i][i]=1;
 				
 				for (int j=i-1; j>=0; j--) {
 					double sum = 0;
-					for (int k=j+1; k<=i; k++)
+					double sum0 = 0;
+					for (int k=j+1; k<=i; k++) {
 						sum+=D[i][k]*H[k][j];
+						sum0+=D0[i][k]*H[k][j];
+					}
 					
-					D[i][j]=(int) Math.rint(-1.0/H[j][j]*sum);
+					D[i][j]=(int) Math.floor(-1.0/H[j][j]*sum + 0.5);
+					D0[i][j]=-1.0/H[j][j]*sum0;
 				}
 			
 			}
@@ -371,7 +399,43 @@ public class AlgoSurdText extends AlgoElement {
 				
 			}
 			
-			//matrices G[0], G[1],... G[n-2]
+			//1. replace H by DH
+			newH = new double[n][n-1];
+			double[][] newH0 = new double[n][n-1];
+			for (int i = 0; i<n; i++) {
+				for (int j=0; j<n-1; j++) {
+					newH[i][j]=0;
+					newH0[i][j]=0;
+					for (int k=0; k<n; k++) {
+						newH[i][j]+=D[i][k]*H[k][j];
+						newH0[i][j]+=D0[i][k]*H[k][j];
+					}
+					
+				}
+			}
+			
+			for (int i = 0; i<n; i++)
+				for (int j=0; j<n-1; j++)
+					H[i][j]=newH[i][j];
+			
+			
+			
+			//2. find j to maximize gamma^j |h_jj|
+			double gammaPow = 1;
+			double temp;
+			double max=0;
+			int index=0;
+			
+			for (int j=0; j<n-1; j++) {
+				gammaPow *= gamma;
+				temp = gammaPow * Math.abs(H[j][j]);
+				if (max<temp) {
+					max = temp;
+					index = j;
+				}
+			}
+		
+			//2.5 calculate matrices G[0], G[1],... G[n-2]
 			G = new double[n-1][n-1][n-1];
 			for (int i=0; i<n-1; i++)
 				for (int k=0; k<n-1; k++)
@@ -398,36 +462,7 @@ public class AlgoSurdText extends AlgoElement {
 				G[j][j+1][j+1]=G[j][j][j]; // = b/d
 			}
 			
-			//1. replace H by DH
-			newH = new double[n][n-1];
-			for (int i = 0; i<n; i++) {
-				for (int j=0; j<n-1; j++) {
-					newH[i][j]=0;
-					for (int k=0; k<n; k++)
-						newH[i][j]+=D[i][k]*H[k][j];
-					
-				}
-			}
 			
-			for (int i = 0; i<n; i++)
-				for (int j=0; j<n-1; j++)
-					H[i][j]=newH[i][j];
-			
-			//2. find j to maximize gamma^j |h_jj|
-			double gammaPow = 1;
-			double temp;
-			double max=0;
-			int index=0;
-			
-			for (int j=0; j<n-1; j++) {
-				gammaPow *= gamma;
-				temp = gammaPow * Math.abs(H[j][j]);
-				if (max<temp) {
-					max = temp;
-					index = j;
-				}
-			}
-		
 			//3. replace H by R_jHG_j, A by R_jDA, B by BER_j
 			newH = new double[n][n-1];
 			for (int i = 0; i<n; i++) {
