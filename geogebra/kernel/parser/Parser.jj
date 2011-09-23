@@ -50,6 +50,7 @@ import geogebra.main.*;
 import geogebra.kernel.*;
 import geogebra.kernel.arithmetic.*;
 import geogebra.kernel.arithmetic3D.*;
+import geogebra.kernel.parser.cashandlers.*;
 import geogebra.util.Unicode;
 import java.util.*;
 
