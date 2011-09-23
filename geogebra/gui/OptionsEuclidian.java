@@ -1196,7 +1196,15 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 				int type = cbTickStyle.getSelectedIndex();
 				int [] styles = view.getAxesTickStyles();
 				styles[axis] = type;
-				view.setAxesTickStyles(styles);
+
+				if (app.getEuclidianView() == view)
+					app.getSettings().getEuclidian(1).setAxisTickStyle(axis, type);
+				else if (!app.hasEuclidianView2EitherShowingOrNot())
+					view.setAxesTickStyles(styles);
+				else if (app.getEuclidianView2() == view)
+					app.getSettings().getEuclidian(2).setAxisTickStyle(axis, type);
+				else
+					view.setAxesTickStyles(styles);
 			}	
 
 			else if (source == tfCross) {		
