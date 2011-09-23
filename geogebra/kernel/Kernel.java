@@ -99,6 +99,13 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 public class Kernel {
+	
+	/** CAS variable handling */	
+	private static final String GGBCAS_VARIABLE_PREFIX = "ggbcasvar";
+	private static final String TMP_VARIABLE_PREFIX = "ggbtmpvar";
+	private static int kernelInstances = 0;
+	private int kernelID;
+	private String casVariablePrefix;
 
 	/** standard precision */ 
 	public final static double STANDARD_PRECISION = 1E-8;
@@ -273,6 +280,18 @@ public class Kernel {
 		setManager3D(newManager3D(this));
 	}
 	
+	public Kernel() {
+		kernelInstances++;
+		kernelID = kernelInstances;
+		casVariablePrefix = GGBCAS_VARIABLE_PREFIX + kernelID;
+		
+		nf = NumberFormat.getInstance(Locale.ENGLISH);
+		nf.setGroupingUsed(false);
+		
+		sf = new ScientificFormat(5, 16, false);
+		
+		setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
+	}
 	
 	/**
 	 * @param kernel
@@ -349,16 +368,6 @@ public class Kernel {
 		if (expressionNodeEvaluator == null)
 			expressionNodeEvaluator = newExpressionNodeEvaluator();
 		return expressionNodeEvaluator;
-	}
-	
-	
-	public Kernel() {
-		nf = NumberFormat.getInstance(Locale.ENGLISH);
-		nf.setGroupingUsed(false);
-		
-		sf = new ScientificFormat(5, 16, false);
-		
-		setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA);
 	}
 	
 	/**
@@ -616,8 +625,10 @@ public class Kernel {
 	public void resetGeoGebraCAS() {
 		if (ggbCAS == null) return;
 		
-		// reset CAS
-		ggbCAS.reset();
+		// do NOT reset CAS because we are using one static CAS for all applicatin windows
+		// see http://www.geogebra.org/trac/ticket/1415
+		// instead we clear variable names of this kernel individually below			
+		//ggbCAS.reset();
 
 		// CAS reset may not clear user variables right now, 
 		// see http://www.geogebra.org/trac/ticket/1249 
@@ -632,7 +643,7 @@ public class Kernel {
 	 */
 	public void unbindVariableInGeoGebraCAS(String variableName) {
 		if (ggbCAS != null) {
-			ggbCAS.unbindVariable(variableName);
+			ggbCAS.unbindVariable(addCASVariablePrefix(variableName));
 		}
 	}
 	
@@ -973,7 +984,7 @@ public class Kernel {
 	 * @param printForm 
 	 * @return label depending on kernel.getCASPrintForm()
 	 */
-	 public static String printVariableName(int printForm, String label) {
+	 final public String printVariableName(int printForm, String label) {
 		 switch(printForm){		
 			case ExpressionNodeConstants.STRING_TYPE_MPREDUCE:
 			case ExpressionNodeConstants.STRING_TYPE_MAXIMA:
@@ -992,29 +1003,41 @@ public class Kernel {
 	 * Returns ExpressionNodeConstants.TMP_VARIABLE_PREFIX + label.
 	 */
 	 private static String addTempVariablePrefix(String label) {
-		 return addPrefix(ExpressionNodeConstants.TMP_VARIABLE_PREFIX, label);
-	 }
-	 
-	 /**
-	 * Returns ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX + label.
-	 */
-	 private static String addCASVariablePrefix(String label) {
-		 if (label.startsWith(ExpressionNodeConstants.TMP_VARIABLE_PREFIX))
-			 return label;
-		 else
-			 return addPrefix(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX, label);
-	 }
-	 
-	 /**
-	  * Returns prefix + label.
-	  */
-	 private static String addPrefix(String prefix, String label) {
 		 StringBuilder sb = new StringBuilder();
-		 sb.append(prefix);
+		// TMP_VARIABLE_PREFIX  + label
+		 sb.append(TMP_VARIABLE_PREFIX);
 		 sb.append(label);
-		 return sb.toString();
+		 return sb.toString();		
 	 }
-	
+	 
+	 /**
+	 * @return ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX + kernelID + label.
+	 */
+	 private String addCASVariablePrefix(String label) {
+		 if (label.startsWith(TMP_VARIABLE_PREFIX))
+			 return label;
+		 else {
+			 // casVariablePrefix  + label
+			 StringBuilder sb = new StringBuilder();
+			 sb.append(casVariablePrefix); // GGBCAS_VARIABLE_PREFIX + kernelID
+			 sb.append(label);
+			 return sb.toString();	
+		 }			
+	 }
+	 
+	 /**
+	 * @return String where CAS variable prefixes are removed again, e.g. "ggbcasvar1a" is turned into "a"
+	 * and 
+	 */
+	 final public String removeCASVariablePrefix(String str) {
+		// e.g. "ggbtmpvar1a" is changed to "a"
+		String result = str.replace(casVariablePrefix, "");
+				 
+		// e.g. "ggbtmpvara" needs to be changed to "a"
+		result = result.replace(TMP_VARIABLE_PREFIX, "");
+		return result;
+	 }
+	 	
 	final public int getCurrentCAS() {
 		return ((GeoGebraCAS)getGeoGebraCAS()).currentCAS;
 	}

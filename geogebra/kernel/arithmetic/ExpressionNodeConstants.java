@@ -18,8 +18,6 @@ public interface ExpressionNodeConstants {
 	public static final int STRING_TYPE_JASYMCA = 7;
 	public static final int STRING_TYPE_MPREDUCE = 8;
 	
-	public static final String GGBCAS_VARIABLE_PREFIX = "ggbcasvar";
-	public static final String TMP_VARIABLE_PREFIX = "ggbtmpvar";
 	public static final String CAS_ROW_REFERENCE_PREFIX = "$";
 	public static final String UNICODE_PREFIX = "unicode";
 	public static final String UNICODE_DELIMITER = "u";  

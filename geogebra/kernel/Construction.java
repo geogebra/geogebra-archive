@@ -1287,32 +1287,18 @@ public class Construction {
 		}
 		
 		// DESPARATE CASE: variable name not found	
-		
-		/*
-		 * TEMP CAS VARIABLE HANDLING
+		        
+    	/*
+		 * CAS VARIABLE HANDLING
 		 * e.g. ggbtmpvara for a
 		 */
-		if (label.startsWith(ExpressionNodeConstants.TMP_VARIABLE_PREFIX)) {								
-	        geo = geoTableVarLookup(label.substring(ExpressionNodeConstants.TMP_VARIABLE_PREFIX.length()));				
-			if (geo != null) {
-				// geo found for name that starts with TMP_VARIABLE_PREFIX
-				return checkConstructionStep(geo);
-			}
-		}
-		
-		/*
-		 * CAS VARIABLE HANDLING
-		 * e.g. ggbcasvara for a
-		 */
-		else if (label.startsWith(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX)) {								
-			// allow automatic creation of elements
-	        geo = geoTableVarLookup(label.substring(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX.length()));				
-			if (geo != null) {
-				// geo found for name that starts with TMP_VARIABLE_PREFIX
-				return checkConstructionStep(geo);
-			}
-		}
-						
+        label = kernel.removeCASVariablePrefix(label);
+		geo = geoTableVarLookup(label);				
+		if (geo != null) {
+			// geo found for name that starts with TMP_VARIABLE_PREFIX or GGBCAS_VARIABLE_PREFIX
+			return checkConstructionStep(geo);
+		}	
+				
 		/*
 		 * SPREADSHEET $ HANDLING
 		 * In the spreadsheet we may have variable names like
@@ -1346,7 +1332,7 @@ public class Construction {
 					return checkConstructionStep(geo);
 				}
 			}
-        }
+        }			
         
         // if we get here, nothing worked: 
         // possibly auto-create new GeoElement with that name			

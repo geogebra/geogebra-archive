@@ -185,12 +185,9 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 		// success
 		if (result != null) {
 			// get names of escaped global variables right
-			// e.g. "ggbcasvara" needs to be changed to "a"
-			result = result.replace(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
-			
-			// get names of escaped temporary variables right
+			// e.g. "ggbcasvar1a" needs to be changed to "a"
 			// e.g. "ggbtmpvara" needs to be changed to "a"
-			result = result.replace(ExpressionNode.TMP_VARIABLE_PREFIX, "");	
+			result = app.getKernel().removeCASVariablePrefix(result);
 		}
 		
 		return result;
@@ -286,7 +283,7 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 			
 			// get names of escaped global variables right
 			// e.g. "ggbcasvara" needs to be changed to "a"
-			tmp = tmp.replace(ExpressionNode.GGBCAS_VARIABLE_PREFIX, "");
+			tmp = app.getKernel().removeCASVariablePrefix(tmp);
 
 			tmp = tmp.substring(1, tmp.length()-1); // strip '{' and '}'
 			result = tmp.split(",");

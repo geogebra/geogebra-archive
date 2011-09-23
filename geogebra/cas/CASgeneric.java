@@ -123,7 +123,7 @@ public abstract class CASgeneric implements SettingListener {
 	 */
 	protected String translateToCAS(ValidExpression ve, int casStringType)
 	{
-		Kernel kernel = casParser.getKernel();
+		Kernel kernel = ve.getKernel();
 		int oldPrintForm = kernel.getCASPrintForm();
 		kernel.setCASPrintForm(casStringType);
 		
@@ -138,7 +138,7 @@ public abstract class CASgeneric implements SettingListener {
 			String label = ve.getLabel();
 			if (label != null) { // is an assignment or a function declaration
 				// make sure to escape labels to avoid problems with reserved CAS labels
-				label = Kernel.printVariableName(casStringType, label);
+				label = kernel.printVariableName(casStringType, label);
 				if (ve instanceof FunctionNVar) {
 					FunctionNVar fun = (FunctionNVar) ve;
 					return translateFunctionDeclaration(label, fun.getVarString(), body);

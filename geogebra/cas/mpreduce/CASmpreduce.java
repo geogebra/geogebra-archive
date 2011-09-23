@@ -24,7 +24,11 @@ public class CASmpreduce extends CASgeneric {
 	
 	private final static String RB_GGB_TO_MPReduce = "/geogebra/cas/mpreduce/ggb2mpreduce";
 	private int significantNumbers=-1;
-	private Interpreter2 mpreduce;
+	
+	// using static CAS instance as a workaround for the MPReduce deadlock with multiple application windows
+	// see http://www.geogebra.org/trac/ticket/1415 
+	private static Interpreter2 mpreduce;
+	
 	private final CasParserTools parserTools;
 	
 	// We escape any upper-letter words so Reduce doesn't switch them to lower-letter,
@@ -256,7 +260,6 @@ public class CASmpreduce extends CASgeneric {
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append("clear(");
-			sb.append(ExpressionNodeConstants.GGBCAS_VARIABLE_PREFIX);
 			sb.append(var);
 			sb.append(");");
 			mpreduce.evaluate(sb.toString());
