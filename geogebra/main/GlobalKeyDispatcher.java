@@ -267,7 +267,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 							Application.VIEW_EUCLIDIAN);
 					consumed = true;
 
-				} else {
+				} else if (!event.isAltDown()) { // make sure not triggered on AltGr
 					// Ctrl-1: set objects back to the default size (for font size 12)
 					changeFontsAndGeoElements(app, 12, false);
 					consumed = true;
@@ -284,7 +284,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 							Application.VIEW_EUCLIDIAN2);
 					consumed = true;
 
-				} else {
+				} else if (!event.isAltDown()) { // make sure not triggered on AltGr
 					// Ctrl-2: large font size and thicker lines for projectors etc
 					int fontSize = Math.min(32, app.getFontSize() + 4);
 					changeFontsAndGeoElements(app, fontSize, false);
@@ -302,7 +302,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 							Application.VIEW_EUCLIDIAN3D);
 					consumed = true;
 
-				} else {
+				} else if (!event.isAltDown()){ // make sure not triggered on AltGr
 					// Ctrl-3: set black/white mode printing and visually impaired users
 					changeFontsAndGeoElements(app, app.getFontSize(), true);
 					consumed = true;
