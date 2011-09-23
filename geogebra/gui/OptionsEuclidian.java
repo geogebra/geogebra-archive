@@ -812,10 +812,16 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 				view.setAllowShowMouseCoords(cbShowMouseCoords.isSelected());
 		}
 		else if (source == cbGridType) {
-			view.setGridType(cbGridType.getSelectedIndex());
-		}	
-		
-		
+			if (app.getEuclidianView() == view)
+				app.getSettings().getEuclidian(1).setGridType(cbGridType.getSelectedIndex());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setGridType(cbGridType.getSelectedIndex());
+			else if (app.getEuclidianView2() == view)
+				app.getSettings().getEuclidian(2).setGridType(cbGridType.getSelectedIndex());
+			else
+				view.setGridType(cbGridType.getSelectedIndex());
+		}
+
 		else if (source == cbAxesStyle) {
 			if (view == app.getEuclidianView())
 				app.getSettings().getEuclidian(1).setAxesLineStyle(cbAxesStyle.getSelectedIndex());
@@ -828,8 +834,16 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 		}
 		else if (source == cbGridStyle) {
 			int type = ((Integer) cbGridStyle.getSelectedItem()).intValue();
-			view.setGridLineStyle(type);
-		}		
+
+			if (app.getEuclidianView() == view)
+				app.getSettings().getEuclidian(1).setGridLineStyle(type);
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setGridLineStyle(type);
+			else if (app.getEuclidianView2() == view)
+				app.getSettings().getEuclidian(2).setGridLineStyle(type);
+			else
+				view.setGridLineStyle(type);
+		}
 		else if (source == cbGridManualTick) {
 			view.setAutomaticGridDistance(!cbGridManualTick.isSelected());
 		}
