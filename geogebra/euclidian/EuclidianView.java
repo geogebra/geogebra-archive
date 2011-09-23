@@ -13,6 +13,8 @@
 package geogebra.euclidian;
 
 import geogebra.euclidian.DrawableList.DrawableIterator;
+import geogebra.gui.GuiManager;
+import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.kernel.AlgoBoxPlot;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
@@ -2844,6 +2846,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	}
 	
 	final protected void drawAnimationButtons(Graphics2D g2) {
+		
+		// draw button in focused EV only
+		if (!drawPlayButtonInThisView()) return;
+
 		int x = 6;
 		int y = height - 22;
 				
@@ -2863,7 +2869,22 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	}
 	
 	public final boolean hitAnimationButton(MouseEvent e) {
+		// draw button in focused EV only
+		if (!drawPlayButtonInThisView()) return false;
+		
 		return kernel.needToShowAnimationButton() && (e.getX() <= 20) && (e.getY() >= height - 20);		
+	}
+	
+	private boolean drawPlayButtonInThisView() {
+		
+		GuiManager gui;
+		// just one view
+		if ((gui = app.getGuiManager()) == null) return true;
+		EuclidianDockPanelAbstract evp;
+		// eg ev1 just closed
+		if ((evp = gui.getLayout().getDockManager().getFocusedEuclidianPanel()) == null) return true;
+		
+		return !(app.getGuiManager() != null && this.getViewID() != evp.getViewId());
 	}
 	
 	/**
@@ -2871,6 +2892,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 	 * @return whether status was changed
 	 */
 	public final boolean setAnimationButtonsHighlighted(boolean flag) {
+
+		// draw button in focused EV only
+		if (!drawPlayButtonInThisView()) return false;
+
 		if (flag == highlightAnimationButtons) 
 			return false;
 		else {
