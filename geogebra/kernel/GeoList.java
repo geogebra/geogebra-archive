@@ -1368,7 +1368,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		for (int i = 0; i < geoList.size(); i++) {
 			GeoElement geo = (GeoElement) geoList.get(i);
 			double d = geo.distance(p);
-			// Application.debug(d+" "+distance);
+			//Application.debug(i+" "+d+" "+distance+" "+getLabel());
 			if (d < distance) {
 				distance = d;
 				closestPointIndex = i;
@@ -1378,6 +1378,19 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		// Application.debug("closestPointIndex="+closestPointIndex);
 
 		return get(closestPointIndex).getNearestPoint(p);
+	}
+
+	public double distance(GeoPoint p) {
+		double distance = Double.POSITIVE_INFINITY;
+		for (int i = 0; i < geoList.size(); i++) {
+			GeoElement geo = (GeoElement) geoList.get(i);
+			double d = geo.distance(p);
+			if (d < distance) {
+				distance = d;
+			}
+		}
+		
+		return distance;
 	}
 
 	public void pathChanged(GeoPointND PI) {
