@@ -2182,7 +2182,7 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 
 				// checks if the basis is leaf and if so
 				// omits the brackets
-				if (left.isLeaf()) {
+				if (left.isLeaf() && leftStr.charAt(0) != '-') {
 					sb.append(leftStr);
 					break;
 				}
