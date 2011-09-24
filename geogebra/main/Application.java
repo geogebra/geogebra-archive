@@ -2613,7 +2613,8 @@ public class Application implements KeyEventDispatcher {
 		while (enume.hasMoreElements()) {
 			s = enume.nextElement();
 			if (!s.endsWith("Syntax") && !s.endsWith(syntaxCAS)) {
-				if (getCommand(s).equals(cmd)) return s;
+				// make sure that when si[] is typed in script, it's changed to Si[] etc
+				if (getCommand(s).toLowerCase().equals(cmd.toLowerCase())) return s;
 			}
 		}
 		return null;
