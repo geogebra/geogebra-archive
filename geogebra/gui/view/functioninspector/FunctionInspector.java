@@ -1108,8 +1108,10 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 	}
 	public void insertGeoElement(GeoElement geo) {
 		if(geo == null 
-				|| geo.getGeoClassType() != GeoElement.GEO_CLASS_FUNCTION)
+				|| !geo.isGeoFunction())
+		{
 			return;
+		}
 
 		activeEV = (EuclidianView) app.getActiveEuclidianView();	
 		selectedGeo = (GeoFunction)geo;
