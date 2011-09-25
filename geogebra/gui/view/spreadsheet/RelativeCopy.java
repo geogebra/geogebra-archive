@@ -742,8 +742,14 @@ public class RelativeCopy {
 		catch (Throwable e) {
 			// if exception is thrown treat the input as text and try to update the cell as a GeoText
 			{ 
-				// redefine the cell as new GeoText if old value has no children
-				if (!oldValue.hasChildren()) {
+				// reset the text string if old value is GeoText 
+				if(oldValue.isGeoText()){
+					((GeoText)oldValue).setTextString(text0);
+					oldValue.updateCascade();
+				}
+				
+				// if not currently a GeoText and no children, redefine the cell as new GeoText 
+				else if (!oldValue.hasChildren()) {
 					oldValue.remove();
 
 					// add input as text
@@ -757,11 +763,7 @@ public class RelativeCopy {
 					newValue.update();
 				}
 				
-				// reset the text string if old value is GeoText with children 
-				else if(oldValue.isGeoText()){
-					((GeoText)oldValue).setTextString(text0);
-					oldValue.updateCascade();
-				}
+				
 				
 				// otherwise throw an exception and let the cell revert to the old value
 				else {
@@ -828,10 +830,10 @@ public class RelativeCopy {
 		// if the cell is currently GeoText then prepare it for changes
 		// make sure it can be changed to something else
 		// eg (2,3 can be overwritten as (2,3)
-		if (oldValue != null && oldValue.isGeoText() && !oldValue.hasChildren()) {
-			oldValue.remove();
-			oldValue = null;
-		}
+	//	if (oldValue != null && oldValue.isGeoText() && !oldValue.hasChildren()) {
+	//		oldValue.remove();
+	//		oldValue = null;
+	//	}
 
 		// if null text then remove the current cell geo and return null
 		if (text == null) {
