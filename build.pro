@@ -44,6 +44,11 @@
     public static void main(java.lang.String[]);
 }
 
+## enums
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
 
 # Keep GeoGebra3D application
 -keep class geogebra.GeoGebra3D {
