@@ -4051,12 +4051,14 @@ public class Application implements KeyEventDispatcher {
 	
 	final public static boolean isWebstart() {
 		if (codebase == null) initCodeBase();
-		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE);
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE)
+				|| codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE_ALTERNATIVE);
 	}
 	
 	final public static boolean isWebstartDebug() {
 		if (codebase == null) initCodeBase();
-		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE + "debug");
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE + "debug")
+				|| codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE_ALTERNATIVE + "debug");
 	}
 	
 	final public static boolean hasFullPermissions() {
