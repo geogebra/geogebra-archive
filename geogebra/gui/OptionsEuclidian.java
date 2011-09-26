@@ -759,8 +759,15 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 				view.setAxesColor(col);
 		}
 		else if (source == btGridColor) {
-			view.setGridColor(
-					app.getGuiManager().showColorChooser(view.getGridColor()));			
+			Color col = app.getGuiManager().showColorChooser(view.getGridColor());
+			if (view == app.getEuclidianView())
+				app.getSettings().getEuclidian(1).setGridColor(col);
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setGridColor(col);
+			else if (view == app.getEuclidianView2())
+				app.getSettings().getEuclidian(2).setGridColor(col);
+			else
+				view.setGridColor(col);
 		}
 		else if (source == cbTooltips) {
 			int ind = cbTooltips.getSelectedIndex();
@@ -799,7 +806,14 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 				view.showGrid(cbShowGrid.isSelected());
 		}
 		else if (source == cbBoldGrid) {
-			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		
+			if (app.getEuclidianView() == view)
+				app.getSettings().getEuclidian(1).setGridIsBold(cbBoldGrid.isSelected());
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setGridIsBold(cbBoldGrid.isSelected());
+			else if (app.getEuclidianView2() == view)
+				app.getSettings().getEuclidian(2).setGridIsBold(cbBoldGrid.isSelected());
+			else
+				view.setGridIsBold(cbBoldGrid.isSelected());
 		}
 		else if (source == cbShowMouseCoords) {
 			if (view == app.getEuclidianView())
