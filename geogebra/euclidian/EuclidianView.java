@@ -5336,20 +5336,21 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		setXmaxObject(evs.getXmaxObject());
 		setYminObject(evs.getYminObject());
 		setYmaxObject(evs.getYmaxObject());
-		
-		
+
 		setBackground(evs.getBackground());
 		setAxesColor(evs.getAxesColor());
 		setGridColor(evs.getGridColor());
 		setAxesLineStyle(evs.getAxesLineStyle());
 		setGridLineStyle(evs.getGridLineStyle());
-		
+
 		double[] d = evs.getGridDistances();
-		if (d != null)
-			setGridDistances(d);
-		else
+		if (!evs.getAutomaticGridDistance() && d == null)
+			setAutomaticGridDistance(false);
+		else if (d == null)
 			setAutomaticGridDistance(true);
-		
+		else
+			setGridDistances(d);
+
 		setShowAxis(0, evs.getShowAxis(0), false);
 		setShowAxis(1, evs.getShowAxis(1), false);
 		axesLabels = evs.getAxesLabels();

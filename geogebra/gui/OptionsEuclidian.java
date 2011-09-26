@@ -859,7 +859,14 @@ public class OptionsEuclidian extends JPanel  implements ActionListener, FocusLi
 				view.setGridLineStyle(type);
 		}
 		else if (source == cbGridManualTick) {
-			view.setAutomaticGridDistance(!cbGridManualTick.isSelected());
+			if (app.getEuclidianView() == view)
+				app.getSettings().getEuclidian(1).setAutomaticGridDistance(!cbGridManualTick.isSelected(), true);
+			else if (!app.hasEuclidianView2EitherShowingOrNot())
+				view.setAutomaticGridDistance(!cbGridManualTick.isSelected());
+			else if (app.getEuclidianView2() == view)
+				app.getSettings().getEuclidian(2).setAutomaticGridDistance(!cbGridManualTick.isSelected(), true);
+			else
+				view.setAutomaticGridDistance(!cbGridManualTick.isSelected());
 		}
 		else if (source == tfAxesRatioX || source == tfAxesRatioY) {			
 			double xval = parseDouble(tfAxesRatioX.getText());

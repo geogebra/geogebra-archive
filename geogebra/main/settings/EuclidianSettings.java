@@ -206,9 +206,13 @@ public class EuclidianSettings extends AbstractSettings {
 				}
 			}
 		}
-		
+
 		if(changed) {
 			gridDistances = dists;
+			if (dists == null)
+				setAutomaticGridDistance(true, false);
+			else
+				setAutomaticGridDistance(false, false);
 			settingChanged();
 		}
 	}
@@ -219,7 +223,26 @@ public class EuclidianSettings extends AbstractSettings {
 	public double[] getGridDistances() {
 		return gridDistances;
 	}
-	
+
+	public void setAutomaticGridDistance(boolean agd, boolean callsc) {
+		if (automaticGridDistance != agd) {
+			automaticGridDistance = agd;
+			
+			if (agd) {
+				gridDistances = null;
+				if (callsc) {
+					settingChanged();
+				}
+			} else if (callsc) {
+				settingChanged();
+			}
+		}
+	}
+
+	public boolean getAutomaticGridDistance() {
+		return automaticGridDistance;
+	}
+
 	protected boolean[] showAxes = { true, true, true };
 	private boolean showAxesCornerCoords = true;
 	
