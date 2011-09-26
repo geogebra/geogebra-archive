@@ -36,13 +36,12 @@ public class AlgoExtremumPolynomial extends AlgoRootsPolynomial {
         super(cons, labels, f);
         
         
-        // TODO: remove
        // Application.debug("AlgoExtremumPolynomial: " + f + ", " + f.cons);
-        Iterator it = f.getVariables().iterator();
-        while (it.hasNext()) {
-        	GeoElement var = (GeoElement) it.next();
-        	Application.debug("  " + var + ", " + var.cons );
-        }
+       // Iterator it = f.getVariables().iterator();
+       // while (it.hasNext()) {
+       // 	GeoElement var = (GeoElement) it.next();
+       // 	Application.debug("  " + var + ", " + var.cons );
+       // }
     }
 
     public String getClassName() {
