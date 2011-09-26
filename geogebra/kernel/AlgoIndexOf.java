@@ -113,14 +113,10 @@ public class AlgoIndexOf extends AlgoElement {
     	int	size = ((GeoList)hayStack).size();	
     	for(int i=startAt;i<size;i++){
     		GeoElement cmp = ((GeoList)hayStack).get(i);
-    		if(needle.isNumberValue() && cmp.isNumberValue() && (((NumberValue)needle).getDouble()== ((NumberValue)cmp).getDouble())){
+    		if(needle.isEqual(cmp)){
     			index.setValue(i+1);
     			break;
     		}
-    		if(cmp.toValueString().equals(needle.toValueString())){
-    			index.setValue(i+1);
-    			break;
-    		}    	
     	}
    }
   
