@@ -184,6 +184,7 @@ would like to use the official JAR files everywhere.
 
 	<!-- download javacc from GeoGebra repository -->
 	<target name="javacc-geogebra">
+	<mkdir dir="build/javacc"/>
 	<get src="http://www.geogebra.org/download/lib/build/javacc/javacc.jar" dest="build/javacc/javacc.jar"
 	    usetimestamp="true"/>
 	</target>
