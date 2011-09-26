@@ -52,12 +52,16 @@ public class MyArbitraryConstant extends MyDouble {
 			case ExpressionNode.STRING_TYPE_LATEX:
 				// return e.g. "k_1" 
 				return latexString;
+							
+			case ExpressionNode.STRING_TYPE_MPREDUCE:			
+				// return e.g. "arbint(2)"
+				return internalString;
 				
 			default:
-				//case ExpressionNode.STRING_TYPE_MPREDUCE:
 				//case ExpressionNode.STRING_TYPE_GEOGEBRA:
-				// return e.g. "arbint(2)"
-				return internalString;		
+				// treat arbitrary constant as 0, 
+				// see #1428 problem with Integral[x^2]
+				return "0";
 		}					
 	}
 

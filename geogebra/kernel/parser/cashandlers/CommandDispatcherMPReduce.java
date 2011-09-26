@@ -40,19 +40,22 @@ public class CommandDispatcherMPReduce {
 					// e.g. arbcomplex(2) from MPreduce becomes next free index label, e.g. z_5
 					ret = new MyArbitraryConstant(kernel, 
 							MyArbitraryConstant.ARB_COMPLEX, 
-							args.getListElement(0).toString()); 
+							args.getListElement(0).toString());
+					break;
 		
 				case arbconst:
 			  		// e.g. arbconst(3) from MPreduce becomes next free index label, e.g. c_4
 			        ret = new MyArbitraryConstant(kernel, 
 			        		MyArbitraryConstant.ARB_CONST, 
-			        		args.getListElement(0).toString());          
+			        		args.getListElement(0).toString());
+			        break;
 	
 				case arbint:
 					// e.g. arbint(2) from MPreduce becomes next free index label, e.g. k_3
 					ret = new MyArbitraryConstant(kernel, 
 							MyArbitraryConstant.ARB_INT, 
 							args.getListElement(0).toString());  
+					break;
 					
 				case df:
 					// e.g. df(f(var),var) from MPReduce becomes f'(var)
@@ -69,6 +72,7 @@ public class CommandDispatcherMPReduce {
 							derivative, 
 							ExpressionNode.FUNCTION, 
 							args.getListElement(1)); // Variable "t"
+					break;
 			}
 			
 			// no match or ExpressionNode
