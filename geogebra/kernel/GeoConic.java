@@ -519,6 +519,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 */
 
 	public void setCoeffs(ExpressionValue[][] coeff) {
+		Application.debug(coeff.length);
+		if(coeff.length == 1){
+			matrix[2] = evalCoeff(coeff[0][0]);
+			if(coeff[0].length > 1)
+				matrix[5] = evalCoeff(coeff[0][1])/2;
+			if(coeff[0].length > 2)
+				matrix[1] = evalCoeff(coeff[0][2]);
+			return;
+		}
 		// TODO Auto-generated method stub
 		if(coeff.length > 2)
 			matrix[0] = evalCoeff(coeff[2][0]);
@@ -538,8 +547,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		matrix[5] = evalCoeff(coeff[0][1])/2;
 		
 		classifyConic(false);
-		if(coeff.length == 2 && coeff[0].length ==2){
+		if(coeff.length == 2 && coeff[0].length ==2 && 
+				Kernel.isZero(evalCoeff(coeff[1][1]))){
 			type = CONIC_LINE;
+			Application.debug(matrix[4]+","+matrix[5]+","+matrix[2]);
 		}
 		Application.debug(this);
 	}
