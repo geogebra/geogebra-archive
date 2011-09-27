@@ -9419,6 +9419,12 @@ public class Kernel {
 		AlgoZip algo = new AlgoZip(cons,label,expression,vars,over);
 		return algo.getOutput();
 	}
+	
+	final public GeoPoint Kimberling(String label, GeoPoint A, GeoPoint B, GeoPoint C, NumberValue v) {
+		AlgoKimberling algo = new AlgoKimberling(cons, label, A,B,C,v);
+		GeoPoint P = algo.getResult();
+		return P;
+	}
 
 
 	public GeoTextField textfield(String label,GeoElement geoElement) {

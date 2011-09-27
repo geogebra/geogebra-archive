@@ -301,7 +301,8 @@ public class CommandDispatcher {
     	// Philipp Weissenbacher 10-04-2007
     	   
     	cmdTable.put("Locus", new CmdLocus(kernel));	   
-    	cmdTable.put("Centroid", new CmdCentroid(kernel));	   
+    	cmdTable.put("Centroid", new CmdCentroid(kernel));
+    	cmdTable.put("Kimberling", new CmdKimberling(kernel));	
     	cmdTable.put("Vertex", new CmdVertex(kernel));	
     	
     	cmdTable.put("PolyLine", new CmdPolyLine(kernel));	   
