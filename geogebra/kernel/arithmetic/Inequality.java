@@ -23,6 +23,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.implicit.GeoImplicitPoly;
+import geogebra.main.MyError;
 
 /**
  * stores left and right hand side of an inequality as Expressions
@@ -170,7 +171,7 @@ public class Inequality {
 				setAboveBorderFromConic();	
 			}
 			else{
-				
+				throw new MyError(kernel.getApplication(), "InvalidEquation");
 			}
 			//TODO implicit ineq	
 			/*if (newBorder.isGeoLine()) {
