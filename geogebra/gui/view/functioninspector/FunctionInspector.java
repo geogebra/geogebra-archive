@@ -1022,7 +1022,7 @@ KeyListener, ActionListener, SpecialNumberFormatInterface {
 
 
 		if(selectedGeo.equals(geo)){
-			//lblGeoName.setText(selectedGeo.toString());
+			lblGeoName.setText(selectedGeo.toString());
 		}
 
 		else if(tabPanel.getSelectedComponent() == pointTabPanel && testPoint.equals(geo)){
