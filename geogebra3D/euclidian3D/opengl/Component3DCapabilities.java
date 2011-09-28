@@ -1,8 +1,12 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.main.Application;
 
 import javax.media.opengl.GLCapabilities;
+//import javax.media.opengl.GLProfile; //JOGL2
+
+
+import geogebra.main.Application;
+
 
 /**
  * openGL capabilities for JPanel3D
@@ -12,7 +16,7 @@ import javax.media.opengl.GLCapabilities;
 public class Component3DCapabilities extends GLCapabilities{
 
 	public Component3DCapabilities() {
-		//super(GLProfile.getDefault());
+		//super(GLProfile.getDefault()); //JOGL2
 		
 		//anti-aliasing
     	setSampleBuffers(true);setNumSamples(4);    	
@@ -23,7 +27,7 @@ public class Component3DCapabilities extends GLCapabilities{
 	}
 	
 	final static public void initSingleton(){
-		//GLProfile.initSingleton(true);
+		//GLProfile.initSingleton(true); //JOGL2
 	}
 	
 	

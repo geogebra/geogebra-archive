@@ -751,7 +751,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 
     
     
-    public GeoElement copy() {
+    public GeoPoint3D copy() {
         return new GeoPoint3D(this);        
     }                 
        

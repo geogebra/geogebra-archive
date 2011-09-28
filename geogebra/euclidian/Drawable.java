@@ -318,7 +318,11 @@ public abstract class Drawable extends DrawableND {
 			return ret.toString();
 		}
 	} */
-
+	
+	
+	public final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
+		labelRectangle.setBounds(drawMultilineLaTeX(view.getApplication(), view.getTempGraphics2D(font), geo, g2, font, fgColor, bgColor, labelDesc, xLabel, yLabel));
+	}
 
 	/**
 	 * Draw a multiline LaTeX label.
@@ -330,7 +334,7 @@ public abstract class Drawable extends DrawableND {
 	 * @param fgColor
 	 * @param bgColor
 	 */
-	public final void drawMultilineLaTeX(Graphics2D g2, Font font, Color fgColor, Color bgColor) {
+	public static final Rectangle drawMultilineLaTeX(Application app, Graphics2D tempGraphics, GeoElement geo, Graphics2D g2, Font font, Color fgColor, Color bgColor, String labelDesc, int xLabel, int yLabel) {
 		int fontSize = g2.getFont().getSize();
 		int lineSpread = (int)(fontSize * 1.0f);
 		int lineSpace = (int)(fontSize * 0.5f);
@@ -356,7 +360,7 @@ public abstract class Drawable extends DrawableND {
 			if(isLaTeX) {
 				// save the height of this element by drawing it to a temporary buffer
 				FormulaDimension dim = new FormulaDimension();
-				dim = view.getApplication().getDrawEquation().drawEquation(view.app, geo, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor, false);
+				dim = app.getDrawEquation().drawEquation(app, geo, tempGraphics, 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor, false);
 				
 				int height = dim.height;
 				
@@ -408,7 +412,7 @@ public abstract class Drawable extends DrawableND {
 				yOffset = (((lineHeights.get(currentLine))).intValue() - ((elementHeights.get(currentElement))).intValue()) / 2;
 				
 				// draw the equation and save the x offset
-				xOffset += view.getApplication().getDrawEquation().drawEquation(view.app, geo, g2, xLabel + xOffset, (yLabel + height) + yOffset + elementDepths.get(currentElement), elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor, true).width;
+				xOffset += app.getDrawEquation().drawEquation(app, geo, g2, xLabel + xOffset, (yLabel + height) + yOffset + elementDepths.get(currentElement), elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor, true).width;
 
 				++currentElement;
 			} else {
@@ -420,7 +424,7 @@ public abstract class Drawable extends DrawableND {
 
 					// draw the string
 					g2.setFont(font); // JLaTeXMath changes g2's fontsize
-					xOffset += drawIndexedString(view.getApplication(), g2, lines[j], xLabel + xOffset, yLabel + height + yOffset + lineSpread).x;
+					xOffset += drawIndexedString(app, g2, lines[j], xLabel + xOffset, yLabel + height + yOffset + lineSpread).x;
 
 					// add the height of this line if more lines follow
 					if(j + 1 < lines.length) {
@@ -450,7 +454,10 @@ public abstract class Drawable extends DrawableND {
 
 			isLaTeX = !isLaTeX;
 		}
-		labelRectangle.setBounds(xLabel - 3, yLabel - 3 + depth, width + 6, height + 6 );
+		
+		return new Rectangle(xLabel - 3, yLabel - 3 + depth, width + 6, height + 6);
+		
+		
 	}
 	/*
 	private static geogebra.gui.hoteqn.sHotEqn eqn;
@@ -560,7 +567,7 @@ public abstract class Drawable extends DrawableND {
 	}
 
 
-	final static Rectangle drawMultiLineText(Application app, String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
+	public final static Rectangle drawMultiLineText(Application app, String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
 		int lines = 0;
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.5f;
@@ -603,6 +610,43 @@ public abstract class Drawable extends DrawableND {
 		//labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
 
 	}
+	
+	
+	public final static Rectangle drawMultiLineIndexedText(Application app, String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
+		int lines = 0;
+		int fontSize = g2.getFont().getSize();
+		float lineSpread = fontSize * 1.5f;
+
+		int xoffset = 0, yoffset = 0;
+
+		// draw text line by line
+		int lineBegin = 0;
+		int length = labelDesc.length();
+		xoffset = 0;
+		yoffset = 0;
+		for (int i=0; i < length-1; i++) {
+			if (labelDesc.charAt(i) == '\n') {
+				//end of line reached: draw this line
+				Point p = drawIndexedString(app, g2, labelDesc.substring(lineBegin, i), xLabel, yLabel + lines * lineSpread);
+				if (p.x > xoffset) xoffset = p.x;
+				if (p.y > yoffset) yoffset = p.y;
+				lines++;
+				lineBegin = i + 1;
+			}
+		}
+
+		float ypos = yLabel + lines * lineSpread;
+		Point p = drawIndexedString(app, g2, labelDesc.substring(lineBegin), xLabel, ypos);
+		if (p.x > xoffset) xoffset = p.x;
+		if (p.y > yoffset) yoffset = p.y;
+		//labelHasIndex = yoffset > 0;
+		int height = (int) ( (lines +1)*lineSpread);
+
+		return new Rectangle(xLabel-3, yLabel - fontSize - 3, xoffset + 6, height + 6 );
+		//labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
+
+	}
+	
 
 	final void drawMultilineText(Graphics2D g2) {
 

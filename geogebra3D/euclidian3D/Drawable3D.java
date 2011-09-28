@@ -215,8 +215,13 @@ public abstract class Drawable3D extends DrawableND {
 	public Drawable3D(EuclidianView3D view3D){
 		setView3D(view3D);
 		
-		label = new DrawLabel3D(view3D);
+		label = newDrawLabel3D(view3D);
 	}
+	
+	protected DrawLabel3D newDrawLabel3D(EuclidianView3D view3D){
+		return new DrawLabel3D(view3D);
+	}
+	
 	
 		
 	/** 
@@ -287,12 +292,13 @@ public abstract class Drawable3D extends DrawableND {
 	 */
 	protected void updateLabel(){
 		
-		label.update(getGeoElement().getLabelDescription(), 10, 
+		label.update(getGeoElement().getLabelDescription(), getView3D().getApplication().getPlainFont(), 
 				getGeoElement().getObjectColor(),
-				getLabelPosition().copyVector(),
+				getLabelPosition(),
 				getLabelOffsetX(),-getLabelOffsetY());
 
 	}
+	
 	
 	/**
 	 * 
@@ -407,7 +413,7 @@ public abstract class Drawable3D extends DrawableND {
 	 * @return the label position
 	 */
 	public Coords getLabelPosition(){
-		return getGeoElement().getLabelPosition();
+		return getGeoElement().getLabelPosition().copyVector();
 	}
 	
 	/**
@@ -568,16 +574,17 @@ public abstract class Drawable3D extends DrawableND {
     		if(!(getGeoElement().isPickable()))
     			return;
     	
-		if(!isVisible())
+		if(!isLabelVisible())
 			return;
-		
-    	if (!getGeoElement().isLabelVisible())
-    		return;
     	
     	
     	
     	label.draw(renderer);
 				
+    }
+    
+    protected boolean isLabelVisible(){
+    	return isVisible() && getGeoElement().isLabelVisible();
     }
 	
 	

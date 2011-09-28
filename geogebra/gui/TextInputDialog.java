@@ -22,6 +22,8 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.Coords;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
 import geogebra.main.MyError;
@@ -82,7 +84,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	// text handling fields
 	private GeoText editGeo;
 	private boolean isLaTeX;
-	private GeoPoint startPoint;
+	private GeoPointND startPoint;
 	private boolean isTextMode = false;
 
 	// recent symbol fields
@@ -107,7 +109,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 * @param rows 
 	 * @param isTextMode 
 	 */
-	public TextInputDialog(Application app,  String title, GeoText editGeo, GeoPoint startPoint,
+	public TextInputDialog(Application app,  String title, GeoText editGeo, GeoPointND startPoint,
 			int cols, int rows, boolean isTextMode) {	
 
 		super(app.getFrame(), false);
@@ -158,7 +160,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	*/
 
 	
-	public void reInitEditor(GeoText text, GeoPoint startPoint) {
+	public void reInitEditor(GeoText text, GeoPointND startPoint) {
 
 		this.startPoint = startPoint;
 		setGeoText(text);  
@@ -796,7 +798,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 						//t.setAbsoluteScreenLoc(euclidianView.toScreenCoordX(startPoint.inhomX), 
 						//		euclidianView.toScreenCoordY(startPoint.inhomY));
 						//t.setAbsoluteScreenLocActive(true); 
-						t.setRealWorldLoc(startPoint.inhomX, startPoint.inhomY);
+						Coords coords = startPoint.getInhomCoordsInD(3);
+						t.setRealWorldLoc(coords.getX(),coords.getY());
 						t.setAbsoluteScreenLocActive(false); 
 					}
 

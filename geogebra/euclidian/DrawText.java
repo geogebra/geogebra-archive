@@ -15,6 +15,9 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.Matrix.Coords;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -40,7 +43,7 @@ public final class DrawText extends Drawable {
     private int fontStyle = -1;
     private boolean serifFont;
     private Font textFont;
-    private GeoPoint loc; // text location
+    private GeoPointND loc; // text location
     
     //private Image eqnImage;
     private int oldXpos, oldYpos;
@@ -89,7 +92,7 @@ public final class DrawText extends Drawable {
 			xLabel = text.getAbsoluteScreenLocX();
 			yLabel = text.getAbsoluteScreenLocY(); 
 		} else {
-			loc = (GeoPoint) text.getStartPoint();
+			loc = text.getStartPoint();
 	        if (loc == null) {
 				xLabel = (int) view.xZero;
 				yLabel = (int) view.yZero;
@@ -98,8 +101,16 @@ public final class DrawText extends Drawable {
 	        		isVisible = false;
 	        		return;
 	        	}
-				xLabel = view.toScreenCoordX(loc.inhomX);
-				yLabel = view.toScreenCoordY(loc.inhomY);        	
+
+	        	//looks if it's on view     	
+	        	Coords p = view.getCoordsForView(loc.getInhomCoordsInD(3));
+	        	if (!Kernel.isZero(p.getZ())){
+	        		isVisible = false;
+	        		return;
+	        	}
+	        	
+				xLabel = view.toScreenCoordX(p.getX());
+				yLabel = view.toScreenCoordY(p.getY());        	
 	        }
 	        xLabel += text.labelOffsetX;
 			yLabel += text.labelOffsetY; 

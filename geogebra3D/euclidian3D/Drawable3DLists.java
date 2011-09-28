@@ -67,8 +67,8 @@ public class Drawable3DLists {
 		
 		drawable.addToDrawable3DLists(this);
 		
-		//Application.debug(size());
-		view3D.addOneGeoToPick();
+		if (drawable.getGeoElement().isPickable())
+			view3D.addOneGeoToPick();
 		
 	}
 	
@@ -92,13 +92,13 @@ public class Drawable3DLists {
 	private void remove(Drawable3D drawable){
 	
 		//TODO fix it
-		if (drawable!=null)
+		if (drawable!=null){
 			//Application.debug(drawable.getGeoElement());
 			drawable.removeFromDrawable3DLists(this);
-		
-
-		//Application.debug(size());
-		view3D.removeOneGeoToPick();
+			//Application.debug(size());
+			if (drawable.getGeoElement().isPickable())
+				view3D.removeOneGeoToPick();
+		}
 		
 	}
 	

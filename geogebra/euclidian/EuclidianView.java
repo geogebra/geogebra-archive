@@ -944,6 +944,10 @@ implements EuclidianViewInterface, Printable, SettingListener {
 		updateDrawableFontSize();
 		updateBackground();
 	}
+	
+	public int getFontSize(){
+		return fontSize;
+	}
 
 	public void setAntialiasing(boolean flag) {
 		if (flag == antiAliasing)

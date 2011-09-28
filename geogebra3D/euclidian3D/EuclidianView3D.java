@@ -17,6 +17,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.Matrix.CoordMatrix;
@@ -619,6 +620,11 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 			case GeoElement3D.GEO_CLASS_SURFACECARTESIAN3D:	
 				d = new DrawSurface3D(this, (GeoSurfaceCartesian3D) geo);
 				break;	
+				
+
+			case GeoElement3D.GEO_CLASS_TEXT:
+				d = new DrawText3D(this,(GeoText) geo);
+				break;
 
 			}
 			
@@ -3978,5 +3984,11 @@ public class EuclidianView3D extends JPanel implements Printable, EuclidianViewI
 	public Graphics2D getGraphicsForPen(){
 		return app.getEuclidianView().getGraphicsForPen();
 		
+	}
+
+
+	public int getFontSize() {
+		
+		return app.getFontSize();
 	}
 }

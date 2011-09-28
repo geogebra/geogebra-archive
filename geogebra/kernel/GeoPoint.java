@@ -193,7 +193,7 @@ GeoPointND, Animatable, Transformable  {
     } 
     
     
-    public GeoElement copy() {
+    public GeoPoint copy() {
         return new GeoPoint(this);        
     }                 
        

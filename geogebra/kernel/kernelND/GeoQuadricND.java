@@ -6,7 +6,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Matrix.CoordMatrix;
 import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra3D.kernel3D.GeoQuadric3D;
 
 
 /** Abstract class describing quadrics in n-dimension space.

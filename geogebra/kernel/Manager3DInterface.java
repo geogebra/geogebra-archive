@@ -13,10 +13,6 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
-import geogebra3D.kernel3D.GeoPlane3D;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.GeoQuadric3D;
-import geogebra3D.kernel3D.Manager3D;
 
 /**
  * Interface for managing all 3D methods in Kernel. <br/>
@@ -386,11 +382,11 @@ public interface Manager3DInterface {
 			 
 			 public GeoElement[] IntersectionPoint(
 						String[] labels,
-						GeoPlane3D p, GeoSurfaceFinite s) ;	
+						GeoPlaneND p, GeoSurfaceFinite s) ;	
 			 
 			 public GeoElement[] IntersectionSegment(
 						String[] labels,
-						GeoPlane3D p, GeoSurfaceFinite s) ;		 
+						GeoPlaneND p, GeoSurfaceFinite s) ;		 
 			 /** Calculate the intersection of plane and quadric
 			  * @param label name of the point
 			  * @param plane
@@ -400,11 +396,11 @@ public interface Manager3DInterface {
 			 public GeoConicND Intersect(
 					 String label,
 					 GeoPlaneND plane,
-					 GeoQuadric3D quadric) ;
+					 GeoQuadricND quadric) ;
 
 			 public GeoConicND Intersect(
 					 GeoPlaneND plane,
-					 GeoQuadric3D quadric) ;
+					 GeoQuadricND quadric) ;
 
 			////////////////////////////////////////////////
 			// FUNCTIONS (2 VARS)
@@ -470,7 +466,7 @@ public interface Manager3DInterface {
 			 * get only one intersection point of two conics that is near to the given
 			 * location (xRW, yRW)
 			 */
-			public GeoPoint3D IntersectLineConicSingle(
+			public GeoPointND IntersectLineConicSingle(
 				String label,
 				GeoLineND g,
 				GeoConicND c, double xRW, double yRW, CoordMatrix4x4 mat);
@@ -478,13 +474,13 @@ public interface Manager3DInterface {
 			/** 
 			 * get only one intersection point of two conics 
 			 */
-			public GeoPoint3D IntersectLineConicSingle(
+			public GeoPointND IntersectLineConicSingle(
 					String label, GeoLineND g, GeoConicND c, NumberValue index);
 			
 			/** 
 			 * get only one intersection point of two conics, near to refPoint
 			 */
-			public GeoPoint3D IntersectLineConicSingle(
+			public GeoPointND IntersectLineConicSingle(
 					String label, GeoLineND g, GeoConicND c, GeoPointND refPoint);
 			
 			
@@ -499,13 +495,13 @@ public interface Manager3DInterface {
 						String[] labels,
 						GeoConicND A,
 						GeoConicND B);
-			 public GeoPoint3D IntersectConicsSingle(
+			 public GeoPointND IntersectConicsSingle(
 						String label,
 						GeoConicND A,
 						GeoConicND B, double xRW, double yRW, CoordMatrix4x4 mat);
-			 public GeoPoint3D IntersectConicsSingle(
+			 public GeoPointND IntersectConicsSingle(
 						String label, GeoConicND A, GeoConicND B, NumberValue index);
-			 public GeoPoint3D IntersectConicsSingle(
+			 public GeoPointND IntersectConicsSingle(
 						String label, GeoConicND A, GeoConicND B, GeoPointND refPoint);
 				
 			 
@@ -514,22 +510,22 @@ public interface Manager3DInterface {
 			*/
 				
 			public GeoPointND[] IntersectLineQuadric(String[] labels, GeoLineND A,
-					GeoQuadric3D B);
+					GeoQuadricND B);
 			/** 
 			 * get only one intersection point of two conics that is near to the given
 			 * location (xRW, yRW) 
 			 */
-			public GeoPoint3D IntersectLineQuadricSingle(
-				String label, GeoLineND g, GeoQuadric3D q, 
+			public GeoPointND IntersectLineQuadricSingle(
+				String label, GeoLineND g, GeoQuadricND q, 
 				double xRW, double yRW, CoordMatrix4x4 mat);
 			/** 
 			 * get only one intersection point of line and quadric
 			 * choice depends on command input
 			 */
-			public GeoPoint3D IntersectLineQuadricSingle(
-					String label, GeoLineND g, GeoQuadric3D q, NumberValue index);
-			public GeoPoint3D IntersectLineQuadricSingle(
-						String label, GeoLineND g, GeoQuadric3D q, GeoPointND refPoint);
+			public GeoPointND IntersectLineQuadricSingle(
+					String label, GeoLineND g, GeoQuadricND q, NumberValue index);
+			public GeoPointND IntersectLineQuadricSingle(
+						String label, GeoLineND g, GeoQuadricND q, GeoPointND refPoint);
 				
 
 			/**

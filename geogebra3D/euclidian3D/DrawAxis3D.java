@@ -124,7 +124,7 @@ public class DrawAxis3D extends DrawLine3D {
     		if (label!=null){
     			//sets the label visible
     			label.setIsVisible(true);
-    			label.update(strNum, 10, 
+    			label.update(strNum, getView3D().getApplication().getPlainFont(), 
     					getGeoElement().getObjectColor(),
     					origin.copyVector(),
     					axis.getNumbersXOffset(),axis.getNumbersYOffset());
@@ -133,7 +133,7 @@ public class DrawAxis3D extends DrawLine3D {
     			//creates new label
     			label = new DrawLabel3D(getView3D());
     			label.setAnchor(true);
-    			label.update(strNum, 10, 
+    			label.update(strNum, getView3D().getApplication().getPlainFont(), 
     					getGeoElement().getObjectColor(),
     					origin.copyVector(),
     					axis.getNumbersXOffset(),axis.getNumbersYOffset());
@@ -144,7 +144,7 @@ public class DrawAxis3D extends DrawLine3D {
     	
 		
 		// update end of axis label
-		label.update(((GeoAxis3D) getGeoElement()).getAxisLabel(), 10, 
+		label.update(((GeoAxis3D) getGeoElement()).getAxisLabel(), getView3D().getApplication().getPlainFont(), 
 				getGeoElement().getObjectColor(),
 				((GeoCoordSys1D) getGeoElement()).getPoint(minmax[1]),
 				axis.labelOffsetX-4,axis.labelOffsetY-6

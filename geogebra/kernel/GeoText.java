@@ -18,7 +18,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 
 	private static final long serialVersionUID = 1L;
 	private String str; 	
-	private GeoPoint startPoint; // location of Text on screen
+	private GeoPointND startPoint; // location of Text on screen
 	private boolean isLaTeX; // text is a LaTeX formula
 	// corners of the text Michael Borcherds 2007-11-26, see AlgoTextCorner
 	private Rectangle2D boundingBox; 
@@ -103,7 +103,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			if (gt.startPoint != null) {
 				if (gt.hasAbsoluteLocation()) {
 					//	create new location point	
-					setStartPoint(new GeoPoint(gt.startPoint));
+					setStartPoint(gt.startPoint.copy());
 				} else {
 					//	take existing location point	
 					setStartPoint(gt.startPoint);
@@ -187,13 +187,13 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		// set new location	
 		if (p == null) {
 			if (startPoint != null) // copy old startPoint			
-				startPoint = new GeoPoint(startPoint);
+				startPoint = startPoint.copy();
 			else 
 				startPoint = null; 
 			labelOffsetX = 0;
 			labelOffsetY = 0;					
 		} else {
-			startPoint = (GeoPoint) p;
+			startPoint = p;
 			//	add new dependencies
 			startPoint.getLocateableList().registerLocateable(this);
 			
@@ -219,7 +219,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		if (startPoint == null)
 			return null;
 	
-		GeoPoint [] ret = new GeoPoint[1];
+		GeoPointND [] ret = new GeoPointND[1];
 		ret[0] = startPoint;
 		return ret;			
 	}
@@ -561,14 +561,14 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		if (startPoint == null)
 			return 0;
 		else
-			return startPoint.inhomX;
+			return startPoint.getInhomCoords().getX();
 	}
 	
 	public double getRealWorldLocY() {
 		if (startPoint == null)
 			return 0;
 		else
-			return startPoint.inhomY;
+			return startPoint.getInhomCoords().getY();
 	}
 	
 	public void setRealWorldLoc(double x, double y) {
@@ -840,6 +840,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 	
 
-
+ 	public boolean hasDrawable3D() {
+		return true;
+	}
 
 }

@@ -1248,13 +1248,13 @@ public class GuiManager {
 	/**
 	 * Creates a new text at given startPoint
 	 */
-	public void showTextCreationDialog(GeoPoint startPoint) {
+	public void showTextCreationDialog(GeoPointND startPoint) {
 		showTextDialog(null, startPoint);
 	}
 
 	
 
-	private void showTextDialog(GeoText text, GeoPoint startPoint) {
+	private void showTextDialog(GeoText text, GeoPointND startPoint) {
 		app.setWaitCursor();
 
 		if(textInputDialog == null)
@@ -1266,7 +1266,7 @@ public class GuiManager {
 		app.setDefaultCursor();
 	}
 
-	public JDialog createTextDialog(GeoText text, GeoPoint startPoint) {
+	public JDialog createTextDialog(GeoText text, GeoPointND startPoint) {
 		boolean isTextMode = app.getMode() == EuclidianConstants.MODE_TEXT;
 		TextInputDialog id = new TextInputDialog(app, app.getPlain("Text"),
 				text, startPoint, 30, 6, isTextMode);

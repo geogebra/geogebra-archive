@@ -3236,10 +3236,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				toggleModeChangedKernel = true;
 			break;
 
-			//  new text or image
+		//  new text
 		case EuclidianConstants.MODE_TEXT:
+			changedKernel = text(hits.getOtherHits(GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
+			break;
+			
+		//  new image
 		case EuclidianConstants.MODE_IMAGE:
-			changedKernel = textImage(hits.getOtherHits(GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
+			changedKernel = image(hits.getOtherHits(GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
 			break;
 
 			// new slider
@@ -6804,7 +6808,37 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return false;
 	}
 
-	final protected boolean textImage(Hits hits, int mode, boolean altDown) {
+	final protected boolean text(Hits hits, int mode, boolean altDown) {
+		GeoPointND loc = null; // location
+
+		if (hits.isEmpty()) {
+			if (selectionPreview)
+				return false;
+			else {
+				// create new Point
+				loc = new GeoPoint(kernel.getConstruction());			
+				loc.setCoords(xRW, yRW, 1.0);	
+			}
+		} else {
+			// points needed
+			addSelectedPoint(hits, 1, false);
+			if (selPoints() == 1) {
+				// fetch the selected point
+				GeoPointND[] points = getSelectedPointsND();
+				loc = points[0];
+			}
+		}		
+
+		// got location
+		if (loc != null) {			
+			app.getGuiManager().showTextCreationDialog(loc);	
+			return true;
+		}
+
+		return false;
+	}
+
+	final protected boolean image(Hits hits, int mode, boolean altDown) {
 		GeoPoint loc = null; // location
 
 		if (hits.isEmpty()) {
@@ -6827,22 +6861,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// got location
 		if (loc != null) {
-			switch (mode) {
-			case EuclidianConstants.MODE_TEXT:				
-				app.getGuiManager().showTextCreationDialog(loc);
-				break;
-
-			case EuclidianConstants.MODE_IMAGE:	
-				app.getGuiManager().loadImage(loc, null, altDown);
-				break;
-			}			
+			app.getGuiManager().loadImage(loc, null, altDown);
 			return true;
 		}
 
 		return false;
 	}
-
-
 	// new slider
 	final protected boolean slider() {		
 		if (!selectionPreview && mouseLoc != null) app.getGuiManager().showSliderCreationDialog(mouseLoc.x, mouseLoc.y);

@@ -17,11 +17,13 @@ import geogebra3D.euclidian3D.Hits3D;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
+
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
@@ -30,8 +32,12 @@ import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.swing.JPanel;
 
-import com.sun.opengl.util.BufferUtil;
-import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.BufferUtil; //JOGL1
+import com.sun.opengl.util.FPSAnimator; //JOGL1
+//import javax.media.opengl.GL2; //JOGL2
+//import com.jogamp.opengl.util.FPSAnimator; //JOGL2
+//import com.jogamp.opengl.util.GLBuffers; //JOGL2
+
 
 
 /**
@@ -71,8 +77,8 @@ public class Renderer implements GLEventListener {
 	//public GLCanvas canvas;
 	public Component3D canvas;
 
-	//private GLCapabilities caps;
-	protected GL gl;
+	protected GL gl; //JOGL1
+	//protected GL2 gl; //JOGL2
 	private GLUquadric quadric;
 	private FPSAnimator animator;
 	
@@ -275,6 +281,8 @@ public class Renderer implements GLEventListener {
 		
 	}
 	
+
+	
 	/**
 	 * 
 	 * openGL method called when the display is to be computed.
@@ -297,7 +305,8 @@ public class Renderer implements GLEventListener {
 
     	//double displayTime = System.currentTimeMillis();
         
-        gl = getGL(gLDrawable);
+        gl = getGL(gLDrawable); //JOGL1
+        //gl = getGL(gLDrawable).getGL2(); //JOGL2
                
         
         
@@ -1199,12 +1208,26 @@ public class Renderer implements GLEventListener {
 
 	public void removeOneGeoToPick(){
 		geoToPickSize--;
+		/*
+		if (geoToPickSize<0)
+			Application.printStacktrace("");
+			*/
 	}
 	
 	
+	public final static IntBuffer newIntBuffer(int size){
+		return BufferUtil.newIntBuffer(size); // JOGL1
+		//return GLBuffers.newDirectIntBuffer(size); // JOGL2
+	}
+	
+	public final static ByteBuffer newByteBuffer(int size){
+		return BufferUtil.newByteBuffer(size); //JOGL1
+		//return GLBuffers.newDirectByteBuffer(size); //JOGL2
+	}
 	
 	private IntBuffer createSelectBufferForPicking(int bufSize){
-		IntBuffer ret = BufferUtil.newIntBuffer(bufSize);// Set Up the Selection Buffer
+		// Set Up the Selection Buffer
+		IntBuffer ret = newIntBuffer(bufSize);
         gl.glSelectBuffer(bufSize, ret); // Tell OpenGL To Use Our Array For Selection
         return ret; 
 	}
@@ -1213,7 +1236,7 @@ public class Renderer implements GLEventListener {
         return new Drawable3D[bufSize];
 	}
 	
-	private void setGLForPicking(){
+	private void setGLForPicking(){		
 
         // The Size Of The Viewport. [0] Is <x>, [1] Is <y>, [2] Is <length>, [3] Is <width>
         int[] viewport = new int[4];
@@ -1236,6 +1259,7 @@ public class Renderer implements GLEventListener {
         
     	
 
+    	
     	gl.glDisable(GLlocal.GL_ALPHA_TEST);
     	gl.glDisable(GLlocal.GL_BLEND);
     	gl.glDisable(GLlocal.GL_LIGHTING);
@@ -1256,7 +1280,7 @@ public class Renderer implements GLEventListener {
 	}
 	
 	
-	private void storePickingInfos(Hits3D hits3D, int labelLoop, IntBuffer selectBuffer){
+	private void storePickingInfos(Hits3D hits3D, int labelLoop){
 
         int hits = gl.glRenderMode(GLlocal.GL_RENDER); // Switch To Render Mode, Find Out How Many
         
@@ -1297,6 +1321,8 @@ public class Renderer implements GLEventListener {
      */
     public void doPick(){
     	
+    	
+    	
     	if (geoToPickSize!=oldGeoToPickSize){
     		int bufSize=geoToPickSize*2+1 +20; //TODO remove "+20" due to intersection curve
     		selectBuffer=createSelectBufferForPicking(bufSize);
@@ -1304,8 +1330,6 @@ public class Renderer implements GLEventListener {
     		oldGeoToPickSize=geoToPickSize;
     	}
 
-        
-        
     	setGLForPicking();
     	pushSceneMatrix();
     	
@@ -1322,10 +1346,11 @@ public class Renderer implements GLEventListener {
         
         if (pickingMode == PICKING_MODE_LABELS){
         	// picking labels
+        	gl.glEnable(GLlocal.GL_TEXTURE_2D);
+        	gl.glDisable(GLlocal.GL_BLEND);
         	gl.glEnable(GLlocal.GL_ALPHA_TEST);
-        	gl.glEnable(GLlocal.GL_BLEND);
-           	gl.glEnable(GLlocal.GL_TEXTURE_2D);
-           	
+        	//gl.glAlphaFunc(GLlocal.GL_GREATER, 0);
+            	
         	drawable3DLists.drawLabelForPicking(this);
         	
            	gl.glDisable(GLlocal.GL_TEXTURE_2D);
@@ -1342,11 +1367,11 @@ public class Renderer implements GLEventListener {
         //Hits3D hits3D = new Hits3D();
         Hits3D hits3D = view3D.getHits3D();
         hits3D.init();
-        storePickingInfos(hits3D, labelLoop, selectBuffer);
+        storePickingInfos(hits3D, labelLoop);
         
         // sets the GeoElements in view3D
         hits3D.sort();
-        /* DEBUG
+        /* DEBUG /
         StringBuilder sbd = new StringBuilder();
         sbd.append("hits~~~"+hits3D.toString());
         for (int i = 0; i<drawHits.length; i++) {
@@ -1356,7 +1381,8 @@ public class Renderer implements GLEventListener {
         			"~~~ zPickMin=" + drawHits[i].zPickMin +
         			"  zPickMax=" + drawHits[i].zPickMax);}}
         }
-		Application.debug(sbd.toString());*/
+		Application.debug(sbd.toString());
+		/ END DEBUG*/
         //view3D.setHits(hits3D);
        
         waitForPick = false;
@@ -1400,7 +1426,7 @@ public class Renderer implements GLEventListener {
         // set off the scene matrix
         gl.glPopMatrix();
  
-        storePickingInfos(null, 0, selectBuffer);
+        storePickingInfos(null, 0);
         
         
         gl.glEnable(GLlocal.GL_LIGHTING);
@@ -1534,9 +1560,9 @@ public class Renderer implements GLEventListener {
     	
     	
     	//Application.printStacktrace("");
-        
-        gl = getGL(drawable);
-               
+
+        gl = getGL(drawable); //JOGL1
+        //gl = getGL(drawable).getGL2(); //JOGL2
         
         // check openGL version
         final String version = gl.glGetString(GLlocal.GL_VERSION);
@@ -1638,6 +1664,7 @@ public class Renderer implements GLEventListener {
         
         
         gl.glAlphaFunc(GLlocal.GL_NOTEQUAL, 0);//pixels with alpha=0 are not drawn
+        //gl.glAlphaFunc(GLlocal.GL_GREATER, 0.8f);//pixels with alpha=0 are not drawn
         
         //using glu quadrics
         quadric = glu.gluNewQuadric();// Create A Pointer To The Quadric Object (Return 0 If No Memory) (NEW)

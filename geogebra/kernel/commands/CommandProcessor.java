@@ -68,7 +68,6 @@ import geogebra.main.MyError;
 import geogebra.sound.SoundManager;
 import geogebra.util.ImageManager;
 import geogebra.util.Unicode;
-import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
 import java.awt.Image;
@@ -9663,7 +9662,7 @@ class CmdSetAxesRatio extends CommandProcessor {
 				GeoNumeric numGeo3 = (GeoNumeric) arg[2];
 				EuclidianViewInterface ev = (EuclidianViewInterface)app.getActiveEuclidianView();
 				//TODO: Fix this once 3D view supports zoom
-				if(ev instanceof EuclidianView3D){
+				if(!ev.isDefault2D()){
 					ev.zoom(numGeo.getDouble()/numGeo3.getDouble(),
 							numGeo2.getDouble()/numGeo3.getDouble(),  1, 3, true);
 				}

@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.Drawable;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Matrix.Coords;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -9,13 +10,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 
 /**
@@ -26,13 +32,16 @@ import java.nio.ByteBuffer;
 public class DrawLabel3D {
 	
 	/** text of the label */
-    private String text;    
+    protected String text;    
+    /** font of the label */
+    protected Font font;
     /** color of the label */
     private Coords color;
     /** origin of the label (left-bottom corner) */
     private Coords origin; 
     /** x and y offset */
     private float xOffset, yOffset;   
+    private float xOffset2, yOffset2;   
     /** says if there's an anchor to do */
     private boolean anchor;
     /** says if the label is visible */
@@ -49,7 +58,7 @@ public class DrawLabel3D {
     private int textureIndex;
     
     /** current view where this label is drawn */
-	private EuclidianView3D view;
+	protected EuclidianView3D view;
 	
 	/** says it wait for reset */
 	private boolean waitForReset;
@@ -58,8 +67,12 @@ public class DrawLabel3D {
 
 	/** shift for getting alpha value */
     private static final int ALPHA_SHIFT = 24;
+    
 	
+    /** temp graphics used for calculate bounds */
+    protected Graphics2D tempGraphics = (new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)).createGraphics();
 	
+    
 	
 	/**
 	 * common constructor
@@ -69,6 +82,7 @@ public class DrawLabel3D {
 		this.view = view;
 	}
 	
+
 	
 	
 	/**
@@ -80,15 +94,13 @@ public class DrawLabel3D {
 	 * @param xOffset
 	 * @param yOffset
 	 */
-	public void update(String text, int fontsize, Color color,
+	public void update(String text, Font font, Color color,
 			Coords v, float xOffset, float yOffset){
 		
 		if (text.length()==0)
 			return;
 		
 		this.origin = v;
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
 		this.color = new Coords((double) color.getRed()/255, 
 				(double) color.getGreen()/255, (double) color.getBlue()/255,1);
 		
@@ -100,56 +112,90 @@ public class DrawLabel3D {
 		
 
 
-		if (!waitForReset && text.equals(this.text))
-			return;
+		if (waitForReset || !text.equals(this.text) || !font.equals(this.font)){
+
+			this.text = text;
+			this.font = font;
+
+			tempGraphics.setFont(font);
+
+			Rectangle2D rectangle = getBounds();
+
+			int xMin = (int) rectangle.getMinX()-1;
+			int xMax = (int) rectangle.getMaxX()+1;
+			int yMin = (int) rectangle.getMinY()-1;
+			int yMax = (int) rectangle.getMaxY()+1;
+
+			//Application.debug(text+"\nxMin="+xMin+", xMax="+xMax+", advance="+textLayout.getAdvance());
 
 
-		this.text = text;
+			width=xMax-xMin;height=yMax-yMin;
+			xOffset2=xMin;
+			yOffset2=-yMax;
 
-		//select correct font, calculates bounds
-		//Font font = view.getFont();
-		Font font = view.getApplication().getPlainFont();//(false, Font.PLAIN, 60);
-		TextLayout textLayout = new TextLayout(text, font, new FontRenderContext(null, false, false));
-		Rectangle2D rectangle = textLayout.getBounds();		
-		int xMin = (int) rectangle.getMinX()-1;
-		int xMax = (int) rectangle.getMaxX()+1;
-		int yMin = (int) rectangle.getMinY()-1;
-		int yMax = (int) rectangle.getMaxY()+1;
+			//creates a 2D image
+			BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = bimg.createGraphics();
+
+			AffineTransform gt = new AffineTransform();
+			gt.scale(1, -1d);
+			gt.translate(-xMin, -yMax); //put the baseline on the label anchor
+			g2d.transform(gt);
+
+			g2d.setColor(Color.BLACK);
+			g2d.setFont(font);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			draw(g2d);		
+
+			//creates the texture
+			int[] intData = ((DataBufferInt) bimg.getRaster().getDataBuffer()).getData();
+			buffer = ByteBuffer.wrap(ARGBtoAlpha(intData));
+			/*
+		if (text.contains("3d")){
+			try {
+				ImageIO.write(bimg, "png", new File("image.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			 */
+			g2d.dispose();
+
+			// update the texture
+			updateTexture();
+			waitForReset = false;
+			//Application.debug("textureIndex = "+textureIndex);
+		}
+		
+		this.xOffset = xOffset + xOffset2;
+		this.yOffset = yOffset + yOffset2;
+
+
+	}
+	
+	protected boolean hasIndex = false;
+	
+	
+	protected Rectangle2D getBounds(){
+		Rectangle2D rectangle = (new TextLayout(text, font, new FontRenderContext(null, false, false))).getBounds();	
 		if(text.contains("_")){ //text contains subscript
 			//Application.debug("yMin="+yMin+", yMax="+yMax);
+			hasIndex = true;
 			Point p = 
-				Drawable.drawIndexedString(view.getApplication(), (new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)).createGraphics(), text, 0, 0);
-			yMax+=p.y; //use real index offset
-			this.yOffset-=p.y;
-		}
-		width=xMax-xMin;height=yMax-yMin;
-		
-		//creates a 2D image
-		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = bimg.createGraphics();
-		
-		AffineTransform gt = new AffineTransform();
-		gt.scale(1, -1d);
-		gt.translate(0, -yMax); //put the baseline on the label anchor
-		g2d.transform(gt);
-		
-		g2d.setColor(Color.BLACK);
-		g2d.setFont(font);
-		//Point p = 
+				Drawable.drawIndexedString(view.getApplication(), tempGraphics, text, 0, 0);
+			rectangle.setRect(rectangle.getMinX(), rectangle.getMinY(), rectangle.getWidth(), rectangle.getHeight()+p.y);
+		}else
+			hasIndex = false;
+		return rectangle;
+	}
+	
+	protected void draw(Graphics2D g2d){
+		if (hasIndex)
 			Drawable.drawIndexedString(view.getApplication(), g2d, text, 0, 0);
-
-		
-		//creates the texture
-		int[] intData = ((DataBufferInt) bimg.getRaster().getDataBuffer()).getData();
-		buffer = ByteBuffer.wrap(ARGBtoAlpha(intData));
-		g2d.dispose();
-		
-		// update the texture
-		updateTexture();
-		waitForReset = false;
-		//Application.debug("textureIndex = "+textureIndex);
-
-
+		else
+			g2d.drawString(text, 0, 0);	
 	}
 	
 	/**

@@ -162,6 +162,10 @@ public interface GeoPointND {
 	public void setUndefined();
 
 	public void showUndefinedInAlgebraView(boolean b);
+
+	public GeoPointND copy();
+
+	public boolean isAbsoluteStartPoint();
 	
 	//private boolean movePointMode = MOVE_POINT_MODE_XY;
 

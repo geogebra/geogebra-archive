@@ -6,17 +6,10 @@ import geogebra.util.ImageManager;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.TreeSet;
 
-import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
-
-//import com.jogamp.opengl.util.GLBuffers;
-import com.sun.opengl.util.BufferUtil;
 
 
 
@@ -348,9 +341,9 @@ public class Textures {
 			}
 
 			int bytesPerPixel = storeAlphaChannel ? 4 : 3;
-			ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
-			//ByteBuffer unpackedPixels = GLBuffers.newDirectByteBuffer(packedPixels.length * bytesPerPixel);
+			ByteBuffer unpackedPixels = Renderer.newByteBuffer(packedPixels.length * bytesPerPixel); 
 
+			
 			for (int row = img.getHeight() - 1; row >= 0; row--) {
 				for (int col = 0; col < img.getWidth(); col++) {
 					int packedPixel = packedPixels[row * img.getWidth() + col];
