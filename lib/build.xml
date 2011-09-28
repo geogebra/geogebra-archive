@@ -3,11 +3,10 @@
 <!-- README: Downloading external libraries for GeoGebra
 
 This build file is about to download all necessary external libraries
-from the Internet. Some files are to be downloaded from their official
-URL, but others are from the GeoGebra server. For a long term, we
-would like to use the official JAR files everywhere.
+from the Internet. Most files are downloaded from the GeoGebra server
+to ensure availability.
 
-@author Zoltan Kovacs
+@author Zoltan Kovacs <zoltan@geogebra.org>
 
 -->
 
