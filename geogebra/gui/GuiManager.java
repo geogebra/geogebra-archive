@@ -3461,6 +3461,10 @@ public class GuiManager {
 		}		
 		
 		private InputBarHelpPanel inputHelpPanel;
+		public boolean hasInputHelpPanel() {
+			if (inputHelpPanel == null) return false;
+			return true;
+		}
 		public Component getInputHelpPanel() {
 			if (inputHelpPanel == null) inputHelpPanel = new InputBarHelpPanel(app);
 			return inputHelpPanel;
