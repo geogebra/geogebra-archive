@@ -48,7 +48,7 @@ public class AlgoPoisson extends AlgoDistribution {
 
 
 		if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
-			int param = (int)Math.round(a.getDouble());
+			double param = a.getDouble();
 			double val = b.getDouble();	
 			try {
 				PoissonDistribution dist = getPoissonDistribution(param);

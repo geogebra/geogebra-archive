@@ -31,6 +31,12 @@ public class AlgoInversePoisson extends AlgoDistribution {
 		super(cons, label, a, b, null, null);
 	}
 
+	public AlgoInversePoisson(Construction cons, NumberValue a,
+			NumberValue b) {
+		super(cons, a, b, null, null);
+	}
+	
+	
 	public String getClassName() {
 		return "AlgoInversePoisson";
 	}
@@ -38,7 +44,7 @@ public class AlgoInversePoisson extends AlgoDistribution {
 	protected final void compute() {
 
 		if (input[0].isDefined() && input[1].isDefined()) {
-			int param = (int) Math.round(a.getDouble());
+			double param = a.getDouble();
 			double val = b.getDouble();
 			try {
 				PoissonDistribution dist = getPoissonDistribution(param);

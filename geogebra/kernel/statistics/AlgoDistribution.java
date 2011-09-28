@@ -240,7 +240,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		return pascal;
 	}
 	
-	PoissonDistribution getPoissonDistribution(int param) {
+	PoissonDistribution getPoissonDistribution(double param) {
 		if (poisson == null) 
 			poisson = new PoissonDistributionImpl(param);
 		else {
