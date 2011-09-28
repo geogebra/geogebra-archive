@@ -4051,8 +4051,8 @@ public class Application implements KeyEventDispatcher {
 	
 	final public static boolean isWebstart() {
 		if (codebase == null) initCodeBase();
-		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE)
-				|| codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE_ALTERNATIVE);
+		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE + "jnlp/")
+				|| codebase.toString().startsWith(GeoGebra.GEOGEBRA_ONLINE_WEBSTART_BASE_ALTERNATIVE + "jnlp/");
 	}
 	
 	final public static boolean isWebstartDebug() {

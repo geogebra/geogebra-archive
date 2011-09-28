@@ -85,7 +85,7 @@ public class ImageManager {
 			 Image im = getImageResourceGeoGebra(fileName);			 
 			 if (im != null) {			 	 
 			 	 icon = new ImageIcon(addBorder(im, borderColor));
-			 	 iconTable.put(fileName, icon);				 	 		 	
+			 	 iconTable.put(fileName, icon);
 			 }  
 		}		                        		
 		return icon;
@@ -173,7 +173,7 @@ public class ImageManager {
 		 try {
 		    java.net.URL url = ImageManager.class.getResource(name);	
 		    if (url != null) {		   
-				img = toolKit.getImage(url);	
+				img = toolKit.getImage(url);
 				tracker.addImage(img, 0);
 				try {
 				   tracker.waitForAll();

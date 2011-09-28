@@ -51,12 +51,12 @@ public class CommandLineArguments {
 					args.put(cmdArgs[i].substring(2).toLowerCase(Locale.US), "");
 				}
 			} else if(!cmdArgs[i].startsWith("-")) { // make sure we don't process -open from eg
-				// javaws -open "file1.ggb,file2.ggb" http://www.geogebra.org/webstart/4.0/geogebra-40.jnlp
+				// javaws -open "file1.ggb,file2.ggb" http://jars.geogebra.org/webstart/4.2/jnlp/geogebra-42.jnlp
 				// no -- or - prefix, therefore a filename
 				
 				if (cmdArgs[i].indexOf(',') > -1 && Application.isWebstart()) {
 					// process multiple files from eg
-					// javaws -open "language=en,file1.ggb,file2.ggb" http://www.geogebra.org/webstart/4.0/geogebra-40.jnlp
+					// javaws -open "language=en,file1.ggb,file2.ggb" http://jars.geogebra.org/webstart/4.2/jnlp/geogebra-42.jnlp
 					String[] files = cmdArgs[i].split(",");
 					for (int j = 0 ; j < files.length ; j++) {
 						if(files[j].indexOf('=') > -1) { // check for eg language=de

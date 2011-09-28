@@ -126,25 +126,25 @@ office@geogebra.org
 	</target>
 
 	<target name="compile-grammar-clean">
-		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
+		<delete followsymlinks="false">
 			<fileset dir="./geogebra/kernel" includes="**/*.class" />
 		</delete>
-		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
+		<delete followsymlinks="false">
 			<fileset dir="./geogebra/kernel/parser" includes="*.java"/>
 		</delete>
 	</target>
 
 	<target name="delete-sources">
-		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
+		<delete followsymlinks="false">
 			<fileset dir="." includes="**/*.java" />
 		</delete>
-		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
+		<delete followsymlinks="false">
 			<fileset dir="." includes="geogebra/properties/*.properties" />
 		</delete>
 	</target>
 
 	<target name="delete-classes">
-		<delete followsymlinks="false" removeNotFollowedSymlinks="true">
+		<delete followsymlinks="false">
 			<fileset dir="." includes="**/*.class" />
 		</delete>
 	</target>
@@ -186,7 +186,7 @@ office@geogebra.org
 	<target name="clean">
 		<!-- delete build directory -->
 		<mkdir dir="${build.dir}"/>
-		<delete includeemptydirs="true" followsymlinks="false" removeNotFollowedSymlinks="true">
+		<delete includeemptydirs="true" followsymlinks="false">
 			<fileset dir="${build.dir}" defaultexcludes="false">
 				<include name="**/*" />
 			</fileset>
@@ -205,7 +205,7 @@ office@geogebra.org
 	<target name="delete3D">
 		<!-- delete build directory -->
 		<mkdir dir="${build.dir}"/>
-		<delete includeemptydirs="true" followsymlinks="false" removeNotFollowedSymlinks="true">
+		<delete includeemptydirs="true" followsymlinks="false">
 			<fileset dir="${build.dir}" defaultexcludes="false">
 				<include name="**/geogebra_3d.jar" />
 			</fileset>
@@ -859,6 +859,6 @@ office@geogebra.org
 			<zipfileset dir="${build.dir}/installer/macosx" excludes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" />
 			<zipfileset dir="${build.dir}/installer/macosx" includes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" filemode="755" />
 		</zip>
-		<delete dir="${build.dir}/installer/macosx" followsymlinks="false" removeNotFollowedSymlinks="true"/>
+		<delete dir="${build.dir}/installer/macosx" followsymlinks="false"/>
 	</target>
 </project>
