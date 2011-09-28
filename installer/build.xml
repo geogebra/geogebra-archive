@@ -45,7 +45,7 @@ to ensure availability.
 	</condition>
 
 	<condition property="linux">
-		<os family="unix" arch="amd64"/>
+		<os family="unix"/>
 	</condition>
 
 
