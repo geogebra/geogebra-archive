@@ -804,7 +804,7 @@ public class MyXMLHandler implements DocHandler {
 		case 'd':
 			if (eName.equals("distribution")) {
 				if (app.useFullGui())
-					ok = handleProbabilityDistribution((ProbabilityCalculator)app.getGuiManager().getProbabilityCalculator(), attrs);
+					ok = handleProbabilityDistribution(attrs);
 				break;
 			}
 		default:
@@ -815,12 +815,16 @@ public class MyXMLHandler implements DocHandler {
 			System.err.println("error in <probabilityCalculator>: " + eName);
 	}
 
-	private boolean handleProbabilityDistribution(ProbabilityCalculator probCalc, LinkedHashMap<String, String> attrs) {
+	private boolean handleProbabilityDistribution(LinkedHashMap<String, String> attrs) {
 
 		try {
 			int distributionType = Integer.parseInt((String) attrs.get("type"));
+			app.getSettings().getProbCalcSettings().setDistributionType(distributionType);
+			
 			boolean isCumulative = parseBoolean((String) attrs.get("isCumulative"));
-
+			app.getSettings().getProbCalcSettings().setCumulative(isCumulative);
+			
+			
 			// get parameters from comma delimited string
 			String parmString = (String) attrs.get("parameters");
 			String[] parmStringArray = parmString.split(",");
@@ -828,8 +832,8 @@ public class MyXMLHandler implements DocHandler {
 			for(int i = 0; i < parmStringArray.length; i++)
 				parameters[i] = Double.parseDouble(parmStringArray[i]);
 
-			// set the prob calculator
-			probCalc.setProbabilityCalculator(distributionType, parameters, isCumulative);
+			app.getSettings().getProbCalcSettings().setParameters(parameters);
+			
 			return true;
 		} catch (Exception e) {
 			return false;

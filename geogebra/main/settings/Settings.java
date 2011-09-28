@@ -29,6 +29,8 @@ public class Settings {
 	private KeyboardSettings keyboardSettings;
 	
 	private CASSettings casSettings;
+
+	private ProbabilityCalculatorSettings probCalcSettings;
 	
 	/**
 	 * Initialize settings using the constructors of the setting container classes.
@@ -90,6 +92,11 @@ public class Settings {
 			casSettings = new CASSettings(algebraSettings.getListeners());
 		
 		
+		if (probCalcSettings == null)
+			probCalcSettings = new ProbabilityCalculatorSettings();
+		else 
+			probCalcSettings = new ProbabilityCalculatorSettings(probCalcSettings.getListeners());
+		
 		
 		
 	}
@@ -112,6 +119,7 @@ public class Settings {
 		applicationSettings.beginBatch();
 		keyboardSettings.beginBatch();
 		casSettings.beginBatch();
+		probCalcSettings.beginBatch();
 	}
 	
 	/**
@@ -132,6 +140,7 @@ public class Settings {
 		applicationSettings.endBatch();
 		keyboardSettings.endBatch();
 		casSettings.endBatch();
+		probCalcSettings.endBatch();
 	}
 	
 	/** 
@@ -154,6 +163,13 @@ public class Settings {
 	 */
 	public final SpreadsheetSettings getSpreadsheet() {
 		return spreadsheetSettings;
+	}
+	
+	/**
+	 * @return Settings of the probability calculator view.
+	 */
+	public final ProbabilityCalculatorSettings getProbCalcSettings() {
+		return probCalcSettings;
 	}
 	
 	/**

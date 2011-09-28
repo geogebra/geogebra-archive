@@ -32,10 +32,14 @@ import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.kernel.statistics.AlgoBinomialDist;
 import geogebra.kernel.statistics.AlgoHyperGeometric;
 import geogebra.kernel.statistics.AlgoInversePascal;
+import geogebra.kernel.statistics.AlgoInversePoisson;
 import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.kernel.statistics.AlgoPoisson;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraColorConstants;
+import geogebra.main.settings.AbstractSettings;
+import geogebra.main.settings.ProbabilityCalculatorSettings;
+import geogebra.main.settings.SettingListener;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -78,7 +82,7 @@ import javax.swing.event.ChangeListener;
  * 
  */
 public class ProbabilityCalculator extends JPanel 
-implements View, ActionListener, FocusListener, ChangeListener   {
+implements View, ActionListener, FocusListener, ChangeListener, SettingListener   {
 
 	// enable/disable integral ---- use for testing
 	private boolean hasIntegral = true; 
@@ -115,9 +119,6 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 	private GeoList discreteValueList, discreteProbList, intervalProbList, intervalValueList;
 	//private GeoList parmList;
 	private ArrayList<GeoElement> pointList;
-
-	// label prefix for geos
-	private static final String labelPrefix = "probcalc";
 
 
 	// GUI elements
@@ -179,7 +180,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 	private boolean removeFromConstruction = true;
 
-
+	private static final double nearlyOne = 1 - 1E-6;
 
 
 
@@ -193,6 +194,9 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		kernel = app.getKernel();
 		cons = kernel.getConstruction();
 
+		// Initialize settings and register listener
+		app.getSettings().getProbCalcSettings().addListener(this);
+
 		probManager = new ProbabilityManager(app, this);
 		plotSettings = new PlotSettings();	
 		plotGeoList = new ArrayList<GeoElement>();
@@ -205,6 +209,7 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 		//setProbabilityCalculator(selectedDist, null, isCumulative);
 
 		attachView();
+		settingsChanged(app.getSettings().getProbCalcSettings());
 
 	} 
 	/**************** end constructor ****************/
@@ -691,8 +696,8 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			discreteIntervalGraph.setFixed(true);
 			discreteIntervalGraph.updateCascade();
 			plotGeoList.add(discreteIntervalGraph);
-			
-			
+
+
 			GeoLine axis = new GeoLine(cons);		
 			axis.setCoords(0, 1, 0);
 			axis.setLayer(4);
@@ -1549,27 +1554,13 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			break;
 
 		case ProbabilityManager.DIST_PASCAL:	
-			/*
-			n = "" + parameters[0];
-			p = "" + parameters[1];
-
-			String n2 = "InversePascal[" + n + "," + p +  ", 0.999]";
-			expr = "Sequence[k,k,0," + n2 + "]";
-			discreteValueList = (GeoList) createGeoFromString(expr);
-
-			expr = "Sequence[Pascal[" + n + "," + p + ",";
-			expr += "Element[" + discreteValueList.getLabel() + ",k]," + isCumulative;
-			expr +=	"],k,1," + n2 + "+ 1 ]";
-
-			//System.out.println(expr);
-			discreteProbList = (GeoList) createGeoFromString(expr);
-			 */
+			
 			nGeo = new GeoNumeric(cons,parameters[0]);
 			pGeo = new GeoNumeric(cons,parameters[1]);	
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
 
-			AlgoInversePascal n2 = new AlgoInversePascal(cons, nGeo, pGeo, new MyDouble(kernel, 0.999));
+			AlgoInversePascal n2 = new AlgoInversePascal(cons, nGeo, pGeo, new MyDouble(kernel, nearlyOne));
 			cons.removeFromConstructionList(n2);
 			GeoElement n2Geo = n2.getGeoElements()[0];
 
@@ -1595,28 +1586,16 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			break;
 
 		case ProbabilityManager.DIST_POISSON:
-			/*
-			mean = "" + parameters[0];
-			n = "" + (parameters[0] + 6*Math.sqrt(parameters[0]));
-
-			expr = "Sequence[k,k,0," + n + "]";
-			discreteValueList = (GeoList) createGeoFromString(expr);
-
-			expr = "Sequence[Poisson[" + mean + ",";
-			expr += "Element[" + discreteValueList.getLabel() + ",k]," + isCumulative;
-			expr +=	"],k,1," + n + "+ 1 ]";
-
-			//System.out.println(expr);
-			discreteProbList = (GeoList) createGeoFromString(expr);
-			 */
 
 			GeoNumeric meanGeo = new GeoNumeric(cons,parameters[0]);
-			nGeo = new GeoNumeric(cons,(parameters[0] + 6*Math.sqrt(parameters[0])));	
-			nPlusOneGeo = new GeoNumeric(cons,(parameters[0] + 6*Math.sqrt(parameters[0])) + 1);	
 			k = new GeoNumeric(cons);
 			k2 = new GeoNumeric(cons);
 
-			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)nGeo, null);
+			AlgoInversePoisson maxSequenceValue = new AlgoInversePoisson(cons, meanGeo, new MyDouble(kernel, nearlyOne));
+			cons.removeFromConstructionList(maxSequenceValue);
+			GeoElement maxDiscreteGeo = maxSequenceValue.getGeoElements()[0];
+
+			algoSeq = new AlgoSequence(cons, k, k, new MyDouble(kernel, 0.0), (NumberValue)maxDiscreteGeo, null);
 			removeFromAlgorithmList(algoSeq);
 			discreteValueList = (GeoList)algoSeq.getGeoElements()[0];
 
@@ -1626,7 +1605,11 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 			AlgoPoisson poisson = new AlgoPoisson(cons, meanGeo, (NumberValue)algo.getGeoElements()[0], new GeoBoolean(cons, isCumulative));
 			cons.removeFromConstructionList(poisson);
 
-			algoSeq2 = new AlgoSequence(cons, poisson.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)nPlusOneGeo, null);
+			nPlusOne = new ExpressionNode(kernel, maxDiscreteGeo, ExpressionNode.PLUS, new MyDouble(kernel, 1.0));
+			plusOneAlgo = new AlgoDependentNumber(cons, nPlusOne, false);
+			cons.removeFromConstructionList(plusOneAlgo);
+
+			algoSeq2 = new AlgoSequence(cons, poisson.getGeoElements()[0], k2, new MyDouble(kernel, 1.0), (NumberValue)plusOneAlgo.getGeoElements()[0], null);
 			cons.removeFromConstructionList(algoSeq2);
 
 			discreteProbList = (GeoList) algoSeq2.getGeoElements()[0];
@@ -2072,10 +2055,10 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 				ev.setAxesNumberingDistance(plotSettings.yAxesInterval, 1);
 			}
 			ev.updateBackground();		
-			
-			
-			
-			
+
+
+
+
 			// remove the new geos from our temporary list
 			newGeoList.clear();
 
@@ -2094,6 +2077,13 @@ implements View, ActionListener, FocusListener, ChangeListener   {
 
 
 
+	public void settingsChanged(AbstractSettings settings) {
+		Application.debug("settings changed");
+
+		ProbabilityCalculatorSettings pcSettings = (ProbabilityCalculatorSettings) settings;
+		setProbabilityCalculator(pcSettings.getDistributionType(), pcSettings.getParameters(), pcSettings.isCumulative());
+
+	}
 
 
 }
