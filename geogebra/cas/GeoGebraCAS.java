@@ -373,8 +373,24 @@ public class GeoGebraCAS implements GeoGebraCASInterface {
 		
 		// no translation found: 
 		// use key as function name
-		if (translation == null) {			
-			sbCASCommand.append(app.getKernel().printVariableName(name));
+		if (translation == null) {		
+			
+			// convert command names x, y, z to xcoord, ycoord, ycoord to protect it in CAS
+			// see http://www.geogebra.org/trac/ticket/1440
+			boolean handled = false;
+			if (name.length() == 1) {
+				char ch = name.charAt(0);
+				if (ch == 'x' || ch == 'y' || ch == 'z') {
+					sbCASCommand.append(ch);
+					sbCASCommand.append("coord");
+					handled = true;
+				}
+			}
+				
+			// standard case: add ggbcasvar prefix to name for CAS
+			if (!handled)
+				sbCASCommand.append(app.getKernel().printVariableName(name));
+			
 			sbCASCommand.append('(');
 			for (int i=0; i < args.size(); i++) {
 				ExpressionValue ev = (ExpressionValue) args.get(i);				
