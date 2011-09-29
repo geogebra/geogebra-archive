@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 import geogebra.kernel.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -53,9 +54,9 @@ public interface Manager3DInterface {
 
 
 			/** Point in region with cartesian coordinates (x,y,z)   */
-			 public GeoPointND Point3DIn(String label, Region region, double x, double y, double z, boolean addToConstruction);
+			 public GeoPointND Point3DIn(String label, Region region, Coords coords, boolean addToConstruction);
 		
-			 public GeoPointND Point3DIn(Region region, double x, double y, double z);
+			 public GeoPointND Point3DIn(Region region, Coords coords);
 
 			/** Point in region */
 			 public GeoPointND Point3DIn(String label, Region region) ;

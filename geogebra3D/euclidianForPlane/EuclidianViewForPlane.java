@@ -52,6 +52,7 @@ public class EuclidianViewForPlane extends EuclidianView {
 		
 		
 		//TODO
+		initView(true);
 		setShowAxes(false, true);
 		showGrid(false);
 	}
@@ -89,6 +90,8 @@ public class EuclidianViewForPlane extends EuclidianView {
 		default:
 			return false;
 		}
+		
+		//Application.debug(geo+": "+geo.isVisibleInView3D());
 		
 		return geo.isVisibleInView3D();
 	}

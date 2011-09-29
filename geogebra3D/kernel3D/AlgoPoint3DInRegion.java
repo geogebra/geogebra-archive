@@ -15,6 +15,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Region;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.main.Application;
 
 
@@ -27,22 +28,18 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
     public AlgoPoint3DInRegion(
         Construction cons,
         Region region,
-        double x,
-        double y,
-        double z) {
+        Coords coords) {
         super(cons);
         this.region = region;
         P = new GeoPoint3D(cons, region);
         
-        P.setCoords(x, y, z, 1.0);        
-        //P.setWillingCoords(x, y, z, 1.0);
-        //region.pointChangedForRegion(P);
-        
-
         setInputOutput(); // for AlgoElement
 
-        // compute 
-        compute();
+        if (coords!=null){
+        	P.setCoords(coords,false);  
+        	// compute 
+        	compute();
+        }
         
     }
     
@@ -50,11 +47,9 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
             Construction cons,
             String label,
             Region region,
-            double x,
-            double y,
-            double z) {
+            Coords coords) {
     	
-    	this(cons, region, x, y, z);
+    	this(cons, region, coords);
         P.setLabel(label);
     }
     

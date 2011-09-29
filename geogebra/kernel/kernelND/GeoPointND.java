@@ -166,6 +166,7 @@ public interface GeoPointND {
 	public GeoPointND copy();
 
 	public boolean isAbsoluteStartPoint();
+
 	
 	//private boolean movePointMode = MOVE_POINT_MODE_XY;
 

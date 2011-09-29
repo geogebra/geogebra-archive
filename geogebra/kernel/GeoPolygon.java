@@ -21,6 +21,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -993,6 +994,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		*/
 		
 		Coords coords = PI.getCoordsInD(2);
+
 				
 		return isInRegion(coords.getX()/coords.getZ(),coords.getY()/coords.getZ());
 
@@ -1025,7 +1027,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		return ret;
 	}
 	
-	public void regionChanged(GeoPointND P){
+	final public void regionChanged(GeoPointND P){
 		
 
 		
@@ -1041,7 +1043,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			double xv = p2.inhomX - p0.inhomX;
 			double yv = p2.inhomY - p0.inhomY;
 			
-			//Application.debug("xu="+xu+", rp.getT1()="+ rp.getT1());
+			Application.debug("xu="+xu+", yu="+yu+", rp.getT1()="+ rp.getT1()+"\nxv="+xv+", yv="+yv+", rp.getT2()="+ rp.getT2());
+			
 			setRegionChanged(P,
 					p0.inhomX + rp.getT1()*xu + rp.getT2()*xv,
 					p0.inhomY + rp.getT1()*yu + rp.getT2()*yv);
@@ -1108,7 +1111,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	/**
 	 * update the coord sys used for region parameters
 	 */
-	public void updateRegionCS() {
+	final public void updateRegionCS() {
 		// TODO add condition to calculate it		
 		if(p2==null || GeoPoint.collinear(p0, p1, p2)){
 			p0 = getPoint(0);	
@@ -1143,8 +1146,10 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 
 			//thirdPoint++;
 			//Application.debug(" secondPoint = "+secondPoint+"\n thirdPoint = "+thirdPoint);
-			//Application.debug(" p0 = "+p0.getLabel()+"\n p1 = "+p1.getLabel()+"\n p2 = "+p2.getLabel());
 		}
+		
+		Application.debug(this+"\n p0 = "+p0.getLabel()+"\n p1 = "+p1.getLabel()+"\n p2 = "+p2.getLabel());
+
 			
 			
 	}

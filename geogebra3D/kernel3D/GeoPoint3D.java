@@ -663,9 +663,16 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	public void updateCoordsFrom2D(boolean doPathOrRegion, CoordSys coordsys){
 		if (coordsys!=null)
 			setCoords(coordsys.getPoint(getX2D(), getY2D()), doPathOrRegion);
-		else if (region!=null)
+		else if (region!=null){
+			/*
+			if (getLabel().contains("B1")){
+				Application.debug(getX2D()+","+getY2D());
+				if (getX2D()>3)
+					Application.printStacktrace("ici");
+			}
+			*/
 			setCoords(((Region3D) region).getPoint(getX2D(), getY2D()), doPathOrRegion);
-		else 
+		}else 
 			setCoords(new Coords(getX2D(), getY2D(), 0, 1), doPathOrRegion);
 	}
 	

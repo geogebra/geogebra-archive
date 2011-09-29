@@ -4338,7 +4338,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected GeoPointND createNewPoint(boolean forPreviewable, Region region, double x, double y, double z, boolean complex){
 		
 		if (((GeoElement) region).isGeoElement3D()) //check if the path is not a 3D element
-			return (GeoPointND) kernel.getManager3D().Point3DIn(null, region, x, y, z, !forPreviewable);
+			return (GeoPointND) kernel.getManager3D().Point3DIn(null, region, new Coords(x, y, z, 1), !forPreviewable);
 		else
 			return createNewPoint2D(forPreviewable, region, x, y, complex);
 

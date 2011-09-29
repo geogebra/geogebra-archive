@@ -496,8 +496,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (inRegionPossible){
 				Region region = point.getRegion();
 				if (((GeoElement) region).isGeoElement3D()){
-					point3D = (GeoPoint3D) getKernel().getManager3D().Point3DIn(null,region);			
-					point3D.setWillingCoords(point.getCoords());
+					Coords coords = point.getCoords();
+					point3D = (GeoPoint3D) getKernel().getManager3D().Point3DIn(null,region,coords,true);			
+					//point3D.setWillingCoords(point.getCoords());
 					point3D.doRegion();
 					point3D.setWillingCoords(null);
 					point3D.setWillingDirection(null);

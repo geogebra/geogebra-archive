@@ -1378,6 +1378,8 @@ GeoPointND, Animatable, Transformable  {
 			return new Coords(new double[] {x,y,z});
 		}
 		
+		
+		
 		public Coords getCoordsInD(int dimension){
 			switch(dimension){
 			case 2:

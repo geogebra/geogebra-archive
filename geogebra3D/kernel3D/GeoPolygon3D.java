@@ -8,6 +8,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.Region;
+import geogebra.kernel.RegionParameters;
 import geogebra.kernel.Matrix.CoordMatrix4x4;
 import geogebra.kernel.Matrix.CoordSys;
 import geogebra.kernel.Matrix.Coords;
@@ -528,13 +529,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	///////////////////////////////////
 	// REGION3D INTERFACE
-	
+
 	public void setRegionChanged(GeoPointND PI, double x, double y){
-		
-		
+
+
 		PI.setCoords2D(x, y, 1);
 		PI.updateCoordsFrom2D(false,null);
-		
+
 	}
 	
 	protected boolean isInRegion(GeoPointND PI, boolean update){
@@ -557,9 +558,15 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		
 	}
 	
+	
 	public boolean isInRegion(GeoPointND PI){
 		
-		return isInRegion(PI,true);
+		GeoPoint3D P = (GeoPoint3D) PI;
+
+
+		P.updateCoords2D(this);
+		
+		return isInRegion(P.getX2D(), P.getY2D());
 		
 	}
 	

@@ -16,6 +16,7 @@ import geogebra.kernel.Manager3DInterface;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.Matrix.CoordMatrix4x4;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -104,7 +105,7 @@ public class Manager3D implements Manager3DInterface {
 
 
 	/** Point in region with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3DIn(String label, Region region, double x, double y, double z, boolean addToConstruction) {
+	final public GeoPoint3D Point3DIn(String label, Region region, Coords coords, boolean addToConstruction) {
 		boolean oldMacroMode = false;
 		
 		if (!addToConstruction) {
@@ -113,7 +114,7 @@ public class Manager3D implements Manager3DInterface {
 
 		}
 		//Application.debug("Point3DIn - \n x="+x+"\n y="+y+"\n z="+z);
-		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, label, region, x, y, z);
+		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, label, region, coords);
 		GeoPoint3D p = algo.getP();    
 		
 		if (!addToConstruction) {
@@ -124,15 +125,15 @@ public class Manager3D implements Manager3DInterface {
 	
 	
 	/** Point in region with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3DIn(Region region, double x, double y, double z) {
-		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, region, x, y, z);
+	final public GeoPoint3D Point3DIn(Region region, Coords coords) {
+		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, region, coords);
 		GeoPoint3D p = algo.getP();    
 		return p;
 	}
 
 	/** Point in region */
 	final public GeoPoint3D Point3DIn(String label, Region region) {  
-		return Point3DIn(label,region,0,0,0, true); 
+		return Point3DIn(label,region, null, true); 
 	}	
 
 
