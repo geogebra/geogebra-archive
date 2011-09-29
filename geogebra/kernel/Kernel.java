@@ -999,6 +999,14 @@ public class Kernel {
 		 } 
 	 }
 	 
+	 /**
+	  * @return The variable prefix used when variables are sent to the CAS,
+	  * e.g. "ggbcasvar1"
+	  */
+	public final String getCasVariablePrefix() {
+		return casVariablePrefix;
+	}
+	 
 	/**
 	 * Returns ExpressionNodeConstants.TMP_VARIABLE_PREFIX + label.
 	 */

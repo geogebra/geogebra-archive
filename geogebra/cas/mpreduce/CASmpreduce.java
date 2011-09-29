@@ -49,12 +49,20 @@ public class CASmpreduce extends CASgeneric {
 			// the first command sent to mpreduce produces an error
 			try {
 				loadMyMPReduceFunctions();
-				initMyMPReduceFunctions();
 			} catch (Throwable e)
 			{}
 			
 			Application.setCASVersionString(getVersionString());
 		}
+		
+		// make sure to call initMyMPReduceFunctions() for each CASmpreduce instance
+		// because it depends on the current kernel's ggbcasvar prefix, see #1443
+		try {
+			initMyMPReduceFunctions();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
 		return mpreduce;
 	}
 
@@ -288,22 +296,36 @@ public class CASmpreduce extends CASgeneric {
 	}
 
 	private synchronized void initMyMPReduceFunctions() throws Throwable {
+		
+		// user variable ordering
+		String varOrder = "order ggbcasvara, " +
+				"ggbcasvarb, ggbcasvarc, ggbcasvard, ggbcasvare, ggbcasvarf, " +
+				"ggbcasvarg, ggbcasvarh, ggbcasvari, ggbcasvarj, ggbcasvark, " +
+				"ggbcasvarl, ggbcasvarm, ggbcasvarn, ggbcasvaro, ggbcasvarp, " +
+				"ggbcasvarq, ggbcasvarr, ggbcasvars, ggbcasvart, ggbcasvaru, " +
+				"ggbcasvarv, ggbcasvarw, ggbcasvary, ggbcasvarz, ggbcasvarx;";
+		// make sure to use current kernel's variable prefix
+		varOrder = varOrder.replace("ggbcasvar", casParser.getKernel().getCasVariablePrefix());
+		mpreduce.evaluate(varOrder);
+		
+		// access functions for elements of a vector
+		String xyzCoordFunctions = 
+			"procedure ggbcasvarx(a); first(a);" +
+			"procedure ggbcasvary(a); second(a);" +
+			"procedure ggbcasvarz(a); third(a);";
+		// make sure to use current kernel's variable prefix
+		xyzCoordFunctions = xyzCoordFunctions.replace("ggbcasvar", casParser.getKernel().getCasVariablePrefix());
+		mpreduce.evaluate(xyzCoordFunctions);
+		
+		// Initialize MPReduce
 		mpreduce.evaluate("off nat;");
-			
-		mpreduce.evaluate("off pri");
+		mpreduce.evaluate("off pri;");
 
 		mpreduce.evaluate("off numval;");
 		mpreduce.evaluate("linelength 50000;");
 		mpreduce.evaluate("scientific_notation {16,5};");
 		mpreduce.evaluate("on fullroots;");
-		mpreduce.evaluate("printprecision!!:=5");
-		
-		mpreduce.evaluate("order ggbcasvara, " +
-				"ggbcasvarb, ggbcasvarc, ggbcasvard, ggbcasvare, ggbcasvarf, " +
-				"ggbcasvarg, ggbcasvarh, ggbcasvari, ggbcasvarj, ggbcasvark, " +
-				"ggbcasvarl, ggbcasvarm, ggbcasvarn, ggbcasvaro, ggbcasvarp, " +
-				"ggbcasvarq, ggbcasvarr, ggbcasvars, ggbcasvart, ggbcasvaru, " +
-				"ggbcasvarv, ggbcasvarw, ggbcasvary, ggbcasvarz, ggbcasvarx;");
+		mpreduce.evaluate("printprecision!!:=5;");
 		
 		mpreduce.evaluate("intrules!!:={" +
 				"int(~w/~x,~x) => w*log(abs(x)) when freeof(w,x)," +
@@ -354,11 +376,6 @@ public class CASmpreduce extends CASgeneric {
 				" else" +
 				"   '? end;");
 		
-		// access functions for elements of a vector
-		mpreduce.evaluate("procedure ggbcasvarx(a); if arglength(a)>-1 and part(a,0)='list then first(a) else ggbcasvarx*a;");
-		mpreduce.evaluate("procedure ggbcasvary(a); if arglength(a)>-1 and part(a,0)='list then second(a) else ggbcasvary*a;");
-		mpreduce.evaluate("procedure ggbcasvarz(a); if arglength(a)>-1 and part(a,0)='list then third(a) else ggbcasvarz*a;");
-
 		mpreduce.evaluate(" Degree := pi/180;");
 
 		mpreduce.evaluate("procedure myround(x);" 
