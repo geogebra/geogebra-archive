@@ -67,7 +67,7 @@ public class Drawable3DLists {
 		
 		drawable.addToDrawable3DLists(this);
 		
-		if (drawable.getGeoElement().isPickable())
+		if (drawable.getGeoElement()!=null && drawable.getGeoElement().isPickable())
 			view3D.addOneGeoToPick();
 		
 	}
@@ -96,7 +96,7 @@ public class Drawable3DLists {
 			//Application.debug(drawable.getGeoElement());
 			drawable.removeFromDrawable3DLists(this);
 			//Application.debug(size());
-			if (drawable.getGeoElement().isPickable())
+			if (drawable.getGeoElement()!=null && drawable.getGeoElement().isPickable())
 				view3D.removeOneGeoToPick();
 		}
 		
