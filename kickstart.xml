@@ -6,8 +6,11 @@ This build file is about to download all necessary external libraries
 from the Internet. Most files are downloaded from the GeoGebra server
 to ensure availability.
 
-@author Zoltan Kovacs <zoltan@geogebra.org>
+-->
 
+<!--
+   GeoGebra kickstart build script    
+   @author Zoltan Kovacs <zoltan@geogebra.org>
 -->
 
 <project default="kickstart-20110923">

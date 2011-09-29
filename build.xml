@@ -34,7 +34,7 @@ office@geogebra.org
 
 <!--
    GeoGebra build script
-   @author Markus Hohenwarter
+   @author Markus Hohenwarter <markus@geogebra.org>
 -->
 
 <project default="geogebra">

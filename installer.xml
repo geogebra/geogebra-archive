@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
+<!-- README: Building GeoGebra Installer for Windows and Mac OS X
+
+This script assumes that the several kinds of GeoGebra *.jar files
+already exist in the build/ folder. Please read the details in
+build.xml.
+
+To learn more on building GeoGebra installers by using this script, please
+read the following web pages:
+
+  http://www.geogebra.org/trac/wiki/NSISonUnix
+
+-->
+
+<!--
+   GeoGebra installer build script
+   @author Markus Hohenwarter <markus@geogebra.org>
+   @author Yves Kreis <yves@geogebra.org>
+   @author Zoltan Kovacs <zoltan@geogeba.org>
+-->
+
+
 <project default="installer">
 
 	<!-- reads the version/build number from geogebra.GeoGebra.java -->
@@ -248,7 +269,7 @@
 				iconfile="installer/geogebra.icns"
 				role="Editor" />
 		</jarbundler>
-		<copy file="${src.dir}/installer/gpl-2.0.txt" tofile="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/gpl-2.0.txt" />
+		<copy file="${src.dir}/installer/gpl-3.0.txt" tofile="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/gpl-3.0.txt" />
 		<move file="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/Java/unpacked" tofile="${build.dir}/installer/macosx/GeoGebra.app/Contents/Resources/Java/unsigned" />
 		<zip destfile="${build.dir}/installer/GeoGebra_${versionname}.zip">
 			<zipfileset dir="${build.dir}/installer/macosx" excludes="GeoGebra.app/Contents/MacOS/JavaApplicationStub" />

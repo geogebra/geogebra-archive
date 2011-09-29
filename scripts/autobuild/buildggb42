@@ -72,7 +72,7 @@ cd $SVNDIR/geogebra/scripts/autobuild
 cd $SVNDIR/geogebra
 
 # 4/7. Creating Windows and Mac OS X installer
-ant installer # installer-clean installer-macosx
+ant -f installer.xml # installer-clean installer-macosx
 
 # Making sure that all files have group writable permissions
 WARNINGS=`chmod -R g+rw $SVNDIR/geogebra 2>&1 | wc -l | awk '{print $1}'`
