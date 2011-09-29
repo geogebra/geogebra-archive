@@ -99,10 +99,21 @@ public class CommandDispatcher {
     }
 
     public static enum Commands {
+    	// Please put each command to its appropriate place only!
+    	// Please do not change the first command in a subtable,
+    	// only change it if you change it in the initCmdTable as well!
+    	// Subtables are separated by comment lines here. 
+
+       	//=================================================================
+       	// Algebra & Numbers
+    	//=============================================================
        	Mod, Div, Min, Max,
        	LCM, GCD, Expand, Factor,
        	Simplify, PrimeFactors, CompleteSquare,
 
+      	//=================================================================
+      	// Geometry
+    	//=============================================================
        	Line, Ray, AngularBisector, OrthogonalLine,
        	Tangent, Segment, Slope, Angle,
        	Direction, Point, Midpoint, LineBisector,
@@ -112,13 +123,24 @@ public class CommandDispatcher {
        	RigidPolygon, Area, Union, Circumference,
        	Perimeter, Locus, Centroid, Kimberling,
        	Vertex, PolyLine, PointIn, AffineRatio,
-       	CrossRatio, ClosestPoint, Text, LaTeX,
-       	LetterToUnicode, TextToUnicode, UnicodeToText, UnicodeToLetter,
-       	FractionText, SurdText, TableText, VerticalText,
-       	RotateText, Ordinal, If, CountIf,
-       	IsInteger, KeepIf, Relation, Defined,
-       	IsInRegion,
-       	
+       	CrossRatio, ClosestPoint,
+
+      	//=============================================================
+      	// text
+    	//=============================================================
+       	Text, LaTeX, LetterToUnicode, TextToUnicode,
+       	UnicodeToText, UnicodeToLetter, FractionText, SurdText,
+       	TableText, VerticalText, RotateText, Ordinal,
+
+      	//=============================================================
+      	// logical	
+    	//=============================================================
+       	If, CountIf, IsInteger, KeepIf,
+       	Relation, Defined, IsInRegion,
+
+    	//=============================================================
+    	// functions & calculus
+    	//=============================================================
        	Root, Roots, TurningPoint, Polynomial,
        	Function, Extremum, CurveCartesian, Derivative,
        	Integral, IntegralBetween, LowerSum, LeftSum,
@@ -129,7 +151,10 @@ public class CommandDispatcher {
        	PathParameter, Asymptote, CurvatureVector, Curvature,
        	OsculatingCircle, IterationList, RootList,
        	ImplicitCurve,
-       	
+
+    	//=============================================================
+    	// conics
+    	//=============================================================
        	Ellipse, Hyperbola, SecondAxisLength, SecondAxis,
        	Directrix, Diameter, Conic, FirstAxis,
        	Circle, Incircle, Semicircle, FirstAxisLength,
@@ -137,6 +162,9 @@ public class CommandDispatcher {
        	Center, Polar, Excentricity, Eccentricity,
        	Axes,
        	
+    	//=============================================================
+    	// lists
+    	//=============================================================
        	Sort, First, Last, Take,
        	RemoveUndefined, Reverse, Element, IndexOf,
        	Append, Join, Insert,
@@ -145,10 +173,16 @@ public class CommandDispatcher {
        	Zip, Intersection,
        	PointList, OrdinalRank, TiedRank,
        	
+    	//=============================================================
+    	// charts
+    	//=============================================================	
        	BarChart, BoxPlot, Histogram, HistogramRight,
        	DotPlot, StemPlot, ResidualPlot, FrequencyPolygon,
        	NormalQuantilePlot, FrequencyTable,
        	
+    	//=============================================================
+    	// statistics
+    	//=============================================================
        	Sum, Mean, Variance, SD,
        	SampleVariance, SampleSD, Median, Q1,
        	Q3, Mode, SigmaXX, SigmaXY,
@@ -164,6 +198,9 @@ public class CommandDispatcher {
        	ANOVA, Percentile, GeometricMean, HarmonicMean,
        	RootMeanSquare,
        	
+    	//=============================================================
+    	// probability
+    	//=============================================================
        	Random, RandomNormal, RandomUniform, RandomBinomial,
        	RandomPoisson, Normal, LogNormal, Logistic,
        	InverseNormal, Binomial, BinomialDist, Bernoulli,
@@ -175,16 +212,28 @@ public class CommandDispatcher {
        	InverseWeibull, Zipf, InverseZipf, Triangular,
        	Uniform, Erlang,
        	
+    	//=============================================================
+    	// vector & matrix
+    	//=============================================================
        	ApplyMatrix, UnitVector, Vector, UnitOrthogonalVector,
        	OrthogonalVector, Invert, Transpose, ReducedRowEchelonForm,
        	Determinant, Identity,
        	
+    	//=============================================================
+    	// transformations
+    	//=============================================================
        	Mirror, Dilate, Rotate, Translate,
        	Shear, Stretch,
        	
+    	//=============================================================
+    	// spreadsheet
+    	//=============================================================
        	CellRange, Row, Column, ColumnName,
        	FillRow, FillColumn, FillCells, Cell,
        	
+      	//=============================================================	
+      	// scripting
+    	//=============================================================
        	CopyFreeObject, SetColor, SetBackgroundColor, SetDynamicColor,
        	SetConditionToShowObject, SetFilling, SetLineThickness, SetLineStyle,
        	SetPointStyle, SetPointSize, SetFixed, Rename,
@@ -196,15 +245,28 @@ public class CommandDispatcher {
        	Checkbox, Textfield, Button, Execute,
        	GetTime, ShowLabel, SetAxesRatio, SetVisibleInView,
        	
+    	//=============================================================	
+      	// discrete math
+    	//=============================================================
        	Voronoi, Hull, ConvexHull, MinimumSpanningTree,
        	DelauneyTriangulation, TravelingSalesman, ShortestDistance,
        	
+    	//=================================================================
+      	// GeoGebra
+    	//=============================================================
        	Corner, AxisStepX, AxisStepY, ConstructionStep,
        	Object, Name, SlowPlot, ToolImage,
        	DynamicCoordinates,
        	
+    	//=================================================================
+      	// Other ???
+    	//=============================================================
        	Maximize, Minimize,
        	
+    	//=================================================================
+      	// commands that have been renamed so we want the new name to work
+    	// in other languages eg Curve used to be CurveCartesian
+    	//=============================================================
        	Curve, FormulaText, IsDefined, ConjugateDiameter,
        	LinearEccentricity, MajorAxis, SemiMajorAxisLength, PerpendicularBisector,
        	PerpendicularLine, PerpendicularVector, MinorAxis, SemiMinorAxisLength,
@@ -362,567 +424,89 @@ public class CommandDispatcher {
     	// in order to speedup the initial loading of the Application
     	// we instantiate CommandProcessor objects when needed and
     	// store them in this command table afterwards
-    	// ... if you change this cmdTable initialization,
+
+    	// ... in order to change or add a command,
     	// please change the enum "Commands" and the method
-    	// "commandTableSwitch" as well
-    	// Arpad Fekete, 2011-09-26
+    	// "commandTableSwitch", and if the first command in a subtable
+    	// changed, the following switch as well
+    	// Arpad Fekete, 2011-09-29
 
-
-    	// Although we could add these commands in a for loop,
-    	// we add them one by one because they have to be put
-    	// into the cmdSubTable as well
-
-       	//=================================================================
-       	// Algebra & Numbers
-    	//=============================================================
-       	cmdTable.put("Mod", null);
-       	cmdTable.put("Div", null);
-       	cmdTable.put("Min", null);
-       	cmdTable.put("Max", null);
-    	cmdTable.put("LCM", null);
-    	cmdTable.put("GCD", null);
-    	cmdTable.put("Expand", null);
-    	cmdTable.put("Factor", null);
-    	cmdTable.put("Simplify", null);
-    	cmdTable.put("PrimeFactors", null);
-    	cmdTable.put("CompleteSquare", null);
-    	
-    	cmdSubTable[TABLE_ALGEBRA].putAll(cmdTable);
-    	cmdTable.clear();
-      	
-    	
-      	//=================================================================
-      	// Geometry
-    	//=============================================================
-       	cmdTable.put("Line", null);	   
-     	cmdTable.put("Ray", null);	   
-    	cmdTable.put("AngularBisector", null);
-    	cmdTable.put("OrthogonalLine", null);
-    	cmdTable.put("Tangent", null);
-    	cmdTable.put("Segment", null);
-    	cmdTable.put("Slope", null);	
-    	cmdTable.put("Angle", null);
-    	cmdTable.put("Direction", null);
-    	
-    	cmdTable.put("Point", null);	
-    	cmdTable.put("Midpoint", null);	
-    	cmdTable.put("LineBisector", null);	 
-    	cmdTable.put("Intersect", null);
-    	
-    	cmdTable.put("IntersectRegion", null);
-    	
-    	cmdTable.put("Distance", null);	   
-    	cmdTable.put("Length", null);	  
-    	   
-    	cmdTable.put("Radius", null);	
-    	cmdTable.put("CircleArc", null);	
-    	cmdTable.put("Arc", null);
-    	cmdTable.put("Sector", null);
-    	cmdTable.put("CircleSector", null);	   
-    	cmdTable.put("CircumcircleSector", null);	     
-    	cmdTable.put("CircumcircleArc", null);	   
-    		   
-    	cmdTable.put("Polygon", null);
-    	cmdTable.put("RigidPolygon", null);	   
-    	cmdTable.put("Area", null);
-    	cmdTable.put("Union", null);
-
-    	// Philipp Weissenbacher 10-04-2007
-    	cmdTable.put("Circumference", null);
-    	cmdTable.put("Perimeter", null);
-    	// Philipp Weissenbacher 10-04-2007
-
-    	cmdTable.put("Locus", null);
-    	cmdTable.put("Centroid", null);
-    	cmdTable.put("Kimberling", null);	
-    	cmdTable.put("Vertex", null);	
-    	
-    	cmdTable.put("PolyLine", null);	   
-    		
-    	//Mathieu Blossier
-    	cmdTable.put("PointIn", null);
-
-    	cmdTable.put("AffineRatio", null);
-    	cmdTable.put("CrossRatio", null);
-    	
-    	cmdTable.put("ClosestPoint", null);     
-
-    	
-    	cmdSubTable[TABLE_GEOMETRY].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	
-      	//=============================================================
-      	// text
-    	//=============================================================
-      	cmdTable.put("Text", null);    	
-      	cmdTable.put("LaTeX", null);
-      	cmdTable.put("LetterToUnicode", null);    	
-      	cmdTable.put("TextToUnicode", null);    	
-      	cmdTable.put("UnicodeToText", null);    
-      	cmdTable.put("UnicodeToLetter", null);    
-      	cmdTable.put("FractionText", null);
-      	cmdTable.put("SurdText", null); 
-      	cmdTable.put("TableText", null); 
-      	cmdTable.put("VerticalText", null);	   
-    	cmdTable.put("RotateText", null);	   
-    	cmdTable.put("Ordinal", null);	   
-      	
-    	cmdSubTable[TABLE_TEXT].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-      	//=============================================================
-      	// logical	
-    	//=============================================================
-      	cmdTable.put("If", null);
-      	cmdTable.put("CountIf", null);   
-      	cmdTable.put("IsInteger", null);
-      	cmdTable.put("KeepIf", null);  
-      	cmdTable.put("Relation", null);	 
-      	cmdTable.put("Defined", null);
-      	cmdTable.put("IsInRegion", null);    
-
-      	cmdSubTable[TABLE_LOGICAL].putAll(cmdTable);
-    	cmdTable.clear();
-      	
-    	
-    	
-    	
-    	//=============================================================
-    	// functions & calculus
-    	//=============================================================
-    	cmdTable.put("Root", null);	
-    	cmdTable.put("Roots",null);
-    	cmdTable.put("TurningPoint", null);
-    	cmdTable.put("Polynomial", null);	
-    	cmdTable.put("Function", null);	   
-    	cmdTable.put("Extremum", null);	
-    	cmdTable.put("CurveCartesian", null);
-    	cmdTable.put("Derivative", null);	
-    	// from GeoGebra 4.0, Integral has been split into Integral and IntegralBetween
-    	// old syntax and files will still work
-    	cmdTable.put("Integral", null);	   
-    	cmdTable.put("IntegralBetween", null);	   
-    	cmdTable.put("LowerSum", null);
-    	cmdTable.put("LeftSum",  null);
-    	cmdTable.put("RectangleSum", null);    	
-    	cmdTable.put("TaylorSeries", null);	 
-    	cmdTable.put("UpperSum", null);  
-    	cmdTable.put("TrapezoidalSum", null); 
-    	cmdTable.put("Limit", null);   
-    	cmdTable.put("LimitBelow", null);   
-    	cmdTable.put("LimitAbove", null);   
-    	cmdTable.put("Factors", null);
-    	cmdTable.put("Degree", null);   
-    	cmdTable.put("Coefficients", null);   
-    	cmdTable.put("PartialFractions", null);   
-    	cmdTable.put("Numerator", null);   
-    	cmdTable.put("Denominator", null); 
-    	cmdTable.put("ComplexRoot", null);	   
-    	cmdTable.put("SolveODE", null);	   
-    	cmdTable.put("Iteration", null);
-    	
-    	cmdTable.put("PathParameter", null);     
-    	cmdTable.put("Asymptote", null);
-
-    	cmdTable.put("CurvatureVector", null);
-    	cmdTable.put("Curvature", null);
-    	cmdTable.put("OsculatingCircle", null);
-    	
-    	cmdTable.put("IterationList", null);
-    	cmdTable.put("RootList", null);   
-    	cmdTable.put("Intersect", null);
-    	
-    	// d. drakulic 2011/3/26
-    	cmdTable.put("ImplicitCurve", null);
-    	
-    	cmdSubTable[TABLE_FUNCTION].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	//=============================================================
-    	// conics
-    	//=============================================================
-    	cmdTable.put("Ellipse", null);
-    	cmdTable.put("Hyperbola", null);
-    	cmdTable.put("SecondAxisLength", null);
-    	cmdTable.put("SecondAxis", null);
-    	cmdTable.put("Directrix", null);
-    	cmdTable.put("Diameter", null);
-    	cmdTable.put("Conic", null);
-    	cmdTable.put("FirstAxis", null);
-    	cmdTable.put("Circle", null);
-    	cmdTable.put("Incircle", null);
-    	cmdTable.put("Semicircle", null);
-    	cmdTable.put("FirstAxisLength", null);	   
-    	cmdTable.put("Parabola", null);
-    	cmdTable.put("Focus", null);	
-    	cmdTable.put("Parameter", null);
-    	cmdTable.put("Asymptote", null);
-    	cmdTable.put("Center", null);	
-    	cmdTable.put("Polar", null);	 
-    	// linear eccentricity (used in Germany etc) LinearExcentricity[]
-    	cmdTable.put("Excentricity", null);	  
-    	// eccentricity
-    	cmdTable.put("Eccentricity", null);	  
-    	cmdTable.put("Axes", null);	  
-    	
-    	cmdSubTable[TABLE_CONIC].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	//=============================================================
-    	// lists
-    	//=============================================================
-    	cmdTable.put("Sort", null);
-    	cmdTable.put("First", null);
-    	cmdTable.put("Last", null);
-    	cmdTable.put("Take", null);
-    	cmdTable.put("RemoveUndefined", null);
-    	cmdTable.put("Reverse", null);
-    	cmdTable.put("Element", null);
-    	cmdTable.put("IndexOf", null);
-    	cmdTable.put("Append", null);   
-    	cmdTable.put("Join", null);   
-    	cmdTable.put("Insert", null);   
-    	cmdTable.put("Union", null);   
-    	cmdTable.put("Sequence", null);   
-    	cmdTable.put("SelectedElement", null);     	                  
-    	cmdTable.put("SelectedIndex", null); 
-    	cmdTable.put("RandomElement", null);
-    	cmdTable.put("Product", null);
-    	cmdTable.put("Frequency", null);
-    	cmdTable.put("Unique", null);
-
-    	cmdTable.put("Classes", null);
-
-    	cmdTable.put("Zip", null);
-      	cmdTable.put("Intersection",null);  	
-       	cmdTable.put("IterationList", null);
-    	cmdTable.put("RootList", null);   
-    	cmdTable.put("PointList", null); 
-    	
-    	cmdTable.put("OrdinalRank", null);
-    	cmdTable.put("TiedRank", null);
-    	
-    	cmdSubTable[TABLE_LIST].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	
-    	//=============================================================
-    	// charts
-    	//=============================================================	
-    	cmdTable.put("BarChart", null);    	
-    	cmdTable.put("BoxPlot", null);    	
-    	cmdTable.put("Histogram", null);
-    	cmdTable.put("HistogramRight", null); 
-    	cmdTable.put("DotPlot", null); 
-    	cmdTable.put("StemPlot", null);  
-    	cmdTable.put("ResidualPlot", null);  
-    	cmdTable.put("FrequencyPolygon", null);
-    	cmdTable.put("NormalQuantilePlot", null);
-    	cmdTable.put("FrequencyTable", null);
-    	
-    	cmdSubTable[TABLE_CHARTS].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	
-    	
-    	//=============================================================
-    	// statistics
-    	//=============================================================
-    	cmdTable.put("Sum", null);
-    	cmdTable.put("Mean", null);
-    	cmdTable.put("Variance", null);
-    	cmdTable.put("SD", null);
-    	cmdTable.put("SampleVariance", null);
-    	cmdTable.put("SampleSD", null);
-    	cmdTable.put("Median", null);
-    	cmdTable.put("Q1", null);
-    	cmdTable.put("Q3", null);
-    	cmdTable.put("Mode", null);	
-    	cmdTable.put("SigmaXX", null);
-    	cmdTable.put("SigmaXY", null);
-    	cmdTable.put("SigmaYY", null);
-    	cmdTable.put("Covariance", null);
-    	cmdTable.put("SXY", null);
-    	cmdTable.put("SXX", null);
-    	cmdTable.put("SYY", null);
-    	cmdTable.put("MeanX", null);
-    	cmdTable.put("MeanY", null);
-    	cmdTable.put("PMCC", null);
-    	cmdTable.put("SampleSDX", null);
-    	cmdTable.put("SampleSDY", null);
-    	cmdTable.put("SDX", null);
-    	cmdTable.put("SDY", null);
-
-    	cmdTable.put("FitLineY", null);
-    	cmdTable.put("FitLineX", null);
-    	cmdTable.put("FitPoly", null);
-    	cmdTable.put("FitExp", null);
-    	cmdTable.put("FitLog", null);
-    	cmdTable.put("FitPow", null);
-    	cmdTable.put("Fit",null);
-    	cmdTable.put("FitGrowth",null);
-    	cmdTable.put("FitSin", null);   
-    	cmdTable.put("FitLogistic", null);  
-    	cmdTable.put("SumSquaredErrors",null);
-    	cmdTable.put("RSquare",null);
-    	
-    	
-    	
-    	cmdTable.put("Sample", null);	  
-    	cmdTable.put("OrdinalRank", null);
-    	cmdTable.put("TiedRank", null);
-    	cmdTable.put("Shuffle", null);
-    	
-    	cmdTable.put("Frequency", null);
-    	cmdTable.put("Spearman", null);
-    	cmdTable.put("Classes", null);
-
-    	cmdTable.put("TTest", null);
-    	cmdTable.put("TTestPaired", null);
-    	cmdTable.put("TTest2", null);
-    	cmdTable.put("TMeanEstimate", null);
-    	cmdTable.put("TMean2Estimate", null);
-    	cmdTable.put("ANOVA", null);
-    	
-    	cmdTable.put("Percentile", null);
-    	cmdTable.put("GeometricMean", null);
-    	cmdTable.put("HarmonicMean", null);
-    	cmdTable.put("RootMeanSquare", null);
-    	
-    	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	//=============================================================
-    	// probability
-    	//=============================================================
-    	cmdTable.put("Random", null);
-    	cmdTable.put("RandomNormal", null);
-    	cmdTable.put("RandomUniform", null);  
-    	cmdTable.put("RandomBinomial", null);   
-    	cmdTable.put("RandomPoisson", null); 
-    	
-    	cmdTable.put("Normal", null);
-    	cmdTable.put("LogNormal", null);
-    	cmdTable.put("Logistic", null);
-    	cmdTable.put("InverseNormal", null);
-    	cmdTable.put("Binomial", null);
-    	cmdTable.put("BinomialDist", null);
-    	cmdTable.put("Bernoulli", null);
-    	cmdTable.put("InverseBinomial", null); 
-    	cmdTable.put("TDistribution", null);  
-    	cmdTable.put("InverseTDistribution", null);  
-    	cmdTable.put("FDistribution", null);  
-    	cmdTable.put("InverseFDistribution", null);     	
-    	cmdTable.put("Gamma", null);  
-    	cmdTable.put("InverseGamma", null);  
-    	cmdTable.put("Cauchy", null);  
-    	cmdTable.put("InverseCauchy", null);  
-    	cmdTable.put("ChiSquared", null);  
-    	cmdTable.put("InverseChiSquared", null);  
-    	cmdTable.put("Exponential", null);  
-    	cmdTable.put("InverseExponential", null);  
-    	cmdTable.put("HyperGeometric", null);  
-    	cmdTable.put("InverseHyperGeometric", null);  
-    	cmdTable.put("Pascal", null);  
-    	cmdTable.put("InversePascal", null); 
-    	cmdTable.put("Poisson", null);  
-    	cmdTable.put("InversePoisson", null); 
-    	cmdTable.put("Weibull", null);  
-    	cmdTable.put("InverseWeibull", null);
-    	cmdTable.put("Zipf", null);  
-    	cmdTable.put("InverseZipf", null);
-    	cmdTable.put("Triangular", null);
-    	cmdTable.put("Uniform", null);
-    	cmdTable.put("Erlang", null);
-    	
-    	cmdSubTable[TABLE_PROBABILITY].putAll(cmdTable);
-    	cmdTable.clear();
-    		
-    	
-    	//=============================================================
-    	// vector & matrix
-    	//=============================================================
-    	cmdTable.put("ApplyMatrix", null); 
-    	cmdTable.put("UnitVector", null);	   
-    	cmdTable.put("Vector", null);	
-    	cmdTable.put("UnitOrthogonalVector", null);	
-    	cmdTable.put("OrthogonalVector", null);
-    	cmdTable.put("Invert", null);   
-    	cmdTable.put("Transpose", null);   
-    	cmdTable.put("ReducedRowEchelonForm", null);   
-    	cmdTable.put("Determinant", null);   
-    	cmdTable.put("Identity", null);
-    	
-    	cmdTable.put("CurvatureVector", null);
-    	
-    	cmdSubTable[TABLE_VECTOR].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	//=============================================================
-    	// transformations
-    	//=============================================================
-    	cmdTable.put("Mirror", null);
-    	cmdTable.put("Dilate", null);	
-    	cmdTable.put("Rotate", null);	
-    	cmdTable.put("Translate", null);
-    	cmdTable.put("Shear", null);
-    	cmdTable.put("Stretch", null);
-    	
-    	cmdSubTable[TABLE_TRANSFORMATION].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	//=============================================================
-    	// spreadsheet
-    	//=============================================================
-    	cmdTable.put("CellRange", null);  // cell range for spreadsheet like A1:A5
-    	cmdTable.put("Row", null);    	
-    	cmdTable.put("Column", null);  
-    	cmdTable.put("ColumnName", null); 
-    	cmdTable.put("FillRow", null);
-      	cmdTable.put("FillColumn", null);
-      	cmdTable.put("FillCells", null);   	
-      	cmdTable.put("Cell", null);
-    	
-      	cmdSubTable[TABLE_SPREADSHEET].putAll(cmdTable);
-    	cmdTable.clear();
-
-    	
-      	//=============================================================	
-      	// scripting
-    	//=============================================================
-      	cmdTable.put("CopyFreeObject", null);
-    	cmdTable.put("SetColor", null);
-    	cmdTable.put("SetBackgroundColor", null);
-    	cmdTable.put("SetDynamicColor", null);
-    	cmdTable.put("SetConditionToShowObject", null);
-    	cmdTable.put("SetFilling", null);
-    	cmdTable.put("SetLineThickness", null);
-    	cmdTable.put("SetLineStyle", null);
-    	cmdTable.put("SetPointStyle", null);
-    	cmdTable.put("SetPointSize", null);
-    	cmdTable.put("SetFixed", null);
-    	cmdTable.put("Rename", null);
-    	cmdTable.put("HideLayer", null);
-       	cmdTable.put("ShowLayer", null);
-       	cmdTable.put("SetCoords", null);
-       	cmdTable.put("Pan", null);
-       	cmdTable.put("ZoomIn", null);
-       	cmdTable.put("ZoomOut", null);
-       	cmdTable.put("SetActiveView", null);
-       	cmdTable.put("SelectObjects", null);
-       	cmdTable.put("SetLayer", null);
-       	cmdTable.put("SetCaption", null);
-       	cmdTable.put("SetLabelMode", null);
-       	cmdTable.put("SetTooltipMode", null);
-       	cmdTable.put("UpdateConstruction", null);
-       	cmdTable.put("SetValue", null);
-       	cmdTable.put("PlaySound", null);
-       	cmdTable.put("ParseToNumber", null);
-       	cmdTable.put("ParseToFunction", null); 
-       	cmdTable.put("StartAnimation", null); 
-    	cmdTable.put("Delete", null);	
-    	cmdTable.put("Slider", null);
-    	cmdTable.put("Checkbox", null);
-    	cmdTable.put("Textfield", null);
-    	cmdTable.put("Button", null);
-    	cmdTable.put("Execute", null);     
-    	cmdTable.put("GetTime", null);     
-    	cmdTable.put("ShowLabel", null);
-    	cmdTable.put("SetAxesRatio", null);   
-    	cmdTable.put("SetVisibleInView", null);     
-       		
-       	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
-    	cmdTable.clear();
-       	
-
-    	//=============================================================	
-      	// discrete math
-    	//=============================================================
-    	
-    	cmdTable.put("Voronoi", null);     	                  
-    	cmdTable.put("Hull", null);     	                  
-    	cmdTable.put("ConvexHull", null); 
-    	cmdTable.put("MinimumSpanningTree", null);     	                  
-    	cmdTable.put("DelauneyTriangulation", null);     	                  
-    	cmdTable.put("TravelingSalesman", null); 
-    	cmdTable.put("ShortestDistance", null);     	   
- 	    	
-    	cmdSubTable[TABLE_DISCRETE_MATH].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-
-    	//=================================================================
-      	// GeoGebra
-    	//=============================================================
-    	
-    	cmdTable.put("Corner", null);
-    	cmdTable.put("AxisStepX", null);   
-    	cmdTable.put("AxisStepY", null);   
-    	
-    	cmdTable.put("ConstructionStep", null);
-    	cmdTable.put("Object", null);  
-    	cmdTable.put("Name", null);
-    	
-    	cmdTable.put("SlowPlot", null);
-    	cmdTable.put("ToolImage", null);
-    	cmdTable.put("DynamicCoordinates", null);  
-    	
-    	
-    	cmdTable.put("ClosestPoint", null);     
-
-    	
-    	cmdSubTable[TABLE_GEOGEBRA].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	
-    	//=================================================================
-      	// Other ???
-    	//=============================================================
-    			
-    	    
-    	cmdTable.put("Maximize",null);  //Definitely "other": Trying to optimize result of a whole construction...
-    	cmdTable.put("Minimize",null);
-    	
-    	
-    	cmdSubTable[TABLE_OPTIMIZATION].putAll(cmdTable);
-    	cmdTable.clear();
-    	
-    	//=================================================================
-      	// commands that have been renamed so we want the new name to work
-    	// in other languages eg Curve used to be CurveCartesian
-    	//=============================================================
-    			
-    	cmdTable.put("Curve",null);
-    	cmdTable.put("FormulaText",null);
-    	cmdTable.put("IsDefined",null);
-    	cmdTable.put("ConjugateDiameter",null);
-    	cmdTable.put("LinearEccentricity",null);
-    	cmdTable.put("MajorAxis",null);
-    	cmdTable.put("SemiMajorAxisLength",null);
-    	cmdTable.put("PerpendicularBisector",null);
-    	cmdTable.put("PerpendicularLine",null);
-    	cmdTable.put("PerpendicularVector",null);
-    	cmdTable.put("MinorAxis",null);
-    	cmdTable.put("SemiMinorAxisLength",null);
-    	cmdTable.put("UnitPerpendicularVector",null);
-    	cmdTable.put("CorrelationCoefficient",null);
-    	cmdTable.put("FitLine",null);
-    	cmdTable.put("BinomialCoefficient",null);
-    	cmdTable.put("RandomBetween",null);  
-    	
+    	for (Commands comm : Commands.values()) {
+    		switch (comm) {
+    			case Line:
+    		    	cmdSubTable[TABLE_ALGEBRA].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Text:
+    		    	cmdSubTable[TABLE_GEOMETRY].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case If:
+    		    	cmdSubTable[TABLE_TEXT].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Root:
+    		      	cmdSubTable[TABLE_LOGICAL].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Ellipse:
+    		    	cmdSubTable[TABLE_FUNCTION].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Sort:
+    		    	cmdSubTable[TABLE_CONIC].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case BarChart:
+    		    	cmdSubTable[TABLE_LIST].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Sum:
+    		    	cmdSubTable[TABLE_CHARTS].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Random:
+    		    	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case ApplyMatrix:
+    		    	cmdSubTable[TABLE_PROBABILITY].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Mirror:
+    		    	cmdSubTable[TABLE_VECTOR].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case CellRange:
+    		    	cmdSubTable[TABLE_TRANSFORMATION].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case CopyFreeObject:
+    		      	cmdSubTable[TABLE_SPREADSHEET].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Voronoi:
+    		       	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Corner:
+    		    	cmdSubTable[TABLE_DISCRETE_MATH].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Maximize:
+    		    	cmdSubTable[TABLE_GEOGEBRA].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    			case Curve:
+    		    	cmdSubTable[TABLE_OPTIMIZATION].putAll(cmdTable);
+    		    	cmdTable.clear();
+    		    	break;
+    		}
+    		cmdTable.put(comm.name(), null);
+    	}
     	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
     	cmdTable.clear();
-  
-    	
+
     	//=================================================================
       	// Put all of the sub Tables together to create cmdTable
     	
