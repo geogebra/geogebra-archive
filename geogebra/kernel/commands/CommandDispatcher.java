@@ -1328,9 +1328,12 @@ public class CommandDispatcher {
     			case FitLine: return new CmdFitLineY(kernel);
     			case BinomialCoefficient: return new CmdBinomial(kernel);
     			case RandomBetween: return new CmdRandom(kernel);  
-    			default: return null;
+    			default:
+    				Application.debug("missing case in CommandDispatcher");
+    				return null;
     		}
     	} catch (Exception e) {
+    		Application.debug("Warning: command not found / CAS command called");
     	}
     	return null;
     }
