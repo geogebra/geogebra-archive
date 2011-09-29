@@ -1315,7 +1315,8 @@ public class Renderer implements GLEventListener {
         }
 	}
 	
-    
+	private boolean needsNewPickingBuffer = true;
+	
     /**
      * does the picking to sets which objects are under the mouse coordinates.
      */
@@ -1323,11 +1324,12 @@ public class Renderer implements GLEventListener {
     	
     	
     	
-    	if (geoToPickSize!=oldGeoToPickSize){
+    	if (geoToPickSize!=oldGeoToPickSize || needsNewPickingBuffer){
     		int bufSize=geoToPickSize*2+1 +20; //TODO remove "+20" due to intersection curve
     		selectBuffer=createSelectBufferForPicking(bufSize);
     		drawHits=createDrawableListForPicking(bufSize);
     		oldGeoToPickSize=geoToPickSize;
+    		needsNewPickingBuffer=false;
     	}
 
     	setGLForPicking();
@@ -1691,6 +1693,10 @@ public class Renderer implements GLEventListener {
         
         //reset euclidian view
         view3D.reset();
+        
+        
+        //reset picking buffer
+        needsNewPickingBuffer = true;
 
     }
 
