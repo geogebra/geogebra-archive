@@ -648,7 +648,7 @@ Section Install Install
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\www.geogebra.org.lnk" http://www.geogebra.org/ "" $INSTDIR\geogebra.exe 0
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License.lnk" http://www.geogebra.org/download/license.txt "" $INSTDIR\geogebra.exe 0
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License (CC-by-SA-3.0).lnk" http://creativecommons.org/licenses/by-sa/3.0/ "" $INSTDIR\cc.ico 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License (GPL-2.0).lnk" $INSTDIR\gpl-2.0.txt
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License (GPL-2.0).lnk" $INSTDIR\gpl-3.0.txt
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\Release Notes.lnk" http://www.geogebra.org/en/wiki/index.php/Release_Notes_GeoGebra_3.2 "" $INSTDIR\geogebra.exe 0
     ${If} 1 = $DESKTOP_ALL
     ${OrIf} 1 = $DESKTOP_CURRENT
@@ -862,13 +862,13 @@ FunctionEnd
     Delete $INSTDIR\forum.ico
     Delete $INSTDIR\geogebra.exe
     Delete $INSTDIR\geogebra*.jar
-    Delete $INSTDIR\gpl-2.0.txt
+    Delete $INSTDIR\gpl-3.0.txt
     Delete $INSTDIR\wiki.ico
     RMDir $INSTDIR
     
     Delete "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License.lnk"
     Delete "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License (CC-by-SA-3.0).lnk"
-    Delete "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License (GPL-2.0).lnk"
+    Delete "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\License (GPL-3.0).lnk"
     Delete "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes\Release Notes.lnk"
     RMDir "$SMPROGRAMS\$STARTMENU_FOLDER\License & Release Notes"
     Delete $SMPROGRAMS\$STARTMENU_FOLDER\GeoGebra.lnk
