@@ -80,7 +80,7 @@ to ensure availability.
 	</target>
 
 	<target name="lib-pack" depends="proguard, p200ant"
-	    description="Download all packages needed for a full build for the current OS and architecture">
+	    description="Download all packages needed for creating the JAR files">
 	</target>
 
 	<target name="lib-runtime" depends="jlatexmath, vernier"
