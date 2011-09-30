@@ -196,8 +196,6 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	 */    
 	final public void setCoords(Coords v, boolean doPathOrRegion) {
 		
-		
-		
 		super.setCoords(v);
 		
 		updateCoords(); 
@@ -584,7 +582,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
     public void updateCoords2D(){
     	if (region!=null){ //use region 2D coord sys
     		
-    		updateCoords2D(region);
+    		updateCoords2D(region, true);
     		
     	}else{//project on xOy plane
     		x2D = getX();
@@ -599,7 +597,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
     /**
      * update the 2D coords on the region (regarding willing coords and direction)
      */
-    public void updateCoords2D(Region region){
+    public void updateCoords2D(Region region, boolean updateParameters){
     	
     	Coords coords;
 		Coords[] project;
@@ -620,10 +618,12 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		x2D = project[1].get(1);
 		y2D = project[1].get(2);
 		z2D = project[1].get(3);
-		
-		RegionParameters rp = getRegionParameters();
-    	rp.setT1(project[1].get(1));rp.setT2(project[1].get(2));
-    	rp.setNormal(((GeoElement) region).getMainDirection());
+
+		if (updateParameters){
+			RegionParameters rp = getRegionParameters();
+			rp.setT1(project[1].get(1));rp.setT2(project[1].get(2));
+			rp.setNormal(((GeoElement) region).getMainDirection());
+		}
  
     }
     

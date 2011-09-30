@@ -982,21 +982,15 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	}
 	
 	protected boolean isInRegion(GeoPointND PI, boolean update){
-		return isInRegion(PI);
+		
+		Coords coords = PI.getCoordsInD(2);				
+		return isInRegion(coords.getX()/coords.getZ(),coords.getY()/coords.getZ());		
+		
 	}
 	
 	public boolean isInRegion(GeoPointND PI){
 		
-		/*
-		GeoPoint P = (GeoPoint) PI;
-		double x0 = P.x/P.z;
-		double y0 = P.y/P.z;
-		*/
-		
-		Coords coords = PI.getCoordsInD(2);
-
-				
-		return isInRegion(coords.getX()/coords.getZ(),coords.getY()/coords.getZ());
+		return isInRegion(PI,false);
 
 	}
 	
@@ -1042,8 +1036,6 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			double yu = p1.inhomY - p0.inhomY;				
 			double xv = p2.inhomX - p0.inhomX;
 			double yv = p2.inhomY - p0.inhomY;
-			
-			Application.debug("xu="+xu+", yu="+yu+", rp.getT1()="+ rp.getT1()+"\nxv="+xv+", yv="+yv+", rp.getT2()="+ rp.getT2());
 			
 			setRegionChanged(P,
 					p0.inhomX + rp.getT1()*xu + rp.getT2()*xv,
@@ -1098,6 +1090,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 				rp.setT1((xv*y-x*yv)/(xv*yu-xu*yv));
 				rp.setT2((x*yu-xu*y)/(xv*yu-xu*yv));
 				
+				//Application.debug(rp.getT1()+","+rp.getT2());
+				
 				P.updateCoordsFrom2D(false,null);
 			}
 		}
@@ -1148,7 +1142,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			//Application.debug(" secondPoint = "+secondPoint+"\n thirdPoint = "+thirdPoint);
 		}
 		
-		Application.debug(this+"\n p0 = "+p0.getLabel()+"\n p1 = "+p1.getLabel()+"\n p2 = "+p2.getLabel());
+		//Application.debug(this+"\n p0 = "+p0.getLabel()+"\n p1 = "+p1.getLabel()+"\n p2 = "+p2.getLabel());
 
 			
 			

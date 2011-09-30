@@ -1207,6 +1207,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			}
 		}
 		
+		if (movedGeoPoint instanceof GeoPoint3D){
+			GeoPoint3D movedGeoPoint3D = (GeoPoint3D) movedGeoPoint;
+			movedGeoPoint3D.setWillingCoords(null);
+			movedGeoPoint3D.setWillingDirection(null);
+		}
+		
 		super.processReleaseForMovedGeoPoint(e);
 		
 	}

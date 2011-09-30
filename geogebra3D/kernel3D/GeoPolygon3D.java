@@ -532,43 +532,21 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 	public void setRegionChanged(GeoPointND PI, double x, double y){
 
-
 		PI.setCoords2D(x, y, 1);
 		PI.updateCoordsFrom2D(false,null);
 
 	}
 	
 	protected boolean isInRegion(GeoPointND PI, boolean update){
-		
-		/*
-		GgbVector coords = PI.getCoordsInD2(getCoordSys());
-		
-		return isInRegion(coords.getX()/coords.getZ(), coords.getY()/coords.getZ());
-		*/
-		
-		
-		GeoPoint3D P = (GeoPoint3D) PI;
 
-		//if (update){
-			//udpate region coords
-			P.updateCoords2D(this);
-		//}
-		
+		GeoPoint3D P = (GeoPoint3D) PI;
+		P.updateCoords2D(this,false);
+
 		return isInRegion(P.getX2D(), P.getY2D());
-		
+
 	}
 	
 	
-	public boolean isInRegion(GeoPointND PI){
-		
-		GeoPoint3D P = (GeoPoint3D) PI;
-
-
-		P.updateCoords2D(this);
-		
-		return isInRegion(P.getX2D(), P.getY2D());
-		
-	}
 	
 	
 

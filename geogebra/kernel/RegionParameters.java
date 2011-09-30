@@ -68,6 +68,7 @@ public class RegionParameters {
 	}
 
 	public final void setT1(double t1) {
+		//Application.printStacktrace(""+t1);
 		this.t1 = t1;
 	}
 	public final double getT2() {
