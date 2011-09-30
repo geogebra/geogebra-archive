@@ -72,7 +72,7 @@ to ensure availability.
 	<get src="http://www.geogebra.org/download/installer/launch4j/launch4j.jar" dest="launch4j/launch4j.jar" usetimestamp="true"/>
 	<get src="http://www.geogebra.org/download/installer/launch4j/lib/xstream.jar" dest="launch4j/lib/xstream.jar" usetimestamp="true"/>
 	<get src="http://www.geogebra.org/download/installer/launch4j/launch4j-head+w32api.zip" dest="download/launch4j-head+w32api.zip" usetimestamp="true"/>
-	<unzip src="download/launch4j-head+w32api.zip" dest="../launch4j/">
+	<unzip src="download/launch4j-head+w32api.zip" dest="launch4j/">
 	</unzip>
 	</target>
 
