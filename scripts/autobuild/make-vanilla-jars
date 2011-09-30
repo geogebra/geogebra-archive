@@ -107,9 +107,6 @@ if [ "$BOOTCLASSPATH" = "not set" ]; then
 
 cd $WORKDIR
 
-# Creating build-local.properties (if needed)
-test -r build-local.properties || echo "javacc.home=lib/build/javacc/" > build-local.properties
-
 umask 0002 # trying to ensure g+w rights for all created files automatically
 
 # 5. Setting global variables

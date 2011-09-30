@@ -2,9 +2,6 @@
 
 <project>
 
-	<!-- GENERAL properties (equal for all OS, platforms, users, ...) -->
-	<property name="local.property.missing"
-		location="A build-local property was not specified. Did you create 'build-local.properties'?"/>
 	<property name="src.dir" location="."/>
 	<property name="propertiessrc.dir" location="./geogebra/properties"/>
 	<property name="build.dir" location="build"/>

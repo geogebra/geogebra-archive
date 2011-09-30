@@ -41,13 +41,6 @@ office@geogebra.org
 
 	<import file="common.xml"/>
 	
-	<!-- USER-SPECIFIC properties -->
-	<!-- Include properties set in [build-local.properties] -->
-	<property file="build-local.properties"/>
-	<!-- These properties must be specified in [build-local.properties] -->
-	<fail unless="javacc.home" message="${local.property.missing}"/>
-	
-
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
 		depends="clean, ggb-jar-files, copyDebug, signDebug, obfuscate, delete3D, ggb-jar-index, 
@@ -87,11 +80,11 @@ office@geogebra.org
 			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-usb-jar, ggb-copy-jlatexmath">
 	</target>
 
-	<!-- compiles grammar -->
+	<!-- compiles grammar, javacc path is hardcoded now for simplicity -->
 	<target name="compile-grammar">
 		<javacc
 		   target="./geogebra/kernel/parser/Parser.jj"
-		   javacchome="${javacc.home}"
+		   javacchome="${src.dir}/lib/build/javacc"
 		   static="false"
 		/>
 	</target>
