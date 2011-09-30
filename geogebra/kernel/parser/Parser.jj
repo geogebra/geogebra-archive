@@ -2098,7 +2098,9 @@ ExpressionNode numberFunction():
       		while (index >= 0) {
       			label = funcName.substring(0, index+1);
       			geo = kernel.lookupLabel(label);
-      			if (geo != null) break;
+      			// stop if f' is defined but f is not defined, see #1444
+      			if (geo != null && !(label.endsWith("\'") && (kernel.lookupLabel(label.substring(0, label.length()-1)) != null)))
+      				break;
       			if (c.image.charAt(index) == '\'') {
       				order++;
       				index--;
