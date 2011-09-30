@@ -596,11 +596,7 @@ office@geogebra.org
 		</copy>
 		<replace file="${build.dir}/unsigned/preload.html" 
 			token="VERSION_STRING" value="${fullversion}"/>
-		<copy file="${src.dir}/version.txt"
-		      tofile="${build.dir}/unpacked/version.txt">
-		</copy>
-		<replace file="${build.dir}/unpacked/version.txt" 
-			token="VERSION_STRING" value="${fullversion}"/>
+		<echo file="${build.dir}/unpacked/version.txt" append="false">${fullversion}</echo>
 	</target>
 
 </project>
