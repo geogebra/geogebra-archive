@@ -25,22 +25,28 @@ to ensure availability.
 	<echo message="****************"/>
 	</target>
 
-	<target name="kickstart-20110923" depends="mpreduce-geogebra, lib-runtime, jogl1, javacc, info">
+	<target name="kickstart-20110923" depends="mpreduce-geogebra, lib-runtime, jogl1, javacc, info"
+	    description="For Eclipse developers: to create GeoGebra 4 or 5 builds (temporarily suggested)">
 	</target>
 
-	<target name="geogebra4-developer" depends="mpreduce-geogebra, lib-runtime">
+	<target name="geogebra4-developer" depends="mpreduce-geogebra, lib-runtime"
+	    description="(not yet working) For Eclipse developers: to create GeoGebra 4 builds">
 	</target>
 
-	<target name="geogebra5-developer" depends="mpreduce-geogebra, lib-runtime, jogl1">
+	<target name="geogebra5-developer" depends="mpreduce-geogebra, lib-runtime, jogl1"
+	    description="(not yet working) For Eclipse developers: to create GeoGebra 5 builds">
 	</target>
 
-	<target name="geogebra4-developer-commandline" depends="geogebra4-developer, javacc, ecj">
+	<target name="geogebra4-developer-commandline" depends="geogebra4-developer, javacc, ecj"
+	    description="For command line developers (mostly Unix): to create GeoGebra 4 builds">	
 	</target>
 
-	<target name="geogebra4-packager" depends="geogebra4-developer, proguard, p200ant">
+	<target name="geogebra4-packager" depends="geogebra4-developer, proguard, p200ant"
+	    description="(not yet working) For JAR testers: to create GeoGebra 4 JAR packages">	
 	</target>
 
-	<target name="geogebra4-packager-commandline" depends="geogebra4-developer-commandline, proguard, p200ant">
+	<target name="geogebra4-packager-commandline" depends="geogebra4-developer-commandline, proguard, p200ant"
+	    description="(not yet working) For command line JAR testers (mostly Unix): to create GeoGebra 4 JAR packages">	
 	</target>
 
 	<!-- these targets should come from the GeoGebra repository (currently) -->
@@ -58,14 +64,17 @@ to ensure availability.
 
 	<!-- download all external libraries -->
 	<!--target name="lib" depends="lib-runtime, lib-build, lib-build-installer"-->
-	<target name="lib" depends="lib-runtime, lib-build">
+	<target name="lib" depends="lib-runtime, lib-build"
+	    description="Download all packages for the current OS and architecture">
 	</target>
 
-	<target name="lib-build" depends="mpreduce, javacc, ecj, proguard, p200ant, jogl1, jogl2">
+	<target name="lib-build" depends="mpreduce, javacc, ecj, proguard, p200ant, jogl1, jogl2, jsobject, mac_extensions"
+	    description="Download all packages needed for a full build for the current OS and architecture">
 	</target>
 
 	<!-- download runtime libraries -->
-	<target name="lib-runtime" depends="jlatexmath, jsobject, mac_extensions, vernier">
+	<target name="lib-runtime" depends="jlatexmath, vernier"
+	    description="Download all packages needed for runtime use">
 	</target>
 
 	<!-- detecting operating system and architecture -->
