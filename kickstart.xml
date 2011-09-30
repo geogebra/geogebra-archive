@@ -96,6 +96,10 @@ to ensure availability.
 		<os family="winnt" arch="amd64"/>
 	</condition>
 
+	<condition property="winnt">
+		<os family="winnt"/>
+	</condition>
+
 	<condition property="mac">
 		<os family="mac"/>
 	</condition>
@@ -154,13 +158,18 @@ to ensure availability.
 	</target>
 
 	<!-- download vernier from GeoGebra repository -->
-	<target name="vernier-geogebra">
+	<target name="vernier-geogebra" depends="vernier-common-geogebra, vernier-windows-geogebra"/>
+	
+	<target name="vernier-common-geogebra">
 	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-macintel-static.jar" dest="lib/vernier_ccsd-macintel-static.jar"
 	    usetimestamp="true"/>
 	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-mac-static.jar" dest="lib/vernier_ccsd-mac-static.jar"
 	    usetimestamp="true"/>
 	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-win.jar" dest="lib/vernier_ccsd-win.jar"
 	    usetimestamp="true"/>
+	</target>
+
+	<target name="vernier-windows-geogebra" if="winnt">
 	<unjar src="lib/vernier_ccsd-win.jar" dest="lib/">
 	    <patternset>
 		<include name="*.dll"/>
