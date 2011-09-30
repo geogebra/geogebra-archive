@@ -84,6 +84,8 @@ public class CASOutputPanel extends JPanel {
 	final public void setFont(Font ft) {
 		super.setFont(ft);
 		
+		if (ft == null) return;
+		
 		if (latexPanel != null)
 			latexPanel.setFont(ft.deriveFont(ft.getSize() + 2f));
 		
