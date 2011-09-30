@@ -90,7 +90,7 @@ public class CASmpreduce extends CASgeneric {
 		// convert parsed input to MPReduce string
 		String mpreduceInput = translateToCAS(casInput, ExpressionNode.STRING_TYPE_MPREDUCE);
 		
-		// tell MPReduce whether it should use the keep input flage, 
+		// tell MPReduce whether it should use the keep input flag, 
 		// e.g. important for Substitute
 		StringBuilder sb = new StringBuilder();
 		sb.append("<<keepinput!!:=");
@@ -193,8 +193,19 @@ public class CASmpreduce extends CASgeneric {
 					if (Character.isLetter(c) && (((int) c) < 97 || ((int) c) > 122)) {
 						sb.append('!');
 						sb.append(c);
-					} else
-						sb.append(c);
+					} else {
+						switch (c) {
+							case '\'':
+								sb.append('!');
+								sb.append(c);
+								break;
+						
+							default:
+								sb.append(c);
+								break;
+						}					
+					}
+						
 				}
 			}
 		}
@@ -353,10 +364,12 @@ public class CASmpreduce extends CASgeneric {
 				);
 		
 		mpreduce.evaluate("let {impart(arbint(~w)) => 0, arbint(~w)*i =>  0};");
-		mpreduce.evaluate("let {atan(sin(~x)/cos(~x))=>x};");
+		mpreduce.evaluate("let {atan(sin(~x)/cos(~x))=>x, " +
+				"acos(1/sqrt(2)) => pi/4" +
+				"};");
 		
 		mpreduce.evaluate("solverules:={" +
-				"tan(~x) => sin(x)/cos(x)" +
+				//"tan(~x) => sin(x)/cos(x)" +
 				"};");
 		
 		mpreduce.evaluate("procedure myatan2(y,x);" +
@@ -865,6 +878,21 @@ public class CASmpreduce extends CASgeneric {
 				" >> " +
 				"end;");
 		
+		mpreduce.evaluate("procedure getkernels(a);" +
+				"	for each element in a sum" +
+				"	  if arglength(element)=-1 then" +
+				"	    element" +
+				"	  else" +
+				"	    getkernels(part(element,0):=list)");
+
+		mpreduce.evaluate("procedure mymainvar a;" +
+				"mainvar(sub({e=0,i=0},getkernels(list(a))));");
+		
+		mpreduce.evaluate("procedure myint(exp!!, var!!, from!!, to!!);" +
+				"begin scalar integrand!!;" +
+				"antiderivative!!:=int(exp!!, var!!);" +
+				"return sub(var!!=to!!,antiderivative!!)-sub(var!!=from!!,antiderivative!!)" +
+				"end;");
 	}
 
 	private String getVersionString() {
