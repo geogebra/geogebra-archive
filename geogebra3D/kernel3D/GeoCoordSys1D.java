@@ -178,17 +178,10 @@ GeoLineND, GeoCoordSys{
 	}
 
 
-	/** returns cs unit */
+	/** @return cs unit */
 	public double getUnit(){
-		
-		/*
-		GgbVector v = getCoordSys().getVx();
-		
-		if (v==null)
-			return 0;
-		else
-		*/
-			return getCoordSys().getVx().norm();
+
+		return getCoordSys().getVx().norm();
 	}
 
 	

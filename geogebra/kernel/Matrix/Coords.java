@@ -123,6 +123,11 @@ public class Coords
 		calcNorm=calcSqNorm=true;
 	}
 	
+	public void set(double val0){
+		super.set(val0);
+		calcNorm=calcSqNorm=true;
+	}
+	
 	/** returns v(i)  
 	 * @param i number of the row
 	 * @return value*/
