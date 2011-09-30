@@ -380,11 +380,19 @@ public class CoordSys {
 	public boolean makeOrthoMatrix(boolean projectOrigin, boolean firstVectorParallelToXOY){
 		
 		
-		//if the coord sys is made, the drawing matrix is updated
-		if (!isMadeCoordSys())
-			return false;
+		
+		if (!isMadeCoordSys()){
+			if (dimension==1){ 
+				matrixOrthonormal.set(0);
+				if (getMadeCoordSys()==0)
+					matrixOrthonormal.setOrigin(getOrigin());
+				getVx().set(0);
+				return false;
+			}
 			
+		}
 
+		//if the coord sys is made, the drawing matrix is updated
 		if (dimension==1){ 
 			//compute Vy and Vz
 			Coords vy = (new Coords(new double[] {0,0,1,0})).crossProduct(getVx());
@@ -464,6 +472,7 @@ public class CoordSys {
 	public boolean isDefined() {
 		return isMadeCoordSys();
 	}
+	
 	
 	public void setUndefined() {
 		resetCoordSys();

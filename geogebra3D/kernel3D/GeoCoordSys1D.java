@@ -75,8 +75,6 @@ GeoLineND, GeoCoordSys{
 		coordsys.addPoint(o);
 		coordsys.addVector(v);
 		coordsys.makeOrthoMatrix(false,false);
-		//Application.debug("o=\n"+o+"\nv=\n"+v+"\ncoordsys=\n"+coordsys.getMatrixOrthonormal());
-		//Application.debug("o=\n"+o+"\nv=\n"+v+"\norigin=\n"+coordsys.getOrigin()+"\nVx=\n"+coordsys.getVx());
 	}
 	
 	
