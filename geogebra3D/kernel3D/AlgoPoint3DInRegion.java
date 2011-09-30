@@ -34,9 +34,11 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
         P = new GeoPoint3D(cons, region);
         
         setInputOutput(); // for AlgoElement
+        
+        //Application.printStacktrace(""+coords);
 
         if (coords!=null){
-        	P.setCoords(coords,false);  
+        	P.setCoords(coords);  
         	// compute 
         	compute();
         }
@@ -82,8 +84,8 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
 
     protected final void compute() {
     	
-    	
     	if (input[0].isDefined()) {	 
+	        //Application.debug("coords=\n"+P.getCoordsInD(3));
 	        region.regionChanged(P);
 	        //Application.debug("coords=\n"+P.getCoordsInD(3)+"\nrp=\n"+P.getRegionParameters().getT1()+"\n"+P.getRegionParameters().getT2());
 	        //P.updateCoords();
