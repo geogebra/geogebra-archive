@@ -162,7 +162,10 @@ to ensure availability.
 	<get src="http://www.geogebra.org/download/lib/vernier_ccsd-win.jar" dest="lib/vernier_ccsd-win.jar"
 	    usetimestamp="true"/>
 	<unjar src="lib/vernier_ccsd-win.jar" dest="lib/">
-			    <mapper type="glob" from="*" to="../*"/>
+	    <patternset>
+		<include name="*.dll"/>
+	    </patternset>
+	    <mapper type="glob" from="*" to="../*"/>
 	</unjar>
 	</target>
 
