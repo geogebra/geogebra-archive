@@ -3520,17 +3520,23 @@ public class ExpressionNode extends ValidExpression implements ReplaceableValue,
 			
 		case FUNCTION_NVAR:
 			if (valueForm) {
+				// TODO: avoid replacing of expressions in operationToString
 				if (left instanceof FunctionalNVar && right instanceof MyList) {
 					FunctionNVar func = ((FunctionalNVar) left).getFunction();
 					ExpressionNode en = func.expression.getCopy(kernel);
 					for (int i = 0; i < func.getVarNumber()
-							&& i < ((MyList) right).size(); i++)
+							&& i < ((MyList) right).size(); i++) {
 						en.replace(func.getFunctionVariables()[i],
 								((MyList) right).getListElement(i));
-					// sb.append(leftBracket(STRING_TYPE));
+					}
+					// add brackets, see http://www.geogebra.org/trac/ticket/1446
+					if (STRING_TYPE != STRING_TYPE_LATEX) 
+						sb.append(leftBracket(STRING_TYPE));
 					sb.append(en.toValueString());
-					// sb.append(rightBracket(STRING_TYPE));
-				} else {
+					if (STRING_TYPE != STRING_TYPE_LATEX) 
+						sb.append(rightBracket(STRING_TYPE));
+				} 
+				else {
 					sb.append(leftBracket(STRING_TYPE));
 					sb.append(leftStr);
 					sb.append(rightBracket(STRING_TYPE));
