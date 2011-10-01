@@ -6047,7 +6047,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			case GeoElement.GEO_CLASS_POLYGON:
 				// remove points and segments of poly
 				GeoPolygon poly = (GeoPolygon) geo;
-				GeoPoint [] points = poly.getPoints();
+				GeoPointND [] points = poly.getPoints();
 				for (int k=0; k < points.length; k++) {
 					tempArrayList.remove(points[k]);
 				}

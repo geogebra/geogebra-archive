@@ -16,6 +16,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -405,10 +406,10 @@ implements EuclidianViewCE {
 	 */
 	private void initPolygon(GeoPolygon macroPoly, GeoPolygon poly) {								
 		// points
-		GeoPoint [] macroPolyPoints = macroPoly.getPoints();
+		GeoPointND [] macroPolyPoints = macroPoly.getPoints();
 		GeoPoint [] polyPoints = new GeoPoint[macroPolyPoints.length];										
 		for (int i=0; i < macroPolyPoints.length; i++) {
-			polyPoints[i] = (GeoPoint) getAlgoGeo( macroPolyPoints[i] );	
+			polyPoints[i] = (GeoPoint) getAlgoGeo( (GeoElement) macroPolyPoints[i] );	
 		}
 		poly.setPoints(polyPoints);
 		

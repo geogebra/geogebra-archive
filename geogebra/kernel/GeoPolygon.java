@@ -499,8 +499,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * Note that this array may change dynamically.
 	 * @return points of this polygon.
 	 */
-	public GeoPoint [] getPoints() {
-		return (GeoPoint[]) points;
+	public GeoPointND [] getPoints() {
+		return points;
 	}
 	
 	/**

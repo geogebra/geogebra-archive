@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 /**
@@ -67,7 +68,7 @@ public class AlgoAnglePolygon extends AlgoElement {
     }
 
     private void createAngles() {
-        GeoPoint[] points = getPoints(poly);
+        GeoPointND[] points = getPoints(poly);
         angles = new GeoAngle[points.length];
         algos = new AlgoAnglePoints[points.length];
 
@@ -76,9 +77,9 @@ public class AlgoAnglePolygon extends AlgoElement {
                 new AlgoAnglePoints(
                     cons,
                     this,
-                    points[(i + 1) % points.length],
-                    points[i % points.length],
-                    points[(i + points.length - 1) % points.length]);
+                    (GeoPoint) points[(i + 1) % points.length],
+                    (GeoPoint) points[i % points.length],
+                    (GeoPoint) points[(i + points.length - 1) % points.length]);
             //  this is only an internal Algorithm that shouldn't be in the construction list
             cons.removeFromConstructionList(algos[i]);
             angles[i] = algos[i].getAngle();
@@ -93,12 +94,12 @@ public class AlgoAnglePolygon extends AlgoElement {
         }
     }
     
-    private GeoPoint[] getPoints(GeoPolygon poly) {    	
+    private GeoPointND[] getPoints(GeoPolygon poly) {    	
     	boolean sup = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
-    	GeoPoint[] points = poly.getPoints();
+    	GeoPointND[] points = poly.getPoints();
     	for(int i=0;i<poly.getPointsLength();i++)
-		if(!points[i].isLabelSet() && points[i].isIndependent()){		
+		if(!points[i].isLabelSet() && ((GeoElement) points[i]).isIndependent()){		
 			points[i]=kernel.Vertex(null, poly, new MyDouble(kernel,i+1));
 		}			
 		cons.setSuppressLabelCreation(sup);

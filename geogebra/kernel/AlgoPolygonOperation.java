@@ -16,6 +16,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.GeneralPathClipped;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.awt.geom.Area;
@@ -132,7 +133,7 @@ public class AlgoPolygonOperation extends AlgoElement {
 		else {
 			// size = poly + points + segments
 			GeoSegmentND[] segments = poly.getSegments();
-			GeoPoint[] points = poly.getPoints();
+			GeoPointND[] points = poly.getPoints();
 			int size = 1 + segments.length + points.length;
 
 			output = new GeoElement[size];
@@ -144,7 +145,7 @@ public class AlgoPolygonOperation extends AlgoElement {
 			}
 
 			for (int i = 0; i < points.length; i++) {
-				output[++k] = points[i];
+				output[++k] = (GeoElement) points[i];
 			}
 		}
 	}
@@ -159,7 +160,7 @@ public class AlgoPolygonOperation extends AlgoElement {
 	/**
 	 * Convert array of polygon GeoPoints to an Area object
 	 */
-	private Area getArea(GeoPoint[] points) {
+	private Area getArea(GeoPointND[] points) {
 
 		double [] coords = new double[2]; 
 		GeneralPathClipped gp = new GeneralPathClipped(ev);

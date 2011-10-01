@@ -186,8 +186,8 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	  * Returns the 2D points of this polygon.
 	  * Note that this array may change dynamically.
 	  */
-	 public GeoPoint [] getPoints() {
-		 return (GeoPoint []) points2D;
+	 public GeoPointND [] getPoints() {
+		 return points2D;
 	 }
 
 

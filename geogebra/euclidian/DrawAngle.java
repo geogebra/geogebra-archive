@@ -186,15 +186,15 @@ public class DrawAngle extends Drawable implements Previewable {
 
 			GeoAngle[] angles = va.getAngles();
 			
-			GeoPoint[] points = va.getPolygon().getPoints();
+			GeoPointND[] points = va.getPolygon().getPoints();
 			
 			int l = points.length;		
 			
 			for (int i = 0 ; i < angles.length ; i++) {
 				if (angles[i] == angle) {
-					point2 = points[(i - 1 + l) % l];
-					vertex = points[i];
-					point = points[(i + 1) % l];
+					point2 = (GeoPoint) points[(i - 1 + l) % l];
+					vertex = (GeoPoint) points[i];
+					point = (GeoPoint) points[(i + 1) % l];
 					break;
 				}
 			}

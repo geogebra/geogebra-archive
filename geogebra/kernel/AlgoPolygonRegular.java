@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     	else {
 	    	// size = poly + points (without A, B) + segments
 	    	GeoSegmentND[] segments = poly.getSegments();
-	    	GeoPoint [] points = poly.getPoints();
+	    	GeoPointND [] points = poly.getPoints();
 	        int size = 1 + segments.length + points.length - 2; 
 	       
 	        output = new GeoElement[size];   
@@ -143,7 +144,7 @@ public class AlgoPolygonRegular extends AlgoElement {
 	        }    
 	        
 	        for (int i=2; i < points.length; i++) {
-	            output[++k] = points[i];            
+	            output[++k] = (GeoElement) points[i];            
 	        }         
     	}
         

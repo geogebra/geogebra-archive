@@ -17,6 +17,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
 
 /**
@@ -42,7 +43,10 @@ public class MacroProcessor extends CommandProcessor {
 			// check if we have a polygon in the arguments
 			// if yes, let's use its points
 			if (arg.length > 0 && arg[0].isGeoPolygon()) {
-				arg = ((GeoPolygon) arg[0]).getPoints();
+				GeoPointND[] points = ((GeoPolygon) arg[0]).getPoints();				
+				arg = new GeoElement[points.length];
+				for (int i=0; i<points.length; i++)
+					arg[i]=(GeoElement) points[i];
 				lengthOk = arg.length == macroInputTypes.length;
 			}
 			

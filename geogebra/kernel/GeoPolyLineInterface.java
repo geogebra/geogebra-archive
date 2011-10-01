@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 
 
 public interface GeoPolyLineInterface {
@@ -15,7 +17,7 @@ public interface GeoPolyLineInterface {
 	 */
 	public boolean isVertexCountFixed() ;
 	
-	public GeoPoint[] getPoints(); 
+	public GeoPointND[] getPoints(); 
 	
 	public GeoPoint getPoint(int i);
 	
@@ -26,5 +28,6 @@ public interface GeoPolyLineInterface {
 	public void toGeoCurveCartesian(GeoCurveCartesian outGeo);
 
 	public Path getBoundary();
+
 
 }

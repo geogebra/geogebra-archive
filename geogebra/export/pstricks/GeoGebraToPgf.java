@@ -33,10 +33,12 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.kernel.implicit.GeoImplicitPoly;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
@@ -874,11 +876,12 @@ public class GeoGebraToPgf extends GeoGebraExport {
     		s="["+s+"] ";
     		codeFilledObject.append(s);
     	}
-    	GeoPoint [] points = geo.getPoints();	
+    	GeoPointND [] points = geo.getPoints();	
     	for (int i=0;i<points.length;i++){
-    		double x=points[i].getX();
-    		double y=points[i].getY();
-    		double z=points[i].getZ();
+    		Coords coords = points[i].getCoordsInD(2);
+            double x = coords.getX(),
+                   y = coords.getY(),
+                   z = coords.getZ();
      		x=x/z;
     		y=y/z;
     		writePoint(x,y,codeFilledObject);

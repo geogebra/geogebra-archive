@@ -39,11 +39,13 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.kernel.implicit.GeoImplicitPoly;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
@@ -840,14 +842,15 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
     }
     
     protected void drawPolygon(GeoPolygon geo){
-        GeoPoint[] points = geo.getPoints();
+        GeoPointND[] points = geo.getPoints();
         // StringBuilder tempsb = new StringBuilder();
         
         startTransparentFill(codeFilledObject);
         for (int i = 0; i < points.length; i++){
-            double x = points[i].getX(),
-                   y = points[i].getY(),
-                   z = points[i].getZ();
+        	Coords coords = points[i].getCoordsInD(2);
+            double x = coords.getX(),
+                   y = coords.getY(),
+                   z = coords.getZ();
             x = x / z; y = y / z;
             addPoint(kernel.format(x),kernel.format(y),codeFilledObject);
             codeFilledObject.append("--");

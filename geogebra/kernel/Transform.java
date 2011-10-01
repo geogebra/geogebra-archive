@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.util.GgbMat;
 
 import org.apache.commons.math.linear.LUDecompositionImpl;
@@ -116,11 +117,11 @@ public abstract class Transform {
 		}
 
 		// use visibility of points for transformed points
-		GeoPoint[] oldPoints = oldPoly.getPoints();
+		GeoPointND[] oldPoints = oldPoly.getPoints();
 		for (int i = 0; i < oldPoints.length; i++) {
-			transformedPoints[i].setEuclidianVisible(oldPoints[i]
+			transformedPoints[i].setEuclidianVisible(((GeoElement) oldPoints[i])
 					.isSetEuclidianVisible());
-			transformedPoints[i].setVisualStyleForTransformations(oldPoints[i]);
+			transformedPoints[i].setVisualStyleForTransformations((GeoElement) oldPoints[i]);
 			cons.getKernel().notifyUpdate(transformedPoints[i]);
 		}
 		
@@ -147,13 +148,13 @@ public abstract class Transform {
 	 * @param points
 	 * @return array of transformed points
 	 */
-	public GeoPoint[] transformPoints(GeoPoint[] points) {
+	public GeoPoint[] transformPoints(GeoPointND[] points) {
 		// dilate all points
 		GeoPoint[] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {
-			String pointLabel = transformedGeoLabel(points[i]);
-			newPoints[i] = (GeoPoint) transform(points[i], pointLabel)[0];
-			newPoints[i].setVisualStyleForTransformations(points[i]);
+			String pointLabel = transformedGeoLabel((GeoElement) points[i]);
+			newPoints[i] = (GeoPoint) transform((GeoElement) points[i], pointLabel)[0];
+			newPoints[i].setVisualStyleForTransformations((GeoElement) points[i]);
 		}
 		return newPoints;
 	}
