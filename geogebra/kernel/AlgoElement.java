@@ -999,6 +999,13 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         } else {
             // translate algorithm class name to internal command name
             cmdname = getCommandString(classname);
+            
+            if (kernel.isUseTempVariablePrefix()) {
+	    		// protect GeoGebra commands when sent to CAS
+	    		// e.g. Element[list, 1] becomes ggbtmpvarElement[list, 1] to
+	    		// make sure that the CAS does not evaluate this command, see #1447
+	    		cmdname = kernel.printVariableName(cmdname);
+	    	}
         }
         return cmdname;
     }   
