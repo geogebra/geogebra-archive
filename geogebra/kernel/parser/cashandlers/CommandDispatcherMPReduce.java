@@ -60,7 +60,9 @@ public class CommandDispatcherMPReduce {
 				case df:
 					// e.g. df(f(var),var) from MPReduce becomes f'(var)
 					// see http://www.geogebra.org/trac/ticket/1420
-					String funLabel = ((GeoElement) ((ExpressionNode) args.getListElement(0)).getLeft()).getLabel();
+					String expStr = args.getListElement(0).toString();
+					int nameEnd = expStr.indexOf('(');
+					String funLabel = nameEnd > 0 ? expStr.substring(0, nameEnd) : expStr;
 					
 					// derivative of f gives f'
 					ExpressionNode derivative = new ExpressionNode(kernel,
