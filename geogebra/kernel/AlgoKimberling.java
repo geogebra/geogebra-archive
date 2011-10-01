@@ -1,13 +1,15 @@
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 /**
- * @author Victor Franco Espino
- * @version 11-02-2007
+ * @author Zbynek Konecny, credit goes to Jason Cantarella of the Univerity of Georgia
+ * for creating a perl script which was used to create this class.
+ * @version 30-09-2011
  * 
- *          This class calculate affine ratio of 3 points: (A,B,C) = (t(C)-t(A))
- *          : (t(C)-t(B))
+ *  This class calculates n-th Kimberling point of a triangle. 
+ *          
  */
 
 public class AlgoKimberling extends AlgoElement {
@@ -62,30 +64,36 @@ public class AlgoKimberling extends AlgoElement {
 		double c = A.distance(B);
 		double b = C.distance(A);
 		double a = B.distance(C);
-
+		/*double m = Math.min(Math.min(a, b), c);
+		a = a/m;
+		b= b/m;
+		c= c/m;*/
 		int k = (int) n.getDouble();
 		double wA = weight(k, a, b, c);
 		double wB = weight(k, b, c, a);
 		double wC = weight(k, c, a, b);
 		double w = wA + wB + wC;
-		M.setCoords((A.x / A.z * wA + B.x / B.z * wB + C.x / C.z * wC) / w,
-				(A.y / A.z * wA + B.y / B.z * wB + C.y / C.z * wC) / w, 1);
+		if(Double.isNaN(w) ||Kernel.isZero(w))
+			M.setUndefined();
+		else	
+			M.setCoords((A.x / A.z * wA + B.x / B.z * wB + C.x / C.z * wC) / w,
+				(A.y / A.z * wA + B.y / B.z * wB + C.y / C.z * wC) / w, 1);		
 	}
 
 	private double weight(int k, double a, double b, double c) {
 		if(k<1000)
-			return weight1(k,a,b,c);
-		if(k<1400)
-			return weight2(k,a,b,c);			
+			return weight0to1000(k,a,b,c);
+		if(k<1500)
+			return weight1000to1499(k,a,b,c);			
 		if(k<2000)				
-			return weight25(k,a,b,c);
+			return weight1500to1999(k,a,b,c);
 		if(k<2500)				
-			return weight3(k,a,b,c);
+			return weight2000to2500(k,a,b,c);
 		if(k<2800)				
-			return weight35(k,a,b,c);
-		return weight38(k,a,b,c);
+			return weight2500to2799(k,a,b,c);
+		return weight2800plus(k,a,b,c);
 	}
-	private double weight1(int k, double a, double b, double c) {
+	private double weight0to1000(int k, double a, double b, double c) {
 		double   
 		a2 = a * a,a3=a*a2,a4=a*a3,a5=a*a4,a6=a*a5,a7=a*a6,a8=a*a7,a9=a*a8,a10=a*a9,
 		b2 = b * b,b3=b*b2,b4=b*b3,b5=b*b4,b6=b*b5,b7=b*b6,b8=b*b7,b9=b*b8,b10=b*b9,		
@@ -2093,7 +2101,7 @@ public class AlgoKimberling extends AlgoElement {
 			return Double.NaN;
 		}
 	}
-	private double weight2(int k, double a, double b, double c) {
+	private double weight1000to1499(int k, double a, double b, double c) {
 				double   
 				a2 = a * a,a3=a*a2,a4=a*a3,a5=a*a4,a6=a*a5,a7=a*a6,a8=a*a7,a9=a*a8,a10=a*a9,
 				b2 = b * b,b3=b*b2,b4=b*b3,b5=b*b4,b6=b*b5,b7=b*b6,b8=b*b7,		
@@ -3107,7 +3115,7 @@ public class AlgoKimberling extends AlgoElement {
 			return Double.NaN;
 				}
 		}
-		private double weight25(int k, double a, double b, double c) {
+		private double weight1500to1999(int k, double a, double b, double c) {
 					double   
 					a2 = a * a,a3=a*a2,a4=a*a3,a5=a*a4,a6=a*a5,a7=a*a6,a8=a*a7,a9=a*a8,a10=a*a9,
 					b2 = b * b,b3=b*b2,b4=b*b3,b5=b*b4,b6=b*b5,b7=b*b6,b8=b*b7,b9=b*b8,b10=b*b9,		
@@ -4122,7 +4130,7 @@ public class AlgoKimberling extends AlgoElement {
 			return Double.NaN;
 				}
 	}
-	private double weight3(int k, double a, double b, double c) {
+	private double weight2000to2500(int k, double a, double b, double c) {
 				double   
 				a2 = a * a,a3=a*a2,a4=a*a3,a5=a*a4,a6=a*a5,a7=a*a6,a8=a*a7,a9=a*a8,a10=a*a9,
 				b2 = b * b,b3=b*b2,b4=b*b3,b5=b*b4,b6=b*b5,b7=b*b6,b8=b*b7,b9=b*b8,b10=b*b9,		
@@ -5134,7 +5142,7 @@ public class AlgoKimberling extends AlgoElement {
 		default: return Double.NaN;	
 				}				
 		}
-		private double weight35(int k, double a, double b, double c) {
+		private double weight2500to2799(int k, double a, double b, double c) {
 					double   
 					a2 = a * a,a3=a*a2,a4=a*a3,a5=a*a4,a6=a*a5,a7=a*a6,a8=a*a7,a9=a*a8,a10=a*a9,
 					b2 = b * b,b3=b*b2,b4=b*b3,b5=b*b4,b6=b*b5,b7=b*b6,b8=b*b7,b9=b*b8,b10=b*b9,		
@@ -5745,7 +5753,7 @@ public class AlgoKimberling extends AlgoElement {
 		default: return Double.NaN;
 					}
 		}
-		private double weight38(int k, double a, double b, double c) {
+		private double weight2800plus(int k, double a, double b, double c) {
 				double   
 				a2 = a * a,a3=a*a2,a4=a*a3,a5=a*a4,a6=a*a5,a7=a*a6,a8=a*a7,a9=a*a8,a10=a*a9,
 				b2 = b * b,b3=b*b2,b4=b*b3,b5=b*b4,b6=b*b5,b7=b*b6,b8=b*b7,b9=b*b8,b10=b*b9,		
