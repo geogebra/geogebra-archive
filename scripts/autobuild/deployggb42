@@ -73,6 +73,15 @@ for i in unpacked debug; do
   sed s/ENDDIR/$i/g \
   > $WWWDIR/history/$MYVER/$i/geogebra-$MYVER_DASHED.jnlp
  done
+ 
+# 4/5. Superfast webstart:
+mkdir -p $WWWDIR/$MYDIR/jnlp
+cd $WWWDIR/$MYDIR/unpacked
+for i in *.jar; do
+ cd $WWWDIR/$MYDIR/jnlp
+ ln -s ../unpacked/$i
+ ln -s ../packed/$i.pack.gz
+ done
 
 echo "$0: JAR files copied to 4.2 and history/$MYVER"
 
