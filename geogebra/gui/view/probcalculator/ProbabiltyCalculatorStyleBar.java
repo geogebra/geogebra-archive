@@ -1,7 +1,5 @@
 package geogebra.gui.view.probcalculator;
 
-import geogebra.gui.util.GeoGebraIcon;
-import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.main.Application;
 
@@ -9,11 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JButton;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.MenuElement;
 
 /**
  * StyleBar for the ProbabilityCalculator view
@@ -25,8 +25,9 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 	private Application app;
 	private ProbabilityCalculator probCalc;
 	protected int iconHeight = 18;
-	private PopupMenuButton btnOptions;
-	private JMenu menuDecimalPlaces;
+	private JButton btnRounding;
+	private JToggleButton btnCumulative, btnLineGraph, btnGrid;
+	private JPopupMenu roundingPopup;
 
 	public ProbabiltyCalculatorStyleBar(Application app, ProbabilityCalculator probCalc){
 
@@ -40,7 +41,45 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 	private void createGUI(){
 		this.removeAll();	
 		buildOptionsButton();
-		add(btnOptions); 
+		
+		
+		btnCumulative = new JToggleButton(app.getImageIcon("cumulative_distribution.png"));
+		btnCumulative.setSelected(probCalc.isCumulative());
+		btnCumulative.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				probCalc.setCumulative(!probCalc.isCumulative());
+			}
+		});
+		
+		
+		btnLineGraph = new JToggleButton(app.getImageIcon("line_graph.png"));
+		btnLineGraph.setSelected(probCalc.isLineGraph());
+		btnLineGraph.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				probCalc.setLineGraph(!probCalc.isLineGraph());
+				probCalc.updateAll();
+			}
+		});
+		
+		
+		btnGrid = new JToggleButton(app.getImageIcon("grid.gif"));
+		btnGrid.setSelected(probCalc.getPlotSettings().showGrid);
+		btnGrid.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				PlotSettings ps = probCalc.getPlotSettings();
+				ps.showGrid = !ps.showGrid;
+				probCalc.setPlotSettings(ps);
+				probCalc.updatePlotSettings();
+			}
+		});
+			
+		
+		
+		add(btnRounding); 
+		add(btnCumulative); 
+		add(btnLineGraph); 
+		//add(btnGrid);  (grid doesn't work well with discrete graphs and point capturing)
+		
 	}
 	
 	public void setLabels(){
@@ -53,68 +92,21 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 	 */
 	private void buildOptionsButton(){
 
-		btnOptions = new PopupMenuButton(app);
-		btnOptions.setKeepVisible(true);
-		btnOptions.setStandardButton(true);
-		btnOptions.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(iconHeight));
-		btnOptions.setDownwardPopup(true);
-		btnOptions.setText(app.getMenu("Options"));
+		btnRounding = new JButton(app.getImageIcon("triangle-down.png"));	
+		btnRounding.setHorizontalTextPosition(JButton.LEFT); 
+		btnRounding.setHorizontalAlignment(JButton.LEFT);
+		btnRounding.setText(app.getMenu("Rounding"));
+		roundingPopup = createRoundingPopup();
 		
-		JMenuItem menuItem;
-
-		btnOptions.addPopupMenuItem(this.createMenuDecimalPlaces());
-
-		menuItem = new JCheckBoxMenuItem(app.getMenu("Cumulative"));
-		menuItem.setSelected(probCalc.isCumulative());
-		menuItem.addActionListener(new ActionListener(){
+		btnRounding.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				probCalc.setCumulative(!probCalc.isCumulative());
-				//probCalc.updateDistribution();
-				//probCalc.updatePlotSettings();
-				probCalc.updateAll();
+				// popup appears below the button
+				roundingPopup.show(getParent(), btnRounding.getLocation().x,btnRounding.getLocation().y + btnRounding.getHeight());
 			}
 		});
-		btnOptions.addPopupMenuItem(menuItem);
-		
-		
-		menuItem = new JCheckBoxMenuItem(app.getPlain("Lines"));
-		menuItem.setSelected(probCalc.isCumulative());
-		menuItem.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				probCalc.setBarGraph(!probCalc.isBarGraph());
-				//probCalc.updateDistribution();
-				//probCalc.updatePlotSettings();
-				probCalc.updateAll();
-			}
-		});
-		btnOptions.addPopupMenuItem(menuItem);
-		
-		
-
-
-		menuItem = new JCheckBoxMenuItem(app.getPlain("ShowGrid"));
-		menuItem.setSelected(probCalc.getPlotSettings().showGrid);
-		menuItem.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				PlotSettings ps = probCalc.getPlotSettings();
-				ps.showGrid = !ps.showGrid;
-				probCalc.setPlotSettings(ps);
-				probCalc.updatePlotSettings();
-			}
-		});
-		//btnOptions.addPopupMenuItem(menuItem);
-
-		menuItem = new JMenuItem(app.getPlain("Export") + "..." );
-		menuItem.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		menuItem.setEnabled(false);
-		btnOptions.addPopupMenuItem(menuItem);
-		updateMenuDecimalPlaces();
-
-		
+	
+		updateMenuDecimalPlaces(roundingPopup);
+	
 	}
 
 
@@ -122,11 +114,11 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 	/**
 	 * Update the menu with the current number format.
 	 */
-	private void updateMenuDecimalPlaces() {
+	private void updateMenuDecimalPlaces(JPopupMenu menu) {
 		int printFigures = probCalc.getPrintFigures();
 		int printDecimals = probCalc.getPrintDecimals();
 
-		if (menuDecimalPlaces == null)
+		if (menu == null)
 			return;
 		int pos = -1;
 
@@ -139,23 +131,28 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 		}
 
 		try {
-			((JRadioButtonMenuItem) menuDecimalPlaces.getMenuComponent(pos))
-			.setSelected(true);
+			MenuElement[] m = menu.getSubElements();
+			((JRadioButtonMenuItem)m[pos]).setSelected(true);
 		} catch (Exception e) {
 		}
 
 	}
 
-	private JMenu createMenuDecimalPlaces(){
-		menuDecimalPlaces = new JMenu(app.getMenu("Rounding"));
+		
+	private JPopupMenu createRoundingPopup(){
+		JPopupMenu menu = new JPopupMenu();
 		String[] strDecimalSpaces = app.getRoundingMenu();
 
-		addRadioButtonMenuItems(menuDecimalPlaces, (ActionListener) this,
+		addRadioButtonMenuItems(menu, (ActionListener) this,
 				strDecimalSpaces, Application.strDecimalSpacesAC, 0);
 
-		return menuDecimalPlaces;
+		return menu;
 	}
-
+	
+	
+	
+	
+	
 
 	/**
 	 * Create a set of radio buttons automatically.
@@ -189,6 +186,44 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 		}
 	}
 
+	
+	
+	/**
+	 * Create a set of radio buttons automatically.
+	 * 
+	 * @param menu
+	 * @param al
+	 * @param items
+	 * @param actionCommands
+	 * @param selectedPos
+	 */
+	private void addRadioButtonMenuItems(JPopupMenu menu, ActionListener al,
+			String[] items, String[] actionCommands, int selectedPos) {
+		JRadioButtonMenuItem mi;
+		ButtonGroup bg = new ButtonGroup();
+		// String label;
+
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] == "---") {
+				menu.addSeparator();
+			} else {
+				String text = app.getMenu(items[i]);
+				mi = new JRadioButtonMenuItem(text);
+				mi.setFont(app.getFontCanDisplay(text));
+				if (i == selectedPos)
+					mi.setSelected(true);
+				mi.setActionCommand(actionCommands[i]);
+				mi.addActionListener(al);
+				bg.add(mi);
+				menu.add(mi);
+			}
+		}
+	}
+	
+	
+	
+	
+	
 
 	public void actionPerformed(ActionEvent e) {
 
@@ -221,9 +256,5 @@ public class ProbabiltyCalculatorStyleBar extends JToolBar implements ActionList
 		}
 
 	}
-
-
-
-
 
 }

@@ -36,10 +36,20 @@ public class AlgoRayPointVector extends AlgoElement {
      * @param v
      */
     AlgoRayPointVector(
-        Construction cons,
-        String label,
-        GeoPoint P,
-        GeoVector v) {
+        Construction cons, String label, GeoPoint P, GeoVector v) {
+    	this(cons, P, v);
+        ray.setLabel(label);
+    }
+
+    
+    /**
+     * Creates new ray algo
+     * @param cons
+     * @param P
+     * @param v
+     */
+    public AlgoRayPointVector(
+        Construction cons, GeoPoint P, GeoVector v) {
         super(cons);
         this.P = P;
         this.v = v;
@@ -49,9 +59,13 @@ public class AlgoRayPointVector extends AlgoElement {
         // compute line through P, Q
         compute();
         setIncidence();
-        ray.setLabel(label);
     }
-
+    
+    
+    
+    
+    
+    
     private void setIncidence() {
     	P.addIncidence(ray);
 	}

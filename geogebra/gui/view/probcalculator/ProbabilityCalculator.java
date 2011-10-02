@@ -7,9 +7,12 @@ import geogebra.gui.view.spreadsheet.statdialog.PlotPanelEuclidianView;
 import geogebra.gui.view.spreadsheet.statdialog.PlotSettings;
 import geogebra.kernel.AlgoBarChart;
 import geogebra.kernel.AlgoDependentNumber;
+import geogebra.kernel.AlgoDependentPoint;
 import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.AlgoPointOnPath;
+import geogebra.kernel.AlgoRayPointVector;
 import geogebra.kernel.AlgoSequence;
 import geogebra.kernel.AlgoTake;
 import geogebra.kernel.Construction;
@@ -22,11 +25,15 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoRay;
+import geogebra.kernel.GeoSegment;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.cas.AlgoIntegralDefinite;
 import geogebra.kernel.statistics.AlgoBinomialDist;
@@ -104,7 +111,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 	private final static int maxParameterCount = 3; // maximum number of parameters allowed for a distribution
 	private double[] parameters;
 	private boolean isCumulative = false;
-	private boolean isBarGraph = false;
+	private boolean isLineGraph = false;
 
 	// maps for the distribution ComboBox 
 	private HashMap<Integer, String> distributionMap;
@@ -113,8 +120,8 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 	// GeoElements
 	private ArrayList<GeoElement> plotGeoList;
-	private GeoPoint lowPoint, highPoint;
-	private GeoElement densityCurve, integral;
+	private GeoPoint lowPoint, highPoint, curvePoint;
+	private GeoElement densityCurve, integral, ySegment, xSegment;
 	private GeoElement discreteGraph, discreteIntervalGraph;
 	private GeoList discreteValueList, discreteProbList, intervalProbList, intervalValueList;
 	//private GeoList parmList;
@@ -179,6 +186,8 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 
 	private boolean removeFromConstruction = true;
+
+
 
 	private static final double nearlyOne = 1 - 1E-6;
 
@@ -269,14 +278,29 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		return isCumulative;
 	}
 	public void setCumulative(boolean isCumulative) {
+
+		if(this.isCumulative == isCumulative) return;
+
 		this.isCumulative = isCumulative;
+		
+		// in cumulative mode only left-sided intervals are allowed
+		setProbabilityComboBoxMenu();
+		if(!isCumulative)
+			// make sure left-sided is still selected when reverting to non-cumulative mode
+			comboProbType.setSelectedIndex(PROB_LEFT);
+		updateAll();
+		
 	}
 
-	public boolean isBarGraph() {
-		return isBarGraph;
+	public boolean isLineGraph() {
+		return isLineGraph;
 	}
-	public void setBarGraph(boolean isBarGraph) {
-		this.isBarGraph = isBarGraph;
+	
+	public void setLineGraph(boolean isLineGraph) {
+		if(this.isLineGraph = isLineGraph) return;
+		
+		this.isLineGraph = isLineGraph;
+		updateAll();
 	}
 
 
@@ -427,7 +451,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 		lblParameterArray = new JLabel[maxParameterCount];
 		fldParameterArray = new JTextField[maxParameterCount];
-		sliderArray = new JSlider[maxParameterCount];
+		//	sliderArray = new JSlider[maxParameterCount];
 
 		for(int i = 0; i < maxParameterCount; ++i){
 			lblParameterArray[i] = new JLabel();
@@ -435,9 +459,9 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 			fldParameterArray[i].setColumns(6);
 			fldParameterArray[i].addActionListener(this);
 			fldParameterArray[i].addFocusListener(this);
-			sliderArray[i] = new JSlider();
-			sliderArray[i].setPreferredSize(fldParameterArray[i].getPreferredSize());
-			sliderArray[i].addChangeListener(this);
+			//	sliderArray[i] = new JSlider();
+			//	sliderArray[i].setPreferredSize(fldParameterArray[i].getPreferredSize());
+			//	sliderArray[i].addChangeListener(this);
 
 
 			Box hBox = Box.createHorizontalBox();
@@ -449,7 +473,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 			JPanel fldSliderPanel = new JPanel(new BorderLayout());
 			fldSliderPanel.add(fldParameterArray[i], BorderLayout.NORTH);
-			fldSliderPanel.add(sliderArray[i], BorderLayout.SOUTH);
+			//	fldSliderPanel.add(sliderArray[i], BorderLayout.SOUTH);
 
 			JPanel fullParmPanel = new JPanel(new BorderLayout());
 			fullParmPanel.add(labelPanel, BorderLayout.WEST);
@@ -591,6 +615,11 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		setXAxisPoints();
 
 
+
+
+
+
+
 		if(probManager.isDiscrete(selectedDist)){   
 
 			// discrete distribution 
@@ -602,9 +631,9 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 
 			AlgoBarChart algoBarChart;
-			if(isBarGraph){
-				NumberValue width = new GeoNumeric(cons, 0);
-				algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList, width);
+			if(isLineGraph){
+				NumberValue zeroWidth = new GeoNumeric(cons, 0);
+				algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList, zeroWidth);
 			}else{
 				algoBarChart = new AlgoBarChart(cons, discreteValueList, discreteProbList);
 			}
@@ -623,11 +652,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 
 			// create discrete interval bar graph and associated lists
-			//expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
-			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
-			//intervalProbList  = (GeoList) createGeoFromString(expr);
-
-
+			
 			// Use Take[] to create a subset of the full discrete graph:
 			//     Take[discreteList, x(lowPoint) + offset, x(highPoint) + offset] 
 			//
@@ -641,37 +666,35 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 			ExpressionNode low = new ExpressionNode(kernel, lowPoint, ExpressionNode.XCOORD, null);
 			ExpressionNode high = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);				
 			ExpressionNode lowPlusOffset = new ExpressionNode(kernel, low, ExpressionNode.PLUS, offset);
-			ExpressionNode highPlusOffset = new ExpressionNode(kernel, high, ExpressionNode.PLUS, offset);				
-
-			AlgoDependentNumber xLow = new AlgoDependentNumber(cons, lowPlusOffset, false);
+			ExpressionNode highPlusOffset = new ExpressionNode(kernel, high, ExpressionNode.PLUS, offset);	
+			
+			AlgoDependentNumber xLow;
+			if(isCumulative)
+				// for cumulative bar graphs we only show a single bar
+				xLow = new AlgoDependentNumber(cons, highPlusOffset, false);
+			else
+				xLow = new AlgoDependentNumber(cons, lowPlusOffset, false);
 			cons.removeFromConstructionList(xLow);
+			
 			AlgoDependentNumber xHigh = new AlgoDependentNumber(cons, highPlusOffset, false);
 			cons.removeFromConstructionList(xHigh);
 
-			AlgoTake take2 = new AlgoTake(cons, (GeoList)discreteProbList, (GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
-			cons.removeFromConstructionList(take2);
-
-			intervalProbList = (GeoList) take2.getGeoElements()[0];
-
-			//expr = "Take[" + discreteValueList.getLabel()  + ", x(" 
-			//+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
-			//intervalValueList  = (GeoList) createGeoFromString(expr);
-
-			AlgoTake take = new AlgoTake(cons, (GeoList)discreteValueList, (GeoNumeric) xLow.getGeoElements()[0], (GeoNumeric) xHigh.getGeoElements()[0]);
+			
+			AlgoTake take = new AlgoTake(cons, (GeoList)discreteValueList, 
+					(GeoNumeric) xLow.getGeoElements()[0], (GeoNumeric) xHigh.getGeoElements()[0]);
 			cons.removeFromConstructionList(take);
-
-
 			intervalValueList = (GeoList) take.getGeoElements()[0];
-
-
-			//expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
-			//discreteIntervalGraph  = createGeoFromString(expr);
+			
+			AlgoTake take2 = new AlgoTake(cons, (GeoList)discreteProbList, 
+					(GeoNumeric)xLow.getGeoElements()[0], (GeoNumeric)xHigh.getGeoElements()[0]);
+			cons.removeFromConstructionList(take2);
+			intervalProbList = (GeoList) take2.getGeoElements()[0];
 
 
 			AlgoBarChart barChart;
-			if(isBarGraph){
-				NumberValue width2 = new GeoNumeric(cons, 0);
-				barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList, width2);
+			if(isLineGraph){
+				NumberValue zeroWidth2 = new GeoNumeric(cons, 0);
+				barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList, zeroWidth2);
 			}else{
 				barChart = new AlgoBarChart(cons, intervalValueList, intervalProbList);
 			}
@@ -681,7 +704,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 			discreteIntervalGraph = barChart.getGeoElements()[0];
 
 			//System.out.println(text);
-			if(isBarGraph){
+			if(isLineGraph){
 				discreteIntervalGraph.setObjColor(this.COLOR_PDF_FILL);
 				discreteIntervalGraph.setLineThickness(thicknessBarChart+2);
 			}
@@ -748,6 +771,75 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 				plotGeoList.add(integral);
 			}
 
+
+
+			if(isCumulative){
+				
+				// point on curve 
+				GeoFunction f = (GeoFunction)densityCurve;	
+				AlgoPointOnPath pAlgo = new AlgoPointOnPath(cons, (Path)f, highPoint.getInhomX(), 0);
+				cons.removeFromConstructionList(pAlgo);
+				curvePoint = (GeoPoint) pAlgo.getGeoElements()[0];
+				
+				
+				/*
+				ExpressionNode highPointX = new ExpressionNode(kernel, highPoint, ExpressionNode.XCOORD, null);
+				
+				// need expression for f evaluated xcoord of highPoint
+				ExpressionNode curveY = new ExpressionNode(???????);
+				
+				MyVecNode curveVec = new MyVecNode( kernel, highPointX, curveY);
+				ExpressionNode curvePointNode = new ExpressionNode(kernel, curveVec, ExpressionNode.NO_OPERATION, null);
+				curvePointNode.setForcePoint();
+
+				AlgoDependentPoint pAlgo = new AlgoDependentPoint(cons, curvePointNode, false);
+				cons.removeFromConstructionList(pAlgo);
+				*/
+				
+				
+				curvePoint = (GeoPoint) pAlgo.getGeoElements()[0];
+				curvePoint.setObjColor(COLOR_POINT);
+				curvePoint.setPointSize(4);
+				curvePoint.setLayer(f.getLayer()+1);
+				plotGeoList.add(curvePoint);
+
+				// create vertical line segment 
+				ExpressionNode xcoord = new ExpressionNode(kernel, curvePoint, ExpressionNode.XCOORD, null);
+				MyVecNode vec = new MyVecNode( kernel, xcoord, new MyDouble(kernel, 0.0));
+				ExpressionNode point = new ExpressionNode(kernel, vec, ExpressionNode.NO_OPERATION, null);
+				point.setForcePoint();
+				AlgoDependentPoint pointAlgo = new AlgoDependentPoint(cons, point, false);
+				cons.removeFromConstructionList(pointAlgo);
+
+				AlgoJoinPointsSegment seg1 = new AlgoJoinPointsSegment(cons, curvePoint, (GeoPoint)pointAlgo.getGeoElements()[0], null);
+				cons.removeFromConstructionList(seg1);	
+				xSegment = (GeoSegment)seg1.getGeoElements()[0];
+				xSegment.setObjColor(Color.blue);
+				xSegment.setLineThickness(3);
+				xSegment.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+				xSegment.setEuclidianVisible(true);
+				xSegment.setFixed(true);
+				plotGeoList.add(xSegment);
+
+				// create horizontal ray 
+				ExpressionNode ycoord = new ExpressionNode(kernel, curvePoint, ExpressionNode.YCOORD, null);
+				MyVecNode vecy = new MyVecNode( kernel, new MyDouble(kernel, 0.0), ycoord);
+				ExpressionNode pointy = new ExpressionNode(kernel, vecy, ExpressionNode.NO_OPERATION, null);
+				pointy.setForcePoint();	
+				GeoVector v = new GeoVector(cons);
+				v.setCoords(-1d, 0d, 1d);
+
+				AlgoRayPointVector seg2 = new AlgoRayPointVector(cons, curvePoint, v);
+				cons.removeFromConstructionList(seg2);
+				ySegment = (GeoRay)seg2.getGeoElements()[0];
+				ySegment.setObjColor(Color.red);
+				ySegment.setLineThickness(3);
+				ySegment.setLineType(EuclidianView.LINE_TYPE_FULL);
+				ySegment.setEuclidianVisible(true);
+				ySegment.setFixed(true);
+				plotGeoList.add(ySegment);
+			}
+
 		}
 
 		hideAllGeosFromViews();
@@ -780,12 +872,12 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		plotSettings.yMax = yMax;
 
 		// don't show the y-axis for continuous case (edge axis looks bad)
-		plotSettings.showYAxis = probManager.isDiscrete(selectedDist);
-		//plotSettings.showYAxis = true;
+		//	plotSettings.showYAxis = probManager.isDiscrete(selectedDist);
+		plotSettings.showYAxis = true;
 
 
 		plotSettings.isEdgeAxis[0] = false;
-		plotSettings.isEdgeAxis[1] = false;
+		plotSettings.isEdgeAxis[1] = true;
 		plotSettings.forceXAxisBuffer = true;
 
 		if(probManager.isDiscrete(selectedDist)){
@@ -809,7 +901,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 
 	/**
-	 * Adjusts the interval control points to match to the current low and high
+	 * Adjusts the interval control points to match the current low and high
 	 * values. The low and high values are changeable from the input fields, so
 	 * this method is called after a field change.
 	 */
@@ -1050,14 +1142,17 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 	public void updateAll(){
 		updateFonts();
 		updateDistribution();
-		updatePlot();
+		updatePlotSettings();
+		updateIntervalProbability();
+		updateDiscreteTable();
+		setXAxisPoints();
 		updateProbabilityType();
 		updateGUI();
 		//this.requestFocus();
 
 	}
 
-
+	
 	private void updateGUI() {
 
 		// set visibility and text of the parameter labels and fields
@@ -1069,7 +1164,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 			fldParameterArray[i].setVisible(hasParm);
 
 			// hide sliders for now ... need to work out slider range for each parm (tricky)
-			sliderArray[i].setVisible(false);
+			//	sliderArray[i].setVisible(false);
 
 			if(hasParm){
 				// set label
@@ -1100,12 +1195,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 	}
 
 
-	private void updatePlot(){
-		updatePlotSettings();
-		updateIntervalProbability();
-		updateDiscreteTable();
-		setXAxisPoints();
-	}
+	
 
 
 	private void updateIntervalProbability(){
@@ -1113,7 +1203,8 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		if(probManager.isDiscrete(selectedDist))
 			this.discreteIntervalGraph.updateCascade();
 		else
-			this.integral.updateCascade();
+			if(hasIntegral)
+				this.integral.updateCascade();
 	}
 
 
@@ -1123,7 +1214,10 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 		boolean isDiscrete = probManager.isDiscrete(selectedDist);
 
-		probMode = comboProbType.getSelectedIndex();
+		if(isCumulative)
+			probMode = PROB_LEFT;
+		else
+			probMode = comboProbType.getSelectedIndex();
 		this.getPlotDimensions();
 
 		if(probMode == PROB_INTERVAL){
@@ -1194,16 +1288,13 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 	}
 
 
+	/**
+	 * Sets the distribution type. 
+	 * This will destroy all GeoElements and create new ones. 
+	 */
 	protected void updateDistribution(){
 
-
-		// reset the distributions
-		/*
-		 * TODO: currently this is done simply by removing all the geos and
-		 * creating new ones, is there a better way?
-		 */
-
-
+		hasIntegral = !isCumulative;
 		createGeoElements();
 		//setSliderDefaults();
 
@@ -1211,17 +1302,12 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		if(probManager.isDiscrete(selectedDist)){
 			discreteGraph.update();
 			discreteIntervalGraph.update();
-
-			updateDiscreteTable();
-
+			//updateDiscreteTable();
 			addRemoveTable(true);
-
 			//this.fldParameterArray[0].requestFocus();
-
 
 		}else{
 			addRemoveTable(false);
-
 			densityCurve.update();
 			if(hasIntegral)
 				integral.update();
@@ -1328,35 +1414,45 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		lblDist.setText(app.getMenu("Distribution") + ": ");
 		lblProb.setText(app.getMenu("Probability") + ": ");
 
-		comboProbType.removeActionListener(this);
-		comboProbType.removeAllItems();
-		comboProbType.addItem(app.getMenu("IntervalProb"));
-		comboProbType.addItem(app.getMenu("LeftProb"));
-		comboProbType.addItem(app.getMenu("RightProb"));
-		comboProbType.addActionListener(this);
+		setProbabilityComboBoxMenu();
 
 		lblBetween.setText(app.getMenu("XBetween"));   // <= X <=
 		lblEndProbOf.setText(app.getMenu("EndProbabilityOf") + " = ");
 		lblProbOf.setText(app.getMenu("ProbabilityOf"));
 
-		setComboDistribution();
+		setDistributionComboBoxMenu();
 
-		table.setLabels();
+		if(table != null)
+			table.setLabels();
 		if(styleBar != null)
 			styleBar.setLabels();
 
 	}
-
-
+	
 	private void setLabelArrays(){
 
 		distributionMap = probManager.getDistributionMap();
 		reverseDistributionMap = probManager.getReverseDistributionMap();
 		parameterLabels = ProbabilityManager.getParameterLabelArray(app);
 	}
+	
+	private void setProbabilityComboBoxMenu(){
+		
+		comboProbType.removeActionListener(this);
+		comboProbType.removeAllItems();
+		if(isCumulative)
+			comboProbType.addItem(app.getMenu("LeftProb"));
+		else{
+			comboProbType.addItem(app.getMenu("IntervalProb"));
+			comboProbType.addItem(app.getMenu("LeftProb"));
+			comboProbType.addItem(app.getMenu("RightProb"));
+		}
+		comboProbType.addActionListener(this);
+		
+	}
+	
 
-
-	private void setComboDistribution(){
+	private void setDistributionComboBoxMenu(){
 
 		comboDistribution.removeActionListener(this);
 		comboDistribution.removeAllItems();
@@ -1389,9 +1485,10 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 
 	//=================================================
-	//       Create GeoElement
+	//       Geo Handlers
 	//=================================================
-
+	
+	
 	private GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
 
 		try {
@@ -1422,14 +1519,6 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		}
 	}
 
-
-
-
-
-
-	//=================================================
-	//       Geo Handlers
-	//=================================================
 
 	public void removeGeos(){
 		if(pointList != null)
@@ -1505,7 +1594,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 
 
 	/**
-	 * Creates two GeoLists, discreteProbList and discreteValueList, that store
+	 * Creates two GeoLists: discreteProbList and discreteValueList. These store
 	 * the probabilities and values of the currently selected discrete
 	 * distribution.
 	 */
@@ -1554,7 +1643,7 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 			break;
 
 		case ProbabilityManager.DIST_PASCAL:	
-			
+
 			nGeo = new GeoNumeric(cons,parameters[0]);
 			pGeo = new GeoNumeric(cons,parameters[1]);	
 			k = new GeoNumeric(cons);
@@ -1700,6 +1789,10 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 	}
 
 
+	/**
+	 * Returns the maximum value in the discrete value list.
+	 * @return
+	 */
 	public int getDiscreteXMax(){
 		if(discreteValueList != null){
 			GeoNumeric geo = (GeoNumeric) discreteValueList.get(discreteValueList.size()-1);
@@ -1708,6 +1801,10 @@ implements View, ActionListener, FocusListener, ChangeListener, SettingListener 
 		return -1;
 	}
 
+	/**
+	 * Returns the minimum value in the discrete value list.
+	 * @return
+	 */
 	public int getDiscreteXMin(){
 		if(discreteValueList != null){
 			GeoNumeric geo = (GeoNumeric) discreteValueList.get(0);

@@ -148,10 +148,19 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 			//System.out.println(low + " , " + high);
 			probCalc.setInterval(low,high);
 
+			// adjust the selection
 			table.getSelectionModel().removeListSelectionListener(this);
-			table.changeSelection(0,0, false,false);
-			table.changeSelection(selRow[selRow.length-1],0, false,true);
-			table.scrollRectToVisible(table.getCellRect(selRow[selRow.length-1], 0, true));
+			if(isCumulative){
+				// single row selected
+				table.changeSelection(selRow[selRow.length-1],0, false,false);
+			}
+			else
+			{
+				// select multiple rows: first up to selected
+				table.changeSelection(0,0, false,false);
+				table.changeSelection(selRow[selRow.length-1],0, false,true);
+				table.scrollRectToVisible(table.getCellRect(selRow[selRow.length-1], 0, true));
+			}
 			table.getSelectionModel().addListSelectionListener(this);
 		}
 		else if(probCalc.getProbMode() == ProbabilityCalculator.PROB_RIGHT){
@@ -185,11 +194,19 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 			statTable.getTable().getSelectionModel().removeListSelectionListener(this);
 
 			int lowIndex = lowValue - xMin;
+			if(lowIndex < 0) lowIndex = 0;
 			int highIndex = highValue - xMin;
 			//System.out.println("-------------");
 			//System.out.println(lowIndex + " , " + highIndex);
-			statTable.getTable().changeSelection(lowIndex,0, false,false);
-			statTable.getTable().changeSelection(highIndex,0, false,true);
+			
+			if(isCumulative){
+				statTable.getTable().changeSelection(highIndex,0, false,false);
+			}
+			else
+			{
+				statTable.getTable().changeSelection(lowIndex,0, false,false);
+				statTable.getTable().changeSelection(highIndex,0, false,true);
+			}
 			repaint();
 			statTable.getTable().getSelectionModel().addListSelectionListener(this);
 		} catch (Exception e) {
