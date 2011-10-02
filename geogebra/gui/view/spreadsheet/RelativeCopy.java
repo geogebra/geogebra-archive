@@ -419,10 +419,11 @@ public class RelativeCopy {
 		int column0 = GeoElement.getSpreadsheetColumn(matcher);
 		int row0 = GeoElement.getSpreadsheetRow(matcher);
 		GeoElement value2;
-		if (freeImage) {
+		if (freeImage || value.isGeoButton()) {
 			value2 = value.copy();
 			if (oldValue != null) oldValue.remove();
 			value2.setLabel(table.getModel().getColumnName(column0 + dx) + (row0 + dy + 1));
+			value2.updateRepaint();
 		} else {
 			value2 = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
 		}

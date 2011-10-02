@@ -44,6 +44,12 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, T
 		setAuxiliaryObject(true);
 	}
 
+	public GeoButton(Construction cons, int labelOffsetX, int labelOffsetY) {
+		this(cons);
+		this.labelOffsetX = labelOffsetX;
+		this.labelOffsetY = labelOffsetY;
+	}
+
 	public String getClassName() {
 		return "GeoButton";
 	}
@@ -61,7 +67,7 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, T
     }
     
 	public GeoElement copy() {
-		return this;
+		return new GeoButton(cons, labelOffsetX, labelOffsetY);
 	}
 	
 	public boolean isGeoButton() {

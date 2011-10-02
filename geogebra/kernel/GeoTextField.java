@@ -22,6 +22,12 @@ public class GeoTextField extends GeoButton {
 		textField.showPopupSymbolButton(true);
 		textField.setAutoComplete(false);
 	}
+	public GeoTextField(Construction cons, int labelOffsetX, int labelOffsetY) {
+		this(cons);
+		this.labelOffsetX = labelOffsetX;
+		this.labelOffsetY = labelOffsetY;
+	}
+
 	public String getClassName() {
 		return "GeoTextField";
 	}
@@ -99,6 +105,10 @@ public class GeoTextField extends GeoButton {
 	}
 	public void setText(String text2) {
 		text = text2;		
+	}
+	
+	public GeoElement copy() {
+		return new GeoTextField(cons, labelOffsetX, labelOffsetY);
 	}
 	
 	
