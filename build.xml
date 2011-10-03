@@ -589,13 +589,17 @@ office@geogebra.org
 
 	</target>
 
-	<!-- creates preload.html by inserting version strings into preload.txt -->
+	<!-- creates preload.html -->
 	<target name="preloadHtml" depends="readVersion">
-		<copy file="${src.dir}/preload.txt"
-		      tofile="${build.dir}/unsigned/preload.html">
-		</copy>
-		<replace file="${build.dir}/unsigned/preload.html" 
-			token="VERSION_STRING" value="${fullversion}"/>
+		<echo file="${build.dir}/unsigned/preload.html" append="false">
+		&lt;html&gt;
+		&lt;applet code="geogebra.GeoGebraAppletPreloader" archive="geogebra.jar" codebase="./" width="1" height="1"&gt;
+			&lt;param name="cache_archive" value="geogebra.jar, geogebra_main.jar, geogebra_gui.jar, geogebra_cas.jar, geogebra_export.jar, geogebra_algos.jar, geogebra_javascript.jar, geogebra_properties.jar, jlatexmath.jar, jlm_cyrillic.jar, jlm_greek.jar "/&gt;
+			&lt;param name="cache_version" value="${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}, ${fullversion}"/&gt;
+		&lt;/applet&gt;
+		&lt;/html&gt;	
+		</echo>		
+		
 		<echo file="${build.dir}/unpacked/version.txt" append="false">${fullversion}</echo>
 	</target>
 
