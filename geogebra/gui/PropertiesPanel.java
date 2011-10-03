@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.inputfield.AutoCompleteTextField;
 import geogebra.gui.inputfield.MyTextField;
 import geogebra.gui.util.FullWidthLayout;
@@ -2058,7 +2059,7 @@ public	class PropertiesPanel extends JPanel implements SetLabels {
 			// absolute screen location flag changed
 			if (source == cbAbsScreenLoc) {
 				boolean flag = cbAbsScreenLoc.isSelected();
-				EuclidianView ev = app.getEuclidianView();
+				EuclidianViewInterface ev = app.getActiveEuclidianView();
 				for (int i = 0; i < geos.length; i++) {
 					geo = (AbsoluteScreenLocateable) geos[i];
 					if (flag) {

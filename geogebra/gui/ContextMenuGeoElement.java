@@ -492,13 +492,13 @@ public class ContextMenuGeoElement extends JPopupMenu {
 							boolean flag = !geoText.isAbsoluteScreenLocActive();
 							if (flag) {
 								// convert real world to screen coords
-								int x = app.getEuclidianView().toScreenCoordX(geoText.getRealWorldLocX());
-								int y = app.getEuclidianView().toScreenCoordY(geoText.getRealWorldLocY());
+								int x = app.getActiveEuclidianView().toScreenCoordX(geoText.getRealWorldLocX());
+								int y = app.getActiveEuclidianView().toScreenCoordY(geoText.getRealWorldLocY());
 								geoText.setAbsoluteScreenLoc(x, y);							
 							} else {
 								// convert screen coords to real world 
-								double x = app.getEuclidianView().toRealWorldCoordX(geoText.getAbsoluteScreenLocX());
-								double y = app.getEuclidianView().toRealWorldCoordY(geoText.getAbsoluteScreenLocY());
+								double x = app.getActiveEuclidianView().toRealWorldCoordX(geoText.getAbsoluteScreenLocX());
+								double y = app.getActiveEuclidianView().toRealWorldCoordY(geoText.getAbsoluteScreenLocY());
 								geoText.setRealWorldLoc(x, y);
 							}
 							geoText.setAbsoluteScreenLocActive(flag);            		
