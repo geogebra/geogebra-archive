@@ -6,6 +6,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 /*
@@ -39,8 +40,13 @@ public class CmdNormal extends CommandProcessor {
 			if ((ok = arg[0].isNumberValue()) && (arg[1].isNumberValue())) {
 				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 									
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
+					
 					String mean = arg[0].getLabel();
 					String sd = arg[1].getLabel();
+					
+					kernel.restorePrintAccuracy();
 					
 					if (cumulative) {
 						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "(erf((x-("+mean+"))/abs("+sd+")) + 1)/2", true );

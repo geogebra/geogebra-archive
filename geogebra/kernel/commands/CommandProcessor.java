@@ -6084,7 +6084,10 @@ class CmdTDistribution extends CommandProcessor {
 			if ((ok[0] = arg[0].isNumberValue()) ) {
 				if (arg[1].isGeoFunction() && ((GeoFunction)arg[1]).toString().equals("x")) {
 
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String v = arg[0].getLabel();
+					kernel.restorePrintAccuracy();
 					String command;
 					
 					if (cumulative) {
@@ -6195,8 +6198,11 @@ class CmdChiSquared extends CommandProcessor {
 			if ((ok[0] = arg[0].isNumberValue()) ) {
 				if (arg[1].isGeoFunction() && ((GeoFunction)arg[1]).toString().equals("x")) {
 
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String k = arg[0].getLabel();
 					String command = null;
+					kernel.restorePrintAccuracy();
 					
 					if (cumulative) {
 						command = "If[x<0,0,gamma(("+k+")/2,x/2)/gamma(("+k+")/2)]";
@@ -6305,7 +6311,10 @@ class CmdExponential extends CommandProcessor {
 			if ((ok[0] = arg[0].isNumberValue()) ) {
 				if (arg[1].isGeoFunction() && ((GeoFunction)arg[1]).toString().equals("x")) {
 
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String l = arg[0].getLabel();
+					kernel.restorePrintAccuracy();
 					String command = null;
 					
 					if (cumulative) {
@@ -6410,8 +6419,11 @@ class CmdLogNormal extends CommandProcessor {
 			if ((ok = arg[0].isNumberValue()) && (arg[1].isNumberValue())) {
 				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 									
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String mean = arg[0].getLabel();
 					String sd = arg[1].getLabel();
+					kernel.restorePrintAccuracy();
 					
 					if (cumulative) {
 						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "If[x<0,0,1/2 erf((ln(x)-("+mean+"))/(sqrt(2)*abs("+sd+"))) + 1/2]", true );
@@ -6426,9 +6438,12 @@ class CmdLogNormal extends CommandProcessor {
 					
 				} else if (arg[2].isNumberValue()) 
 				{
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String mean = arg[0].getLabel();
 					String sd = arg[1].getLabel();
 					String x = arg[2].getLabel();
+					kernel.restorePrintAccuracy();
 					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "1/2 erf((ln(If["+x+"<0,0,"+x+"])-("+mean+"))/(sqrt(2)*abs("+sd+"))) + 1/2", true );
 					return ret;
 					
@@ -6475,8 +6490,11 @@ class CmdLogistic extends CommandProcessor {
 			if ((ok = arg[0].isNumberValue()) && (arg[1].isNumberValue())) {
 				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 									
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String m = arg[0].getLabel();
 					String s = arg[1].getLabel();
+					kernel.restorePrintAccuracy();
 					
 					if (cumulative) {
 						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "1/(1+exp(-(x-("+m+"))/abs("+s+")))", true );
@@ -6491,9 +6509,12 @@ class CmdLogistic extends CommandProcessor {
 					
 				} else if (arg[2].isNumberValue()) 
 				{
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String m = arg[0].getLabel();
 					String s = arg[1].getLabel();
 					String x = arg[2].getLabel();
+					kernel.restorePrintAccuracy();
 					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "1/(1+exp(-("+x+"-("+m+"))/abs("+s+")))", true );
 					return ret;
 					
@@ -6537,8 +6558,11 @@ class CmdLogistic extends CommandProcessor {
 				if ((ok = arg[0].isNumberValue()) && (arg[1].isNumberValue())) {
 					if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 										
+						// needed for eg Normal[1, 0.001, x] 
+						kernel.setTemporaryPrintFigures(15);
 						String a = arg[0].getLabel();
 						String b = arg[1].getLabel();
+						kernel.restorePrintAccuracy();
 						
 						if (cumulative) {
 							GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "If[x<Min["+a+","+b+"],0,If[x>Max["+a+","+b+"],1,(x-Min["+a+","+b+"])/abs("+b+"-("+a+"))]]", true );
@@ -6553,9 +6577,12 @@ class CmdLogistic extends CommandProcessor {
 						
 					} else if (arg[2].isNumberValue()) 
 					{
+						// needed for eg Normal[1, 0.001, x] 
+						kernel.setTemporaryPrintFigures(15);
 						String a = arg[0].getLabel();
 						String b = arg[1].getLabel();
 						String x = arg[2].getLabel();
+						kernel.restorePrintAccuracy();
 						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "If["+x+"<Min["+a+","+b+"],0,If["+x+">Max["+a+","+b+"],1,("+x+"-Min["+a+","+b+"])/abs("+b+"-("+a+"))]]", true );
 						return ret;
 						
@@ -6609,8 +6636,11 @@ class CmdLogistic extends CommandProcessor {
 				if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
 					if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 
+						// needed for eg Normal[1, 0.001, x] 
+						kernel.setTemporaryPrintFigures(15);
 						String k = arg[0].getLabel();
 						String l = arg[1].getLabel();
+						kernel.restorePrintAccuracy();
 						String command;
 						
 						if (cumulative) {
@@ -6624,9 +6654,12 @@ class CmdLogistic extends CommandProcessor {
 
 
 					} else if (arg[2].isNumberValue()) {
+						// needed for eg Normal[1, 0.001, x] 
+						kernel.setTemporaryPrintFigures(15);
 						String k = arg[0].getLabel();
 						String l = arg[1].getLabel();
 						String x = arg[2].getLabel();
+						kernel.restorePrintAccuracy();
 						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand("If[x<0,0,(("+l+")^("+k+")("+x+")^("+k+"-1)exp(-("+l+")("+x+")))/("+k+"-1)!]", true);
 						return ret;
 					} else
@@ -6683,8 +6716,11 @@ class CmdLogistic extends CommandProcessor {
 				if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
 					if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 
+						// needed for eg Normal[1, 0.001, x] 
+						kernel.setTemporaryPrintFigures(15);
 						String d1 = arg[0].getLabel();
 						String d2 = arg[1].getLabel();
+						kernel.restorePrintAccuracy();
 						String command;
 						
 						if (cumulative) {
@@ -6802,8 +6838,11 @@ class CmdGamma extends CommandProcessor {
 			if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
 				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String k = arg[0].getLabel();
 					String t = arg[1].getLabel();
+					kernel.restorePrintAccuracy();
 					String command;
 					
 					if (cumulative) {
@@ -6921,8 +6960,11 @@ class CmdCauchy extends CommandProcessor {
 			if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
 				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String x0 = arg[0].getLabel();
 					String g = arg[1].getLabel();
+					kernel.restorePrintAccuracy();
 					String command;
 					
 					if (cumulative) {
@@ -7476,8 +7518,11 @@ class CmdWeibull extends CommandProcessor {
 			if ((ok[0] = arg[0].isNumberValue()) && (ok[1] = arg[1].isNumberValue())) {
 				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String k = arg[0].getLabel();
 					String l = arg[1].getLabel();
+					kernel.restorePrintAccuracy();
 					String command;
 					
 					if (cumulative) {

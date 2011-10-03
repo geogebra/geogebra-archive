@@ -1006,7 +1006,7 @@ public class DrawParametricCurve extends Drawable {
     }
 	
     final public boolean isInside(Rectangle rect) {
-    	return rect.contains(gp.getBounds());  
+    	return gp != null && rect.contains(gp.getBounds());  
     }
     
     public GeoElement getGeoElement() {

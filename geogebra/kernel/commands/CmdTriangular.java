@@ -33,9 +33,12 @@ public class CmdTriangular extends CommandProcessor {
 			if ((ok = arg[0].isNumberValue()) && (ok2 = arg[1].isNumberValue()) && (arg[2].isNumberValue())) {
 				if (arg[3].isGeoFunction() && ((GeoFunction)arg[3]).toString().equals("x")) {
 									
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String a = arg[0].getLabel();
 					String b = arg[1].getLabel();
 					String c = arg[2].getLabel();
+					kernel.restorePrintAccuracy();
 					
 					if (cumulative) {
 						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "If[x < "+a+", 0, If[x < "+c+", (x - ("+a+"))� / ("+b+" - ("+a+")) / ("+c+" - ("+a+")), If[x < "+b+", 1 + (x - ("+b+"))� / ("+b+" - ("+a+")) / ("+c+" - ("+b+")), 1]]]", true);
@@ -49,10 +52,13 @@ public class CmdTriangular extends CommandProcessor {
 					
 				} else if (arg[3].isNumberValue()) 
 				{
+					// needed for eg Normal[1, 0.001, x] 
+					kernel.setTemporaryPrintFigures(15);
 					String a = arg[0].getLabel();
 					String b = arg[1].getLabel();
 					String c = arg[2].getLabel();
 					String x = arg[3].getLabel();
+					kernel.restorePrintAccuracy();
 					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "If["+x+" < "+a+", 0, If["+x+" < "+c+", ("+x+" - ("+a+"))� / ("+b+" - ("+a+")) / ("+c+" - ("+a+")), If["+x+" < "+b+", 1 + ("+x+" - ("+b+"))� / ("+b+" - ("+a+")) / ("+c+" - ("+b+")), 1]]]", true );
 					return ret;
 					
