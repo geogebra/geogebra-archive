@@ -114,11 +114,11 @@ public class ProbabilityTable extends JPanel  implements ListSelectionListener{
 	public void setLabels(){
 
 		columnNames = new String[2];
-		columnNames[0] = "x";
+		columnNames[0] = "k";
 		if(isCumulative)
-			columnNames[1] = app.getMenu("ProbabilityOf") + "x ≤ X" + app.getMenu("EndProbabilityOf");
+			columnNames[1] = app.getMenu("ProbabilityOf") + "X ≤ k" + app.getMenu("EndProbabilityOf");
 		else
-			columnNames[1] = app.getMenu("ProbabilityOf") + "x" + app.getMenu("EndProbabilityOf");
+			columnNames[1] = app.getMenu("ProbabilityOf") + "X = k" + app.getMenu("EndProbabilityOf");
 	}
 
 
