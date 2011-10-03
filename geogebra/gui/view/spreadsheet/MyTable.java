@@ -1393,7 +1393,11 @@ public class MyTable extends JTable implements FocusListener
 
 		if (ob instanceof GeoElement) {
 			GeoElement geo = (GeoElement) ob;
-
+			if(geo.isGeoButton()
+					|| geo.isGeoImage()){
+				app.getGuiManager().showPropertiesDialog();
+				return true;
+			}
 			if(!view.getShowFormulaBar()){
 				if (!geo.isFixed()) {
 					if (!geo.isGeoText() && 
@@ -1498,16 +1502,24 @@ public class MyTable extends JTable implements FocusListener
 	@Override
 	public boolean isCellEditable(int row, int column)
 	{
-		if(view.isColumnSelect()) return false;
+		if(view.isColumnSelect()) 
+			return false;
 
-		// to avoid getValueAt() unless necessary
-
-		if (!allowEditing && !oneClickEditMap.containsKey(new Point(column,row))) return false; 
-
+		// allow use of special editors for e.g. buttons, lists
+		if (view.allowSpecialEditor() && oneClickEditMap.containsKey(new Point(column,row))) 
+			return true; 
+		
+		// normal case: return false so we can handle double click in our mouseReleased  
+		if (!allowEditing) 
+			return false; 
+		
+		// prevent editing fixed geos when allowEditing == true 
 		GeoElement geo = (GeoElement) getModel().getValueAt(row, column);
+		if (geo != null && geo.isFixed()) 
+			return false;
 
-		if (geo != null && geo.isFixed()) return false;
-
+		// return true when editing is allowed (mostly for blank cells). This lets 
+		// the JTable mousePressed listener catch double clicks and invoke the editor 
 		return true;
 	}
 
